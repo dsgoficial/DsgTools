@@ -55,19 +55,26 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         Sets headers to table and prepare each row for their contents.
         """
+        #######################################################################
+        # 'headers' attribute is a map that describes each column on table.   #
+        # it has a mandatory set of attributes and some are optional (depends #
+        # on the cell contents type). It is composed as:                      #
+        # {                                                                   #
+        #     col (int) : {                                                   #
+        #         "header" : "Header for current column as exposed on table", #
+        #         "type" : "item" or "widget",                                #
+        #         "editable" or "widget" : bool or callable object to a Widget#
+        #         "getter" : method for value retrieval or None, if not given #
+        #         "setter" : method for value definition or None, if not given#
+        #     }                                                               #
+        # }                                                                   #
+        #######################################################################
         self.clear()
-        self.headers = { 
-            col : {
-                "header" : prop["header"],
-                "type" : prop["type"],
-                "editable" if prop["type"] == "item" else "widget" : \
-                    prop["editable" if prop["type"] == "item" else "widget"],
-                "getter" : prop["getter"] if "getter" in prop else None,
-                "setter" : prop["setter"] if "setter" in prop else None
-            } for col, prop in headerMap.items()
-        }
+        self.headers = headerMap
         self.tableWidget.setColumnCount(len(self.headers))
-        self.tableWidget.setHorizontalHeaderLabels(list(self.headers.keys()))
+        self.tableWidget.setHorizontalHeaderLabels([
+            p["header"] for p in self.headers.values()
+        ])
 
     def clear(self):
         """
@@ -79,33 +86,45 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
     
     def getValue(self, row, column):
         """
-        Gets value from row, column item according to type.
-        If it is an item type, returns item.text()
-        Else, returns the getter funcion applied to the item.
+        Gets the value from a table cell. It uses column definitions from
+        headers attribute.
+        :param row: (int) target cell's row.
+        :param column: (int) target cell's column.
+        :return: (*) cell's contents. This might be any of widget's readable
+                 inputs (int, float, str, dict, etc) - Depends on defined input
+                 widget.
         """
-        if self.headers[column]['type'] == 'item':
+        if self.headers[column]["type"] == "item":
             return self.tableWidget.item(row, column).text()
         else:
-            getter = self.headers[column]['getter']
+            getter = self.headers[column]["getter"]
             widget = self.tableWidget.cellWidget(row, column)
             if not getter:
-                raise Exception(self.tr('Getter must be defined for widget type'))
-            return getattr(widget, getter)
+                raise Exception(
+                    self.tr("Getter method must be defined for widget type.")
+                )
+            return getattr(widget, getter)()
 
     def setValue(self, row, column, value):
         """
-        Sets value from row, column item according to type.
-        If it is an item type, applies item.setText()
-        Else, applies the value to the item using the setter function.
+        Sets a value to a table cell. It uses column definitions from headers
+        attribute.
+        :param row: (int) target cell's row.
+        :param column: (int) target cell's column.
+        :param value: (*) cell's contents. This might be any of widget's
+                      writeable data (int, float, str, dict, etc). Depends on
+                      input widget.
         """
         if self.headers[column]['type'] == 'item':
-            return self.tableWidget.item(row, column).setText(value)
+            self.tableWidget.item(row, column).setText(value)
         else:
             setter = self.headers[column]['setter']
             widget = self.tableWidget.cellWidget(row, column)
             if not setter:
-                raise Exception(self.tr('Setter must be defined for widget type'))
-            return getattr(widget, setter)(value)
+                raise Exception(
+                    self.tr('Setter mthod must be defined for widget type.')
+                )
+            getattr(widget, setter)(value)
 
     def rowCount(self):
         """
@@ -170,19 +189,18 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         row = row if row is not None else self.rowCount()
         self.tableWidget.insertRow(row)
-        for header, properties in self.headers.items():
+        for col, properties in self.headers.items():
             if properties["type"] == "item":
                 item = QTableWidgetItem()
                 # it "flips" current state, which, by default, is "editable"
                 if not properties["editable"]:
                     item.setFlags(Qt.ItemIsEditable)
-                self.tableWidget.setItem(
-                    row, properties["col"], item
-                )
+                self.tableWidget.setItem(row, col, item)
             else:
                 self.tableWidget.setCellWidget(
-                    row, properties["col"], properties["class"]()
+                    row, col, properties["widget"]()
                 )
+        self.rowAdded.emit(row)
 
     def addRow(self, contents, row=None):
         """
@@ -192,22 +210,20 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         row = row if row is not None else self.rowCount()
         self.tableWidget.insertRow(row)
-        for header, properties in self.headers.items():
-            value = contents[header] if header in contents else None
+        for col, properties in self.headers.items():
+            value = contents[col] if col in contents else None
             if properties["type"] == "item":
                 item = QTableWidgetItem(value)
                 # it "flips" current state, which, by default, is "editable"
                 if not properties["editable"]:
                     item.setFlags(Qt.ItemIsEditable)
-                self.tableWidget.setItem(
-                    row, properties["col"], item
-                )
+                self.tableWidget.setItem(row, col, item)
             else:
-                self.tableWidget.setCellWidget(
-                    row,
-                    properties["col"],
-                    value if value is not None else properties["class"]()
-                )
+                widget = properties["widget"]()
+                if value is not None:
+                    getattr(widget, properties["setter"])(value)
+                self.tableWidget.setCellWidget(row, col, widget)
+        self.rowAdded.emit(row)
 
     def removeRow(self, row=None):
         """
@@ -237,26 +253,10 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
                 contents[header] = self.tableWidget.cellWidget(row, col)
         return contents
 
-    def item(self, row, col):
-        """
-        Reads the contents from a table cell.
-        :param row: (int) item's row to be read.
-        :param col: (int) item's column to be read.
-        :return: (str/QWidget) cell contents.
-        """
-        if row >= self.rowCount() or col >= self.columnCount() \
-           or row < 0 or col < 0:
-            return None
-        for header, properties in self.headers.items():
-            if col == properties["col"]:
-                if properties["type"] == "item":
-                    return self.tableWidget.item(row, col).text()
-                else:
-                    return self.tableWidget.cellWidget(row, col)
-
     def itemAt(self, row, col):
         """
-        Similiar to item, but returns QTableWIdgetItem instead of its text.
+        Retrives a cell's item: either a QTableWIdgetItem or current set
+        widget.
         :param row: (int) item's row to be read.
         :param col: (int) item's column to be read.
         :return: (QTableWIdgetItem/QWidget) cell contents.
@@ -264,8 +264,8 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         if row >= self.rowCount() or col >= self.columnCount() \
            or row < 0 or col < 0:
             return None
-        for header, properties in self.headers.items():
-            if col == properties["col"]:
+        for column, properties in self.headers.items():
+            if col == column:
                 if properties["type"] == "item":
                     return self.tableWidget.item(row, col)
                 else:
@@ -284,7 +284,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         items = set()
         for idx in self.selectedIndexes():
-            items.add(self.item(idx.row(), idx.column()))
+            items.add(self.itemAt(idx.row(), idx.column()))
         return items
 
     def selectedRows(self, reverseOrder=False):
