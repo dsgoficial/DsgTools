@@ -244,13 +244,8 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         if row >= self.rowCount() or row < 0:
             return {}
         contents = dict()
-        for header, properties in self.headers.items():
-            col = properties["col"]
-            if properties["type"] == "item":
-                item = self.tableWidget.item(row, col)
-                contents[header] = item.text() if item is not None else None
-            else:
-                contents[header] = self.tableWidget.cellWidget(row, col)
+        for col, properties in self.headers.items():
+            contents[col] = self.getValue(row, col)
         return contents
 
     def itemAt(self, row, col):

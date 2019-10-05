@@ -60,12 +60,6 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         ON_FLAGS_IGNORE : "ignore"
     }
     MODEL_NAME_HEADER, MODEL_SOURCE_HEADER, ON_FLAGS_HEADER, LOAD_OUT_HEADER = range(4)
-    headerNameMap = {
-        MODEL_NAME_HEADER : QCoreApplication.translate('WorkflowSetupDialog', "Model name"),
-        MODEL_SOURCE_HEADER : QCoreApplication.translate('WorkflowSetupDialog', "Model source"),
-        ON_FLAGS_HEADER : QCoreApplication.translate('WorkflowSetupDialog', "On flags"),
-        LOAD_OUT_HEADER : QCoreApplication.translate('WorkflowSetupDialog', "Load output")
-    }
 
     def __init__(self, parent=None):
         """
@@ -79,21 +73,33 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         self.setupUi(self)
         self.messageBar = QgsMessageBar(self)
         self.orderedTableWidget.setHeaders({
-            self.headerNameMap[self.MODEL_NAME_HEADER] : {
+            self.MODEL_NAME_HEADER : {
+                "header" : self.tr("Model name"),
                 "type" : "widget",
-                "class" : self.modelNameWidget
+                "widget" : self.modelNameWidget,
+                "setter" : "setText",
+                "getter" : "text"
             },
-            self.headerNameMap[self.MODEL_SOURCE_HEADER] : {
+            self.MODEL_SOURCE_HEADER : {
+                "header" : self.tr("Model source"),
                 "type" : "widget",
-                "class" : self.modelWidget
+                "widget" : self.modelWidget,
+                "setter" : "setText",
+                "getter" : "text"
             },
-            self.headerNameMap[self.ON_FLAGS_HEADER] : {
+            self.ON_FLAGS_HEADER : {
+                "header" : self.tr("On flags"),
                 "type" : "widget",
-                "class" : self.onFlagsWidget
+                "widget" : self.onFlagsWidget,
+                "setter" : "setCurrentIndex",
+                "getter" : "currentIndex"
             },
-            self.headerNameMap[self.LOAD_OUT_HEADER] : {
+            self.LOAD_OUT_HEADER : {
+                "header" : self.tr("Load output"),
                 "type" : "widget",
-                "class" : self.loadOutputWidget
+                "widget" : self.loadOutputWidget,
+                "setter" : "setChecked",
+                "getter" : "isChecked"
             }
         })
 
@@ -189,8 +195,11 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         widget.setFilter(
             self.tr("Select a QGIS Processing model (*.model *.model3)")
         )
+        # defining setter and getter methods for composed widgets into OTW
+        widget.setText = widget.lineEdit.setText
+        widget.text = widget.lineEdit.text
         if filepath is not None:
-            widget.lineEdit.setText(filepath)
+            widget.setText(filepath)
         return widget
 
     def onFlagsWidget(self, option=None):
@@ -302,10 +311,10 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         :return: (dict) parameters map.
         """
         contents = self.orderedTableWidget.row(row)
-        filepath = contents[self.headerNameMap[self.MODEL_SOURCE_HEADER]].lineEdit.text().strip()
-        onFlagsIdx = contents[self.headerNameMap[self.ON_FLAGS_HEADER]].currentIndex()
-        name = contents[self.headerNameMap[self.MODEL_NAME_HEADER]].text().strip()
-        loadOutput = contents[self.headerNameMap[self.LOAD_OUT_HEADER]].isChecked()
+        filepath = contents[self.MODEL_SOURCE_HEADER].strip()
+        onFlagsIdx = contents[self.ON_FLAGS_HEADER]
+        name = contents[self.MODEL_NAME_HEADER].strip()
+        loadOutput = contents[self.LOAD_OUT_HEADER]
         if not os.path.exists(filepath):
             xml = ""
         else:
@@ -347,17 +356,24 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         else:
             return False
         path = os.path.join(self.__qgisModelPath__, originalName)
-        msg = self.tr("Model '{0}' is already imported would you like overwrite it?").format(path)
+        msg = self.tr(
+            "Model '{0}' is already imported would you like to overwrite it?"
+        ).format(path)
         if os.path.exists(path) and self.confirmAction(msg):
             os.remove(path)
         if not os.path.exists(path):
             with open(path, "w") as f:
                 f.write(xml)
         self.orderedTableWidget.addRow(contents={
-            self.headerNameMap[self.MODEL_NAME_HEADER] : self.modelNameWidget(model.displayName()),
-            self.headerNameMap[self.MODEL_SOURCE_HEADER] : self.modelWidget(path),
-            self.headerNameMap[self.ON_FLAGS_HEADER] : self.onFlagsWidget(model.onFlagsRaised()),
-            self.headerNameMap[self.LOAD_OUT_HEADER] : self.loadOutputWidget(model.loadOutput())
+            self.MODEL_NAME_HEADER : model.displayName(),
+            self.MODEL_SOURCE_HEADER : path,
+            self.ON_FLAGS_HEADER : {
+                "halt" : self.ON_FLAGS_HALT,
+                "warn" : self.ON_FLAGS_WARN,
+                "ignore" : self.ON_FLAGS_IGNORE
+                
+            }[model.onFlagsRaised()],
+            self.LOAD_OUT_HEADER : model.loadOutput()
         })
         return True
 
