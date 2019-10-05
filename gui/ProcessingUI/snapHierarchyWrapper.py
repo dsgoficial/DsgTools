@@ -62,17 +62,26 @@ class SnapHierarchyWrapper(WidgetWrapper):
 
     def createPanel(self):
         return OrderedTableWidget(headerMap={
-            "Layer" : {
+            0 : {
+                "header" : self.tr("Layer"),
                 "type" : "widget",
-                "class" : QgsMapLayerComboBox
+                "widget" : QgsMapLayerComboBox,
+                "setter" : "setCurrentText",
+                "getter" : "currentText"
             },
-            "Snap" : {
+            1 : {
+                "header" : self.tr("Snap"),
                 "type" : "widget",
-                "class" : QDoubleSpinBox
+                "widget" : QDoubleSpinBox,
+                "setter" : "setValue",
+                "getter" : "value"
             },
-            "Snap mode" : {
+            2 : {
+                "header" : self.tr("Snap mode"),
                 "type" : "widget",
-                "class" : self.modeComboBox
+                "widget" : self.modeComboBox,
+                "setter" : "setCurrentIndex",
+                "getter" : "currentIndex"
             }
         })
     
@@ -98,9 +107,9 @@ class SnapHierarchyWrapper(WidgetWrapper):
         # self.panel = self.createPanel()
         for valueMap in value:
             self.panel.addRow({
-                "Layer" : valueMap["referenceLayer"],
-                "Snap" : valueMap["snap"],
-                "Snap mode" : valueMap["mode"]
+                0 : valueMap["referenceLayer"],
+                1 : valueMap["snap"],
+                2 : valueMap["mode"]
             })
 
     def readStandardPanel(self):
@@ -110,13 +119,13 @@ class SnapHierarchyWrapper(WidgetWrapper):
         """
         valueMaplist = list()
         layers = [
-            self.panel.item(r, 0).currentText() for r in range(self.panel.rowCount())
+            self.panel.getValue(r, 0) for r in range(self.panel.rowCount())
         ]
         for row in range(self.panel.rowCount()):
             values = dict()
-            values["referenceLayer"] = self.panel.item(row, 0).currentText()
-            values["snap"] = self.panel.item(row, 1).value()
-            values["mode"] = self.panel.item(row, 2).currentIndex()
+            values["referenceLayer"] = self.panel.getValue(row, 0)
+            values["snap"] = self.panel.getValue(row, 1)
+            values["mode"] = self.panel.getValue(row, 2)
             values["snapLayerList"] = [l for l in layers[(row + 1)::]]
             valueMaplist.append(values)
         return json.dumps(valueMaplist)
