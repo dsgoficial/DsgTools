@@ -176,7 +176,7 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
                     outputLyr,
                     context
                 )
-            self.flagFeatures(outputLyr, algName, context)
+            self.flagFeatures(outputLyr, algName, layerName, context)
 
         return { self.OUTPUT : self.flag_id}
     
@@ -198,13 +198,13 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
         )
         return output[outputKey]
     
-    def flagFeatures(self, outputLyr, algName, context):
+    def flagFeatures(self, outputLyr, algName, inputLyrName, context):
         for feat in outputLyr.getFeatures():
             newFeat = QgsFeature(self.flagFields)
             for field in feat.fields():
                 newFeat[field.name()]=feat[field.name()]
             newFeat['alg_name'] = algName
-            newFeat['layer_name'] = outputLyr.name()
+            newFeat['layer_name'] = inputLyrName
             newFeat.setGeometry(feat.geometry())
             self.flagSink.addFeature(newFeat, QgsFeatureSink.FastInsert)
 
