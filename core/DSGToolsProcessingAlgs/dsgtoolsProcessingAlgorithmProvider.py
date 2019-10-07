@@ -144,6 +144,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirec
     VerifyNetworkDirectioningAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithm import \
     BatchRunAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.stringCsvToLayerListAlgorithm import \
+    StringCsvToLayerListAlgorithm
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
 from qgis.PyQt.QtGui import QIcon
@@ -219,7 +221,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     LoadNonSpatialLayersFromPostgreSQLAlgorithm(),
                     AssignAliasesToLayersAlgorithm(),
                     BuildJoinsOnLayersAlgorithm(),
-                    BatchRunAlgorithm()
+                    BatchRunAlgorithm(),
+                    StringCsvToLayerListAlgorithm()
                 ]
         return algList
 
