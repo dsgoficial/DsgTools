@@ -142,6 +142,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalLineCon
     TopologicalLineConnectivityAdjustment
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import \
     VerifyNetworkDirectioningAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithm import \
+    BatchRunAlgorithm
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
 from qgis.PyQt.QtGui import QIcon
@@ -216,7 +218,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     LoadLayersFromPostgisAlgorithm(),
                     LoadNonSpatialLayersFromPostgreSQLAlgorithm(),
                     AssignAliasesToLayersAlgorithm(),
-                    BuildJoinsOnLayersAlgorithm()
+                    BuildJoinsOnLayersAlgorithm(),
+                    BatchRunAlgorithm()
                 ]
         return algList
 
