@@ -23,8 +23,13 @@
 
 import json
 
+from qgis.core import (QgsProject, 
+                       QgsProcessingUtils,
+                       QgsProcessingContext)
 from qgis.gui import QgsMapLayerComboBox
-from qgis.PyQt.QtWidgets import QDoubleSpinBox, QComboBox
+from qgis.PyQt.QtWidgets import (QComboBox,
+                                 QLineEdit,
+                                 QDoubleSpinBox)
 from processing.gui.wrappers import (WidgetWrapper,
                                      DIALOG_STANDARD,
                                      DIALOG_MODELER,
@@ -44,6 +49,15 @@ class SnapHierarchyWrapper(WidgetWrapper):
         cb = QgsMapLayerComboBox()
         return cb
 
+    def mapLayerModelDialog(self):
+        """
+        Retrieves widget for map layer selection in a model dialog setup.
+        :return: (QLineEdit)
+        """
+        le = QLineEdit()
+        le.setPlaceholderText(self.tr("Set layer name..."))
+        return le
+
     def modeComboBox(self):
         """
         Retrieves a new widget for snap mode selection.
@@ -60,12 +74,16 @@ class SnapHierarchyWrapper(WidgetWrapper):
         ])
         return cb
 
-    def createPanel(self):
+    def standardPanel(self):
+        """
+        Returns the table prepared for the standard Processing GUI.
+        :return: (OrderedTableWidget) DSGTools customized table widget.
+        """
         return OrderedTableWidget(headerMap={
             0 : {
                 "header" : self.tr("Layer"),
                 "type" : "widget",
-                "widget" : QgsMapLayerComboBox,
+                "widget" : self.mapLayerComboBox,
                 "setter" : "setCurrentText",
                 "getter" : "currentText"
             },
@@ -84,6 +102,49 @@ class SnapHierarchyWrapper(WidgetWrapper):
                 "getter" : "currentIndex"
             }
         })
+
+    def batchPanel(self):
+        """
+        Returns the table prepared for the batch Processing GUI.
+        :return: (OrderedTableWidget) DSGTools customized table widget.
+        """
+        return self.standardPanel()
+
+    def modelerPanel(self):
+        """
+        Returns the table prepared for the modeler Processing GUI.
+        :return: (OrderedTableWidget) DSGTools customized table widget.
+        """
+        return OrderedTableWidget(headerMap={
+            0 : {
+                "header" : self.tr("Layer"),
+                "type" : "widget",
+                "widget" : self.mapLayerModelDialog,
+                "setter" : "setText",
+                "getter" : "text"
+            },
+            1 : {
+                "header" : self.tr("Snap"),
+                "type" : "widget",
+                "widget" : QDoubleSpinBox,
+                "setter" : "setValue",
+                "getter" : "value"
+            },
+            2 : {
+                "header" : self.tr("Snap mode"),
+                "type" : "widget",
+                "widget" : self.modeComboBox,
+                "setter" : "setCurrentIndex",
+                "getter" : "currentIndex"
+            }
+        })
+
+    def createPanel(self):
+        return {
+            DIALOG_MODELER : self.modelerPanel,
+            DIALOG_STANDARD : self.standardPanel,
+            DIALOG_BATCH : self.batchPanel
+        }[self.dialogType]()
     
     def createWidget(self):
         self.panel = self.createPanel()
@@ -103,7 +164,7 @@ class SnapHierarchyWrapper(WidgetWrapper):
         """
         if value is None:
             return
-        value = json.loads(value)
+        # value = json.loads(value)
         # self.panel = self.createPanel()
         for valueMap in value:
             self.panel.addRow({
@@ -128,7 +189,8 @@ class SnapHierarchyWrapper(WidgetWrapper):
             values["mode"] = self.panel.getValue(row, 2)
             values["snapLayerList"] = [l for l in layers[(row + 1)::]]
             valueMaplist.append(values)
-        return json.dumps(valueMaplist)
+        # return json.dumps(valueMaplist)
+        return valueMaplist
 
     def readModelerPanel(self):
         """
@@ -139,9 +201,10 @@ class SnapHierarchyWrapper(WidgetWrapper):
 
     def readBatchPanel(self):
         """
-        
+        Reads widget's contents when process' parameters are set from a batch
+        processing instance.
         """
-        return
+        return self.readStandardPanel()
 
     def value(self):
         """
