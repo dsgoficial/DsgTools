@@ -334,7 +334,7 @@ class PostgisDb(AbstractDb):
         elif self.getDatabaseVersion() == 'FTer_2a_Ed':
             schemaList = ['pe','ge', 'complexos']
         else:
-            QgsMessageLog.logMessage(self.tr('Operation not defined for this database version!'), "DSG Tools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(self.tr('Operation not defined for this database version!'), "DSGTools Plugin", Qgis.Critical)
             return None
         
         sql = self.gen.getNotNullFields(schemaList)
@@ -365,7 +365,7 @@ class PostgisDb(AbstractDb):
         elif self.getDatabaseVersion() == 'FTer_2a_Ed':
             schemaList = ['pe','ge', 'complexos']
         else:
-            QgsMessageLog.logMessage(self.tr('Operation not defined for this database version!'), "DSG Tools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(self.tr('Operation not defined for this database version!'), "DSGTools Plugin", Qgis.Critical)
             return
         
         sql = self.gen.validateWithDomain(schemaList)
@@ -2014,7 +2014,7 @@ class PostgisDb(AbstractDb):
         elif self.getDatabaseVersion() == 'FTer_2a_Ed':
             schemaList = ['pe','ge', 'complexos']
         else:
-            QgsMessageLog.logMessage(self.tr('Operation not defined for this database version!'), "DSG Tools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(self.tr('Operation not defined for this database version!'), "DSGTools Plugin", Qgis.Critical)
             return
         
         sql = self.gen.validateWithDomain(schemaList)

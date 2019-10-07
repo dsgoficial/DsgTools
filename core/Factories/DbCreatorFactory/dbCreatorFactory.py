@@ -34,10 +34,10 @@ class DbCreatorFactory(object):
     def createDbCreatorFactory(self, driverName, createParam, parentWidget = None):
         #TODO Treat none return
         if not ('QPSQL' in QSqlDatabase.drivers()): #Driver wasn't loaded
-            QgsMessageLog.logMessage('QT PSQL driver not installed!', 'DSG Tools Plugin', Qgis.Critical)
+            QgsMessageLog.logMessage('QT PSQL driver not installed!', 'DSGTools Plugin', Qgis.Critical)
             return None
         if not ('QSQLITE' in QSqlDatabase.drivers()): #Driver wasn't loaded
-            QgsMessageLog.logMessage('QT QSQLITE driver not installed!', 'DSG Tools Plugin', Qgis.Critical)
+            QgsMessageLog.logMessage('QT QSQLITE driver not installed!', 'DSGTools Plugin', Qgis.Critical)
             return None        
         creators = {
             "QSQLITE" : SpatialiteDbCreator,

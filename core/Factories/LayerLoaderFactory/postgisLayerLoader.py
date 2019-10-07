@@ -230,7 +230,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                 self.buildJoin(vlayer, pkColumn, editLyr, joinLyrFieldName)
             parentNode.addLayer(vlayer)
             if not vlayer.isValid():
-                QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", Qgis.Critical)
+                QgsMessageLog.logMessage(vlayer.error().summary(), "DSGTools Plugin", Qgis.Critical)
         vlayer = self.createMeasureColumn(vlayer)
         return vlayer
     

@@ -104,7 +104,7 @@ class LoadByClass(QtWidgets.QDialog, FORM_CLASS):
             self.classes = self.widget.abstractDb.listGeomClassesFromDatabase()
         except Exception as e:
             self.bar.pushMessage(self.tr("CRITICAL!"), self.tr('A problem occurred! Check log for details.'), level=QgsMessageBar.CRITICAL)
-            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', Qgis.Critical)
+            QgsMessageLog.logMessage(':'.join(e.args), 'DSGTools Plugin', Qgis.Critical)
 
         if self.onlyParentsCheckBox.isChecked() and not self.widget.isSpatialite:
             self.classesListWidget.addItems(self.parentClassList)

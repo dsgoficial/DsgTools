@@ -27,6 +27,8 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtWidgets import QMessageBox
 
+from qgis.core import Qgis, QgsMessageLog
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'alter_user_password.ui'))
 
@@ -111,7 +113,7 @@ class AlterUserPassword(QtWidgets.QDialog, FORM_CLASS):
             msg+= ', '.join(errorDbList)
             msg+= self.tr('\nError messages for each user were output in qgis log.')
             for errorDb in errorDbList:
-                QgsMessageLog.logMessage(self.tr('Error for user ')+ errorDb + ': ' +exceptionDict[errorDb], "DSG Tools Plugin", Qgis.Critical)
+                QgsMessageLog.logMessage(self.tr('Error for user ')+ errorDb + ': ' +exceptionDict[errorDb], "DSGTools Plugin", Qgis.Critical)
         return msg 
 
     @pyqtSlot(bool)

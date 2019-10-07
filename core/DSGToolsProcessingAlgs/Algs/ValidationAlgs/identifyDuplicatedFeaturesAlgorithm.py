@@ -115,14 +115,14 @@ class IdentifyDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         geomDict = layerHandler.getDuplicatedFeaturesDict(
-                        inputLyr,
-                        onlySelected=onlySelected,
-                        attributeBlackList=attributeBlackList,
-                        excludePrimaryKeys=ignorePK,
-                        ignoreVirtualFields=ignoreVirtual,
-                        useAttributes=True,
-                        feedback=multiStepFeedback
-                    )
+                    inputLyr,
+                    onlySelected=onlySelected,
+                    attributeBlackList=attributeBlackList,
+                    excludePrimaryKeys=ignorePK,
+                    ignoreVirtualFields=ignoreVirtual,
+                    useAttributes=True,
+                    feedback=multiStepFeedback
+                )
         multiStepFeedback.setCurrentStep(1)
         self.raiseDuplicatedFeaturesFlags(inputLyr, geomDict, multiStepFeedback)
 

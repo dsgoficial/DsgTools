@@ -75,7 +75,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         try:
             self.populateConfigFromDb()
         except Exception as e:
-            QgsMessageLog.logMessage(self.tr('Error getting stored configuration.\n')+':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(self.tr('Error getting stored configuration.\n')+':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
     
     def setEditButtonEnabled(self, enabled):
         """
@@ -305,7 +305,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             version = self.widget.abstractDb.getDatabaseVersion()
         except Exception as e:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem obtaining database version! Please, check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
             return False
 
         if 'version' not in list(self.reclassificationDict.keys()):

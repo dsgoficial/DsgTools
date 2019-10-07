@@ -75,5 +75,8 @@
         <file>icons/toggleActiveLayerLabel.png</file>
         <file>icons/reload.png</file>
         <file>icons/runModel.png</file>
+        <file>icons/model_continue.png</file>
+        <file>icons/model_run.png</file>
+        <file>icons/pause.png</file>
     </qresource>
 </RCC>

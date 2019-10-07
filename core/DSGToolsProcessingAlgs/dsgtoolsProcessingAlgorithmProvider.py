@@ -142,10 +142,35 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalLineCon
     TopologicalLineConnectivityAdjustment
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import \
     VerifyNetworkDirectioningAlgorithm
+
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithm import \
     BatchRunAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.stringCsvToLayerListAlgorithm import \
     StringCsvToLayerListAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runRemoteFMEAlgorithm import \
+    RunRemoteFMEAlgorithm, ParameterFMEManagerType
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm import \
+    CreateFrameAlgorithm
+
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.fileInventoryAlgorithm import \
+    FileInventoryAlgorithm
+
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.raiseFlagsAlgorithm import \
+    RaiseFlagsAlgorithm
+
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAndFixInvalidGeometriesAlgorithm import \
+    IdentifyAndFixInvalidGeometriesAlgorithm
+
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.pecCalculatorAlgorithm import PecCalculatorAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.matchAndApplyQmlStylesToLayersAlgorithm import \
+    MatchAndApplyQmlStylesToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.applyStylesFromDatabaseToLayersAlgorithm import \
+    ApplyStylesFromDatabaseToLayersAlgorithm
+
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWrongBuildingAnglesAlgorithm import \
+    IdentifyWrongBuildingAnglesAlgorithm
+
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
 from qgis.PyQt.QtGui import QIcon
@@ -222,7 +247,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     AssignAliasesToLayersAlgorithm(),
                     BuildJoinsOnLayersAlgorithm(),
                     BatchRunAlgorithm(),
-                    StringCsvToLayerListAlgorithm()
+                    StringCsvToLayerListAlgorithm(),
+                    IdentifyWrongBuildingAnglesAlgorithm()
                 ]
         return algList
 
