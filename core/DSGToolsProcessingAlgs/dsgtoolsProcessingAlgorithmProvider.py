@@ -21,38 +21,55 @@
  ***************************************************************************/
 """
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import QgsApplication, QgsProcessingProvider
-from qgis.PyQt.QtGui import QIcon
 
+from core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildJoinsOnLayersAlgorithm import \
+    BuildJoinsOnLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.EditingAlgs.createEditingGridAlgorithm import \
     CreateEditingGridAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.donutHoleExtractorAlgorithm import \
     DonutHoleExtractorAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.applyStylesFromDatabaseToLayersAlgorithm import \
+    ApplyStylesFromDatabaseToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignAliasesToLayersAlgorithm import \
+    AssignAliasesToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignBoundingBoxFilterToLayersAlgorithm import \
     AssignBoundingBoxFilterToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFilterToLayersAlgorithm import \
     AssignFilterToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignCustomFormAndFormatRulesToLayersAlgorithm import \
+    AssignCustomFormAndFormatRulesToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignMeasureColumnToLayersAlgorithm import \
     AssignMeasureColumnToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignValueMapToLayersAlgorithm import \
+    AssignValueMapToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildJoinsOnLayersAlgorithm import \
+    BuildJoinsOnLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.groupLayersAlgorithm import \
     GroupLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadLayersFromPostgisAlgorithm import \
+    LoadLayersFromPostgisAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadNonSpatialLayersFromPostgreSQLAlgorithm import \
+    LoadNonSpatialLayersFromPostgreSQLAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.matchAndApplyQmlStylesToLayersAlgorithm import \
+    MatchAndApplyQmlStylesToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.convertLayer2LayerAlgorithm import \
     ConvertLayer2LayerAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.exportToMemoryLayer import \
-    ExportToMemoryLayer
-
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm import \
     CreateFrameAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.exportToMemoryLayer import \
+    ExportToMemoryLayer
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.fileInventoryAlgorithm import \
     FileInventoryAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.pecCalculatorAlgorithm import \
+    PecCalculatorAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.raiseFlagsAlgorithm import \
     RaiseFlagsAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runRemoteFMEAlgorithm import (ParameterFMEManagerType,
-                                                                                       RunRemoteFMEAlgorithm)
-
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.ruleStatisticsAlgorithm import \
     RuleStatisticsAlgorithm
-
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runRemoteFMEAlgorithm import (
+    ParameterFMEManagerType, RunRemoteFMEAlgorithm)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import \
+    SingleOutputUnitTestAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateOriginalLayerAlgorithm import \
     UpdateOriginalLayerAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.adjustNetworkConnectivityAlgorithm import \
@@ -65,8 +82,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.deaggregateGeometr
     DeaggregatorAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.dissolvePolygonsWithSameAttributesAlgorithm import \
     DissolvePolygonsWithSameAttributesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.hierarchicalSnapLayerOnLayerAndUpdateAlgorithm import (HierarchicalSnapLayerOnLayerAndUpdateAlgorithm,
-                                                                                                                     ParameterSnapHierarchyType)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.hierarchicalSnapLayerOnLayerAndUpdateAlgorithm import (
+    HierarchicalSnapLayerOnLayerAndUpdateAlgorithm, ParameterSnapHierarchyType)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAndFixInvalidGeometriesAlgorithm import \
     IdentifyAndFixInvalidGeometriesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesAlgorithm import \
@@ -126,6 +143,10 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalLineCon
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import \
     VerifyNetworkDirectioningAlgorithm
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithm import \
+    BatchRunAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.stringCsvToLayerListAlgorithm import \
+    StringCsvToLayerListAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runRemoteFMEAlgorithm import \
     RunRemoteFMEAlgorithm, ParameterFMEManagerType
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm import \
@@ -151,6 +172,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWrongBuild
     IdentifyWrongBuildingAnglesAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
+from qgis.core import QgsApplication, QgsProcessingProvider
+from qgis.PyQt.QtGui import QIcon
 
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
@@ -217,6 +240,14 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     ApplyStylesFromDatabaseToLayersAlgorithm(),
                     SingleOutputUnitTestAlgorithm(),
                     ExportToMemoryLayer(),
+                    AssignCustomFormAndFormatRulesToLayersAlgorithm(),
+                    AssignValueMapToLayersAlgorithm(),
+                    LoadLayersFromPostgisAlgorithm(),
+                    LoadNonSpatialLayersFromPostgreSQLAlgorithm(),
+                    AssignAliasesToLayersAlgorithm(),
+                    BuildJoinsOnLayersAlgorithm(),
+                    BatchRunAlgorithm(),
+                    StringCsvToLayerListAlgorithm(),
                     IdentifyWrongBuildingAnglesAlgorithm()
                 ]
         return algList

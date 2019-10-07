@@ -35,6 +35,7 @@ from DsgTools.core.dsgEnums import DsgEnums
 
 from osgeo import ogr
 from uuid import uuid4
+from collections import defaultdict
 import codecs, os, json, binascii, re
 import psycopg2
 
@@ -2167,7 +2168,7 @@ class PostgisDb(AbstractDb):
             
         return geomDict
     
-    def getCheckConstraintDict(self):
+    def getCheckConstraintDict(self, layerFilter=None):
         """
         returns a dict like this:
         {'asb_dep_abast_agua_a': {
@@ -2179,7 +2180,7 @@ class PostgisDb(AbstractDb):
         """
         self.checkAndOpenDb()
         #gets only schemas of classes with geom, to speed up the process.
-        sql = self.gen.getGeomTableConstraints()
+        sql = self.gen.getGeomTableConstraints(layerFilter=layerFilter)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
@@ -2254,14 +2255,18 @@ class PostgisDb(AbstractDb):
         checkList = list(map(int,equalSplit[1].split(',')))
         return tableName, attribute, checkList
     
-    def getMultiColumnsDict(self):
+    def getMultiColumnsDict(self, layerFilter=None):
         """
         { 'table_name':[-list of columns-] } 
         """
         self.checkAndOpenDb()
         #gets only schemas of classes with geom, to speed up the process.
-        schemaList = self.getGeomSchemaList()
-        sql = self.gen.getMultiColumns(schemaList)
+        if layerFilter:
+            sql = self.gen.getMultiColumnsFromTableList(layerFilter)
+        else:
+            sql = self.gen.getMultiColumns(
+                schemaList=self.getGeomSchemaList()
+            )
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
@@ -2320,12 +2325,14 @@ class PostgisDb(AbstractDb):
             geomDict[aux['f2']].append(aux['f1'])
         return geomDict
     
-    def getGeomColumnTupleList(self, showViews = False, hideCentroids = True, primitiveFilter = [], withElements = False):
+    def getGeomColumnTupleList(self, showViews = False, hideCentroids = True, primitiveFilter = None, withElements = False, layerFilter = None):
         """
         list in the format [(table_schema, table_name, geometryColumn, geometryType, tableType)]
         centroids are hidden by default
         """
         self.checkAndOpenDb()
+        primitiveFilter = [] if primitiveFilter is None else primitiveFilter
+        layerFilter = [] if layerFilter is None else layerFilter
         centroidTableList = []
         try:
             edgvVersion = self.getDatabaseVersion()
@@ -2388,6 +2395,153 @@ class PostgisDb(AbstractDb):
             key = ','.join([cat, lyrName, geom, geomType, tableType])
             lyrDict[key] = {'tableSchema':tableSchema, 'tableName':tableName, 'geom':geom, 'geomType':geomType, 'tableType':tableType, 'lyrName':lyrName, 'cat':cat}
         return lyrDict
+    
+    def getAuxInfoDict(self, layerFilter = None):
+        """
+        Dict with values of check constraint, null values and multi attributes 
+        """
+        return {
+            'attributeDomainDict' : self.getAttributeDomainDict(
+                layerFilter = layerFilter
+            ),
+            'checkConstraintDict' : self.getCheckConstraintDict(
+                layerFilter = layerFilter
+            )
+        }
+    
+    def getAttributeDomainDict(self, layerFilter = None):
+        self.checkAndOpenDb()
+        sql = self.gen.getGeomTablesDomains(layerFilter=layerFilter)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting AttributeDomainDict: ")+query.lastError().text())
+        attributeDomainDict = defaultdict(
+            lambda : defaultdict(dict)
+        )
+        while query.next():
+            tableName, fkAttribute, domainTable, domainReferencedAttribute = self.parseFkQuery(
+                    query.value(0),query.value(1)
+                )
+            newAttrDict = attributeDomainDict[tableName][fkAttribute]
+            domainPk = self.getPrimaryKeyColumn(domainTable)
+            newAttrDict['references'] = domainTable
+            newAttrDict['refPk'] = domainPk
+            values, otherKey = self.getLayerColumnDict(domainPk, domainTable)
+            newAttrDict['otherKey'] = otherKey
+            newAttrDict['values'] = values
+            newAttrDict['filterAttr'] = self.getFilter(
+                    domainTable, domainPk, otherKey
+                )
+            
+            
+        return attributeDomainDict
+
+    def getFilter(self, domainTable, domainPk, otherKey):
+        tableSchema, tableName = domainTable.split('.')
+        knownColumns = [domainPk, otherKey]
+        sql = self.gen.getAttributesFromTable(tableSchema, tableName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting filter: ")+query.lastError().text())
+        while query.next():
+            column_name = query.value(0)
+            if column_name not in knownColumns:
+                return column_name
+        return None
+
+    
+    def getTableMetadataDict(self, layerFilter = None, showViews = False):
+        """
+        New method to handle information from database. Must be migrated to new postgisDb
+        returns a dict of 'table_name' : {
+            'table_name' : --name of the table--,
+            'table_schema' : --schema of the table--,
+            'primary_key' : --primary key--,
+            'geometry_column' : --geometry column--,
+            'geometry_type' : --geometry type--,
+            'columns' : {
+                --name of the column-- : {
+                    'name' : --name of the column--,
+                    'references' : --fk-- (optional),
+                    'refPk' : --reference pk-- (optional),
+                    'otherKey' : --domain value-- (optional),
+                    'filterAttr' : --if attribute has filter (new feature, optional)--
+                    'values' : [--list of values--] (optional),
+                    'constraintList' : [--list of constraints--] (optional),
+                    'isMulti' : --true or false--,
+                    'nullable': --true or false--,
+                    'column_type' : --type of the column--
+                },
+            'sqlFilter' : --
+            }
+        }
+        """
+        layerFilter = [] if layerFilter is None else layerFilter
+        auxInfoDict = self.getAuxInfoDict(layerFilter)
+        sql = self.gen.getTableMetadataDict(layerFilter=layerFilter)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom tuple list: ")+query.lastError().text())
+        metadataDict = defaultdict(lambda :{"columns" : defaultdict(dict)})
+        while query.next():
+            auxDict = json.loads(query.value(0))
+            newDict = metadataDict[auxDict["table_name"]]
+            self.setNewDictTableInfo(newDict, auxDict)
+            attrDict = newDict["columns"][auxDict["attr_name"]]
+            self.setNewAttrInfo(attrDict, auxDict, auxInfoDict)
+            
+        return metadataDict
+
+    def setNewDictTableInfo(self, newDict, auxDict):
+        newDict["table_name"] = auxDict["table_name"]
+        newDict["table_schema"] = auxDict["table_schema"]
+        newDict["primary_key"] = self.getPrimaryKeyColumn(
+                        '.'.join(
+                            [
+                                auxDict["table_schema"],
+                                auxDict["table_name"]
+                            ]
+                        )
+                    )
+        newDict["geometry_column"] = auxDict["geometry_column"]
+        newDict["geometry_type"] = auxDict["geometry_type"]
+    
+    def setNewAttrInfo(self, attrDict, auxDict, auxInfoDict):
+        attrDict["name"] = auxDict["attr_name"]
+        attrDict["nullable"] = auxDict["nullable"]
+        attrDict["column_type"] = auxDict["column_type"]
+        attrDict["isMulti"] = True if 'ARRAY' in auxDict["column_type"] else False
+        self.setReferenceInfo(attrDict, auxDict, auxInfoDict['attributeDomainDict'])
+        self.setConstraintInfo(attrDict, auxDict, auxInfoDict['checkConstraintDict'])
+    
+    def setReferenceInfo(self, attrDict, auxDict, attributeDomainDict):
+        if auxDict['table_name'] in attributeDomainDict and \
+            auxDict["attr_name"] in attributeDomainDict[auxDict['table_name']]:
+            attr_name_dict = attributeDomainDict[auxDict['table_name']][auxDict["attr_name"]]
+            attrDict.update(
+                attr_name_dict
+            )
+    
+    def getDomainDictFromDomainTable(self, refPk, domainTable, otherKey):
+        domainDict = dict()
+        self.checkAndOpenDb()
+        sql = self.gen.getDomainCodeDictWithColumns(domainTable, refPk, otherKey)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(
+                self.tr(
+                        "Problem getting getDomainDictFromDomainTable from table {table_name}:{query_error}"
+                    ).format(table_name=domainTable, query_error=query.lastError().text())
+            )
+        while query.next():
+            aux = json.loads(query.value(0))
+            domainDict.update({aux[refPk]:aux[otherKey]})
+        return domainDict
+    
+    def setConstraintInfo(self, attrDict, auxDict, checkConstraintDict):
+        if auxDict["table_name"] in checkConstraintDict and \
+            auxDict["attr_name"] in checkConstraintDict[auxDict["table_name"]]:
+            attrDict["constraintList"] = checkConstraintDict[auxDict["table_name"]][auxDict["attr_name"]]
 
     def getLayersFilterByInheritance(self, layerList):
         filter = [i.split('.')[-1] for i in self.getOrphanGeomTables(loading = True)]
@@ -2398,13 +2552,13 @@ class PostgisDb(AbstractDb):
                 filtered.append(lyr)
         return filtered
 
-    def getNotNullDictV2(self):
+    def getNotNullDictV2(self, layerFilter=None):
         """
         Dict in the form 'tableName': { 'schema':-name of the schema'
                                         'attributes':[-list of table names-]}
         """
         self.checkAndOpenDb()
-        sql = self.gen.getNotNullDict()
+        sql = self.gen.getNotNullDict(layerFilter=layerFilter)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting not null dict: ")+query.lastError().text())

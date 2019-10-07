@@ -22,24 +22,25 @@
 """
 
 from __future__ import absolute_import
-from builtins import range
-from itertools import combinations
+
 from collections import defaultdict
 from functools import partial
-
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
-                      QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
-                      QgsCoordinateTransform, QgsWkbTypes, edit, QgsCoordinateReferenceSystem, QgsProject, \
-                      QgsProcessingMultiStepFeedback, QgsProcessingContext, QgsVectorLayerUtils
-from qgis.PyQt.Qt import QObject, QVariant
-from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
-
-from .featureHandler import FeatureHandler
-
-from .geometryHandler import GeometryHandler
+from itertools import combinations
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
+from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
+from qgis.core import (Qgis, QgsCoordinateReferenceSystem,
+                       QgsCoordinateTransform, QgsExpression, QgsFeature,
+                       QgsFeatureRequest, QgsField, QgsGeometry, QgsMessageLog,
+                       QgsProcessingContext, QgsProcessingMultiStepFeedback,
+                       QgsProject, QgsSpatialIndex, QgsVectorDataProvider,
+                       QgsVectorLayer, QgsVectorLayerUtils, QgsWkbTypes, edit)
+from qgis.PyQt.Qt import QObject, QVariant
+
+from .featureHandler import FeatureHandler
+from .geometryHandler import GeometryHandler
+
 
 class LayerHandler(QObject):
     def __init__(self, iface = None, parent = None):

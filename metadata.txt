@@ -65,7 +65,7 @@ changelog=
 	2.0rc09 - Bug fixes and adjustments for EDGV FTer_2a_Ed
 	2.0rc10 - Bug fixes and adjustments for EDGV FTer_2a_Ed
 	2.0 - Bug fixes and adjustments for EDGV FTer_2a_Ed
-	3.0 - New Tool to reclassify features (move them to another layer) with predefined attributes. Several batch management tools (db creation, user permissions, customizations and etc). Validation Tools (fix geometry problems prior to creating a topology structure). Other bug fixes.
+	3.0 - New Tool to reclassify features (move them to another layer) with predefined attributes. Several batch management tools (db creation, user permissions, customizations and etc). Quality Assurance Tools (fix geometry problems prior to creating a topology structure). Other bug fixes.
 	3.0.1 - Fixing errors raised by users
 	3.0.2 - Fixing others errors and improving some features (many thanks to our users)
 	3.0.3 - Fixing encoding problems in some systems (utf-8 encoding problems)

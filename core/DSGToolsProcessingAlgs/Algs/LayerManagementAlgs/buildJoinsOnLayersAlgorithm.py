@@ -29,23 +29,24 @@ from qgis.core import (QgsDataSourceUri, QgsExpression, QgsExpressionContext,
                        QgsExpressionContextUtils, QgsProcessing,
                        QgsProcessingAlgorithm,
                        QgsProcessingOutputMultipleLayers,
+                       QgsProcessingParameterBoolean,
                        QgsProcessingParameterExpression,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterNumber,
-                       QgsProcessingParameterString, QgsProject)
+                       QgsProcessingParameterString, QgsProject, QgsRelation,
+                       QgsVectorLayerJoinInfo)
 from qgis.utils import iface
 
 
-class GroupLayersAlgorithm(QgsProcessingAlgorithm):
+class BuildJoinsOnLayersAlgorithm(QgsProcessingAlgorithm):
     """
-    Algorithm to group layers according to primitive, dataset and a category.
+    Algorithm to join layers according to its relations.
     INPUT_LAYERS: list of QgsVectorLayer
-    CATEGORY_TOKEN: token used to split layer name
-    CATEGORY_TOKEN_INDEX: index of the split list
+    START_EDITING: starts edition of related layer if true
     OUTPUT: list of outputs
     """
     INPUT_LAYERS = 'INPUT_LAYERS'
-    CATEGORY_EXPRESSION = 'CATEGORY_EXPRESSION'
+    START_EDITING = 'START_EDITING'
     OUTPUT = 'OUTPUT'
     def initAlgorithm(self, config):
         """
@@ -59,12 +60,12 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             )
         )
         self.addParameter(
-            QgsProcessingParameterExpression(
-                self.CATEGORY_EXPRESSION,
-                self.tr('Expression used to find out the category'),
-                defaultValue="regexp_substr(@layer_name ,'([^_]+)')"
+            QgsProcessingParameterBoolean(
+                    self.START_EDITING,
+                    self.tr('Start Editing'),
+                    defaultValue=True
+                )
             )
-        )
         self.addOutput(
             QgsProcessingOutputMultipleLayers(
                 self.OUTPUT,
@@ -81,96 +82,58 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             self.INPUT_LAYERS,
             context
         )
-        categoryExpression = self.parameterAsExpression(
+        startEditing = self.parameterAsBoolean(
             parameters,
-            self.CATEGORY_EXPRESSION,
+            self.START_EDITING,
             context
-        ) 
+        )
         listSize = len(inputLyrList)
         progressStep = 100/listSize if listSize else 0
-        rootNode = QgsProject.instance().layerTreeRoot()
-        inputLyrList.sort(key=lambda x: (x.geometryType(), x.name()))
-        geometryNodeDict = {
-            0 : self.tr('Point'),
-            1 : self.tr('Line'),
-            2 : self.tr('Polygon'),
-            4 : self.tr('Non spatial')
-        }
-        iface.mapCanvas().freeze(True)
-        for current, lyr in enumerate(inputLyrList):
+        relationManager = QgsProject.instance().relationManager()
+        for current, relation in enumerate(
+                relationManager.discoverRelations([], inputLyrList)
+            ):
             if feedback.isCanceled():
                 break
-            rootDatabaseNode = self.getLayerRootNode(lyr, rootNode)
-            geometryNode = self.createGroup(
-                geometryNodeDict[lyr.geometryType()],
-                rootDatabaseNode
+            if relation.strength() != QgsRelation.Association:
+                continue
+            originalLyr = relation.referencingLayer()
+            joinnedLyr = relation.referencedLayer()
+            originalLyrFieldName, joinLyrFieldName = [
+                (k, v) for k, v in relation.fieldPairs().items()
+            ][0]
+            self.buildJoin(
+                originalLyr,
+                originalLyrFieldName,
+                joinnedLyr,
+                joinLyrFieldName,
+                startEdit=startEditing
             )
-            categoryNode = self.getLayerCategoryNode(
-                lyr,
-                geometryNode,
-                categoryExpression
-            )
-            lyrNode = rootNode.findLayer(lyr.id())
-            myClone = lyrNode.clone()
-            categoryNode.addChildNode(myClone)
-            # not thread safe, must set flag to FlagNoThreading
-            rootNode.removeChildNode(lyrNode)
             feedback.setProgress(current*progressStep)
-        iface.mapCanvas().freeze(False)
         return {self.OUTPUT: [i.id() for i in inputLyrList]}
 
-    def getLayerRootNode(self, lyr, rootNode):
+    def buildJoin(self, originalLyr, originalLyrFieldName, joinnedLyr, joinLyrFieldName, startEdit=False):
         """
-        Finds the database name of the layer and creates (if not exists)
-        a node with the found name.
-        lyr: (QgsVectorLayer)
-        rootNode: (node item)
+        Builds a join bewteen lyr and joinnedLyr.
+        :param originalLyr: QgsVectorLayer original layer;
+        :param originalLyrFieldName: (str) name of the field;
+        :param joinnedLyr: QgsVectorLayer lyr to be joinned to originalLayer;
+        :param joinLyrFieldName: (str) name of the join field name (usually primary key of joinnedLyr)
         """
-        uriText = lyr.dataProvider().dataSourceUri()
-        candidateUri = QgsDataSourceUri(uriText)
-        rootNodeName = candidateUri.database()
-        if not rootNodeName:
-            rootNodeName = self.getRootNodeName(uriText)
-        #creates database root
-        return self.createGroup(rootNodeName, rootNode)
+        joinObject = QgsVectorLayerJoinInfo()
+        joinObject.setJoinFieldName(joinLyrFieldName)
+        joinObject.setTargetFieldName(originalLyrFieldName)
+        if startEdit:
+            joinnedLyr.startEditing()
+        joinObject.setJoinLayer(joinnedLyr)
+        # joinObject.setJoinFieldNamesSubset([])
+        joinObject.setUpsertOnEdit(True) #set to enable edit on original lyr
+        joinObject.setCascadedDelete(True)
+        joinObject.setDynamicFormEnabled(True)
+        joinObject.setEditable(True)
+        joinObject.setUsingMemoryCache(True)
+        originalLyr.addJoin(joinObject)
 
-    def getRootNodeName(self, uriText):
-        """
-        Gets root node name from uri according to provider type.
-        """
-        if 'memory?' in uriText:
-            rootNodeName = 'memory'
-        elif 'dbname' in uriText:
-            rootNodeName = uriText.replace('dbname=', '').split(' ')[0]
-        elif '|' in uriText:
-            rootNodeName = os.path.dirname(uriText.split(' ')[0].split('|')[0])
-        else:
-            rootNodeName = 'unrecognised_format'
-        return rootNodeName
-
-    def getLayerCategoryNode(self, lyr, rootNode, categoryExpression):
-        """
-        Finds category node based on category expression
-        and creates it (if not exists a node)
-        """
-        exp = QgsExpression(categoryExpression)
-        context = QgsExpressionContext()
-        context.appendScopes(
-            QgsExpressionContextUtils.globalProjectLayerScopes(lyr)
-        )
-        if exp.hasParserError():
-            raise Exception(exp.parserErrorString())
-        if exp.hasEvalError():
-            raise ValueError(exp.evalErrorString())
-        categoryText = exp.evaluate(context)
-        return self.createGroup(categoryText, rootNode)
-
-    def createGroup(self, groupName, rootNode):
-        """
-        Create group with the name groupName and parent rootNode.
-        """
-        groupNode = rootNode.findGroup(groupName)
-        return groupNode if groupNode else rootNode.addGroup(groupName)
 
     def name(self):
         """
@@ -180,14 +143,14 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'grouplayers'
+        return 'buildjoinsonlayersalgorithm'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Group Layers')
+        return self.tr('Build Joins on Layers')
 
     def group(self):
         """
@@ -210,13 +173,13 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
         """
         Translates input string.
         """
-        return QCoreApplication.translate('GroupLayersAlgorithm', string)
+        return QCoreApplication.translate('BuildJoinsOnLayersAlgorithm', string)
 
     def createInstance(self):
         """
         Creates an instance of this class
         """
-        return GroupLayersAlgorithm()
+        return BuildJoinsOnLayersAlgorithm()
 
     def flags(self):
         """
