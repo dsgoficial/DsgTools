@@ -116,7 +116,7 @@ class MatchAndApplyQmlStylesToLayersAlgorithm(QgsProcessingAlgorithm):
                 lyr.triggerRepaint()
             feedback.setProgress(current*progressStep)
 
-        return {self.OUTPUT: inputLyrList}
+        return {self.OUTPUT: [i.id() for i in inputLyrList]}
     
     def buildQmlDict(self, inputDir):
         """
