@@ -595,7 +595,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # maybe we should connect to some parent resizing signal or something...
             msgBar.resize(QSize(self.geometry().size().width(), msgBar.geometry().height()))
             msgBar.pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
-            QgsMessageLog.logMessage(msg, 'DSG Tools Plugin', Qgis.Critical)
+            QgsMessageLog.logMessage(msg, 'DSGTools Plugin', Qgis.Critical)
         return msg == ''
 
     def validateCurrentPage(self):
@@ -703,7 +703,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             QtWidgets.QApplication.restoreOverrideCursor()
             msg = self.tr("Dataset conversion has failed: '{0}'").format(', '.join(map(str, e.args)))
             iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
         summaryDlg.exec_()
 
     def startConversion(self, exportMap=False):

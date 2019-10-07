@@ -255,7 +255,7 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
             geomList = abstractDb.getTablesJsonList()
         except Exception as e:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', Qgis.Critical)
+            QgsMessageLog.logMessage(':'.join(e.args), 'DSGTools Plugin', Qgis.Critical)
             return
         profile = dict()
         categories = dict()

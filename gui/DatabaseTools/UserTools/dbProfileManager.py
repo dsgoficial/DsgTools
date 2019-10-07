@@ -23,7 +23,7 @@
 from builtins import str
 import os
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
@@ -96,5 +96,5 @@ class DbProfileManager(QtWidgets.QDialog, FORM_CLASS):
             msg+= ', '.join(errorDbList)
             msg+= self.tr('\nError messages for each profile were output in qgis log.')
             for errorDb in errorDbList:
-                QgsMessageLog.logMessage(self.tr('Error for profile ')+ errorDb + ': ' +exceptionDict[errorDb], "DSG Tools Plugin", Qgis.Critical)
+                QgsMessageLog.logMessage(self.tr('Error for profile ')+ errorDb + ': ' +exceptionDict[errorDb], "DSGTools Plugin", Qgis.Critical)
         return msg 

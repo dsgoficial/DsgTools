@@ -64,8 +64,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
             self.tr('PostGIS (create new database)') : DsgEnums.NewPostGIS,
             'SpatiaLite' : DsgEnums.SpatiaLite,
             self.tr('SpatiaLite (create new database)') : DsgEnums.NewSpatiaLite,
-            'Shapefile' : DsgEnums.Shapefile,
-            self.tr('Shapefile (create new database)') : DsgEnums.NewShapefile,
+            # 'Shapefile' : DsgEnums.Shapefile,
+            # self.tr('Shapefile (create new database)') : DsgEnums.NewShapefile,
             'Geopackage' : DsgEnums.Geopackage,
             self.tr('Geopackage (create new database)') : DsgEnums.NewGeopackage
         }

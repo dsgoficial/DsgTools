@@ -115,7 +115,7 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
             errorList = []
             for key in list(errorDict.keys()):
                 errorList.append(key)
-                QgsMessageLog.logMessage(self.tr('Error on {0}: ').format(key)+errorDict[key], "DSG Tools Plugin", Qgis.Critical)
+                QgsMessageLog.logMessage(self.tr('Error on {0}: ').format(key)+errorDict[key], "DSGTools Plugin", Qgis.Critical)
             if len(errorList) > 0:
                 errorMsg += self.tr('Some errors occurred while trying to create database(s) {0}').format(', '.join(errorList))
         logMsg = ''
