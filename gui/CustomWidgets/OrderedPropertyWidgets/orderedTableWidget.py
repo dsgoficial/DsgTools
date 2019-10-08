@@ -38,6 +38,8 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
     rowAdded = pyqtSignal(int)
     rowRemoved = pyqtSignal(int)
     # rowModified = pyqtSignal(int)
+    # ordering modes
+    ORIGINAL_ORDER, ASC_ORDER, DESC_ORDER = range(3)
 
     def __init__(self, parent=None, headerMap=None):
         """
@@ -99,8 +101,12 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         Orders a colums based on column filled values.
         :param col: (int) column to be ordered.
         """
+        contents = []
         for row in range(self.rowCount()):
-            pass
+            contents.append(self.row(row))
+        self.clear()
+        for content in sorted(contents, key = lambda i: i[col]):
+            self.addRow(content)
 
     def setHeaderDoubleClickBehaviour(self, mode=None, cols=None):
         """
