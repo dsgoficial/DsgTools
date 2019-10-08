@@ -77,33 +77,30 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
             p["header"] for p in self.headers.values()
         ])
 
-    def replicateColumnValue(self, cols=None):
+    def replicateColumnValue(self, col):
         """
         Replicates the value from the first cell of a colums based on column 
         filled values.
-        :param cols: (list-of-int) list of columns to which callback behaviour
-                     is applied.
+        :param col: (int) column to have its first value replicated to the
+                    other rows.
         """
-        for col in cols or range(self.columnCount()):
-            prop = self.headers[col]
-            if "editable" in prop and not prop["editable"]:
-                # ingnores non-editable columns
-                continue
-            for row in range(self.rowCount()):
-                if row == 0:
-                    value = self.getValue(row, col)
-                else:
-                    self.setValue(row, col, value)
+        prop = self.headers[col]
+        if "editable" in prop and not prop["editable"]:
+            # ingnores non-editable columns
+            return
+        for row in range(self.rowCount()):
+            if row == 0:
+                value = self.getValue(row, col)
+            else:
+                self.setValue(row, col, value)
 
-    def orderColumn(self, cols=None):
+    def orderColumn(self, col):
         """
         Orders a colums based on column filled values.
-        :param cols: (list-of-int) list of columns to which callback behaviour
-                     is applied.
+        :param col: (int) column to be ordered.
         """
-        for col in cols or range(self.columnCount()):
-            for row in range(self.rowCount()):
-                pass
+        for row in range(self.rowCount()):
+            pass
 
     def setHeaderDoubleClickBehaviour(self, mode=None, cols=None):
         """
@@ -115,9 +112,9 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         self.unsetHeaderDoubleClickBehaviour()
         self.headerDoubleClicked = {
-            "replicate" : lambda : self.replicateColumnValue(cols),
-            "order" : lambda : self.orderColumn(cols),
-            "none" : lambda cols : None
+            "replicate" : self.replicateColumnValue,
+            "order" : self.orderColumn,
+            "none" : lambda col : None
         }[mode or "none"]
         self.horizontalHeader().sectionDoubleClicked.connect(
             self.headerDoubleClicked
