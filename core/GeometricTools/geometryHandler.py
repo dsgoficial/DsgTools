@@ -354,6 +354,9 @@ class GeometryHandler(QObject):
         # getting whether geometry is multipart or not
         isMulti = QgsWkbTypes.isMultiType(int(layer.wkbType()))
         geom = feature.geometry()
+        return self.getGeomNodes(geom, geomType, isMulti)
+    
+    def getGeomNodes(self, geom, geomType, isMulti):
         if geomType == 0:
             if isMulti:
                 nodes = geom.asMultiPoint()       
@@ -653,3 +656,14 @@ class GeometryHandler(QObject):
                 for item in handledList:
                     outputSet.add(item)
         return list(outputSet)
+    
+    def getFirstAndLastNodeFromGeom(self, geom):
+        isMulti = geom.isMultipart()
+        geomType = geom.type()
+        n = self.getGeomNodes(geom, geomType, isMulti)
+        if isMulti:
+            if len(n) > 1:
+                return
+            return n[0][0], n[0][-1]
+        elif n:
+            return n[0], n[-1]

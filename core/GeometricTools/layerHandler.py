@@ -861,11 +861,15 @@ class LayerHandler(QObject):
                 for error in geom.validateGeometry(i):
                     if feedback is not None and feedback.isCanceled():
                         break
+
                     if error.hasWhere():
                         errorPointXY = error.where()
+                        flagGeom = QgsGeometry.fromPointXY(errorPointXY)
+                        if self.isClosedAndFlagIsAtStartOrEnd(geom, flagGeom):
+                            continue
                         if errorPointXY not in flagDict:
                             flagDict[errorPointXY] = {
-                                'geom' : QgsGeometry.fromPointXY(errorPointXY),
+                                'geom' : flagGeom,
                                 'reason' : ''
                             }
                         flagDict[errorPointXY]['reason'] += '{type} invalid reason: {text}\n'.format(
@@ -888,6 +892,13 @@ class LayerHandler(QObject):
             inputLyr.endEditCommand()
 
         return flagDict
+    
+    def isClosedAndFlagIsAtStartOrEnd(self, geom, flagGeom):
+        for part in geom.asGeometryCollection():
+            startPoint, endPoint = self.geometryHandler.getFirstAndLastNodeFromGeom(part)
+            if flagGeom == startPoint or flagGeom == endPoint:
+                return True
+        return False
 
     def runGrassDissolve(self, inputLyr, context, feedback=None, column=None, outputLyr=None, onFinish=None):
         """

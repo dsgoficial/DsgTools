@@ -52,7 +52,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         self.setDatabaseConnection()
         self.buildUri()
         self.customFormGenerator = CustomFormGenerator()
-        self.customInitCodeGenerator = GeneratorCustomInitCode()
+        self.customInitCodeGenerator = CustomInitCodeGenerator()
 
     def checkLoaded(self, name):
         """
