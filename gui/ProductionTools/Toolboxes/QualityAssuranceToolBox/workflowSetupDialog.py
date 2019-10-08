@@ -102,6 +102,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 "getter" : "isChecked"
             }
         })
+        self.orderedTableWidget.setHeaderDoubleClickBehaviour("replicate")
 
     def resizeTable(self):
         """
