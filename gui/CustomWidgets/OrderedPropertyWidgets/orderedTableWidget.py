@@ -50,6 +50,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         self.parent = parent
         self.setupUi(self)
         self.setHeaders(headerMap or {})
+        self.setHeaderDoubleClickBehaviour()
 
     def setHeaders(self, headerMap):
         """
@@ -75,6 +76,65 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         self.tableWidget.setHorizontalHeaderLabels([
             p["header"] for p in self.headers.values()
         ])
+
+    def replicateColumnValue(self, cols=None):
+        """
+        Replicates the value from the first cell of a colums based on column 
+        filled values.
+        :param cols: (list-of-int) list of columns to which callback behaviour
+                     is applied.
+        """
+        for col in cols or range(self.columnCount()):
+            prop = self.headers[col]
+            if "editable" in prop and not prop["editable"]:
+                # ingnores non-editable columns
+                continue
+            for row in range(self.rowCount()):
+                if row == 0:
+                    value = self.getValue(row, col)
+                else:
+                    self.setValue(row, col, value)
+
+    def orderColumn(self, cols=None):
+        """
+        Orders a colums based on column filled values.
+        :param cols: (list-of-int) list of columns to which callback behaviour
+                     is applied.
+        """
+        for col in cols or range(self.columnCount()):
+            for row in range(self.rowCount()):
+                pass
+
+    def setHeaderDoubleClickBehaviour(self, mode=None, cols=None):
+        """
+        Connects header double click signal to the selected callback.
+        :param mode: (str) pre-set callback mode (e.g. what will be applied to
+                     each column).
+        :param cols: (list-of-int) list of columns to which callback behaviour
+                     is applied.
+        """
+        self.unsetHeaderDoubleClickBehaviour()
+        self.headerDoubleClicked = {
+            "replicate" : lambda : self.replicateColumnValue(cols),
+            "order" : lambda : self.orderColumn(cols),
+            "none" : lambda cols : None
+        }[mode or "none"]
+        self.horizontalHeader().sectionDoubleClicked.connect(
+            self.headerDoubleClicked
+        )
+
+    def unsetHeaderDoubleClickBehaviour(self):
+        """
+        Disconnects header double click signal to the selected callback.
+        :return: (bool) whether behaviour was disconnected.
+        """
+        try:
+            self.horizontalHeader().sectionDoubleClicked.disconnect(
+                self.headerDoubleClicked
+            )
+            return True
+        except:
+            return False
 
     def clear(self):
         """
