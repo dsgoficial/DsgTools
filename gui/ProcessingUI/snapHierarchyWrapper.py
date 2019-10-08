@@ -79,7 +79,7 @@ class SnapHierarchyWrapper(WidgetWrapper):
         Returns the table prepared for the standard Processing GUI.
         :return: (OrderedTableWidget) DSGTools customized table widget.
         """
-        return OrderedTableWidget(headerMap={
+        otw = OrderedTableWidget(headerMap={
             0 : {
                 "header" : self.tr("Layer"),
                 "type" : "widget",
@@ -102,6 +102,8 @@ class SnapHierarchyWrapper(WidgetWrapper):
                 "getter" : "currentIndex"
             }
         })
+        otw.setHeaderDoubleClickBehaviour("replicate")
+        return otw
 
     def batchPanel(self):
         """
@@ -115,7 +117,7 @@ class SnapHierarchyWrapper(WidgetWrapper):
         Returns the table prepared for the modeler Processing GUI.
         :return: (OrderedTableWidget) DSGTools customized table widget.
         """
-        return OrderedTableWidget(headerMap={
+        otw = OrderedTableWidget(headerMap={
             0 : {
                 "header" : self.tr("Layer"),
                 "type" : "widget",
@@ -138,6 +140,8 @@ class SnapHierarchyWrapper(WidgetWrapper):
                 "getter" : "currentIndex"
             }
         })
+        otw.setHeaderDoubleClickBehaviour("replicate")
+        return otw
 
     def createPanel(self):
         return {
