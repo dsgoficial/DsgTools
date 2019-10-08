@@ -100,7 +100,8 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterString(
                 self.OUTPUT_LAYER_PARAMETER_NAME,
                 self.tr('Output layer parameter name'),
-                defaultValue = 'FLAGS'
+                defaultValue = 'FLAGS',
+                optional=True
             )
         )
         self.addParameter(
@@ -170,6 +171,8 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
                 feedback=multiStepFeedback
             )
             outputLyr = QgsProcessingUtils.mapLayerFromString(output, context) if isinstance(output, str) else output
+            if outputLyr is None:
+                continue
             if self.flagSink is None:
                 self.prepareFlagSink(
                     parameters,
@@ -196,7 +199,7 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
             context=context,
             feedback=feedback
         )
-        return output[outputKey]
+        return output[outputKey] if outputKey else None
     
     def flagFeatures(self, outputLyr, algName, inputLyrName, context):
         for feat in outputLyr.getFeatures():
