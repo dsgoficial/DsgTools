@@ -52,7 +52,7 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
             )
         )
        
-        self.addParameter(
+        self.addOutput(
             QgsProcessingOutputMultipleLayers(
                 self.OUTPUT,
                 self.tr('Multiple layer list')
