@@ -178,10 +178,10 @@ class LayerHandler(QObject):
         return fields
     
 
-    def getUnifiedLayerFeatures(self, unifiedLyr, layerList, attributeTupple=False, attributeBlackList='', onlySelected=False, parameterDict=None, feedback=None):
+    def getUnifiedLayerFeatures(self, unifiedLyr, layerList, attributeTupple=False, attributeBlackList=None, onlySelected=False, parameterDict=None, feedback=None):
         parameterDict = {} if parameterDict is None else parameterDict
         featList = []
-        blackList = attributeBlackList.split(',') if ',' in attributeBlackList else []
+        blackList = attributeBlackList.split(',') if attributeBlackList is not None and ',' in attributeBlackList else []
         if feedback:
             multiStepFeedback = QgsProcessingMultiStepFeedback(len(layerList), feedback)
         for i, layer in enumerate(layerList):
@@ -207,7 +207,8 @@ class LayerHandler(QObject):
                     multiStepFeedback.setProgress(current*size)
         return featList
 
-    def addFeaturesToLayer(self, lyr, featList, commitChanges=True, msg=''):
+    def addFeaturesToLayer(self, lyr, featList, commitChanges=True, msg=None):
+        msg = '' if msg is None else msg
         lyr.startEditing()
         lyr.beginEditCommand(msg)
         res = lyr.addFeatures(featList)
@@ -262,7 +263,7 @@ class LayerHandler(QObject):
                 feedback.setProgress(localTotal*current)
 
     
-    def updateOriginalLayer(self, originalLayer, resultLayer, field=None, feedback = None, keepFeatures = False, onlySelected = True):
+    def updateOriginalLayer(self, originalLayer, resultLayer, field=None, feedback=None, keepFeatures=False, onlySelected=True):
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) if feedback else None
         #1- build inputDict structure to store the original state of the layer
         if feedback:
@@ -803,7 +804,8 @@ class LayerHandler(QObject):
             )
 
     def prepareConversion(self, inputLyr, context, inputExpression=None, filterLyr=None,\
-                         behavior=None, bufferRadius=0, conversionMap=None, feedback=None):
+                         behavior=None, bufferRadius=None, conversionMap=None, feedback=None):
+        bufferRadius = 0 if bufferRadius is None else bufferRadius
         algRunner = AlgRunner()
         if feedback is not None:
             count = 0

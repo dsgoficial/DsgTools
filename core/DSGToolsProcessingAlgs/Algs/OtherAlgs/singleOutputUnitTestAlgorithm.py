@@ -162,7 +162,7 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
             alg = self.AVAILABLE_ALGS[algIdx]
             feedback.pushInfo(self.tr("Testing {alg}'s...").format(alg=alg))
             # decided not to pass feedback to not pollute this alg's log
-            msg = tester.testAlg(alg) #, feedback=feedback, context=context)
+            msg = tester.testAlg(alg, context=context) #, feedback=feedback, context=context)
             status = self.tr("Failed") if msg else self.tr("Passed")
             pushMethod = feedback.reportError if msg else feedback.pushDebugInfo
             failCount += 1 if msg else 0
