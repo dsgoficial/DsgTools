@@ -45,15 +45,24 @@ class InspectFeatures(QWidget,Ui_Form):
         self.parent = parent
         self.splitter.hide()
         self.iface = iface
-        self.iface.currentLayerChanged.connect(self.enableScale)
+        # self.iface.currentLayerChanged.connect(self.enableScale)
         self.mMapLayerComboBox.layerChanged.connect(self.enableScale)
         self.mMapLayerComboBox.layerChanged.connect(self.mFieldExpressionWidget.setLayer)
         if not self.iface.activeLayer():
             self.enableTool(False)
-        self.iface.currentLayerChanged.connect(self.enableTool)
+        # self.iface.currentLayerChanged.connect(self.enableTool)
         self.mMapLayerComboBox.layerChanged.connect(self.enableTool)
+        self.zoomPercentageSpinBox.setMinimum(0)
+        self.zoomPercentageSpinBox.setMaximum(100)
+        self.zoomPercentageSpinBox.setDecimals(3)
+        self.zoomPercentageSpinBox.setSingleStep(1)
+        self.zoomPercentageSpinBox.setSuffix('%')
+        self.zoomPercentageSpinBox.setValue(100)
+        self.zoomPercentageSpinBox.setEnabled(False)
+        self.zoomPercentageSpinBox.hide()
         self.mScaleWidget.setScaleString('1:40000')
         self.mScaleWidget.setEnabled(False)
+        self.mScaleWidget.hide()
         self.enableScale()
         self.canvas = self.iface.mapCanvas()
         self.allLayers={}
@@ -71,6 +80,11 @@ class InspectFeatures(QWidget,Ui_Form):
         text = self.tr('DSGTools: Next Inspect')
         self.nextButtonAction = self.add_action(icon_path, text, self.nextInspectButton.click, parent = self.parent)
         self.iface.registerMainWindowAction(self.nextButtonAction, '')
+        icon_path = ':/plugins/DsgTools/icons/reload.png'
+        text = self.tr('DSGTools: Set Active Layer on Feature Inspector')
+        self.refreshPushButtonAction = self.add_action(icon_path, text, self.refreshPushButton.click, parent = self.parent)
+        self.iface.registerMainWindowAction(self.refreshPushButtonAction, '')
+        self.refreshPushButton.setToolTip(self.tr('Set current layer as selected layer on inspect tool'))
     
     def add_action(self, icon_path, text, callback, parent=None):
         icon = QIcon(icon_path)
@@ -103,8 +117,14 @@ class InspectFeatures(QWidget,Ui_Form):
                 if currentLayer.type() == QgsMapLayer.VectorLayer:
                     if currentLayer.geometryType() == QgsWkbTypes.PointGeometry:
                         self.mScaleWidget.setEnabled(True)
+                        self.mScaleWidget.show()
+                        self.zoomPercentageSpinBox.setEnabled(False)
+                        self.zoomPercentageSpinBox.hide()
                     else:
                         self.mScaleWidget.setEnabled(False)
+                        self.mScaleWidget.hide()
+                        self.zoomPercentageSpinBox.setEnabled(True)
+                        self.zoomPercentageSpinBox.show()
  
     @pyqtSlot(bool)
     def on_nextInspectButton_clicked(self):
@@ -158,9 +178,9 @@ class InspectFeatures(QWidget,Ui_Form):
             featIdList = self.getFeatIdList(currentLayer)
             if oldIndex not in featIdList:
                 oldIndex = 0
-            zoom = self.mScaleWidget.scale()
+            zoom = self.mScaleWidget.scale() if currentLayer.geometryType() == QgsWkbTypes.PointGeometry else self.zoomPercentageSpinBox.value()
             if oldIndex == newId:
-                self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Selected id does not exist in layer {0}. Returned to previous id.').format(lyrName), level=Qgis.Warning, duration=2)
+                # self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Selected id does not exist in layer {0}. Returned to previous id.').format(lyrName), level=Qgis.Warning, duration=2)
                 return
             try:
                 index = featIdList.index(newId)
@@ -168,7 +188,7 @@ class InspectFeatures(QWidget,Ui_Form):
                 self.makeZoom(zoom, currentLayer, newId)
                 self.idSpinBox.setSuffix(' ({0}/{1})'.format(index+1,len(featIdList)))
             except:
-                self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Selected id does not exist in layer {0}. Returned to previous id.').format(lyrName), level=Qgis.Warning, duration=2)
+                # self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Selected id does not exist in layer {0}. Returned to previous id.').format(lyrName), level=Qgis.Warning, duration=2)
                 self.idSpinBox.setValue(oldIndex)
                 self.makeZoom(zoom, currentLayer, oldIndex)
 
@@ -195,7 +215,7 @@ class InspectFeatures(QWidget,Ui_Form):
         currentLayer = self.getIterateLayer()
         lyrName = currentLayer.name()
         
-        zoom = self.mScaleWidget.scale()
+        zoom = self.mScaleWidget.scale() if currentLayer.geometryType() == QgsWkbTypes.PointGeometry else self.zoomPercentageSpinBox.value()
         
         featIdList = self.getFeatIdList(currentLayer)
         
@@ -249,9 +269,10 @@ class InspectFeatures(QWidget,Ui_Form):
             currentLayer.removeSelection()
             currentLayer.select(index)
     
-    def zoomToLayer(self, layer):
+    def zoomToLayer(self, layer, zoom = None):
         box = layer.boundingBoxOfSelected()
-
+        if zoom is not None:
+            box.grow(100-zoom)
         # Defining the crs from src and destiny
         epsg = self.iface.mapCanvas().mapSettings().destinationCrs().authid()
         crsDest = QgsCoordinateReferenceSystem(epsg)
@@ -267,21 +288,22 @@ class InspectFeatures(QWidget,Ui_Form):
         self.iface.mapCanvas().setExtent(newBox)
         self.iface.mapCanvas().refresh()
 
-    def zoomFeature(self, zoom, idDict = {}):
+    def zoomFeature(self, zoom, idDict = None):
         """
         Zooms to current layer selected features according to a specific zoom
         zoom: zoom to be applied
         """
+        idDict = dict() if idDict is None else idDict
         currentLayer = self.getIterateLayer()
         if idDict == {}:
-            self.zoomToLayer(currentLayer)
+            self.zoomToLayer(currentLayer, zoom=float(zoom))
         else:
             id = idDict['id']
             lyr = idDict['lyr']
             selectIdList = lyr.selectedFeatureIds()
             lyr.removeSelection()
             lyr.selectByIds([id])
-            self.zoomToLayer(layer = lyr)
+            self.zoomToLayer(layer = lyr, zoom=float(zoom))
             lyr.selectByIds(selectIdList)
 
         if self.getIterateLayer().geometryType() == QgsWkbTypes.PointGeometry:
@@ -300,7 +322,8 @@ class InspectFeatures(QWidget,Ui_Form):
             self.setToolTip(self.tr('Select a vector layer to enable tool'))
         else:
             self.splitter.hide()   
-            self.enableTool(False)      
+            self.enableTool(False)
+            self.setToolTip('') 
 
     def setValues(self, featIdList, currentLayer):
         lyrName = currentLayer.name()
@@ -342,6 +365,14 @@ class InspectFeatures(QWidget,Ui_Form):
             featIdList = currentLayer.allFeatureIds()
             self.setValues(featIdList, currentLayer)
             self.idSpinBox.setEnabled(True)
+    
+    @pyqtSlot(bool)
+    def on_refreshPushButton_clicked(self):
+        activeLayer = self.iface.activeLayer()
+        if isinstance(activeLayer, QgsVectorLayer):
+            self.mMapLayerComboBox.setLayer(activeLayer)
+        else:
+            self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Active layer is not valid to be used in this tool.'), level=Qgis.Warning, duration=2)
     
     def unload(self):
         self.iface.unregisterMainWindowAction(self.activateToolAction)
