@@ -244,13 +244,14 @@ class NetworkHandler(QObject):
                     return True
         return False
 
-    def checkIfHasLineInsideWaterBody(self, node, waterBodiesLayers, searchRadius=1.0):
+    def checkIfHasLineInsideWaterBody(self, node, waterBodiesLayers, searchRadius=None):
         """
         Checks whether one of ending lines connected to given node is inside of a water body feature.
         :param node: (QgsPoint) node to be identified having an ending line inside of a water body.
         :param waterBodiesLayers: (list-of-QgsVectorLayer) list of layers composing the water bodies on map.
         :return: (bool) whether node is as close as searchRaius to a water body element.
         """
+        searchRadius = 1.0 if searchRadius is None else searchRadius
         qgisPoint = QgsGeometry.fromPointXY(node)
         # building a buffer around node with search radius for intersection with Layer Frame
         buf = qgisPoint.buffer(searchRadius, -1)
@@ -411,7 +412,9 @@ class NetworkHandler(QObject):
                     return True
         return False
 
-    def nodeType(self, nodePoint, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, nodeTypeDict, waterSinkLayer=None, spillwayLayer=None, networkLayerGeomType=None, fieldList=None, ditchLayer=None, auxIndexStructure={}):
+    def nodeType(self, nodePoint, networkLayer, frameLyrContourList, waterBodiesLayers,\
+                    searchRadius, nodeTypeDict, waterSinkLayer=None, spillwayLayer=None,\
+                    networkLayerGeomType=None, fieldList=None, ditchLayer=None, auxIndexStructure=None):
         """
         Get the node type given all lines that flows from/to it.
         :param nodePoint: (QgsPoint) point to be classified.
@@ -425,6 +428,7 @@ class NetworkHandler(QObject):
         :return: returns the (int) point type.
         """
         fieldList = [] if fieldList is None else fieldList
+        auxIndexStructure = {} if auxIndexStructure is None else auxIndexStructure
         # to reduce calculation time in expense of memory, which is cheap
         nodePointDict = self.nodeDict[nodePoint]
         sizeFlowOut = len(nodePointDict['start'])
