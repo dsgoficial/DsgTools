@@ -865,7 +865,7 @@ class LayerHandler(QObject):
                     if error.hasWhere():
                         errorPointXY = error.where()
                         flagGeom = QgsGeometry.fromPointXY(errorPointXY)
-                        if self.isClosedAndFlagIsAtStartOrEnd(geom, flagGeom):
+                        if geom.type() == QgsWkbTypes.LineGeometry and self.isClosedAndFlagIsAtStartOrEnd(geom, flagGeom):
                             continue
                         if errorPointXY not in flagDict:
                             flagDict[errorPointXY] = {
