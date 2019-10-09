@@ -209,12 +209,11 @@ class SnapHierarchyWrapper(WidgetWrapper):
         Retrieves parameters from current widget. Method reimplementation.
         :return: (dict) value currently set to the GUI.
         """
-        x = {
+        return {
             DIALOG_STANDARD : self.readStandardPanel,
             DIALOG_MODELER : self.readModelerPanel,
             DIALOG_BATCH : self.readBatchPanel
         }[self.dialogType]()
-        return x
     
     def postInitialize(self, wrappers):
         pass
