@@ -21,11 +21,6 @@
  ***************************************************************************/
 """
 
-import json
-
-from qgis.core import (QgsProject, 
-                       QgsProcessingUtils,
-                       QgsProcessingContext)
 from qgis.gui import QgsMapLayerComboBox
 from qgis.PyQt.QtWidgets import (QComboBox,
                                  QLineEdit,
@@ -52,7 +47,8 @@ class SnapHierarchyWrapper(WidgetWrapper):
     def mapLayerModelDialog(self):
         """
         Retrieves widget for map layer selection in a model dialog setup.
-        :return: (QLineEdit)
+        :return: (QLineEdit) map layer setter widget for processing dialog
+                 mode.
         """
         le = QLineEdit()
         le.setPlaceholderText(self.tr("Set layer name..."))
@@ -61,16 +57,17 @@ class SnapHierarchyWrapper(WidgetWrapper):
     def modeComboBox(self):
         """
         Retrieves a new widget for snap mode selection.
+        :return: (QComboBox) snap mode selection widget.
         """
         cb = QComboBox()
         cb.addItems([
-            self.tr('Prefer aligning nodes, insert extra vertices where required'),
-            self.tr('Prefer closest point, insert extra vertices where required'),
-            self.tr('Prefer aligning nodes, don\'t insert new vertices'),
-            self.tr('Prefer closest point, don\'t insert new vertices'),
-            self.tr('Move end points only, prefer aligning nodes'),
-            self.tr('Move end points only, prefer closest point'),
-            self.tr('Snap end points to end points only')
+            self.tr("Prefer aligning nodes, insert extra vertices where required"),
+            self.tr("Prefer closest point, insert extra vertices where required"),
+            self.tr("Prefer aligning nodes, don't insert new vertices"),
+            self.tr("Prefer closest point, don't insert new vertices"),
+            self.tr("Move end points only, prefer aligning nodes"),
+            self.tr("Move end points only, prefer closest point"),
+            self.tr("Snap end points to end points only")
         ])
         return cb
 
@@ -168,8 +165,6 @@ class SnapHierarchyWrapper(WidgetWrapper):
         """
         if value is None:
             return
-        # value = json.loads(value)
-        # self.panel = self.createPanel()
         for valueMap in value:
             self.panel.addRow({
                 0 : valueMap["referenceLayer"],
@@ -193,7 +188,6 @@ class SnapHierarchyWrapper(WidgetWrapper):
             values["mode"] = self.panel.getValue(row, 2)
             values["snapLayerList"] = [l for l in layers[(row + 1)::]]
             valueMaplist.append(values)
-        # return json.dumps(valueMaplist)
         return valueMaplist
 
     def readModelerPanel(self):

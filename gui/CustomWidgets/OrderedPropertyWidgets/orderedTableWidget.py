@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-import os, json
+import os
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt, pyqtSlot, pyqtSignal, QItemSelectionModel
@@ -317,7 +317,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         if row >= self.rowCount() or row < 0:
             return {}
         contents = dict()
-        for col, properties in self.headers.items():
+        for col in self.headers:
             contents[col] = self.getValue(row, col)
         return contents
 
@@ -332,12 +332,10 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         if row >= self.rowCount() or col >= self.columnCount() \
            or row < 0 or col < 0:
             return None
-        for column, properties in self.headers.items():
-            if col == column:
-                if properties["type"] == "item":
-                    return self.tableWidget.item(row, col)
-                else:
-                    return self.tableWidget.cellWidget(row, col)
+        if self.headers[col]["type"] == "item":
+            return self.tableWidget.item(row, col)
+        else:
+            return self.tableWidget.cellWidget(row, col)
 
     def selectedIndexes(self):
         """
