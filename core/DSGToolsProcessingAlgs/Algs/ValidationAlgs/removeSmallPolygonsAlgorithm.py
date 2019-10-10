@@ -155,7 +155,7 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Validation Tools (Correction Processes)')
+        return self.tr('Quality Assurance Tools (Correction Processes)')
 
     def groupId(self):
         """
@@ -165,7 +165,7 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Validation Tools (Correction Processes)'
+        return 'DSGTools: Quality Assurance Tools (Correction Processes)'
 
     def tr(self, string):
         return QCoreApplication.translate('RemoveSmallPolygonsAlgorithm', string)

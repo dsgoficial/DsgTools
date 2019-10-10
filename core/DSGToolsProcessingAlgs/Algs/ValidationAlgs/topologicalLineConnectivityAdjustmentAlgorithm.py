@@ -146,7 +146,7 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Validation Tools (Network Processes)')
+        return self.tr('Quality Assurance Tools (Network Processes)')
 
     def groupId(self):
         """
@@ -156,7 +156,7 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Validation Tools (Network Processes)'
+        return 'DSGTools: Quality Assurance Tools (Network Processes)'
 
     def tr(self, string):
         return QCoreApplication.translate('TopologicalLineConnectivityAdjustment', string)

@@ -80,6 +80,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
                       '25k',
                       '10k',
                       '5k',
+                      '2k',
                       '1k']
         self.addParameter(
             QgsProcessingParameterEnum(

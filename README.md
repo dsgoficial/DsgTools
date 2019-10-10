@@ -28,7 +28,7 @@ DSGTools 3.1 has the following features:
 - EDGV code list viewer to aid attributes queries using our EDGV databases;
 - Drop EDGV databases;
 - Tool to reclassify features (move them to another layer) with predefined attributes;
-- Validation Tools: fix geometry problems prior to creating a topology structure;
+- Quality Assurance Tools: fix geometry problems prior to creating a topology structure;
 
 Requirements for LINUX (Ubuntu/Debian):
 
