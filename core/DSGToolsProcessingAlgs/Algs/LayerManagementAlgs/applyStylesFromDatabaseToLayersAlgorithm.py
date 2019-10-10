@@ -121,7 +121,7 @@ class ApplyStylesFromDatabaseToLayersAlgorithm(QgsProcessingAlgorithm):
                 self.applyStyle(lyr, styleQml)
             feedback.setProgress(current*progressStep)
 
-        return {self.OUTPUT: inputLyrList}
+        return {self.OUTPUT: [i.id() for i in inputLyrList]}
     
     def applyStyle(self, lyr, styleQml):
         styleDoc = QDomDocument('qgis')

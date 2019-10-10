@@ -47,6 +47,8 @@ class DatabaseGuiManager(QObject):
         self.menu = self.manager.addMenu(u'databasetools', self.tr('Database Tools'),'database.png')
         self.stackButton = self.manager.createToolButton(self.toolbar, u'DatabaseTools')
         self.iconBasePath = ':/plugins/DsgTools/icons/'
+        self.singleDbCreator = None
+        self.batchCreator = None
     
     def addTool(self, text, callback, parentMenu, icon, parentButton=None, defaultButton=False):
         """
@@ -78,10 +80,24 @@ class DatabaseGuiManager(QObject):
         """
         Instantiates all available database creation GUI. 
         """
-        self.singleDbCreator = CreateSingleDatabase(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
-        self.singleDbCreator.initGui()
-        self.batchCreator = BatchDbCreator(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
-        self.batchCreator.initGui()
+        callback = lambda : self.createDatabase(isBatchCreation=False)
+        self.addTool(
+            text=self.tr('Create a PostGIS, SpatiaLite or Geopackage Database'),
+            callback=callback,
+            parentMenu=self.menu,
+            icon='database.png',
+            parentButton=self.stackButton,
+            defaultButton=True
+        )
+        callback = lambda : self.createDatabase(isBatchCreation=True)
+        self.addTool(
+            text=self.tr('Create batches of PostGIS, SpatiaLite or Geopackage Databases'),
+            callback=callback,
+            parentMenu=self.menu,
+            icon='batchDatabase.png',
+            parentButton=self.stackButton,
+            defaultButton=False
+        )
         self.datasourceConversion = DatasourceConversion(manager=self, parentMenu=self.menu, parentButton=self.stackButton)
         self.datasourceConversion.initGui()
 
@@ -89,8 +105,10 @@ class DatabaseGuiManager(QObject):
         """
         Unloads all loaded GUI.
         """
-        self.singleDbCreator.unload()
-        self.batchCreator.unload()
+        if self.singleDbCreator is not None:
+            self.singleDbCreator.unload()
+        if self.batchCreator is not None:
+            self.batchCreator.unload()
         self.datasourceConversion.unload()
 
     def createDatabase(self, isBatchCreation):
@@ -103,8 +121,12 @@ class DatabaseGuiManager(QObject):
         except:
             pass
         if not isBatchCreation:
+            if self.singleDbCreator is None:
+                self.singleDbCreator = CreateSingleDatabase(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
             dlg = self.singleDbCreator
         else:
+            if self.batchCreator is None:
+                self.batchCreator = BatchDbCreator(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
             dlg = self.batchCreator
         if dlg:
             result = dlg.exec_()

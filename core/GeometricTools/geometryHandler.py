@@ -202,7 +202,7 @@ class GeometryHandler(QObject):
         else:
             return reversedFeatureList
 
-    def isclose(self, a, b, rel_tol=1e-09, abs_tol=0.0):
+    def isclose(self, a, b, rel_tol=None, abs_tol=None):
         """
         Fuzzy compare from https://www.python.org/dev/peps/pep-0485/#proposed-implementation
         :param a:
@@ -211,9 +211,12 @@ class GeometryHandler(QObject):
         :param abs_tol:
         :return:
         """
+        rel_tol = 1e-09 if rel_tol is None else rel_tol
+        abs_tol = 0.0 if abs_tol is None else abs_tol
         return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
     
-    def getOutOfBoundsAngleInPolygon(self, feat, part, angle, outOfBoundsList, exactAngleMatch=False, angTol=0.1):
+    def getOutOfBoundsAngleInPolygon(self, feat, part, angle, outOfBoundsList, exactAngleMatch=False, angTol=None):
+        angTol = 0.1 if angTol is None else angTol
         for linearRing in part.asPolygon():
             linearRing = self.getClockWiseList(linearRing)
             nVertex = len(linearRing)-1
@@ -354,6 +357,9 @@ class GeometryHandler(QObject):
         # getting whether geometry is multipart or not
         isMulti = QgsWkbTypes.isMultiType(int(layer.wkbType()))
         geom = feature.geometry()
+        return self.getGeomNodes(geom, geomType, isMulti)
+    
+    def getGeomNodes(self, geom, geomType, isMulti):
         if geomType == 0:
             if isMulti:
                 nodes = geom.asMultiPoint()       
@@ -653,3 +659,14 @@ class GeometryHandler(QObject):
                 for item in handledList:
                     outputSet.add(item)
         return list(outputSet)
+    
+    def getFirstAndLastNodeFromGeom(self, geom):
+        isMulti = geom.isMultipart()
+        geomType = geom.type()
+        n = self.getGeomNodes(geom, geomType, isMulti)
+        if isMulti:
+            if len(n) > 1:
+                return
+            return n[0][0], n[0][-1]
+        elif n:
+            return n[0], n[-1]

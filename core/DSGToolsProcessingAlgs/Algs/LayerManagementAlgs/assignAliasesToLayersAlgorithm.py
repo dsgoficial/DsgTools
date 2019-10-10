@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2019-04-26
+        begin                : 2019-09-03
         git sha              : $Format:%H$
         copyright            : (C) 2019 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtGui import QColor
 from qgis.PyQt.Qt import QVariant
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
@@ -54,29 +55,16 @@ from qgis.core import (QgsProcessing,
                        QgsField,
                        QgsFields,
                        QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterString)
+                       QgsProcessingParameterString,
+                       QgsConditionalStyle)
 
-class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
-    INPUT_LAYERS = 'INPUT_LAYERS'
-    OUTPUT = 'OUTPUT'
-    def initAlgorithm(self, config):
-        """
-        Parameter setting.
-        """
-        self.addParameter(
-            QgsProcessingParameterMultipleLayers(
-                self.INPUT_LAYERS,
-                self.tr('Input Layers'),
-                QgsProcessing.TypeVectorAnyGeometry
-            )
-        )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.ruleStatisticsAlgorithm import \
+    RuleStatisticsAlgorithm
+from operator import itemgetter
+from collections import defaultdict
 
-        self.addOutput(
-            QgsProcessingOutputMultipleLayers(
-                self.OUTPUT,
-                self.tr('Original layers with measure column')
-            )
-        )
+
+class AssignAliasesToLayersAlgorithm(RuleStatisticsAlgorithm):
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -84,38 +72,48 @@ class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
         """
         inputLyrList = self.parameterAsLayerList(
             parameters,
-            self.INPUT_LAYERS,
+            self.INPUTLAYERS,
             context
         )
+        if not inputLyrList:
+            return {}
+        input_data = self.load_rules_from_parameters(parameters)
         listSize = len(inputLyrList)
         stepSize = 100/listSize if listSize else 0
-        notSuccessfulList = []
+        aliasDict = self.buildAliasDict(input_data)
+
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
-            self.createMeasureColumn(lyr)
+            layerName = lyr.name()
+            for idx, field in enumerate(lyr.fields()):
+                if feedback.isCanceled() or layerName not in aliasDict:
+                    break
+                fieldName = field.name()
+                if fieldName in aliasDict[layerName]['attributeAlias']:
+                    lyr.setFieldAlias(
+                        idx,
+                        aliasDict[layerName]['attributeAlias'][fieldName]
+                    )
+            if layerName in aliasDict:
+                lyr.setLayerName(aliasDict[layerName]['layerAlias'])
             feedback.setProgress(current * stepSize)
 
-        return {self.OUTPUT: inputLyrList}
+        return {}
 
-    def createMeasureColumn(self, layer):
-        if layer.geometryType() == QgsWkbTypes.PolygonGeometry:
-            layer.addExpressionField(
-                    '$area',
-                    QgsField(
-                        'area_otf',
-                        QVariant.Double
-                    )
-                )
-        elif layer.geometryType() == QgsWkbTypes.LineGeometry:
-            layer.addExpressionField(
-                    '$length',
-                    QgsField(
-                        'lenght_otf',
-                        QVariant.Double
-                    )
-                )
-        return layer
+    def buildAliasDict(self, input_data):
+        """
+        atividade.camadas é um array de dict que tem os atributos "nome", "alias", "atributos".
+        "atributos" é um array de dict com atributos "nome" e "alias"
+        """
+        input_data = input_data[0] if isinstance(input_data, list) else input_data
+        aliasDict = dict()
+        for data in input_data:
+            attributeAliasDict = defaultdict(lambda: defaultdict(list))
+            attributeAliasDict['layerAlias'] = data['alias']
+            attributeAliasDict['attributeAlias'] = {i['nome']:i['alias'] for i in data['atributos']}
+            aliasDict[data['nome']] = attributeAliasDict
+        return aliasDict
 
     def name(self):
         """
@@ -125,14 +123,14 @@ class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'assignmeasurecolumntolayers'
+        return 'AssignAliasesToLayersAlgorithm'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Assign Measure Column to Layers')
+        return self.tr('Assign Aliases to Layers')
 
     def group(self):
         """
@@ -152,7 +150,7 @@ class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
         return 'DSGTools: Layer Management Algorithms'
 
     def tr(self, string):
-        return QCoreApplication.translate('AssignMeasureColumnToLayersAlgorithm', string)
+        return QCoreApplication.translate('AssignAliasesToLayersAlgorithm', string)
 
     def createInstance(self):
-        return AssignMeasureColumnToLayersAlgorithm()
+        return AssignAliasesToLayersAlgorithm()
