@@ -20,27 +20,23 @@
  *                                                                         *
  ***************************************************************************/
 """
+import json
+
 from PyQt5.QtCore import QCoreApplication
 
 import processing
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterDistance,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterNumber,
+from qgis.core import (QgsProject,
+                       QgsFeature,
+                       QgsProcessing,
+                       QgsProcessingUtils,
+                       QgsProcessingContext,
                        QgsProcessingParameterType,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsSpatialIndex, QgsWkbTypes)
+                       QgsProcessingParameterEnum,
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingMultiStepFeedback,
+                       QgsProcessingParameterDefinition)
 
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
@@ -90,6 +86,16 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
     def parameterAsSnapHierarchy(self, parameters, name, context):
         return parameters[name]
 
+    def layerFromProject(self, layerName):
+        """
+        Retrieves map layer from its name, considering project context.
+        :param layerName: (str) target layer's name.
+        :return: (QgsMapLayer) layer object.
+        """
+        ctx = QgsProcessingContext()
+        ctx.setProject(QgsProject.instance())
+        return QgsProcessingUtils.mapLayerFromString(layerName, ctx)
+
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
@@ -106,8 +112,9 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         currStep = 0
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         for current, item in enumerate(snapDict):
-            refLyr = item['referenceLayer']
+            refLyr = self.layerFromProject(item['referenceLayer'])
             for i, lyr in enumerate(item['snapLayerList']):
+                lyr = self.layerFromProject(lyr)
                 if multiStepFeedback.isCanceled():
                     break
                 multiStepFeedback.setCurrentStep(currStep)
@@ -220,7 +227,7 @@ class ParameterSnapHierarchy(QgsProcessingParameterDefinition):
         return True
 
     def valueAsPythonString(self, value, context):
-        return str(value)
+        return json.dumps(value)
 
     def asScriptCode(self):
         raise NotImplementedError()

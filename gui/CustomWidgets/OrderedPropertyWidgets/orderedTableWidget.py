@@ -24,7 +24,7 @@
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import Qt, pyqtSlot, pyqtSignal, QItemSelectionModel
+from qgis.PyQt.QtCore import Qt, pyqtSlot, pyqtSignal
 from qgis.PyQt.QtWidgets import (QWidget,
                                  QHeaderView,
                                  QTableWidgetItem,
@@ -38,6 +38,9 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
     rowAdded = pyqtSignal(int)
     rowRemoved = pyqtSignal(int)
     # rowModified = pyqtSignal(int)
+    # ordering modes
+    ORDER_MODE_COUNT = 2
+    ASC_ORDER, DESC_ORDER = range(ORDER_MODE_COUNT)
 
     def __init__(self, parent=None, headerMap=None):
         """
@@ -50,22 +53,103 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         self.parent = parent
         self.setupUi(self)
         self.setHeaders(headerMap or {})
+        self.setHeaderDoubleClickBehaviour()
+        self.tableWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+
 
     def setHeaders(self, headerMap):
         """
         Sets headers to table and prepare each row for their contents.
         """
+        #######################################################################
+        # 'headers' attribute is a map that describes each column on table.   #
+        # it has a mandatory set of attributes and some are optional (depends #
+        # on the cell contents type). It is composed as:                      #
+        # {                                                                   #
+        #     col (int) : {                                                   #
+        #         "header" : "Header for current column as exposed on table", #
+        #         "type" : "item" or "widget",                                #
+        #         "editable" or "widget" : bool or callable object to a Widget#
+        #         "getter" : method for value retrieval or None, if not given #
+        #         "setter" : method for value definition or None, if not given#
+        #     }                                                               #
+        # }                                                                   #
+        #######################################################################
         self.clear()
-        self.headers = { 
-            header : {
-                "col" : col,
-                "type" : prop["type"],
-                "editable" if prop["type"] == "item" else "class" : \
-                    prop["editable" if prop["type"] == "item" else "class"]
-            } for col, (header, prop) in enumerate(headerMap.items())
-        }
+        self.headers = headerMap
         self.tableWidget.setColumnCount(len(self.headers))
-        self.tableWidget.setHorizontalHeaderLabels(list(self.headers.keys()))
+        self.tableWidget.setHorizontalHeaderLabels([
+            p["header"] for p in self.headers.values()
+        ])
+
+    def replicateColumnValue(self, col):
+        """
+        Replicates the value from the first cell of a colums based on column 
+        filled values.
+        :param col: (int) column to have its first value replicated to the
+                    other rows.
+        """
+        prop = self.headers[col]
+        if "editable" in prop and not prop["editable"]:
+            # ingnores non-editable columns
+            return
+        for row in range(self.rowCount()):
+            if row == 0:
+                value = self.getValue(row, col)
+            else:
+                self.setValue(row, col, value)
+
+    def orderColumn(self, col):
+        """
+        Orders a colums based on column filled values.
+        :param col: (int) column to be ordered.
+        """
+        if not hasattr(self, "currentRowOrder"):
+            self.currentRowOrder = dict()
+        if col not in self.currentRowOrder:
+            self.currentRowOrder[col] = self.ASC_ORDER
+        else:
+            # get next mode
+            self.currentRowOrder[col] = (self.currentRowOrder[col] + 1) % \
+                                        self.ORDER_MODE_COUNT
+        contents = []
+        for row in range(self.rowCount()):
+            contents.append(self.row(row))
+        self.clear()
+        rev = self.currentRowOrder[col] == self.DESC_ORDER
+        for content in sorted(contents, key = lambda i: i[col], reverse=rev):
+            self.addRow(content)
+
+    def setHeaderDoubleClickBehaviour(self, mode=None, cols=None):
+        """
+        Connects header double click signal to the selected callback.
+        :param mode: (str) pre-set callback mode (e.g. what will be applied to
+                     each column).
+        :param cols: (list-of-int) list of columns to which callback behaviour
+                     is applied.
+        """
+        self.unsetHeaderDoubleClickBehaviour()
+        self.headerDoubleClicked = {
+            "replicate" : self.replicateColumnValue,
+            "order" : self.orderColumn,
+            "none" : lambda col : None
+        }[mode or "none"]
+        self.horizontalHeader().sectionDoubleClicked.connect(
+            self.headerDoubleClicked
+        )
+
+    def unsetHeaderDoubleClickBehaviour(self):
+        """
+        Disconnects header double click signal to the selected callback.
+        :return: (bool) whether behaviour was disconnected.
+        """
+        try:
+            self.horizontalHeader().sectionDoubleClicked.disconnect(
+                self.headerDoubleClicked
+            )
+            return True
+        except:
+            return False
 
     def clear(self):
         """
@@ -74,6 +158,48 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         for row in range(self.rowCount()):
             self.tableWidget.removeRow(row)
         self.tableWidget.setRowCount(0)
+    
+    def getValue(self, row, column):
+        """
+        Gets the value from a table cell. It uses column definitions from
+        headers attribute.
+        :param row: (int) target cell's row.
+        :param column: (int) target cell's column.
+        :return: (*) cell's contents. This might be any of widget's readable
+                 inputs (int, float, str, dict, etc) - Depends on defined input
+                 widget.
+        """
+        if self.headers[column]["type"] == "item":
+            return self.tableWidget.item(row, column).text()
+        else:
+            getter = self.headers[column]["getter"]
+            widget = self.tableWidget.cellWidget(row, column)
+            if not getter:
+                raise Exception(
+                    self.tr("Getter method must be defined for widget type.")
+                )
+            return getattr(widget, getter)()
+
+    def setValue(self, row, column, value):
+        """
+        Sets a value to a table cell. It uses column definitions from headers
+        attribute.
+        :param row: (int) target cell's row.
+        :param column: (int) target cell's column.
+        :param value: (*) cell's contents. This might be any of widget's
+                      writeable data (int, float, str, dict, etc). Depends on
+                      input widget.
+        """
+        if self.headers[column]['type'] == 'item':
+            self.tableWidget.item(row, column).setText(value)
+        else:
+            setter = self.headers[column]['setter']
+            widget = self.tableWidget.cellWidget(row, column)
+            if not setter:
+                raise Exception(
+                    self.tr('Setter mthod must be defined for widget type.')
+                )
+            getattr(widget, setter)(value)
 
     def rowCount(self):
         """
@@ -138,19 +264,18 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         row = row if row is not None else self.rowCount()
         self.tableWidget.insertRow(row)
-        for header, properties in self.headers.items():
+        for col, properties in self.headers.items():
             if properties["type"] == "item":
                 item = QTableWidgetItem()
                 # it "flips" current state, which, by default, is "editable"
                 if not properties["editable"]:
                     item.setFlags(Qt.ItemIsEditable)
-                self.tableWidget.setItem(
-                    row, properties["col"], item
-                )
+                self.tableWidget.setItem(row, col, item)
             else:
                 self.tableWidget.setCellWidget(
-                    row, properties["col"], properties["class"]()
+                    row, col, properties["widget"]()
                 )
+        self.rowAdded.emit(row)
 
     def addRow(self, contents, row=None):
         """
@@ -160,22 +285,20 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         row = row if row is not None else self.rowCount()
         self.tableWidget.insertRow(row)
-        for header, properties in self.headers.items():
-            value = contents[header] if header in contents else None
+        for col, properties in self.headers.items():
+            value = contents[col] if col in contents else None
             if properties["type"] == "item":
                 item = QTableWidgetItem(value)
                 # it "flips" current state, which, by default, is "editable"
                 if not properties["editable"]:
                     item.setFlags(Qt.ItemIsEditable)
-                self.tableWidget.setItem(
-                    row, properties["col"], item
-                )
+                self.tableWidget.setItem(row, col, item)
             else:
-                self.tableWidget.setCellWidget(
-                    row,
-                    properties["col"],
-                    value if value is not None else properties["class"]()
-                )
+                widget = properties["widget"]()
+                if value is not None:
+                    getattr(widget, properties["setter"])(value)
+                self.tableWidget.setCellWidget(row, col, widget)
+        self.rowAdded.emit(row)
 
     def removeRow(self, row=None):
         """
@@ -196,35 +319,14 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         if row >= self.rowCount() or row < 0:
             return {}
         contents = dict()
-        for header, properties in self.headers.items():
-            col = properties["col"]
-            if properties["type"] == "item":
-                item = self.tableWidget.item(row, col)
-                contents[header] = item.text() if item is not None else None
-            else:
-                contents[header] = self.tableWidget.cellWidget(row, col)
+        for col in self.headers:
+            contents[col] = self.getValue(row, col)
         return contents
-
-    def item(self, row, col):
-        """
-        Reads the contents from a table cell.
-        :param row: (int) item's row to be read.
-        :param col: (int) item's column to be read.
-        :return: (str/QWidget) cell contents.
-        """
-        if row >= self.rowCount() or col >= self.columnCount() \
-           or row < 0 or col < 0:
-            return None
-        for header, properties in self.headers.items():
-            if col == properties["col"]:
-                if properties["type"] == "item":
-                    return self.tableWidget.item(row, col).text()
-                else:
-                    return self.tableWidget.cellWidget(row, col)
 
     def itemAt(self, row, col):
         """
-        Similiar to item, but returns QTableWIdgetItem instead of its text.
+        Retrives a cell's item: either a QTableWIdgetItem or current set
+        widget.
         :param row: (int) item's row to be read.
         :param col: (int) item's column to be read.
         :return: (QTableWIdgetItem/QWidget) cell contents.
@@ -232,18 +334,16 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         if row >= self.rowCount() or col >= self.columnCount() \
            or row < 0 or col < 0:
             return None
-        for header, properties in self.headers.items():
-            if col == properties["col"]:
-                if properties["type"] == "item":
-                    return self.tableWidget.item(row, col)
-                else:
-                    return self.tableWidget.cellWidget(row, col)
+        if self.headers[col]["type"] == "item":
+            return self.tableWidget.item(row, col)
+        else:
+            return self.tableWidget.cellWidget(row, col)
 
     def selectedIndexes(self):
         """
         :return: (list-of-QModelIndex) table's selected indexes.
         """
-        return self.tableWidget.selectionModel().selectedItems()
+        return self.tableWidget.selectedIndexes()
 
     def selectedItems(self):
         """
@@ -252,7 +352,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         items = set()
         for idx in self.selectedIndexes():
-            items.add(self.item(idx.row(), idx.column()))
+            items.add(self.itemAt(idx.row(), idx.column()))
         return items
 
     def selectedRows(self, reverseOrder=False):
@@ -273,7 +373,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :return: (list-of-int) ordered list of selected columns' indexes.
         """
         return sorted(
-            set(i.column() for i in self.tableWidget.selectionModel().selectedColumns()),
+            set(i.column() for i in self.selectedIndexes()),
             reverse=reverseOrder
         )
 
@@ -282,15 +382,8 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         Clears all selected rows and selects row.
         :param row: (int) index for the row to be select.
         """
-        self.tableWidget.selectionModel().select(
-            self.tableWidget.selectionModel().model().index(row, 0),
-            QItemSelectionModel.SelectionFlags(
-                QItemSelectionModel.Clear |
-                QItemSelectionModel.Select |
-                QItemSelectionModel.Current |
-                QItemSelectionModel.Rows
-            )
-        )
+        self.clearRowSelection()
+        self.addRowToSelection(row)
 
     def addRowToSelection(self, row):
         """
@@ -298,16 +391,26 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param row: (int) index for the row to be added to selection.
         """
         if row not in self.selectedRows():
-            self.tableWidget.selectionModel().select(
-                self.tableWidget.selectionModel().model().index(row, 0),
-                QItemSelectionModel.SelectionFlags(
-                    QItemSelectionModel.Clear |
-                    QItemSelectionModel.Select |
-                    QItemSelectionModel.Current |
-                    QItemSelectionModel.Rows
-                )
-            )
-        self.rowAdded.emit(row)
+            self.tableWidget.setSelectionMode(QAbstractItemView.MultiSelection)
+            self.tableWidget.selectRow(row)
+            self.tableWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+
+    def removeRowFromSelection(self, row):
+        """
+        Removes a row from selection.
+        :param row: (int) index for the row to be removed from selection.
+        """
+        if row in self.selectedRows():
+            self.tableWidget.setSelectionMode(QAbstractItemView.MultiSelection)
+            self.tableWidget.selectRow(row)
+            self.tableWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+
+    def clearRowSelection(self):
+        """
+        Removes all selected rows from selection.
+        """
+        for row in self.selectedRows():
+            self.removeRowFromSelection(row)
 
     def moveRowUp(self, row):
         """
@@ -336,11 +439,13 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         Method triggered when remove button is clicked.
         """
-        if not self.tableWidget.selectionModel().hasSelection():
+        rows = self.selectedRows()
+        if not rows:
             return
-        self.tableWidget.setUpdatesEnabled(False)
-        for row in self.selectedRows():
-            self.removeRow(row)
+        popped = 0
+        for row in rows:
+            self.removeRow(row - popped)
+            popped += 1
         self.tableWidget.setUpdatesEnabled(True)
 
     @pyqtSlot()
@@ -358,26 +463,53 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         else:
             self.addRow({})
             self.selectRow(self.rowCount() - 1)
-        
+
     @pyqtSlot()
     def on_moveUpPushButton_clicked(self):
         """
         Method triggered when move row up button is clicked.
         """
-        if not self.tableWidget.selectionModel().hasSelection():
+        rows = self.selectedRows()
+        if not rows:
             return
-        # selected rows method is sorted!
-        selected = self.selectedRows()
-        for row in selected:
+        for row in self.selectedRows():
+            if row - 1 in rows:
+                # rows is a copy of selected rows that is updated after the
+                # item is moved
+                continue
             self.moveRowUp(row)
+            if row != 0:
+                # this row is never aftected, hence it is "fixed"
+                rows.remove(row)
 
     @pyqtSlot()
     def on_moveDownPushButton_clicked(self):
         """
         Method triggered when move row down button is clicked.
         """
-        if not self.tableWidget.selectionModel().hasSelection():
+        rows = self.selectedRows(True)
+        if not rows:
             return
-        selected = self.selectedRows(True)
-        for row in selected:
+        lastRow = self.rowCount() - 1
+        for row in self.selectedRows(True):
+            if row + 1 in rows:
+                continue
             self.moveRowDown(row)
+            if row != lastRow:
+                rows.remove(row)
+    
+    def exportState(self):
+        """
+        Exports the state of the interface
+        The state of the interface is a dictionary used to populate it.
+        """
+        for row in self.tab:
+            pass
+
+    def importState(self, stateDict):
+        """
+        Imports the state of the interface
+        :param stateDict: dict of the state of the interface. The state
+        of the interface is a dictionary used to populate it.
+        """
+        pass
