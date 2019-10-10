@@ -36,8 +36,8 @@ class LabelTogglingTool(QgsMapTool):
         self.canvas = self.iface.mapCanvas()
         super(LabelTogglingTool, self).__init__(self.canvas)
     
-    def addTool(self, manager, callback, parentToolbar, iconBasePath):
-        self.stackButton = manager.createToolButton(parentToolbar, u'LabelTools')
+    def addTool(self, manager, callback, parentToolbar, stackButton, iconBasePath):
+        self.stackButton = stackButton
 
         icon_path = iconBasePath + '/toggleAllLabels.png'
         toolTip = self.tr("DSGTools: Toggle all labels visibility")

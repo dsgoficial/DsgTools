@@ -78,5 +78,7 @@
         <file>icons/model_continue.png</file>
         <file>icons/model_run.png</file>
         <file>icons/pause.png</file>
+        <file>icons/on_off.png</file>
+        <file>icons/vertex.png</file>
     </qresource>
 </RCC>
