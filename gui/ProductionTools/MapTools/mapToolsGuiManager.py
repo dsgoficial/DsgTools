@@ -34,6 +34,7 @@ from .FlipLineTool.flipLineTool import FlipLine
 from .FreeHandTool.freeHandMain import FreeHandMain
 from .FreeHandTool.freeHandReshape import FreeHandReshape
 from .LabelTogglingTool.labelTogglingTool import LabelTogglingTool
+from .ShortcutTool.shortcutTool import ShortcutTool
 from qgis.PyQt.QtCore import QObject
 
 class MapToolsGuiManager(QObject):
@@ -78,8 +79,13 @@ class MapToolsGuiManager(QObject):
         self.freeHandReshape.addTool(self.manager, None, self.parentMenu, self.iconBasePath, parentButton=self.freeHandStackButton)
         self.freeHandReshape.acquisitionFreeController.setToolEnabled()
         #adding label toggling tool
+        self.labelStackButton = self.manager.createToolButton(self.toolbar, u'LabelTools')
         self.labelTool = LabelTogglingTool(self.iface)
-        self.labelTool.addTool(self.manager, None, self.toolbar, self.iconBasePath)
+        self.labelTool.addTool(self.manager, None, self.toolbar, self.labelStackButton, self.iconBasePath)
+        #adding shortcuts tools
+        self.shortcutsTool = ShortcutTool(self.iface)
+        self.shortcutsTool.addTool(self.manager, None, self.toolbar, self.labelStackButton, self.iconBasePath)
+
         #initiate tools signals
         self.initiateToolsSignals()
 
