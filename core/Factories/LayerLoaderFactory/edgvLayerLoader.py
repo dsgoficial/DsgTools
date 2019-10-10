@@ -229,12 +229,16 @@ class EDGVLayerLoader(QObject):
                     geomNode.removeChildNode(catNode)
     
     def getParams(self, inputParam):
-        if isinstance(inputParam,dict):
+        if isinstance(inputParam, dict):
             lyrName = inputParam['lyrName']
             schema = inputParam['tableSchema']
             geomColumn = inputParam['geom']
             tableName = inputParam['tableName']
             srid =  self.geomDict['tablePerspective'][tableName]['srid']
+        elif isinstance(inputParam, tuple):
+            schema, tableName = inputParam
+            lyrName = tableName
+            geomColumn, srid = '', ''
         else:
             lyrName = inputParam
             tableName = self.geomDict['tablePerspective'][lyrName]['tableName']

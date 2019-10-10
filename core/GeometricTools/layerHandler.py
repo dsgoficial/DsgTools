@@ -22,24 +22,25 @@
 """
 
 from __future__ import absolute_import
-from builtins import range
-from itertools import combinations
+
 from collections import defaultdict
 from functools import partial
-
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
-                      QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
-                      QgsCoordinateTransform, QgsWkbTypes, edit, QgsCoordinateReferenceSystem, QgsProject, \
-                      QgsProcessingMultiStepFeedback, QgsProcessingContext, QgsVectorLayerUtils
-from qgis.PyQt.Qt import QObject, QVariant
-from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
-
-from .featureHandler import FeatureHandler
-
-from .geometryHandler import GeometryHandler
+from itertools import combinations
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
+from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
+from qgis.core import (Qgis, QgsCoordinateReferenceSystem,
+                       QgsCoordinateTransform, QgsExpression, QgsFeature,
+                       QgsFeatureRequest, QgsField, QgsGeometry, QgsMessageLog,
+                       QgsProcessingContext, QgsProcessingMultiStepFeedback,
+                       QgsProject, QgsSpatialIndex, QgsVectorDataProvider,
+                       QgsVectorLayer, QgsVectorLayerUtils, QgsWkbTypes, edit)
+from qgis.PyQt.Qt import QObject, QVariant
+
+from .featureHandler import FeatureHandler
+from .geometryHandler import GeometryHandler
+
 
 class LayerHandler(QObject):
     def __init__(self, iface = None, parent = None):
@@ -177,10 +178,10 @@ class LayerHandler(QObject):
         return fields
     
 
-    def getUnifiedLayerFeatures(self, unifiedLyr, layerList, attributeTupple=False, attributeBlackList='', onlySelected=False, parameterDict=None, feedback=None):
+    def getUnifiedLayerFeatures(self, unifiedLyr, layerList, attributeTupple=False, attributeBlackList=None, onlySelected=False, parameterDict=None, feedback=None):
         parameterDict = {} if parameterDict is None else parameterDict
         featList = []
-        blackList = attributeBlackList.split(',') if ',' in attributeBlackList else []
+        blackList = attributeBlackList.split(',') if attributeBlackList is not None and ',' in attributeBlackList else []
         if feedback:
             multiStepFeedback = QgsProcessingMultiStepFeedback(len(layerList), feedback)
         for i, layer in enumerate(layerList):
@@ -206,7 +207,8 @@ class LayerHandler(QObject):
                     multiStepFeedback.setProgress(current*size)
         return featList
 
-    def addFeaturesToLayer(self, lyr, featList, commitChanges=True, msg=''):
+    def addFeaturesToLayer(self, lyr, featList, commitChanges=True, msg=None):
+        msg = '' if msg is None else msg
         lyr.startEditing()
         lyr.beginEditCommand(msg)
         res = lyr.addFeatures(featList)
@@ -261,7 +263,7 @@ class LayerHandler(QObject):
                 feedback.setProgress(localTotal*current)
 
     
-    def updateOriginalLayer(self, originalLayer, resultLayer, field=None, feedback = None, keepFeatures = False, onlySelected = True):
+    def updateOriginalLayer(self, originalLayer, resultLayer, field=None, feedback=None, keepFeatures=False, onlySelected=True):
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) if feedback else None
         #1- build inputDict structure to store the original state of the layer
         if feedback:
@@ -802,7 +804,8 @@ class LayerHandler(QObject):
             )
 
     def prepareConversion(self, inputLyr, context, inputExpression=None, filterLyr=None,\
-                         behavior=None, bufferRadius=0, conversionMap=None, feedback=None):
+                         behavior=None, bufferRadius=None, conversionMap=None, feedback=None):
+        bufferRadius = 0 if bufferRadius is None else bufferRadius
         algRunner = AlgRunner()
         if feedback is not None:
             count = 0
@@ -860,11 +863,15 @@ class LayerHandler(QObject):
                 for error in geom.validateGeometry(i):
                     if feedback is not None and feedback.isCanceled():
                         break
+
                     if error.hasWhere():
                         errorPointXY = error.where()
+                        flagGeom = QgsGeometry.fromPointXY(errorPointXY)
+                        if geom.type() == QgsWkbTypes.LineGeometry and self.isClosedAndFlagIsAtStartOrEnd(geom, flagGeom):
+                            continue
                         if errorPointXY not in flagDict:
                             flagDict[errorPointXY] = {
-                                'geom' : QgsGeometry.fromPointXY(errorPointXY),
+                                'geom' : flagGeom,
                                 'reason' : ''
                             }
                         flagDict[errorPointXY]['reason'] += '{type} invalid reason: {text}\n'.format(
@@ -887,6 +894,13 @@ class LayerHandler(QObject):
             inputLyr.endEditCommand()
 
         return flagDict
+    
+    def isClosedAndFlagIsAtStartOrEnd(self, geom, flagGeom):
+        for part in geom.asGeometryCollection():
+            startPoint, endPoint = self.geometryHandler.getFirstAndLastNodeFromGeom(part)
+            if flagGeom.equals(QgsGeometry.fromPointXY(startPoint)) or flagGeom.equals(QgsGeometry.fromPointXY(endPoint)):
+                return True
+        return False
 
     def runGrassDissolve(self, inputLyr, context, feedback=None, column=None, outputLyr=None, onFinish=None):
         """
