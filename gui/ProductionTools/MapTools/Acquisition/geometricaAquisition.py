@@ -45,10 +45,10 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
 
     def getSuppressOptions(self):
         qgisSettigns = QSettings()
-        qgisSettigns.beginGroup('Qgis/digitizing')
+        qgisSettigns.beginGroup('qgis/digitizing')
         setting = qgisSettigns.value('disable_enter_attribute_values_dialog')
         qgisSettigns.endGroup()
-        return isinstance(setting, str) and setting.lower() == u'true'
+        return setting
 
     def setAction(self, action):
         self.toolAction = action

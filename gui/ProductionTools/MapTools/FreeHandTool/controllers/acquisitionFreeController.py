@@ -216,7 +216,9 @@ class AcquisitionFreeController(object):
                     feature.setAttribute(i, defaultClauseCandidate)
             formSuppressOnLayer = layer.editFormConfig().suppress()
             formSuppressOnSettings = self.getFormSuppressStateSettings()
-            if formSuppressOnLayer == core.QgsEditFormConfig.SuppressOff or formSuppressOnSettings == 'true':
+            if formSuppressOnLayer == core.QgsEditFormConfig.SuppressOff or \
+                (formSuppressOnLayer == core.QgsEditFormConfig.SuppressDefault \
+                    and formSuppressOnSettings):
                 self.addFeatureWithoutForm(layer, feature)
             else:
                 self.addFeatureWithForm(layer, feature)

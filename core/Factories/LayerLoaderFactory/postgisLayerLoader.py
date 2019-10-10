@@ -20,25 +20,28 @@
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import str
-from builtins import map
-from builtins import range
 import os
-
-# Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
-from qgis.PyQt.Qt import QObject
+from builtins import map, range, str
 
 # QGIS imports
-from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog, Qgis, QgsProject, QgsEditorWidgetSetup
+from qgis.core import (Qgis, QgsCoordinateReferenceSystem, QgsDataSourceUri,
+                       QgsEditorWidgetSetup, QgsMessageLog, QgsProject,
+                       QgsVectorLayer)
+# Qt imports
+from qgis.PyQt import QtCore, QtGui, uic
+from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot
 from qgis.utils import iface
 
+from ....core.LayerTools.CustomFormTools.customFormGenerator import \
+    CustomFormGenerator
+from ....core.LayerTools.CustomFormTools.customInitCodeGenerator import \
+    CustomInitCodeGenerator
+from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import \
+    ProgressWidget
 #DsgTools imports
 from .edgvLayerLoader import EDGVLayerLoader
-from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
-from ....core.LayerTools.CustomFormTools.generatorCustomForm import GeneratorCustomForm
-from ....core.LayerTools.CustomFormTools.generatorCustomInitCode import GeneratorCustomInitCode
+
 
 class PostGISLayerLoader(EDGVLayerLoader):
     def __init__(self, iface, abstractDb, loadCentroids):
@@ -48,8 +51,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
         self.provider = 'postgres'
         self.setDatabaseConnection()
         self.buildUri()
-        self.generatorCustomForm = GeneratorCustomForm()
-        self.generatorCustomInitCode = GeneratorCustomInitCode()
+        self.customFormGenerator = CustomFormGenerator()
+        self.customInitCodeGenerator = CustomInitCodeGenerator()
 
     def checkLoaded(self, name):
         """
@@ -366,7 +369,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         formFile = self.newUiForm(pathUiForm)
         #inserir flag do filtro
         withFilter = True if lyr.name() in list(self.filterDict.keys()) else False
-        self.generatorCustomForm.create(formFile, lyr, withFilter = withFilter)
+        self.customFormGenerator.create(formFile, lyr, withFilter = withFilter)
         lyr.editFormConfig().setInitCodeSource(2)
         lyr.editFormConfig().setLayout(2)
         lyr.editFormConfig().setUiForm(pathUiForm)
@@ -396,10 +399,10 @@ class PostGISLayerLoader(EDGVLayerLoader):
         # dbData = data['userData']['dbJson'][data['dbAlias']]
         # layerData = dbData[data['nameGeom']][data['nameCatLayer']][data['layerName']]
         if lyr.name() in list(self.filterDict.keys()):
-            initCode = self.generatorCustomInitCode.getInitCodeWithFilter(self.filterDict[lyr.name()], rules) #layerData['filter'] é o resultado da query select * from dominios.<nome do dominio do atributo com filtro>
+            initCode = self.customInitCodeGenerator.getInitCodeWithFilter(self.filterDict[lyr.name()], rules) #layerData['filter'] é o resultado da query select * from dominios.<nome do dominio do atributo com filtro>
             return initCode
         else:
-            initCode = self.generatorCustomInitCode.getInitCodeNotFilter(rules)
+            initCode = self.customInitCodeGenerator.getInitCodeNotFilter(rules)
             return initCode
 
     def getLayerByName(self, layer):
@@ -410,7 +413,60 @@ class PostGISLayerLoader(EDGVLayerLoader):
         """
         # parent class reimplementation
         table = layer.split('.')[1]
-        lyrName, schema, geomColumn, tableName, srid = self.getParams(inputParam=table)
-        pkColumn = self.abstractDb.getPrimaryKeyColumn(layer)
-        self.setDataSource(schema, tableName, geomColumn, '', pkColumn=pkColumn)
-        return QgsVectorLayer(self.uri.uri(), table, self.provider)
+        return loadQgsVectorLayer(table)
+    
+    def loadQgsVectorLayer(self, inputParam, uniqueLoad=False, addToCanvas=False, nonSpatial=False):
+        """
+        Returns a QgsVectorLayer using the parameters from inputParam.
+        If uniqueLoad=True, checks if layer is already loaded and if it is,
+        returns it.
+        """
+        lyrName, schema, geomColumn, tableName, srid = self.getParams(inputParam=inputParam)
+        lyr = self.checkLoaded(tableName)
+        if uniqueLoad and lyr is not None:
+            return lyr
+        pkColumn = self.abstractDb.getPrimaryKeyColumn(
+            "{table_schema}.{table_name}".format(
+                table_schema=schema,
+                table_name=tableName
+            )
+        )
+        if nonSpatial:
+            uri = """dbname='{dbname}' host={host} port={port} user='{user}' password='{password}' key={pk} checkPrimaryKeyUnicity='0' table="{table_schema}"."{table_name}" sql=""".format(
+                dbname=self.database,
+                host=self.host,
+                port=self.port,
+                user=self.user,
+                password=self.password,
+                pk=pkColumn,
+                table_schema=schema,
+                table_name=tableName
+            )
+        else:
+            self.setDataSource(schema, tableName, geomColumn, '', pkColumn=pkColumn)
+            uri = self.uri.uri()
+        lyr = QgsVectorLayer(uri, tableName, self.provider)
+        QgsProject.instance().addMapLayer(lyr, addToLegend=addToCanvas)
+        return lyr
+
+    
+    def loadLayersInsideProcessing(self, inputParamList, uniqueLoad=False, addToCanvas=True, nonSpatial=False, feedback=None):
+        """
+        Loads layer inside qgis using processing. If uniqueLoad=True, only loads
+        if it is not loaded.
+        """
+        outputLayers = []
+        progressStep = 100/len(inputParamList) if len(inputParamList) else 0
+        for current, inputParam in enumerate(inputParamList):
+            if feedback is not None and feedback.isCanceled():
+                break
+            lyr = self.loadQgsVectorLayer(
+                inputParam=inputParam,
+                uniqueLoad=uniqueLoad,
+                addToCanvas=addToCanvas,
+                nonSpatial=nonSpatial
+            )
+            outputLayers.append(lyr)
+            if feedback is not None:
+                feedback.setProgress(current*progressStep)
+        return outputLayers
