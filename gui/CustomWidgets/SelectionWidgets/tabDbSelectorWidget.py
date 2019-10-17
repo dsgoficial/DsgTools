@@ -46,7 +46,7 @@ class TabDbSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.serverWidget.populateServersCombo()
         self.setSpatiaLitePage()
-        self.setGeopackagePage()
+        # self.setGeopackagePage()
 
     def setSpatiaLitePage(self):
         """
@@ -69,7 +69,7 @@ class TabDbSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         self.serverWidget.clearAll()
         self.outputDirSelector.resetAll()
-        self.outputDirSelectorGeopackage.resetAll()
+        # self.outputDirSelectorGeopackage.resetAll()
 
     def validate(self):
         """
@@ -87,12 +87,12 @@ class TabDbSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
                 return False
             else:
                 return True
-        elif self.tabWidget.currentIndex() == 2:
-            if self.outputDirSelectorGeopackage.fileNameList == []:
-                QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a folder!'))
-                return False
-            else:
-                return True
+        # elif self.tabWidget.currentIndex() == 2:
+        #     if self.outputDirSelectorGeopackage.fileNameList == []:
+        #         QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a folder!'))
+        #         return False
+        #     else:
+        #         return True
     
     def getFactoryCreationParam(self):
         """
@@ -102,8 +102,8 @@ class TabDbSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
             return self.serverWidget.abstractDb 
         elif self.tabWidget.currentIndex() == 1 and self.outputDirSelector.fileNameList != []:
             return self.outputDirSelector.fileNameList[0]
-        elif self.tabWidget.currentIndex() == 2 and self.outputDirSelectorGeopackage.fileNameList != []:
-            return self.outputDirSelectorGeopackage.fileNameList[0]
+        # elif self.tabWidget.currentIndex() == 2 and self.outputDirSelectorGeopackage.fileNameList != []:
+        #     return self.outputDirSelectorGeopackage.fileNameList[0]
         else:
             return None
     
@@ -115,5 +115,5 @@ class TabDbSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
             return 'QPSQL'
         elif self.tabWidget.currentIndex() == 1:
             return 'QSQLITE'
-        elif self.tabWidget.currentIndex() == 2:
-            return 'GPKG'
+        # elif self.tabWidget.currentIndex() == 2:
+        #     return 'GPKG'
