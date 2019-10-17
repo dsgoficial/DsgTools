@@ -66,8 +66,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
             self.tr('SpatiaLite (create new database)') : DsgEnums.NewSpatiaLite,
             # 'Shapefile' : DsgEnums.Shapefile,
             # self.tr('Shapefile (create new database)') : DsgEnums.NewShapefile,
-            'Geopackage' : DsgEnums.Geopackage,
-            self.tr('Geopackage (create new database)') : DsgEnums.NewGeopackage
+            # 'Geopackage' : DsgEnums.Geopackage,
+            # self.tr('Geopackage (create new database)') : DsgEnums.NewGeopackage
         }
         self.setupUi(self)
         # adds all available drivers to conversion to GUI
