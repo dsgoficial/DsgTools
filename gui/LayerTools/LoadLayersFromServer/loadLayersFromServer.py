@@ -53,7 +53,7 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         self.layerFactory = LayerLoaderFactory()
         self.customServerConnectionWidget.postgisCustomSelector.setTitle(self.tr('Select Databases'))
         self.customServerConnectionWidget.spatialiteCustomSelector.setTitle(self.tr('Selected Spatialites'))
-        self.customServerConnectionWidget.gpkgCustomSelector.setTitle(self.tr('Selected Geopackages'))
+        # self.customServerConnectionWidget.gpkgCustomSelector.setTitle(self.tr('Selected Geopackages'))
         self.layersCustomSelector.setTitle(self.tr('Select layers to be loaded'))
         self.customServerConnectionWidget.dbDictChanged.connect(self.updateLayersFromDbs)
         self.customServerConnectionWidget.resetAll.connect(self.resetInterface)
@@ -62,7 +62,7 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         self.layersCustomSelector.setHeaders(self.headerList)
         self.customServerConnectionWidget.postgisEdgvComboFilter.currentIndexChanged.connect(self.layersCustomSelector.setInitialState)
         self.customServerConnectionWidget.spatialiteEdgvComboFilter.currentIndexChanged.connect(self.layersCustomSelector.setInitialState)
-        self.customServerConnectionWidget.gpkgEdgvComboFilter.currentIndexChanged.connect(self.layersCustomSelector.setInitialState)
+        # self.customServerConnectionWidget.gpkgEdgvComboFilter.currentIndexChanged.connect(self.layersCustomSelector.setInitialState)
         self.customServerConnectionWidget.serverConnectionTab.currentChanged.connect(self.layersCustomSelector.setInitialState)
         self.lyrDict = dict()
     
