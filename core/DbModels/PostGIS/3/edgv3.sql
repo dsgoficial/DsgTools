@@ -5,11 +5,11 @@ CREATE EXTENSION postgis#
 SET search_path TO pg_catalog,public,edgv,dominios#
 
 CREATE TABLE public.db_metadata(
-	 edgvversion varchar(50) NOT NULL DEFAULT 'EDGV 3.0',
-	 dbimplversion varchar(50) NOT NULL DEFAULT '2',
-	 CONSTRAINT edgvversioncheck CHECK (edgvversion = 'EDGV 3.0')
+	 edgvversion varchar(50) NOT NULL DEFAULT '3.0',
+	 dbimplversion varchar(50) NOT NULL DEFAULT '4',
+	 CONSTRAINT edgvversioncheck CHECK (edgvversion = '3.0')
 )#
-INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 3.0','2')#
+INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('3.0','4')#
 
 CREATE TABLE dominios.aptidao_operacional_atracadouro (
 	 code smallint NOT NULL,
@@ -12000,15 +12000,15 @@ CREATE TABLE edgv.pto_pto_ref_geod_topo_p(
 	 id serial NOT NULL,
 	 geometriaaproximada boolean NOT NULL,
 	 tiporef smallint NOT NULL,
-	 latitude varchar(15) NOT NULL,
-	 longitude varchar(15) NOT NULL,
+	 latitude varchar(16) NOT NULL,
+	 longitude varchar(16) NOT NULL,
 	 altitudeortometrica real,
 	 altitudegeometrica real,
 	 sistemageodesico smallint NOT NULL,
 	 outrarefplan varchar(20),
 	 referencialaltim smallint NOT NULL,
 	 outrarefalt varchar(20),
-	 codponto varchar(9),
+	 codponto varchar(12),
 	 obs varchar(255),
 	 nome varchar(80),
 	 proximidade smallint NOT NULL,
@@ -12085,8 +12085,8 @@ CREATE TABLE edgv.pto_pto_geod_topo_controle_p(
 	 id serial NOT NULL,
 	 geometriaaproximada boolean NOT NULL,
 	 tiporef smallint NOT NULL,
-	 latitude varchar(15) NOT NULL,
-	 longitude varchar(15) NOT NULL,
+	 latitude varchar(16) NOT NULL,
+	 longitude varchar(16) NOT NULL,
 	 altitudeortometrica real,
 	 altitudegeometrica real,
 	 sistemageodesico smallint NOT NULL,
@@ -14772,7 +14772,7 @@ ALTER TABLE edgv.veg_reflorestamento_a
 
 ALTER TABLE edgv.veg_reflorestamento_a
 	 ADD CONSTRAINT veg_reflorestamento_a_cultivopredominante_check 
-	 CHECK (cultivopredominante = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 17 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 30 :: SMALLINT, 31 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 42 :: SMALLINT, 43 :: SMALLINT, 44 :: SMALLINT, 45 :: SMALLINT, 46 :: SMALLINT, 47 :: SMALLINT, 48 :: SMALLINT, 49 :: SMALLINT, 50 :: SMALLINT, 51 :: SMALLINT, 52 :: SMALLINT, 53 :: SMALLINT, 54 :: SMALLINT, 55 :: SMALLINT, 56 :: SMALLINT, 57 :: SMALLINT, 58 :: SMALLINT, 59 :: SMALLINT, 60 :: SMALLINT, 61 :: SMALLINT, 62 :: SMALLINT, 63 :: SMALLINT, 64 :: SMALLINT, 65 :: SMALLINT, 66 :: SMALLINT, 67 :: SMALLINT, 68 :: SMALLINT, 69 :: SMALLINT, 70 :: SMALLINT, 71 :: SMALLINT, 72 :: SMALLINT, 73 :: SMALLINT, 74 :: SMALLINT, 75 :: SMALLINT, 76 :: SMALLINT, 77 :: SMALLINT, 78 :: SMALLINT, 79 :: SMALLINT, 80 :: SMALLINT, 81 :: SMALLINT, 82 :: SMALLINT, 83 :: SMALLINT, 84 :: SMALLINT, 85 :: SMALLINT, 86 :: SMALLINT, 87 :: SMALLINT, 88 :: SMALLINT, 89 :: SMALLINT, 90 :: SMALLINT, 96 :: SMALLINT, 99 :: SMALLINT, 100 :: SMALLINT, 101 :: SMALLINT, 102 :: SMALLINT, 103 :: SMALLINT, 104 :: SMALLINT, 105 :: SMALLINT, 106 :: SMALLINT, 108 :: SMALLINT, 110 :: SMALLINT, 111 :: SMALLINT, 112 :: SMALLINT, 113 :: SMALLINT, 114 :: SMALLINT, 115 :: SMALLINT, 116 :: SMALLINT, 117 :: SMALLINT, 118 :: SMALLINT, 119 :: SMALLINT, 9999 :: SMALLINT]))# 
+	 CHECK (cultivopredominante = ANY(ARRAY[20 :: SMALLINT, 21 :: SMALLINT, 23 :: SMALLINT, 96 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 9999 :: SMALLINT]))# 
 ALTER TABLE edgv.veg_reflorestamento_a ALTER COLUMN cultivopredominante SET DEFAULT 9999#
 
 CREATE TABLE edgv.veg_campo_a(
