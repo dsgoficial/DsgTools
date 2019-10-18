@@ -51,7 +51,7 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.serverWidget.populateServersCombo()
         self.serverWidget.abstractDbLoaded.connect(self.populatePostgisSelector)
         self.spatialiteCustomFileSelector.filesSelected.connect(self.populateSpatialiteSelector)
-        self.gpkgCustomFileSelector.filesSelected.connect(self.populateGeopackageSelector)
+        # self.gpkgCustomFileSelector.filesSelected.connect(self.populateGeopackageSelector)
         self.comboDict = {self.tr('Load Database Model EDGV Version 2.1.3'):'2.1.3',
                          self.tr('Load Database Model EDGV Version 2.1.3 Pro'):'2.1.3 Pro',
                          self.tr('Load Database Model EDGV Version 3.0'):'3.0',
@@ -63,14 +63,14 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.stylesDict = dict()
         self.postgisCustomSelector.selectionChanged.connect(self.selectedDatabases)
         self.spatialiteCustomSelector.selectionChanged.connect(self.selectedFiles)
-        self.gpkgCustomSelector.selectionChanged.connect(self.selectedGeopackageFiles)
+        # self.gpkgCustomSelector.selectionChanged.connect(self.selectedGeopackageFiles)
         self.path = None
         self.spatialiteCustomFileSelector.setCaption(self.tr('Select a DSGTools Spatialite File'))
         self.spatialiteCustomFileSelector.setFilter(self.tr('Spatialite file databases (*.sqlite)'))
         self.spatialiteCustomFileSelector.setType('multi')
-        self.gpkgCustomFileSelector.setCaption(self.tr('Select a DSGTools Geopackage File'))
-        self.gpkgCustomFileSelector.setFilter(self.tr('Geopackage Database Files (*.gpkg)'))
-        self.gpkgCustomFileSelector.setType('multi')
+        # self.gpkgCustomFileSelector.setCaption(self.tr('Select a DSGTools Geopackage File'))
+        # self.gpkgCustomFileSelector.setFilter(self.tr('Geopackage Database Files (*.gpkg)'))
+        # self.gpkgCustomFileSelector.setType('multi')
         self.edgvType = self.comboDict[self.postgisEdgvComboFilter.currentText()]
     
     def selectedDatabases(self, dbList, type):
@@ -286,10 +286,10 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         Clears the postgis tab, returning it to the original state
         """
-        self.gpkgCustomSelector.clearAll()
+        # self.gpkgCustomSelector.clearAll()
         self.serverWidget.clearAll()
         self.dbDict = {'2.1.3':[], '2.1.3 Pro':[], 'FTer_2a_Ed':[],'Non_EDGV':[], '3.0':[], '3.0 Pro':[]}
-        self.gpkgCustomFileSelector.resetAll()
+        # self.gpkgCustomFileSelector.resetAll()
         self.edgvType = None
         self.selectedDbsDict = dict()
         self.resetAll.emit()
@@ -360,7 +360,7 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
 
     def getDatabaseVersion(self):
         comboBox = self.postgisEdgvComboFilter if self.serverConnectionTab.currentIndex() == 0 else\
-                   self.spatialiteEdgvComboFilter if self.serverConnectionTab.currentIndex() == 1 else\
-                   self.gpkgEdgvComboFilter
+                   self.spatialiteEdgvComboFilter #if self.serverConnectionTab.currentIndex() == 1 #else\
+                #    self.gpkgEdgvComboFilter
         comboText = comboBox.currentText()
         return self.comboDict[comboText]
