@@ -28,7 +28,9 @@ from qgis.core import (QgsTask,
                        QgsMapLayer,
                        QgsLayerTreeLayer,
                        QgsProcessingFeedback,
-                       QgsProcessingModelAlgorithm)
+                       QgsProcessingModelAlgorithm,
+                       QgsVectorLayer,
+                       QgsProcessingUtils)
 from qgis.PyQt.QtCore import pyqtSignal, QCoreApplication
 import processing
 
@@ -341,22 +343,10 @@ class DsgToolsProcessingModel(QgsTask):
         :param subgroupname: (str) name for the subgroup to be added.
         """
         root = QgsProject.instance().layerTreeRoot()
-        for g in root.children():
-            if g.name() == groupname:
-                group = g
-                break
-        else:
-            group = root.addGroup(groupname)
-        if subgroupname is not None:
-            for sg in group.children():
-                if sg.name() == subgroupname:
-                    subgroup = sg
-                    break
-            else:
-                subgroup = group.addGroup(subgroupname)
-        subgroup = root.findGroup(subgroupname)
+        layer = layer if isinstance(layer, QgsMapLayer) or isinstance(layer, QgsVectorLayer) \
+            else QgsProcessingUtils.mapLayerFromString(layer)
         QgsProject.instance().addMapLayer(layer, False)
-        subgroup.insertChildNode(1, QgsLayerTreeLayer(layer))
+        root.insertChildNode(-1, QgsLayerTreeLayer(layer))
 
     def runModel(self, feedback=None):
         """
