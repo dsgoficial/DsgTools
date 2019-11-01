@@ -343,7 +343,7 @@ class DsgToolsProcessingModel(QgsTask):
         :param subgroupname: (str) name for the subgroup to be added.
         """
         root = QgsProject.instance().layerTreeRoot()
-        layer = layer if isinstance(layer, QgsMapLayer) or isinstance(layer, QgsVectorLayer) \
+        layer = layer if isinstance(layer, QgsMapLayer) \
             else QgsProcessingUtils.mapLayerFromString(layer)
         QgsProject.instance().addMapLayer(layer, False)
         root.insertChildNode(-1, QgsLayerTreeLayer(layer))
