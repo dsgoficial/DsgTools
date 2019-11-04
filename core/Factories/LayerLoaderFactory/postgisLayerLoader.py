@@ -224,7 +224,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
                     # clear fullPath variable
                     del fullPath
             if customForm:
-                vlayer = self.loadFormCustom(vlayer)
+                # vlayer = self.loadFormCustom(vlayer)
+                pass
             if editingDict is not None:
                 editLyr, joinLyrFieldName = self.loadEditLayer(lyrName, editingDict)
                 self.buildJoin(vlayer, pkColumn, editLyr, joinLyrFieldName)
@@ -368,8 +369,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
         pathUiForm = self.getPathUiForm(self.database, lyr.name())
         formFile = self.newUiForm(pathUiForm)
         #inserir flag do filtro
-        withFilter = True if lyr.name() in list(self.filterDict.keys()) else False
-        self.customFormGenerator.create(formFile, lyr, withFilter = withFilter)
+        withFilter = lyr.name() in self.filterDict
+        self.customFormGenerator.create(formFile, lyr, withFilter=withFilter)
         lyr.editFormConfig().setInitCodeSource(2)
         lyr.editFormConfig().setLayout(2)
         lyr.editFormConfig().setUiForm(pathUiForm)
@@ -413,7 +414,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         """
         # parent class reimplementation
         table = layer.split('.')[1]
-        return loadQgsVectorLayer(table)
+        return self.loadQgsVectorLayer(table)
     
     def loadQgsVectorLayer(self, inputParam, uniqueLoad=False, addToCanvas=False, nonSpatial=False):
         """

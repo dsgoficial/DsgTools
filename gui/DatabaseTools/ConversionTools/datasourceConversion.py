@@ -175,6 +175,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         :param containerWidget:
         :param resizeColumns: (bool)
         """
+        self.inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
         # create a 'function' to get datasource exposing name and create the output list
         getNameAlias = lambda widget : '{0}: {1}'.format(widget.groupBox.title(), widget.getDatasourceConnectionName())
         # use it in a map loop to get output list
