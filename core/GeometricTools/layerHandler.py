@@ -27,15 +27,16 @@ from collections import defaultdict
 from functools import partial
 from itertools import combinations
 
+from processing.tools import dataobjects
+
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
-from qgis.core import (Qgis, QgsCoordinateReferenceSystem,
-                       QgsCoordinateTransform, QgsExpression, QgsFeature,
-                       QgsFeatureRequest, QgsField, QgsGeometry, QgsMessageLog,
-                       QgsProcessingContext, QgsProcessingMultiStepFeedback,
-                       QgsProject, QgsSpatialIndex, QgsVectorDataProvider,
-                       QgsVectorLayer, QgsVectorLayerUtils, QgsWkbTypes, edit)
+from qgis.core import (edit, Qgis, QgsCoordinateReferenceSystem, QgsCoordinateTransform,
+    QgsExpression, QgsFeature, QgsFeatureRequest, QgsField, QgsGeometry, QgsMessageLog,
+    QgsProcessingContext, QgsProcessingMultiStepFeedback, QgsProcessingUtils, QgsProject,
+    QgsSpatialIndex, QgsVectorDataProvider, QgsVectorLayer, QgsVectorLayerUtils, QgsWkbTypes,
+    QgsProcessingFeatureSourceDefinition)
 from qgis.PyQt.Qt import QObject, QVariant
 
 from .featureHandler import FeatureHandler
@@ -914,3 +915,135 @@ class LayerHandler(QObject):
         :return: (QgsVectorLayer) dissolved (output) layer.
         """
         return AlgRunner().runGrassDissolve(inputLyr, context, feedback=None, column=None, outputLyr=None, onFinish=None)
+    
+    def getVertexNearEdgeDict(self, inputLyr, tol, onlySelected=False, feedback=None, context=None):
+        """
+        Identifies vertexes that are too close to a vertex.
+        :param inputLyr: (QgsVectorLayer) layer to run the identification.
+        :param onlySelected: (Boolean) If true, gets only selected layer
+        :param tol: (float) search radius
+        :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
+        """
+        if inputLyr.geometryType() == QgsWkbTypes.PointGeometry:
+            raise Exception('Vertex near edge not defined for point geometry') 
+        algRunner = AlgRunner()
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Creating index'))
+        usedInput = inputLyr if not onlySelected else QgsProcessingFeatureSourceDefinition(inputLyr.id(), True)
+        incrementedLayer = algRunner.runAddAutoIncrementalField(
+            usedInput,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Building auxiliar search structures'))
+        edgeSpatialIdx, edgeIdDict = self.buildEdgesAuxStructure(
+            incrementedLayer,
+            feedback=multiStepFeedback,
+            algRunner=algRunner
+        )
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo(self.tr('Getting flags'))
+        vertexNearEdgeFlagDict = self.getVertexNearEdgeFlagDict(
+            incrementedLayer,
+            edgeSpatialIdx,
+            edgeIdDict,
+            tol,
+            feedback=multiStepFeedback,
+            algRunner=algRunner
+        )
+        return vertexNearEdgeFlagDict
+
+    def buildEdgesAuxStructure(self, inputLyr, algRunner=None, feedback=None, context=None):
+        """
+        returns a spatialIndex of lines and a dict of the features
+        :param inputLyr: (QgsVectorLayer) layer to run build the aux structure.
+        :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
+        """
+        nSteps = 3 if inputLyr.geometryType() == QgsWkbTypes.PolygonGeometry else 2
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        edgeLyr = inputLyr if inputLyr.geometryType() == QgsWkbTypes.LineGeometry \
+            else algRunner.runPolygonsToLines(
+                    inputLyr,
+                    context,
+                    feedback=multiStepFeedback
+                )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        explodedEdges = algRunner.runExplodeLines(
+            edgeLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        spatialIdx, idDict = self.buildSpatialIndexAndIdDict(
+            edgeLyr,
+            feedback=multiStepFeedback
+        )
+        return spatialIdx, idDict
+
+    def getVertexNearEdgeFlagDict(self, inputLyr, edgeSpatialIdx, edgeIdDict, searchRadius, feedback=None, algRunner=None, context=None):
+        """
+        returns a dict in the following format:
+            {'featid':{
+                'vertexWkt': {
+                    'flagGeom' : --geometry of the flag--,
+                    'edges' : set of edges (QgsGeometry)
+                }
+
+            }
+            } 
+        :param inputLyr: (QgsVectorLayer) layer to run build the aux structure.
+        :param edgeSpatialIdx: (QgsSpatialIndex) spatial index to perform the search
+        :param edgeIdDict: (dict) dictionary in the format {featid:QgsFeature}
+        :param searchRadius: (float) search radius
+        :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
+        """
+        flagDict = defaultdict(lambda :defaultdict(lambda : {'edges': set()}) )
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        # step 1: extract vertexes
+        multiStepFeedback.setCurrentStep(0)
+        vertexLyr = algRunner.runExtractVertices(
+            inputLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        # step 2: for each vertex, get the buffer, the buffer BoundingBox and 
+        # assess wich edge intersects the buffer. If there is any, this is a flag
+        multiStepFeedback.setCurrentStep(1)
+        iterator, size = self.getFeatureList(vertexLyr, returnIterator=True, onlySelected=False)
+        if size == 0:
+            return {}
+        stepSize = 100/size
+        for current, pointFeat in enumerate(iterator):
+            if multiStepFeedback.isCanceled():
+                break
+            pointGeom = pointFeat.geometry()
+            buffer = pointGeom.buffer(searchRadius, -1)
+            bufferBB = buffer.boundingBox()
+            featId = pointFeat['featid']
+            #pointWkt is used as a key because it is unique and hashable
+            pointWkt = pointGeom.asWkt()
+            for candidateId in edgeSpatialIdx.intersects(bufferBB):
+                if multiStepFeedback.isCanceled():
+                    break
+                edgeGeom = edgeIdDict[candidateId].geometry()
+                #must maintain search within the same feature and 
+                # must be with not adjacent edges
+                if featId != edgeIdDict[candidateId] or pointGeom.touches(edgeGeom):
+                    continue
+                if buffer.intersects(edgeGeom):
+                    flagDict[featId][pointWkb]['flagGeom'] = buffer
+                    flagDict[featId][pointWkb]['edges'].add(edgeGeom)
+            #make progress
+            multiStepFeedback.setProgress(current * stepSize)
+        return flagDict
