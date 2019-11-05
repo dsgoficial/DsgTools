@@ -1,1 +1,413 @@
-<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'><qgis version="2.6.0-Brighton" minimumScale="1" maximumScale="1" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" simplifyMaxScale="1" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0"><edittypes><edittype widgetv2type="TextEdit" name="id"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="TextEdit" name="OGC_FID"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="TextEdit" name="id_complexo_gerad_energ_eletr"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="TextEdit" name="id_org_industrial"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="TextEdit" name="id_org_ext_mineral"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="TextEdit" name="id_org_comerc_serv"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="TextEdit" name="id_org_agropec_ext_veg_pesca"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="TextEdit" name="id_estrut_transporte"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="ValueMap" name="tipoexposicao"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Coberto" value="4"/><value key="Outros" value="99"/><value key="Fechado" value="3"/><value key="Céu aberto" value="5"/><value key="Desconhecido" value="0"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="operacional"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Desconhecido" value="0"/><value key="Sim" value="1"/><value key="Não" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="unidadevolume"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Litro" value="1"/><value key="Desconhecido" value="0"/><value key="Metro cúbico" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="matconstr"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Outros" value="99"/><value key="Desconhecido" value="0"/><value key="Alvenaria" value="1"/><value key="Não Aplicável" value="97"/><value key="Metal" value="3"/><value key="Madeira" value="5"/><value key="Rocha" value="4"/><value key="Concreto" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="geometriaaproximada"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Sim" value="1"/><value key="Não" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="situacaofisica"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Desconhecida" value="0"/><value key="Em Construção" value="3"/><value key="Abandonada" value="1"/><value key="Destruída" value="2"/><value key="Construída" value="5"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="tipodepgeral"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Galpão" value="8"/><value key="Outros" value="99"/><value key="Desconhecido" value="0"/><value key="Reservatório de Combustível" value="19"/><value key="Armazém" value="32"/><value key="Depósito frigorífico" value="11"/><value key="Silo" value="9"/><value key="Composteira" value="10"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="tipoconteudo"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Insumo" value="1"/><value key="Produto" value="2"/><value key="Resíduo" value="3"/><value key="Desconhecido" value="0"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="tipoprodutoresiduo"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Semente" value="19"/><value key="Pedra" value="22"/><value key="Granito" value="23"/><value key="Querosene" value="31"/><value key="Talco" value="27"/><value key="Álcool" value="30"/><value key="Gás" value="5"/><value key="Escória" value="36"/><value key="Estrume" value="17"/><value key="Grãos" value="6"/><value key="Vinhoto" value="16"/><value key="Folhagens" value="21"/><value key="Óleo diesel" value="28"/><value key="Forragem" value="41"/><value key="Petróleo" value="3"/><value key="Outros" value="99"/><value key="Bauxita" value="25"/><value key="Desconhecido" value="0"/><value key="Gasolina" value="29"/><value key="Cascalho" value="18"/><value key="Ferro" value="35"/><value key="Misto" value="98"/><value key="Mármore" value="24"/><value key="Cobre" value="32"/><value key="Sal" value="34"/><value key="Manganês" value="26"/><value key="Carvão" value="33"/><value key="Inseticida" value="20"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="tratamento"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Não aplicável" value="97"/><value key="Sim" value="1"/><value key="Desconhecido" value="0"/><value key="Não" value="2"/></widgetv2config></edittype></edittypes></qgis>
+<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
+<qgis maxScale="0" simplifyDrawingHints="0" readOnly="0" simplifyDrawingTol="1" version="3.7.0-Master" labelsEnabled="0" hasScaleBasedVisibilityFlag="0" styleCategories="AllStyleCategories" simplifyMaxScale="1" minScale="1e+8" simplifyLocal="1" simplifyAlgorithm="0">
+  <flags>
+    <Identifiable>1</Identifiable>
+    <Removable>1</Removable>
+    <Searchable>1</Searchable>
+  </flags>
+  <renderer-v2 enableorderby="0" forceraster="0" type="singleSymbol" symbollevels="0">
+    <symbols>
+      <symbol alpha="1" type="fill" name="0" clip_to_extent="1" force_rhr="0">
+        <layer pass="0" locked="0" enabled="1" class="SimpleFill">
+          <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
+          <prop v="145,82,45,255" k="color"/>
+          <prop v="bevel" k="joinstyle"/>
+          <prop v="0,0" k="offset"/>
+          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
+          <prop v="MM" k="offset_unit"/>
+          <prop v="35,35,35,255" k="outline_color"/>
+          <prop v="solid" k="outline_style"/>
+          <prop v="0.26" k="outline_width"/>
+          <prop v="MM" k="outline_width_unit"/>
+          <prop v="solid" k="style"/>
+          <data_defined_properties>
+            <Option type="Map">
+              <Option value="" type="QString" name="name"/>
+              <Option name="properties"/>
+              <Option value="collection" type="QString" name="type"/>
+            </Option>
+          </data_defined_properties>
+        </layer>
+      </symbol>
+    </symbols>
+    <rotation/>
+    <sizescale/>
+  </renderer-v2>
+  <customproperties/>
+  <blendMode>0</blendMode>
+  <featureBlendMode>0</featureBlendMode>
+  <layerOpacity>1</layerOpacity>
+  <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
+    <activeChecks type="StringList">
+      <Option value="" type="QString"/>
+    </activeChecks>
+    <checkConfiguration/>
+  </geometryOptions>
+  <fieldConfiguration>
+    <field name="id">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="nome">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="nomeabrev">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="geometriaaproximada">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="2" type="QString" name="Não"/>
+              <Option value="1" type="QString" name="Sim"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="operacional">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="2" type="QString" name="Não"/>
+              <Option value="1" type="QString" name="Sim"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="situacaofisica">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="1" type="QString" name="Abandonada"/>
+              <Option value="5" type="QString" name="Construída"/>
+              <Option value="0" type="QString" name="Desconhecida"/>
+              <Option value="2" type="QString" name="Destruída"/>
+              <Option value="3" type="QString" name="Em Construção"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="tipodepgeral">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="32" type="QString" name="Armazém"/>
+              <Option value="10" type="QString" name="Composteira"/>
+              <Option value="11" type="QString" name="Depósito frigorífico"/>
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="8" type="QString" name="Galpão"/>
+              <Option value="99" type="QString" name="Outros"/>
+              <Option value="19" type="QString" name="Reservatório de Combustível"/>
+              <Option value="9" type="QString" name="Silo"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="matconstr">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="1" type="QString" name="Alvenaria"/>
+              <Option value="2" type="QString" name="Concreto"/>
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="5" type="QString" name="Madeira"/>
+              <Option value="3" type="QString" name="Metal"/>
+              <Option value="97" type="QString" name="Não Aplicável"/>
+              <Option value="99" type="QString" name="Outros"/>
+              <Option value="4" type="QString" name="Rocha"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="tipoexposicao">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="4" type="QString" name="Coberto"/>
+              <Option value="5" type="QString" name="Céu aberto"/>
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="3" type="QString" name="Fechado"/>
+              <Option value="99" type="QString" name="Outros"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="tipoprodutoresiduo">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="25" type="QString" name="Bauxita"/>
+              <Option value="33" type="QString" name="Carvão"/>
+              <Option value="18" type="QString" name="Cascalho"/>
+              <Option value="32" type="QString" name="Cobre"/>
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="36" type="QString" name="Escória"/>
+              <Option value="17" type="QString" name="Estrume"/>
+              <Option value="35" type="QString" name="Ferro"/>
+              <Option value="21" type="QString" name="Folhagens"/>
+              <Option value="41" type="QString" name="Forragem"/>
+              <Option value="29" type="QString" name="Gasolina"/>
+              <Option value="23" type="QString" name="Granito"/>
+              <Option value="6" type="QString" name="Grãos"/>
+              <Option value="5" type="QString" name="Gás"/>
+              <Option value="20" type="QString" name="Inseticida"/>
+              <Option value="26" type="QString" name="Manganês"/>
+              <Option value="98" type="QString" name="Misto"/>
+              <Option value="24" type="QString" name="Mármore"/>
+              <Option value="99" type="QString" name="Outros"/>
+              <Option value="22" type="QString" name="Pedra"/>
+              <Option value="3" type="QString" name="Petróleo"/>
+              <Option value="31" type="QString" name="Querosene"/>
+              <Option value="34" type="QString" name="Sal"/>
+              <Option value="19" type="QString" name="Semente"/>
+              <Option value="27" type="QString" name="Talco"/>
+              <Option value="16" type="QString" name="Vinhoto"/>
+              <Option value="30" type="QString" name="Álcool"/>
+              <Option value="28" type="QString" name="Óleo diesel"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="tipoconteudo">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="1" type="QString" name="Insumo"/>
+              <Option value="2" type="QString" name="Produto"/>
+              <Option value="3" type="QString" name="Resíduo"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="unidadevolume">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="1" type="QString" name="Litro"/>
+              <Option value="2" type="QString" name="Metro cúbico"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="valorvolume">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="tratamento">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="2" type="QString" name="Não"/>
+              <Option value="97" type="QString" name="Não aplicável"/>
+              <Option value="1" type="QString" name="Sim"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="id_org_comerc_serv">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="id_org_ext_mineral">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="id_org_agropec_ext_veg_pesca">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="id_complexo_gerad_energ_eletr">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="id_estrut_transporte">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="id_org_industrial">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="area_otf">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+  </fieldConfiguration>
+  <aliases>
+    <alias field="id" index="0" name=""/>
+    <alias field="nome" index="1" name=""/>
+    <alias field="nomeabrev" index="2" name=""/>
+    <alias field="geometriaaproximada" index="3" name=""/>
+    <alias field="operacional" index="4" name=""/>
+    <alias field="situacaofisica" index="5" name=""/>
+    <alias field="tipodepgeral" index="6" name=""/>
+    <alias field="matconstr" index="7" name=""/>
+    <alias field="tipoexposicao" index="8" name=""/>
+    <alias field="tipoprodutoresiduo" index="9" name=""/>
+    <alias field="tipoconteudo" index="10" name=""/>
+    <alias field="unidadevolume" index="11" name=""/>
+    <alias field="valorvolume" index="12" name=""/>
+    <alias field="tratamento" index="13" name=""/>
+    <alias field="id_org_comerc_serv" index="14" name=""/>
+    <alias field="id_org_ext_mineral" index="15" name=""/>
+    <alias field="id_org_agropec_ext_veg_pesca" index="16" name=""/>
+    <alias field="id_complexo_gerad_energ_eletr" index="17" name=""/>
+    <alias field="id_estrut_transporte" index="18" name=""/>
+    <alias field="id_org_industrial" index="19" name=""/>
+    <alias field="area_otf" index="20" name=""/>
+  </aliases>
+  <excludeAttributesWMS/>
+  <excludeAttributesWFS/>
+  <defaults>
+    <default applyOnUpdate="0" field="id" expression=""/>
+    <default applyOnUpdate="0" field="nome" expression=""/>
+    <default applyOnUpdate="0" field="nomeabrev" expression=""/>
+    <default applyOnUpdate="0" field="geometriaaproximada" expression=""/>
+    <default applyOnUpdate="0" field="operacional" expression=""/>
+    <default applyOnUpdate="0" field="situacaofisica" expression=""/>
+    <default applyOnUpdate="0" field="tipodepgeral" expression=""/>
+    <default applyOnUpdate="0" field="matconstr" expression=""/>
+    <default applyOnUpdate="0" field="tipoexposicao" expression=""/>
+    <default applyOnUpdate="0" field="tipoprodutoresiduo" expression=""/>
+    <default applyOnUpdate="0" field="tipoconteudo" expression=""/>
+    <default applyOnUpdate="0" field="unidadevolume" expression=""/>
+    <default applyOnUpdate="0" field="valorvolume" expression=""/>
+    <default applyOnUpdate="0" field="tratamento" expression=""/>
+    <default applyOnUpdate="0" field="id_org_comerc_serv" expression=""/>
+    <default applyOnUpdate="0" field="id_org_ext_mineral" expression=""/>
+    <default applyOnUpdate="0" field="id_org_agropec_ext_veg_pesca" expression=""/>
+    <default applyOnUpdate="0" field="id_complexo_gerad_energ_eletr" expression=""/>
+    <default applyOnUpdate="0" field="id_estrut_transporte" expression=""/>
+    <default applyOnUpdate="0" field="id_org_industrial" expression=""/>
+    <default applyOnUpdate="0" field="area_otf" expression=""/>
+  </defaults>
+  <constraints>
+    <constraint unique_strength="1" field="id" constraints="3" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="nome" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="nomeabrev" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="geometriaaproximada" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="operacional" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="situacaofisica" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="tipodepgeral" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="matconstr" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="tipoexposicao" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="tipoprodutoresiduo" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="tipoconteudo" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="unidadevolume" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="valorvolume" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="tratamento" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="id_org_comerc_serv" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="id_org_ext_mineral" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="id_org_agropec_ext_veg_pesca" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="id_complexo_gerad_energ_eletr" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="id_estrut_transporte" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="id_org_industrial" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="area_otf" constraints="0" exp_strength="0" notnull_strength="0"/>
+  </constraints>
+  <constraintExpressions>
+    <constraint exp="" desc="" field="id"/>
+    <constraint exp="" desc="" field="nome"/>
+    <constraint exp="" desc="" field="nomeabrev"/>
+    <constraint exp="" desc="" field="geometriaaproximada"/>
+    <constraint exp="" desc="" field="operacional"/>
+    <constraint exp="" desc="" field="situacaofisica"/>
+    <constraint exp="" desc="" field="tipodepgeral"/>
+    <constraint exp="" desc="" field="matconstr"/>
+    <constraint exp="" desc="" field="tipoexposicao"/>
+    <constraint exp="" desc="" field="tipoprodutoresiduo"/>
+    <constraint exp="" desc="" field="tipoconteudo"/>
+    <constraint exp="" desc="" field="unidadevolume"/>
+    <constraint exp="" desc="" field="valorvolume"/>
+    <constraint exp="" desc="" field="tratamento"/>
+    <constraint exp="" desc="" field="id_org_comerc_serv"/>
+    <constraint exp="" desc="" field="id_org_ext_mineral"/>
+    <constraint exp="" desc="" field="id_org_agropec_ext_veg_pesca"/>
+    <constraint exp="" desc="" field="id_complexo_gerad_energ_eletr"/>
+    <constraint exp="" desc="" field="id_estrut_transporte"/>
+    <constraint exp="" desc="" field="id_org_industrial"/>
+    <constraint exp="" desc="" field="area_otf"/>
+  </constraintExpressions>
+  <expressionfields>
+    <field precision="0" comment="" length="0" typeName="" expression="$area" type="6" name="area_otf" subType="0"/>
+  </expressionfields>
+  <attributeactions/>
+  <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
+    <columns/>
+  </attributetableconfig>
+  <conditionalstyles>
+    <rowstyles/>
+    <fieldstyles/>
+  </conditionalstyles>
+  <editform tolerant="1"></editform>
+  <editforminit/>
+  <editforminitcodesource>0</editforminitcodesource>
+  <editforminitfilepath></editforminitfilepath>
+  <editforminitcode><![CDATA[]]></editforminitcode>
+  <featformsuppress>0</featformsuppress>
+  <editorlayout>generatedlayout</editorlayout>
+  <editable/>
+  <labelOnTop/>
+  <widgets/>
+  <previewExpression></previewExpression>
+  <mapTip></mapTip>
+  <layerGeometryType>2</layerGeometryType>
+</qgis>
