@@ -1042,7 +1042,7 @@ class LayerHandler(QObject):
                 if pointGeom.touches(edgeGeom):
                     continue
                 if buffer.intersects(edgeGeom):
-                    flagDict[featId][pointWkt]['flagGeom'] = buffer
+                    flagDict[featId][pointWkt]['flagGeom'] = pointGeom
                     flagDict[featId][pointWkt]['edges'].add(edgeGeom)
             #make progress
             multiStepFeedback.setProgress(current * stepSize)
