@@ -33,7 +33,7 @@ from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
-class IdentifyVertexNearEdgeOnPolygonsAlgorithm(ValidationAlgorithm):
+class IdentifyVertexNearEdgesAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
@@ -47,7 +47,10 @@ class IdentifyVertexNearEdgeOnPolygonsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr('Input layer'),
-                [QgsProcessing.TypeVectorPolygon]
+                [
+                    QgsProcessing.TypeVectorLine,
+                    QgsProcessing.TypeVectorPolygon
+                ]
             )
         )
 
@@ -97,9 +100,9 @@ class IdentifyVertexNearEdgeOnPolygonsAlgorithm(ValidationAlgorithm):
             self.SEARCH_RADIUS,
             context
         )
-        #output flag type is a polygon because the flag will be a circle with 
+        # output flag type is a polygon because the flag will be a circle with 
         # radius tol and center as the vertex
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Polygon, context)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
@@ -148,14 +151,14 @@ class IdentifyVertexNearEdgeOnPolygonsAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifyvertexnearedgeonpolygons'
+        return 'identifyvertexnearedges'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Vertex Near Edge On Polygons')
+        return self.tr('Identify Vertex Near Edges')
 
     def group(self):
         """
@@ -175,7 +178,7 @@ class IdentifyVertexNearEdgeOnPolygonsAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Quality Assurance Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyVertexNearEdgeOnPolygonsAlgorithm', string)
+        return QCoreApplication.translate('IdentifyVertexNearEdgesAlgorithm', string)
 
     def createInstance(self):
-        return IdentifyVertexNearEdgeOnPolygonsAlgorithm()
+        return IdentifyVertexNearEdgesAlgorithm()

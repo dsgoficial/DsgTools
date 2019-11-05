@@ -171,8 +171,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlg
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWrongBuildingAnglesAlgorithm import \
     IdentifyWrongBuildingAnglesAlgorithm
 
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyVertexNearEdgeOnPolygonsAlgorithm import \
-    IdentifyVertexNearEdgeOnPolygonsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyVertexNearEdgesAlgorithm import \
+    IdentifyVertexNearEdgesAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -252,7 +252,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     BatchRunAlgorithm(),
                     StringCsvToLayerListAlgorithm(),
                     IdentifyWrongBuildingAnglesAlgorithm(),
-                    IdentifyVertexNearEdgeOnPolygonsAlgorithm()
+                    IdentifyVertexNearEdgesAlgorithm()
                 ]
         return algList
 
