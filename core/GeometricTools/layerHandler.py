@@ -984,7 +984,7 @@ class LayerHandler(QObject):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         spatialIdx, idDict = self.buildSpatialIndexAndIdDict(
-            edgeLyr,
+            explodedEdges,
             feedback=multiStepFeedback
         )
         return spatialIdx, idDict
@@ -1039,11 +1039,11 @@ class LayerHandler(QObject):
                 edgeGeom = edgeIdDict[candidateId].geometry()
                 #must maintain search within the same feature and 
                 # must be with not adjacent edges
-                if featId != edgeIdDict[candidateId] or pointGeom.touches(edgeGeom):
+                if pointGeom.touches(edgeGeom):
                     continue
                 if buffer.intersects(edgeGeom):
-                    flagDict[featId][pointWkb]['flagGeom'] = buffer
-                    flagDict[featId][pointWkb]['edges'].add(edgeGeom)
+                    flagDict[featId][pointWkt]['flagGeom'] = buffer
+                    flagDict[featId][pointWkt]['edges'].add(edgeGeom)
             #make progress
             multiStepFeedback.setProgress(current * stepSize)
         return flagDict
