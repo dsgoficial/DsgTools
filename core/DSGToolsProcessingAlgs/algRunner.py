@@ -453,7 +453,7 @@ class AlgRunner:
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
             'INPUT' : inputLyr,
-            'OUTPUT' : 'TEMPORARY_OUTPUT'
+            'OUTPUT' : outputLyr
         }
         output = processing.run(
             'native:extractvertices',
@@ -467,7 +467,7 @@ class AlgRunner:
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
             'INPUT' : inputLyr,
-            'OUTPUT' : 'TEMPORARY_OUTPUT'
+            'OUTPUT' : outputLyr
         }
         output = processing.run(
             'native:explodelines',
