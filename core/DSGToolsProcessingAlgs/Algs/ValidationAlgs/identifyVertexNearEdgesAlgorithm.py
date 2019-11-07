@@ -111,7 +111,8 @@ class IdentifyVertexNearEdgesAlgorithm(ValidationAlgorithm):
             inputLyr,
             searchRadius,
             onlySelected=onlySelected,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
+            context=context
         )
         multiStepFeedback.setCurrentStep(1)
         self.raiseFeaturesFlags(
