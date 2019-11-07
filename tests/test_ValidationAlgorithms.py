@@ -166,7 +166,8 @@ class Tester(object):
             },
             "gpkg" : {
                 "testes_wgs84" : os.path.join(gpkgPaths, 'testes_wgs84.gpkg'),
-                "testes_sirgas2000_23s" : os.path.join(gpkgPaths, 'testes_sirgas2000_23s.gpkg')
+                "testes_sirgas2000_23s" : os.path.join(gpkgPaths, 'testes_sirgas2000_23s.gpkg'),
+                "testes_sirgas2000_24s" : os.path.join(gpkgPaths, 'testes_sirgas2000_24s.gpkg')
             }
         }
         # switch-case for dataset reading
@@ -380,7 +381,24 @@ class Tester(object):
                     'SELECTED': False
                 }
             ],
-
+            "dsgtools:identifyvertexnearedges" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works with polygon.",
+                    'FLAGS': "memory:",
+                    'INPUT': self.getInputLayers(
+                            'gpkg', 'testes_sirgas2000_24s', ['test1_vertexnearedge_a']
+                        )[0],
+                    'SELECTED': False
+                },
+                {
+                    '__comment' : "'Normal' test: checks if it works with polygon.",
+                    'FLAGS': "memory:",
+                    'INPUT': self.getInputLayers(
+                            'gpkg', 'testes_sirgas2000_24s', ['test2_vertexnearedge_l']
+                        )[0],
+                    'SELECTED': False
+                }
+            ],
             "dsgtools:removeduplicatedfeatures" : [
                 {
                     '__comment' : "'Normal' test: checks if it works.",
@@ -684,7 +702,7 @@ class Tester(object):
                 "dsgtools:identifyduplicatedlinesoncoverage", "dsgtools:identifysmalllines",
                 "dsgtools:identifyduplicatedpolygonsoncoverage", "dsgtools:identifysmallpolygons",
                 "dsgtools:identifydangles", "dsgtools:identifyduplicatedpointsoncoverage",
-                "dsgtools:identifyoverlaps",
+                "dsgtools:identifyoverlaps", "dsgtools:identifyvertexnearedges",
                 # correction algs
                 "dsgtools:removeduplicatedfeatures", "dsgtools:removeduplicatedgeometries",
                 "dsgtools:removesmalllines", "dsgtools:removesmallpolygons",
