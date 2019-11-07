@@ -414,3 +414,65 @@ class AlgRunner:
         }
         output = processing.run('dsgtools:matchandapplyqmlstylestolayersalgorithm', parameters, context = context, feedback = feedback)
         return output['OUTPUT']
+    
+    def runAddAutoIncrementalField(self, inputLyr, context, feedback = None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'FIELD_NAME' : 'featid',
+            'START':1,
+            'GROUP_FIELDS':[],
+            'SORT_EXPRESSION':'',
+            'SORT_ASCENDING':True,
+            'SORT_NULLS_FIRST':False,
+            'OUTPUT':outputLyr
+        }
+        output = processing.run(
+            'native:addautoincrementalfield',
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runPolygonsToLines(self, inputLyr, context, feedback = None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT':inputLyr,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            'native:polygonstolines',
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+
+    def runExtractVertices(self, inputLyr, context, feedback = None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            'native:extractvertices',
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runExplodeLines(self, inputLyr, context, feedback = None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            'native:explodelines',
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
