@@ -173,6 +173,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWrongBuild
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyVertexNearEdgesAlgorithm import \
     IdentifyVertexNearEdgesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUnsharedVertexOnSharedEdgesAlgorithm import \
+    IdentifyUnsharedVertexOnSharedEdgesAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -252,7 +254,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     BatchRunAlgorithm(),
                     StringCsvToLayerListAlgorithm(),
                     IdentifyWrongBuildingAnglesAlgorithm(),
-                    IdentifyVertexNearEdgesAlgorithm()
+                    IdentifyVertexNearEdgesAlgorithm(),
+                    IdentifyUnsharedVertexOnSharedEdgesAlgorithm()
                 ]
         return algList
 

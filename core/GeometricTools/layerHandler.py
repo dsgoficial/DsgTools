@@ -916,7 +916,7 @@ class LayerHandler(QObject):
         """
         return AlgRunner().runGrassDissolve(inputLyr, context, feedback=None, column=None, outputLyr=None, onFinish=None)
     
-    def getVertexNearEdgeDict(self, inputLyr, tol, onlySelected=False, feedback=None, context=None):
+    def getVertexNearEdgeDict(self, inputLyr, tol, onlySelected=False, feedback=None, context=None, algRunner=None):
         """
         Identifies vertexes that are too close to a vertex.
         :param inputLyr: (QgsVectorLayer) layer to run the identification.
@@ -926,7 +926,7 @@ class LayerHandler(QObject):
         """
         if inputLyr.geometryType() == QgsWkbTypes.PointGeometry:
             raise Exception('Vertex near edge not defined for point geometry') 
-        algRunner = AlgRunner()
+        algRunner = AlgRunner() if algRunner is None else algRunner
         context = dataobjects.createContext(feedback=feedback) if context is None else context
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
@@ -1047,3 +1047,96 @@ class LayerHandler(QObject):
             #make progress
             multiStepFeedback.setProgress(current * stepSize)
         return flagDict
+
+    def getUnsharedVertexOnSharedEdgesDict(self, inputLineLyrList, inputPolygonLyrList, searchRadius, onlySelected=False, feedback=None, context=None, algRunner=None):
+        """
+        returns a dict in the following format:
+            {'featid':{
+                'vertexWkt': {
+                    'flagGeom' : --geometry of the flag--,
+                    'edges' : set of edges (QgsGeometry)
+                }
+
+            }
+            } 
+        :param inputLineLyrList: (list of QgsVectorLayers) line layers to run build the aux structure.
+        :param inputPolygonLyrList: (list of QgsVectorLayers) line polygon layers to run build the aux structure.
+        :param searchRadius: (float) search radius
+        :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
+        """
+        inputList = inputLineLyrList
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Getting lines'))
+        linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
+            inputLineLyrList,
+            inputPolygonLyrList,
+            onlySelected=onlySelected,
+            feedback=multiStepFeedback,
+            context=context
+        )
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Building vertex near edge dict'))
+        #only selected should not be filled because it was already used to build the line lyr
+        return self.getVertexNearEdgeDict(
+            linesLyr,
+            searchRadius,
+            algRunner=algRunner,
+            feedback=multiStepFeedback,
+            context=context
+        )
+
+    def getLinesLayerFromPolygonsAndLinesLayers(self, inputLineLyrList, inputPolygonLyrList, algRunner=None, onlySelected=False, feedback=None, context=None):
+        """
+        returns a dict in the following format:
+            {'featid':{
+                'vertexWkt': {
+                    'flagGeom' : --geometry of the flag--,
+                    'edges' : set of edges (QgsGeometry)
+                }
+
+            }
+            } 
+        :param inputLineLyrList: (list of QgsVectorLayers) line layers to run build the aux structure.
+        :param inputPolygonLyrList: (list of QgsVectorLayers) line polygon layers to run build the aux structure.
+        :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
+        """
+        lineList = []
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        nSteps = len(inputLineLyrList) + len(inputPolygonLyrList) + 1
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) #set number of steps
+        currentStep = 0
+        for lineLyr in inputLineLyrList:
+            multiStepFeedback.setCurrentStep(currentStep)
+            lineList.append(
+                lineLyr if not onlySelected else \
+                algRunner.runSaveSelectedFeatures(
+                    lineLyr,
+                    context,
+                    feedback=multiStepFeedback
+                )
+            )
+            currentStep += 1
+        for polygonLyr in inputPolygonLyrList:
+            multiStepFeedback.setCurrentStep(currentStep)
+            usedInput = polygonLyr if not onlySelected else \
+                QgsProcessingFeatureSourceDefinition(polygonLyr.id(), True)
+            lineList.append(
+                algRunner.runPolygonsToLines(
+                    usedInput,
+                    context,
+                    feedback=multiStepFeedback
+                )
+            )
+            currentStep += 1
+        #merge layers
+        multiStepFeedback.setCurrentStep(currentStep)
+        mergedLayer = algRunner.runMergeVectorLayers(
+            lineList,
+            context,
+            feedback=multiStepFeedback
+        )
+        return mergedLayer
