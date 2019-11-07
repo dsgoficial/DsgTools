@@ -942,7 +942,8 @@ class LayerHandler(QObject):
         edgeSpatialIdx, edgeIdDict = self.buildEdgesAuxStructure(
             incrementedLayer,
             feedback=multiStepFeedback,
-            algRunner=algRunner
+            algRunner=algRunner,
+            context=context
         )
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Getting flags'))
@@ -952,7 +953,8 @@ class LayerHandler(QObject):
             edgeIdDict,
             tol,
             feedback=multiStepFeedback,
-            algRunner=algRunner
+            algRunner=algRunner,
+            context=context
         )
         return vertexNearEdgeFlagDict
 
