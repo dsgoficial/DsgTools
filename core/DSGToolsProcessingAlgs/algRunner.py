@@ -442,7 +442,7 @@ class AlgRunner:
             'OUTPUT' : outputLyr
         }
         output = processing.run(
-            'native:polygonstolines',
+            'native:polygonstolines' if qgis.core.Qgis.QGIS_VERSION_INT >= 30600 else 'qgis:polygonstolines',
             parameters,
             context=context,
             feedback=feedback
