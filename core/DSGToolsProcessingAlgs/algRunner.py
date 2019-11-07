@@ -476,3 +476,32 @@ class AlgRunner:
             feedback=feedback
         )
         return output['OUTPUT']
+    
+    def runMergeVectorLayers(self, inputList, context, feedback = None, outputLyr=None, crs=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'LAYERS':inputList,
+            'CRS':crs,
+            'OUTPUT':outputLyr
+        }
+        output = processing.run(
+            'native:mergevectorlayers',
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runSaveSelectedFeatures(self, inputLyr, context, feedback = None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'LAYERS':inputLyr,
+            'OUTPUT':outputLyr
+        }
+        processing.run(
+            "native:saveselectedfeatures",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT'] 
