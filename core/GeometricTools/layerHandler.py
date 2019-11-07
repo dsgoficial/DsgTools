@@ -1107,7 +1107,7 @@ class LayerHandler(QObject):
         algRunner = AlgRunner() if algRunner is None else algRunner
         context = dataobjects.createContext(feedback=feedback) if context is None else context
         nSteps = len(inputLineLyrList) + len(inputPolygonLyrList) + 1
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) #set number of steps
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback) #set number of steps
         currentStep = 0
         for lineLyr in inputLineLyrList:
             multiStepFeedback.setCurrentStep(currentStep)
