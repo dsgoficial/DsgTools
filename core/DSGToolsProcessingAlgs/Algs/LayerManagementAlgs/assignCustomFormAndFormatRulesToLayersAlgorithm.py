@@ -133,10 +133,12 @@ class AssignCustomFormAndFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
             elif mode == 1:
                 #only format rules
                 self.addRuleToLayer(lyr, feedback=feedback)
+                self.createRuleVirtualField(lyr)
             else:
                 #both
                 self.assignFormToLayer(lyr)
                 self.addRuleToLayer(lyr, feedback=feedback)
+                self.createRuleVirtualField(lyr)
             feedback.setProgress(current * stepSize)
         return {}
 
@@ -200,6 +202,23 @@ class AssignCustomFormAndFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
             ) 
         )
         return conditionalStyle
+    
+    def createRuleVirtualField(self, lyr):
+        expressionString = """CASE\n"""
+        for fieldName, dataList in self.ruleDict[lyr.name()].items():
+            for data in dataList:
+                expressionString += """WHEN {condition} THEN '{result}'\n""".format(
+                    condition=data['regra'],
+                    result=data['descricao']
+                )
+        expressionString += """ELSE ''\nEND"""
+        lyr.addExpressionField(
+                    expressionString,
+                    QgsField(
+                        'attribute_error_description',
+                        QVariant.String
+                    )
+                )
 
     def cleanRules(self, inputLayerList):
         for lyr in inputLayerList:
