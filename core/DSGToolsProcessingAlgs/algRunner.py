@@ -23,7 +23,7 @@
 import uuid
 
 import processing
-from qgis.core import QgsProcessingUtils, QgsVectorLayer
+from qgis.core import QgsProcessingUtils, QgsVectorLayer, Qgis
 
 
 class AlgRunner:
@@ -442,7 +442,7 @@ class AlgRunner:
             'OUTPUT' : outputLyr
         }
         output = processing.run(
-            'native:polygonstolines',
+            'native:polygonstolines' if Qgis.QGIS_VERSION_INT >= 30600 else 'qgis:polygonstolines',
             parameters,
             context=context,
             feedback=feedback
