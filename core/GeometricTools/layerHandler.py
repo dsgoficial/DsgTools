@@ -36,7 +36,7 @@ from qgis.core import (edit, Qgis, QgsCoordinateReferenceSystem, QgsCoordinateTr
     QgsExpression, QgsFeature, QgsFeatureRequest, QgsField, QgsGeometry, QgsMessageLog,
     QgsProcessingContext, QgsProcessingMultiStepFeedback, QgsProcessingUtils, QgsProject,
     QgsSpatialIndex, QgsVectorDataProvider, QgsVectorLayer, QgsVectorLayerUtils, QgsWkbTypes,
-    QgsProcessingFeatureSourceDefinition)
+    QgsProcessingFeatureSourceDefinition, QgsFeatureSink)
 from qgis.PyQt.Qt import QObject, QVariant
 
 from .featureHandler import FeatureHandler
@@ -1092,15 +1092,7 @@ class LayerHandler(QObject):
 
     def getLinesLayerFromPolygonsAndLinesLayers(self, inputLineLyrList, inputPolygonLyrList, algRunner=None, onlySelected=False, feedback=None, context=None):
         """
-        returns a dict in the following format:
-            {'featid':{
-                'vertexWkt': {
-                    'flagGeom' : --geometry of the flag--,
-                    'edges' : set of edges (QgsGeometry)
-                }
-
-            }
-            } 
+        returns a merged line lyr
         :param inputLineLyrList: (list of QgsVectorLayers) line layers to run build the aux structure.
         :param inputPolygonLyrList: (list of QgsVectorLayers) line polygon layers to run build the aux structure.
         :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
@@ -1142,3 +1134,114 @@ class LayerHandler(QObject):
             feedback=multiStepFeedback
         )
         return mergedLayer
+    
+    def getMergedLayerLayer(self, inputLayerList, onlySelected=False, feedback=None, context=None, algRunner=None):
+        """
+        This does almost the same of createAndPopulateUnifiedVectorLayer, but it
+        is much faster. Maybe the implementation of createAndPopulateUnifiedVectorLayer
+        should change.
+        """
+        lyrList = []
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        nSteps = len(inputLayerList) + 1
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback) #set number of steps
+        currentStep = 0
+        for lyr in inputLayerList:
+            multiStepFeedback.setCurrentStep(currentStep)
+            lyrList.append(
+                lyr if not onlySelected else algRunner.runSaveSelectedFeatures(
+                    lineLyr,
+                    context,
+                    feedback=multiStepFeedback
+                )
+            )
+            currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        return algRunner.runMergeVectorLayers(
+            lyrList,
+            context,
+            feedback=multiStepFeedback
+        )
+    
+    def getBoundariesFromPolygons(self, inputLyr, outputSink, constraintLineLyrList=None,\
+        constraintPolygonLyrList=None, context=None, feedback=None, algRunner=None):
+        """
+        FILL out
+        """
+        constraintLineLyrList = [] if constraintLineLyrList is None else constraintLineLyrList
+        constraintPolygonLyrList = [] if constraintPolygonLyrList is None else constraintPolygonLyrList
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Getting constraint lines'))
+        linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
+            constraintLineLyrList,
+            constraintPolygonLyrList,
+            onlySelected=False,
+            feedback=multiStepFeedback,
+            context=context,
+            algRunner=algRunner
+        )
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Building auxiliar search structures'))
+        constraintSpatialIdx, constraintIdDict = self.buildSpatialIndexAndIdDict(
+            linesLyr,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(2)
+        edgeLyr = algRunner.runPolygonsToLines(
+            inputLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(3)
+        explodedEdges = algRunner.runExplodeLines(
+            edgeLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(4)
+        explodedWithoutDuplicates = algRunner.runRemoveDuplicatedGeometries(
+            explodedEdges,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(5)
+        return self.filterEdges(
+            explodedWithoutDuplicates,
+            constraintSpatialIdx,
+            constraintIdDict,
+            outputSink,
+            feedback=multiStepFeedback,
+            context=context
+        )
+    
+    def filterEdges(self, inputLyr, constraintSpatialIdx, constraintIdDict,\
+        outputSink, context=None, feedback=None, algRunner=None):
+        """
+        """
+        notBoundarySet = set()
+        stepSize = 100/inputLyr.featureCount()
+        featList = [i for i in inputLyr.getFeatures()]
+        for current, feat in enumerate(featList):
+            if feedback is not None and feedback.isCanceled():
+                break
+            featGeom = feat.geometry()
+            featBB = featGeom.boundingBox()
+            for candidateId in constraintSpatialIdx.intersects(featBB):
+                if featGeom.within(constraintIdDict[candidateId].geometry()):
+                    notBoundarySet.add(feat)
+                    break
+            if feedback is not None:
+                feedback.setProgress(current*stepSize)
+        # addFeaturePartial = partial(outputSink.addFeature, flags=QgsFeatureSink.FastInsert)
+        for feat in featList:
+            if feat not in notBoundarySet:
+                outputSink.addFeature(feat, QgsFeatureSink.FastInsert)
+        # list(
+        #     map(
+        #         addFeaturePartial, ((feat for feat in inputLyr.getFeatures() if feat not in notBoundarySet))
+        #     )
+        # )
