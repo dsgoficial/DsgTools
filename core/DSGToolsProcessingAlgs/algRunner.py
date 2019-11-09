@@ -537,3 +537,43 @@ class AlgRunner:
             feedback=feedback
         )
         return output['OUTPUT']
+    
+    def runPolygonize(self, inputLyr, context, keepFields=False, feedback=None, outputLyr=None, onlySelected=False):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'KEEP_FIELDS' : keepFields,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "qgis:polygonize",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runJoinAttributesByLocation(self, inputLyr, joinLyr, context, predicateList=None, joinFields=None,\
+        method=None, discardNonMatching=True, feedback=None, outputLyr=None):
+        predicateList = [0] if predicateList is None else predicateList
+        joinFields = [] if joinFields is None else joinFields
+        method = 0 if method is None else method
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'JOIN' : joinLyr,
+            'PREDICATE' : predicateList,
+            'JOIN_FIELDS' : joinFields,
+            'METHOD' : 0,
+            'DISCARD_NONMATCHING' : discardNonMatching,
+            'PREFIX' : '',
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "qgis:joinattributesbylocation",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+        
