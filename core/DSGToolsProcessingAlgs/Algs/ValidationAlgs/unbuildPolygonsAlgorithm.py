@@ -148,13 +148,6 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         multiStepFeedback.pushInfo(
             self.tr('Building single polygon layer')
         )
-        # singlePolygonLayer = layerHandler.createAndPopulateUnifiedVectorLayer(
-        #     inputPolygonLyrList,
-        #     geomType=QgsWkbTypes.Polygon,
-        #     onlySelected=onlySelected,
-        #     attributeTupple=True,
-        #     feedback=multiStepFeedback
-        # )
         singlePolygonLayer = layerHandler.getMergedLayerLayer(
             inputPolygonLyrList,
             onlySelected=onlySelected,
@@ -163,10 +156,10 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             algRunner=algRunner
         )
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(
-            self.tr('Computing center points')
-        )
-        (output_center_point_sink, output_center_point_sink_id) = self.parameterAsSink(
+        (
+            output_center_point_sink,
+            output_center_point_sink_id
+        ) = self.parameterAsSink(
             parameters,
             self.OUTPUT_CENTER_POINTS,
             context,
@@ -174,19 +167,10 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             QgsWkbTypes.Point,
             singlePolygonLayer.sourceCrs()
         )
-        outputCenterPointLyr = algRunner.runPointOnSurface(
-            singlePolygonLayer,
-            context,
-            feedback=multiStepFeedback
-        )
-        for feat in outputCenterPointLyr.getFeatures():
-            output_center_point_sink.addFeature(feat, QgsFeatureSink.FastInsert)
-
-        multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(
-            self.tr('Computing boundaries')
-        )
-        (output_boundaries_sink, output_boundaries_sink_id) = self.parameterAsSink(
+        (
+            output_boundaries_sink,
+            output_boundaries_sink_id
+        ) = self.parameterAsSink(
             parameters,
             self.OUTPUT_BOUNDARIES,
             context,
@@ -194,8 +178,9 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             QgsWkbTypes.LineString,
             singlePolygonLayer.sourceCrs()
         )
-        layerHandler.getBoundariesFromPolygons(
+        layerHandler.getCentroidsAndBoundariesFromPolygons(
             singlePolygonLayer,
+            output_center_point_sink,
             output_boundaries_sink,
             constraintLineLyrList=constraintLineLyrList,
             constraintPolygonLyrList=constraintPolygonLyrList,
@@ -204,7 +189,10 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
             algRunner=algRunner
         )
 
-        return {self.OUTPUT_CENTER_POINTS : output_center_point_sink_id, self.OUTPUT_BOUNDARIES : output_boundaries_sink_id}
+        return {
+            self.OUTPUT_CENTER_POINTS : output_center_point_sink_id,
+            self.OUTPUT_BOUNDARIES : output_boundaries_sink_id
+        }
 
     def name(self):
         """

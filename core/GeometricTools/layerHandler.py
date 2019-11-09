@@ -1134,7 +1134,7 @@ class LayerHandler(QObject):
             feedback=multiStepFeedback
         )
         return mergedLayer
-    
+
     def getMergedLayerLayer(self, inputLayerList, onlySelected=False, feedback=None, context=None, algRunner=None):
         """
         This does almost the same of createAndPopulateUnifiedVectorLayer, but it
@@ -1163,9 +1163,9 @@ class LayerHandler(QObject):
             context,
             feedback=multiStepFeedback
         )
-    
-    def getBoundariesFromPolygons(self, inputLyr, outputSink, constraintLineLyrList=None,\
-        constraintPolygonLyrList=None, context=None, feedback=None, algRunner=None):
+
+    def getCentroidsAndBoundariesFromPolygons(self, inputLyr, outputCenterPointSink, outputBoundarySink,\
+        constraintLineLyrList=None, constraintPolygonLyrList=None, context=None, feedback=None, algRunner=None):
         """
         FILL out
         """
@@ -1173,7 +1173,7 @@ class LayerHandler(QObject):
         constraintPolygonLyrList = [] if constraintPolygonLyrList is None else constraintPolygonLyrList
         algRunner = AlgRunner() if algRunner is None else algRunner
         context = dataobjects.createContext(feedback=feedback) if context is None else context
-        multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(7, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Getting constraint lines'))
         linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
@@ -1209,17 +1209,69 @@ class LayerHandler(QObject):
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(5)
-        return self.filterEdges(
+        self.buildCenterPoints(
+            inputLyr,
+            outputCenterPointSink,
+            explodedWithoutDuplicates,
+            linesLyr,
+            feedback=multiStepFeedback,
+            context=context,
+            algRunner=algRunner
+        )
+        multiStepFeedback.setCurrentStep(6)
+        self.filterEdges(
             explodedWithoutDuplicates,
             constraintSpatialIdx,
             constraintIdDict,
-            outputSink,
+            outputBoundarySink,
             feedback=multiStepFeedback,
             context=context
         )
+
+    def buildCenterPoints(self, inputLyr, outputCenterPointSink, polygonBoundaryLyr,\
+        constraintLineLyr=None, context=None, feedback=None, algRunner=None):
+        """
+
+        """
+        # 1- Merge line layers
+        # 2- Build polygons
+        # 3- Get center points from built polygons
+        # 4- Make spatial join of center points with original polygons to get attributes
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        mergedLineLyr = polygonBoundaryLyr if constraintLineLyr is None\
+            else algRunner.runMergeVectorLayers(
+                [polygonBoundaryLyr, constraintLineLyr],
+                context,
+                feedback=multiStepFeedback
+            )
+        multiStepFeedback.setCurrentStep(1)
+        outputPolygonLyr = algRunner.runPolygonize(
+            mergedLineLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(2)
+        centroidLyr = algRunner.runPointOnSurface(
+            outputPolygonLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(3)
+        centroidsWithAttributes = algRunner.runJoinAttributesByLocation(
+            centroidLyr,
+            inputLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        for feat in centroidsWithAttributes.getFeatures():
+            outputCenterPointSink.addFeature(feat, QgsFeatureSink.FastInsert)
+
     
     def filterEdges(self, inputLyr, constraintSpatialIdx, constraintIdDict,\
-        outputSink, context=None, feedback=None, algRunner=None):
+        outputBoundarySink, context=None, feedback=None, algRunner=None):
         """
         """
         notBoundarySet = set()
@@ -1236,12 +1288,6 @@ class LayerHandler(QObject):
                     break
             if feedback is not None:
                 feedback.setProgress(current*stepSize)
-        # addFeaturePartial = partial(outputSink.addFeature, flags=QgsFeatureSink.FastInsert)
         for feat in featList:
             if feat not in notBoundarySet:
-                outputSink.addFeature(feat, QgsFeatureSink.FastInsert)
-        # list(
-        #     map(
-        #         addFeaturePartial, ((feat for feat in inputLyr.getFeatures() if feat not in notBoundarySet))
-        #     )
-        # )
+                outputBoundarySink.addFeature(feat, QgsFeatureSink.FastInsert)
