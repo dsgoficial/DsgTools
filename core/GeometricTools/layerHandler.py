@@ -1239,7 +1239,7 @@ class LayerHandler(QObject):
         # 4- Make spatial join of center points with original polygons to get attributes
         algRunner = AlgRunner() if algRunner is None else algRunner
         context = dataobjects.createContext(feedback=feedback) if context is None else context
-        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
         multiStepFeedback.setCurrentStep(0)
         mergedLineLyr = polygonBoundaryLyr if constraintLineLyr is None\
             else algRunner.runMergeVectorLayers(
@@ -1248,18 +1248,30 @@ class LayerHandler(QObject):
                 feedback=multiStepFeedback
             )
         multiStepFeedback.setCurrentStep(1)
-        outputPolygonLyr = algRunner.runPolygonize(
+        splitSegmentsLyr = algRunner.runExplodeLines(
             mergedLineLyr,
             context,
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(2)
+        segmentsWithoutDuplicates = algRunner.runRemoveDuplicatedGeometries(
+            splitSegmentsLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(3)
+        outputPolygonLyr = algRunner.runPolygonize(
+            segmentsWithoutDuplicates,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(4)
         centroidLyr = algRunner.runPointOnSurface(
             outputPolygonLyr,
             context,
             feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(3)
+        multiStepFeedback.setCurrentStep(5)
         centroidsWithAttributes = algRunner.runJoinAttributesByLocation(
             centroidLyr,
             inputLyr,
