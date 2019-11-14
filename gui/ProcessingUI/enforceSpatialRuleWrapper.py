@@ -143,8 +143,8 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 "type" : "widget",
                 # problema: conectar o sinal da mapLayerComboBox no filterexpression
                 "widget" : self.cardinalityWidget,
-                "setter" : "setCurrentText",
-                "getter" : "currentText"
+                "setter" : "setText",
+                "getter" : "text"
             }
         })
         otw.setHeaderDoubleClickBehaviour("replicate")
