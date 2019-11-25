@@ -5,11 +5,11 @@ CREATE EXTENSION postgis#
 SET search_path TO pg_catalog,public,edgv,dominios#
 
 CREATE TABLE public.db_metadata(
-	 edgvversion varchar(50) NOT NULL DEFAULT '2.1.3 Pro',
-	 dbimplversion varchar(50) NOT NULL DEFAULT '5.00',
-	 CONSTRAINT edgvversioncheck CHECK (edgvversion = '2.1.3 Pro')
+	 edgvversion varchar(50) NOT NULL DEFAULT 'EDGV 2.1.3 Pro',
+	 dbimplversion varchar(50) NOT NULL DEFAULT '5.4',
+	 CONSTRAINT edgvversioncheck CHECK (edgvversion = 'EDGV 2.1.3 Pro')
 )#
-INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('2.1.3 Pro','5.00')#
+INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 2.1.3 Pro','5.4')#
 
 CREATE TABLE dominios.tipo_comprovacao (
 	 code smallint NOT NULL,
@@ -354,6 +354,7 @@ CREATE TABLE dominios.tipo_edificacao (
 
 INSERT INTO dominios.tipo_edificacao (code,code_name, filter) VALUES (0,'Edificação genérica','Edificação genérica')#
 INSERT INTO dominios.tipo_edificacao (code,code_name, filter) VALUES (1,'Edificação destruída','Edificação genérica')#
+INSERT INTO dominios.tipo_edificacao (code,code_name, filter) VALUES (2,'Edificação abandonada','Edificação genérica')#
 INSERT INTO dominios.tipo_edificacao (code,code_name, filter) VALUES (101,'Com - Centro de operações de comunicação','Edificação de comunicação')#
 INSERT INTO dominios.tipo_edificacao (code,code_name, filter) VALUES (102,'Com - Central de comutação e transmissão','Edificação de comunicação')#
 INSERT INTO dominios.tipo_edificacao (code,code_name, filter) VALUES (103,'Com - Estação rádio-base','Edificação de comunicação')#
@@ -966,6 +967,25 @@ INSERT INTO dominios.tipo_trecho_drenagem (code,code_name) VALUES (3,'Fundo de v
 INSERT INTO dominios.tipo_trecho_drenagem (code,code_name) VALUES (11,'Vala')#
 INSERT INTO dominios.tipo_trecho_drenagem (code,code_name) VALUES (999,'A SER PREENCHIDO')#
 
+CREATE TABLE dominios.tipo_hid (
+	 code smallint NOT NULL,
+	 code_name text NOT NULL,
+	 CONSTRAINT tipo_hid_pk PRIMARY KEY (code)
+)#
+
+INSERT INTO dominios.tipo_hid (code,code_name) VALUES (1,'Rio')#
+INSERT INTO dominios.tipo_hid (code,code_name) VALUES (2,'Canal')#
+INSERT INTO dominios.tipo_hid (code,code_name) VALUES (3,'Oceano')#
+INSERT INTO dominios.tipo_hid (code,code_name) VALUES (4,'Baía')#
+INSERT INTO dominios.tipo_hid (code,code_name) VALUES (5,'Enseada')#
+INSERT INTO dominios.tipo_hid (code,code_name) VALUES (6,'Meando Abandonado')#
+INSERT INTO dominios.tipo_hid (code,code_name) VALUES (7,'Lago ou Lagoa')#
+INSERT INTO dominios.tipo_hid (code,code_name) VALUES (9,'Laguna')#
+INSERT INTO dominios.tipo_hid (code,code_name) VALUES (10,'Represa')#
+INSERT INTO dominios.tipo_hid (code,code_name) VALUES (11,'Açude')#
+INSERT INTO dominios.tipo_hid (code,code_name) VALUES (12,'Terreno Sujeito a Inundação')#
+INSERT INTO dominios.tipo_hid (code,code_name) VALUES (999,'A SER PREENCHIDO')#
+
 CREATE TABLE dominios.tipo_veg (
 	 code smallint NOT NULL,
 	 code_name text NOT NULL,
@@ -987,7 +1007,8 @@ INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (142,'Cult - Videi
 INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (150,'Cult - Arroz de inundação','Vegetação Cultivada')#
 INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (151,'Cult - Maçã','Vegetação Cultivada')#
 INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (152,'Cult - Pêssego','Vegetação Cultivada')#
-INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (153,'Cult - Pêra','Vegetação Cultivada')#
+INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (153,'Cult - Pera','Vegetação Cultivada')#
+INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (194,'Cult - Perene não identificado','Vegetação Cultivada')#
 INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (195,'Cult - Perene misto','Vegetação Cultivada')#
 INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (196,'Cult - Anual não identificado','Vegetação Cultivada')#
 INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (198,'Cult - Perene outros','Vegetação Cultivada')#
@@ -1003,6 +1024,7 @@ INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (702,'Cerrado/Cerr
 INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (801,'Caatinga','Caatinga')#
 INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (901,'Campo','Campo')#
 INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (1000,'Terreno exposto desconhecido','Terreno Exposto')#
+INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (1001,'Terreno exposto areia','Terreno Exposto')#
 INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (1101,'Vegetação de área de contato','Vegetação de área de contato')#
 INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (1296,'Ref - Não identificado','Reflorestamento')#
 INSERT INTO dominios.tipo_veg (code,code_name, filter) VALUES (999,'A SER PREENCHIDO','A SER PREENCHIDO')#
@@ -1139,6 +1161,9 @@ ALTER TABLE edgv.cobter_vegetacao_a
 	 REFERENCES dominios.tipo_veg (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
+ALTER TABLE edgv.cobter_vegetacao_a
+	 ADD CONSTRAINT cobter_vegetacao_a_tipo_check 
+	 CHECK (tipo = ANY(ARRAY[301 :: SMALLINT, 302 :: SMALLINT, 201 :: SMALLINT, 202 :: SMALLINT, 801 :: SMALLINT, 501 :: SMALLINT, 701 :: SMALLINT, 702 :: SMALLINT, 401 :: SMALLINT, 1101 :: SMALLINT, 901 :: SMALLINT, 601 :: SMALLINT, 194 :: SMALLINT, 196 :: SMALLINT, 150 :: SMALLINT, 118 :: SMALLINT, 102 :: SMALLINT, 115 :: SMALLINT, 114 :: SMALLINT, 116 :: SMALLINT, 103 :: SMALLINT, 151 :: SMALLINT, 117 :: SMALLINT, 153 :: SMALLINT, 152 :: SMALLINT, 119 :: SMALLINT, 142 :: SMALLINT, 107 :: SMALLINT, 124 :: SMALLINT, 198 :: SMALLINT, 195 :: SMALLINT, 1296 :: SMALLINT, 1000 :: SMALLINT, 999 :: SMALLINT]))# 
 ALTER TABLE edgv.cobter_vegetacao_a ALTER COLUMN tipo SET DEFAULT 999#
 
 ALTER TABLE edgv.cobter_vegetacao_a
@@ -1351,7 +1376,7 @@ ALTER TABLE edgv.constr_edificacao_a
 
 ALTER TABLE edgv.constr_edificacao_a
 	 ADD CONSTRAINT constr_edificacao_a_tipo_check 
-	 CHECK (tipo = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 101 :: SMALLINT, 102 :: SMALLINT, 103 :: SMALLINT, 104 :: SMALLINT, 201 :: SMALLINT, 301 :: SMALLINT, 302 :: SMALLINT, 303 :: SMALLINT, 395 :: SMALLINT, 398 :: SMALLINT, 403 :: SMALLINT, 405 :: SMALLINT, 406 :: SMALLINT, 407 :: SMALLINT, 498 :: SMALLINT, 516 :: SMALLINT, 517 :: SMALLINT, 518 :: SMALLINT, 519 :: SMALLINT, 520 :: SMALLINT, 521 :: SMALLINT, 522 :: SMALLINT, 523 :: SMALLINT, 524 :: SMALLINT, 525 :: SMALLINT, 595 :: SMALLINT, 601 :: SMALLINT, 602 :: SMALLINT, 603 :: SMALLINT, 604 :: SMALLINT, 605 :: SMALLINT, 606 :: SMALLINT, 607 :: SMALLINT, 698 :: SMALLINT, 709 :: SMALLINT, 710 :: SMALLINT, 711 :: SMALLINT, 712 :: SMALLINT, 713 :: SMALLINT, 798 :: SMALLINT, 801 :: SMALLINT, 802 :: SMALLINT, 803 :: SMALLINT, 804 :: SMALLINT, 805 :: SMALLINT, 806 :: SMALLINT, 807 :: SMALLINT, 808 :: SMALLINT, 898 :: SMALLINT, 903 :: SMALLINT, 904 :: SMALLINT, 905 :: SMALLINT, 906 :: SMALLINT, 907 :: SMALLINT, 998 :: SMALLINT, 1015 :: SMALLINT, 1016 :: SMALLINT, 1017 :: SMALLINT, 1018 :: SMALLINT, 1019 :: SMALLINT, 1020 :: SMALLINT, 1021 :: SMALLINT, 1022 :: SMALLINT, 1023 :: SMALLINT, 1024 :: SMALLINT, 1025 :: SMALLINT, 1026 :: SMALLINT, 1027 :: SMALLINT, 1028 :: SMALLINT, 1029 :: SMALLINT, 1030 :: SMALLINT, 1031 :: SMALLINT, 1032 :: SMALLINT, 1033 :: SMALLINT, 1034 :: SMALLINT, 1035 :: SMALLINT, 1036 :: SMALLINT, 1037 :: SMALLINT, 1045 :: SMALLINT, 1098 :: SMALLINT, 1110 :: SMALLINT, 1111 :: SMALLINT, 1113 :: SMALLINT, 1114 :: SMALLINT, 1198 :: SMALLINT, 1212 :: SMALLINT, 1213 :: SMALLINT, 1214 :: SMALLINT, 1215 :: SMALLINT, 1216 :: SMALLINT, 1217 :: SMALLINT, 1218 :: SMALLINT, 1298 :: SMALLINT, 1301 :: SMALLINT, 1302 :: SMALLINT, 1303 :: SMALLINT, 1304 :: SMALLINT, 1305 :: SMALLINT, 1306 :: SMALLINT, 1307 :: SMALLINT, 1308 :: SMALLINT, 1309 :: SMALLINT, 1322 :: SMALLINT, 1398 :: SMALLINT, 1401 :: SMALLINT, 1501 :: SMALLINT, 1712 :: SMALLINT, 1717 :: SMALLINT, 1718 :: SMALLINT, 1719 :: SMALLINT, 1798 :: SMALLINT, 1820 :: SMALLINT, 1821 :: SMALLINT, 1910 :: SMALLINT, 1911 :: SMALLINT, 1995 :: SMALLINT, 2025 :: SMALLINT, 2026 :: SMALLINT, 2027 :: SMALLINT, 2028 :: SMALLINT, 2029 :: SMALLINT, 2030 :: SMALLINT, 2031 :: SMALLINT, 2132 :: SMALLINT, 2133 :: SMALLINT, 2195 :: SMALLINT, 2208 :: SMALLINT, 2209 :: SMALLINT, 2210 :: SMALLINT, 2212 :: SMALLINT, 2213 :: SMALLINT, 2214 :: SMALLINT, 2298 :: SMALLINT, 2316 :: SMALLINT, 2317 :: SMALLINT, 2318 :: SMALLINT, 2319 :: SMALLINT, 2320 :: SMALLINT, 2398 :: SMALLINT, 2426 :: SMALLINT, 2427 :: SMALLINT, 2428 :: SMALLINT, 2429 :: SMALLINT, 2498 :: SMALLINT, 2526 :: SMALLINT, 2527 :: SMALLINT, 2533 :: SMALLINT, 2534 :: SMALLINT, 2535 :: SMALLINT, 2536 :: SMALLINT, 2598 :: SMALLINT, 2601 :: SMALLINT, 2701 :: SMALLINT, 999 :: SMALLINT]))# 
+	 CHECK (tipo = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 101 :: SMALLINT, 102 :: SMALLINT, 103 :: SMALLINT, 104 :: SMALLINT, 201 :: SMALLINT, 301 :: SMALLINT, 302 :: SMALLINT, 303 :: SMALLINT, 395 :: SMALLINT, 398 :: SMALLINT, 403 :: SMALLINT, 405 :: SMALLINT, 406 :: SMALLINT, 407 :: SMALLINT, 498 :: SMALLINT, 516 :: SMALLINT, 517 :: SMALLINT, 518 :: SMALLINT, 519 :: SMALLINT, 520 :: SMALLINT, 521 :: SMALLINT, 522 :: SMALLINT, 523 :: SMALLINT, 524 :: SMALLINT, 525 :: SMALLINT, 595 :: SMALLINT, 601 :: SMALLINT, 602 :: SMALLINT, 603 :: SMALLINT, 604 :: SMALLINT, 605 :: SMALLINT, 606 :: SMALLINT, 607 :: SMALLINT, 698 :: SMALLINT, 709 :: SMALLINT, 710 :: SMALLINT, 711 :: SMALLINT, 712 :: SMALLINT, 713 :: SMALLINT, 798 :: SMALLINT, 801 :: SMALLINT, 802 :: SMALLINT, 803 :: SMALLINT, 804 :: SMALLINT, 805 :: SMALLINT, 806 :: SMALLINT, 807 :: SMALLINT, 808 :: SMALLINT, 898 :: SMALLINT, 903 :: SMALLINT, 904 :: SMALLINT, 905 :: SMALLINT, 906 :: SMALLINT, 907 :: SMALLINT, 998 :: SMALLINT, 1015 :: SMALLINT, 1016 :: SMALLINT, 1017 :: SMALLINT, 1018 :: SMALLINT, 1019 :: SMALLINT, 1020 :: SMALLINT, 1021 :: SMALLINT, 1022 :: SMALLINT, 1023 :: SMALLINT, 1024 :: SMALLINT, 1025 :: SMALLINT, 1026 :: SMALLINT, 1027 :: SMALLINT, 1028 :: SMALLINT, 1029 :: SMALLINT, 1030 :: SMALLINT, 1031 :: SMALLINT, 1032 :: SMALLINT, 1033 :: SMALLINT, 1034 :: SMALLINT, 1035 :: SMALLINT, 1036 :: SMALLINT, 1037 :: SMALLINT, 1045 :: SMALLINT, 1098 :: SMALLINT, 1110 :: SMALLINT, 1111 :: SMALLINT, 1113 :: SMALLINT, 1114 :: SMALLINT, 1198 :: SMALLINT, 1212 :: SMALLINT, 1213 :: SMALLINT, 1214 :: SMALLINT, 1215 :: SMALLINT, 1216 :: SMALLINT, 1217 :: SMALLINT, 1218 :: SMALLINT, 1298 :: SMALLINT, 1301 :: SMALLINT, 1302 :: SMALLINT, 1303 :: SMALLINT, 1304 :: SMALLINT, 1305 :: SMALLINT, 1306 :: SMALLINT, 1307 :: SMALLINT, 1308 :: SMALLINT, 1309 :: SMALLINT, 1322 :: SMALLINT, 1398 :: SMALLINT, 1401 :: SMALLINT, 1501 :: SMALLINT, 1712 :: SMALLINT, 1717 :: SMALLINT, 1718 :: SMALLINT, 1719 :: SMALLINT, 1798 :: SMALLINT, 1820 :: SMALLINT, 1821 :: SMALLINT, 1910 :: SMALLINT, 1911 :: SMALLINT, 1995 :: SMALLINT, 2025 :: SMALLINT, 2026 :: SMALLINT, 2027 :: SMALLINT, 2028 :: SMALLINT, 2029 :: SMALLINT, 2030 :: SMALLINT, 2031 :: SMALLINT, 2132 :: SMALLINT, 2133 :: SMALLINT, 2195 :: SMALLINT, 2208 :: SMALLINT, 2209 :: SMALLINT, 2210 :: SMALLINT, 2212 :: SMALLINT, 2213 :: SMALLINT, 2214 :: SMALLINT, 2298 :: SMALLINT, 2316 :: SMALLINT, 2317 :: SMALLINT, 2318 :: SMALLINT, 2319 :: SMALLINT, 2320 :: SMALLINT, 2398 :: SMALLINT, 2426 :: SMALLINT, 2427 :: SMALLINT, 2428 :: SMALLINT, 2429 :: SMALLINT, 2498 :: SMALLINT, 2526 :: SMALLINT, 2527 :: SMALLINT, 2533 :: SMALLINT, 2534 :: SMALLINT, 2535 :: SMALLINT, 2536 :: SMALLINT, 2598 :: SMALLINT, 2601 :: SMALLINT, 2701 :: SMALLINT, 999 :: SMALLINT]))# 
 ALTER TABLE edgv.constr_edificacao_a ALTER COLUMN tipo SET DEFAULT 999#
 
 ALTER TABLE edgv.constr_edificacao_a
@@ -1479,7 +1504,7 @@ ALTER TABLE edgv.constr_extracao_mineral_a
 
 ALTER TABLE edgv.constr_extracao_mineral_a
 	 ADD CONSTRAINT constr_extracao_mineral_a_tipo_produto_residuo_check 
-	 CHECK (tipo_produto_residuo = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 18 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 34 :: SMALLINT, 35 :: SMALLINT, 37 :: SMALLINT, 38 :: SMALLINT, 39 :: SMALLINT, 40 :: SMALLINT, 42 :: SMALLINT, 43 :: SMALLINT, 999 :: SMALLINT]))# 
+	 CHECK (tipo_produto_residuo = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 18 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 34 :: SMALLINT, 35 :: SMALLINT, 37 :: SMALLINT, 38 :: SMALLINT, 39 :: SMALLINT, 40 :: SMALLINT, 42 :: SMALLINT, 43 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
 ALTER TABLE edgv.constr_extracao_mineral_a ALTER COLUMN tipo_produto_residuo SET DEFAULT 999#
 
 ALTER TABLE edgv.constr_extracao_mineral_a
@@ -1549,7 +1574,7 @@ ALTER TABLE edgv.constr_extracao_mineral_p
 
 ALTER TABLE edgv.constr_extracao_mineral_p
 	 ADD CONSTRAINT constr_extracao_mineral_p_tipo_produto_residuo_check 
-	 CHECK (tipo_produto_residuo = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 18 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 34 :: SMALLINT, 35 :: SMALLINT, 37 :: SMALLINT, 38 :: SMALLINT, 39 :: SMALLINT, 40 :: SMALLINT, 42 :: SMALLINT, 43 :: SMALLINT, 999 :: SMALLINT]))# 
+	 CHECK (tipo_produto_residuo = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 18 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 34 :: SMALLINT, 35 :: SMALLINT, 37 :: SMALLINT, 38 :: SMALLINT, 39 :: SMALLINT, 40 :: SMALLINT, 42 :: SMALLINT, 43 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
 ALTER TABLE edgv.constr_extracao_mineral_p ALTER COLUMN tipo_produto_residuo SET DEFAULT 999#
 
 ALTER TABLE edgv.constr_extracao_mineral_p
@@ -2129,7 +2154,7 @@ ALTER TABLE edgv.infra_elemento_infraestrutura_a
 
 ALTER TABLE edgv.infra_elemento_infraestrutura_a
 	 ADD CONSTRAINT infra_elemento_infraestrutura_a_material_construcao_check 
-	 CHECK (material_construcao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 23 :: SMALLINT, 97 :: SMALLINT, 999 :: SMALLINT]))# 
+	 CHECK (material_construcao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 23 :: SMALLINT, 97 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
 ALTER TABLE edgv.infra_elemento_infraestrutura_a ALTER COLUMN material_construcao SET DEFAULT 999#
 
 ALTER TABLE edgv.infra_elemento_infraestrutura_a
@@ -2196,7 +2221,7 @@ ALTER TABLE edgv.infra_elemento_infraestrutura_l
 
 ALTER TABLE edgv.infra_elemento_infraestrutura_l
 	 ADD CONSTRAINT infra_elemento_infraestrutura_l_material_construcao_check 
-	 CHECK (material_construcao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 23 :: SMALLINT, 97 :: SMALLINT, 999 :: SMALLINT]))# 
+	 CHECK (material_construcao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 23 :: SMALLINT, 97 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
 ALTER TABLE edgv.infra_elemento_infraestrutura_l ALTER COLUMN material_construcao SET DEFAULT 999#
 
 ALTER TABLE edgv.infra_elemento_infraestrutura_l
@@ -2263,7 +2288,7 @@ ALTER TABLE edgv.infra_elemento_infraestrutura_p
 
 ALTER TABLE edgv.infra_elemento_infraestrutura_p
 	 ADD CONSTRAINT infra_elemento_infraestrutura_p_material_construcao_check 
-	 CHECK (material_construcao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 23 :: SMALLINT, 97 :: SMALLINT, 999 :: SMALLINT]))# 
+	 CHECK (material_construcao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 23 :: SMALLINT, 97 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
 ALTER TABLE edgv.infra_elemento_infraestrutura_p ALTER COLUMN material_construcao SET DEFAULT 999#
 
 ALTER TABLE edgv.infra_elemento_infraestrutura_p
@@ -3466,7 +3491,7 @@ ALTER TABLE edgv.aux_objeto_desconhecido_p
 
 ALTER TABLE edgv.aux_objeto_desconhecido_p ALTER COLUMN tipo_insumo SET DEFAULT 999#
 
-CREATE TABLE edgv.aux_valida_a(
+CREATE TABLE edgv.val_transportes_a(
 	 id serial NOT NULL,
 	 obs varchar(255),
 	 tipo_comprovacao smallint NOT NULL,
@@ -3476,26 +3501,26 @@ CREATE TABLE edgv.aux_valida_a(
 	 controle_id uuid,
 	 ultimo_usuario VARCHAR(255),
 	 geom geometry(MultiPolygon, [epsg]),
-	 CONSTRAINT aux_valida_a_pk PRIMARY KEY (id)
+	 CONSTRAINT val_transportes_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
 )#
-CREATE INDEX aux_valida_a_geom ON edgv.aux_valida_a USING gist (geom)#
+CREATE INDEX val_transportes_a_geom ON edgv.val_transportes_a USING gist (geom)#
 
-ALTER TABLE edgv.aux_valida_a
-	 ADD CONSTRAINT aux_valida_a_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+ALTER TABLE edgv.val_transportes_a
+	 ADD CONSTRAINT val_transportes_a_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
 	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aux_valida_a ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+ALTER TABLE edgv.val_transportes_a ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
 
-ALTER TABLE edgv.aux_valida_a
-	 ADD CONSTRAINT aux_valida_a_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+ALTER TABLE edgv.val_transportes_a
+	 ADD CONSTRAINT val_transportes_a_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
 	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aux_valida_a ALTER COLUMN tipo_insumo SET DEFAULT 999#
+ALTER TABLE edgv.val_transportes_a ALTER COLUMN tipo_insumo SET DEFAULT 999#
 
-CREATE TABLE edgv.aux_valida_l(
+CREATE TABLE edgv.val_transportes_l(
 	 id serial NOT NULL,
 	 obs varchar(255),
 	 tipo_comprovacao smallint NOT NULL,
@@ -3505,26 +3530,26 @@ CREATE TABLE edgv.aux_valida_l(
 	 controle_id uuid,
 	 ultimo_usuario VARCHAR(255),
 	 geom geometry(MultiLinestring, [epsg]),
-	 CONSTRAINT aux_valida_l_pk PRIMARY KEY (id)
+	 CONSTRAINT val_transportes_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
 )#
-CREATE INDEX aux_valida_l_geom ON edgv.aux_valida_l USING gist (geom)#
+CREATE INDEX val_transportes_l_geom ON edgv.val_transportes_l USING gist (geom)#
 
-ALTER TABLE edgv.aux_valida_l
-	 ADD CONSTRAINT aux_valida_l_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+ALTER TABLE edgv.val_transportes_l
+	 ADD CONSTRAINT val_transportes_l_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
 	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aux_valida_l ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+ALTER TABLE edgv.val_transportes_l ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
 
-ALTER TABLE edgv.aux_valida_l
-	 ADD CONSTRAINT aux_valida_l_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+ALTER TABLE edgv.val_transportes_l
+	 ADD CONSTRAINT val_transportes_l_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
 	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aux_valida_l ALTER COLUMN tipo_insumo SET DEFAULT 999#
+ALTER TABLE edgv.val_transportes_l ALTER COLUMN tipo_insumo SET DEFAULT 999#
 
-CREATE TABLE edgv.aux_valida_p(
+CREATE TABLE edgv.val_transportes_p(
 	 id serial NOT NULL,
 	 obs varchar(255),
 	 tipo_comprovacao smallint NOT NULL,
@@ -3534,26 +3559,287 @@ CREATE TABLE edgv.aux_valida_p(
 	 controle_id uuid,
 	 ultimo_usuario VARCHAR(255),
 	 geom geometry(MultiPoint, [epsg]),
-	 CONSTRAINT aux_valida_p_pk PRIMARY KEY (id)
+	 CONSTRAINT val_transportes_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
 )#
-CREATE INDEX aux_valida_p_geom ON edgv.aux_valida_p USING gist (geom)#
+CREATE INDEX val_transportes_p_geom ON edgv.val_transportes_p USING gist (geom)#
 
-ALTER TABLE edgv.aux_valida_p
-	 ADD CONSTRAINT aux_valida_p_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+ALTER TABLE edgv.val_transportes_p
+	 ADD CONSTRAINT val_transportes_p_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
 	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aux_valida_p ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+ALTER TABLE edgv.val_transportes_p ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
 
-ALTER TABLE edgv.aux_valida_p
-	 ADD CONSTRAINT aux_valida_p_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+ALTER TABLE edgv.val_transportes_p
+	 ADD CONSTRAINT val_transportes_p_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
 	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aux_valida_p ALTER COLUMN tipo_insumo SET DEFAULT 999#
+ALTER TABLE edgv.val_transportes_p ALTER COLUMN tipo_insumo SET DEFAULT 999#
 
-CREATE TABLE edgv.aux_revisao_a(
+CREATE TABLE edgv.val_edificacao_a(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPolygon, [epsg]),
+	 CONSTRAINT val_edificacao_a_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX val_edificacao_a_geom ON edgv.val_edificacao_a USING gist (geom)#
+
+ALTER TABLE edgv.val_edificacao_a
+	 ADD CONSTRAINT val_edificacao_a_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_edificacao_a ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.val_edificacao_a
+	 ADD CONSTRAINT val_edificacao_a_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_edificacao_a ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.val_edificacao_l(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiLinestring, [epsg]),
+	 CONSTRAINT val_edificacao_l_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX val_edificacao_l_geom ON edgv.val_edificacao_l USING gist (geom)#
+
+ALTER TABLE edgv.val_edificacao_l
+	 ADD CONSTRAINT val_edificacao_l_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_edificacao_l ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.val_edificacao_l
+	 ADD CONSTRAINT val_edificacao_l_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_edificacao_l ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.val_edificacao_p(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPoint, [epsg]),
+	 CONSTRAINT val_edificacao_p_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX val_edificacao_p_geom ON edgv.val_edificacao_p USING gist (geom)#
+
+ALTER TABLE edgv.val_edificacao_p
+	 ADD CONSTRAINT val_edificacao_p_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_edificacao_p ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.val_edificacao_p
+	 ADD CONSTRAINT val_edificacao_p_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_edificacao_p ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.val_vegetacao_a(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPolygon, [epsg]),
+	 CONSTRAINT val_vegetacao_a_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX val_vegetacao_a_geom ON edgv.val_vegetacao_a USING gist (geom)#
+
+ALTER TABLE edgv.val_vegetacao_a
+	 ADD CONSTRAINT val_vegetacao_a_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_vegetacao_a ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.val_vegetacao_a
+	 ADD CONSTRAINT val_vegetacao_a_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_vegetacao_a ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.val_vegetacao_l(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiLinestring, [epsg]),
+	 CONSTRAINT val_vegetacao_l_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX val_vegetacao_l_geom ON edgv.val_vegetacao_l USING gist (geom)#
+
+ALTER TABLE edgv.val_vegetacao_l
+	 ADD CONSTRAINT val_vegetacao_l_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_vegetacao_l ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.val_vegetacao_l
+	 ADD CONSTRAINT val_vegetacao_l_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_vegetacao_l ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.val_vegetacao_p(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPoint, [epsg]),
+	 CONSTRAINT val_vegetacao_p_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX val_vegetacao_p_geom ON edgv.val_vegetacao_p USING gist (geom)#
+
+ALTER TABLE edgv.val_vegetacao_p
+	 ADD CONSTRAINT val_vegetacao_p_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_vegetacao_p ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.val_vegetacao_p
+	 ADD CONSTRAINT val_vegetacao_p_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_vegetacao_p ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.val_hidrografia_a(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPolygon, [epsg]),
+	 CONSTRAINT val_hidrografia_a_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX val_hidrografia_a_geom ON edgv.val_hidrografia_a USING gist (geom)#
+
+ALTER TABLE edgv.val_hidrografia_a
+	 ADD CONSTRAINT val_hidrografia_a_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_hidrografia_a ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.val_hidrografia_a
+	 ADD CONSTRAINT val_hidrografia_a_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_hidrografia_a ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.val_hidrografia_l(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiLinestring, [epsg]),
+	 CONSTRAINT val_hidrografia_l_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX val_hidrografia_l_geom ON edgv.val_hidrografia_l USING gist (geom)#
+
+ALTER TABLE edgv.val_hidrografia_l
+	 ADD CONSTRAINT val_hidrografia_l_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_hidrografia_l ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.val_hidrografia_l
+	 ADD CONSTRAINT val_hidrografia_l_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_hidrografia_l ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.val_hidrografia_p(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPoint, [epsg]),
+	 CONSTRAINT val_hidrografia_p_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX val_hidrografia_p_geom ON edgv.val_hidrografia_p USING gist (geom)#
+
+ALTER TABLE edgv.val_hidrografia_p
+	 ADD CONSTRAINT val_hidrografia_p_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_hidrografia_p ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.val_hidrografia_p
+	 ADD CONSTRAINT val_hidrografia_p_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.val_hidrografia_p ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.rev_vegetacao_a(
 	 id serial NOT NULL,
 	 obs varchar(255),
 	 categoria varchar(255),
@@ -3565,33 +3851,33 @@ CREATE TABLE edgv.aux_revisao_a(
 	 controle_id uuid,
 	 ultimo_usuario VARCHAR(255),
 	 geom geometry(MultiPolygon, [epsg]),
-	 CONSTRAINT aux_revisao_a_pk PRIMARY KEY (id)
+	 CONSTRAINT rev_vegetacao_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
 )#
-CREATE INDEX aux_revisao_a_geom ON edgv.aux_revisao_a USING gist (geom)#
+CREATE INDEX rev_vegetacao_a_geom ON edgv.rev_vegetacao_a USING gist (geom)#
 
-ALTER TABLE edgv.aux_revisao_a
-	 ADD CONSTRAINT aux_revisao_a_corrigido_fk FOREIGN KEY (corrigido)
+ALTER TABLE edgv.rev_vegetacao_a
+	 ADD CONSTRAINT rev_vegetacao_a_corrigido_fk FOREIGN KEY (corrigido)
 	 REFERENCES dominios.booleano (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aux_revisao_a ALTER COLUMN corrigido SET DEFAULT 999#
+ALTER TABLE edgv.rev_vegetacao_a ALTER COLUMN corrigido SET DEFAULT 999#
 
-ALTER TABLE edgv.aux_revisao_a
-	 ADD CONSTRAINT aux_revisao_a_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+ALTER TABLE edgv.rev_vegetacao_a
+	 ADD CONSTRAINT rev_vegetacao_a_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
 	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aux_revisao_a ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+ALTER TABLE edgv.rev_vegetacao_a ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
 
-ALTER TABLE edgv.aux_revisao_a
-	 ADD CONSTRAINT aux_revisao_a_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+ALTER TABLE edgv.rev_vegetacao_a
+	 ADD CONSTRAINT rev_vegetacao_a_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
 	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aux_revisao_a ALTER COLUMN tipo_insumo SET DEFAULT 999#
+ALTER TABLE edgv.rev_vegetacao_a ALTER COLUMN tipo_insumo SET DEFAULT 999#
 
-CREATE TABLE edgv.aux_revisao_l(
+CREATE TABLE edgv.rev_vegetacao_l(
 	 id serial NOT NULL,
 	 obs varchar(255),
 	 categoria varchar(255),
@@ -3603,33 +3889,33 @@ CREATE TABLE edgv.aux_revisao_l(
 	 controle_id uuid,
 	 ultimo_usuario VARCHAR(255),
 	 geom geometry(MultiLinestring, [epsg]),
-	 CONSTRAINT aux_revisao_l_pk PRIMARY KEY (id)
+	 CONSTRAINT rev_vegetacao_l_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
 )#
-CREATE INDEX aux_revisao_l_geom ON edgv.aux_revisao_l USING gist (geom)#
+CREATE INDEX rev_vegetacao_l_geom ON edgv.rev_vegetacao_l USING gist (geom)#
 
-ALTER TABLE edgv.aux_revisao_l
-	 ADD CONSTRAINT aux_revisao_l_corrigido_fk FOREIGN KEY (corrigido)
+ALTER TABLE edgv.rev_vegetacao_l
+	 ADD CONSTRAINT rev_vegetacao_l_corrigido_fk FOREIGN KEY (corrigido)
 	 REFERENCES dominios.booleano (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aux_revisao_l ALTER COLUMN corrigido SET DEFAULT 999#
+ALTER TABLE edgv.rev_vegetacao_l ALTER COLUMN corrigido SET DEFAULT 999#
 
-ALTER TABLE edgv.aux_revisao_l
-	 ADD CONSTRAINT aux_revisao_l_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+ALTER TABLE edgv.rev_vegetacao_l
+	 ADD CONSTRAINT rev_vegetacao_l_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
 	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aux_revisao_l ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+ALTER TABLE edgv.rev_vegetacao_l ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
 
-ALTER TABLE edgv.aux_revisao_l
-	 ADD CONSTRAINT aux_revisao_l_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+ALTER TABLE edgv.rev_vegetacao_l
+	 ADD CONSTRAINT rev_vegetacao_l_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
 	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aux_revisao_l ALTER COLUMN tipo_insumo SET DEFAULT 999#
+ALTER TABLE edgv.rev_vegetacao_l ALTER COLUMN tipo_insumo SET DEFAULT 999#
 
-CREATE TABLE edgv.aux_revisao_p(
+CREATE TABLE edgv.rev_vegetacao_p(
 	 id serial NOT NULL,
 	 obs varchar(255),
 	 categoria varchar(255),
@@ -3641,35 +3927,696 @@ CREATE TABLE edgv.aux_revisao_p(
 	 controle_id uuid,
 	 ultimo_usuario VARCHAR(255),
 	 geom geometry(MultiPoint, [epsg]),
-	 CONSTRAINT aux_revisao_p_pk PRIMARY KEY (id)
+	 CONSTRAINT rev_vegetacao_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
 )#
-CREATE INDEX aux_revisao_p_geom ON edgv.aux_revisao_p USING gist (geom)#
+CREATE INDEX rev_vegetacao_p_geom ON edgv.rev_vegetacao_p USING gist (geom)#
 
-ALTER TABLE edgv.aux_revisao_p
-	 ADD CONSTRAINT aux_revisao_p_corrigido_fk FOREIGN KEY (corrigido)
+ALTER TABLE edgv.rev_vegetacao_p
+	 ADD CONSTRAINT rev_vegetacao_p_corrigido_fk FOREIGN KEY (corrigido)
 	 REFERENCES dominios.booleano (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aux_revisao_p ALTER COLUMN corrigido SET DEFAULT 999#
+ALTER TABLE edgv.rev_vegetacao_p ALTER COLUMN corrigido SET DEFAULT 999#
 
-ALTER TABLE edgv.aux_revisao_p
-	 ADD CONSTRAINT aux_revisao_p_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+ALTER TABLE edgv.rev_vegetacao_p
+	 ADD CONSTRAINT rev_vegetacao_p_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
 	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aux_revisao_p ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+ALTER TABLE edgv.rev_vegetacao_p ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
 
-ALTER TABLE edgv.aux_revisao_p
-	 ADD CONSTRAINT aux_revisao_p_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+ALTER TABLE edgv.rev_vegetacao_p
+	 ADD CONSTRAINT rev_vegetacao_p_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
 	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aux_revisao_p ALTER COLUMN tipo_insumo SET DEFAULT 999#
+ALTER TABLE edgv.rev_vegetacao_p ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.rev_edificacao_a(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 categoria varchar(255),
+	 corrigido smallint NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPolygon, [epsg]),
+	 CONSTRAINT rev_edificacao_a_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX rev_edificacao_a_geom ON edgv.rev_edificacao_a USING gist (geom)#
+
+ALTER TABLE edgv.rev_edificacao_a
+	 ADD CONSTRAINT rev_edificacao_a_corrigido_fk FOREIGN KEY (corrigido)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_edificacao_a ALTER COLUMN corrigido SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_edificacao_a
+	 ADD CONSTRAINT rev_edificacao_a_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_edificacao_a ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_edificacao_a
+	 ADD CONSTRAINT rev_edificacao_a_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_edificacao_a ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.rev_edificacao_l(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 categoria varchar(255),
+	 corrigido smallint NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiLinestring, [epsg]),
+	 CONSTRAINT rev_edificacao_l_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX rev_edificacao_l_geom ON edgv.rev_edificacao_l USING gist (geom)#
+
+ALTER TABLE edgv.rev_edificacao_l
+	 ADD CONSTRAINT rev_edificacao_l_corrigido_fk FOREIGN KEY (corrigido)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_edificacao_l ALTER COLUMN corrigido SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_edificacao_l
+	 ADD CONSTRAINT rev_edificacao_l_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_edificacao_l ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_edificacao_l
+	 ADD CONSTRAINT rev_edificacao_l_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_edificacao_l ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.rev_edificacao_p(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 categoria varchar(255),
+	 corrigido smallint NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPoint, [epsg]),
+	 CONSTRAINT rev_edificacao_p_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX rev_edificacao_p_geom ON edgv.rev_edificacao_p USING gist (geom)#
+
+ALTER TABLE edgv.rev_edificacao_p
+	 ADD CONSTRAINT rev_edificacao_p_corrigido_fk FOREIGN KEY (corrigido)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_edificacao_p ALTER COLUMN corrigido SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_edificacao_p
+	 ADD CONSTRAINT rev_edificacao_p_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_edificacao_p ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_edificacao_p
+	 ADD CONSTRAINT rev_edificacao_p_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_edificacao_p ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.rev_transportes_a(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 categoria varchar(255),
+	 corrigido smallint NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPolygon, [epsg]),
+	 CONSTRAINT rev_transportes_a_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX rev_transportes_a_geom ON edgv.rev_transportes_a USING gist (geom)#
+
+ALTER TABLE edgv.rev_transportes_a
+	 ADD CONSTRAINT rev_transportes_a_corrigido_fk FOREIGN KEY (corrigido)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_transportes_a ALTER COLUMN corrigido SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_transportes_a
+	 ADD CONSTRAINT rev_transportes_a_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_transportes_a ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_transportes_a
+	 ADD CONSTRAINT rev_transportes_a_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_transportes_a ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.rev_transportes_l(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 categoria varchar(255),
+	 corrigido smallint NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiLinestring, [epsg]),
+	 CONSTRAINT rev_transportes_l_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX rev_transportes_l_geom ON edgv.rev_transportes_l USING gist (geom)#
+
+ALTER TABLE edgv.rev_transportes_l
+	 ADD CONSTRAINT rev_transportes_l_corrigido_fk FOREIGN KEY (corrigido)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_transportes_l ALTER COLUMN corrigido SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_transportes_l
+	 ADD CONSTRAINT rev_transportes_l_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_transportes_l ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_transportes_l
+	 ADD CONSTRAINT rev_transportes_l_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_transportes_l ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.rev_transportes_p(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 categoria varchar(255),
+	 corrigido smallint NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPoint, [epsg]),
+	 CONSTRAINT rev_transportes_p_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX rev_transportes_p_geom ON edgv.rev_transportes_p USING gist (geom)#
+
+ALTER TABLE edgv.rev_transportes_p
+	 ADD CONSTRAINT rev_transportes_p_corrigido_fk FOREIGN KEY (corrigido)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_transportes_p ALTER COLUMN corrigido SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_transportes_p
+	 ADD CONSTRAINT rev_transportes_p_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_transportes_p ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_transportes_p
+	 ADD CONSTRAINT rev_transportes_p_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_transportes_p ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.rev_hidrografia_a(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 categoria varchar(255),
+	 corrigido smallint NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPolygon, [epsg]),
+	 CONSTRAINT rev_hidrografia_a_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX rev_hidrografia_a_geom ON edgv.rev_hidrografia_a USING gist (geom)#
+
+ALTER TABLE edgv.rev_hidrografia_a
+	 ADD CONSTRAINT rev_hidrografia_a_corrigido_fk FOREIGN KEY (corrigido)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_hidrografia_a ALTER COLUMN corrigido SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_hidrografia_a
+	 ADD CONSTRAINT rev_hidrografia_a_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_hidrografia_a ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_hidrografia_a
+	 ADD CONSTRAINT rev_hidrografia_a_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_hidrografia_a ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.rev_hidrografia_l(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 categoria varchar(255),
+	 corrigido smallint NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiLinestring, [epsg]),
+	 CONSTRAINT rev_hidrografia_l_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX rev_hidrografia_l_geom ON edgv.rev_hidrografia_l USING gist (geom)#
+
+ALTER TABLE edgv.rev_hidrografia_l
+	 ADD CONSTRAINT rev_hidrografia_l_corrigido_fk FOREIGN KEY (corrigido)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_hidrografia_l ALTER COLUMN corrigido SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_hidrografia_l
+	 ADD CONSTRAINT rev_hidrografia_l_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_hidrografia_l ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_hidrografia_l
+	 ADD CONSTRAINT rev_hidrografia_l_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_hidrografia_l ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.rev_hidrografia_p(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 categoria varchar(255),
+	 corrigido smallint NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPoint, [epsg]),
+	 CONSTRAINT rev_hidrografia_p_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX rev_hidrografia_p_geom ON edgv.rev_hidrografia_p USING gist (geom)#
+
+ALTER TABLE edgv.rev_hidrografia_p
+	 ADD CONSTRAINT rev_hidrografia_p_corrigido_fk FOREIGN KEY (corrigido)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_hidrografia_p ALTER COLUMN corrigido SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_hidrografia_p
+	 ADD CONSTRAINT rev_hidrografia_p_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_hidrografia_p ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_hidrografia_p
+	 ADD CONSTRAINT rev_hidrografia_p_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_hidrografia_p ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.rev_reambulacao_a(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 categoria varchar(255),
+	 corrigido smallint NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPolygon, [epsg]),
+	 CONSTRAINT rev_reambulacao_a_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX rev_reambulacao_a_geom ON edgv.rev_reambulacao_a USING gist (geom)#
+
+ALTER TABLE edgv.rev_reambulacao_a
+	 ADD CONSTRAINT rev_reambulacao_a_corrigido_fk FOREIGN KEY (corrigido)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_reambulacao_a ALTER COLUMN corrigido SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_reambulacao_a
+	 ADD CONSTRAINT rev_reambulacao_a_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_reambulacao_a ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_reambulacao_a
+	 ADD CONSTRAINT rev_reambulacao_a_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_reambulacao_a ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.rev_reambulacao_l(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 categoria varchar(255),
+	 corrigido smallint NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiLinestring, [epsg]),
+	 CONSTRAINT rev_reambulacao_l_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX rev_reambulacao_l_geom ON edgv.rev_reambulacao_l USING gist (geom)#
+
+ALTER TABLE edgv.rev_reambulacao_l
+	 ADD CONSTRAINT rev_reambulacao_l_corrigido_fk FOREIGN KEY (corrigido)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_reambulacao_l ALTER COLUMN corrigido SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_reambulacao_l
+	 ADD CONSTRAINT rev_reambulacao_l_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_reambulacao_l ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_reambulacao_l
+	 ADD CONSTRAINT rev_reambulacao_l_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_reambulacao_l ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.rev_reambulacao_p(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 categoria varchar(255),
+	 corrigido smallint NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPoint, [epsg]),
+	 CONSTRAINT rev_reambulacao_p_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX rev_reambulacao_p_geom ON edgv.rev_reambulacao_p USING gist (geom)#
+
+ALTER TABLE edgv.rev_reambulacao_p
+	 ADD CONSTRAINT rev_reambulacao_p_corrigido_fk FOREIGN KEY (corrigido)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_reambulacao_p ALTER COLUMN corrigido SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_reambulacao_p
+	 ADD CONSTRAINT rev_reambulacao_p_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_reambulacao_p ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_reambulacao_p
+	 ADD CONSTRAINT rev_reambulacao_p_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_reambulacao_p ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.aux_insumo_externo_a(
+	 id serial NOT NULL,
+	 nome varchar(255),
+	 obs varchar(255),
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPolygon, [epsg]),
+	 CONSTRAINT aux_insumo_externo_a_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX aux_insumo_externo_a_geom ON edgv.aux_insumo_externo_a USING gist (geom)#
+
+ALTER TABLE edgv.aux_insumo_externo_a
+	 ADD CONSTRAINT aux_insumo_externo_a_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.aux_insumo_externo_a ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.aux_insumo_externo_a
+	 ADD CONSTRAINT aux_insumo_externo_a_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.aux_insumo_externo_a ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.aux_insumo_externo_l(
+	 id serial NOT NULL,
+	 nome varchar(255),
+	 obs varchar(255),
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiLinestring, [epsg]),
+	 CONSTRAINT aux_insumo_externo_l_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX aux_insumo_externo_l_geom ON edgv.aux_insumo_externo_l USING gist (geom)#
+
+ALTER TABLE edgv.aux_insumo_externo_l
+	 ADD CONSTRAINT aux_insumo_externo_l_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.aux_insumo_externo_l ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.aux_insumo_externo_l
+	 ADD CONSTRAINT aux_insumo_externo_l_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.aux_insumo_externo_l ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.aux_insumo_externo_p(
+	 id serial NOT NULL,
+	 nome varchar(255),
+	 obs varchar(255),
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPoint, [epsg]),
+	 CONSTRAINT aux_insumo_externo_p_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX aux_insumo_externo_p_geom ON edgv.aux_insumo_externo_p USING gist (geom)#
+
+ALTER TABLE edgv.aux_insumo_externo_p
+	 ADD CONSTRAINT aux_insumo_externo_p_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.aux_insumo_externo_p ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.aux_insumo_externo_p
+	 ADD CONSTRAINT aux_insumo_externo_p_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.aux_insumo_externo_p ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.rev_revisao_a(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 categoria varchar(255),
+	 corrigido smallint NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPolygon, [epsg]),
+	 CONSTRAINT rev_revisao_a_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX rev_revisao_a_geom ON edgv.rev_revisao_a USING gist (geom)#
+
+ALTER TABLE edgv.rev_revisao_a
+	 ADD CONSTRAINT rev_revisao_a_corrigido_fk FOREIGN KEY (corrigido)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_revisao_a ALTER COLUMN corrigido SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_revisao_a
+	 ADD CONSTRAINT rev_revisao_a_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_revisao_a ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_revisao_a
+	 ADD CONSTRAINT rev_revisao_a_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_revisao_a ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.rev_revisao_l(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 categoria varchar(255),
+	 corrigido smallint NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiLinestring, [epsg]),
+	 CONSTRAINT rev_revisao_l_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX rev_revisao_l_geom ON edgv.rev_revisao_l USING gist (geom)#
+
+ALTER TABLE edgv.rev_revisao_l
+	 ADD CONSTRAINT rev_revisao_l_corrigido_fk FOREIGN KEY (corrigido)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_revisao_l ALTER COLUMN corrigido SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_revisao_l
+	 ADD CONSTRAINT rev_revisao_l_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_revisao_l ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_revisao_l
+	 ADD CONSTRAINT rev_revisao_l_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_revisao_l ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.rev_revisao_p(
+	 id serial NOT NULL,
+	 obs varchar(255),
+	 categoria varchar(255),
+	 corrigido smallint NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPoint, [epsg]),
+	 CONSTRAINT rev_revisao_p_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX rev_revisao_p_geom ON edgv.rev_revisao_p USING gist (geom)#
+
+ALTER TABLE edgv.rev_revisao_p
+	 ADD CONSTRAINT rev_revisao_p_corrigido_fk FOREIGN KEY (corrigido)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_revisao_p ALTER COLUMN corrigido SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_revisao_p
+	 ADD CONSTRAINT rev_revisao_p_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_revisao_p ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.rev_revisao_p
+	 ADD CONSTRAINT rev_revisao_p_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.rev_revisao_p ALTER COLUMN tipo_insumo SET DEFAULT 999#
 
 CREATE TABLE edgv.aux_moldura_a(
 	 id serial NOT NULL,
 	 nome varchar(255) NOT NULL,
+	 mi varchar(255) NOT NULL,
 	 tipo_comprovacao smallint NOT NULL,
 	 tipo_insumo smallint NOT NULL,
 	 observacao VARCHAR(255),
@@ -3696,7 +4643,7 @@ ALTER TABLE edgv.aux_moldura_a
 
 ALTER TABLE edgv.aux_moldura_a ALTER COLUMN tipo_insumo SET DEFAULT 999#
 
-CREATE TABLE edgv.aux_limite_area_continua_a(
+CREATE TABLE edgv.aux_moldura_area_continua_a(
 	 id serial NOT NULL,
 	 nome varchar(255) NOT NULL,
 	 tipo_comprovacao smallint NOT NULL,
@@ -3706,24 +4653,80 @@ CREATE TABLE edgv.aux_limite_area_continua_a(
 	 controle_id uuid,
 	 ultimo_usuario VARCHAR(255),
 	 geom geometry(MultiPolygon, [epsg]),
-	 CONSTRAINT aux_limite_area_continua_a_pk PRIMARY KEY (id)
+	 CONSTRAINT aux_moldura_area_continua_a_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
 )#
-CREATE INDEX aux_limite_area_continua_a_geom ON edgv.aux_limite_area_continua_a USING gist (geom)#
+CREATE INDEX aux_moldura_area_continua_a_geom ON edgv.aux_moldura_area_continua_a USING gist (geom)#
 
-ALTER TABLE edgv.aux_limite_area_continua_a
-	 ADD CONSTRAINT aux_limite_area_continua_a_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+ALTER TABLE edgv.aux_moldura_area_continua_a
+	 ADD CONSTRAINT aux_moldura_area_continua_a_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
 	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aux_limite_area_continua_a ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+ALTER TABLE edgv.aux_moldura_area_continua_a ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
 
-ALTER TABLE edgv.aux_limite_area_continua_a
-	 ADD CONSTRAINT aux_limite_area_continua_a_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+ALTER TABLE edgv.aux_moldura_area_continua_a
+	 ADD CONSTRAINT aux_moldura_area_continua_a_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
 	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aux_limite_area_continua_a ALTER COLUMN tipo_insumo SET DEFAULT 999#
+ALTER TABLE edgv.aux_moldura_area_continua_a ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.aux_rascunho_l(
+	 id serial NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiLinestring, [epsg]),
+	 CONSTRAINT aux_rascunho_l_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX aux_rascunho_l_geom ON edgv.aux_rascunho_l USING gist (geom)#
+
+ALTER TABLE edgv.aux_rascunho_l
+	 ADD CONSTRAINT aux_rascunho_l_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.aux_rascunho_l ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.aux_rascunho_l
+	 ADD CONSTRAINT aux_rascunho_l_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.aux_rascunho_l ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
+CREATE TABLE edgv.aux_rascunho_a(
+	 id serial NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiPolygon, [epsg]),
+	 CONSTRAINT aux_rascunho_a_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX aux_rascunho_a_geom ON edgv.aux_rascunho_a USING gist (geom)#
+
+ALTER TABLE edgv.aux_rascunho_a
+	 ADD CONSTRAINT aux_rascunho_a_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.aux_rascunho_a ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.aux_rascunho_a
+	 ADD CONSTRAINT aux_rascunho_a_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.aux_rascunho_a ALTER COLUMN tipo_insumo SET DEFAULT 999#
 
 CREATE TABLE edgv.aquisicao_limite_vegetacao_l(
 	 id serial NOT NULL,
@@ -3753,6 +4756,34 @@ ALTER TABLE edgv.aquisicao_limite_vegetacao_l
 
 ALTER TABLE edgv.aquisicao_limite_vegetacao_l ALTER COLUMN tipo_insumo SET DEFAULT 999#
 
+CREATE TABLE edgv.aquisicao_limite_hidrografia_l(
+	 id serial NOT NULL,
+	 tipo_comprovacao smallint NOT NULL,
+	 tipo_insumo smallint NOT NULL,
+	 observacao VARCHAR(255),
+	 data_modificacao timestamp with time zone,
+	 controle_id uuid,
+	 ultimo_usuario VARCHAR(255),
+	 geom geometry(MultiLinestring, [epsg]),
+	 CONSTRAINT aquisicao_limite_hidrografia_l_pk PRIMARY KEY (id)
+	 WITH (FILLFACTOR = 80)
+)#
+CREATE INDEX aquisicao_limite_hidrografia_l_geom ON edgv.aquisicao_limite_hidrografia_l USING gist (geom)#
+
+ALTER TABLE edgv.aquisicao_limite_hidrografia_l
+	 ADD CONSTRAINT aquisicao_limite_hidrografia_l_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.aquisicao_limite_hidrografia_l ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+
+ALTER TABLE edgv.aquisicao_limite_hidrografia_l
+	 ADD CONSTRAINT aquisicao_limite_hidrografia_l_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.aquisicao_limite_hidrografia_l ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
 CREATE TABLE edgv.aquisicao_centroide_vegetacao_p(
 	 id serial NOT NULL,
 	 nome varchar(255),
@@ -3774,6 +4805,9 @@ ALTER TABLE edgv.aquisicao_centroide_vegetacao_p
 	 REFERENCES dominios.tipo_veg (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
+ALTER TABLE edgv.aquisicao_centroide_vegetacao_p
+	 ADD CONSTRAINT aquisicao_centroide_vegetacao_p_tipo_check 
+	 CHECK (tipo = ANY(ARRAY[301 :: SMALLINT, 302 :: SMALLINT, 201 :: SMALLINT, 202 :: SMALLINT, 801 :: SMALLINT, 501 :: SMALLINT, 701 :: SMALLINT, 702 :: SMALLINT, 401 :: SMALLINT, 1101 :: SMALLINT, 901 :: SMALLINT, 601 :: SMALLINT, 194 :: SMALLINT, 196 :: SMALLINT, 150 :: SMALLINT, 118 :: SMALLINT, 102 :: SMALLINT, 115 :: SMALLINT, 114 :: SMALLINT, 116 :: SMALLINT, 103 :: SMALLINT, 151 :: SMALLINT, 117 :: SMALLINT, 153 :: SMALLINT, 152 :: SMALLINT, 119 :: SMALLINT, 142 :: SMALLINT, 107 :: SMALLINT, 124 :: SMALLINT, 198 :: SMALLINT, 195 :: SMALLINT, 1296 :: SMALLINT, 1000 :: SMALLINT, 999 :: SMALLINT]))# 
 ALTER TABLE edgv.aquisicao_centroide_vegetacao_p ALTER COLUMN tipo SET DEFAULT 999#
 
 ALTER TABLE edgv.aquisicao_centroide_vegetacao_p
@@ -3790,8 +4824,10 @@ ALTER TABLE edgv.aquisicao_centroide_vegetacao_p
 
 ALTER TABLE edgv.aquisicao_centroide_vegetacao_p ALTER COLUMN tipo_insumo SET DEFAULT 999#
 
-CREATE TABLE edgv.aquisicao_centroide_area_construida_p(
+CREATE TABLE edgv.aquisicao_centroide_hidrografia_p(
 	 id serial NOT NULL,
+	 nome varchar(255),
+	 tipo smallint NOT NULL,
 	 tipo_comprovacao smallint NOT NULL,
 	 tipo_insumo smallint NOT NULL,
 	 observacao VARCHAR(255),
@@ -3799,25 +4835,32 @@ CREATE TABLE edgv.aquisicao_centroide_area_construida_p(
 	 controle_id uuid,
 	 ultimo_usuario VARCHAR(255),
 	 geom geometry(MultiPoint, [epsg]),
-	 CONSTRAINT aquisicao_centroide_area_construida_p_pk PRIMARY KEY (id)
+	 CONSTRAINT aquisicao_centroide_hidrografia_p_pk PRIMARY KEY (id)
 	 WITH (FILLFACTOR = 80)
 )#
-CREATE INDEX aquisicao_centroide_area_construida_p_geom ON edgv.aquisicao_centroide_area_construida_p USING gist (geom)#
+CREATE INDEX aquisicao_centroide_hidrografia_p_geom ON edgv.aquisicao_centroide_hidrografia_p USING gist (geom)#
 
-ALTER TABLE edgv.aquisicao_centroide_area_construida_p
-	 ADD CONSTRAINT aquisicao_centroide_area_construida_p_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
+ALTER TABLE edgv.aquisicao_centroide_hidrografia_p
+	 ADD CONSTRAINT aquisicao_centroide_hidrografia_p_tipo_fk FOREIGN KEY (tipo)
+	 REFERENCES dominios.tipo_hid (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.aquisicao_centroide_hidrografia_p ALTER COLUMN tipo SET DEFAULT 999#
+
+ALTER TABLE edgv.aquisicao_centroide_hidrografia_p
+	 ADD CONSTRAINT aquisicao_centroide_hidrografia_p_tipo_comprovacao_fk FOREIGN KEY (tipo_comprovacao)
 	 REFERENCES dominios.tipo_comprovacao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aquisicao_centroide_area_construida_p ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
+ALTER TABLE edgv.aquisicao_centroide_hidrografia_p ALTER COLUMN tipo_comprovacao SET DEFAULT 999#
 
-ALTER TABLE edgv.aquisicao_centroide_area_construida_p
-	 ADD CONSTRAINT aquisicao_centroide_area_construida_p_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
+ALTER TABLE edgv.aquisicao_centroide_hidrografia_p
+	 ADD CONSTRAINT aquisicao_centroide_hidrografia_p_tipo_insumo_fk FOREIGN KEY (tipo_insumo)
 	 REFERENCES dominios.tipo_insumo (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 
-ALTER TABLE edgv.aquisicao_centroide_area_construida_p ALTER COLUMN tipo_insumo SET DEFAULT 999#
- 
+ALTER TABLE edgv.aquisicao_centroide_hidrografia_p ALTER COLUMN tipo_insumo SET DEFAULT 999#
+
 CREATE EXTENSION IF NOT EXISTS hstore#
 
 CREATE OR REPLACE FUNCTION public.explode_geom()
@@ -3840,7 +4883,7 @@ $BODY$
 				IF r.value <> '' THEN
 					querytext2 := querytext2 || quote_literal(r.value) || ',';
 				ELSE
-					querytext2 := querytext2 || 'NULL' || ',';					
+					querytext2 := querytext2 || 'NULL' || ',';
 				END IF;
 			END IF;
 		END LOOP;
@@ -3874,143 +4917,41 @@ BEGIN
     END LOOP;
 END$$;
 
-
-CREATE OR REPLACE FUNCTION public.corrige_geom()
-  RETURNS trigger AS
-$BODY$
-    DECLARE empty boolean;
-	DECLARE measure real;
-    DECLARE geometrytype text;
-    DECLARE npoints integer;
-    BEGIN
-
-	empty := ST_IsEmpty(NEW.geom::Geometry);
-
-	IF empty OR NEW.geom IS NULL THEN
-		RETURN NULL;
-	ELSE
-	    empty := ST_IsEmpty(NEW.geom::Geometry);
-        IF empty OR NEW.geom IS NULL THEN
-            RETURN NULL;
-        ELSE
-            geometrytype := st_geometrytype(NEW.geom::Geometry);
-            npoints := ST_NPoints(NEW.geom::Geometry);
-            IF geometrytype = 'ST_MultiLineString' THEN
-                measure := ST_Length(NEW.geom::Geometry);
-                IF measure < 0.1 OR npoints < 2 THEN
-                    RETURN NULL;
-                END IF;
-            END IF;
-
-            IF geometrytype = 'ST_MultiPolygon' THEN
-                measure := ST_Area(NEW.geom::Geometry);
-                IF measure < 0.1 OR npoints < 2 THEN
-                    RETURN NULL;
-                END IF;
-            END IF;
-
-            IF geometrytype = 'ST_MultiPoint'  AND npoints < 1 THEN
-                RETURN NULL;
-            END IF;
-
-		    RETURN NEW;
-        END IF;
-	END IF;
-
-    END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
-ALTER FUNCTION public.corrige_geom()
-  OWNER TO postgres;
-
-
-DO $$DECLARE r record;
-BEGIN
-	FOR r in select f_table_schema, f_table_name from public.geometry_columns
-    LOOP
-	IF r.f_table_schema = 'edgv' THEN
-		EXECUTE 'CREATE TRIGGER b_corrige_geom BEFORE INSERT OR UPDATE ON edgv.' || quote_ident(r.f_table_name) || ' FOR EACH ROW EXECUTE PROCEDURE public.corrige_geom()';
-	END IF;
-    END LOOP;
-END$$;
-
-
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE OR REPLACE FUNCTION public.controle_prod()
-  RETURNS trigger AS
-$BODY$
-    DECLARE id uuid;
-    DECLARE usuario varchar(255);
-    DECLARE application varchar(255);
-    BEGIN
-    SELECT current_setting('application_name') into application;
-
-    IF application = 'QGIS' then
-        SELECT current_user into usuario;
-        IF TG_OP = 'INSERT' then
-            SELECT uuid_generate_v1() INTO id;
-            NEW.controle_id = id;
-            NEW.ultimo_usuario = usuario;
-            NEW.data_modificacao = NOW();   
-        END IF;
-
-        IF TG_OP = 'UPDATE' then
-            NEW.ultimo_usuario = usuario;
-            NEW.data_modificacao = NOW();
-			IF NEW.controle_id IS NULL then
-				SELECT uuid_generate_v1() INTO id;
-				NEW.controle_id = id;
-			END IF;
-        END IF;
-    ELSE
-        IF NEW.controle_id IS NULL then
-            SELECT uuid_generate_v1() INTO id;
-            NEW.controle_id = id;
-        END IF;
-        IF NEW.ultimo_usuario IS NULL then
-		    SELECT current_user into usuario;
-            NEW.ultimo_usuario = usuario ||'_'||application;
-        END IF;
-        IF NEW.data_modificacao IS NULL then
-            NEW.data_modificacao = NOW();   
-        END IF;
-    END IF;
-
-    RETURN NEW;
-
-    END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
-ALTER FUNCTION public.controle_prod()
-  OWNER TO postgres;
-
-DO $$DECLARE r record;
-BEGIN
-	FOR r in select f_table_schema, f_table_name from public.geometry_columns
-    LOOP
-	IF r.f_table_schema = 'edgv' THEN
-		EXECUTE 'CREATE TRIGGER c_controle BEFORE INSERT OR UPDATE ON edgv.' || quote_ident(r.f_table_name) || ' FOR EACH ROW EXECUTE PROCEDURE public.controle_prod()';
-	END IF;
-    END LOOP;
-END$$;
-
-
-CREATE TABLE public.layer_filter
+CREATE TABLE public.layer_styles
 (
-  id SERIAL NOT NULL,
-  camada text,
-  tipo_filtro text,
-  filtro text,
-  CONSTRAINT layer_filter_pkey PRIMARY KEY (id)
+  id serial NOT NULL,
+  f_table_catalog character varying,
+  f_table_schema character varying,
+  f_table_name character varying,
+  f_geometry_column character varying,
+  stylename character varying(255),
+  styleqml text,
+  stylesld xml,
+  useasdefault boolean,
+  description text,
+  owner character varying(30),
+  ui xml,
+  update_time timestamp without time zone DEFAULT now(),
+  CONSTRAINT layer_styles_pkey PRIMARY KEY (id)
 )
 WITH (
   OIDS=FALSE
 )#
-ALTER TABLE public.layer_filter
-  OWNER TO postgres#
+ALTER TABLE public.layer_styles OWNER TO postgres#
+GRANT ALL ON TABLE public.layer_styles TO postgres#
+GRANT ALL ON TABLE public.layer_styles TO public#
 
+CREATE OR REPLACE FUNCTION public.estilo()
+  RETURNS integer AS
+$BODY$
+    UPDATE public.layer_styles
+        SET f_table_catalog = (select current_catalog);
+    SELECT 1;
+$BODY$
+  LANGUAGE sql VOLATILE
+  COST 100#
+ALTER FUNCTION public.estilo()
+  OWNER TO postgres#
 
 CREATE TABLE public.menu_profile
 (
@@ -4032,25 +4973,37 @@ ALTER TABLE public.menu_profile
 GRANT ALL ON TABLE public.menu_profile TO postgres#
 GRANT ALL ON TABLE public.menu_profile TO PUBLIC#
 
-CREATE TABLE dominios.situacao_insumo (
- code smallint NOT NULL,
- code_name text NOT NULL,
- CONSTRAINT situacao_insumo_pk PRIMARY KEY (code)
-)#
-INSERT INTO dominios.situacao_insumo (code,code_name) VALUES (999,'A SER PREENCHIDO')#
-INSERT INTO dominios.situacao_insumo (code,code_name) VALUES (1,'Primitiva geométrica alterada')#
-INSERT INTO dominios.situacao_insumo (code,code_name) VALUES (2,'Geometria corrigida')#
-INSERT INTO dominios.situacao_insumo (code,code_name) VALUES (3,'Não possível de confirmar')#
-INSERT INTO dominios.situacao_insumo (code,code_name) VALUES (4,'Insumo incorreto')#
+CREATE TABLE public.layer_rules
+(
+    id serial NOT NULL,
+    camada text NOT NULL,
+    tipo_regra text NOT NULL,
+    nome text NOT NULL,
+    cor_rgb text NOT NULL,
+    regra text NOT NULL,
+    tipo_estilo text NOT NULL,
+    atributo text NOT NULL,
+    descricao text NOT NULL,
+    ordem integer NOT NULL,
+    CONSTRAINT layer_rules_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default#
 
-DO $$DECLARE r record;
-BEGIN
-	FOR r in select f_table_schema, f_table_name from public.geometry_columns
-    LOOP
-	IF r.f_table_schema = 'edgv' and substring(r.f_table_name from 1 for 3) != 'aux' THEN
-		EXECUTE 'ALTER TABLE edgv.' || quote_ident(r.f_table_name) || ' ADD COLUMN fonte_insumo VARCHAR(255), ADD COLUMN situacao_insumo smallint NOT NULL'; 
-		EXECUTE 'ALTER TABLE edgv.' || quote_ident(r.f_table_name) || ' ADD CONSTRAINT ' || quote_ident(r.f_table_name) || '_situacao_insumo_fk FOREIGN KEY (situacao_insumo) REFERENCES dominios.situacao_insumo (code) MATCH FULL'; 
-		EXECUTE 'ALTER TABLE edgv.' || quote_ident(r.f_table_name) || ' ALTER COLUMN situacao_insumo SET DEFAULT 999;'; 
-	END IF;
-	END LOOP;
-END$$;
+ALTER TABLE public.layer_rules
+    OWNER to postgres#
+
+GRANT ALL ON TABLE public.layer_rules TO postgres#
+GRANT ALL ON TABLE public.layer_rules TO PUBLIC#
+
+--########################################################
+
+GRANT USAGE ON SCHEMA edgv TO public#
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA edgv TO public#
+GRANT ALL ON ALL SEQUENCES IN SCHEMA edgv TO public#
+
+GRANT USAGE ON SCHEMA dominios TO public#
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA dominios TO public#
+GRANT ALL ON ALL SEQUENCES IN SCHEMA dominios TO public#
