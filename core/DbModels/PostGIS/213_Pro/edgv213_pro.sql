@@ -220,7 +220,7 @@ CREATE TABLE dominios.referencial_grav (
 	 CONSTRAINT referencial_grav_pk PRIMARY KEY (code)
 )#
 
-INSERT INTO dominios.referencial_grav (code,code_name) VALUES (1,'Postdam 1930')#
+INSERT INTO dominios.referencial_grav (code,code_name) VALUES (1,'Potsdam 1930')#
 INSERT INTO dominios.referencial_grav (code,code_name) VALUES (2,'IGSN71')#
 INSERT INTO dominios.referencial_grav (code,code_name) VALUES (3,'Absoluto')#
 INSERT INTO dominios.referencial_grav (code,code_name) VALUES (4,'Local')#
