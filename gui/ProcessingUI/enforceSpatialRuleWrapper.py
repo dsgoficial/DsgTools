@@ -23,7 +23,7 @@
 
 from functools import partial
 
-from qgis.core import QgsVectorLayer, QgsMapLayerProxyModel
+from qgis.core import QgsMapLayerProxyModel
 from qgis.gui import QgsMapLayerComboBox, QgsFieldExpressionWidget
 from qgis.PyQt.QtWidgets import (QComboBox,
                                  QLineEdit)
@@ -76,16 +76,12 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         le.setPlaceholderText(self.tr("Set layer name..."))
         return le
 
-    def filterExpressionWidget(self, layer=None):
+    def filterExpressionWidget(self):
         """
         Retrieves a new widget for filtering expression setting.
-        :param layer: (QgsVectorLayer) vector layer on which filter should be
-                      applied to.
         :return: (QgsFieldExpressionWidget) snap mode selection widget.
         """
         filterWidget = QgsFieldExpressionWidget()
-        if isinstance(layer, QgsVectorLayer):
-            filterWidget.setLayer(layer)
         return filterWidget
 
     def predicateComboBox(self):
@@ -113,7 +109,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                  applied.
         """
         le = QLineEdit()
-        le.setPlaceholderText("0..*")
+        le.setPlaceholderText("1..*")
         return le
 
     def standardPanel(self):
@@ -279,7 +275,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             values["predicate"] = self.panel.getValue(row, 2)
             values["layer_b"] = self.panel.getValue(row, 3)
             values["filter_b"] = self.panel.getValue(row, 4)
-            values["cardinality"] = self.panel.getValue(row, 5)
+            values["cardinality"] = self.panel.getValue(row, 5) or "1..*"
             valueMaplist.append(values)
         return valueMaplist
 
