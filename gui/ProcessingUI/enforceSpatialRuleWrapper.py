@@ -21,6 +21,8 @@
  ***************************************************************************/
 """
 
+from functools import partial
+
 from qgis.core import QgsVectorLayer, QgsMapLayerProxyModel
 from qgis.gui import QgsMapLayerComboBox, QgsFieldExpressionWidget
 from qgis.PyQt.QtWidgets import (QComboBox,
@@ -44,6 +46,25 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         cb = QgsMapLayerComboBox()
         cb.setFilters(QgsMapLayerProxyModel.VectorLayer)
         return cb
+
+    def postAddRowStandard(self, row):
+        """
+        Sets up widgets to work as expected right after they are added to GUI.
+        """
+        # in standard GUI, the layer selectors are QgsMapLayerComboBox, and its
+        # layer changed signal should be connected to the filter expression
+        # widget setup
+        for col in [0, 3]:
+            mapLayerComboBox = self.panel.itemAt(row, col)
+            filterWidget = self.panel.itemAt(row, col + 1)
+            mapLayerComboBox.layerChanged.connect(filterWidget.setLayer)
+            mapLayerComboBox.layerChanged.connect(
+                partial(filterWidget.setExpression, "")
+            )
+            # first setup is manual though
+            vl = mapLayerComboBox.currentLayer()
+            if vl:
+                filterWidget.setLayer(vl)
 
     def mapLayerModelDialog(self):
         """
@@ -148,6 +169,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             }
         })
         otw.setHeaderDoubleClickBehaviour("replicate")
+        otw.rowAdded.connect(self.postAddRowStandard)
         return otw
 
     def batchPanel(self):
