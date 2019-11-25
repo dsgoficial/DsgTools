@@ -25,15 +25,21 @@ import os
 from time import sleep
 
 from qgis.PyQt.QtCore import QCoreApplication
-from qgis.core import (QgsVectorLayer,
+from qgis.core import (QgsProject,
+                       QgsVectorLayer,
+                       QgsProcessingContext,
+                       QgsProcessingException,
                        QgsProcessingParameterType,
                        QgsProcessingParameterDefinition)
 
-from .validationAlgorithm import ValidationAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import ValidationAlgorithm
 
 class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
     RULES_SET = 'RULES_SET'
-
+    # a map to canvas layers, reset every time alg is asked to be run: make
+    # reusage of layers available for each cycle, reducing re-reading time 
+    __layers = dict()
 
     def initAlgorithm(self, config):
         """
@@ -42,7 +48,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         spatialRulesSetter = ParameterSpatialRulesSet(
             self.RULES_SET,
             description=self.tr('Spatial Rules Set')
-            )
+        )
         spatialRulesSetter.setMetadata({
             'widget_wrapper' : 'DsgTools.gui.ProcessingUI.enforceSpatialRuleWrapper.EnforceSpatialRuleWrapper'
         })
@@ -50,14 +56,6 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
 
     def parameterAsSpatialRulesSet(self, parameters, name, context):
         return parameters[name]
-
-    def processAlgorithm(self, parameters, context, feedback):
-        """
-        Here is where the processing itself takes place.
-        """
-        rulesDict = self.parameterAsSpatialRulesSet(parameters, self.RULES_SET, context)
-
-        return {}
 
     def name(self):
         """
@@ -98,6 +96,65 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
 
     def createInstance(self):
         return EnforceSpatialRulesAlgorithm()
+
+    def setupLayer(self, layername, expression, context=None, feedback=None):
+        """
+        Reads layer from canvas and applies the filtering expression.
+        :param layername: (str) layer to be setup.
+        :param expression: (str) filtering expression to be applied to the
+                           target layer.
+        :param context: (QgsProcessingContext) environment context in which 
+                        layer is retrieved and setup.
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
+                         component.
+        :return: (QgsVectorLayer) vector layer ready to be 
+        """
+        
+        if layername not in self.__layers:
+            # by default, it is assumed layer names are unique on canvas
+            vl = QgsProject.instance().mapLayersByName(layername)
+            if not vl:
+                raise QgsProcessingException(
+                    self.tr("Layer {l} was not found!").format(l=layername)
+                )
+            # layer caching happens here
+            self.__layers[layername] = vl[0]
+        vl = self.__layers[layername]
+        if expression:
+            vl = AlgRunner().runFilterExpression(
+                vl,
+                expression,
+                context or QgsProcessingContext(),
+                outputLyr='memory:',
+                feedback=feedback
+            )
+        return vl
+
+    def verifyTopologicalRelation(self, predicate, layerA, layerB, cardinality):
+        """
+        
+        """
+        pass
+
+    def processAlgorithm(self, parameters, context, feedback):
+        """
+        Here is where the processing itself takes place.
+        """
+        rules = self.parameterAsSpatialRulesSet(
+            parameters, self.RULES_SET, context
+        )
+        for rule in rules:
+            name = rule["name"]
+            out = self.verifyTopologicalRelation(
+                rule["predicate"],
+                self.setupLayer(rule["layer_a"], rule["filter_a"]),
+                self.setupLayer(rule["layer_b"], rule["filter_b"]),
+                rule["cardinality"] 
+            )
+        # dont forget to clear cached layers
+        del self.__layers
+        self.__layers = dict()
+        return {}
 
 class ParameterSpatialRulesSetType(QgsProcessingParameterType):
 
