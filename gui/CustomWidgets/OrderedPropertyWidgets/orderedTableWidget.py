@@ -458,7 +458,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         rows = self.selectedRows()
         if rows:
             row = max(rows) + 1
-            self.addRow({}, row)
+            self.addNewRow(row)
             self.selectRow(row)
         else:
             self.addRow({})
