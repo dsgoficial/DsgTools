@@ -54,7 +54,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         # in standard GUI, the layer selectors are QgsMapLayerComboBox, and its
         # layer changed signal should be connected to the filter expression
         # widget setup
-        for col in [0, 3]:
+        for col in [1, 4]:
             mapLayerComboBox = self.panel.itemAt(row, col)
             filterWidget = self.panel.itemAt(row, col + 1)
             mapLayerComboBox.layerChanged.connect(filterWidget.setLayer)
@@ -119,13 +119,20 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         """
         otw = OrderedTableWidget(headerMap={
             0 : {
+                "header" : self.tr("Rule name"),
+                "type" : "widget",
+                "widget" : QLineEdit,
+                "setter" : "setText",
+                "getter" : "text"
+            },
+            1 : {
                 "header" : self.tr("Layer A"),
                 "type" : "widget",
                 "widget" : self.mapLayerComboBox,
                 "setter" : "setCurrentText",
                 "getter" : "currentText"
             },
-            1 : {
+            2 : {
                 "header" : self.tr("Filter A"),
                 "type" : "widget",
                 # problema: conectar o sinal da mapLayerComboBox no filterexpression
@@ -133,21 +140,21 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 "setter" : "setExpression",
                 "getter" : "currentText"
             },
-            2 : {
+            3 : {
                 "header" : self.tr("Predicate"),
                 "type" : "widget",
                 "widget" : self.predicateComboBox,
                 "setter" : "setCurrentIndex",
                 "getter" : "currentIndex"
             },
-            3 : {
+            4 : {
                 "header" : self.tr("Layer B"),
                 "type" : "widget",
                 "widget" : self.mapLayerComboBox,
                 "setter" : "setCurrentText",
                 "getter" : "currentText"
             },
-            4 : {
+            5 : {
                 "header" : self.tr("Filter B"),
                 "type" : "widget",
                 # problema: conectar o sinal da mapLayerComboBox no filterexpression
@@ -155,7 +162,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 "setter" : "setExpression",
                 "getter" : "currentText"
             },
-            5 : {
+            6 : {
                 "header" : self.tr("Cardinality"),
                 "type" : "widget",
                 # problema: conectar o sinal da mapLayerComboBox no filterexpression
@@ -182,6 +189,13 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         """
         otw = OrderedTableWidget(headerMap={
             0 : {
+                "header" : self.tr("Rule name"),
+                "type" : "widget",
+                "widget" : QLineEdit,
+                "setter" : "setText",
+                "getter" : "text"
+            },
+            1 : {
                 "header" : self.tr("Layer A"),
                 "type" : "widget",
                 "widget" : self.mapLayerModelDialog,
@@ -196,21 +210,21 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 "setter" : "setExpression",
                 "getter" : "currentText"
             },
-            2 : {
+            3 : {
                 "header" : self.tr("Predicate"),
                 "type" : "widget",
                 "widget" : self.predicateComboBox,
                 "setter" : "setCurrentIndex",
                 "getter" : "currentIndex"
             },
-            3 : {
+            4 : {
                 "header" : self.tr("Layer B"),
                 "type" : "widget",
                 "widget" : self.mapLayerModelDialog,
                 "setter" : "setText",
                 "getter" : "text"
             },
-            4 : {
+            5 : {
                 "header" : self.tr("Filter B"),
                 "type" : "widget",
                 # problema: conectar o sinal da mapLayerComboBox no filterexpression
@@ -218,7 +232,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 "setter" : "setExpression",
                 "getter" : "currentText"
             },
-            5 : {
+            6 : {
                 "header" : self.tr("Cardinality"),
                 "type" : "widget",
                 # problema: conectar o sinal da mapLayerComboBox no filterexpression
@@ -270,12 +284,14 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         valueMaplist = list()
         for row in range(self.panel.rowCount()):
             values = dict()
-            values["layer_a"] = self.panel.getValue(row, 0)
-            values["filter_a"] = self.panel.getValue(row, 1)
-            values["predicate"] = self.panel.getValue(row, 2)
-            values["layer_b"] = self.panel.getValue(row, 3)
-            values["filter_b"] = self.panel.getValue(row, 4)
-            values["cardinality"] = self.panel.getValue(row, 5) or "1..*"
+            values["name"] = self.panel.getValue(row, 0).strip() or \
+                             self.tr("Spatial Rule #{n}".format(n=row + 1))
+            values["layer_a"] = self.panel.getValue(row, 1)
+            values["filter_a"] = self.panel.getValue(row, 2)
+            values["predicate"] = self.panel.getValue(row, 3)
+            values["layer_b"] = self.panel.getValue(row, 4)
+            values["filter_b"] = self.panel.getValue(row, 5)
+            values["cardinality"] = self.panel.getValue(row, 6) or "1..*"
             valueMaplist.append(values)
         return valueMaplist
 
