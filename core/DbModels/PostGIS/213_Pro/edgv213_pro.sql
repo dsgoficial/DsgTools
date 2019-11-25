@@ -5,11 +5,11 @@ CREATE EXTENSION postgis#
 SET search_path TO pg_catalog,public,edgv,dominios#
 
 CREATE TABLE public.db_metadata(
-	 edgvversion varchar(50) NOT NULL DEFAULT 'EDGV 2.1.3 Pro',
+	 edgvversion varchar(50) NOT NULL DEFAULT '2.1.3 Pro',
 	 dbimplversion varchar(50) NOT NULL DEFAULT '5.4',
-	 CONSTRAINT edgvversioncheck CHECK (edgvversion = 'EDGV 2.1.3 Pro')
+	 CONSTRAINT edgvversioncheck CHECK (edgvversion = '2.1.3 Pro')
 )#
-INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 2.1.3 Pro','5.4')#
+INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('2.1.3 Pro','5.4')#
 
 CREATE TABLE dominios.tipo_comprovacao (
 	 code smallint NOT NULL,
@@ -4997,8 +4997,6 @@ ALTER TABLE public.layer_rules
 
 GRANT ALL ON TABLE public.layer_rules TO postgres#
 GRANT ALL ON TABLE public.layer_rules TO PUBLIC#
-
---########################################################
 
 GRANT USAGE ON SCHEMA edgv TO public#
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA edgv TO public#
