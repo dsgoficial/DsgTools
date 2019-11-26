@@ -442,7 +442,7 @@ class SpatialRelationsHandler(QObject):
         )
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(3)
-        flagList = self.identifyInvalidRelations(spatialDict, spatialRuleDict, feedback=multiStepFeedback):
+        flagList = self.identifyInvalidRelations(spatialDict, spatialRuleDict, feedback=multiStepFeedback)
         return flagList
 
     def buildSpatialDictFromRuleList(self, ruleList, feedback=None):
@@ -561,7 +561,7 @@ class SpatialRelationsHandler(QObject):
         for inputKey, inputDict in spatialRuleDict.items():
             if feedback is not None and feedback.isCanceled():
                 break
-            keyRuleList = ['_'.join(i['candidate_layer'], i['candidate_layer_filter'] for i in inputDict['rule_list']]
+            keyRuleList = ['_'.join(i['candidate_layer'], i['candidate_layer_filter']) for i in inputDict['rule_list']]
             for featId, feat in spatialDict[inputKey]['feature_id_dict']:
                 if feedback is not None and feedback.isCanceled():
                     break
@@ -627,7 +627,7 @@ class SpatialRelationsHandler(QObject):
             lambdaCompair = lambda x: len(x) != 0
             return lambdaCompair
         min_card, max_card = cardinality.split('..')
-        if max_card != '*'
+        if max_card != '*':
             lambdaCompair = lambda x : len(x) < int(min_card)
         elif min_card == max_card:
             lambdaCompair = lambda x: len(x) != int(min_card)
@@ -650,8 +650,8 @@ class SpatialRelationsHandler(QObject):
             for rule in inputDict['rule_list']:
                 if feedback is not None and feedback.isCanceled():
                         break
-                candidateLyrName = i['candidate_layer']
-                candidateKey = '_'.join(candidateLyrName, i['candidate_layer_filter']
+                candidateLyrName = inputDict['candidate_layer']
+                candidateKey = '_'.join(candidateLyrName, inputDict['candidate_layer_filter'])
                 sameLayer = True if inputKey == candidateKey else False
                 lambdaCompair = self.parseCardinalityAndGetLambdaToIdentifyProblems(
                     cardinality=rule['cardinality'],
@@ -695,7 +695,3 @@ class SpatialRelationsHandler(QObject):
                 }
             )
         return spatialFlags
-
-
-    
-
