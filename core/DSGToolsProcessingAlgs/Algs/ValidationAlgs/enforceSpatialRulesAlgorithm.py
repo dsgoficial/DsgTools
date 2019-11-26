@@ -30,14 +30,18 @@ from qgis.core import (QgsProject,
                        QgsProcessingContext,
                        QgsProcessingException,
                        QgsProcessingParameterType,
-                       QgsProcessingParameterDefinition)
+                       QgsProcessingParameterDefinition,
+                       QgsProcessingParameterFeatureSink)
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import ValidationAlgorithm
 
 class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
-    RULES_SET = 'RULES_SET'
+    RULES_SET = "RULES_SET"
+    POINT_FLAGS = "POINT_FLAGS"
+    LINE_FLAGS = "LINE_FLAGS"
+    POLYGON_FLAGS = "POLYGON_FLAGS"
     # a map to canvas layers, reset every time alg is asked to be run: make
     # reusage of layers available for each cycle, reducing re-reading time 
     __layers = dict()
@@ -69,6 +73,27 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
             'widget_wrapper' : 'DsgTools.gui.ProcessingUI.enforceSpatialRuleWrapper.EnforceSpatialRuleWrapper'
         })
         self.addParameter(spatialRulesSetter)
+
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.POINT_FLAGS,
+                self.tr('{0} flags (points)').format(self.displayName())
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.LINE_FLAGS,
+                self.tr('{0} flags (lines)').format(self.displayName())
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.POLYGON_FLAGS,
+                self.tr('{0} flags (polygons)').format(self.displayName())
+            )
+        )
 
     def parameterAsSpatialRulesSet(self, parameters, name, context):
         return parameters[name]
@@ -125,7 +150,6 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
                          component.
         :return: (QgsVectorLayer) vector layer ready to be 
         """
-        
         if layername not in self.__layers:
             # by default, it is assumed layer names are unique on canvas
             vl = QgsProject.instance().mapLayersByName(layername)
@@ -155,7 +179,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
                             bounds of occurrences an event can happen between
                             the target layers.
         """
-        pass
+        return QgsVectorLayer()
 
     def notContains(self, layerA, layerB, cardinality):
         """
@@ -166,7 +190,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
                             bounds of occurrences an event can happen between
                             the target layers.
         """
-        pass
+        return QgsVectorLayer()
 
     def intersects(self, layerA, layerB, cardinality):
         """
@@ -177,7 +201,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
                             bounds of occurrences an event can happen between
                             the target layers.
         """
-        pass
+        return QgsVectorLayer()
 
     def notIntersects(self, layerA, layerB, cardinality):
         """
@@ -189,7 +213,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
                             bounds of occurrences an event can happen between
                             the target layers.
         """
-        pass
+        return QgsVectorLayer()
 
     def isContained(self, layerA, layerB, cardinality):
         """
@@ -200,7 +224,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
                             bounds of occurrences an event can happen between
                             the target layers.
         """
-        pass
+        return QgsVectorLayer()
 
     def isNotContained(self, layerA, layerB, cardinality):
         """
@@ -212,7 +236,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
                             bounds of occurrences an event can happen between
                             the target layers.
         """
-        pass
+        return QgsVectorLayer()
 
     def touches(self, layerA, layerB, cardinality):
         """
@@ -223,7 +247,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
                             bounds of occurrences an event can happen between
                             the target layers.
         """
-        pass
+        return QgsVectorLayer()
 
     def notTouches(self, layerA, layerB, cardinality):
         """
@@ -234,7 +258,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
                             bounds of occurrences an event can happen between
                             the target layers.
         """
-        pass
+        return QgsVectorLayer()
 
     def verifyTopologicalRelation(self, predicate, layerA, layerB, cardinality):
         """
@@ -249,10 +273,9 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         :return: (QgsVectorLayer) layer containing features representing the
                                   occurrences of the given test.
         """
-        # this method checks the
-        if predicate >= len(self.__predicates) or predicate < 0:
+        if predicate not in range(len(self.__predicates)):
             raise QgsProcessingException(
-                self.tr("Cannot recognize relation {n}").format(n=predicate)
+                self.tr("Unsupported relation {n}").format(n=predicate)
             )
         return {
             self.CONTAINS : self.contains,
@@ -284,8 +307,10 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
                 ),
                 rule["cardinality"] 
             )
+            if out.featureCount() > 0:
+                # raise flags
+                pass
         # dont forget to clear cached layers
-        del self.__layers
         self.__layers = dict()
         return {}
 
