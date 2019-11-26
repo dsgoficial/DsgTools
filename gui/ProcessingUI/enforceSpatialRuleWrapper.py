@@ -25,6 +25,8 @@ from functools import partial
 
 from qgis.core import QgsMapLayerProxyModel
 from qgis.gui import QgsMapLayerComboBox, QgsFieldExpressionWidget
+from qgis.PyQt.QtCore import QRegExp
+from qgis.PyQt.QtGui import QRegExpValidator
 from qgis.PyQt.QtWidgets import (QComboBox,
                                  QLineEdit)
 from processing.gui.wrappers import (WidgetWrapper,
@@ -109,6 +111,8 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                  applied.
         """
         le = QLineEdit()
+        regex = QRegExp("[0-9\*]\.\.[0-9\*]")
+        le.setValidator(QRegExpValidator(regex, le))
         le.setPlaceholderText("1..*")
         return le
 
