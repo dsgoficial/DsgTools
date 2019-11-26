@@ -33,6 +33,7 @@ from qgis.core import (QgsProject,
                        QgsProcessingParameterDefinition)
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import ValidationAlgorithm
 
 class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
@@ -40,6 +41,21 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
     # a map to canvas layers, reset every time alg is asked to be run: make
     # reusage of layers available for each cycle, reducing re-reading time 
     __layers = dict()
+    # the order here matters and must be denial right after and the same as in
+    # the wrapper widget
+    __predicates = [
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "contains"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not contain"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is contained"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is not contained"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "intersects"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not intersect"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "touches"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not touch")
+    ]
+    CONTAINS, NOTCONTAINS, ISCONTAINED, ISNOTCONTAINED,\
+        INTERSECTS, NOTINTERSECTS, TOUCHES, NOTTOUCHES = range(len(__predicates))
+
 
     def initAlgorithm(self, config):
         """
@@ -130,11 +146,124 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
             )
         return vl
 
-    def verifyTopologicalRelation(self, predicate, layerA, layerB, cardinality):
+    def contains(self, layerA, layerB, cardinality):
         """
-        
+        Checks if layer A contains layer B, respecting its cardinality.
+        :param layerA: (QgsVectorLayer) reference layer to be tested.
+        :param layerB: (QgsVectorLayer) the other layer to be tested.
+        :param cardinality: (str) a string representing the upper and lower
+                            bounds of occurrences an event can happen between
+                            the target layers.
         """
         pass
+
+    def notContains(self, layerA, layerB, cardinality):
+        """
+        Checks if layer A does not contain layer B, respecting its cardinality.
+        :param layerA: (QgsVectorLayer) reference layer to be tested.
+        :param layerB: (QgsVectorLayer) the other layer to be tested.
+        :param cardinality: (str) a string representing the upper and lower
+                            bounds of occurrences an event can happen between
+                            the target layers.
+        """
+        pass
+
+    def intersects(self, layerA, layerB, cardinality):
+        """
+        Checks if layer A intersects layer B, respecting its cardinality.
+        :param layerA: (QgsVectorLayer) reference layer to be tested.
+        :param layerB: (QgsVectorLayer) the other layer to be tested.
+        :param cardinality: (str) a string representing the upper and lower
+                            bounds of occurrences an event can happen between
+                            the target layers.
+        """
+        pass
+
+    def notIntersects(self, layerA, layerB, cardinality):
+        """
+        Checks if layer A does not intersect layer B, respecting its
+        cardinality.
+        :param layerA: (QgsVectorLayer) reference layer to be tested.
+        :param layerB: (QgsVectorLayer) the other layer to be tested.
+        :param cardinality: (str) a string representing the upper and lower
+                            bounds of occurrences an event can happen between
+                            the target layers.
+        """
+        pass
+
+    def isContained(self, layerA, layerB, cardinality):
+        """
+        Checks if layer A is contained by layer B, respecting its cardinality.
+        :param layerA: (QgsVectorLayer) reference layer to be tested.
+        :param layerB: (QgsVectorLayer) the other layer to be tested.
+        :param cardinality: (str) a string representing the upper and lower
+                            bounds of occurrences an event can happen between
+                            the target layers.
+        """
+        pass
+
+    def isNotContained(self, layerA, layerB, cardinality):
+        """
+        Checks if layer A is not contained by layer B, respecting its
+        cardinality.
+        :param layerA: (QgsVectorLayer) reference layer to be tested.
+        :param layerB: (QgsVectorLayer) the other layer to be tested.
+        :param cardinality: (str) a string representing the upper and lower
+                            bounds of occurrences an event can happen between
+                            the target layers.
+        """
+        pass
+
+    def touches(self, layerA, layerB, cardinality):
+        """
+        Checks if layer A touches layer B, respecting its cardinality.
+        :param layerA: (QgsVectorLayer) reference layer to be tested.
+        :param layerB: (QgsVectorLayer) the other layer to be tested.
+        :param cardinality: (str) a string representing the upper and lower
+                            bounds of occurrences an event can happen between
+                            the target layers.
+        """
+        pass
+
+    def notTouches(self, layerA, layerB, cardinality):
+        """
+        Checks if layer A does not touch layer B, respecting its cardinality.
+        :param layerA: (QgsVectorLayer) reference layer to be tested.
+        :param layerB: (QgsVectorLayer) the other layer to be tested.
+        :param cardinality: (str) a string representing the upper and lower
+                            bounds of occurrences an event can happen between
+                            the target layers.
+        """
+        pass
+
+    def verifyTopologicalRelation(self, predicate, layerA, layerB, cardinality):
+        """
+        Verifies a given topological relation between two layers, returning a
+        vector layer pointing where these predicates have happened.
+        :param predicate: (int) topological relation to be tested.
+        :param layerA: (QgsVectorLayer) reference layer to be tested.
+        :param layerB: (QgsVectorLayer) the other layer to be tested.
+        :param cardinality: (str) a string representing the upper and lower
+                            bounds of occurrences an event can happen between
+                            the target layers.
+        :return: (QgsVectorLayer) layer containing features representing the
+                                  occurrences of the given test.
+        """
+        # this method checks the
+        if predicate >= len(self.__predicates) or predicate < 0:
+            raise QgsProcessingException(
+                self.tr("Cannot recognize relation {n}").format(n=predicate)
+            )
+        return {
+            self.CONTAINS : self.contains,
+            self.NOTCONTAINS : self.notContains,
+            self.INTERSECTS : self.intersects,
+            self.NOTINTERSECTS : self.notIntersects,
+            self.ISCONTAINED : self.isContained,
+            self.ISNOTCONTAINED : self.isNotContained,
+            self.TOUCHES : self.touches,
+            self.NOTTOUCHES : self.notTouches
+        }[predicate](layerA, layerB, cardinality)
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -147,8 +276,12 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
             name = rule["name"]
             out = self.verifyTopologicalRelation(
                 rule["predicate"],
-                self.setupLayer(rule["layer_a"], rule["filter_a"]),
-                self.setupLayer(rule["layer_b"], rule["filter_b"]),
+                self.setupLayer(
+                    rule["layer_a"], rule["filter_a"], context, feedback
+                ),
+                self.setupLayer(
+                    rule["layer_b"], rule["filter_b"], context, feedback
+                ),
                 rule["cardinality"] 
             )
         # dont forget to clear cached layers
