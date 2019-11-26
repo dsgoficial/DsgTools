@@ -20,16 +20,13 @@
  *                                                                         *
  ***************************************************************************/
 """
-
-import os
-from time import sleep
-
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (QgsProject,
                        QgsVectorLayer,
                        QgsProcessingContext,
                        QgsProcessingException,
                        QgsProcessingParameterType,
+                       QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterDefinition,
                        QgsProcessingParameterFeatureSink)
 
@@ -295,21 +292,35 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         rules = self.parameterAsSpatialRulesSet(
             parameters, self.RULES_SET, context
         )
-        for rule in rules:
+        size = len(rules)
+        step = 1 / size if size else 0
+        multiStepFeedback = QgsProcessingMultiStepFeedback(size, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        for current, rule in enumerate(rules):
+            if feedback.isCanceled() or multiStepFeedback.isCanceled():
+                return {}
             name = rule["name"]
+            multiStepFeedbackInner = QgsProcessingMultiStepFeedback(
+                2, multiStepFeedback
+            )
             out = self.verifyTopologicalRelation(
                 rule["predicate"],
                 self.setupLayer(
-                    rule["layer_a"], rule["filter_a"], context, feedback
+                    rule["layer_a"], rule["filter_a"],
+                    context, multiStepFeedbackInner
                 ),
                 self.setupLayer(
-                    rule["layer_b"], rule["filter_b"], context, feedback
+                    rule["layer_b"], rule["filter_b"],
+                    context, multiStepFeedbackInner
                 ),
                 rule["cardinality"] 
             )
+            multiStepFeedbackInner.setCurrentStep(1)
             if out.featureCount() > 0:
                 # raise flags
                 pass
+            multiStepFeedbackInner.setCurrentStep(2)
+            multiStepFeedback.setCurrentStep(current + 1)
         # dont forget to clear cached layers
         self.__layers = dict()
         return {}
