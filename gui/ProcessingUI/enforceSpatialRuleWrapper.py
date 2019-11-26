@@ -40,6 +40,15 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
     def __init__(self, *args, **kwargs):
         super(EnforceSpatialRuleWrapper, self).__init__(*args, **kwargs)
 
+    def ruleNameWidget(self):
+        """
+        Retrieves the widget for reading/setting rule name.
+        :return: (QLineEdit)
+        """
+        le = QLineEdit()
+        le.setPlaceholderText(self.tr("Set a name for this spatial rule..."))
+        return le
+
     def mapLayerComboBox(self):
         """
         Retrieves the configured map layer selection combo box.
@@ -125,7 +134,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             0 : {
                 "header" : self.tr("Rule name"),
                 "type" : "widget",
-                "widget" : QLineEdit,
+                "widget" : self.ruleNameWidget,
                 "setter" : "setText",
                 "getter" : "text"
             },
@@ -139,7 +148,6 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             2 : {
                 "header" : self.tr("Filter A"),
                 "type" : "widget",
-                # problema: conectar o sinal da mapLayerComboBox no filterexpression
                 "widget" : self.filterExpressionWidget,
                 "setter" : "setExpression",
                 "getter" : "currentText"
@@ -161,7 +169,6 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             5 : {
                 "header" : self.tr("Filter B"),
                 "type" : "widget",
-                # problema: conectar o sinal da mapLayerComboBox no filterexpression
                 "widget" : self.filterExpressionWidget,
                 "setter" : "setExpression",
                 "getter" : "currentText"
@@ -169,7 +176,6 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             6 : {
                 "header" : self.tr("Cardinality"),
                 "type" : "widget",
-                # problema: conectar o sinal da mapLayerComboBox no filterexpression
                 "widget" : self.cardinalityWidget,
                 "setter" : "setText",
                 "getter" : "text"
@@ -195,7 +201,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             0 : {
                 "header" : self.tr("Rule name"),
                 "type" : "widget",
-                "widget" : QLineEdit,
+                "widget" : self.ruleNameWidget,
                 "setter" : "setText",
                 "getter" : "text"
             },
@@ -209,7 +215,6 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             1 : {
                 "header" : self.tr("Filter A"),
                 "type" : "widget",
-                # problema: conectar o sinal da mapLayerComboBox no filterexpression
                 "widget" : self.filterExpressionWidget,
                 "setter" : "setExpression",
                 "getter" : "currentText"
@@ -231,7 +236,6 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             5 : {
                 "header" : self.tr("Filter B"),
                 "type" : "widget",
-                # problema: conectar o sinal da mapLayerComboBox no filterexpression
                 "widget" : self.filterExpressionWidget,
                 "setter" : "setExpression",
                 "getter" : "currentText"
@@ -239,7 +243,6 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             6 : {
                 "header" : self.tr("Cardinality"),
                 "type" : "widget",
-                # problema: conectar o sinal da mapLayerComboBox no filterexpression
                 "widget" : self.cardinalityWidget,
                 "setter" : "setCurrentText",
                 "getter" : "currentText"
@@ -257,7 +260,6 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
     
     def createWidget(self):
         self.panel = self.createPanel()
-        # self.panel.dialogType = self.dialogType
         return self.panel
     
     def parentLayerChanged(self, layer=None):
@@ -273,12 +275,16 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         """
         if value is None:
             return
-        # for valueMap in value:
-        #     self.panel.addRow({
-        #         0 : valueMap["referenceLayer"],
-        #         1 : valueMap["snap"],
-        #         2 : valueMap["mode"]
-        #     })
+        for valueMap in value:
+            self.panel.addRow({
+                0 : valueMap["name"],
+                1 : valueMap["layer_a"],
+                2 : valueMap["filter_a"],
+                3 : valueMap["predicate"],
+                4 : valueMap["layer_b"],
+                5 : valueMap["filter_b"],
+                6 : valueMap["cardinality"],
+            })
 
     def readStandardPanel(self):
         """
