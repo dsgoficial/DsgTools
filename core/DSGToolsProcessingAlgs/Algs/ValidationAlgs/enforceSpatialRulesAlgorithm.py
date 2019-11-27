@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (QgsProject,
                        QgsVectorLayer,
@@ -45,17 +46,31 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
     # the order here matters and must be denial right after and the same as in
     # the wrapper widget
     __predicates = [
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "contains"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not contain"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is contained"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is not contained"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "equals"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is not equals"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "disjoint"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is not disjoint"),
             QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "intersects"),
             QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not intersect"),
             QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "touches"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not touch")
-    ]
-    CONTAINS, NOTCONTAINS, ISCONTAINED, ISNOTCONTAINED,\
-        INTERSECTS, NOTINTERSECTS, TOUCHES, NOTTOUCHES = range(len(__predicates))
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not touch"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "crosses"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not cross"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "within"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is not within"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "overlaps"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not overlap"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "contains"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not contain"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "covers"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not cover"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "covered by"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is not covered by")
+        ]
+    EQUALS, NOTEQUALS, DISJOINT, NOTDISJOINT, INTERSECTS, NOTINTERSECTS, \
+        TOUCHES, NOTTOUCHES, CROSSES, NOTCROSSES, WITHIN, NOTWITHIN, OVERLAPS, \
+        NOTOVERLAPS, CONTAINS, NOTCONTAINS, COVERS, NOTCOVERS, COVEREDBY, \
+        NOTCOVEREDBY = range(len(__predicates))
 
 
     def initAlgorithm(self, config):
@@ -145,7 +160,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
                         layer is retrieved and setup.
         :param feedback: (QgsProcessingFeedback) QGIS progress tracking
                          component.
-        :return: (QgsVectorLayer) vector layer ready to be 
+        :return: (QgsVectorLayer) vector layer ready to be set up.
         """
         if layername not in self.__layers:
             # by default, it is assumed layer names are unique on canvas
@@ -167,7 +182,27 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
             )
         return vl
 
-    def contains(self, layerA, layerB, cardinality):
+    def disjoint(self, layerA, layerB, cardinality, context=None, feedback=None):
+        """
+        Checks if layer A is disjoint to layer B.
+        :param layerA: (QgsVectorLayer) reference layer to be tested.
+        :param layerB: (QgsVectorLayer) the other layer to be tested.
+        :param cardinality: (str) a string representing the upper and lower
+                            bounds of occurrences an event can happen between
+                            the target layers.
+        :param context: (QgsProcessingContext) environment context in which 
+                        layer is retrieved and setup.
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
+                         component.
+        :return: (QgsVectorLayer) layer containing features representing the
+                 occurrences features of layer A are not disjoint to features
+                 of layer B.
+        """
+        # disjoint is kept to keep parallel with other methods. it only counts
+        # completely dissociated features (obviously)
+        return QgsVectorLayer()
+
+    def contains(self, layerA, layerB, cardinality, context=None, feedback=None):
         """
         Checks if layer A contains layer B, respecting its cardinality.
         :param layerA: (QgsVectorLayer) reference layer to be tested.
@@ -175,10 +210,17 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         :param cardinality: (str) a string representing the upper and lower
                             bounds of occurrences an event can happen between
                             the target layers.
+        :param context: (QgsProcessingContext) environment context in which 
+                        layer is retrieved and setup.
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
+                         component.
+        :return: (QgsVectorLayer) layer containing features representing the
+                 occurrences features of layer A not contanining features of
+                 layer B.
         """
         return QgsVectorLayer()
 
-    def notContains(self, layerA, layerB, cardinality):
+    def notContains(self, layerA, layerB, cardinality, context=None, feedback=None):
         """
         Checks if layer A does not contain layer B, respecting its cardinality.
         :param layerA: (QgsVectorLayer) reference layer to be tested.
@@ -186,10 +228,16 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         :param cardinality: (str) a string representing the upper and lower
                             bounds of occurrences an event can happen between
                             the target layers.
+        :param context: (QgsProcessingContext) environment context in which 
+                        layer is retrieved and setup.
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
+                         component.
+        :return: (QgsVectorLayer) layer containing features representing the
+                 occurrences features of layer A containing features of layer B.
         """
         return QgsVectorLayer()
 
-    def intersects(self, layerA, layerB, cardinality):
+    def intersects(self, layerA, layerB, cardinality, context=None, feedback=None):
         """
         Checks if layer A intersects layer B, respecting its cardinality.
         :param layerA: (QgsVectorLayer) reference layer to be tested.
@@ -197,10 +245,17 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         :param cardinality: (str) a string representing the upper and lower
                             bounds of occurrences an event can happen between
                             the target layers.
+        :param context: (QgsProcessingContext) environment context in which 
+                        layer is retrieved and setup.
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
+                         component.
+        :return: (QgsVectorLayer) layer containing features representing the
+                 occurrences features of layer A not intersecting features of
+                 layer B.
         """
         return QgsVectorLayer()
 
-    def notIntersects(self, layerA, layerB, cardinality):
+    def notIntersects(self, layerA, layerB, cardinality, context=None, feedback=None):
         """
         Checks if layer A does not intersect layer B, respecting its
         cardinality.
@@ -209,10 +264,17 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         :param cardinality: (str) a string representing the upper and lower
                             bounds of occurrences an event can happen between
                             the target layers.
+        :param context: (QgsProcessingContext) environment context in which 
+                        layer is retrieved and setup.
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
+                         component.
+        :return: (QgsVectorLayer) layer containing features representing the
+                 occurrences features of layer A intersecting features of
+                 layer B.
         """
         return QgsVectorLayer()
 
-    def isContained(self, layerA, layerB, cardinality):
+    def isContained(self, layerA, layerB, cardinality, context=None, feedback=None):
         """
         Checks if layer A is contained by layer B, respecting its cardinality.
         :param layerA: (QgsVectorLayer) reference layer to be tested.
@@ -220,10 +282,17 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         :param cardinality: (str) a string representing the upper and lower
                             bounds of occurrences an event can happen between
                             the target layers.
+        :param context: (QgsProcessingContext) environment context in which 
+                        layer is retrieved and setup.
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
+                         component.
+        :return: (QgsVectorLayer) layer containing features representing the
+                 occurrences features of layer A not contained by features of
+                 layer B.
         """
         return QgsVectorLayer()
 
-    def isNotContained(self, layerA, layerB, cardinality):
+    def isNotContained(self, layerA, layerB, cardinality, context=None, feedback=None):
         """
         Checks if layer A is not contained by layer B, respecting its
         cardinality.
@@ -232,10 +301,16 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         :param cardinality: (str) a string representing the upper and lower
                             bounds of occurrences an event can happen between
                             the target layers.
+        :param context: (QgsProcessingContext) environment context in which 
+                        layer is retrieved and setup.
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
+                         component.
+        :return: (QgsVectorLayer) layer containing features representing the
+                 occurrences features of layer A being contained by layer B.
         """
         return QgsVectorLayer()
 
-    def touches(self, layerA, layerB, cardinality):
+    def touches(self, layerA, layerB, cardinality, context=None, feedback=None):
         """
         Checks if layer A touches layer B, respecting its cardinality.
         :param layerA: (QgsVectorLayer) reference layer to be tested.
@@ -243,10 +318,16 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         :param cardinality: (str) a string representing the upper and lower
                             bounds of occurrences an event can happen between
                             the target layers.
+        :param context: (QgsProcessingContext) environment context in which 
+                        layer is retrieved and setup.
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
+                         component.
+        :return: (QgsVectorLayer) layer containing features representing the
+                 occurrences features of layer A not touching layer B.
         """
         return QgsVectorLayer()
 
-    def notTouches(self, layerA, layerB, cardinality):
+    def notTouches(self, layerA, layerB, cardinality, context=None, feedback=None):
         """
         Checks if layer A does not touch layer B, respecting its cardinality.
         :param layerA: (QgsVectorLayer) reference layer to be tested.
@@ -254,10 +335,16 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         :param cardinality: (str) a string representing the upper and lower
                             bounds of occurrences an event can happen between
                             the target layers.
+        :param context: (QgsProcessingContext) environment context in which 
+                        layer is retrieved and setup.
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
+                         component.
+        :return: (QgsVectorLayer) layer containing features representing the
+                 occurrences features of layer A touching layer B.
         """
         return QgsVectorLayer()
 
-    def verifyTopologicalRelation(self, predicate, layerA, layerB, cardinality):
+    def verifyTopologicalRelation(self, predicate, layerA, layerB, cardinality, context=None, feedback=None):
         """
         Verifies a given topological relation between two layers, returning a
         vector layer pointing where these predicates have happened.
@@ -267,23 +354,40 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         :param cardinality: (str) a string representing the upper and lower
                             bounds of occurrences an event can happen between
                             the target layers.
+        :param context: (QgsProcessingContext) environment context in which 
+                        layer is retrieved and setup.
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
+                         component.
         :return: (QgsVectorLayer) layer containing features representing the
-                                  occurrences of the given test.
+                 occurrences of the given test (their flags).
         """
         if predicate not in range(len(self.__predicates)):
             raise QgsProcessingException(
                 self.tr("Unsupported relation {n}").format(n=predicate)
             )
+        handler = SpatialRelationsHandler()
         return {
-            self.CONTAINS : self.contains,
-            self.NOTCONTAINS : self.notContains,
-            self.INTERSECTS : self.intersects,
-            self.NOTINTERSECTS : self.notIntersects,
-            self.ISCONTAINED : self.isContained,
-            self.ISNOTCONTAINED : self.isNotContained,
-            self.TOUCHES : self.touches,
-            self.NOTTOUCHES : self.notTouches
-        }[predicate](layerA, layerB, cardinality)
+            self.EQUALS : handler.isEqual,
+            self.NOTEQUALS : handler.disjoint,
+            self.DISJOINT : handler.disjoint,
+            self.NOTDISJOINT : handler.disjoint,
+            self.INTERSECTS : handler.disjoint,
+            self.NOTINTERSECTS : handler.disjoint,
+            self.TOUCHES : handler.disjoint,
+            self.NOTTOUCHES : handler.disjoint,
+            self.CROSSES : handler.disjoint,
+            self.NOTCROSSES : handler.disjoint,
+            self.WITHIN : handler.disjoint,
+            self.NOTWITHIN : handler.disjoint,
+            self.OVERLAPS : handler.contains,
+            self.NOTOVERLAPS : handler.notContains,
+            self.CONTAINS : handler.intersects,
+            self.NOTCONTAINS : handler.notIntersects,
+            self.NOTCOVERS : handler.isContained,
+            self.ISNOTCONTAINED : handler.isNotContained,
+            self.COVEREDBY : handler.touches,
+            self.NOTCOVEREDBY : handler.notTouches
+        }[predicate](layerA, layerB, cardinality, context, feedback)
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -292,9 +396,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         rules = self.parameterAsSpatialRulesSet(
             parameters, self.RULES_SET, context
         )
-        size = len(rules)
-        step = 1 / size if size else 0
-        multiStepFeedback = QgsProcessingMultiStepFeedback(size, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(len(rules), feedback)
         multiStepFeedback.setCurrentStep(0)
         for current, rule in enumerate(rules):
             if feedback.isCanceled() or multiStepFeedback.isCanceled():
@@ -306,14 +408,14 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
             out = self.verifyTopologicalRelation(
                 rule["predicate"],
                 self.setupLayer(
-                    rule["layer_a"], rule["filter_a"],
-                    context, multiStepFeedbackInner
+                    rule["layer_a"], rule["filter_a"], context, None
                 ),
                 self.setupLayer(
-                    rule["layer_b"], rule["filter_b"],
-                    context, multiStepFeedbackInner
+                    rule["layer_b"], rule["filter_b"], context, None
                 ),
-                rule["cardinality"] 
+                rule["cardinality"],
+                context,
+                multiStepFeedbackInner
             )
             multiStepFeedbackInner.setCurrentStep(1)
             if out.featureCount() > 0:
