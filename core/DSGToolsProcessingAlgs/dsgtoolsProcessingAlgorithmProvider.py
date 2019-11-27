@@ -176,7 +176,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyVertexNear
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUnsharedVertexOnSharedEdgesAlgorithm import \
     IdentifyUnsharedVertexOnSharedEdgesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.enforceSpatialRulesAlgorithm import \
-    EnforceSpatialRulesAlgorithm
+    (EnforceSpatialRulesAlgorithm, ParameterSpatialRulesSetType)
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -273,6 +273,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         QgsApplication.instance().processingRegistry().addParameterType(self.parameterTypeSnapHierarchy)
         self.parameterTypeFMEManager = ParameterFMEManagerType()
         QgsApplication.instance().processingRegistry().addParameterType(self.parameterTypeFMEManager)
+        self.parameterSpatialRulesSetType = ParameterSpatialRulesSetType()
+        QgsApplication.instance().processingRegistry().addParameterType(self.parameterSpatialRulesSetType)
         self.refreshAlgorithms()
         return True
 
@@ -283,6 +285,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         ProcessingConfig.removeSetting('ACTIVATE_DSGTools')
         QgsApplication.instance().processingRegistry().removeParameterType(self.parameterTypeSnapHierarchy)
         QgsApplication.instance().processingRegistry().removeParameterType(self.parameterTypeFMEManager)
+        QgsApplication.instance().processingRegistry().removeParameterType(self.parameterSpatialRulesSetType)
 
     def isActive(self):
         """

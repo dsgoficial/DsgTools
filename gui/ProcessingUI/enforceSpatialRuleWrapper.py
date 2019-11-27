@@ -23,7 +23,7 @@
 
 from functools import partial
 
-from qgis.core import QgsMapLayerProxyModel
+from qgis.core import QgsProject, QgsVectorLayer, QgsMapLayerProxyModel
 from qgis.gui import QgsMapLayerComboBox, QgsFieldExpressionWidget
 from qgis.PyQt.QtCore import QRegExp
 from qgis.PyQt.QtGui import QRegExpValidator
@@ -77,6 +77,35 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             if vl:
                 filterWidget.setLayer(vl)
 
+    def postAddRowModeler(self, row):
+        """
+        Sets up widgets to work as expected right after they are added to GUI.
+        """
+        def checkLayerBeforeConnect(le, filterExp):
+            lName = le.text().strip()
+            for layer in QgsProject.instance().mapLayersByName(lName):
+                if isinstance(layer, QgsVectorLayer) and layer.name() == lName:
+                    filterExp.setLayer(layer)
+                    return
+            filterExp.setLayer(None)
+        for col in [1, 4]:
+            le = self.panel.itemAt(row, col)
+            filterWidget = self.panel.itemAt(row, col + 1)
+            le.editingFinished.connect(
+                partial(checkLayerBeforeConnect, le, filterWidget)
+            )
+            # mapLayerComboBox.layerChanged.connect(filterWidget.setLayer)
+            # mapLayerComboBox.editTextChanged.connect(
+            #     partial(checkLayerBeforeConnect, mapLayerComboBox, filterWidget)
+            # )
+            # mapLayerComboBox.layerChanged.connect(
+            #     partial(filterWidget.setExpression, "")
+            # )
+            # first setup is manual though
+            # vl = mapLayerComboBox.currentLayer()
+            # if vl:
+            #     filterWidget.setLayer(vl)
+
     def mapLayerModelDialog(self):
         """
         Retrieves widget for map layer selection in a model dialog setup.
@@ -84,7 +113,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                  mode.
         """
         le = QLineEdit()
-        le.setPlaceholderText(self.tr("Set layer name..."))
+        le.setPlaceholderText(self.tr("Type a vector layer's name..."))
         return le
 
     def filterExpressionWidget(self):
@@ -102,14 +131,26 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         """
         cb = QComboBox()
         cb.addItems([
-            self.tr("contains"),
-            self.tr("does not contain"),
-            self.tr("is contained"),
-            self.tr("is not contained"),
+            self.tr("equals"),
+            self.tr("is not equals"),
+            self.tr("disjoint"),
+            self.tr("is not disjoint"),
             self.tr("intersects"),
             self.tr("does not intersect"),
             self.tr("touches"),
-            self.tr("does not touch")
+            self.tr("does not touch"),
+            self.tr("crosses"),
+            self.tr("does not cross"),
+            self.tr("within"),
+            self.tr("is not within"),
+            self.tr("overlaps"),
+            self.tr("does not overlap"),
+            self.tr("contains"),
+            self.tr("does not contain"),
+            self.tr("covers"),
+            self.tr("does not cover"),
+            self.tr("covered by"),
+            self.tr("is not covered by")
         ])
         return cb
 
@@ -122,7 +163,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         le = QLineEdit()
         regex = QRegExp("[0-9\*]\.\.[0-9\*]")
         le.setValidator(QRegExpValidator(regex, le))
-        le.setPlaceholderText("1..*")
+        le.setPlaceholderText("0..*")
         return le
 
     def standardPanel(self):
@@ -212,7 +253,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 "setter" : "setText",
                 "getter" : "text"
             },
-            1 : {
+            2 : {
                 "header" : self.tr("Filter A"),
                 "type" : "widget",
                 "widget" : self.filterExpressionWidget,
@@ -244,11 +285,12 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 "header" : self.tr("Cardinality"),
                 "type" : "widget",
                 "widget" : self.cardinalityWidget,
-                "setter" : "setCurrentText",
-                "getter" : "currentText"
+                "setter" : "setText",
+                "getter" : "text"
             }
         })
         otw.setHeaderDoubleClickBehaviour("replicate")
+        otw.rowAdded.connect(self.postAddRowModeler)
         return otw
 
     def createPanel(self):
@@ -301,7 +343,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             values["predicate"] = self.panel.getValue(row, 3)
             values["layer_b"] = self.panel.getValue(row, 4)
             values["filter_b"] = self.panel.getValue(row, 5)
-            values["cardinality"] = self.panel.getValue(row, 6) or "1..*"
+            values["cardinality"] = self.panel.getValue(row, 6) or "0..*"
             valueMaplist.append(values)
         return valueMaplist
 
