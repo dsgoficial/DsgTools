@@ -13,7 +13,7 @@ install:
     # If needd additional steps (for example make or paver setup, place it here)
     # Link the plugin to the tests_directory
     - docker exec -it dsgtools-testing-env sh -c "cd /tests_directory"
-    - docker exec -it qgis-testing-environment sh -c "ln -s /tests_directory/ /root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/DsgTools"
+    - docker exec -it dsgtools-testing-env sh -c "ln -s /tests_directory/ /root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/DsgTools"
 
 script:
     - docker exec -it dsgtools-testing-env sh -c "qgis_testrunner.sh DsgTools.tests.test_TravisTest"
