@@ -6,5 +6,5 @@ RUN mkdir /tests_directory && \
     rm -f  /root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/DsgTools && \
     ln -s /tests_directory/DsgTools/ /root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/DsgTools
 
-ENV PYTHONPATH=/usr/share/qgis/python/:/usr/lib/python2.7/dist-packages/qgis:/usr/lib/python3/dist-packages/qgis:/usr/share/qgis/python/qgis:/root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/DsgTools
+ENV PYTHONPATH=/usr/share/qgis/python/:/usr/lib/python2.7/dist-packages/qgis:/usr/lib/python3/dist-packages/qgis:/usr/share/qgis/python/qgis:/usr/share/qgis/python/qgis/python/:/usr/share/qgis/python/qgis/python/plugins/:/root/.local/share/QGIS/QGIS3/profiles/default/:/root/.local/share/QGIS/QGIS3/profiles/default/python/:/root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/:/root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/DsgTools
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
