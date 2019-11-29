@@ -727,12 +727,12 @@ class Tester(unittest.TestCase):
             self.testAlg("dsgtools:identifyduplicatedpolygonsoncoverage"), ""
         )
 
-     def test_identifysmallpolygons(self):
+    def test_identifysmallpolygons(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifysmallpolygons"), ""
         )
 
-     def test_identifydangles(self):
+    def test_identifydangles(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifydangles"), ""
         )
