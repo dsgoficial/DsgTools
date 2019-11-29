@@ -22,18 +22,20 @@
 """
 from __future__ import absolute_import
 
-from builtins import range
 from itertools import tee
 from collections import defaultdict
 
+from qgis.core import (Qgis,
+                       QgsFeature,
+                       QgsProject,
+                       QgsGeometry,
+                       QgsVectorLayer,
+                       QgsSpatialIndex,
+                       QgsFeatureRequest,
+                       QgsProcessingMultiStepFeedback)
 from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
-from qgis.core import (Qgis, QgsCoordinateReferenceSystem,
-                       QgsCoordinateTransform, QgsExpression, QgsFeature,
-                       QgsFeatureRequest, QgsField, QgsGeometry, QgsMessageLog,
-                       QgsProcessingMultiStepFeedback, QgsProject,
-                       QgsSpatialIndex, QgsVectorDataProvider, QgsVectorLayer,
-                       QgsWkbTypes, edit)
-from qgis.PyQt.Qt import QObject, QVariant
+from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtCore import QCoreApplication
 
 from .featureHandler import FeatureHandler
 from .geometryHandler import GeometryHandler
@@ -41,6 +43,28 @@ from .layerHandler import LayerHandler
 
 
 class SpatialRelationsHandler(QObject):
+    __predicates = (
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "equals"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is not equals"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "disjoint"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is not disjoint"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "intersects"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not intersect"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "touches"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not touch"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "crosses"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not cross"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "within"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is not within"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "overlaps"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not overlap"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "contains"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not contain")
+        )
+    EQUALS, NOTEQUALS, DISJOINT, NOTDISJOINT, INTERSECTS, NOTINTERSECTS, \
+        TOUCHES, NOTTOUCHES, CROSSES, NOTCROSSES, WITHIN, NOTWITHIN, OVERLAPS, \
+        NOTOVERLAPS, CONTAINS, NOTCONTAINS = range(len(__predicates))
+
     def __init__(self, iface = None, parent = None):
         super(SpatialRelationsHandler, self).__init__()
         self.parent = parent
@@ -528,7 +552,6 @@ class SpatialRelationsHandler(QObject):
                 feedback.setProgress(current * progressStep)
         return spatialRuleDict
 
-    
     def buildSpatialRelationDictOnSpatialRuleDict(self, spatialDict, spatialRuleDict, feedback=None):
         """
         layerFeatureDict = {
@@ -592,49 +615,7 @@ class SpatialRelationsHandler(QObject):
             steps += len(v['rule_list'])
             steps += len(spatialDict[k]['feature_id_dict'])
         return steps
-    
-    def prepareEngine(self, feat):
-        """
-        Prepairs the geometryEngine for spatial comparisons.
 
-        returns geom (QgsGeometry), geom_BB (QgsRectangle), engine (QgsGeometryEngine)
-        """
-        geom = feat.geometry()
-        geom_BB = geom.boundingBox()
-        #geometry engine is the fastest way of comparing geometries in QGIS 3.x series
-        engine = QgsGeometry.createGeometryEngine(geom.constGet())
-        engine.prepareGeometry()
-        return geom, geom_BB, engine
-                
-    def relateFeatureAccordingToPredicate(self, feat, rule, key, predicate, spatialDict):
-        geom, geom_BB, engine = self.prepareEngine(feat)
-        relationSet = set()
-        predicate = rule['predicate']
-        candidateSpatialIdx = spatialDict[key]['spatial_index']
-        candidateFeatureDict = spatialDict[key]['feature_id_dict']
-        for fid in candidateSpatialIdx.intersects(geom_BB):
-            test_feat = candidateFeatureDict[fid]
-            if getattr(engine, predicate)(test_feat.geometry().constGet()):
-                relationSet.add(test_feat)
-        return relationSet
-    
-    def parseCardinalityAndGetLambdaToIdentifyProblems(self, cardinality, necessity, isSameLayer=False):
-        """
-        Parses cardinality and returns a lambda to verify if the list of features 
-        that relates to the considered feature violates rule.
-        """
-        if cardinality is None:
-            lambdaCompair = lambda x: len(x) != 0
-            return lambdaCompair
-        min_card, max_card = cardinality.split('..')
-        if max_card != '*':
-            lambdaCompair = lambda x : len(x) < int(min_card)
-        elif min_card == max_card:
-            lambdaCompair = lambda x: len(x) != int(min_card)
-        else:
-            lambdaCompair = lambda x : len(x) < int(min_card) or len(x) > int(max_card)
-        return lambdaCompair
-    
     def identifyInvalidRelations(self, spatialDict, spatialRuleDict, feedback=None):
         """
         Identifies invalid spatial relations and returns a list with flags to be raised.
@@ -695,3 +676,108 @@ class SpatialRelationsHandler(QObject):
                 }
             )
         return spatialFlags
+
+    def availablePredicates(self):
+        """
+        Returns the name of all available predicates.
+        :return: (tuple-of-str) list of available predicates.
+        """
+        return self.__predicates
+
+    def getCardinalityTest(self, cardinality):
+        """
+        Parses cardinality string and gets a callable to check if the iterable
+        tested is not complying with the cardinality.
+        :param cardinality: (str) cardinality string to be tested against.
+        """
+        if cardinality is None:
+            return lambda x: len(x) != 0
+        min_card, max_card = cardinality.split('..')
+        if max_card == '*':
+            test = lambda x : len(x) < int(min_card)
+        elif min_card == max_card:
+            test = lambda x: len(x) != int(min_card)
+        else:
+            test = lambda x : len(x) < int(min_card) or len(x) > int(max_card)
+        return test
+                
+    def testPredicate(self, predicate, feat, targetFeatures):
+        """
+        Applies a predicate test to a given feature from a list of features.
+        :param predicate: (int) topological relation code to be tested against.
+        :param feat: (QgsFeature) reference feature to be used on the tests.
+        :param targetFeatures: (list-of-QgsFeature) features to be tested.
+        :return: (set-of-QgsFeatures) features that comply with the predicate. 
+        """
+        # negatives are disregarded. method simply apply the predicate comparison
+        positives = set()
+        geom = feat.geometry()
+        engine = QgsGeometry.createGeometryEngine(geom.constGet())
+        engine.prepareGeometry()
+        methods = {
+            self.EQUALS : "isEqual",
+            self.DISJOINT : "disjoint",
+            self.INTERSECTS : "intersects",
+            self.TOUCHES : "touches",
+            self.CROSSES : "crosses",
+            self.WITHIN : "within",
+            self.OVERLAPS : "overlaps",
+            self.CONTAINS : "contains"
+        }
+        if predicate not in methods:
+            raise NotImplementedError(
+                self.tr("Invalid predicate ({}).").format(predicate)
+            )
+        predicateMethod = methods[predicate]
+        for test_feat in targetFeatures:
+            if getattr(engine, predicateMethod)(test_feat.geometry().constGet()):
+                positives.add(test_feat)
+        return positives
+
+    def verifyTopologicalRelation(self, predicate, layerA, layerB, cardinality, context=None, feedback=None):
+        """
+        Verifies a given topological relation between two layers, returning a
+        vector layer pointing where these predicates have happened.
+        :param predicate: (int) topological relation to be tested.
+        :param layerA: (QgsVectorLayer) reference layer to be tested.
+        :param layerB: (QgsVectorLayer) the other layer to be tested.
+        :param cardinality: (str) a string representing the upper and lower
+                            bounds of occurrences an event can happen between
+                            the target layers.
+        :param context: (QgsProcessingContext) environment context in which 
+                        layer is retrieved and setup.
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
+                         component.
+        :return: (QgsVectorLayer) layer containing features representing the
+                 occurrences of the given test (their flags).
+        """
+        denials = [
+            self.NOTEQUALS,
+            self.NOTDISJOINT,
+            self.NOTINTERSECTS,
+            self.NOTTOUCHES,
+            self.NOTCROSSES,
+            self.NOTWITHIN,
+            self.NOTOVERLAPS,
+            self.NOTCONTAINS
+        ]
+        output = dict()
+        if predicate in denials:
+            # denials always follow the "positives", hence -1
+            # denials are ALWAYS absolute (cardinality is not applicable)
+            predicate -= 1
+            predicateTest = lambda x: len(x) > 0
+        else:
+            predicateTest = self.getCardinalityTest(cardinality)
+        for feat in layerA.getFeatures():
+            flags = self.testPredicate(
+                predicate,
+                feat,
+                layerB.getFeatures(
+                    QgsFeatureRequest(feat.geometry().boundingBox())
+                )
+            )
+            if predicateTest(flags):
+                # still missing how to get flag geometry
+                output[feat.id()] = flags
+        return output

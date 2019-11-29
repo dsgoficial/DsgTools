@@ -58,54 +58,6 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         cb.setFilters(QgsMapLayerProxyModel.VectorLayer)
         return cb
 
-    def postAddRowStandard(self, row):
-        """
-        Sets up widgets to work as expected right after they are added to GUI.
-        """
-        # in standard GUI, the layer selectors are QgsMapLayerComboBox, and its
-        # layer changed signal should be connected to the filter expression
-        # widget setup
-        for col in [1, 4]:
-            mapLayerComboBox = self.panel.itemAt(row, col)
-            filterWidget = self.panel.itemAt(row, col + 1)
-            mapLayerComboBox.layerChanged.connect(filterWidget.setLayer)
-            mapLayerComboBox.layerChanged.connect(
-                partial(filterWidget.setExpression, "")
-            )
-            # first setup is manual though
-            vl = mapLayerComboBox.currentLayer()
-            if vl:
-                filterWidget.setLayer(vl)
-
-    def postAddRowModeler(self, row):
-        """
-        Sets up widgets to work as expected right after they are added to GUI.
-        """
-        def checkLayerBeforeConnect(le, filterExp):
-            lName = le.text().strip()
-            for layer in QgsProject.instance().mapLayersByName(lName):
-                if isinstance(layer, QgsVectorLayer) and layer.name() == lName:
-                    filterExp.setLayer(layer)
-                    return
-            filterExp.setLayer(None)
-        for col in [1, 4]:
-            le = self.panel.itemAt(row, col)
-            filterWidget = self.panel.itemAt(row, col + 1)
-            le.editingFinished.connect(
-                partial(checkLayerBeforeConnect, le, filterWidget)
-            )
-            # mapLayerComboBox.layerChanged.connect(filterWidget.setLayer)
-            # mapLayerComboBox.editTextChanged.connect(
-            #     partial(checkLayerBeforeConnect, mapLayerComboBox, filterWidget)
-            # )
-            # mapLayerComboBox.layerChanged.connect(
-            #     partial(filterWidget.setExpression, "")
-            # )
-            # first setup is manual though
-            # vl = mapLayerComboBox.currentLayer()
-            # if vl:
-            #     filterWidget.setLayer(vl)
-
     def mapLayerModelDialog(self):
         """
         Retrieves widget for map layer selection in a model dialog setup.
@@ -165,6 +117,43 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         le.setValidator(QRegExpValidator(regex, le))
         le.setPlaceholderText("0..*")
         return le
+
+    def postAddRowStandard(self, row):
+        """
+        Sets up widgets to work as expected right after they are added to GUI.
+        """
+        # in standard GUI, the layer selectors are QgsMapLayerComboBox, and its
+        # layer changed signal should be connected to the filter expression
+        # widget setup
+        for col in [1, 4]:
+            mapLayerComboBox = self.panel.itemAt(row, col)
+            filterWidget = self.panel.itemAt(row, col + 1)
+            mapLayerComboBox.layerChanged.connect(filterWidget.setLayer)
+            mapLayerComboBox.layerChanged.connect(
+                partial(filterWidget.setExpression, "")
+            )
+            # first setup is manual though
+            vl = mapLayerComboBox.currentLayer()
+            if vl:
+                filterWidget.setLayer(vl)
+
+    def postAddRowModeler(self, row):
+        """
+        Sets up widgets to work as expected right after they are added to GUI.
+        """
+        def checkLayerBeforeConnect(le, filterExp):
+            lName = le.text().strip()
+            for layer in QgsProject.instance().mapLayersByName(lName):
+                if isinstance(layer, QgsVectorLayer) and layer.name() == lName:
+                    filterExp.setLayer(layer)
+                    return
+            filterExp.setLayer(None)
+        for col in [1, 4]:
+            le = self.panel.itemAt(row, col)
+            filterWidget = self.panel.itemAt(row, col + 1)
+            le.editingFinished.connect(
+                partial(checkLayerBeforeConnect, le, filterWidget)
+            )
 
     def standardPanel(self):
         """
@@ -325,7 +314,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 3 : valueMap["predicate"],
                 4 : valueMap["layer_b"],
                 5 : valueMap["filter_b"],
-                6 : valueMap["cardinality"],
+                6 : valueMap["cardinality"]
             })
 
     def readStandardPanel(self):
