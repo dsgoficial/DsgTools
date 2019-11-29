@@ -49,13 +49,7 @@ class Tester(unittest.TestCase):
                             CURRENT_PATH, '..', 'core', 'DSGToolsProcessingAlgs',
                             'Algs', 'ValidationAlgs'
                         )
-
-    def __init__(self):
-        """
-        Class constructor.
-        """
-        super(Tester, self).__init__()
-        self.datasets = dict()
+    datasets = dict()
 
     def clearDatasets(self):
         """
