@@ -29,6 +29,7 @@ It is supposed to be run through QGIS with DSGTools installed.
 
 import os
 import sys
+import warnings
 from osgeo import ogr
 
 import processing
@@ -688,14 +689,18 @@ class Tester(unittest.TestCase):
         )
 
     def test_identifyoutofboundsanglesincoverage(self):
-        self.assertEqual(
-            self.testAlg("dsgtools:identifyoutofboundsanglesincoverage"), ""
-        )
-    
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            self.assertEqual(
+                self.testAlg("dsgtools:identifyoutofboundsanglesincoverage"), ""
+            )
+        
     def test_identifygaps(self):
-        self.assertEqual(
-            self.testAlg("dsgtools:identifygaps"), ""
-        )
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            self.assertEqual(
+                self.testAlg("dsgtools:identifygaps"), ""
+            )
     
     def test_identifyandfixinvalidgeometries(self):
         self.assertEqual(
@@ -742,4 +747,4 @@ def run_all():
     """Default function that is called by the runner if nothing else is specified"""
     suite = unittest.TestSuite()
     suite.addTests(unittest.makeSuite(Tester, 'test_'))
-    unittest.TextTestRunner(verbosity=2, stream=sys.stdout).run(suite)
+    unittest.TextTestRunner(verbosity=3, stream=sys.stdout).run(suite)
