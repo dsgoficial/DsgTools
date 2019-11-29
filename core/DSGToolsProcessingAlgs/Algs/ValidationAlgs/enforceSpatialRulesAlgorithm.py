@@ -361,11 +361,11 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         :return: (QgsVectorLayer) layer containing features representing the
                  occurrences of the given test (their flags).
         """
-        if predicate not in range(len(self.__predicates)):
+        handler = SpatialRelationsHandler()        
+        if predicate not in range(len(self.availablePredicates())):
             raise QgsProcessingException(
                 self.tr("Unsupported relation {n}").format(n=predicate)
             )
-        handler = SpatialRelationsHandler()
         return {
             self.EQUALS : handler.isEqual,
             self.NOTEQUALS : handler.disjoint,
