@@ -28,6 +28,7 @@ It is supposed to be run through QGIS with DSGTools installed.
 """
 
 import os
+import sys
 from osgeo import ogr
 
 import processing
@@ -39,8 +40,9 @@ from qgis.PyQt.QtSql import QSqlDatabase
 from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+from qgis.testing import unittest
 
-class Tester(object):
+class Tester(unittest.TestCase):
     
     CURRENT_PATH = os.path.dirname(__file__)
     DEFAULT_ALG_PATH = os.path.join(
@@ -703,3 +705,14 @@ class Tester(object):
             except KeyError:
                 results[alg] = "No tests registered."
         return results
+    
+    def test_identifyoutofboundsangles(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyoutofboundsangles"), ""
+        )
+
+def run_all():
+    """Default function that is called by the runner if nothing else is specified"""
+    suite = unittest.TestSuite()
+    suite.addTests(unittest.makeSuite(Tester, 'test'))
+    unittest.TextTestRunner(verbosity=3, stream=sys.stdout).run(suite)

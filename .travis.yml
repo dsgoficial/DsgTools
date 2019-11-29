@@ -17,4 +17,4 @@ install:
     - docker exec -it dsgtools-testing-env sh -c "ln -s /tests_directory/ /root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/DsgTools"
 
 script:
-    - docker exec -it dsgtools-testing-env sh -c "cd /tests_directory && qgis_testrunner.sh tests.test_TravisTest"
+    - docker exec -it dsgtools-testing-env sh -c "cd /tests_directory && qgis_testrunner.sh tests.test_ValidationAlgorithms"
