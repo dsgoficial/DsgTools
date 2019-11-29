@@ -4,8 +4,9 @@ before_install:
     # Build this docker:
     # - cd qgis-testing-environment && docker build -t qgis-testing-environment .
     # or just pull it:
-    - docker pull qgis/qgis:final-3_4_13
+    - docker pull qgis/qgis:final-3_4_13 || true
 install:
+    - docker build --pull --cache-from qgis/qgis:final-3_4_13 --tag qgis/qgis:final-3_4_13 .
     - docker run -d --name dsgtools-testing-env -v ${TRAVIS_BUILD_DIR}:/tests_directory -e DISPLAY=:99 qgis/qgis:final-3_4_13
     - sleep 10
     # Setup qgis and enable the plugin
