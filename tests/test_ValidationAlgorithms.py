@@ -51,22 +51,6 @@ class Tester(unittest.TestCase):
                         )
     datasets = dict()
 
-    def clearDatasets(self):
-        """
-        Clears all testing datasets set to memory. 
-        """
-        del self.datasets
-        self.datasets = dict()
-
-    def __del__(self):
-        """
-        Class destructor.
-        Clears all datasets set to memory and any memory usage it has set.
-        """
-        self.clearDatasets()
-        super(Tester, self).__del__()
-        del self
-
     def readAvailableAlgs(self, path):
         """
         Reads all available .py files from a path. To get the algorithms,
@@ -91,8 +75,6 @@ class Tester(unittest.TestCase):
         """
         db = None
         if os.path.exists(path):
-            # db = QSqlDatabase('QSQLITE')
-            # db.setDatabaseName(path)
             db = DbFactory().createDbFactory(driver=DsgEnums.DriverSpatiaLite)
             db.connectDatabase(conn=path)
         return db
@@ -704,6 +686,57 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg("dsgtools:identifyoutofboundsangles"), ""
         )
+
+    def test_identifyoutofboundsanglesincoverage(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyoutofboundsanglesincoverage"), ""
+        )
+    
+    def test_identifygaps(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifygaps"), ""
+        )
+    
+    def test_identifyandfixinvalidgeometries(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyandfixinvalidgeometries"), ""
+        )
+    
+    def test_identifyduplicatedfeatures(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyduplicatedfeatures"), ""
+        )
+
+    def test_identifyduplicatedgeometries(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyduplicatedgeometries"), ""
+        )
+
+    def test_identifyduplicatedlinesoncoverage(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyduplicatedlinesoncoverage"), ""
+        )
+
+    def test_identifysmalllines(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifysmalllines"), ""
+        )
+
+    def test_identifyduplicatedpolygonsoncoverage(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyduplicatedpolygonsoncoverage"), ""
+        )
+
+     def test_identifysmallpolygons(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifysmallpolygons"), ""
+        )
+
+     def test_identifydangles(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifydangles"), ""
+        )
+
 
 def run_all():
     """Default function that is called by the runner if nothing else is specified"""
