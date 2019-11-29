@@ -742,4 +742,4 @@ def run_all():
     """Default function that is called by the runner if nothing else is specified"""
     suite = unittest.TestSuite()
     suite.addTests(unittest.makeSuite(Tester, 'test_'))
-    unittest.TextTestRunner(verbosity=3, stream=sys.stdout).run(suite)
+    unittest.TextTestRunner(verbosity=2, stream=sys.stdout).run(suite)
