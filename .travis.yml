@@ -15,4 +15,4 @@ install:
     - docker exec -it dsgtools-testing-env sh -c "cd /tests_directory"
 
 script:
-    - docker exec -it dsgtools-testing-env sh -c "qgis_testrunner.sh test_TravisTest"
+    - docker exec -it dsgtools-testing-env sh -c "qgis_testrunner.sh test_TravisTest.TestTest"
