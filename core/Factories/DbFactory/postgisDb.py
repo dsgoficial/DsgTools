@@ -2746,7 +2746,7 @@ class PostgisDb(AbstractDb):
     def getTemplateName(self, version):
         if version == '2.1.3':
             return 'template_edgv_213'
-        elif version == '2.1.3 Pro':
+        elif version == '2.1.3 Pro' or 'EDGV 2.1.3 Pro':
             return 'template_edgv_213_pro'
         elif version == 'FTer_2a_Ed':
             return 'template_edgv_fter_2a_ed'
@@ -2784,7 +2784,7 @@ class PostgisDb(AbstractDb):
         edgvPath = ''
         if version == '2.1.3':
             edgvPath = os.path.join(currentPath,'..','..','..','core','DbModels','PostGIS', '213', 'edgv213.sql')
-        elif version == '2.1.3 Pro':
+        elif version == '2.1.3 Pro' or 'EDGV 2.1.3 Pro':
             edgvPath = os.path.join(currentPath,'..','..','..','core','DbModels','PostGIS', '213_Pro', 'edgv213_pro.sql')
         elif version == 'FTer_2a_Ed':
             edgvPath = os.path.join(currentPath,'..','..','..','core','DbModels','PostGIS', 'FTer_2a_Ed', 'edgvFter_2a_Ed.sql')
