@@ -442,7 +442,8 @@ class AlgRunner:
             'OUTPUT' : outputLyr
         }
         output = processing.run(
-            'native:polygonstolines' if Qgis.QGIS_VERSION_INT >= 30600 else 'qgis:polygonstolines',
+            'native:polygonstolines' if Qgis.QGIS_VERSION_INT >= 30600 \
+                else 'qgis:polygonstolines',
             parameters,
             context=context,
             feedback=feedback
@@ -480,9 +481,9 @@ class AlgRunner:
     def runMergeVectorLayers(self, inputList, context, feedback = None, outputLyr=None, crs=None):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
-            'LAYERS':inputList,
-            'CRS':crs,
-            'OUTPUT':outputLyr
+            'LAYERS' : inputList,
+            'CRS' : crs,
+            'OUTPUT' : outputLyr
         }
         output = processing.run(
             'native:mergevectorlayers',
@@ -495,13 +496,84 @@ class AlgRunner:
     def runSaveSelectedFeatures(self, inputLyr, context, feedback = None, outputLyr=None):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
-            'LAYERS':inputLyr,
-            'OUTPUT':outputLyr
+            'LAYERS' : inputLyr,
+            'OUTPUT' : outputLyr
         }
-        processing.run(
+        output = processing.run(
             "native:saveselectedfeatures",
             parameters,
             context=context,
             feedback=feedback
         )
-        return output['OUTPUT'] 
+        return output['OUTPUT']
+    
+    def runPointOnSurface(self, inputLyr, context, allParts=True, feedback=None, outputLyr=None, onlySelected=False):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'ALL_PARTS' : allParts,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "native:pointonsurface",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runRemoveDuplicatedGeometries(self, inputLyr, context, feedback=None, outputLyr=None, onlySelected=False):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'SELECTED' : onlySelected,
+            'FLAGS' : 'memory:',
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "dsgtools:removeduplicatedgeometries",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runPolygonize(self, inputLyr, context, keepFields=False, feedback=None, outputLyr=None, onlySelected=False):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'KEEP_FIELDS' : keepFields,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "qgis:polygonize",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runJoinAttributesByLocation(self, inputLyr, joinLyr, context, predicateList=None, joinFields=None,\
+        method=None, discardNonMatching=True, feedback=None, outputLyr=None):
+        predicateList = [0] if predicateList is None else predicateList
+        joinFields = [] if joinFields is None else joinFields
+        method = 0 if method is None else method
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'JOIN' : joinLyr,
+            'PREDICATE' : predicateList,
+            'JOIN_FIELDS' : joinFields,
+            'METHOD' : 0,
+            'DISCARD_NONMATCHING' : discardNonMatching,
+            'PREFIX' : '',
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "qgis:joinattributesbylocation",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+        
