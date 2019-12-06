@@ -1039,9 +1039,11 @@ class LayerHandler(QObject):
                 if multiStepFeedback.isCanceled():
                     break
                 edgeGeom = edgeIdDict[candidateId].geometry()
-                #must maintain search within the same feature and 
+                # must ignore search within the same feature and 
                 # must be with not adjacent edges
-                if pointGeom.touches(edgeGeom):
+                if pointGeom.touches(edgeGeom) or \
+                    (featId == edgeIdDict[candidateId]['featid'] and \
+                        pointFeat['layer'] == edgeIdDict[candidateId]['layer']):
                     continue
                 if buffer.intersects(edgeGeom):
                     flagDict[featId][pointWkt]['flagGeom'] = pointGeom
