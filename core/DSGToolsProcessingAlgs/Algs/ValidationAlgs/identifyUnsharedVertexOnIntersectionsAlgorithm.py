@@ -74,14 +74,6 @@ class IdentifyUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterDistance(
-                self.SEARCH_RADIUS,
-                self.tr('Search Radius'),
-                defaultValue=1.0
-            )
-        )
-
-        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS,
                 self.tr('{0} Flags').format(self.displayName())
@@ -122,7 +114,7 @@ class IdentifyUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         # get features from source
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
-        vertexNearEdgeFlagDict = layerHandler.getUnsharedVertexOnIntersections(
+        usharedIntersectionSet = layerHandler.getUnsharedVertexOnIntersections(
             inputLineLyrList,
             inputPolygonLyrList,
             onlySelected=onlySelected,
@@ -130,29 +122,21 @@ class IdentifyUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         )
         multiStepFeedback.setCurrentStep(1)
         self.raiseFeaturesFlags(
-            vertexNearEdgeFlagDict,
+            usharedIntersectionSet,
             multiStepFeedback
         )
 
         return {self.FLAGS: self.flag_id}
 
-    def raiseFeaturesFlags(self, geomDict, feedback):
-        size = 100/len(geomDict) if geomDict else 0
-        for current, (featid, vertexDict) in enumerate(geomDict.items()):
+    def raiseFeaturesFlags(self, usharedIntersectionSet, feedback):
+        size = 100/len(usharedIntersectionSet) if usharedIntersectionSet else 0
+        flagText = self.tr(
+            'Unshared vertex between the intersections of input layers.'
+        )
+        for current, geomWkb in enumerate(usharedIntersectionSet):
             if feedback.isCanceled():
                 break
-            for vertexWkt, flagDict in vertexDict.items():
-                edgeText = ', '.join(
-                    [edge.asWkt() for edge in flagDict['edges']]
-                )
-                flagText = self.tr(
-                    'Vertex {vertex_geom} is an unshared vertex between the intersections of {edge_text}.'
-                ).format(
-                    vertex_geom=vertexWkt,
-                    edge_text=edgeText
-                )
-                flagGeom = flagDict['flagGeom']
-                self.flagFeature(flagGeom, flagText)
+            self.flagFeature(geomWkb, flagText, fromWkb=True)
             feedback.setProgress(size * current)
 
     def name(self):
