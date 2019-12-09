@@ -120,7 +120,8 @@ class AssignValueMapToLayersAlgorithm(QgsProcessingAlgorithm):
                 formConfig.setReadOnly(i, True)
                 lyr.setEditFormConfig(formConfig)
             elif lyrName in self.domainDict \
-                and attrName in self.domainDict[lyrName]['columns']:
+                and attrName in self.domainDict[lyrName]['columns'] \
+                and 'values' in self.domainDict[lyrName]['columns'][attrName]:
                 attrMetadataDict = self.domainDict[lyrName]['columns'][attrName]
                 if lyrName in self.multiColumnsDict and \
                     attrName in self.multiColumnsDict[lyrName]:
@@ -153,7 +154,8 @@ class AssignValueMapToLayersAlgorithm(QgsProcessingAlgorithm):
                 else:
                     #filter value dict
                     valueDict = attrMetadataDict['values']
-                    if attrMetadataDict['constraintList'] != [] and \
+                    if 'constraintList' in attrMetadataDict and \
+                        attrMetadataDict['constraintList'] != [] and \
                         attrMetadataDict['constraintList'] != list(valueDict.keys()):
                         valueRelationDict = {
                             v: str(k) for k, v in valueDict.items()
