@@ -1091,6 +1091,51 @@ class LayerHandler(QObject):
             feedback=multiStepFeedback,
             context=context
         )
+    
+    def getUnsharedVertexOnIntersections(self, inputLineLyrList, inputPolygonLyrList, onlySelected=False, feedback=None, context=None, algRunner=None):
+        """
+        returns a dict in the following format:
+            {'featid':{
+                'vertexWkt': {
+                    'flagGeom' : --geometry of the flag--,
+                    'edges' : set of edges (QgsGeometry)
+                }
+
+            }
+            } 
+        :param inputLineLyrList: (list of QgsVectorLayers) line layers to run build the aux structure.
+        :param inputPolygonLyrList: (list of QgsVectorLayers) line polygon layers to run build the aux structure.
+        :param searchRadius: (float) search radius
+        :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
+        """
+        inputList = inputLineLyrList
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Getting lines'))
+        linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
+            inputLineLyrList,
+            inputPolygonLyrList,
+            onlySelected=onlySelected,
+            feedback=multiStepFeedback,
+            context=context
+        )
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Building intersections'))
+        intersectionLyr = algRunner.runIntersection(
+            linesLyr,
+            
+        )
+        #only selected should not be filled because it was already used to build the line lyr
+        return self.getVertexNearEdgeDict(
+            linesLyr,
+            searchRadius,
+            algRunner=algRunner,
+            feedback=multiStepFeedback,
+            context=context
+        )
+
 
     def getLinesLayerFromPolygonsAndLinesLayers(self, inputLineLyrList, inputPolygonLyrList, algRunner=None, onlySelected=False, feedback=None, context=None):
         """
