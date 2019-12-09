@@ -57,7 +57,8 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
         "dsgtools:dissolvepolygonswithsameattributes", "dsgtools:removeemptyandupdate",
         "dsgtools:snaplayeronlayer",
         # network algs
-        "dsgtools:adjustnetworkconnectivity"
+        "dsgtools:adjustnetworkconnectivity",
+        "dsgtools:identifyunsharedvertexonintersectionsalgorithm"
     ]
     INPUT_ALGS = 'INPUT_ALGS'
     OUTPUT = 'OUTPUT'
