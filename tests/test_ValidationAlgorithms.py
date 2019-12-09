@@ -533,7 +533,8 @@ class Tester(unittest.TestCase):
                     'INPUT_POLYGONS' : self.getInputLayers(
                         'gpkg', 'testes_wgs84', ['polygon_input']
                     )[0],
-                    'SELECTED' : False
+                    'SELECTED' : False,
+                    'FLAGS' : "memory:"
                 }
             ],
 
