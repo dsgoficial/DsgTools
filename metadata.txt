@@ -8,15 +8,15 @@
 
 [general]
 name=DSG Tools
-qgisMinimumVersion=3.0
+qgisMinimumVersion=3.2
 description=Brazilian Army Cartographic Production Tools
-version=4.0-dev_4d83125b3e5ac9934b15f5f95246bbf6aa5f845f
-author=Brazilian Army - Geographic Service Bureau
+version=4.0
+author=Brazilian Army Geographic Service
 email=suporte.dsgtools@dsg.eb.mil.br
 about=
 	DSGTools with the following features:
 	-Creation, Storage and Deletion of PostGIS servers configurations
-	-Database creation using Spatialite and PostGIS according to EDGV version 2.1.3 and EDGV version FTer_2a_Ed (cadaster)
+	-Database creation using Spatialite and PostGIS according to EDGV version 2.1.3 and 3.0 (cadaster)
 	-Layer loading by category and class as defined by EDGV version 2.1.3 and EDGV version FTer_2a_Ed (cadaster)
 	-Manipulation of complex features (Creation, Editing, Deletion, Zoom, Association, Disassociation) and
 	-Access to some WM(T)S services provided by BDGEx.
@@ -33,6 +33,7 @@ about=
 	-Remove missing databases from qsettings
 	-Tool to reclassify features (move them to another layer) with predefined attributes
 	Requirements for LINUX (Ubuntu/Debian):
+
 	Install the following packages as follows:
 	sudo apt-get install libqt5sql5-psql
 	sudo apt-get install libqt5sql5-sqlite
@@ -43,36 +44,40 @@ about=
 
 # Uncomment the following line and add your changelog:
 changelog=
-	1.0.1 - Minor bug fix on spatialite complex features and improved help.
-	1.1 - Bug fix on frame creation on spatilite databases. New thread management api. Help improved. Improvements on create frame.
-	1.1.1 - Bug fix on frame creation. Adjustments on few methods. Now postgis database are forced do have lowercase names.
-	1.2 - New WM(T)S services from BDGEx. Minor bug fix on create frame. Image batch processing tool added.
-	1.3 - New Inventory Tool added. Now it's possible to scan recursively a folder and make a inventory of all geospatial data supported by GDAL/OGR. Bug fix on BDGExTools.
-	1.3.1 - Minor bug fix on Inventory Tools for Windows OS.
-	1.4 - New tool to install Models and Script (geoalgorithms) in the Processing Toolbox. HSV fusion script added. New model added.
-	1.4.1 - RapidEye Tile Cache service back on air.
-	1.5 - Improvements on the Inventory Tool. New server browser for EDGV databases. Minor bug fixes.
-	1.6 - Database role management. Database user profile management. Create/Remove PostgreSQL users. Alter PostgreSQL user Password.
-	1.7 - Conversion tools between postgis and spatialite EDGV databases. Tool to assign elevation values to contour lines. EDGV code list viewer to aid attributes queries using our EDGV databases. Drop/Manage databases. View permissions details.
-	2.0rc01 - Database creation using Spatialite and PostGIS according to EDGV version FTer_2a_ed (cadaster). Layer loading by category and class as defined by EDGV version FTer_2a_ed (cadaster)
-	2.0rc02 - Databases are now sorted
-	2.0rc03 - Minor bug fix on EDGV FTer
-	2.0rc04 - Minor bug fix on EDGV FTer
-	2.0rc05 - Returning file removed by error
-	2.0rc06 - minor fix on code lit viewer
-	2.0rc07 - Complexes working with valueRelation. Code List viewer adjusted.
-	2.0rc08 - Bug fixes and adjustments for EDGV FTer_2a_Ed
-	2.0rc09 - Bug fixes and adjustments for EDGV FTer_2a_Ed
-	2.0rc10 - Bug fixes and adjustments for EDGV FTer_2a_Ed
-	2.0 - Bug fixes and adjustments for EDGV FTer_2a_Ed
-	3.0 - New Tool to reclassify features (move them to another layer) with predefined attributes. Several batch management tools (db creation, user permissions, customizations and etc). Quality Assurance Tools (fix geometry problems prior to creating a topology structure). Other bug fixes.
-	3.0.1 - Fixing errors raised by users
-	3.0.2 - Fixing others errors and improving some features (many thanks to our users)
-	3.0.3 - Fixing encoding problems in some systems (utf-8 encoding problems)
-	3.0.4 - Updating our BDGEx access to use the new urls. Fixing some problems with databases using schemas in uppercase 
-	3.0.6 - Bug fix on (Re)classification tool
-	3.0.7 - Bug fix on Circle Tool, Zoom to Flag and Database Conversion
-	3.0.8 - Bug fix on image processing on windows and bug fix on generic selection tool
+    4.0 - DSGTools Migrated to QGIS 3
+            New Features:
+                . DSGTools now have a Processing Provider Called DSGToolsAlgorithm. Algorithms were grouped by types such as Data Quality, Quality Assurance, Editing Algorithms and Layer Management Algorithms. It has 61 algorithms, as follows:
+                    'Deaggregate Geometries', 'Identify Small Polygons', 'Identify Small Lines', 'Identify Duplicated Geometries', 'Identify Out Of Bounds Angles', 'Identify Out Of Bounds Angles in Coverage', 'Identify Overlaps', 'Identify Gaps and Overlaps in Coverage Layers', 'Identify Dangles', 'Identify Gaps', 'Donut Hole Extractor', 'Update Layer', 'Topological Clean Polygons', 'Topological Douglas Peucker Simplification', 'Remove Duplicated Geometries', 'Remove Small Lines', 'Remove Small Polygons', 'Clean Geometries', 'Merge lines with same attribute set', 'Topological Clean Linestrings', 'Snap layer on layer', 'Line on line overlayer', 'Dissolve polygons with same attribute set', 'Snap to grid and update', 'Remove empty and update', 'Convert layer to layer', 'Overlay Elements With Areas', 'Create Drainage Network Nodes', 'Verify Drainage Network Directioning', 'Identify Duplicated Features', 'Adjust Network Connectivity', 'Remove Duplicated Features', 'Hierarchical Snap layer on layer', 'Identify Duplicated Polygons Between Layers', 'Identify Duplicated Lines Between Layers', 'Identify Duplicated Points Between Layers', 'Run Remote FME Workspace', 'Generate Systematic Grid', 'Run File Inventory', 'Raise Flags', 'Identify And Fix Invalid Geometries', 'Create Editing Grid', 'Assign Filter to Layers', 'Assign Bounding Box Filter to Layers', 'Assign Measure Column to Layers', 'Group Layers', 'Topological adjustment of the connectivity of lines', 'Calculate RMS and Percentile 90 of Layer', 'Rule Statistics', 'Match and Apply QML Styles to Layers', 'Apply Styles from Database to Layers', 'Export To Memory Layer', 'Assign Custom Form and Format Rules to Layers', 'Assign Value Map to Layers', 'Load Layers From Postgis', 'Load Non-Spatial Layers From PostgreSQL', 'Assign Aliases to Layers', 'Build Joins on Layers', 'Batch Run Algorithm', 'String CSV to Layer List Algorithm', 'Identify Wrong Building Angles'
+                . New Quality Assurance Toolbox that allows users to stop between executions of models if there are flags raised in a flag layer;
+                . New Quality Assurance Toolbar that allows users to change between installed models and run them using a single hotkey;
+                . New Toggle Layers Visibility Tool that allows users to toggle layers visibylity using a hotkey;
+                . New Toggle Layers' Label Visibility Tool that allows users to toggle layers' label visibility using a hotkey;
+                . New BDGEx (Brazilian SDI) layers, such as: Digital Surface Models, Artificial SAR Imagery and Multi-scale mosaics;
+                
+            Enhancements:
+                . Database Conversion Tool has been updated with new UX and new features such as 1:n conversion, m:n conversion and geoprocessing features such as clip before conversion;
+                . Inspect Features now can zoom to a % of the bounding box of the feature;
+                . Option to set active layer to the feature inspector;
+                . Performance improvements on Quality Assurance algorithms (previously called validation algorithms) ;
+                . Style swap in the style  toolbar is now generic (works with any style stored into PostgreSQL database);
+            Changes:
+                . Bug fixes;
+                . Dropped support for EDGV FTer_2a_Ed (DSGTools no longer creates this model, but feature loading is still supported);
+                . Bug fixes on EDGV 3.0 model;
+	3.1.2 - Bug fixes:
+		.Bug fix on Generic Selection Tool
+		.Bug fix on loading EDGV FTer_2a_Ed databases with custom check constraints
+		.Bug fix on Validation Processes
+		.Bug fix on Field Toolbox
+	3.1.1 - Bug fixes:
+		.Bug fix on EDGV 3.0
+		.Bug fix on Help url
+		.Bug fix on Generic Selection Tool
+		.Bug fix on Server Management Tools
+		.Bug fix on Field Toolbox
+		.Bug fix on Load Layers From Server
+		.Fixed missing translations
+		.Fixed missing Style Folder
 	3.1 - New Features:
 	      	.New database model: EDGV 3.0 (experimental);
 		.New validation process: Merge lines with common attributes;
@@ -107,20 +112,30 @@ changelog=
              Database Bug Fix:
                 .EDGV 2.1.3 bug fix: uuid values on primary keys of some geometric tables;
 	     Several other bug fixes.
-	3.1.1 - Bug fixes:
-		.Bug fix on EDGV 3.0
-		.Bug fix on Help url
-		.Bug fix on Generic Selection Tool
-		.Bug fix on Server Management Tools
-		.Bug fix on Field Toolbox
-		.Bug fix on Load Layers From Server
-		.Fixed missing translations
-		.Fixed missing Style Folder
-	3.1.2 - Bug fixes:
-		.Bug fix on Generic Selection Tool
-		.Bug fix on loading EDGV FTer_2a_Ed databases with custom check constraints
-		.Bug fix on Validation Processes
-		.Bug fix on Field Toolbox
+    3.0.8 - Bug fix on image processing on windows and bug fix on generic selection tool
+    3.0.7 - Bug fix on Circle Tool, Zoom to Flag and Database Conversion
+    3.0.6 - Bug fix on (Re)classification tool  
+    3.0.4 - Updating our BDGEx access to use the new urls. Fixing some problems with databases using schemas in uppercase 
+    3.0.3 - Fixing encoding problems in some systems (utf-8 encoding problems)
+    3.0.2 - Fixing others errors and improving some features (many thanks to our users)
+    3.0.1 - Fixing errors raised by users
+    3.0 - New Tool to reclassify features (move them to another layer) with predefined attributes. Several batch management tools (db creation, user permissions, customizations and etc). Quality Assurance Tools (fix geometry problems prior to creating a topology structure). Other bug fixes.
+    2.0 - Database creation using Spatialite and PostGIS according to EDGV version FTer_2a_ed (cadaster). Layer loading by category and class as defined by EDGV version FTer_2a_ed (cadaster). Bug fixes and adjustments for EDGV FTer_2a_Ed
+    1.7 - Conversion tools between postgis and spatialite EDGV databases. Tool to assign elevation values to contour lines. EDGV code list viewer to aid attributes queries using our EDGV databases. Drop/Manage databases. View permissions details.
+    1.6 - Database role management. Database user profile management. Create/Remove PostgreSQL users. Alter PostgreSQL user Password.
+    1.5 - Improvements on the Inventory Tool. New server browser for EDGV databases. Minor bug fixes.
+    1.4.1 - RapidEye Tile Cache service back on air.
+    1.4 - New tool to install Models and Script (geoalgorithms) in the Processing Toolbox. HSV fusion script added. New model added.
+    1.3.1 - Minor bug fix on Inventory Tools for Windows OS.
+    1.3 - New Inventory Tool added. Now it's possible to scan recursively a folder and make a inventory of all geospatial data supported by GDAL/OGR. Bug fix on BDGExTools.
+    1.2 - New WM(T)S services from BDGEx. Minor bug fix on create frame. Image batch processing tool added.
+    1.1.1 - Bug fix on frame creation. Adjustments on few methods. Now postgis database are forced do have lowercase names.
+    1.1 - Bug fix on frame creation on spatilite databases. New thread management api. Help improved. Improvements on create frame.
+	1.0.1 - Minor bug fix on spatialite complex features and improved help.
+
+
+
+            
 
 # Tags are comma separated with spaces allowed
 tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script
