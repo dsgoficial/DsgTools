@@ -77,7 +77,16 @@ class CodeList(QDockWidget, FORM_CLASS):
                         else:
                             classFieldMap[layername][fieldName].update(map_)
                 else:
-                    classFieldMap[layername][fieldName] = fieldConfig['map']
+                    def sortingMethod(item):
+                        try:
+                            return int(item[1])
+                        except:
+                            return item[1]
+                    classFieldMap[layername][fieldName] = {
+                        k: v for k, v in sorted(
+                            fieldConfig['map'].items(), key=sortingMethod
+                        )
+                    }
         return classFieldMap
 
     def updateClassFieldMap(self):
@@ -323,4 +332,4 @@ class CodeList(QDockWidget, FORM_CLASS):
         for row, (code, value) in enumerate(fieldMap.items()):
             self.tableWidget.setItem(row, 0, QTableWidgetItem(value))
             self.tableWidget.setItem(row, 1, QTableWidgetItem(code))
-        self.tableWidget.sortItems(1)
+        # self.tableWidget.sortItems(1)

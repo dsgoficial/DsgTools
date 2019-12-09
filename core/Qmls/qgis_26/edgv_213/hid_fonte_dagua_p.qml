@@ -1,1 +1,190 @@
-<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'><qgis version="2.6.0-Brighton" minimumScale="1" maximumScale="1" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" simplifyMaxScale="1" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0"><edittypes><edittype widgetv2type="TextEdit" name="id"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="TextEdit" name="OGC_FID"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="ValueMap" name="geometriaaproximada"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Sim" value="1"/><value key="Não" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="tipofontedagua"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Olho d`água" value="3"/><value key="Poço" value="1"/><value key="Desconhecido" value="0"/><value key="Poço Artesiano" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="qualidagua"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Desconhecida" value="0"/><value key="Não potável" value="2"/><value key="Potável" value="1"/><value key="Mineral" value="3"/><value key="Salobra" value="4"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="regime"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Permanente" value="1"/><value key="Temporário" value="3"/><value key="Desconhecido" value="0"/></widgetv2config></edittype></edittypes></qgis>
+<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
+<qgis maxScale="0" simplifyDrawingHints="0" readOnly="0" simplifyDrawingTol="1" version="3.7.0-Master" labelsEnabled="0" hasScaleBasedVisibilityFlag="0" styleCategories="AllStyleCategories" simplifyMaxScale="1" minScale="1e+8" simplifyLocal="1" simplifyAlgorithm="0">
+  <flags>
+    <Identifiable>1</Identifiable>
+    <Removable>1</Removable>
+    <Searchable>1</Searchable>
+  </flags>
+  <renderer-v2 enableorderby="0" forceraster="0" type="singleSymbol" symbollevels="0">
+    <symbols>
+      <symbol alpha="1" type="marker" name="0" clip_to_extent="1" force_rhr="0">
+        <layer pass="0" locked="0" enabled="1" class="SimpleMarker">
+          <prop v="0" k="angle"/>
+          <prop v="243,166,178,255" k="color"/>
+          <prop v="1" k="horizontal_anchor_point"/>
+          <prop v="bevel" k="joinstyle"/>
+          <prop v="circle" k="name"/>
+          <prop v="0,0" k="offset"/>
+          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
+          <prop v="MM" k="offset_unit"/>
+          <prop v="35,35,35,255" k="outline_color"/>
+          <prop v="solid" k="outline_style"/>
+          <prop v="0" k="outline_width"/>
+          <prop v="3x:0,0,0,0,0,0" k="outline_width_map_unit_scale"/>
+          <prop v="MM" k="outline_width_unit"/>
+          <prop v="diameter" k="scale_method"/>
+          <prop v="2" k="size"/>
+          <prop v="3x:0,0,0,0,0,0" k="size_map_unit_scale"/>
+          <prop v="MM" k="size_unit"/>
+          <prop v="1" k="vertical_anchor_point"/>
+          <data_defined_properties>
+            <Option type="Map">
+              <Option value="" type="QString" name="name"/>
+              <Option name="properties"/>
+              <Option value="collection" type="QString" name="type"/>
+            </Option>
+          </data_defined_properties>
+        </layer>
+      </symbol>
+    </symbols>
+    <rotation/>
+    <sizescale/>
+  </renderer-v2>
+  <customproperties/>
+  <blendMode>0</blendMode>
+  <featureBlendMode>0</featureBlendMode>
+  <layerOpacity>1</layerOpacity>
+  <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
+    <activeChecks type="StringList">
+      <Option value="" type="QString"/>
+    </activeChecks>
+    <checkConfiguration/>
+  </geometryOptions>
+  <fieldConfiguration>
+    <field name="id">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="nome">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="nomeabrev">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="geometriaaproximada">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="2" type="QString" name="Não"/>
+              <Option value="1" type="QString" name="Sim"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="tipofontedagua">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="3" type="QString" name="Olho d`água"/>
+              <Option value="1" type="QString" name="Poço"/>
+              <Option value="2" type="QString" name="Poço Artesiano"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="qualidagua">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="0" type="QString" name="Desconhecida"/>
+              <Option value="3" type="QString" name="Mineral"/>
+              <Option value="2" type="QString" name="Não potável"/>
+              <Option value="1" type="QString" name="Potável"/>
+              <Option value="4" type="QString" name="Salobra"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="regime">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="1" type="QString" name="Permanente"/>
+              <Option value="3" type="QString" name="Temporário"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+  </fieldConfiguration>
+  <aliases>
+    <alias field="id" index="0" name=""/>
+    <alias field="nome" index="1" name=""/>
+    <alias field="nomeabrev" index="2" name=""/>
+    <alias field="geometriaaproximada" index="3" name=""/>
+    <alias field="tipofontedagua" index="4" name=""/>
+    <alias field="qualidagua" index="5" name=""/>
+    <alias field="regime" index="6" name=""/>
+  </aliases>
+  <excludeAttributesWMS/>
+  <excludeAttributesWFS/>
+  <defaults>
+    <default applyOnUpdate="0" field="id" expression=""/>
+    <default applyOnUpdate="0" field="nome" expression=""/>
+    <default applyOnUpdate="0" field="nomeabrev" expression=""/>
+    <default applyOnUpdate="0" field="geometriaaproximada" expression=""/>
+    <default applyOnUpdate="0" field="tipofontedagua" expression=""/>
+    <default applyOnUpdate="0" field="qualidagua" expression=""/>
+    <default applyOnUpdate="0" field="regime" expression=""/>
+  </defaults>
+  <constraints>
+    <constraint unique_strength="1" field="id" constraints="3" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="nome" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="nomeabrev" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="geometriaaproximada" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="tipofontedagua" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="qualidagua" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="regime" constraints="1" exp_strength="0" notnull_strength="1"/>
+  </constraints>
+  <constraintExpressions>
+    <constraint exp="" desc="" field="id"/>
+    <constraint exp="" desc="" field="nome"/>
+    <constraint exp="" desc="" field="nomeabrev"/>
+    <constraint exp="" desc="" field="geometriaaproximada"/>
+    <constraint exp="" desc="" field="tipofontedagua"/>
+    <constraint exp="" desc="" field="qualidagua"/>
+    <constraint exp="" desc="" field="regime"/>
+  </constraintExpressions>
+  <expressionfields/>
+  <attributeactions/>
+  <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
+    <columns/>
+  </attributetableconfig>
+  <conditionalstyles>
+    <rowstyles/>
+    <fieldstyles/>
+  </conditionalstyles>
+  <editform tolerant="1"></editform>
+  <editforminit/>
+  <editforminitcodesource>0</editforminitcodesource>
+  <editforminitfilepath></editforminitfilepath>
+  <editforminitcode><![CDATA[]]></editforminitcode>
+  <featformsuppress>0</featformsuppress>
+  <editorlayout>generatedlayout</editorlayout>
+  <editable/>
+  <labelOnTop/>
+  <widgets/>
+  <previewExpression></previewExpression>
+  <mapTip></mapTip>
+  <layerGeometryType>0</layerGeometryType>
+</qgis>
