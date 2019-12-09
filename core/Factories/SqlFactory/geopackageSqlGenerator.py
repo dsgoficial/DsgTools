@@ -25,6 +25,13 @@ from DsgTools.core.dsgEnums import DsgEnums
 
 class GeopackageSqlGenerator(SpatialiteSqlGenerator):
 
+    def getEDGVVersion(self):
+        """
+        Gets the version of the data model.
+        """
+        sql = "SELECT edgvversion FROM db_metadata LIMIT 1"
+        return sql
+
     def getSrid(self, parameters = dict()):
         """
         Gets SRID for selected database (it is assumed all tables have the same SRID).
