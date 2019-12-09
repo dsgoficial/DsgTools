@@ -524,6 +524,20 @@ class Tester(unittest.TestCase):
                 }
             ],
 
+            "dsgtools:identifyunsharedvertexonintersectionsalgorithm" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'INPUT_LINES' : self.getInputLayers(
+                        'gpkg', 'testes_wgs84', ['line_input']
+                    )[0],
+                    'INPUT_POLYGONS' : self.getInputLayers(
+                        'gpkg', 'testes_wgs84', ['polygon_input']
+                    )[0],
+                    'SELECTED' : False,
+                    'FLAGS' : "memory:"
+                }
+            ],
+
             "dsgtools:ALG" : [
                 {
                     '__comment' : "'Normal' test: checks if it works."
@@ -682,6 +696,7 @@ class Tester(unittest.TestCase):
                 "dsgtools:identifyduplicatedpolygonsoncoverage", "dsgtools:identifysmallpolygons",
                 "dsgtools:identifydangles", "dsgtools:identifyduplicatedpointsoncoverage",
                 "dsgtools:identifyoverlaps", "dsgtools:identifyvertexnearedges",
+                "dsgtools:identifyunsharedvertexonintersectionsalgorithm"
                 # correction algs
                 "dsgtools:removeduplicatedfeatures", "dsgtools:removeduplicatedgeometries",
                 "dsgtools:removesmalllines", "dsgtools:removesmallpolygons",
@@ -758,6 +773,11 @@ class Tester(unittest.TestCase):
     def test_identifydangles(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifydangles"), ""
+        )
+    
+    def test_identifyunsharedvertexonintersectionsalgorithm(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyunsharedvertexonintersectionsalgorithm"), ""
         )
 
 
