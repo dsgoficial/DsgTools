@@ -217,7 +217,7 @@ class AssignBandValueTool(QgsMapTool):
         formSuppress = layer.editFormConfig().suppress()
         if formSuppress == QgsEditFormConfig.SuppressDefault:
             if self.getSuppressOptions(): #this is calculated every time because user can switch options while using tool
-                layer.addFeature(feature, True)
+                layer.addFeature(feature)
             else:
                 if not form.exec_():
                     feature.setAttributes(form.feature().attributes())
@@ -225,7 +225,7 @@ class AssignBandValueTool(QgsMapTool):
             if not form.exec_():
                 feature.setAttributes(form.feature().attributes())
         else:
-            layer.addFeature(feature, True)
+            layer.addFeature(feature)
 
     def getCursorRect(self, e):
         """

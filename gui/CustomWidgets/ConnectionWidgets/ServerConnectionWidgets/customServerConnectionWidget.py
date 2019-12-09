@@ -221,6 +221,8 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
             self.clearPostgisTab()
         dbList.sort()
         for (dbname, dbversion) in dbList:
+            if "EDGV" in dbversion:
+                dbversion = dbversion.split("EDGV")[-1].strip()
             if dbversion in list(self.dbDict.keys()):
                 self.dbDict[dbversion].append(dbname)
             else:

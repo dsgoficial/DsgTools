@@ -47,7 +47,7 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
         "dsgtools:identifyduplicatedlinesoncoverage", "dsgtools:identifysmalllines",
         "dsgtools:identifyduplicatedpolygonsoncoverage", "dsgtools:identifysmallpolygons",
         "dsgtools:identifydangles", "dsgtools:identifyduplicatedpointsoncoverage",
-        "dsgtools:identifyoverlaps",
+        "dsgtools:identifyoverlaps", "dsgtools:identifyvertexnearedges",
         # correction algs
         "dsgtools:removeduplicatedfeatures", "dsgtools:removeduplicatedgeometries",
         "dsgtools:removesmalllines", "dsgtools:removesmallpolygons",

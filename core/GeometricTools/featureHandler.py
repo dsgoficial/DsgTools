@@ -132,8 +132,12 @@ class FeatureHandler(QObject):
         geomList = self.geometryHandler.handleGeometry(feat.geometry(), parameterDict, coordinateTransformer)
         newFeatSet = set()
         for geom in geomList:
-            attrMap = { idx : feat[field.name()] for idx, field in enumerate(feat.fields()) if idx not in lyr.primaryKeyAttributes()}
-            newFeat = QgsVectorLayerUtils.createFeature(lyr, geom, attrMap)
+            newFeat = QgsVectorLayerUtils.createFeature(lyr, geom)
+            for idx, field in enumerate(lyr.fields()):
+                fieldName = field.name()
+                if idx not in lyr.primaryKeyAttributes() \
+                    and fieldName in newFeat and fieldName in feat:
+                    newFeat[field.name()] = feat[field.name()]
             newFeatSet.add(newFeat)
         return newFeatSet
 
