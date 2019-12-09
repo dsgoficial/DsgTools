@@ -576,4 +576,21 @@ class AlgRunner:
             feedback=feedback
         )
         return output['OUTPUT']
+    
+    def runLineIntersections(self, inputLyr, intersectLyr, context, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'INTERSECT' : intersectLyr,
+            'INPUT_FIELDS' : [],
+            'INTERSECT_FIELDS' : [],
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "native:lineintersections",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
         
