@@ -93,7 +93,9 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
         if fromWkb:
             geom = QgsGeometry()
             geom.fromWkb(flagGeom)
-        newFeat.setGeometry(geom)
+            newFeat.setGeometry(geom)
+        else:
+            newFeat.setGeometry(flagGeom)
         self.flagSink.addFeature(newFeat, QgsFeatureSink.FastInsert)
     
     def getFlagsFromOutput(self, output):
