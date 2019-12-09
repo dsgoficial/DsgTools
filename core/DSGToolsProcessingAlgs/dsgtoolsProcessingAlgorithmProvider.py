@@ -22,7 +22,7 @@
 """
 from PyQt5.QtCore import QCoreApplication
 
-from core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildJoinsOnLayersAlgorithm import \
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildJoinsOnLayersAlgorithm import \
     BuildJoinsOnLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.EditingAlgs.createEditingGridAlgorithm import \
     CreateEditingGridAlgorithm
