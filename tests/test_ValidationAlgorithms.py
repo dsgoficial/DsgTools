@@ -28,6 +28,8 @@ It is supposed to be run through QGIS with DSGTools installed.
 """
 
 import os
+import sys
+import warnings
 from osgeo import ogr
 
 import processing
@@ -39,37 +41,16 @@ from qgis.PyQt.QtSql import QSqlDatabase
 from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+from qgis.testing import unittest
 
-class Tester(object):
+class Tester(unittest.TestCase):
     
     CURRENT_PATH = os.path.dirname(__file__)
     DEFAULT_ALG_PATH = os.path.join(
                             CURRENT_PATH, '..', 'core', 'DSGToolsProcessingAlgs',
                             'Algs', 'ValidationAlgs'
                         )
-
-    def __init__(self):
-        """
-        Class constructor.
-        """
-        super(Tester, self).__init__()
-        self.datasets = dict()
-
-    def clearDatasets(self):
-        """
-        Clears all testing datasets set to memory. 
-        """
-        del self.datasets
-        self.datasets = dict()
-
-    def __del__(self):
-        """
-        Class destructor.
-        Clears all datasets set to memory and any memory usage it has set.
-        """
-        self.clearDatasets()
-        super(Tester, self).__del__()
-        del self
+    datasets = dict()
 
     def readAvailableAlgs(self, path):
         """
@@ -95,8 +76,6 @@ class Tester(object):
         """
         db = None
         if os.path.exists(path):
-            # db = QSqlDatabase('QSQLITE')
-            # db.setDatabaseName(path)
             db = DbFactory().createDbFactory(driver=DsgEnums.DriverSpatiaLite)
             db.connectDatabase(conn=path)
         return db
@@ -721,3 +700,69 @@ class Tester(object):
             except KeyError:
                 results[alg] = "No tests registered."
         return results
+    
+    def test_identifyoutofboundsangles(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyoutofboundsangles"), ""
+        )
+
+    # def test_identifyoutofboundsanglesincoverage(self):
+    #     with warnings.catch_warnings():
+    #         warnings.simplefilter("ignore")
+    #         self.assertEqual(
+    #             self.testAlg("dsgtools:identifyoutofboundsanglesincoverage"), ""
+    #         )
+
+    # def test_identifygaps(self):
+    #     with warnings.catch_warnings():
+    #         warnings.simplefilter("ignore")
+    #         self.assertEqual(
+    #             self.testAlg("dsgtools:identifygaps"), ""
+    #         )
+    
+    def test_identifyandfixinvalidgeometries(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyandfixinvalidgeometries"), ""
+        )
+    
+    def test_identifyduplicatedfeatures(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyduplicatedfeatures"), ""
+        )
+
+    def test_identifyduplicatedgeometries(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyduplicatedgeometries"), ""
+        )
+
+    def test_identifyduplicatedlinesoncoverage(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyduplicatedlinesoncoverage"), ""
+        )
+
+    def test_identifysmalllines(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifysmalllines"), ""
+        )
+
+    def test_identifyduplicatedpolygonsoncoverage(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyduplicatedpolygonsoncoverage"), ""
+        )
+
+    def test_identifysmallpolygons(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifysmallpolygons"), ""
+        )
+
+    def test_identifydangles(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifydangles"), ""
+        )
+
+
+def run_all():
+    """Default function that is called by the runner if nothing else is specified"""
+    suite = unittest.TestSuite()
+    suite.addTests(unittest.makeSuite(Tester, 'test_'))
+    unittest.TextTestRunner(verbosity=3, stream=sys.stdout).run(suite)

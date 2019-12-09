@@ -70,8 +70,8 @@ class AbstractSelectionWidget(QObject):
             DsgEnums.NewSpatiaLite : self.tr('SpatiaLite (create new database)'),
             DsgEnums.Shapefile : 'Shapefile',
             DsgEnums.NewShapefile : self.tr('Shapefile (create new database)'),
-            DsgEnums.Geopackage : 'Geopackage',
-            DsgEnums.NewGeopackage : self.tr('Geopackage (create new database)')
+            #DsgEnums.Geopackage : 'Geopackage',
+            #DsgEnums.NewGeopackage : self.tr('Geopackage (create new database)')
         }
         return sourceNameDict[source]
 
