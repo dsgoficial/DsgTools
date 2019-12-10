@@ -785,20 +785,20 @@ class Tester(unittest.TestCase):
             self.testAlg("dsgtools:identifyvertexnearedges"), ""
         )
     
-    def test_overlayelementswithareas(self):
-        self.assertEqual(
-            self.testAlg("dsgtools:overlayelementswithareas"), ""
-        )
+    # def test_overlayelementswithareas(self):
+    #     self.assertEqual(
+    #         self.testAlg("dsgtools:overlayelementswithareas"), ""
+    #     )
     
     def test_deaggregategeometries(self):
         self.assertEqual(
             self.testAlg("dsgtools:deaggregategeometries"), ""
         )
     
-    def test_dissolvepolygonswithsameattributes(self):
-        self.assertEqual(
-            self.testAlg("dsgtools:dissolvepolygonswithsameattributes"), ""
-        )
+    # def test_dissolvepolygonswithsameattributes(self):
+    #     self.assertEqual(
+    #         self.testAlg("dsgtools:dissolvepolygonswithsameattributes"), ""
+    #     )
     
     def test_removeemptyandupdate(self):
         self.assertEqual(
@@ -810,10 +810,10 @@ class Tester(unittest.TestCase):
             self.testAlg("dsgtools:snaplayeronlayer"), ""
         )
 
-    def test_adjustnetworkconnectivity(self):
-        self.assertEqual(
-            self.testAlg("dsgtools:adjustnetworkconnectivity"), ""
-        )
+    # def test_adjustnetworkconnectivity(self):
+    #     self.assertEqual(
+    #         self.testAlg("dsgtools:adjustnetworkconnectivity"), ""
+    #     )
 
 def run_all():
     """Default function that is called by the runner if nothing else is specified"""
