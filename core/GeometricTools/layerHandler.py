@@ -916,7 +916,8 @@ class LayerHandler(QObject):
         """
         return AlgRunner().runGrassDissolve(inputLyr, context, feedback=None, column=None, outputLyr=None, onFinish=None)
     
-    def getVertexNearEdgeDict(self, inputLyr, tol, onlySelected=False, feedback=None, context=None, algRunner=None):
+    def getVertexNearEdgeDict(self, inputLyr, tol, onlySelected=False, feedback=None,\
+        context=None, algRunner=None, ignoreErrorsOnSameFeat=False):
         """
         Identifies vertexes that are too close to a vertex.
         :param inputLyr: (QgsVectorLayer) layer to run the identification.
@@ -954,7 +955,8 @@ class LayerHandler(QObject):
             tol,
             feedback=multiStepFeedback,
             algRunner=algRunner,
-            context=context
+            context=context,
+            ignoreErrorsOnSameFeat=ignoreErrorsOnSameFeat
         )
         return vertexNearEdgeFlagDict
 
