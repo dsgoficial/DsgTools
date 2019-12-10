@@ -34,6 +34,7 @@ from processing.gui.wrappers import (WidgetWrapper,
                                      DIALOG_MODELER,
                                      DIALOG_BATCH)
 
+from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
 from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedTableWidget import OrderedTableWidget
 
 class EnforceSpatialRuleWrapper(WidgetWrapper):
@@ -82,28 +83,9 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         :return: (QComboBox) a combo box with all available predicates.
         """
         cb = QComboBox()
-        cb.addItems([
-            self.tr("equals"),
-            self.tr("is not equals"),
-            self.tr("disjoint"),
-            self.tr("is not disjoint"),
-            self.tr("intersects"),
-            self.tr("does not intersect"),
-            self.tr("touches"),
-            self.tr("does not touch"),
-            self.tr("crosses"),
-            self.tr("does not cross"),
-            self.tr("within"),
-            self.tr("is not within"),
-            self.tr("overlaps"),
-            self.tr("does not overlap"),
-            self.tr("contains"),
-            self.tr("does not contain"),
-            self.tr("covers"),
-            self.tr("does not cover"),
-            self.tr("covered by"),
-            self.tr("is not covered by")
-        ])
+        cb.addItems(
+            list(SpatialRelationsHandler().availablePredicates().values())
+        )
         return cb
 
     def cardinalityWidget(self):
