@@ -991,7 +991,8 @@ class LayerHandler(QObject):
         )
         return spatialIdx, idDict
 
-    def getVertexNearEdgeFlagDict(self, inputLyr, edgeSpatialIdx, edgeIdDict, searchRadius, feedback=None, algRunner=None, context=None):
+    def getVertexNearEdgeFlagDict(self, inputLyr, edgeSpatialIdx, edgeIdDict,\
+        searchRadius, feedback=None, algRunner=None, context=None, ignoreErrorsOnSameFeat=False):
         """
         returns a dict in the following format:
             {'featid':{
@@ -1042,7 +1043,7 @@ class LayerHandler(QObject):
                 # must ignore search within the same feature and 
                 # must be with not adjacent edges
                 if pointGeom.touches(edgeGeom) or \
-                    (featId == edgeIdDict[candidateId]['featid'] and \
+                    (ignoreErrorsOnSameFeat and featId == edgeIdDict[candidateId]['featid'] and \
                         pointFeat['layer'] == edgeIdDict[candidateId]['layer']):
                     continue
                 if buffer.intersects(edgeGeom):
@@ -1089,7 +1090,8 @@ class LayerHandler(QObject):
             searchRadius,
             algRunner=algRunner,
             feedback=multiStepFeedback,
-            context=context
+            context=context,
+            ignoreErrorsOnSameFeat=True
         )
     
     def getUnsharedVertexOnIntersections(self, inputLineLyrList, inputPolygonLyrList,\
