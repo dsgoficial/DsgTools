@@ -721,12 +721,12 @@ class Tester(unittest.TestCase):
             self.testAlg("dsgtools:identifyoutofboundsangles"), ""
         )
 
-    def test_identifyoutofboundsanglesincoverage(self):
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            self.assertEqual(
-                self.testAlg("dsgtools:identifyoutofboundsanglesincoverage"), ""
-            )
+    # def test_identifyoutofboundsanglesincoverage(self):
+    #     with warnings.catch_warnings():
+    #         warnings.simplefilter("ignore")
+    #         self.assertEqual(
+    #             self.testAlg("dsgtools:identifyoutofboundsanglesincoverage"), ""
+    #         )
 
     # def test_identifygaps(self):
     #     with warnings.catch_warnings():
