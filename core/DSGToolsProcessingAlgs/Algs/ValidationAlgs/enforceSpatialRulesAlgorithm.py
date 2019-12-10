@@ -22,16 +22,12 @@
 """
 
 from qgis.PyQt.QtCore import QCoreApplication
-from qgis.core import (QgsProject,
-                       QgsVectorLayer,
-                       QgsProcessingContext,
+from qgis.core import (QgsProcessingContext,
                        QgsProcessingException,
                        QgsProcessingParameterType,
-                       QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterDefinition,
                        QgsProcessingParameterFeatureSink)
 
-from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import ValidationAlgorithm
 
@@ -40,38 +36,6 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
     POINT_FLAGS = "POINT_FLAGS"
     LINE_FLAGS = "LINE_FLAGS"
     POLYGON_FLAGS = "POLYGON_FLAGS"
-    # a map to canvas layers, reset every time alg is asked to be run: make
-    # reusage of layers available for each cycle, reducing re-reading time 
-    __layers = dict()
-    # the order here matters and must be denial right after and the same as in
-    # the wrapper widget
-    __predicates = [
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "equals"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is not equals"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "disjoint"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is not disjoint"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "intersects"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not intersect"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "touches"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not touch"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "crosses"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not cross"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "within"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is not within"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "overlaps"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not overlap"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "contains"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not contain"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "covers"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not cover"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "covered by"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is not covered by")
-        ]
-    EQUALS, NOTEQUALS, DISJOINT, NOTDISJOINT, INTERSECTS, NOTINTERSECTS, \
-        TOUCHES, NOTTOUCHES, CROSSES, NOTCROSSES, WITHIN, NOTWITHIN, OVERLAPS, \
-        NOTOVERLAPS, CONTAINS, NOTCONTAINS, COVERS, NOTCOVERS, COVEREDBY, \
-        NOTCOVEREDBY = range(len(__predicates))
-
 
     def initAlgorithm(self, config):
         """
@@ -165,6 +129,15 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
             "{{count}} feature(s) from {layerB}"
         ).format(**rule)
 
+    def validateRules(self, ruleDict):
+        """
+        Verifies whether given rule set is valid/applicable.
+        :param ruleDict: (dict) rules to be checked.
+        :return: (bool) rules validity status
+        """
+        # TODO
+        return True
+
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
@@ -172,6 +145,25 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         rules = self.parameterAsSpatialRulesSet(
             parameters, self.RULES_SET, context
         )
+        if not rules or self.validateRuleSet(rules):
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.RULES_SET)
+            )
+        pointFlags = self.parameterAsLayer(parameters, self.POINT_FLAGS, context)
+        if not pointFlags:
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.POINT_FLAGS)
+            )
+        lineFlags = self.parameterAsLayer(parameters, self.LINE_FLAGS, context)
+        if not lineFlags:
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.LINE_FLAGS)
+            )
+        polygonFlags = self.parameterAsLayer(parameters, self.POLYGON_FLAGS, context)
+        if not polygonFlags:
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.POLYGON_FLAGS)
+            )
         flagsDict = SpatialRelationsHandler().enforceRules(
             rules, context, feedback
         )

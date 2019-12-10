@@ -822,9 +822,21 @@ class SpatialRelationsHandler(QObject):
         out = dict()
         ctx = ctx or QgsProcessingContext()
         for rule in ruleSet:
+            if feedback is not None:
+                feedback.pushInfo(
+                    self.tr("Checking rule {0}...").format(rule["name"])
+                )
             flags = self.enforceRule(rule, ctx, feedback)
             if flags:
                 out[rule["name"]] = flags
+                feedback.pushInfo(
+                    self.tr("Rule {0} raised flags").format(rule["name"])
+                )
+            else:
+                feedback.pushInfo(
+                    self.tr("Rule {0} did not raise flags\n")
+                    .format(rule["name"])
+                )
         return out
 
     def verifyTopologicalRelation(self, predicate, layerA, layerB, cardinality, context=None, feedback=None):
