@@ -32,6 +32,7 @@ from qgis.core import (Qgis,
                        QgsVectorLayer,
                        QgsSpatialIndex,
                        QgsFeatureRequest,
+                       QgsProcessingContext,
                        QgsProcessingMultiStepFeedback)
 from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
 from qgis.PyQt.Qt import QObject
@@ -682,7 +683,7 @@ class SpatialRelationsHandler(QObject):
         Returns the name of all available predicates.
         :return: (tuple-of-str) list of available predicates.
         """
-        return self.__predicates
+        return {i: p for i, p in enumerate(self.__predicates)}
 
     def getCardinalityTest(self, cardinality):
         """
@@ -701,19 +702,18 @@ class SpatialRelationsHandler(QObject):
             test = lambda x : len(x) < int(min_card) or len(x) > int(max_card)
         return test
                 
-    def testPredicate(self, predicate, feat, targetFeatures):
+    def testPredicate(self, predicate, engine, targetGeometries):
         """
         Applies a predicate test to a given feature from a list of features.
         :param predicate: (int) topological relation code to be tested against.
-        :param feat: (QgsFeature) reference feature to be used on the tests.
-        :param targetFeatures: (list-of-QgsFeature) features to be tested.
-        :return: (set-of-QgsFeatures) features that comply with the predicate. 
+        :param engine: (QgsGeometryEngine) reference feature's QGIS structure
+                       for based on geometries for faster spatial operations.
+        :param targetGeometries: (dict) maps feature ids to their geometries
+                                 that will be tested.
+        :return: (set-of-int) feature ids that comply with the predicate. 
         """
         # negatives are disregarded. method simply apply the predicate comparison
         positives = set()
-        geom = feat.geometry()
-        engine = QgsGeometry.createGeometryEngine(geom.constGet())
-        engine.prepareGeometry()
         methods = {
             self.EQUALS : "isEqual",
             self.DISJOINT : "disjoint",
@@ -726,13 +726,106 @@ class SpatialRelationsHandler(QObject):
         }
         if predicate not in methods:
             raise NotImplementedError(
-                self.tr("Invalid predicate ({}).").format(predicate)
+                self.tr("Invalid predicate ({0}).").format(predicate)
             )
         predicateMethod = methods[predicate]
-        for test_feat in targetFeatures:
-            if getattr(engine, predicateMethod)(test_feat.geometry().constGet()):
-                positives.add(test_feat)
+        for test_fid, test_geom in targetGeometries.items():
+            if getattr(engine, predicateMethod)(test_geom.constGet()):
+                positives.add(test_fid)
         return positives
+
+    def checkPredicate(self, layerA, layerB, predicate, cardinality, ctx=None, feedback=None):
+        """
+        Checks if a duo of layers comply with a spatial predicate at a given
+        cardinality.
+        :param layerA: (QgsVectorLayer) reference layer.
+        :param layerB: (QgsVectorLayer) layer to have its features spatially
+                    compared to reference layer.
+        :param predicate: (str) topological comparison method to be applied.
+        :param cardinality: (str) a formatted string that informs minimum and
+                            maximum occurences of a spatial predicate.
+        
+        :param ctx: (QgsProcessingContext) processing context in which algorithm
+                    should be executed.
+        :param feedback: (QgsFeedback) QGIS progress tracking component.
+        :return: (dict) a map from offended feature IDs to the list of its
+                offending features.
+        """
+        flags = defaultdict(list)
+        # getFlagGeometryMethod = {
+        #     # fill up with appropriate methods
+        # }[predicate]
+        getFlagGeometryMethod = lambda a, b: a.intersection(b)
+        testingMethod = self.getCardinalityTest(cardinality)
+        layerNameA = layerA.name()
+        layerNameB = layerB.name()
+        geometriesB = {f.id(): f.geometry() for f in layerB.getFeatures()}
+        for featA in layerA.getFeatures():
+            geomA = featA.geometry()
+            engine = QgsGeometry.createGeometryEngine(geomA.constGet())
+            engine.prepareGeometry()
+            positives = self.testPredicate(predicate, engine, geometriesB)
+            if testingMethod(positives):
+                fidA = featA.id()
+                for fidB in positives:
+                    flags[fidA] += [{
+                        "text": self.tr(
+                            "feature {fidA} from layer {layer_a} {pred} feature"
+                            " {fidB} from layer {layer_b}."
+                            .format(
+                                fidA=fidA, layer_a=layerNameA, pred=predicate,
+                                layer_b=layerNameB, fidB=fidB
+                            )
+                        ),
+                        "geom": getFlagGeometryMethod(geomA, geometriesB[fidB])
+                    }]
+        return flags
+
+    def enforceRule(self, rule, ctx=None, feedback=None):
+        """
+        Applies a given set of spatial restrictions to a duo of layers.
+        :param rule: (dict) a map to spatial rule's parameters.
+        :param ctx: (QgsProcessingContext) processing context in which algorithm
+                    should be executed.
+        :param feedback: (QgsFeedback) QGIS progress tracking component.
+        :return: (dict) a map from offended feature's ID to offenders feature set.
+        """
+        lh = LayerHandler()
+        ctx = ctx or QgsProcessingContext()
+        if rule["filter_a"]:
+            layerA = lh.filterByExpression(
+                rule["layer_a"], rule["filter_a"], ctx, feedback
+            )
+        else:
+            # this will raise an error if layer is not loaded
+            layerA = QgsProject.instance().mapLayersByName(rule["layer_a"])[0]
+        if rule["filter_b"]:
+            layerA = lh.filterByExpression(
+                rule["layer_b"], rule["filter_b"], ctx, feedback
+            )
+        else:
+            # this will raise an error if layer is not loaded
+            layerB = QgsProject.instance().mapLayersByName(rule["layer_b"])[0]
+        return self.checkPredicate(
+            layerA, layerB, rule["predicate"], rule["cardinality"], ctx, feedback
+        )
+
+    def enforceRules(self, ruleSet, ctx=None, feedback=None):
+        """
+        Applies a set of spatial rules to current active layers on canvas.
+        :param ruleSet: (dict) all rules that should be applied to canvas.
+        :param ctx: (QgsProcessingContext) processing context in which algorithm
+                    should be executed.
+        :param feedback: (QgsFeedback) QGIS progress tracking component.
+        :return: (dict) a map of offended rules to its flags.
+        """
+        out = dict()
+        ctx = ctx or QgsProcessingContext()
+        for rule in ruleSet:
+            flags = self.enforceRule(rule, ctx, feedback)
+            if flags:
+                out[rule["name"]] = flags
+        return out
 
     def verifyTopologicalRelation(self, predicate, layerA, layerB, cardinality, context=None, feedback=None):
         """
@@ -751,6 +844,7 @@ class SpatialRelationsHandler(QObject):
         :return: (QgsVectorLayer) layer containing features representing the
                  occurrences of the given test (their flags).
         """
+        # TO BE REMOVED
         denials = [
             self.NOTEQUALS,
             self.NOTDISJOINT,
