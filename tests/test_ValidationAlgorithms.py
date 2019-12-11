@@ -631,9 +631,14 @@ class Tester(unittest.TestCase):
             testFeat = testFeatureMap[featId]
             if not testFeat.geometry().equals(refFeat.geometry()):
                 return "Feature {fid} has incorrect geometry.".format(fid=featId)
-            # for attr in targetFieldNames:
-            #     if testFeat[attr] != refFeat[attr]:
-            #         return "Incorrect set o attributes for feature {fid}.".format(fid=featId)
+            for attr in targetFieldNames:
+                if testFeat[attr] != refFeat[attr]:
+                    return "Incorrect set of attributes for feature {fid}: Attribute {attr} is {test_attr} in the test feature and {ref_attr} in the reference feature.".format(
+                        fid=featId,
+                        attr=attr,
+                        test_attr=testFeat[attr],
+                        ref_attr=refFeat[attr]
+                    )
         return ""
 
     def testAlg(self, algName, feedback=None, context=None, loadLayers=False):
