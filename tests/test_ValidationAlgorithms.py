@@ -160,7 +160,7 @@ class Tester(unittest.TestCase):
             if key not in self.datasets:
                 self.datasets[key] = funcs[driver](dataset)
             else:
-                list(map(rollBack, self.datasets[key].values()))
+                [lyr.rollBack() for lyr in self.datasets[key].values()]
             layers = self.datasets[key]
         return layers
 
