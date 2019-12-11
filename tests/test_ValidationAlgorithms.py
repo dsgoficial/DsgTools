@@ -172,12 +172,8 @@ class Tester(unittest.TestCase):
         :param layers: (list-of-str) layers to be read.
         :return: (list-of-QgsVectorLayer) vector layers read from the dataset.
         """
-        out = []
         vls = self.testingDataset(driver, dataset)
-        for l in layers:
-            vls[l].rollBack()
-            out.append(vls[l])
-        return out
+        return [vls[lyrName] for lyrName in layers]
 
     def addLayerToGroup(self, layer, groupname):
         """
@@ -563,8 +559,8 @@ class Tester(unittest.TestCase):
                 )
         outputstr = 'FLAGS' if 'FLAGS' in out else 'OUTPUT' if 'OUTPUT' in out else ''
         if outputstr:
-            out = out[outputstr]
-            # out.setName(algName.split(':')[-1])
+            out = out[outputstr].clone()
+            out.setName(algName.split(':')[-1])
             return out
         return out
 
@@ -637,7 +633,7 @@ class Tester(unittest.TestCase):
                 return "Feature {fid} has incorrect geometry.".format(fid=featId)
             for attr in targetFieldNames:
                 if testFeat[attr] != refFeat[attr]:
-                    return "Incorrect set of attributes for feature {fid}: Attribute {attr} is {test_attr} in the test feature and {ref_attr} in the reference feature.".format(
+                    return "Incorrect set of attributes for feature {fid}:\nAttribute {attr} in the test feature is: {test_attr}\nAttribute {attr} in the reference feature is: {ref_attr}".format(
                         fid=featId,
                         attr=attr,
                         test_attr=testFeat[attr],
