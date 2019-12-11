@@ -559,8 +559,8 @@ class Tester(unittest.TestCase):
                 )
         outputstr = 'FLAGS' if 'FLAGS' in out else 'OUTPUT' if 'OUTPUT' in out else ''
         if outputstr:
-            out = out[outputstr].clone()
-            out.setName(algName.split(':')[-1])
+            out = out[outputstr]
+            # out.setName(algName.split(':')[-1])
             return out
         return out
 
