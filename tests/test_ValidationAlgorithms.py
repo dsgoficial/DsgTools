@@ -173,6 +173,7 @@ class Tester(unittest.TestCase):
         out = []
         vls = self.testingDataset(driver, dataset)
         for l in layers:
+            l.rollBack()
             out.append(vls[l])
         return out
 
@@ -673,21 +674,15 @@ class Tester(unittest.TestCase):
                     msg = self.compareLayers(output, expected)
                     # once layer is compared, revert all modifications in order to not compromise layer reusage
                     output.rollBack() # soemtimes in = output
+                    expected.rollBack()
                     if msg:
                         raise Exception(msg)
                     if loadLayers:
                         self.addLayerToGroup(output, "DSGTools Algorithm Tests")
                         self.addLayerToGroup(expected, "DSGTools Algorithm Tests")
-                QgsProject.instance().removeMapLayer(output.id())
-                del output
-                QgsProject.instance().removeMapLayer(expected.id())
-                del expected
         except Exception as e:
             output.rollBack()
-            QgsProject.instance().removeMapLayer(output.id())
-            del output
-            QgsProject.instance().removeMapLayer(expected.id())
-            del expected
+            expected.rollBack()
             return "Test #{nr} for '{alg}' has failed:\n'{msg}'".format(
                     msg=", ".join(map(str, e.args)), nr=i + 1, alg=algName
                 )
