@@ -1142,3 +1142,14 @@ class LayerHandler(QObject):
             feedback=multiStepFeedback
         )
         return mergedLayer
+
+    def reprojectLayer(self, layer, targetEpsg, output=None):
+        """
+        Reprojects layer's CRS.
+        :param : (QgsVectorLayer) layer to be reprojected.
+        :param targetCrs: (QgsCoordinateReferenceSystem) CRS object for the
+                          output layer.
+        :param output: (QgsVectorLayer) layer accomodate reprojected layer.
+        :return: (QgsVectorLayer) reprojected layer
+        """
+        return AlgRunner().runReprojectLayer(layer, targetEpsg, output)

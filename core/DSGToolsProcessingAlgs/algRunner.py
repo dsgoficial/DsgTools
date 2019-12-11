@@ -23,8 +23,10 @@
 import uuid
 
 import processing
-from qgis.core import QgsProcessingUtils, QgsVectorLayer, Qgis
-
+from qgis.core import (Qgis,
+                       QgsVectorLayer,
+                       QgsProcessingUtils,
+                       QgsProcessingContext)
 
 class AlgRunner:
     Break, Snap, RmDangle, ChDangle, RmBridge, ChBridge, RmDupl, RmDac, BPol, Prune, RmArea, RmLine, RMSA = range(13)
@@ -498,10 +500,33 @@ class AlgRunner:
             'LAYERS':inputLyr,
             'OUTPUT':outputLyr
         }
-        processing.run(
+        output = processing.run(
             "native:saveselectedfeatures",
             parameters,
             context=context,
             feedback=feedback
         )
-        return output['OUTPUT'] 
+        return output['OUTPUT']
+
+    def runReprojectLayer(self, layer, targetCrs, output=None, ctx=None, feedback=None):
+        """
+        Reprojects layer's CRS.
+        :param : (QgsVectorLayer) layer to be reprojected.
+        :param targetCrs: (QgsCoordinateReferenceSystem) CRS object for the
+                          output layer.
+        :param output: (QgsVectorLayer) layer accomodate reprojected layer.
+        :param ctx: (QgsProcessingContext) processing context in which algorithm
+                    should be executed.
+        :param feedback: (QgsFeedback) QGIS progress tracking component.
+        :return: (QgsVectorLayer) reprojected layer.
+        """
+        return processing.run(
+            "native:reprojectlayer",
+            {
+                'INPUT' : layer,
+                'OUTPUT' : output or 'memory:',
+                'TARGET_CRS' : targetCrs
+            },
+            context=ctx or QgsProcessingContext(),
+            feedback=feedback
+        )['OUTPUT']
