@@ -560,9 +560,9 @@ class Tester(unittest.TestCase):
                 )
         outputstr = 'FLAGS' if 'FLAGS' in out else 'OUTPUT' if 'OUTPUT' in out else ''
         if outputstr:
-            output = out.clone()
-            output[outputstr].setName(algName.split(':')[-1])
-            return output[outputstr]
+            out = output[outputstr].clone()
+            out.setName(algName.split(':')[-1])
+            return out
         return out
 
     def expectedOutput(self, algName, test):
@@ -683,6 +683,7 @@ class Tester(unittest.TestCase):
                 QgsProject.instance().removeMapLayer(expected.id())
                 del expected
         except Exception as e:
+            output.rollBack()
             QgsProject.instance().removeMapLayer(output.id())
             del output
             QgsProject.instance().removeMapLayer(expected.id())
