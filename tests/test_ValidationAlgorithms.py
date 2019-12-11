@@ -30,7 +30,6 @@ It is supposed to be run through QGIS with DSGTools installed.
 import os
 import sys
 import warnings
-import copy
 from osgeo import ogr
 
 import processing
@@ -561,9 +560,9 @@ class Tester(unittest.TestCase):
                 )
         outputstr = 'FLAGS' if 'FLAGS' in out else 'OUTPUT' if 'OUTPUT' in out else ''
         if outputstr:
-            out = copy.deepcopy(out)
-            out[outputstr].setName(algName.split(':')[-1])
-            return out[outputstr]
+            output = out.clone()
+            output[outputstr].setName(algName.split(':')[-1])
+            return output[outputstr]
         return out
 
     def expectedOutput(self, algName, test):
