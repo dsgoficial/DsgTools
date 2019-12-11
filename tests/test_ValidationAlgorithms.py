@@ -159,6 +159,8 @@ class Tester(unittest.TestCase):
             key = "{driver}:{dataset}".format(driver=driver, dataset=dataset)
             if key not in self.datasets:
                 self.datasets[key] = funcs[driver](dataset)
+            else:
+                list(map(rollBack, self.datasets[key].values()))
             layers = self.datasets[key]
         return layers
 
