@@ -768,6 +768,11 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg("dsgtools:identifyduplicatedlinesoncoverage"), ""
         )
+    
+    def test_identifyduplicatedpointsoncoverage(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyduplicatedpointsoncoverage"), ""
+        )
 
     def test_identifysmalllines(self):
         self.assertEqual(
