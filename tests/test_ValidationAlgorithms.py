@@ -633,7 +633,12 @@ class Tester(unittest.TestCase):
                 return "Feature {fid} has incorrect geometry.".format(fid=featId)
             for attr in targetFieldNames:
                 if testFeat[attr] != refFeat[attr]:
-                    return "Incorrect set o attributes for feature {fid}.".format(fid=featId)
+                    return "Incorrect set of attributes for feature {fid}: Attribute {attr} is {test_attr} in the test feature and {ref_attr} in the reference feature.".format(
+                        fid=featId,
+                        attr=attr,
+                        test_attr=testFeat[attr],
+                        ref_attr=refFeat[attr]
+                    )
         return ""
 
     def testAlg(self, algName, feedback=None, context=None, loadLayers=False):
@@ -779,7 +784,41 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg("dsgtools:identifyunsharedvertexonintersectionsalgorithm"), ""
         )
+    
+    def test_identifyvertexnearedges(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyvertexnearedges"), ""
+        )
+    
+    # def test_overlayelementswithareas(self):
+    #     self.assertEqual(
+    #         self.testAlg("dsgtools:overlayelementswithareas"), ""
+    #     )
+    
+    def test_deaggregategeometries(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:deaggregategeometries"), ""
+        )
+    
+    def test_dissolvepolygonswithsameattributes(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:dissolvepolygonswithsameattributes"), ""
+        )
+    
+    def test_removeemptyandupdate(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:removeemptyandupdate"), ""
+        )
+    
+    def test_snaplayeronlayer(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:snaplayeronlayer"), ""
+        )
 
+    # def test_adjustnetworkconnectivity(self):
+    #     self.assertEqual(
+    #         self.testAlg("dsgtools:adjustnetworkconnectivity"), ""
+    #     )
 
 def run_all():
     """Default function that is called by the runner if nothing else is specified"""
