@@ -815,10 +815,10 @@ class Tester(unittest.TestCase):
             self.testAlg("dsgtools:snaplayeronlayer"), ""
         )
 
-    # def test_adjustnetworkconnectivity(self):
-    #     self.assertEqual(
-    #         self.testAlg("dsgtools:adjustnetworkconnectivity"), ""
-    #     )
+    def test_adjustnetworkconnectivity(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:adjustnetworkconnectivity"), ""
+        )
 
 def run_all():
     """Default function that is called by the runner if nothing else is specified"""
