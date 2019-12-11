@@ -370,6 +370,7 @@ class Tester(unittest.TestCase):
                     'INPUT': self.getInputLayers(
                             'gpkg', 'testes_sirgas2000_24s', ['test1_vertexnearedge_a']
                         )[0],
+                    'SEARCH_RADIUS':1,
                     'SELECTED': False
                 },
                 {
@@ -378,6 +379,7 @@ class Tester(unittest.TestCase):
                     'INPUT': self.getInputLayers(
                             'gpkg', 'testes_sirgas2000_24s', ['test2_vertexnearedge_l']
                         )[0],
+                    'SEARCH_RADIUS':1,
                     'SELECTED': False
                 }
             ],
