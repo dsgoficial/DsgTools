@@ -173,7 +173,7 @@ class Tester(unittest.TestCase):
         out = []
         vls = self.testingDataset(driver, dataset)
         for l in layers:
-            l.rollBack()
+            vls[l].rollBack()
             out.append(vls[l])
         return out
 
