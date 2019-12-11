@@ -781,6 +781,34 @@ class SpatialRelationsHandler(QObject):
                     }]
         return flags
 
+    def setupLayer(self, layerName, exp, ctx=None, feedback=None):
+        """
+        Retrieves layer from canvas and applies filtering expression. If CRS is
+        different than project's, layer is reprojected.
+        :param layerName: (str) layer's name on canvas.
+        :param exp: (str) filtering expression to be applied to target layer.
+        :param ctx: (QgsProcessingContext) processing context in which algorithm
+                    should be executed.
+        :param feedback: (QgsFeedback) QGIS progress tracking component.
+        :return: (QgsVectorLayer) layer ready to be compared.
+        """
+        lh = LayerHandler()
+        ctx = ctx or QgsProcessingContext()
+        if exp:
+            layer = lh.filterByExpression(
+                layerName, exp, ctx, feedback
+            )
+        else:
+            # this will raise an error if layer is not loaded
+            layer = QgsProject.instance().mapLayersByName(layerName)
+            if not layer:
+                return
+            layer = layer[0]
+        projectCrs = QgsProject.instance().crs()
+        if layer.crs() != projectCrs:
+            layer = lh.runReprojectLayer(layer, projectCrs)
+        return layer
+
     def enforceRule(self, rule, ctx=None, feedback=None):
         """
         Applies a given set of spatial restrictions to a duo of layers.
@@ -792,20 +820,12 @@ class SpatialRelationsHandler(QObject):
         """
         lh = LayerHandler()
         ctx = ctx or QgsProcessingContext()
-        if rule["filter_a"]:
-            layerA = lh.filterByExpression(
-                rule["layer_a"], rule["filter_a"], ctx, feedback
-            )
-        else:
-            # this will raise an error if layer is not loaded
-            layerA = QgsProject.instance().mapLayersByName(rule["layer_a"])[0]
-        if rule["filter_b"]:
-            layerA = lh.filterByExpression(
-                rule["layer_b"], rule["filter_b"], ctx, feedback
-            )
-        else:
-            # this will raise an error if layer is not loaded
-            layerB = QgsProject.instance().mapLayersByName(rule["layer_b"])[0]
+        layerA = self.setupLayer(
+            rule["layer_a"], rule["filter_a"], ctx, feedback
+        )
+        layerB = self.setupLayer(
+            rule["layer_b"], rule["filter_b"], ctx, feedback
+        )
         return self.checkPredicate(
             layerA, layerB, rule["predicate"], rule["cardinality"], ctx, feedback
         )
