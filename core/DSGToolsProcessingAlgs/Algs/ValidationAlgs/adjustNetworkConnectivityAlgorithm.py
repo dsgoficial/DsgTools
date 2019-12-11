@@ -37,7 +37,7 @@ from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterNumber,
                        QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsSpatialIndex, QgsWkbTypes)
+                       QgsSpatialIndex, QgsWkbTypes, QgsProject)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
@@ -103,7 +103,7 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Snapping layer {layer} to dangles...').format(layer=inputLyr.name()))
         algRunner.runSnapLayerOnLayer(inputLyr, dangleLyr, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected, behavior=0)
-
+        QgsProject.instance().removeMapLayer(dangleLyr.id())
         return {self.OUTPUT: inputLyr}
 
     def name(self):

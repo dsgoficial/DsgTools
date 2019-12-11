@@ -159,6 +159,8 @@ class Tester(unittest.TestCase):
             key = "{driver}:{dataset}".format(driver=driver, dataset=dataset)
             if key not in self.datasets:
                 self.datasets[key] = funcs[driver](dataset)
+            else:
+                [lyr.rollBack() for lyr in self.datasets[key].values()]
             layers = self.datasets[key]
         return layers
 
@@ -173,6 +175,7 @@ class Tester(unittest.TestCase):
         out = []
         vls = self.testingDataset(driver, dataset)
         for l in layers:
+            vls[l].rollBack()
             out.append(vls[l])
         return out
 
@@ -367,6 +370,7 @@ class Tester(unittest.TestCase):
                     'INPUT': self.getInputLayers(
                             'gpkg', 'testes_sirgas2000_24s', ['test1_vertexnearedge_a']
                         )[0],
+                    'SEARCH_RADIUS':1,
                     'SELECTED': False
                 },
                 {
@@ -375,6 +379,7 @@ class Tester(unittest.TestCase):
                     'INPUT': self.getInputLayers(
                             'gpkg', 'testes_sirgas2000_24s', ['test2_vertexnearedge_l']
                         )[0],
+                    'SEARCH_RADIUS':1,
                     'SELECTED': False
                 }
             ],
@@ -560,8 +565,9 @@ class Tester(unittest.TestCase):
                 )
         outputstr = 'FLAGS' if 'FLAGS' in out else 'OUTPUT' if 'OUTPUT' in out else ''
         if outputstr:
-            out[outputstr].setName(algName.split(':')[-1])
-            return out[outputstr]
+            out = out[outputstr]
+            # out.setName(algName.split(':')[-1])
+            return out
         return out
 
     def expectedOutput(self, algName, test):
@@ -633,7 +639,7 @@ class Tester(unittest.TestCase):
                 return "Feature {fid} has incorrect geometry.".format(fid=featId)
             for attr in targetFieldNames:
                 if testFeat[attr] != refFeat[attr]:
-                    return "Incorrect set of attributes for feature {fid}: Attribute {attr} is {test_attr} in the test feature and {ref_attr} in the reference feature.".format(
+                    return "Incorrect set of attributes for feature {fid}:\nAttribute {attr} in the test feature is: {test_attr}\nAttribute {attr} in the reference feature is: {ref_attr}".format(
                         fid=featId,
                         attr=attr,
                         test_attr=testFeat[attr],
@@ -672,12 +678,15 @@ class Tester(unittest.TestCase):
                     msg = self.compareLayers(output, expected)
                     # once layer is compared, revert all modifications in order to not compromise layer reusage
                     output.rollBack() # soemtimes in = output
+                    expected.rollBack()
                     if msg:
                         raise Exception(msg)
                     if loadLayers:
                         self.addLayerToGroup(output, "DSGTools Algorithm Tests")
                         self.addLayerToGroup(expected, "DSGTools Algorithm Tests")
         except Exception as e:
+            output.rollBack()
+            expected.rollBack()
             return "Test #{nr} for '{alg}' has failed:\n'{msg}'".format(
                     msg=", ".join(map(str, e.args)), nr=i + 1, alg=algName
                 )
@@ -759,6 +768,11 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg("dsgtools:identifyduplicatedlinesoncoverage"), ""
         )
+    
+    def test_identifyduplicatedpointsoncoverage(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyduplicatedpointsoncoverage"), ""
+        )
 
     def test_identifysmalllines(self):
         self.assertEqual(
@@ -815,10 +829,10 @@ class Tester(unittest.TestCase):
             self.testAlg("dsgtools:snaplayeronlayer"), ""
         )
 
-    # def test_adjustnetworkconnectivity(self):
-    #     self.assertEqual(
-    #         self.testAlg("dsgtools:adjustnetworkconnectivity"), ""
-    #     )
+    def test_adjustnetworkconnectivity(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:adjustnetworkconnectivity"), ""
+        )
 
 def run_all():
     """Default function that is called by the runner if nothing else is specified"""
