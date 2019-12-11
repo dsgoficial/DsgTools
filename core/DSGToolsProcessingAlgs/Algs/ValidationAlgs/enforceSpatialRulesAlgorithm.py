@@ -31,6 +31,7 @@ from qgis.core import (QgsProject,
                        QgsProcessingParameterFeatureSink)
 
 from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
+from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import ValidationAlgorithm
 
 class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
@@ -126,17 +127,28 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
                          component.
         :return: (tuple-of-QgsVectorLayer) filled flag layers.
         """
+        fh = FeatureHandler()
         fields = self.getFlagFields()
+        for vl in [ptLayer, lLayer, polLayer]:
+            vl.startEditing()
+        points = set()
+        lines = set()
+        polygons = set()
+        setMap = {
+            QgsWkbTypes.PointGeometry: points,
+            QgsWkbTypes.PointGeometry: lines,
+            QgsWkbTypes.PointGeometry: polygons
+        }
         for rule, flags in flagDict.items():
             ruleName = rule["name"]
             for flag in flags:
                 geom = flag["geom"]
-                vl = {
-                    QgsWkbTypes.PointGeometry: ptLayer,
-                    QgsWkbTypes.PointGeometry: lLayer,
-                    QgsWkbTypes.PointGeometry: polLayer
-                }[geom.type()]
-
+                #### sontinue from here
+                newFeature = ()
+                setMap[geom.type()].add(newFeature)
+        ptLayer.addFeatures(points)
+        lLayer.addFeatures(lines)
+        polLayer.addFeatures(polygons)
         return (ptLayer, lLayer, polLayer)
 
     def validateRules(self, ruleDict):
