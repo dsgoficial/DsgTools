@@ -172,8 +172,12 @@ class Tester(unittest.TestCase):
         :param layers: (list-of-str) layers to be read.
         :return: (list-of-QgsVectorLayer) vector layers read from the dataset.
         """
+        out = []
         vls = self.testingDataset(driver, dataset)
-        return [vls[lyrName] for lyrName in layers]
+        for l in layers:
+            vls[l].rollBack()
+            out.append(vls[l])
+        return out
 
     def addLayerToGroup(self, layer, groupname):
         """
