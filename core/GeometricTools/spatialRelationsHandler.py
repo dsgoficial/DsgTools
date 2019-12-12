@@ -765,10 +765,10 @@ class SpatialRelationsHandler(QObject):
             engine = QgsGeometry.createGeometryEngine(geomA.constGet())
             engine.prepareGeometry()
             positives = self.testPredicate(predicate, engine, geometriesB)
-            if testingMethod(positives):
+            if positives and testingMethod(positives):
                 fidA = featA.id()
                 for fidB in positives:
-                    flags[fidA] += [{
+                    flags[fidA].append({
                         "text": self.tr(
                             "feature {fidA} from layer {layer_a} {pred} feature"
                             " {fidB} from layer {layer_b}."
@@ -778,8 +778,8 @@ class SpatialRelationsHandler(QObject):
                             )
                         ),
                         "geom": getFlagGeometryMethod(geomA, geometriesB[fidB])
-                    }]
-        return flags
+                    })
+        return {fid: flag for fid, flag in flags.items() if flag}
 
     def setupLayer(self, layerName, exp, ctx=None, feedback=None):
         """

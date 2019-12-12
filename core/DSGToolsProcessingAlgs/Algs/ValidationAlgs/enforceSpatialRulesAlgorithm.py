@@ -23,7 +23,9 @@
 
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (QgsProject,
+                       QgsFeature,
                        QgsWkbTypes,
+                       QgsFeatureSink,
                        QgsProcessingContext,
                        QgsProcessingException,
                        QgsProcessingParameterType,
@@ -129,29 +131,29 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         """
         fh = FeatureHandler()
         fields = self.getFlagFields()
-        for vl in [ptLayer, lLayer, polLayer]:
-            vl.startEditing()
-        points = set()
-        lines = set()
-        polygons = set()
-        setMap = {
-            QgsWkbTypes.PointGeometry: points,
-            QgsWkbTypes.PointGeometry: lines,
-            QgsWkbTypes.PointGeometry: polygons
+        layerMap = {
+            QgsWkbTypes.PointGeometry: ptLayer,
+            QgsWkbTypes.LineGeometry: lLayer,
+            QgsWkbTypes.PolygonGeometry: polLayer
         }
-        for rule, flags in flagDict.items():
-            ruleName = rule["name"]
-            for flag in flags:
-                geom = flag["geom"]
-                #### sontinue from here
-                newFeature = ()
-                setMap[geom.type()].add(newFeature)
-        ptLayer.addFeatures(points)
-        lLayer.addFeatures(lines)
-        polLayer.addFeatures(polygons)
+        for ruleName, flags in flagDict.items():
+            flagText = self.tr("Rule {name} offended: {{text}}").format(
+                name=ruleName
+            )
+            for flagList in flags.values():
+                for flag in flagList:
+                    geom = flag["geom"]
+                    if geom.isMultipart():
+                        geom.convertToSingleType()
+                    newFeature = QgsFeature(fields)
+                    newFeature["reason"] = flagText.format(text=flag["text"])
+                    newFeature.setGeometry(geom)
+                    layerMap[geom.type()].addFeature(
+                        newFeature, QgsFeatureSink.FastInsert
+                    )
         return (ptLayer, lLayer, polLayer)
 
-    def validateRules(self, ruleDict):
+    def validateRuleSet(self, ruleDict):
         """
         Verifies whether given rule set is valid/applicable.
         :param ruleDict: (dict) rules to be checked.
@@ -167,24 +169,32 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         rules = self.parameterAsSpatialRulesSet(
             parameters, self.RULES_SET, context
         )
-        if not rules or self.validateRuleSet(rules):
+        if not rules or not self.validateRuleSet(rules):
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.RULES_SET)
             )
         flagFields = self.getFlagFields()
         crs = QgsProject.instance().crs()
-        pointFlags, plId = self.parameterAsSink(parameters, self.POINT_FLAGS,
-                context, flagFields, QgsWkbTypes.PointGeometry, crs)
+        pointFlags, ptId = self.parameterAsSink(
+                parameters, self.POINT_FLAGS, context,
+                flagFields, QgsWkbTypes.Point, crs
+        )
         if not pointFlags:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.POINT_FLAGS)
             )
-        lineFlags = self.parameterAsLayer(parameters, self.LINE_FLAGS, context)
+        lineFlags, lId = self.parameterAsSink(
+                parameters, self.LINE_FLAGS, context,
+                flagFields, QgsWkbTypes.LineString, crs
+        )
         if not lineFlags:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.LINE_FLAGS)
             )
-        polygonFlags = self.parameterAsLayer(parameters, self.POLYGON_FLAGS, context)
+        polygonFlags, polId = self.parameterAsSink(
+                parameters, self.POLYGON_FLAGS, context,
+                flagFields, QgsWkbTypes.Polygon, crs
+        )
         if not polygonFlags:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.POLYGON_FLAGS)
@@ -192,9 +202,14 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         flagsDict = SpatialRelationsHandler().enforceRules(
             rules, context, feedback
         )
-        self.setFlags(flagsDict)
-        # set flags to their layers accordingly to its geometry
-        return {}
+        self.setFlags(
+            flagsDict, pointFlags, lineFlags, polygonFlags, context, feedback
+        )
+        return {
+            self.POINT_FLAGS: ptId,
+            self.LINE_FLAGS: lId,
+            self.POLYGON_FLAGS: polId
+        }
 
 class ParameterSpatialRulesSetType(QgsProcessingParameterType):
 
