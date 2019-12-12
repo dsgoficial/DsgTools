@@ -34,6 +34,7 @@ from qgis.core import (QgsProject,
 
 from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
 from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
+from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import ValidationAlgorithm
 
 class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
@@ -130,6 +131,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         :return: (tuple-of-QgsVectorLayer) filled flag layers.
         """
         fh = FeatureHandler()
+        gh = GeometryHandler()
         fields = self.getFlagFields()
         layerMap = {
             QgsWkbTypes.PointGeometry: ptLayer,
@@ -137,20 +139,19 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
             QgsWkbTypes.PolygonGeometry: polLayer
         }
         for ruleName, flags in flagDict.items():
-            flagText = self.tr("Rule {name} offended: {{text}}").format(
+            flagText = self.tr("Rule {name} broken: {{text}}").format(
                 name=ruleName
             )
             for flagList in flags.values():
                 for flag in flagList:
                     geom = flag["geom"]
-                    if geom.isMultipart():
-                        geom.convertToSingleType()
-                    newFeature = QgsFeature(fields)
-                    newFeature["reason"] = flagText.format(text=flag["text"])
-                    newFeature.setGeometry(geom)
-                    layerMap[geom.type()].addFeature(
-                        newFeature, QgsFeatureSink.FastInsert
-                    )
+                    for g in gh.multiToSinglePart(geom):
+                        newFeature = QgsFeature(fields)
+                        newFeature["reason"] = flagText.format(text=flag["text"])
+                        newFeature.setGeometry(g)
+                        layerMap[geom.type()].addFeature(
+                            newFeature, QgsFeatureSink.FastInsert
+                        )
         return (ptLayer, lLayer, polLayer)
 
     def validateRuleSet(self, ruleDict):

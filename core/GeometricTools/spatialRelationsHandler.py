@@ -756,14 +756,35 @@ class SpatialRelationsHandler(QObject):
         #     # fill up with appropriate methods
         # }[predicate]
         getFlagGeometryMethod = lambda a, b: a.intersection(b)
-        testingMethod = self.getCardinalityTest(cardinality)
         layerNameA = layerA.name()
         layerNameB = layerB.name()
-        geometriesB = {f.id(): f.geometry() for f in layerB.getFeatures()}
+        predicates = self.availablePredicates()
+        denials = [
+            self.NOTEQUALS,
+            self.NOTDISJOINT,
+            self.NOTINTERSECTS,
+            self.NOTTOUCHES,
+            self.NOTCROSSES,
+            self.NOTWITHIN,
+            self.NOTOVERLAPS,
+            self.NOTCONTAINS
+        ]
+        if predicate in denials:
+            # denials always follow the "affirmitives" (contains = 14 
+            # -> notcontains = 15), hence -1.
+            # denials are ALWAYS absolute (cardinality is not applicable)
+            predicate -= 1
+            testingMethod = lambda x: len(x) > 0
+        else:
+            testingMethod = self.getCardinalityTest(cardinality)
         for featA in layerA.getFeatures():
             geomA = featA.geometry()
             engine = QgsGeometry.createGeometryEngine(geomA.constGet())
             engine.prepareGeometry()
+            geometriesB = {
+                f.id(): f.geometry() \
+                    for f in layerB.getFeatures(geomA.boundingBox())
+            }
             positives = self.testPredicate(predicate, engine, geometriesB)
             if positives and testingMethod(positives):
                 fidA = featA.id()
@@ -773,7 +794,7 @@ class SpatialRelationsHandler(QObject):
                             "feature {fidA} from layer {layer_a} {pred} feature"
                             " {fidB} from layer {layer_b}."
                             .format(
-                                fidA=fidA, layer_a=layerNameA, pred=predicate,
+                                fidA=fidA, layer_a=layerNameA, pred=predicates[predicate],
                                 layer_b=layerNameB, fidB=fidB
                             )
                         ),
@@ -858,52 +879,3 @@ class SpatialRelationsHandler(QObject):
                     .format(rule["name"])
                 )
         return out
-
-    def verifyTopologicalRelation(self, predicate, layerA, layerB, cardinality, context=None, feedback=None):
-        """
-        Verifies a given topological relation between two layers, returning a
-        vector layer pointing where these predicates have happened.
-        :param predicate: (int) topological relation to be tested.
-        :param layerA: (QgsVectorLayer) reference layer to be tested.
-        :param layerB: (QgsVectorLayer) the other layer to be tested.
-        :param cardinality: (str) a string representing the upper and lower
-                            bounds of occurrences an event can happen between
-                            the target layers.
-        :param context: (QgsProcessingContext) environment context in which 
-                        layer is retrieved and setup.
-        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
-                         component.
-        :return: (QgsVectorLayer) layer containing features representing the
-                 occurrences of the given test (their flags).
-        """
-        # TO BE REMOVED
-        denials = [
-            self.NOTEQUALS,
-            self.NOTDISJOINT,
-            self.NOTINTERSECTS,
-            self.NOTTOUCHES,
-            self.NOTCROSSES,
-            self.NOTWITHIN,
-            self.NOTOVERLAPS,
-            self.NOTCONTAINS
-        ]
-        output = dict()
-        if predicate in denials:
-            # denials always follow the "positives", hence -1
-            # denials are ALWAYS absolute (cardinality is not applicable)
-            predicate -= 1
-            predicateTest = lambda x: len(x) > 0
-        else:
-            predicateTest = self.getCardinalityTest(cardinality)
-        for feat in layerA.getFeatures():
-            flags = self.testPredicate(
-                predicate,
-                feat,
-                layerB.getFeatures(
-                    QgsFeatureRequest(feat.geometry().boundingBox())
-                )
-            )
-            if predicateTest(flags):
-                # still missing how to get flag geometry
-                output[feat.id()] = flags
-        return output
