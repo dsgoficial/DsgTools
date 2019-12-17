@@ -707,6 +707,10 @@ class Tester(unittest.TestCase):
                         expected,
                         loadLayers=loadLayers
                     )
+                    if isinstance(output, QgsVectorLayer):
+                        output.rollBack()
+                    if isinstance(expected, QgsVectorLayer):
+                        expected.rollBack()
                 elif isinstance(output, dict):
                     for key, outputLyr in output.items():
                         if key not in expected:
@@ -720,6 +724,10 @@ class Tester(unittest.TestCase):
                             expected[key],
                             loadLayers=loadLayers
                         )
+                        if isinstance(outputLyr, QgsVectorLayer):
+                        output.rollBack()
+                        if isinstance(expected[key], QgsVectorLayer):
+                            expected[key].rollBack()
                     for key, expectedLyr in expected.items():
                         if key not in expected:
                             raise Exception("Output dictionary key was not found in expected output dictionary.".\
@@ -729,8 +737,12 @@ class Tester(unittest.TestCase):
         except Exception as e:
             if isinstance(output, QgsVectorLayer):
                 output.rollBack()
+            elif isinstance(output, dict):
+                [lyr.rollBack() for key, lyr in output.items() if isinstance(lyr, QgsVectorLayer)]
             if isinstance(expected, QgsVectorLayer):
                 expected.rollBack()
+            elif isinstance(expected, dict):
+                [lyr.rollBack() for key, lyr in expected.items() if isinstance(lyr, QgsVectorLayer)]
             return "Test #{nr} for '{alg}' has failed:\n'{msg}'".format(
                     msg=", ".join(map(str, e.args)), nr=i + 1, alg=algName
                 )
