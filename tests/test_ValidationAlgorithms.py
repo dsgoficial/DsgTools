@@ -635,8 +635,10 @@ class Tester(unittest.TestCase):
         if target.geometryType() != reference.geometryType():
             return "Incorrect geometry type for the output layer."
         # feature check
-        targetFeaureIds = set([f.id() for f in target.getFeatures()])
-        refFeaureIds = set([f.id() for f in reference.getFeatures()])
+        targetFeatDict = {f.id():f for f in target.getFeatures()}
+        refFeatDict = {f.id():f for f in reference.getFeatures()}
+        targetFeaureIds = set(targetFeatDict.keys())
+        refFeaureIds = set(refFeatDict.keys())
         if target.featureCount() != reference.featureCount():    
             msg = ""
             if targetFeaureIds - refFeaureIds:
@@ -657,20 +659,10 @@ class Tester(unittest.TestCase):
                 continue
             if fieldname not in targetFieldNames:
                 return "Incorrect set of attributes for output layer (missing '{attr}').".format(attr=fieldname)
-        # feature attribute check
-        # it is considered that our testing datasets will always have their PK set to serial column 'OGC_FID'
-        try:
-            # identification algorithms have in-memory layers, and they do not have a PK column
-            col = 'OGC_FID' if 'OGC_FID' in targetFieldNames else 'fid'
-            testFeatureMap = { f[col] : f for f in target.getFeatures() }
-        except:
-            testFeatureMap = { f.id() : f for f in target.getFeatures() }
-        # testing datasets have their PK column set to 'fid'
-        pkColumn = 'OGC_FID' if 'OGC_FID' in [f.name() for f in next(reference.getFeatures()).fields()] else 'fid'
-        for featId, refFeat in { f[pkColumn] : f for f in reference.getFeatures() }.items():
-            if featId not in testFeatureMap:
+        for featId, refFeat in refFeatDict.items():
+            if featId not in targetFeatDict:
                 return "Feature id={0} was not found on output layer.".format(featId)
-            testFeat = testFeatureMap[featId]
+            testFeat = targetFeatDict[featId]
             if not testFeat.geometry().equals(refFeat.geometry()):
                 return "Feature {fid} has incorrect geometry.".format(fid=featId)
             for attr in targetFieldNames:
