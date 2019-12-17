@@ -48,7 +48,6 @@ class SpatialRelationsHandler(QObject):
             QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "equals"),
             QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is not equals"),
             QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "disjoint"),
-            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is not disjoint"),
             QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "intersects"),
             QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not intersect"),
             QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "touches"),
@@ -62,7 +61,7 @@ class SpatialRelationsHandler(QObject):
             QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "contains"),
             QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not contain")
         )
-    EQUALS, NOTEQUALS, DISJOINT, NOTDISJOINT, INTERSECTS, NOTINTERSECTS, \
+    EQUALS, NOTEQUALS, DISJOINT, INTERSECTS, NOTINTERSECTS, \
         TOUCHES, NOTTOUCHES, CROSSES, NOTCROSSES, WITHIN, NOTWITHIN, OVERLAPS, \
         NOTOVERLAPS, CONTAINS, NOTCONTAINS = range(len(__predicates))
 
@@ -685,22 +684,23 @@ class SpatialRelationsHandler(QObject):
         """
         return {i: p for i, p in enumerate(self.__predicates)}
 
-    def getCardinalityTest(self, cardinality):
+    def getCardinalityTest(self, cardinality=None):
         """
         Parses cardinality string and gets a callable to check if the iterable
-        tested is not complying with the cardinality.
+        tested (e.g. list of features) complies with the cardinality.
         :param cardinality: (str) cardinality string to be tested against.
+        :return: (function) testing method to be applied to an iterable.
         """
         if cardinality is None:
-            return lambda x: len(x) != 0
+            # default is "1..*"
+            return lambda x: len(x) > 0
         min_card, max_card = cardinality.split('..')
         if max_card == '*':
-            test = lambda x : len(x) < int(min_card)
+            return lambda x: len(x) >= int(min_card)
         elif min_card == max_card:
-            test = lambda x: len(x) != int(min_card)
+            return lambda x: len(x) == int(min_card)
         else:
-            test = lambda x : len(x) < int(min_card) or len(x) > int(max_card)
-        return test
+            return lambda x: len(x) >= int(min_card) and len(x) <= int(max_card)
                 
     def testPredicate(self, predicate, engine, targetGeometries):
         """
@@ -710,10 +710,13 @@ class SpatialRelationsHandler(QObject):
                        for based on geometries for faster spatial operations.
         :param targetGeometries: (dict) maps feature ids to their geometries
                                  that will be tested.
-        :return: (set-of-int) feature ids that comply with the predicate. 
+        :param cardinality: (str) cardinality string to be tested against.
+        :return: (set-of-int) feature IDs for those that the geometries do
+                 comply with given predicate/cardinality. 
         """
         # negatives are disregarded. method simply apply the predicate comparison
         positives = set()
+        negatives = set()
         methods = {
             self.EQUALS : "isEqual",
             self.DISJOINT : "disjoint",
@@ -752,16 +755,9 @@ class SpatialRelationsHandler(QObject):
                 offending features.
         """
         flags = defaultdict(list)
-        # getFlagGeometryMethod = {
-        #     # fill up with appropriate methods
-        # }[predicate]
-        getFlagGeometryMethod = lambda a, b: a.intersection(b)
-        layerNameA = layerA.name()
-        layerNameB = layerB.name()
         predicates = self.availablePredicates()
         denials = [
             self.NOTEQUALS,
-            self.NOTDISJOINT,
             self.NOTINTERSECTS,
             self.NOTTOUCHES,
             self.NOTCROSSES,
@@ -774,9 +770,26 @@ class SpatialRelationsHandler(QObject):
             # -> notcontains = 15), hence -1.
             # denials are ALWAYS absolute (cardinality is not applicable)
             predicate -= 1
-            testingMethod = lambda x: len(x) > 0
+            cardinality = "0..0"
+        if predicate == self.DISJOINT:
+            predicateFlagText = self.tr("feature ID {{fid_a}} from {layer_a} "
+                                        "id not {pred} to {{size}} features of"
+                                        " {layer_b}")\
+                                .format(layer_a=layerA.name(),
+                                        pred=predicates[predicate],
+                                        layer_b=layerB.name())
         else:
-            testingMethod = self.getCardinalityTest(cardinality)
+            predicateFlagText = self.tr("feature ID {{fid_a}} from {layer_a} "
+                                        "{pred} {{size}} features of "
+                                        "{layer_b}")\
+                                .format(layer_a=layerA.name(),
+                                        pred=predicates[predicate],
+                                        layer_b=layerB.name())
+        if predicate in (self.EQUALS, self.WITHIN):
+            getFlagGeometryMethod = lambda geom, _: geom
+        else:
+            getFlagGeometryMethod = lambda geomA, geomB: geomA.intersection(geomB)
+        testingMethod = self.getCardinalityTest(cardinality)
         for featA in layerA.getFeatures():
             geomA = featA.geometry()
             engine = QgsGeometry.createGeometryEngine(geomA.constGet())
@@ -786,18 +799,25 @@ class SpatialRelationsHandler(QObject):
                     for f in layerB.getFeatures(geomA.boundingBox())
             }
             positives = self.testPredicate(predicate, engine, geometriesB)
-            if positives and testingMethod(positives):
+            if not testingMethod(positives):
                 fidA = featA.id()
+                size = len(positives)
+                if not size:
+                    flags[fidA].append({
+                        "text": predicateFlagText.format(fid_a=fidA, size=0),
+                        "geom": geomA
+                    })
+                    continue
+                if size > 1:
+                    predicateFlagText_ = "{0} (IDs {1})"\
+                        .format(predicateFlagText, ", ".join(map(str, positives)))
+                elif size == 1:
+                    predicateFlagText_ = "{0} (ID {1})"\
+                        .format(predicateFlagText, str(set(positives).pop()))
                 for fidB in positives:
                     flags[fidA].append({
-                        "text": self.tr(
-                            "feature {fidA} from layer {layer_a} {pred} feature"
-                            " {fidB} from layer {layer_b}."
-                            .format(
-                                fidA=fidA, layer_a=layerNameA, pred=predicates[predicate],
-                                layer_b=layerNameB, fidB=fidB
-                            )
-                        ),
+                        "text": predicateFlagText_\
+                                    .format(fid_a=fidA, size=size),
                         "geom": getFlagGeometryMethod(geomA, geometriesB[fidB])
                     })
         return {fid: flag for fid, flag in flags.items() if flag}
