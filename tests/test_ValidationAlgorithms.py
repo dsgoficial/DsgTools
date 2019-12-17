@@ -725,7 +725,7 @@ class Tester(unittest.TestCase):
                             loadLayers=loadLayers
                         )
                         if isinstance(outputLyr, QgsVectorLayer):
-                            output.rollBack()
+                            outputLyr.rollBack()
                         if isinstance(expected[key], QgsVectorLayer):
                             expected[key].rollBack()
                     for key, expectedLyr in expected.items():
