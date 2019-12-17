@@ -97,7 +97,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         le = QLineEdit()
         regex = QRegExp("[0-9\*]\.\.[0-9\*]")
         le.setValidator(QRegExpValidator(regex, le))
-        le.setPlaceholderText("0..*")
+        le.setPlaceholderText("1..*")
         return le
 
     def postAddRowStandard(self, row):
@@ -314,7 +314,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             values["predicate"] = self.panel.getValue(row, 3)
             values["layer_b"] = self.panel.getValue(row, 4)
             values["filter_b"] = self.panel.getValue(row, 5)
-            values["cardinality"] = self.panel.getValue(row, 6) or "0..*"
+            values["cardinality"] = self.panel.getValue(row, 6) or "1..*"
             valueMaplist.append(values)
         return valueMaplist
 
