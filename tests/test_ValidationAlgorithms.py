@@ -146,7 +146,8 @@ class Tester(unittest.TestCase):
             "gpkg" : {
                 "testes_wgs84" : os.path.join(gpkgPaths, 'testes_wgs84.gpkg'),
                 "testes_sirgas2000_23s" : os.path.join(gpkgPaths, 'testes_sirgas2000_23s.gpkg'),
-                "testes_sirgas2000_24s" : os.path.join(gpkgPaths, 'testes_sirgas2000_24s.gpkg')
+                "testes_sirgas2000_24s" : os.path.join(gpkgPaths, 'testes_sirgas2000_24s.gpkg'),
+                "test_dataset_unbuild_polygons" : os.path.join(gpkgPaths, 'test_dataset_unbuild_polygons.gpkg')
             }
         }
         # switch-case for dataset reading
@@ -542,6 +543,24 @@ class Tester(unittest.TestCase):
                     'FLAGS' : "memory:"
                 }
             ],
+            "dsgtools:unbuildpolygonsalgorithm" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'INPUT_POLYGONS' : self.getInputLayers(
+                        'gpkg', 'test_dataset_unbuild_polygons', ['vegetation']
+                    )[0],
+                    'SELECTED' : False,
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'gpkg', 'test_dataset_unbuild_polygons', ['fence', 'road']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                        'gpkg', 'test_dataset_unbuild_polygons', ['water']
+                    ),
+                    'GEOGRAPHIC_BOUNDARY' : '',
+                    'OUTPUT_CENTER_POINTS' : "memory:",
+                    'OUTPUT_BOUNDARIES' : "memory:"
+                }
+            ],
 
             "dsgtools:ALG" : [
                 {
@@ -569,8 +588,22 @@ class Tester(unittest.TestCase):
             # out.setName(algName.split(':')[-1])
             return out
         return out
+    
+    def runAlgWithMultipleOutputs(self, algName, parameters, feedback=None, context=None):
+        """
+        Executes a given algorithm that has multiple outputs. Returns a dict 
+        with the returned layers in the format {'OUTPUT_LAYER_KEY':(QgsVectorLayer) OutputLayer}
+        :param algName: (str) target algorithm's name.
+        :param parameters: (dict) set of arguments for target algorithm.
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking object.
+        :param context: (QgsProcessingContext) execution's environmental parameters.
+        """
+        return processing.run(algName, parameters, None,\
+                    feedback or QgsProcessingFeedback(),
+                    context or QgsProcessingContext()
+                )
 
-    def expectedOutput(self, algName, test):
+    def expectedOutput(self, algName, test, multipleOutputs=False):
         """
         Gets the expect output layer.
         :param algName: (str) target algorithm's name.
@@ -582,11 +615,14 @@ class Tester(unittest.TestCase):
                     'test_{0}.gpkg'.format(test)
                 )
         if os.path.exists(path):
-            return QgsVectorLayer(
-                        path, 
-                        "{alg}_test_{test}_output".format(alg=algName.split(':')[-1], test=test),
-                        "ogr"
-                    )
+            if multipleOutputs:
+                return self.readGeopackage(path)
+            else:
+                return QgsVectorLayer(
+                            path, 
+                            "{alg}_test_{test}_output".format(alg=algName.split(':')[-1], test=test),
+                            "ogr"
+                        )
 
     def compareLayers(self, target, reference):
         """
@@ -647,7 +683,7 @@ class Tester(unittest.TestCase):
                     )
         return ""
 
-    def testAlg(self, algName, feedback=None, context=None, loadLayers=False):
+    def testAlg(self, algName, feedback=None, context=None, loadLayers=False, multipleOutputs=False):
         """
         Tests if the output of a given algorithm is the expected one.
         :param algName: (str) target algorithm's name.
@@ -664,34 +700,71 @@ class Tester(unittest.TestCase):
                 )
         try:
             for i, param in enumerate(parameters):
-                output = self.runAlg(algName, param, feedback, context)
-                expected = self.expectedOutput(algName, i + 1)
+                output = self.runAlgWithMultipleOutputs(algName, param, feedback, context) \
+                    if multipleOutputs else self.runAlg(algName, param, feedback, context)
+                expected = self.expectedOutput(
+                    algName,
+                    i + 1,
+                    multipleOutputs=multipleOutputs
+                )
                 if isinstance(output, QgsVectorLayer):
-                    if not output.isValid():
-                        raise Exception("Output is an INVALID vector layer.".\
+                    self.compareInputLayerWithOutputLayer(
+                        i,
+                        algName,
+                        output,
+                        expected,
+                        loadLayers=loadLayers
+                    )
+                elif isinstance(output, dict):
+                    for key, outputLyr in output.items():
+                        if key not in expected:
+                            raise Exception("Output dictionary key was not found in expected output dictionary.".\
                                 format(alg=algName, nr=i + 1)
                             )
-                    if expected is None:
-                        raise Exception("No expected output registered for the test, yet an output was generated.".\
+                        self.compareInputLayerWithOutputLayer(
+                            i,
+                            algName,
+                            outputLyr,
+                            expected[key],
+                            loadLayers=loadLayers
+                        )
+                    for key, expectedLyr in expected.items():
+                        if key not in expected:
+                            raise Exception("Output dictionary key was not found in expected output dictionary.".\
                                 format(alg=algName, nr=i + 1)
                             )
-                    msg = self.compareLayers(output, expected)
-                    # once layer is compared, revert all modifications in order to not compromise layer reusage
-                    output.rollBack() # soemtimes in = output
-                    expected.rollBack()
-                    if msg:
-                        raise Exception(msg)
-                    if loadLayers:
-                        self.addLayerToGroup(output, "DSGTools Algorithm Tests")
-                        self.addLayerToGroup(expected, "DSGTools Algorithm Tests")
+
         except Exception as e:
-            output.rollBack()
-            expected.rollBack()
+            if isinstance(output, QgsVectorLayer):
+                output.rollBack()
+            if isinstance(expected, QgsVectorLayer):
+                expected.rollBack()
             return "Test #{nr} for '{alg}' has failed:\n'{msg}'".format(
                     msg=", ".join(map(str, e.args)), nr=i + 1, alg=algName
                 )
         # missing the output testing
         return ""
+    
+    def compareInputLayerWithOutputLayer(self, i, algName, output, expected, loadLayers=False):
+        if not output.isValid():
+            raise Exception("Output is an INVALID vector layer.".\
+                    format(alg=algName, nr=i + 1)
+                )
+        if expected is None:
+            raise Exception("No expected output registered for the test, yet an output was generated.".\
+                    format(alg=algName, nr=i + 1)
+                )
+        msg = self.compareLayers(output, expected)
+        # once layer is compared, revert all modifications in order to not compromise layer reusage
+        if isinstance(output, QgsVectorLayer):
+            output.rollBack()
+        if isinstance(expected, QgsVectorLayer):
+            expected.rollBack()
+        if msg:
+            raise Exception(msg)
+        if loadLayers:
+            self.addLayerToGroup(output, "DSGTools Algorithm Tests")
+            self.addLayerToGroup(expected, "DSGTools Algorithm Tests")
 
     def testAllAlgorithms(self):
         """
@@ -833,9 +906,15 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg("dsgtools:adjustnetworkconnectivity"), ""
         )
+    
+    def test_unbuildpolygonsalgorithm(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:unbuildpolygonsalgorithm", multipleOutputs=True), ""
+        )
 
-def run_all():
+def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
+    filterString = 'test_' if filterString is None else filterString
     suite = unittest.TestSuite()
-    suite.addTests(unittest.makeSuite(Tester, 'test_'))
+    suite.addTests(unittest.makeSuite(Tester, filterString))
     unittest.TextTestRunner(verbosity=3, stream=sys.stdout).run(suite)
