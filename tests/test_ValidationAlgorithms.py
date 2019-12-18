@@ -165,7 +165,7 @@ class Tester(unittest.TestCase):
             layers = self.datasets[key]
         return layers
 
-    def getInputLayers(self, driver, dataset, layers):
+    def getInputLayers(self, driver, dataset, layers, addControlKey=False):
         """
         Gets the vector layers from an input dataset.
         :param driver: (str) driver's to be read.
@@ -177,8 +177,27 @@ class Tester(unittest.TestCase):
         vls = self.testingDataset(driver, dataset)
         for l in layers:
             vls[l].rollBack()
-            out.append(vls[l])
+            lyr = vls[l] if not addControlKey else \
+                self.addControlKey(vls[l])
+            out.append(lyr)
         return out
+    
+    def addControlKey(self, lyr):
+        return processing.run(
+                    'native:addautoincrementalfield',
+                    {
+                        'INPUT' : lyr,
+                        'FIELD_NAME' : 'AUTO',
+                        'START' : 0,
+                        'GROUP_FIELDS' : [],
+                        'SORT_EXPRESSION' : '',
+                        'SORT_ASCENDING' : True,
+                        'SORT_NULLS_FIRST' : False,
+                        'OUTPUT' : 'memory:'
+                    },
+                    context = QgsProcessingContext(),
+                    feedback = QgsProcessingFeedback()
+                )['OUTPUT']
 
     def addLayerToGroup(self, layer, groupname):
         """
@@ -449,7 +468,7 @@ class Tester(unittest.TestCase):
                 {
                     '__comment' : "'Normal' test: checks if it works.",
                     'INPUT' : self.getInputLayers(
-                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_1']
+                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_1'], addControlKey=True
                         )[0],
                     'SELECTED' : False
                 }
@@ -570,7 +589,7 @@ class Tester(unittest.TestCase):
         }
         return parameters[algName] if algName in parameters else dict()
 
-    def runAlg(self, algName, parameters, feedback=None, context=None):
+    def runAlg(self, algName, parameters, feedback=None, context=None, addControlKey=False):
         """
         Executes a given algorithm.
         :param algName: (str) target algorithm's name.
@@ -585,9 +604,7 @@ class Tester(unittest.TestCase):
         outputstr = 'FLAGS' if 'FLAGS' in out else 'OUTPUT' if 'OUTPUT' in out else ''
         if outputstr:
             out = out[outputstr]
-            # out.setName(algName.split(':')[-1])
-            return out
-        return out
+        return out if not addControlKey else self.addControlKey(out)
     
     def runAlgWithMultipleOutputs(self, algName, parameters, feedback=None, context=None):
         """
@@ -624,7 +641,7 @@ class Tester(unittest.TestCase):
                             "ogr"
                         )
 
-    def compareLayers(self, target, reference):
+    def compareLayers(self, target, reference, attributeBlackList=None, addControlKey=False):
         """
         Compares two vector layers. The algorithm stops on the first difference found.
         :param target: (QgsVectorLayer) layer to be checked.
@@ -632,6 +649,8 @@ class Tester(unittest.TestCase):
         :return: (str) message containing identified differences.
         """
         # geometry type check
+        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
+        attributeBlackList += ['AUTO'] if addControlKey else []
         if target.geometryType() != reference.geometryType():
             return "Incorrect geometry type for the output layer."
         # feature check
@@ -654,7 +673,7 @@ class Tester(unittest.TestCase):
         targetFieldNames = [f.name() for f in target.fields()]
         for f in reference.fields():
             fieldname = f.name()
-            if fieldname == 'fid' or '_otf' in fieldname:
+            if fieldname in ['fid', 'AUTO'] or '_otf' in fieldname:
                 # not sure if this should happen...
                 continue
             if fieldname not in targetFieldNames:
@@ -666,7 +685,7 @@ class Tester(unittest.TestCase):
             if not testFeat.geometry().equals(refFeat.geometry()):
                 return "Feature {fid} has incorrect geometry.".format(fid=featId)
             for attr in targetFieldNames:
-                if testFeat[attr] != refFeat[attr]:
+                if testFeat[attr] != refFeat[attr] and attr not in attributeBlackList:
                     return "Incorrect set of attributes for feature {fid}:\nAttribute {attr} in the test feature is: {test_attr}\nAttribute {attr} in the reference feature is: {ref_attr}".format(
                         fid=featId,
                         attr=attr,
@@ -675,7 +694,7 @@ class Tester(unittest.TestCase):
                     )
         return ""
 
-    def testAlg(self, algName, feedback=None, context=None, loadLayers=False, multipleOutputs=False):
+    def testAlg(self, algName, feedback=None, context=None, loadLayers=False, multipleOutputs=False, attributeBlackList=None, addControlKey=False):
         """
         Tests if the output of a given algorithm is the expected one.
         :param algName: (str) target algorithm's name.
@@ -693,7 +712,7 @@ class Tester(unittest.TestCase):
         try:
             for i, param in enumerate(parameters):
                 output = self.runAlgWithMultipleOutputs(algName, param, feedback, context) \
-                    if multipleOutputs else self.runAlg(algName, param, feedback, context)
+                    if multipleOutputs else self.runAlg(algName, param, feedback, context, addControlKey=addControlKey)
                 expected = self.expectedOutput(
                     algName,
                     i + 1,
@@ -705,7 +724,9 @@ class Tester(unittest.TestCase):
                         algName,
                         output,
                         expected,
-                        loadLayers=loadLayers
+                        loadLayers=loadLayers,
+                        attributeBlackList=attributeBlackList,
+                        addControlKey=addControlKey
                     )
                     if isinstance(output, QgsVectorLayer):
                         output.rollBack()
@@ -722,7 +743,8 @@ class Tester(unittest.TestCase):
                             algName,
                             outputLyr,
                             expected[key],
-                            loadLayers=loadLayers
+                            loadLayers=loadLayers,
+                            addControlKey=addControlKey
                         )
                         if isinstance(outputLyr, QgsVectorLayer):
                             outputLyr.rollBack()
@@ -749,7 +771,7 @@ class Tester(unittest.TestCase):
         # missing the output testing
         return ""
     
-    def compareInputLayerWithOutputLayer(self, i, algName, output, expected, loadLayers=False):
+    def compareInputLayerWithOutputLayer(self, i, algName, output, expected, loadLayers=False, attributeBlackList=None, addControlKey=False):
         if not output.isValid():
             raise Exception("Output is an INVALID vector layer.".\
                     format(alg=algName, nr=i + 1)
@@ -758,7 +780,8 @@ class Tester(unittest.TestCase):
             raise Exception("No expected output registered for the test, yet an output was generated.".\
                     format(alg=algName, nr=i + 1)
                 )
-        msg = self.compareLayers(output, expected)
+        expected = self.addControlKey(expected) if addControlKey else expected
+        msg = self.compareLayers(output, expected, attributeBlackList=attributeBlackList, addControlKey=addControlKey)
         # once layer is compared, revert all modifications in order to not compromise layer reusage
         if isinstance(output, QgsVectorLayer):
             output.rollBack()
@@ -888,12 +911,12 @@ class Tester(unittest.TestCase):
     
     def test_deaggregategeometries(self):
         self.assertEqual(
-            self.testAlg("dsgtools:deaggregategeometries"), ""
+            self.testAlg("dsgtools:deaggregategeometries", addControlKey=True), ""
         )
     
     def test_dissolvepolygonswithsameattributes(self):
         self.assertEqual(
-            self.testAlg("dsgtools:dissolvepolygonswithsameattributes"), ""
+            self.testAlg("dsgtools:dissolvepolygonswithsameattributes", addControlKey=True), ""
         )
     
     def test_removeemptyandupdate(self):
@@ -913,7 +936,7 @@ class Tester(unittest.TestCase):
     
     def test_unbuildpolygonsalgorithm(self):
         self.assertEqual(
-            self.testAlg("dsgtools:unbuildpolygonsalgorithm", multipleOutputs=True), ""
+            self.testAlg("dsgtools:unbuildpolygonsalgorithm", multipleOutputs=True, attributeBlackList=['path']), ""
         )
 
 def run_all(filterString=None):
