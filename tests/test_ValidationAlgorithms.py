@@ -685,7 +685,7 @@ class Tester(unittest.TestCase):
             if not testFeat.geometry().equals(refFeat.geometry()):
                 return "Feature {fid} has incorrect geometry.".format(fid=featId)
             for attr in targetFieldNames:
-                if testFeat[attr] != refFeat[attr] and attr not in attributeBlackList:
+                if attr not in attributeBlackList and testFeat[attr] != refFeat[attr]:
                     return "Incorrect set of attributes for feature {fid}:\nAttribute {attr} in the test feature is: {test_attr}\nAttribute {attr} in the reference feature is: {ref_attr}".format(
                         fid=featId,
                         attr=attr,
@@ -744,7 +744,8 @@ class Tester(unittest.TestCase):
                             outputLyr,
                             expected[key],
                             loadLayers=loadLayers,
-                            addControlKey=addControlKey
+                            addControlKey=addControlKey,
+                            attributeBlackList=attributeBlackList
                         )
                         if isinstance(outputLyr, QgsVectorLayer):
                             outputLyr.rollBack()
