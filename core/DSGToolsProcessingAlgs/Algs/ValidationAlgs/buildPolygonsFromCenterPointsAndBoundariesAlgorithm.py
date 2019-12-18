@@ -23,7 +23,7 @@
 from PyQt5.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink, QgsFields,
                        QgsProcessing, QgsProcessingAlgorithm,
                        QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
@@ -33,7 +33,7 @@ from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterField,
                        QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes, QgsFields)
+                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
@@ -125,13 +125,13 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             self.INPUT_CENTER_POINTS,
             context
         )
-        if inputLyr is None:
+        if inputCenterPointLyr is None:
             raise QgsProcessingException(
-                        self.invalidSourceError(
-                            parameters,
-                            self.INPUT_CENTER_POINTS
-                        )
-                    )
+                self.invalidSourceError(
+                    parameters,
+                    self.INPUT_CENTER_POINTS
+                )
+            )
         constraintLineLyrList = self.parameterAsLayerList(
             parameters,
             self.CONSTRAINT_LINE_LAYERS,
@@ -158,19 +158,6 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         # 1- Build single polygon layer
         # 2- Compute center points
         # 3- Compute boundaries
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(
-            self.tr('Building single polygon layer')
-        )
-        singlePolygonLayer = layerHandler.getMergedLayerLayer(
-            inputPolygonLyrList,
-            onlySelected=onlySelected,
-            feedback=multiStepFeedback,
-            context=context,
-            algRunner=algRunner
-        )
-        multiStepFeedback.setCurrentStep(1)
         (
             output_polygon_sink,
             output_polygon_sink_id
@@ -189,19 +176,21 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             context
         )
         layerHandler.getPolygonsFromCenterPointsAndBoundaries(
-            singlePolygonLayer,
+            inputCenterPointLyr,
             output_polygon_sink,
             self.flagSink,
+            boundaryLyr=boundaryLyr,
             constraintLineLyrList=constraintLineLyrList,
             constraintPolygonLyrList=constraintPolygonLyrList,
+            onlySelected=onlySelected,
             context=context,
-            feedback=multiStepFeedback,
+            feedback=feedback,
             algRunner=algRunner
         )
 
         return {
-            self.OUTPUT_CENTER_POINTS : output_polygon_sink_id,
-            self.OUTPUT_BOUNDARIES : output_boundaries_sink_id
+            self.OUTPUT_POLYGONS : output_polygon_sink_id,
+            self.FLAGS : self.flag_id
         }
 
     def name(self):

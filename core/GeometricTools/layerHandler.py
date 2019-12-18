@@ -1365,5 +1365,5 @@ class LayerHandler(QObject):
 
     def getPolygonsFromCenterPointsAndBoundaries(self, inputLyr, outputPolygonSink, flagSink,\
         constraintLineLyrList=None, constraintPolygonLyrList=None, attributeBlackList=None,\
-        onlySelected=False, context=None, feedback=None, algRunner=None):
+        boundaryLyr=None, onlySelected=False, context=None, feedback=None, algRunner=None):
         pass
