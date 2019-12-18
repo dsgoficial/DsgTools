@@ -1362,3 +1362,8 @@ class LayerHandler(QObject):
         for feat in featList:
             if feat not in notBoundarySet:
                 outputBoundarySink.addFeature(feat, QgsFeatureSink.FastInsert)
+
+    def getPolygonsFromCenterPointsAndBoundaries(self, inputLyr, outputPolygonSink, flagSink,\
+        constraintLineLyrList=None, constraintPolygonLyrList=None, attributeBlackList=None,\
+        onlySelected=False, context=None, feedback=None, algRunner=None):
+        pass
