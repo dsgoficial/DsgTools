@@ -895,7 +895,7 @@ class SpatialRelationsHandler(QObject):
                 )
             else:
                 feedback.pushInfo(
-                    self.tr("Rule {0} did not raise flags\n")
+                    self.tr("Rule {0} did not raise any flags\n")
                     .format(rule["name"])
                 )
         return out

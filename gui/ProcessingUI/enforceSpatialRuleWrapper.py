@@ -118,6 +118,20 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             vl = mapLayerComboBox.currentLayer()
             if vl:
                 filterWidget.setLayer(vl)
+        def checkCardinalityAvailability(row):
+            predicate = self.panel.getValue(row, 3)
+            handler = SpatialRelationsHandler()
+            noCardinality = predicate in (
+                handler.DISJOINT, handler.NOTEQUALS, handler.NOTINTERSECTS,
+                handler.NOTTOUCHES, handler.NOTCROSSES, handler.NOTWITHIN,
+                handler.NOTOVERLAPS, handler.NOTCONTAINS
+            )
+            self.panel.itemAt(row, 6).setText("")
+            self.panel.itemAt(row, 6).setEnabled(not noCardinality)   
+        predicateWidget = self.panel.itemAt(row, 3)
+        predicateWidget.currentIndexChanged.connect(
+            partial(checkCardinalityAvailability, row)
+        )
 
     def postAddRowModeler(self, row):
         """
@@ -136,6 +150,20 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             le.editingFinished.connect(
                 partial(checkLayerBeforeConnect, le, filterWidget)
             )
+        def checkCardinalityAvailability(row):
+            predicate = self.panel.getValue(row, 3)
+            handler = SpatialRelationsHandler()
+            noCardinality = predicate in (
+                handler.DISJOINT, handler.NOTEQUALS, handler.NOTINTERSECTS,
+                handler.NOTTOUCHES, handler.NOTCROSSES, handler.NOTWITHIN,
+                handler.NOTOVERLAPS, handler.NOTCONTAINS
+            )
+            self.panel.itemAt(row, 6).setText("")
+            self.panel.itemAt(row, 6).setEnabled(not noCardinality)   
+        predicateWidget = self.panel.itemAt(row, 3)
+        predicateWidget.currentIndexChanged.connect(
+            partial(checkCardinalityAvailability, row)
+        )
 
     def standardPanel(self):
         """
