@@ -177,6 +177,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unbuildPolygonsAlg
     UnbuildPolygonsAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUnsharedVertexOnIntersectionsAlgorithm import \
     IdentifyUnsharedVertexOnIntersectionsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.setFreeHandToolParametersAlgorithm import \
+    SetFreeHandToolParametersAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -259,7 +261,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     IdentifyVertexNearEdgesAlgorithm(),
                     IdentifyUnsharedVertexOnSharedEdgesAlgorithm(),
                     UnbuildPolygonsAlgorithm(),
-                    IdentifyUnsharedVertexOnIntersectionsAlgorithm()
+                    IdentifyUnsharedVertexOnIntersectionsAlgorithm(),
+                    SetFreeHandToolParametersAlgorithm()
                 ]
         return algList
 
