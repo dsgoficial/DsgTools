@@ -5,9 +5,9 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2018-12-13
+        begin                : 2019-12-18
         git sha              : $Format:%H$
-        copyright            : (C) 2018 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        copyright            : (C) 2019 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
@@ -80,6 +80,42 @@ class SetFreeHandToolParametersAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=2
             )
         )
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.FREE_HAND_SMOOTH_ITERATIONS,
+                self.tr('Free hand smooth iterations'),
+                minValue=0,
+                type=QgsProcessingParameterNumber.Integer,
+                defaultValue=3
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.FREE_HAND_SMOOTH_OFFSET,
+                self.tr('Free hand smooth offset'),
+                minValue=0,
+                type=QgsProcessingParameterNumber.Double,
+                defaultValue=0.25
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.ALG_ITERATIONS,
+                self.tr('Free hand algorithm iterations'),
+                minValue=0,
+                type=QgsProcessingParameterNumber.Integer,
+                defaultValue=2
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.UNDO_POINTS,
+                self.tr('Number of points removed on undo action'),
+                minValue=0,
+                type=QgsProcessingParameterNumber.Integer,
+                defaultValue=50
+            )
+        )
     
     def getValueFromQSettings(self, v):
         settings = QSettings()
@@ -99,7 +135,7 @@ class SetFreeHandToolParametersAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        searchRadius = self.parameterAsDouble(parameters, self.TOLERANCE, context)
+        self.storeParametersInConfig(parameters)
 
         return {}
 
