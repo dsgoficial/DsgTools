@@ -25,6 +25,12 @@
      <layout class="QGridLayout" name="gridLayout">
       <item row="2" column="1">
        <widget class="QgsDoubleSpinBox" name="smoothOffsetQgsDoubleSpinBox">
+        <property name="decimals">
+         <number>10</number>
+        </property>
+        <property name="maximum">
+         <double>100000000000000004764729344.000000000000000</double>
+        </property>
         <property name="value">
          <double>0.250000000000000</double>
         </property>
@@ -39,6 +45,12 @@
       </item>
       <item row="0" column="1">
        <widget class="QgsDoubleSpinBox" name="toleranceQgsDoubleSpinBox">
+        <property name="decimals">
+         <number>10</number>
+        </property>
+        <property name="maximum">
+         <double>100000000000000000.000000000000000</double>
+        </property>
         <property name="value">
          <double>2.000000000000000</double>
         </property>
@@ -60,6 +72,9 @@
       </item>
       <item row="1" column="1">
        <widget class="QgsSpinBox" name="smoothIterationsQgsSpinBox">
+        <property name="maximum">
+         <number>999999999</number>
+        </property>
         <property name="value">
          <number>3</number>
         </property>
@@ -81,6 +96,9 @@
       </item>
       <item row="4" column="1">
        <widget class="QgsSpinBox" name="undoQgsSpinBox">
+        <property name="maximum">
+         <number>999999999</number>
+        </property>
         <property name="value">
          <number>50</number>
         </property>
