@@ -1363,12 +1363,11 @@ class LayerHandler(QObject):
             if feat not in notBoundarySet:
                 outputBoundarySink.addFeature(feat, QgsFeatureSink.FastInsert)
 
-    def getPolygonsFromCenterPointsAndBoundaries(self, inputLyr, outputPolygonSink, flagSink,\
-        constraintLineLyrList=None, constraintPolygonLyrList=None, attributeBlackList=None,\
-        geographicBoundaryLyr=None, onlySelected=False, context=None, feedback=None, algRunner=None):
+    def getPolygonsFromCenterPointsAndBoundaries(self, inputLyr, constraintLineLyrList=None, \
+            constraintPolygonLyrList=None, attributeBlackList=None, geographicBoundaryLyr=None,\
+            onlySelected=False, context=None, feedback=None, algRunner=None):
         """
         
-
         1. Merge Polygon lyrs into one
         2. Coerce polygons to lines
         3. Merge all lines
@@ -1381,6 +1380,7 @@ class LayerHandler(QObject):
         constraintPolygonList = constraintPolygonList + geographicBoundaryLyr \
             if geographicBoundaryLyr is not None else constraintPolygonList
         attributeBlackList = [] if attributeBlackList is None else attributeBlackList
+        polygonFeatList, flagFeatList = [], []
         
         multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
         #1. Merge Polygon lyrs into one
@@ -1413,4 +1413,5 @@ class LayerHandler(QObject):
             feedback=multiStepFeedback
         )
 
-        pass
+
+        return polygonFeatList, flagFeatList
