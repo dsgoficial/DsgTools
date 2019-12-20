@@ -559,7 +559,7 @@ class AlgRunner:
         joinFields = [] if joinFields is None else joinFields
         method = 0 if method is None else method
         outputLyr = 'memory:' if outputLyr is None else outputLyr
-        
+        unjoinnedLyr = 'memory:' if unjoinnedLyr is None else unjoinnedLyr
         parameters = {
             'INPUT' : inputLyr,
             'JOIN' : joinLyr,
@@ -569,7 +569,7 @@ class AlgRunner:
             'DISCARD_NONMATCHING' : discardNonMatching,
             'PREFIX' : '',
             'OUTPUT' : outputLyr,
-            'NON_MATCHING : 
+            'NON_MATCHING': unjoinnedLyr
         }
         output = processing.run(
             "qgis:joinattributesbylocation",
@@ -577,7 +577,7 @@ class AlgRunner:
             context=context,
             feedback=feedback
         )
-        return output['OUTPUT'] if not returnNonMatching else output['OUTPUT'], 
+        return output['OUTPUT'] if not returnNonMatching else output['OUTPUT'], parameters['NON_MATCHING']
     
     def runLineIntersections(self, inputLyr, intersectLyr, context, feedback=None, outputLyr=None):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
