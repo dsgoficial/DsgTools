@@ -148,7 +148,7 @@ class UnbuildPolygonsAlgorithm(ValidationAlgorithm):
         multiStepFeedback.pushInfo(
             self.tr('Building single polygon layer')
         )
-        singlePolygonLayer = layerHandler.getMergedLayerLayer(
+        singlePolygonLayer = layerHandler.getMergedLayer(
             inputPolygonLyrList,
             onlySelected=onlySelected,
             feedback=multiStepFeedback,
