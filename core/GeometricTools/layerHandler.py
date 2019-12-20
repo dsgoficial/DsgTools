@@ -1194,7 +1194,7 @@ class LayerHandler(QObject):
         )
         return mergedLayer
 
-    def getMergedLayerLayer(self, inputLayerList, onlySelected=False, feedback=None, context=None, algRunner=None):
+    def getMergedLayer(self, inputLayerList, onlySelected=False, feedback=None, context=None, algRunner=None):
         """
         This does almost the same of createAndPopulateUnifiedVectorLayer, but it
         is much faster. Maybe the implementation of createAndPopulateUnifiedVectorLayer
@@ -1365,5 +1365,52 @@ class LayerHandler(QObject):
 
     def getPolygonsFromCenterPointsAndBoundaries(self, inputLyr, outputPolygonSink, flagSink,\
         constraintLineLyrList=None, constraintPolygonLyrList=None, attributeBlackList=None,\
-        boundaryLyr=None, onlySelected=False, context=None, feedback=None, algRunner=None):
+        geographicBoundaryLyr=None, onlySelected=False, context=None, feedback=None, algRunner=None):
+        """
+        
+
+        1. Merge Polygon lyrs into one
+        2. Coerce polygons to lines
+        3. Merge all lines
+        4. Split lines
+        5. Run Polygonize
+        6. Get Flags, filtering them with constraint polygons
+        """
+        constraintLineLyrList = [] if constraintLineLyrList is None else constraintLineLyrList
+        constraintPolygonList = [] if constraintPolygonLyrList is None else constraintPolygonList
+        constraintPolygonList = constraintPolygonList + geographicBoundaryLyr \
+            if geographicBoundaryLyr is not None else constraintPolygonList
+        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
+        
+        multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
+        #1. Merge Polygon lyrs into one
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Getting constraint lines'))
+        linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
+            constraintLineLyrList,
+            constraintPolygonLyrList,
+            onlySelected=False,
+            feedback=multiStepFeedback,
+            context=context,
+            algRunner=algRunner
+        )
+        multiStepFeedback.setCurrentStep(1)
+        splitSegmentsLyr = algRunner.runExplodeLines(
+            mergedLineLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(2)
+        segmentsWithoutDuplicates = algRunner.runRemoveDuplicatedGeometries(
+            splitSegmentsLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(3)
+        outputPolygonLyr = algRunner.runPolygonize(
+            segmentsWithoutDuplicates,
+            context,
+            feedback=multiStepFeedback
+        )
+
         pass

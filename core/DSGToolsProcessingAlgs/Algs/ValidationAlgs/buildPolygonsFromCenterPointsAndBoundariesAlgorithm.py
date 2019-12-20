@@ -147,7 +147,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             self.SELECTED,
             context
         )
-        boundaryLyr = self.parameterAsLayer(
+        geographicBoundaryLyr = self.parameterAsLayer(
             parameters,
             self.GEOGRAPHIC_BOUNDARY,
             context
@@ -179,7 +179,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             inputCenterPointLyr,
             output_polygon_sink,
             self.flagSink,
-            boundaryLyr=boundaryLyr,
+            geographicBoundaryLyr=geographicBoundaryLyr,
             constraintLineLyrList=constraintLineLyrList,
             constraintPolygonLyrList=constraintPolygonLyrList,
             onlySelected=onlySelected,
