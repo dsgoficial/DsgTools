@@ -175,7 +175,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             inputCenterPointLyr.wkbType(),
             context
         )
-        layerHandler.getPolygonsFromCenterPointsAndBoundaries(
+        polygonFeatList, flagList = layerHandler.getPolygonsFromCenterPointsAndBoundaries(
             inputCenterPointLyr,
             output_polygon_sink,
             self.flagSink,
