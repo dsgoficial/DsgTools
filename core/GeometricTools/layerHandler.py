@@ -1363,32 +1363,30 @@ class LayerHandler(QObject):
             if feat not in notBoundarySet:
                 outputBoundarySink.addFeature(feat, QgsFeatureSink.FastInsert)
 
-    def getPolygonsFromCenterPointsAndBoundaries(self, inputLyr, constraintLineLyrList=None, \
+    def getPolygonsFromCenterPointsAndBoundaries(self, inputCenterPointLyr, constraintLineLyrList=None, \
             constraintPolygonLyrList=None, attributeBlackList=None, geographicBoundaryLyr=None,\
             onlySelected=False, context=None, feedback=None, algRunner=None):
         """
         
-        1. Merge Polygon lyrs into one
-        2. Coerce polygons to lines
-        3. Merge all lines
-        4. Split lines
-        5. Run Polygonize
-        6. Get Flags, filtering them with constraint polygons
+        1. Merge Polygon lyrs into one and coerce polygons to lines
+        2. Merge all lines
+        3. Split lines
+        4. Run Polygonize
+        5. Get Flags, filtering them with constraint polygons
         """
         constraintLineLyrList = [] if constraintLineLyrList is None else constraintLineLyrList
         constraintPolygonList = [] if constraintPolygonLyrList is None else constraintPolygonList
-        constraintPolygonList = constraintPolygonList + geographicBoundaryLyr \
+        constraintPolygonListWithGeoBounds = constraintPolygonList + geographicBoundaryLyr \
             if geographicBoundaryLyr is not None else constraintPolygonList
         attributeBlackList = [] if attributeBlackList is None else attributeBlackList
-        polygonFeatList, flagFeatList = [], []
         
-        multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         #1. Merge Polygon lyrs into one
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Getting constraint lines'))
         linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
             constraintLineLyrList,
-            constraintPolygonLyrList,
+            constraintPolygonListWithGeoBounds,
             onlySelected=False,
             feedback=multiStepFeedback,
             context=context,
@@ -1407,11 +1405,30 @@ class LayerHandler(QObject):
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(3)
-        outputPolygonLyr = algRunner.runPolygonize(
+        builtPolygonLyr = algRunner.runPolygonize(
             segmentsWithoutDuplicates,
             context,
             feedback=multiStepFeedback
         )
+        multiStepFeedback.setCurrentStep(4)
+        return self.relateCenterPointsWithPolygons(
+            inputCenterPointLyr,
+            builtPolygonLyr,
+            constraintPolygonList=constraintPolygonList,
+            context=context,
+            feedback=multiStepFeedback
+        )
+
+    def relateCenterPointsWithPolygons(self, inputCenterPointLyr, builtPolygonLyr,\
+        constraintPolygonList=None, context=None, feedback=None):
+        """
+        1. Build constraintPolygon search structures;
+        2. 
+        returns polygonList, flagList
+        """
+        polygonList, flagList = [], []
 
 
-        return polygonFeatList, flagFeatList
+
+        return polygonList, flagList
+
