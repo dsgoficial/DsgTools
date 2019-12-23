@@ -34,14 +34,16 @@ class EnvironmentSetterAlgorithmsTest(unittest.TestCase):
                 'FREE_HAND_SMOOTH_ITERATIONS' : 20,
                 'FREE_HAND_SMOOTH_OFFSET' : 30,
                 'ALG_ITERATIONS' : 40,
-                'UNDO_POINTS' : 50
+                'UNDO_POINTS' : 50,
+                'FREE_HAND_FINAL_SIMPLIFY_TOLERANCE' : 60
             }
         QSETTINGS_DICT = {
             'FREE_HAND_TOLERANCE' : 'freeHandTolerance',
             'FREE_HAND_SMOOTH_ITERATIONS' : 'freeHandSmoothIterations',
             'FREE_HAND_SMOOTH_OFFSET' : 'freeHandSmoothOffset',
             'ALG_ITERATIONS' : 'algIterations',
-            'UNDO_POINTS' : 'undoPoints'
+            'UNDO_POINTS' : 'undoPoints',
+            'FREE_HAND_FINAL_SIMPLIFY_TOLERANCE' : 'freeHandFinalSimplifyTolerance'
         }
         processing.run(
             'dsgtools:setfreehandtoolparametersalgorithm',
