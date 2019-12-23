@@ -52,6 +52,7 @@ class LayerHandler(QObject):
             self.canvas = iface.mapCanvas()
         self.featureHandler = FeatureHandler(iface)
         self.geometryHandler = GeometryHandler(iface)
+        self.algRunner = AlgRunner()
     
     def getFeatureList(self, lyr, onlySelected=False, returnIterator=True, returnSize=True):
         """
@@ -1426,8 +1427,13 @@ class LayerHandler(QObject):
         2. 
         returns polygonList, flagList
         """
-        polygonList, flagList = [], []
-
+        polygonList, flagList = self.algRunner.runJoinAttributesByLocation(
+            inputCenterPointLyr,
+            builtPolygonLyr,
+            context,
+            predicateList=[0]
+            feedback=feedback,
+        )
 
 
         return polygonList, flagList

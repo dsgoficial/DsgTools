@@ -578,7 +578,7 @@ class AlgRunner:
             feedback=feedback
         )
         return output['OUTPUT'] if not returnNonMatching else output['OUTPUT'], parameters['NON_MATCHING']
-    
+ 
     def runLineIntersections(self, inputLyr, intersectLyr, context, feedback=None, outputLyr=None):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
