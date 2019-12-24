@@ -58,13 +58,15 @@ class SetFreeHandToolParametersAlgorithm(QgsProcessingAlgorithm):
     FREE_HAND_SMOOTH_OFFSET = 'FREE_HAND_SMOOTH_OFFSET'
     ALG_ITERATIONS = 'ALG_ITERATIONS'
     UNDO_POINTS = 'UNDO_POINTS'
+    FREE_HAND_FINAL_SIMPLIFY_TOLERANCE = 'FREE_HAND_FINAL_SIMPLIFY_TOLERANCE'
 
     QSETTINGS_DICT = {
         'FREE_HAND_TOLERANCE' : 'freeHandTolerance',
         'FREE_HAND_SMOOTH_ITERATIONS' : 'freeHandSmoothIterations',
         'FREE_HAND_SMOOTH_OFFSET' : 'freeHandSmoothOffset',
         'ALG_ITERATIONS' : 'algIterations',
-        'UNDO_POINTS' : 'undoPoints'
+        'UNDO_POINTS' : 'undoPoints',
+        'FREE_HAND_FINAL_SIMPLIFY_TOLERANCE' : 'freeHandFinalSimplifyTolerance'
     }
 
     def initAlgorithm(self, config):
@@ -114,6 +116,15 @@ class SetFreeHandToolParametersAlgorithm(QgsProcessingAlgorithm):
                 minValue=0,
                 type=QgsProcessingParameterNumber.Integer,
                 defaultValue=50
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.FREE_HAND_FINAL_SIMPLIFY_TOLERANCE,
+                self.tr('Free hand tolerance'),
+                minValue=0,
+                type=QgsProcessingParameterNumber.Double,
+                defaultValue=1
             )
         )
     
