@@ -851,7 +851,7 @@ class SpatialRelationsHandler(QObject):
             layer = layer[0]
         projectCrs = QgsProject.instance().crs()
         if layer.crs() != projectCrs:
-            layer = lh.runReprojectLayer(layer, projectCrs)
+            layer = lh.reprojectLayer(layer, projectCrs)
         return layer
 
     def enforceRule(self, rule, ctx=None, feedback=None):
