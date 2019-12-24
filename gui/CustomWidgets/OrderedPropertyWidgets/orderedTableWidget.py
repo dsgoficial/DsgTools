@@ -262,7 +262,10 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         Adds a new row of items and fill it into table.
         :param row: (int) position to add the new row.
         """
-        row = row if row is not None else self.rowCount()
+        row = self.rowCount() if row is None else \
+                0 if row < 0 else \
+                row if row <= self.rowCount() else self.rowCount()
+        # row = row if row is not None else self.rowCount()
         self.tableWidget.insertRow(row)
         for col, properties in self.headers.items():
             if properties["type"] == "item":
@@ -283,7 +286,9 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param row: (int) position to add the new row.
         :param contents: (dict) a map to items to be filled.
         """
-        row = row if row is not None else self.rowCount()
+        row = self.rowCount() if row is None else \
+                0 if row < 0 else \
+                row if row <= self.rowCount() else self.rowCount()
         self.tableWidget.insertRow(row)
         for col, properties in self.headers.items():
             value = contents[col] if col in contents else None
