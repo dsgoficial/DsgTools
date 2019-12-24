@@ -886,11 +886,14 @@ class SpatialRelationsHandler(QObject):
         """
         out = dict()
         ctx = ctx or QgsProcessingContext()
-        for rule in ruleSet:
+        size = len(ruleSet)
+        for idx, rule in enumerate(ruleSet):
             ruleName = rule["name"]
             if feedback is not None:
                 feedback.pushInfo(
-                    self.tr("Checking rule {0}...").format(ruleName)
+                    self.tr('Checking rule "{0}"... [{1}/{2}]').format(
+                        ruleName, idx + 1, size
+                    )
                 )
             flags = self.enforceRule(rule, ctx, feedback)
             if flags:
@@ -903,12 +906,14 @@ class SpatialRelationsHandler(QObject):
                             out[ruleName][fid] = flags[fid]
                 else:
                     out[ruleName] = flags
-                feedback.pushInfo(
-                    self.tr("Rule {0} raised flags").format(ruleName)
+                feedback.reportError(
+                    self.tr('Rule "{0}" raised flags\n').format(
+                        ruleName, idx + 1, size
+                    )
                 )
             else:
-                feedback.pushInfo(
-                    self.tr("Rule {0} did not raise any flags\n")
+                feedback.pushDebugInfo(
+                    self.tr('Rule "{0}" did not raise any flags\n')
                     .format(ruleName)
                 )
         return out
