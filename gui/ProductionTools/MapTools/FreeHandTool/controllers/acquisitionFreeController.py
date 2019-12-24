@@ -116,6 +116,7 @@ class AcquisitionFreeController(object):
         settings.beginGroup('PythonPlugins/DsgTools/Options')
         parameters = {
             u'freeHandTolerance' : settings.value('freeHandTolerance'),
+            u'freeHandFinalSimplifyTolerance' : settings.value('freeHandFinalSimplifyTolerance'),
             u'freeHandSmoothIterations' : settings.value('freeHandSmoothIterations'),
             u'freeHandSmoothOffset' : settings.value('freeHandSmoothOffset'),
             u'algIterations' : settings.value('algIterations'),
@@ -130,6 +131,11 @@ class AcquisitionFreeController(object):
         #Parâmetro de retorno: sGeom (Geometria simplificada)
         parameters = self.getParametersFromConfig()
         return parameters[u'freeHandTolerance']
+    
+    def getFinalTolerance(self):
+        parameters = self.getParametersFromConfig()
+        finalTolerance = parameters[u'freeHandFinalSimplifyTolerance']
+        return 0 if finalTolerance is None else float(finalTolerance)
 
     def simplifyGeometry(self, geom, tolerance):
         #Método para simplificar geometria
@@ -157,9 +163,10 @@ class AcquisitionFreeController(object):
                 )
                 QgsMessageLog.logMessage(msg, 'DSGTools Plugin', Qgis.Critical)
                 return geom
+        finalGeom = sGeom.simplify(self.getFinalTolerance())
         tr = core.QgsCoordinateTransform(dest_crs, source_crs, core.QgsCoordinateTransformContext())
-        sGeom.transform(tr)
-        return sGeom
+        finalGeom.transform(tr)
+        return finalGeom
 
     def reprojectGeometry(self, geom):
         # Defining the crs from src and destiny
