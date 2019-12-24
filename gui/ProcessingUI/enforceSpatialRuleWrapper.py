@@ -118,21 +118,23 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             vl = mapLayerComboBox.currentLayer()
             if vl:
                 filterWidget.setLayer(vl)
-        def checkCardinalityAvailability(row):
-            predicate = self.panel.getValue(row, 3)
+        def checkCardinalityAvailability(r):
+            predicate = self.panel.getValue(r, 3)
             handler = SpatialRelationsHandler()
             noCardinality = predicate in (
                 handler.DISJOINT, handler.NOTEQUALS, handler.NOTINTERSECTS,
                 handler.NOTTOUCHES, handler.NOTCROSSES, handler.NOTWITHIN,
                 handler.NOTOVERLAPS, handler.NOTCONTAINS
             )
-            self.panel.itemAt(row, 6).setText("")
             self.panel.itemAt(row, 6).setEnabled(not noCardinality)
-            self.panel.setValue(row, 6, "")
+            if noCardinality:
+                self.panel.setValue(row, 6, "")
         predicateWidget = self.panel.itemAt(row, 3)
         predicateWidget.currentIndexChanged.connect(
             partial(checkCardinalityAvailability, row)
         )
+        # also triggers the action for the first time it is open
+        checkCardinalityAvailability(row)
 
     def postAddRowModeler(self, row):
         """
