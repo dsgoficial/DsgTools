@@ -778,6 +778,7 @@ class SpatialRelationsHandler(QObject):
                                 .format(layer_a=layerA.name(),
                                         pred=predicates[predicate],
                                         layer_b=layerB.name())
+            cardinality = "0..0"
         else:
             predicateFlagText = self.tr("feature ID {{fid_a}} from {layer_a} "
                                         "{pred} {{size}} features of "
@@ -799,6 +800,9 @@ class SpatialRelationsHandler(QObject):
                     for f in layerB.getFeatures(geomA.boundingBox())
             }
             positives = self.testPredicate(predicate, engine, geometriesB)
+            if predicate == self.DISJOINT:
+                # disjoint comparison wants those that are NOT disjoint to flag
+                positives = set(geometriesB.keys()) - positives
             if not testingMethod(positives):
                 fidA = featA.id()
                 size = len(positives)
@@ -883,19 +887,28 @@ class SpatialRelationsHandler(QObject):
         out = dict()
         ctx = ctx or QgsProcessingContext()
         for rule in ruleSet:
+            ruleName = rule["name"]
             if feedback is not None:
                 feedback.pushInfo(
-                    self.tr("Checking rule {0}...").format(rule["name"])
+                    self.tr("Checking rule {0}...").format(ruleName)
                 )
             flags = self.enforceRule(rule, ctx, feedback)
             if flags:
-                out[rule["name"]] = flags
+                if ruleName in out:
+                    previous = out[ruleName]
+                    for fid in flags:
+                        if fid in previous:
+                            out[ruleName][fid] += flags[fid]
+                        else:
+                            out[ruleName][fid] = flags[fid]
+                else:
+                    out[ruleName] = flags
                 feedback.pushInfo(
-                    self.tr("Rule {0} raised flags").format(rule["name"])
+                    self.tr("Rule {0} raised flags").format(ruleName)
                 )
             else:
                 feedback.pushInfo(
                     self.tr("Rule {0} did not raise any flags\n")
-                    .format(rule["name"])
+                    .format(ruleName)
                 )
         return out

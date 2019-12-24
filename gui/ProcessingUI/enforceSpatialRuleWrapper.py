@@ -127,7 +127,8 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 handler.NOTOVERLAPS, handler.NOTCONTAINS
             )
             self.panel.itemAt(row, 6).setText("")
-            self.panel.itemAt(row, 6).setEnabled(not noCardinality)   
+            self.panel.itemAt(row, 6).setEnabled(not noCardinality)
+            self.panel.setValue(row, 6, "")
         predicateWidget = self.panel.itemAt(row, 3)
         predicateWidget.currentIndexChanged.connect(
             partial(checkCardinalityAvailability, row)

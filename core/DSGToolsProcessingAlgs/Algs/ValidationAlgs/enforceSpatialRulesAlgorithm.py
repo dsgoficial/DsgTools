@@ -139,7 +139,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
             QgsWkbTypes.PolygonGeometry: polLayer
         }
         for ruleName, flags in flagDict.items():
-            flagText = self.tr("Rule {name} broken: {{text}}").format(
+            flagText = self.tr('Rule "{name}" broken: {{text}}').format(
                 name=ruleName
             )
             for flagList in flags.values():

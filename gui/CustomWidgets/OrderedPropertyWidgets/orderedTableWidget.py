@@ -197,7 +197,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
             widget = self.tableWidget.cellWidget(row, column)
             if not setter:
                 raise Exception(
-                    self.tr('Setter mthod must be defined for widget type.')
+                    self.tr('Setter method must be defined for widget type.')
                 )
             getattr(widget, setter)(value)
 
