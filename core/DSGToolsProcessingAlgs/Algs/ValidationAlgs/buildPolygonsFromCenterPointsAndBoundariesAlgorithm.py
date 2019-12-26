@@ -152,12 +152,6 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             self.GEOGRAPHIC_BOUNDARY,
             context
         )
-        # Compute the number of steps to display within the progress bar and
-        # get features from source
-        # alg steps:
-        # 1- Build single polygon layer
-        # 2- Compute center points
-        # 3- Compute boundaries
         (
             output_polygon_sink,
             output_polygon_sink_id
@@ -177,8 +171,6 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         )
         polygonFeatList, flagList = layerHandler.getPolygonsFromCenterPointsAndBoundaries(
             inputCenterPointLyr,
-            output_polygon_sink,
-            self.flagSink,
             geographicBoundaryLyr=geographicBoundaryLyr,
             constraintLineLyrList=constraintLineLyrList,
             constraintPolygonLyrList=constraintPolygonLyrList,
@@ -187,6 +179,11 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             feedback=feedback,
             algRunner=algRunner
         )
+        output_polygon_sink.addFeatures(
+            polygonFeatList, QgsFeatureSink.FastInsert
+        )
+        for flagDict in flagList:
+            self.flagFeature(flagDict['flagGeom'], flagDict['flagText'])
 
         return {
             self.OUTPUT_POLYGONS : output_polygon_sink_id,
