@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>613</width>
-    <height>818</height>
+    <width>610</width>
+    <height>870</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,27 +19,14 @@
      <property name="title">
       <string>Free Hand's Parameters</string>
      </property>
-     <property name="saveCollapsedState" stdset="0">
+     <property name="saveCollapsedState">
       <bool>false</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="2" column="1">
-       <widget class="QgsDoubleSpinBox" name="smoothOffsetQgsDoubleSpinBox">
-        <property name="decimals">
-         <number>10</number>
-        </property>
-        <property name="maximum">
-         <double>100000000000000004764729344.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>0.250000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
         <property name="text">
-         <string>Smooth Iterations</string>
+         <string>Tolerance</string>
         </property>
        </widget>
       </item>
@@ -56,17 +43,10 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_4">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>Algorithm Iterations</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Tolerance</string>
+         <string>Smooth Iterations</string>
         </property>
        </widget>
       </item>
@@ -87,10 +67,37 @@
         </property>
        </widget>
       </item>
+      <item row="2" column="1">
+       <widget class="QgsDoubleSpinBox" name="smoothOffsetQgsDoubleSpinBox">
+        <property name="decimals">
+         <number>10</number>
+        </property>
+        <property name="maximum">
+         <double>100000000000000004764729344.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.250000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Algorithm Iterations</string>
+        </property>
+       </widget>
+      </item>
       <item row="3" column="1">
        <widget class="QgsSpinBox" name="algIterationsQgsSpinBox">
         <property name="value">
          <number>2</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Number of points removed on undo action</string>
         </property>
        </widget>
       </item>
@@ -104,10 +111,23 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_5">
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_8">
         <property name="text">
-         <string>Number of points removed on undo action</string>
+         <string>Final Simplify Tolerance</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QgsDoubleSpinBox" name="finalToleranceQgsDoubleSpinBox">
+        <property name="decimals">
+         <number>10</number>
+        </property>
+        <property name="maximum">
+         <double>100000000000000000.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.300000000000000</double>
         </property>
        </widget>
       </item>
