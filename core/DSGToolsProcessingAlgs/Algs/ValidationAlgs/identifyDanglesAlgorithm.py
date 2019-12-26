@@ -325,7 +325,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         spatialIdx = QgsSpatialIndex()
         idDict = {}
         for feat in inputLyr.getFeatures():
-            spatialIdx.insertFeature(feat)
+            spatialIdx.addFeature(feat)
             idDict[feat.id()] = feat
         return spatialIdx, idDict
 
