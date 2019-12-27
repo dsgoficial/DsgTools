@@ -708,6 +708,8 @@ class Tester(unittest.TestCase):
         # geometry type check
         attributeBlackList = [] if attributeBlackList is None else attributeBlackList
         attributeBlackList += ['AUTO'] if addControlKey else []
+        if target.featureCount() == 0 and reference.featureCount() == 0:
+            return ""
         if target.geometryType() != reference.geometryType():
             return "Incorrect geometry type for the output layer."
         # feature check
@@ -739,7 +741,8 @@ class Tester(unittest.TestCase):
             if featId not in targetFeatDict:
                 return "Feature id={0} was not found on output layer.".format(featId)
             testFeat = targetFeatDict[featId]
-            if not testFeat.geometry().isGeosEqual(refFeat.geometry()):
+            if not (testFeat.geometry().isGeosEqual(refFeat.geometry()) or\
+                testFeat.geometry().equals(refFeat.geometry())):
                 return "Feature {fid} has incorrect geometry.".format(fid=featId)
             for attr in targetFieldNames:
                 if attr not in attributeBlackList and testFeat[attr] != refFeat[attr]:
@@ -1020,7 +1023,8 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg(
                 "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
-                multipleOutputs=True
+                multipleOutputs=True,
+                addControlKey=True
             ),
             ""
         )
