@@ -1,6 +1,6 @@
 {
 "type": "FeatureCollection",
-"name": "center_points_test1_build_polygons",
+"name": "center_points_test4",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
 { "type": "Feature", "properties": { "fid": 1, "type": "forest", "layer": "vegetation", "path": "\/Users\/philipeborba\/Library\/Application Support\/QGIS\/QGIS3\/profiles\/default\/python\/plugins\/DsgTools\/tests\/testing_datasets\/Geopackage\/test_dataset_unbuild_polygons.gpkg|layername=vegetation" }, "geometry": { "type": "Point", "coordinates": [ 0.209159853195966, 0.458634023511671 ] } },
@@ -14,6 +14,14 @@
 { "type": "Feature", "properties": { "fid": 3, "type": "forest", "layer": "vegetation", "path": "\/Users\/philipeborba\/Library\/Application Support\/QGIS\/QGIS3\/profiles\/default\/python\/plugins\/DsgTools\/tests\/testing_datasets\/Geopackage\/test_dataset_unbuild_polygons.gpkg|layername=vegetation" }, "geometry": { "type": "Point", "coordinates": [ -0.939391408866779, 0.67193505011356 ] } },
 { "type": "Feature", "properties": { "fid": 4, "type": "forest", "layer": "vegetation", "path": "\/Users\/philipeborba\/Library\/Application Support\/QGIS\/QGIS3\/profiles\/default\/python\/plugins\/DsgTools\/tests\/testing_datasets\/Geopackage\/test_dataset_unbuild_polygons.gpkg|layername=vegetation" }, "geometry": { "type": "Point", "coordinates": [ 0.980765169625021, -0.07621247113164 ] } },
 { "type": "Feature", "properties": { "fid": 5, "type": "crop", "layer": "vegetation", "path": "\/Users\/philipeborba\/Library\/Application Support\/QGIS\/QGIS3\/profiles\/default\/python\/plugins\/DsgTools\/tests\/testing_datasets\/Geopackage\/test_dataset_unbuild_polygons.gpkg|layername=vegetation" }, "geometry": { "type": "Point", "coordinates": [ -1.241744580198167, -0.419168591224019 ] } },
-{ "type": "Feature", "properties": { "fid": 5, "type": "crop", "layer": "vegetation", "path": "\/Users\/philipeborba\/Library\/Application Support\/QGIS\/QGIS3\/profiles\/default\/python\/plugins\/DsgTools\/tests\/testing_datasets\/Geopackage\/test_dataset_unbuild_polygons.gpkg|layername=vegetation" }, "geometry": { "type": "Point", "coordinates": [ -1.462692466940188, -0.528152923039169 ] } }
+{ "type": "Feature", "properties": { "fid": 5, "type": "crop", "layer": "vegetation", "path": "\/Users\/philipeborba\/Library\/Application Support\/QGIS\/QGIS3\/profiles\/default\/python\/plugins\/DsgTools\/tests\/testing_datasets\/Geopackage\/test_dataset_unbuild_polygons.gpkg|layername=vegetation" }, "geometry": { "type": "Point", "coordinates": [ -1.462692466940188, -0.528152923039169 ] } },
+{ "type": "Feature", "properties": { "fid": null, "type": null, "layer": null, "path": null }, "geometry": { "type": "Point", "coordinates": [ -0.113917186768615, 0.031617312483928 ] } },
+{ "type": "Feature", "properties": { "fid": null, "type": null, "layer": null, "path": null }, "geometry": { "type": "Point", "coordinates": [ 0.455273867880598, 0.390893935631303 ] } },
+{ "type": "Feature", "properties": { "fid": null, "type": null, "layer": null, "path": null }, "geometry": { "type": "Point", "coordinates": [ -1.026237600603524, 0.047764576445608 ] } },
+{ "type": "Feature", "properties": { "fid": null, "type": null, "layer": null, "path": null }, "geometry": { "type": "Point", "coordinates": [ -0.158322162663235, 0.709802398874479 ] } },
+{ "type": "Feature", "properties": { "fid": null, "type": null, "layer": null, "path": null }, "geometry": { "type": "Point", "coordinates": [ 0.758035067162094, 0.758244190759519 ] } },
+{ "type": "Feature", "properties": { "fid": null, "type": null, "layer": null, "path": null }, "geometry": { "type": "Point", "coordinates": [ 0.083886796761962, -0.468947870328146 ] } },
+{ "type": "Feature", "properties": { "fid": null, "type": null, "layer": null, "path": null }, "geometry": { "type": "Point", "coordinates": [ 0.132328588647002, 0.136574528234847 ] } },
+{ "type": "Feature", "properties": { "fid": null, "type": null, "layer": null, "path": null }, "geometry": { "type": "Point", "coordinates": [ -0.190616690586594, 0.382820303650463 ] } }
 ]
 }
