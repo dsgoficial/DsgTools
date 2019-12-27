@@ -68,11 +68,12 @@ LayerTools/CustomFormTools/formsCustom
 # =========================
 gui/DatabaseTools/ConversionTools/conversion_map.json
 
-# Physical database file handling 
-# =========================
-*.gpkg-shm
-*.gpkg-wal
-
 # Built files
 # =========================
 gui/AboutAndFurtherInfo/ui_about_.ui
+
+# Caching formats and other file handling temporary files
+# =========================
+*.xsd
+*.gpkg-shm
+*.gpkg-wal
