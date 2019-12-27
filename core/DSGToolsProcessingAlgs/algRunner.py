@@ -26,7 +26,8 @@ import processing
 from qgis.core import (Qgis,
                        QgsVectorLayer,
                        QgsProcessingUtils,
-                       QgsProcessingContext)
+                       QgsProcessingContext,
+                       QgsProcessingFeatureSourceDefinition)
 
 class AlgRunner:
     Break, Snap, RmDangle, ChDangle, RmBridge, ChBridge, RmDupl, RmDac, BPol, Prune, RmArea, RmLine, RMSA = range(13)
@@ -619,3 +620,21 @@ class AlgRunner:
         )
         return output['OUTPUT']
 
+    def runSplitLinesWithLines(self, inputLyr, linesLyr, context, feedback=None, onlySelected=False, outputLyr=None):
+        usedInput = inputLyr if not onlySelected else \
+                QgsProcessingFeatureSourceDefinition(inputLyr.id(), True)
+        usedLines = linesLyr if not onlySelected else \
+                QgsProcessingFeatureSourceDefinition(linesLyr.id(), True)
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : usedInput,
+            'LINES' : usedLines,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "native:splitwithlines",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']

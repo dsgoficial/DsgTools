@@ -41,6 +41,7 @@ from qgis.PyQt.QtCore import QCoreApplication
 from .featureHandler import FeatureHandler
 from .geometryHandler import GeometryHandler
 from .layerHandler import LayerHandler
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
 
 class SpatialRelationsHandler(QObject):
@@ -74,7 +75,23 @@ class SpatialRelationsHandler(QObject):
         self.layerHandler = LayerHandler(iface)
         self.featureHandler = FeatureHandler(iface)
         self.geometryHandler = GeometryHandler(iface)
-    
+        self.algRunner = AlgRunner()
+
+    def validateTerrainModel(self, contourLyr, contourFieldName, threshold,\
+        onlySelected=False, geoBoundsLyr=None, context=None, feedback=None):
+        """
+        Does several validation procedures with terrain elements.
+        """
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback) #ajustar depois
+        multiStepFeedback.setCurrentStep(0)
+        splitLinesLyr = self.algRunner.runSplitLinesWithLines(
+            contourLyr,
+            contourLyr,
+            context=context,
+            feedback=multiStepFeedback
+        )
+
+
     def relateDrainagesWithContours(self, drainageLyr, contourLyr, frameLinesLyr, heightFieldName, threshold, topologyRadius, feedback=None):
         """
         Checks the conformity between directed drainages and contours.
@@ -166,7 +183,7 @@ class SpatialRelationsHandler(QObject):
         """
         spatialIdx = QgsSpatialIndex()
         idDict = {}
-        nodeDict = {}
+        nodeDict = defaultdict(list)
         featCount = inputLyr.featureCount()
         size = 100/featCount if featCount else 0
         iterator = inputLyr.getFeatures() if featureRequest is None else inputLyr.getFeatures(featureRequest)
@@ -192,16 +209,15 @@ class SpatialRelationsHandler(QObject):
         :param feat : (QgsFeature) feature to be added on spatial index and on idDict
         :param spatialIdx: (QgsSpatialIndex) spatial index
         :param idDict: (dict) dictionary with format {feat.id(): feat}
+        :param nodeDict: (defaultdict(list)) dictionary with format {node:[list of features]}
         :param size: (int) size to be used to update feedback
         :param firstAndLastNode: (dict) dictionary used to relate nodes of features
         :param feedback: (QgsProcessingFeedback) feedback to be used on processing
         """
+        if feedback is not None and feedback.isCanceled():
+            return
         firstNode, lastNode = firstAndLastNode(feat)
-        if firstNode not in nodeDict:
-            nodeDict[firstNode] = []
         nodeDict[firstNode] += [firstNode]
-        if lastNode not in nodeDict:
-            nodeDict[lastNode] = []
         nodeDict[lastNode] += [lastNode]
         self.layerHandler.addFeatureToSpatialIndex(current, feat, spatialIdx, idDict, size, feedback)
 
