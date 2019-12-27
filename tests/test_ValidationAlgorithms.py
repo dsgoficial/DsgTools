@@ -672,6 +672,23 @@ class Tester(unittest.TestCase):
                     'GEOGRAPHIC_BOUNDARY' : '',
                     'OUTPUT_POLYGONS' : "memory:",
                     'FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['center_points_test5']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['water']
+                    ),
+                    'GEOGRAPHIC_BOUNDARY' : '',
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
                 }
             ],
             "dsgtools:ALG" : [
