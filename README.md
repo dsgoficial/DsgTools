@@ -2,18 +2,23 @@
 
 [![Join the chat at https://gitter.im/DsgTools/Lobby](https://badges.gitter.im/DsgTools/Lobby.svg)](https://gitter.im/DsgTools/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+|branch|status|
+|-------|--------|
+|master|[![Build Status](https://travis-ci.com/dsgoficial/DsgTools.svg?branch=master)](https://travis-ci.com/dsgoficial/DsgTools)|
+|dev|[![Build Status](https://travis-ci.com/dsgoficial/DsgTools.svg?branch=dev)](https://travis-ci.com/dsgoficial/DsgTools)|
+
 ------------------------------------
 # DSGTools Plugin (English Version)
 
-DSGTools is a QGIS plugin that allow users to create and manipulate Geospatial Data according to Brazilian Law (ET-EDGV 2.1.3 and ET-EDGV Defesa F Ter 2ª Edição). DSGTools aims to provide tools not only to Brazilian Army, but to GIS comunity in general.
+DSGTools is a QGIS plugin that allow users to create and manipulate Geospatial Data according to Brazilian Law (ET-EDGV 2.1.3 and ET-EDGV 3.0). DSGTools aims to provide tools not only to Brazilian Army, but to GIS comunity in general.
 
 Current changelog can be viewed on https://github.com/dsgoficial/DsgTools/wiki (portuguese only, for now).
 
-DSGTools 3.1 has the following features:
+DSGTools 4.1 has the following features:
 
 - Creation, Storage and Deletion of PostGIS servers configurations;
-- Database creation using Spatialite and PostGIS according to EDGV version 2.1.3, EDGV version 3.0 and EDGV version FTer_2a_Ed;
-- Layer loading by category and class as defined by EDGV version 2.1.3, EDGV version 3.0 and EDGV version FTer_2a_Ed;
+- Database creation using Spatialite and PostGIS according to EDGV version 2.1.3 and EDGV version 3.0
+- Layer loading by category and class as defined by EDGV version 2.1.3 and EDGV version 3.0;
 - Layer loading grouping by geometric primitive and schema for any PostGIS database;
 - Manipulation of complex features (Creation, Editing, Deletion, Zoom, Association, Disassociation) and;
 - Access to some WM(T)S services provided by BDGEx (Brazilian Army SDI);
@@ -29,6 +34,7 @@ DSGTools 3.1 has the following features:
 - Drop EDGV databases;
 - Tool to reclassify features (move them to another layer) with predefined attributes;
 - Quality Assurance Tools: fix geometry problems prior to creating a topology structure;
+
 
 Requirements for LINUX (Ubuntu/Debian):
 

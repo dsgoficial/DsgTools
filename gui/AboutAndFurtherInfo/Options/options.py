@@ -73,7 +73,8 @@ class Options(QDialog, FORM_CLASS):
         valueList = [self.blackListWidget.item(i).text() for i in range(self.blackListWidget.count())]
         undoPoints = self.undoQgsSpinBox.value()
         decimals = self.decimalQgsSpinBox.value()
-        return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, valueList, undoPoints, decimals)
+        freeHandFinalSimplifyTolerance = self.finalToleranceQgsDoubleSpinBox.value()
+        return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, valueList, undoPoints, decimals, freeHandFinalSimplifyTolerance)
 
     def loadParametersFromConfig(self):
         settings = QSettings()
@@ -86,13 +87,14 @@ class Options(QDialog, FORM_CLASS):
         valueList = settings.value('valueList')
         undoPoints = settings.value('undoPoints')
         decimals = settings.value('decimals')
+        freeHandFinalSimplifyTolerance = settings.value('freeHandFinalSimplifyTolerance')
         if valueList:
             valueList = valueList.split(';')
         settings.endGroup()
-        return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, valueList, undoPoints, decimals)
+        return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, valueList, undoPoints, decimals, freeHandFinalSimplifyTolerance)
     
     def setInterfaceWithParametersFromConfig(self):
-        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, valueList, undoPoints, decimals) = self.loadParametersFromConfig()
+        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, valueList, undoPoints, decimals, freeHandFinalSimplifyTolerance) = self.loadParametersFromConfig()
         if freeHandTolerance:
             self.toleranceQgsDoubleSpinBox.setValue(float(freeHandTolerance))
         if freeHandSmoothIterations:
@@ -109,9 +111,13 @@ class Options(QDialog, FORM_CLASS):
             self.blackListWidget.sortItems(order = Qt.AscendingOrder)
         if undoPoints:
             self.undoQgsSpinBox.setValue(int(undoPoints))
+        if decimals:
+            self.decimalQgsSpinBox.setValue(int(decimals))
+        if freeHandFinalSimplifyTolerance:
+            self.finalToleranceQgsDoubleSpinBox.setValue(float(freeHandFinalSimplifyTolerance))
     
     def storeParametersInConfig(self):
-        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, valueList, undoPoints, decimals) = self.getParameters()
+        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, valueList, undoPoints, decimals, freeHandFinalSimplifyTolerance) = self.getParameters()
         settings = QSettings()
         settings.beginGroup('PythonPlugins/DsgTools/Options')
         settings.setValue('freeHandTolerance', freeHandTolerance)
@@ -122,6 +128,7 @@ class Options(QDialog, FORM_CLASS):
         settings.setValue('valueList', ';'.join(valueList))
         settings.setValue('undoPoints', undoPoints)
         settings.setValue('decimals', decimals)
+        settings.setValue('freeHandFinalSimplifyTolerance', freeHandFinalSimplifyTolerance)
         settings.endGroup()
     
     @pyqtSlot()
@@ -142,8 +149,8 @@ class Options(QDialog, FORM_CLASS):
             self.blackListWidget.takeItem(i)
     
     def firstTimeConfig(self):
-        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, valueList, undoPoints, decimals) = self.loadParametersFromConfig()
-        if not (freeHandTolerance and freeHandSmoothIterations and freeHandSmoothOffset and algIterations and valueList and undoPoints and decimals is not None):
+        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, valueList, undoPoints, decimals, freeHandFinalSimplifyTolerance) = self.loadParametersFromConfig()
+        if not (freeHandTolerance and freeHandSmoothIterations and freeHandSmoothOffset and algIterations and valueList and undoPoints and decimals is not None and freeHandFinalSimplifyTolerance is not None):
             self.storeParametersInConfig()
 
     def setupModelPath(self):

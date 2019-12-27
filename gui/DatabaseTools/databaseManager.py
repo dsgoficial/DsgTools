@@ -82,7 +82,7 @@ class DatabaseGuiManager(QObject):
         """
         callback = lambda : self.createDatabase(isBatchCreation=False)
         self.addTool(
-            text=self.tr('Create a PostGIS, SpatiaLite or Geopackage Database'),
+            text=self.tr('Create a PostGIS or SpatiaLite Database'),
             callback=callback,
             parentMenu=self.menu,
             icon='database.png',
@@ -91,7 +91,7 @@ class DatabaseGuiManager(QObject):
         )
         callback = lambda : self.createDatabase(isBatchCreation=True)
         self.addTool(
-            text=self.tr('Create batches of PostGIS, SpatiaLite or Geopackage Databases'),
+            text=self.tr('Create batches of PostGIS or SpatiaLite Databases'),
             callback=callback,
             parentMenu=self.menu,
             icon='batchDatabase.png',
