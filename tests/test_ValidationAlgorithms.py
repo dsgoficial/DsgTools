@@ -727,6 +727,63 @@ class Tester(unittest.TestCase):
                     )[0],
                     'OUTPUT_POLYGONS' : "memory:",
                     'FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 8 - same as test 3, but with geo bounds",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['center_points_test3']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries_within_geo_bounds']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['water']
+                    ),
+                    'GEOGRAPHIC_BOUNDARY' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['geographic_bounds']
+                    )[0],
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 9 - same as test 4, but with geo bounds",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['center_points_test4']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries_within_geo_bounds']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['water']
+                    ),
+                    'GEOGRAPHIC_BOUNDARY' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['geographic_bounds']
+                    )[0],
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 10 - same as test 5, but with geo bounds",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['center_points_test5']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries_within_geo_bounds']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['water']
+                    ),
+                    'GEOGRAPHIC_BOUNDARY' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['geographic_bounds']
+                    )[0],
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
                 }
             ],
             "dsgtools:ALG" : [
