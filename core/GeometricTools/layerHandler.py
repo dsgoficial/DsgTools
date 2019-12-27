@@ -1520,12 +1520,13 @@ class LayerHandler(QObject):
                 polygonList.append(newFeat)
             else:
                 insideConstraint = False
+                pointOnSurfaceGeom = geom.pointOnSurface()
                 for candidateId in constraintPolygonLyrSpatialIdx.intersects(geom.boundingBox()):
                     if feedback is not None and feedback.isCanceled():
                         break
-                    if geomKey not in flagDict or \
-                        geom.isGeosEqual(constraintPolygonLyrIdDict[candidateId].geometry()) or \
-                        geom.within(constraintPolygonLyrIdDict[candidateId].geometry()):
+                    if geomKey not in flagDict and pointOnSurfaceGeom.intersects(
+                            constraintPolygonLyrIdDict[candidateId].geometry()
+                        ):
                         insideConstraint = True
                         break
                 if not insideConstraint:
