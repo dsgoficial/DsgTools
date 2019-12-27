@@ -1138,7 +1138,7 @@ class Tester(unittest.TestCase):
     
     def test_identifyvertexnearedges(self):
         self.assertEqual(
-            self.testAlg("dsgtools:identifyvertexnearedges"), ""
+            self.testAlg("dsgtools:identifyvertexnearedges", addControlKey=True), ""
         )
     
     # def test_overlayelementswithareas(self):
