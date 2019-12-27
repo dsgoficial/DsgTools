@@ -1377,7 +1377,7 @@ class LayerHandler(QObject):
         """
         constraintLineLyrList = [] if constraintLineLyrList is None else constraintLineLyrList
         constraintPolygonList = [] if constraintPolygonLyrList is None else constraintPolygonLyrList
-        constraintPolygonListWithGeoBounds = constraintPolygonList + geographicBoundaryLyr \
+        constraintPolygonListWithGeoBounds = constraintPolygonList + [geographicBoundaryLyr] \
             if geographicBoundaryLyr is not None else constraintPolygonList
         attributeBlackList = [] if attributeBlackList is None else attributeBlackList
         
