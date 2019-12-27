@@ -1511,27 +1511,27 @@ class LayerHandler(QObject):
             structureLen = builtPolygonToCenterPointDict[geomKey]
             geom = QgsGeometry()
             geom.fromWkb(geomKey)
-            if len(structureLen) == 1:
-                # actual polygon, must get center point attributes and build final feat
-                pointFeatList = list(builtPolygonToCenterPointDict[geomKey].values())
-                newFeat = QgsFeature(pointFeatList[0][0].fields())
-                newFeat.setAttributes(pointFeatList[0][0].attributes())
-                newFeat.setGeometry(geom)
-                polygonList.append(newFeat)
-            else:
-                insideConstraint = False
-                pointOnSurfaceGeom = geom.pointOnSurface()
-                for candidateId in constraintPolygonLyrSpatialIdx.intersects(geom.boundingBox()):
-                    if feedback is not None and feedback.isCanceled():
-                        break
-                    if geomKey not in flagDict and pointOnSurfaceGeom.intersects(
-                            constraintPolygonLyrIdDict[candidateId].geometry()
-                        ):
-                        insideConstraint = True
-                        break
-                if not insideConstraint:
-                    # polygon with more than one center point with different attribute
-                    # set. Must be verityed afterwards
+            insideConstraint = False
+            pointOnSurfaceGeom = geom.pointOnSurface()
+            for candidateId in constraintPolygonLyrSpatialIdx.intersects(geom.boundingBox()):
+                if feedback is not None and feedback.isCanceled():
+                    break
+                if geomKey not in flagDict and pointOnSurfaceGeom.intersects(
+                        constraintPolygonLyrIdDict[candidateId].geometry()
+                    ):
+                    insideConstraint = True
+                    break
+            if not insideConstraint:
+                # polygon with more than one center point with different attribute
+                # set. Must be verityed afterwards
+                if len(structureLen) == 1:
+                    # actual polygon, must get center point attributes and build final feat
+                    pointFeatList = list(builtPolygonToCenterPointDict[geomKey].values())
+                    newFeat = QgsFeature(pointFeatList[0][0].fields())
+                    newFeat.setAttributes(pointFeatList[0][0].attributes())
+                    newFeat.setGeometry(geom)
+                    polygonList.append(newFeat)
+                else:
                     flagText = self.tr("Polygon without center point.") if len(structureLen) == 0\
                         else self.tr("Polygon with more than one center point with conflicting attributes.")
                     flagDict[geomKey] = flagText
