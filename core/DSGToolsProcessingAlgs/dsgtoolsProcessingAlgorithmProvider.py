@@ -181,6 +181,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.setFreeHand
     SetFreeHandToolParametersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.buildPolygonsFromCenterPointsAndBoundariesAlgorithm import \
     BuildPolygonsFromCenterPointsAndBoundariesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.multipleOutputUnitTestAlgorithm import \
+    MultipleOutputUnitTestAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -265,7 +267,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     UnbuildPolygonsAlgorithm(),
                     IdentifyUnsharedVertexOnIntersectionsAlgorithm(),
                     SetFreeHandToolParametersAlgorithm(),
-                    BuildPolygonsFromCenterPointsAndBoundariesAlgorithm()
+                    BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(),
+                    MultipleOutputUnitTestAlgorithm()
                 ]
         return algList
 
