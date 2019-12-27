@@ -22,7 +22,7 @@
 """
 from PyQt5.QtCore import QCoreApplication
 
-from core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildJoinsOnLayersAlgorithm import \
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildJoinsOnLayersAlgorithm import \
     BuildJoinsOnLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.EditingAlgs.createEditingGridAlgorithm import \
     CreateEditingGridAlgorithm
@@ -42,8 +42,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignMeasure
     AssignMeasureColumnToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignValueMapToLayersAlgorithm import \
     AssignValueMapToLayersAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildJoinsOnLayersAlgorithm import \
-    BuildJoinsOnLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.groupLayersAlgorithm import \
     GroupLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadLayersFromPostgisAlgorithm import \
@@ -177,6 +175,16 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUnsharedVe
     IdentifyUnsharedVertexOnSharedEdgesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.enforceSpatialRulesAlgorithm import \
     (EnforceSpatialRulesAlgorithm, ParameterSpatialRulesSetType)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unbuildPolygonsAlgorithm import \
+    UnbuildPolygonsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUnsharedVertexOnIntersectionsAlgorithm import \
+    IdentifyUnsharedVertexOnIntersectionsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.setFreeHandToolParametersAlgorithm import \
+    SetFreeHandToolParametersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.buildPolygonsFromCenterPointsAndBoundariesAlgorithm import \
+    BuildPolygonsFromCenterPointsAndBoundariesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.multipleOutputUnitTestAlgorithm import \
+    MultipleOutputUnitTestAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -258,7 +266,12 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     IdentifyWrongBuildingAnglesAlgorithm(),
                     IdentifyVertexNearEdgesAlgorithm(),
                     IdentifyUnsharedVertexOnSharedEdgesAlgorithm(),
-                    EnforceSpatialRulesAlgorithm()
+                    EnforceSpatialRulesAlgorithm(),
+                    UnbuildPolygonsAlgorithm(),
+                    IdentifyUnsharedVertexOnIntersectionsAlgorithm(),
+                    SetFreeHandToolParametersAlgorithm(),
+                    BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(),
+                    MultipleOutputUnitTestAlgorithm()
                 ]
         return algList
 

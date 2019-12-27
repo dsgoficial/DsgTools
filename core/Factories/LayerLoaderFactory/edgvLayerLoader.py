@@ -169,7 +169,10 @@ class EDGVLayerLoader(QObject):
         if edgvVersion not in ('FTer_2a_Ed', '3.0'):
             return dict()
         domLayerDict = dict()
-        qmlDict = self.abstractDb.getQmlDict(layerList)
+        try:
+            qmlDict = self.abstractDb.getQmlDict(layerList)
+        except:
+            return dict()
         domainNode = self.createGroup(self.tr("Domains"), dbRootNode)
         loadedDomainsDict = {} if not domainNode.findLayers() else {i.layer().name() : i.layer() for i in domainNode.findLayers()}
         for lyr in layerList:

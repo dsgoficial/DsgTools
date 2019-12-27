@@ -28,6 +28,8 @@ It is supposed to be run through QGIS with DSGTools installed.
 """
 
 import os
+import sys
+import warnings
 from osgeo import ogr
 
 import processing
@@ -39,37 +41,16 @@ from qgis.PyQt.QtSql import QSqlDatabase
 from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+from qgis.testing import unittest
 
-class Tester(object):
+class Tester(unittest.TestCase):
     
     CURRENT_PATH = os.path.dirname(__file__)
     DEFAULT_ALG_PATH = os.path.join(
                             CURRENT_PATH, '..', 'core', 'DSGToolsProcessingAlgs',
                             'Algs', 'ValidationAlgs'
                         )
-
-    def __init__(self):
-        """
-        Class constructor.
-        """
-        super(Tester, self).__init__()
-        self.datasets = dict()
-
-    def clearDatasets(self):
-        """
-        Clears all testing datasets set to memory. 
-        """
-        del self.datasets
-        self.datasets = dict()
-
-    def __del__(self):
-        """
-        Class destructor.
-        Clears all datasets set to memory and any memory usage it has set.
-        """
-        self.clearDatasets()
-        super(Tester, self).__del__()
-        del self
+    datasets = dict()
 
     def readAvailableAlgs(self, path):
         """
@@ -95,8 +76,6 @@ class Tester(object):
         """
         db = None
         if os.path.exists(path):
-            # db = QSqlDatabase('QSQLITE')
-            # db.setDatabaseName(path)
             db = DbFactory().createDbFactory(driver=DsgEnums.DriverSpatiaLite)
             db.connectDatabase(conn=path)
         return db
@@ -144,10 +123,29 @@ class Tester(object):
         for layer in ogr.Open(path):
             layername = layer.GetName()
             layers[layername] = QgsVectorLayer(
-                        "{0}|layername={1}".format(path, layername), 
-                        layername,
-                        "ogr"
-                    )
+                "{0}|layername={1}".format(path, layername), 
+                layername,
+                "ogr"
+            )
+        return layers
+
+    def readGeojson(self, path):
+        """
+        Reads a folder with Geojson files.
+        :param path: (str) path do the geojson folder.
+        :return: (dict) map to the geojson folder's layers.
+        """
+        layers = dict()
+        fileList = [f for f in next(os.walk(path))[2] if '.geojson' in f]
+        for f in fileList:
+            fullPath = os.path.join(path, f)
+            for layer in ogr.Open(fullPath):
+                layername = layer.GetName()
+                layers[layername] = QgsVectorLayer(
+                    fullPath,
+                    layername,
+                    "ogr"
+                )
         return layers
 
     def testingDataset(self, driver, dataset):
@@ -160,6 +158,7 @@ class Tester(object):
         """
         spatiaLitePaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'SpatiaLite')
         gpkgPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'Geopackage')
+        geojsonPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'GeoJson')
         datasets = {
             "sqlite" : {
                 "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite')
@@ -167,23 +166,30 @@ class Tester(object):
             "gpkg" : {
                 "testes_wgs84" : os.path.join(gpkgPaths, 'testes_wgs84.gpkg'),
                 "testes_sirgas2000_23s" : os.path.join(gpkgPaths, 'testes_sirgas2000_23s.gpkg'),
-                "testes_sirgas2000_24s" : os.path.join(gpkgPaths, 'testes_sirgas2000_24s.gpkg')
+                "testes_sirgas2000_24s" : os.path.join(gpkgPaths, 'testes_sirgas2000_24s.gpkg'),
+                "test_dataset_unbuild_polygons" : os.path.join(gpkgPaths, 'test_dataset_unbuild_polygons.gpkg')
+            },
+            "geojson" : {
+                "land_cover_layers" : os.path.join(geojsonPaths, 'land_cover_layers')
             }
         }
         # switch-case for dataset reading
         funcs = {
-            "sqlite" : lambda ds : self.readSpatiaLite(datasets["sqlite"][ds]),
-            "gpkg" : lambda ds : self.readGeopackage(datasets["gpkg"][ds])
+            "sqlite" : lambda ds: self.readSpatiaLite(datasets["sqlite"][ds]),
+            "gpkg" : lambda ds: self.readGeopackage(datasets["gpkg"][ds]),
+            "geojson" : lambda ds: self.readGeojson(datasets["geojson"][ds])
         }
         layers = dict()
         if driver in datasets and dataset in datasets[driver]:
             key = "{driver}:{dataset}".format(driver=driver, dataset=dataset)
             if key not in self.datasets:
                 self.datasets[key] = funcs[driver](dataset)
+            else:
+                [lyr.rollBack() for lyr in self.datasets[key].values()]
             layers = self.datasets[key]
         return layers
 
-    def getInputLayers(self, driver, dataset, layers):
+    def getInputLayers(self, driver, dataset, layers, addControlKey=False):
         """
         Gets the vector layers from an input dataset.
         :param driver: (str) driver's to be read.
@@ -194,8 +200,28 @@ class Tester(object):
         out = []
         vls = self.testingDataset(driver, dataset)
         for l in layers:
-            out.append(vls[l])
+            vls[l].rollBack()
+            lyr = vls[l] if not addControlKey else \
+                self.addControlKey(vls[l])
+            out.append(lyr)
         return out
+    
+    def addControlKey(self, lyr):
+        return processing.run(
+                    'native:addautoincrementalfield',
+                    {
+                        'INPUT' : lyr,
+                        'FIELD_NAME' : 'AUTO',
+                        'START' : 0,
+                        'GROUP_FIELDS' : [],
+                        'SORT_EXPRESSION' : '',
+                        'SORT_ASCENDING' : True,
+                        'SORT_NULLS_FIRST' : False,
+                        'OUTPUT' : 'memory:'
+                    },
+                    context = QgsProcessingContext(),
+                    feedback = QgsProcessingFeedback()
+                )['OUTPUT']
 
     def addLayerToGroup(self, layer, groupname):
         """
@@ -388,6 +414,7 @@ class Tester(object):
                     'INPUT': self.getInputLayers(
                             'gpkg', 'testes_sirgas2000_24s', ['test1_vertexnearedge_a']
                         )[0],
+                    'SEARCH_RADIUS':1,
                     'SELECTED': False
                 },
                 {
@@ -396,6 +423,7 @@ class Tester(object):
                     'INPUT': self.getInputLayers(
                             'gpkg', 'testes_sirgas2000_24s', ['test2_vertexnearedge_l']
                         )[0],
+                    'SEARCH_RADIUS':1,
                     'SELECTED': False
                 }
             ],
@@ -464,7 +492,7 @@ class Tester(object):
                 {
                     '__comment' : "'Normal' test: checks if it works.",
                     'INPUT' : self.getInputLayers(
-                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_1']
+                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_1'], addControlKey=True
                         )[0],
                     'SELECTED' : False
                 }
@@ -545,6 +573,219 @@ class Tester(object):
                 }
             ],
 
+            "dsgtools:identifyunsharedvertexonintersectionsalgorithm" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'INPUT_LINES' : self.getInputLayers(
+                        'gpkg', 'testes_wgs84', ['line_input']
+                    )[0],
+                    'INPUT_POLYGONS' : self.getInputLayers(
+                        'gpkg', 'testes_wgs84', ['polygon_input']
+                    )[0],
+                    'SELECTED' : False,
+                    'FLAGS' : "memory:"
+                }
+            ],
+            "dsgtools:unbuildpolygonsalgorithm" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'INPUT_POLYGONS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['vegetation']
+                    )[0],
+                    'SELECTED' : False,
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['fence', 'road']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['water']
+                    ),
+                    'GEOGRAPHIC_BOUNDARY' : '',
+                    'OUTPUT_CENTER_POINTS' : "memory:",
+                    'OUTPUT_BOUNDARIES' : "memory:"
+                }
+            ],
+            "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['center_points_test1']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['water']
+                    ),
+                    'GEOGRAPHIC_BOUNDARY' : '',
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['center_points_test2']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['water']
+                    ),
+                    'GEOGRAPHIC_BOUNDARY' : '',
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['center_points_test3']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['water']
+                    ),
+                    'GEOGRAPHIC_BOUNDARY' : '',
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['center_points_test4']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['water']
+                    ),
+                    'GEOGRAPHIC_BOUNDARY' : '',
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['center_points_test5']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['water']
+                    ),
+                    'GEOGRAPHIC_BOUNDARY' : '',
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 6 - same as test 1, but with geo bounds",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['center_points_test1']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries_within_geo_bounds']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['water']
+                    ),
+                    'GEOGRAPHIC_BOUNDARY' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['geographic_bounds']
+                    )[0],
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 7 - same as test 2, but with geo bounds",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['center_points_test2']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries_within_geo_bounds']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['water']
+                    ),
+                    'GEOGRAPHIC_BOUNDARY' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['geographic_bounds']
+                    )[0],
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 8 - same as test 3, but with geo bounds",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['center_points_test3']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries_within_geo_bounds']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['water']
+                    ),
+                    'GEOGRAPHIC_BOUNDARY' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['geographic_bounds']
+                    )[0],
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 9 - same as test 4, but with geo bounds",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['center_points_test4']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries_within_geo_bounds']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['water']
+                    ),
+                    'GEOGRAPHIC_BOUNDARY' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['geographic_bounds']
+                    )[0],
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 10 - same as test 5, but with geo bounds",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['center_points_test5']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries_within_geo_bounds']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['water']
+                    ),
+                    'GEOGRAPHIC_BOUNDARY' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['geographic_bounds']
+                    )[0],
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
+                }
+            ],
             "dsgtools:ALG" : [
                 {
                     '__comment' : "'Normal' test: checks if it works."
@@ -553,7 +794,7 @@ class Tester(object):
         }
         return parameters[algName] if algName in parameters else dict()
 
-    def runAlg(self, algName, parameters, feedback=None, context=None):
+    def runAlg(self, algName, parameters, feedback=None, context=None, addControlKey=False):
         """
         Executes a given algorithm.
         :param algName: (str) target algorithm's name.
@@ -567,29 +808,60 @@ class Tester(object):
                 )
         outputstr = 'FLAGS' if 'FLAGS' in out else 'OUTPUT' if 'OUTPUT' in out else ''
         if outputstr:
-            out[outputstr].setName(algName.split(':')[-1])
-            return out[outputstr]
-        return out
+            out = out[outputstr]
+        return out if not addControlKey else self.addControlKey(out)
+    
+    def runAlgWithMultipleOutputs(self, algName, parameters, feedback=None, context=None):
+        """
+        Executes a given algorithm that has multiple outputs. Returns a dict 
+        with the returned layers in the format {'OUTPUT_LAYER_KEY':(QgsVectorLayer) OutputLayer}
+        :param algName: (str) target algorithm's name.
+        :param parameters: (dict) set of arguments for target algorithm.
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking object.
+        :param context: (QgsProcessingContext) execution's environmental parameters.
+        """
+        return processing.run(algName, parameters, None,\
+                    feedback or QgsProcessingFeedback(),
+                    context or QgsProcessingContext()
+                )
 
-    def expectedOutput(self, algName, test):
+    def expectedOutput(self, algName, test, multipleOutputs=False):
         """
         Gets the expect output layer.
         :param algName: (str) target algorithm's name.
         :param test: (int) test being run.
         :return: (QgsVectorLayer) expected output layer.
         """
+        rootPath = os.path.join(
+            self.CURRENT_PATH, 'expected_outputs', algName.split(':')[-1]
+        )
+        gpkgOutput = False
+        for f in next(os.walk(rootPath))[2]:
+            if '.gpkg' in f:
+                gpkgOutput = True
+                break
         path = os.path.join(
-                    self.CURRENT_PATH, 'expected_outputs', algName.split(':')[-1],
-                    'test_{0}.gpkg'.format(test)
+                    rootPath,
+                    'test_{test_number}{extension}'.format(
+                        test_number=test,
+                        extension='.gpkg' if gpkgOutput else ''
+                        )
                 )
         if os.path.exists(path):
-            return QgsVectorLayer(
-                        path, 
-                        "{alg}_test_{test}_output".format(alg=algName.split(':')[-1], test=test),
-                        "ogr"
-                    )
+            if multipleOutputs:
+                return self.readGeopackage(path) if gpkgOutput else self.readGeojson(path)
+            else:
+                path = path if gpkgOutput else os.path.join(
+                    path,
+                    'test_{test_number}.geojson'.format(test_number=test)
+                )
+                return QgsVectorLayer(
+                            path, 
+                            "{alg}_test_{test}_output".format(alg=algName.split(':')[-1], test=test),
+                            "ogr"
+                        )
 
-    def compareLayers(self, target, reference):
+    def compareLayers(self, target, reference, attributeBlackList=None, addControlKey=False):
         """
         Compares two vector layers. The algorithm stops on the first difference found.
         :param target: (QgsVectorLayer) layer to be checked.
@@ -597,11 +869,17 @@ class Tester(object):
         :return: (str) message containing identified differences.
         """
         # geometry type check
+        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
+        attributeBlackList += ['AUTO'] if addControlKey else []
+        if target.featureCount() == 0 and reference.featureCount() == 0:
+            return ""
         if target.geometryType() != reference.geometryType():
             return "Incorrect geometry type for the output layer."
         # feature check
-        targetFeaureIds = set([f.id() for f in target.getFeatures()])
-        refFeaureIds = set([f.id() for f in reference.getFeatures()])
+        targetFeatDict = {f.id():f for f in target.getFeatures()}
+        refFeatDict = {f.id():f for f in reference.getFeatures()}
+        targetFeaureIds = set(targetFeatDict.keys())
+        refFeaureIds = set(refFeatDict.keys())
         if target.featureCount() != reference.featureCount():    
             msg = ""
             if targetFeaureIds - refFeaureIds:
@@ -617,33 +895,29 @@ class Tester(object):
         targetFieldNames = [f.name() for f in target.fields()]
         for f in reference.fields():
             fieldname = f.name()
-            if fieldname == 'fid' or '_otf' in fieldname:
+            if fieldname in ['fid', 'AUTO'] or '_otf' in fieldname:
                 # not sure if this should happen...
                 continue
             if fieldname not in targetFieldNames:
                 return "Incorrect set of attributes for output layer (missing '{attr}').".format(attr=fieldname)
-        # feature attribute check
-        # it is considered that our testing datasets will always have their PK set to serial column 'OGC_FID'
-        try:
-            # identification algorithms have in-memory layers, and they do not have a PK column
-            col = 'OGC_FID' if 'OGC_FID' in targetFieldNames else 'fid'
-            testFeatureMap = { f[col] : f for f in target.getFeatures() }
-        except:
-            testFeatureMap = { f.id() : f for f in target.getFeatures() }
-        # testing datasets have their PK column set to 'fid'
-        pkColumn = 'OGC_FID' if 'OGC_FID' in [f.name() for f in next(reference.getFeatures()).fields()] else 'fid'
-        for featId, refFeat in { f[pkColumn] : f for f in reference.getFeatures() }.items():
-            if featId not in testFeatureMap:
+        for featId, refFeat in refFeatDict.items():
+            if featId not in targetFeatDict:
                 return "Feature id={0} was not found on output layer.".format(featId)
-            testFeat = testFeatureMap[featId]
-            if not testFeat.geometry().equals(refFeat.geometry()):
+            testFeat = targetFeatDict[featId]
+            if not (testFeat.geometry().isGeosEqual(refFeat.geometry()) or\
+                testFeat.geometry().equals(refFeat.geometry())):
                 return "Feature {fid} has incorrect geometry.".format(fid=featId)
             for attr in targetFieldNames:
-                if testFeat[attr] != refFeat[attr]:
-                    return "Incorrect set o attributes for feature {fid}.".format(fid=featId)
+                if attr not in attributeBlackList and testFeat[attr] != refFeat[attr]:
+                    return "Incorrect set of attributes for feature {fid}:\nAttribute {attr} in the test feature is: {test_attr}\nAttribute {attr} in the reference feature is: {ref_attr}".format(
+                        fid=featId,
+                        attr=attr,
+                        test_attr=testFeat[attr],
+                        ref_attr=refFeat[attr]
+                    )
         return ""
 
-    def testAlg(self, algName, feedback=None, context=None, loadLayers=False):
+    def testAlg(self, algName, feedback=None, context=None, loadLayers=False, multipleOutputs=False, attributeBlackList=None, addControlKey=False):
         """
         Tests if the output of a given algorithm is the expected one.
         :param algName: (str) target algorithm's name.
@@ -660,31 +934,88 @@ class Tester(object):
                 )
         try:
             for i, param in enumerate(parameters):
-                output = self.runAlg(algName, param, feedback, context)
-                expected = self.expectedOutput(algName, i + 1)
+                output = self.runAlgWithMultipleOutputs(algName, param, feedback, context) \
+                    if multipleOutputs else self.runAlg(algName, param, feedback, context, addControlKey=addControlKey)
+                expected = self.expectedOutput(
+                    algName,
+                    i + 1,
+                    multipleOutputs=multipleOutputs
+                )
                 if isinstance(output, QgsVectorLayer):
-                    if not output.isValid():
-                        raise Exception("Output is an INVALID vector layer.".\
+                    self.compareInputLayerWithOutputLayer(
+                        i,
+                        algName,
+                        output,
+                        expected,
+                        loadLayers=loadLayers,
+                        attributeBlackList=attributeBlackList,
+                        addControlKey=addControlKey
+                    )
+                    if isinstance(output, QgsVectorLayer):
+                        output.rollBack()
+                    if isinstance(expected, QgsVectorLayer):
+                        expected.rollBack()
+                elif isinstance(output, dict):
+                    for key, outputLyr in output.items():
+                        if key not in expected:
+                            raise Exception("Output dictionary key was not found in expected output dictionary.".\
                                 format(alg=algName, nr=i + 1)
                             )
-                    if expected is None:
-                        raise Exception("No expected output registered for the test, yet an output was generated.".\
+                        self.compareInputLayerWithOutputLayer(
+                            i,
+                            algName,
+                            outputLyr,
+                            expected[key],
+                            loadLayers=loadLayers,
+                            addControlKey=addControlKey,
+                            attributeBlackList=attributeBlackList
+                        )
+                        if isinstance(outputLyr, QgsVectorLayer):
+                            outputLyr.rollBack()
+                        if isinstance(expected[key], QgsVectorLayer):
+                            expected[key].rollBack()
+                    for key, expectedLyr in expected.items():
+                        if key not in expected:
+                            raise Exception("Output dictionary key was not found in expected output dictionary.".\
                                 format(alg=algName, nr=i + 1)
                             )
-                    msg = self.compareLayers(output, expected)
-                    # once layer is compared, revert all modifications in order to not compromise layer reusage
-                    output.rollBack() # soemtimes in = output
-                    if msg:
-                        raise Exception(msg)
-                    if loadLayers:
-                        self.addLayerToGroup(output, "DSGTools Algorithm Tests")
-                        self.addLayerToGroup(expected, "DSGTools Algorithm Tests")
+
         except Exception as e:
+            if isinstance(output, QgsVectorLayer):
+                output.rollBack()
+            elif isinstance(output, dict):
+                [lyr.rollBack() for key, lyr in output.items() if isinstance(lyr, QgsVectorLayer)]
+            if isinstance(expected, QgsVectorLayer):
+                expected.rollBack()
+            elif isinstance(expected, dict):
+                [lyr.rollBack() for key, lyr in expected.items() if isinstance(lyr, QgsVectorLayer)]
             return "Test #{nr} for '{alg}' has failed:\n'{msg}'".format(
                     msg=", ".join(map(str, e.args)), nr=i + 1, alg=algName
                 )
         # missing the output testing
         return ""
+    
+    def compareInputLayerWithOutputLayer(self, i, algName, output, expected, loadLayers=False, attributeBlackList=None, addControlKey=False):
+        if not output.isValid():
+            raise Exception("Output is an INVALID vector layer.".\
+                    format(alg=algName, nr=i + 1)
+                )
+        if expected is None:
+            raise Exception("No expected output registered for the test, yet an output was generated.".\
+                    format(alg=algName, nr=i + 1)
+                )
+        expected = self.addControlKey(expected) if addControlKey else expected
+        msg = self.compareLayers(output, expected, attributeBlackList=attributeBlackList, addControlKey=addControlKey)
+        # once layer is compared, revert all modifications in order to not compromise layer reusage
+        if isinstance(output, QgsVectorLayer):
+            output.rollBack()
+        if isinstance(expected, QgsVectorLayer):
+            expected.rollBack()
+        if msg:
+            raise Exception(msg)
+        if loadLayers:
+            self.addLayerToGroup(output, "DSGTools Algorithm Tests")
+            self.addLayerToGroup(expected, "DSGTools Algorithm Tests")
 
     def testAllAlgorithms(self):
         """
@@ -703,6 +1034,7 @@ class Tester(object):
                 "dsgtools:identifyduplicatedpolygonsoncoverage", "dsgtools:identifysmallpolygons",
                 "dsgtools:identifydangles", "dsgtools:identifyduplicatedpointsoncoverage",
                 "dsgtools:identifyoverlaps", "dsgtools:identifyvertexnearedges",
+                "dsgtools:identifyunsharedvertexonintersectionsalgorithm"
                 # correction algs
                 "dsgtools:removeduplicatedfeatures", "dsgtools:removeduplicatedgeometries",
                 "dsgtools:removesmalllines", "dsgtools:removesmallpolygons",
@@ -714,10 +1046,155 @@ class Tester(object):
                 # network algs
                 "dsgtools:adjustnetworkconnectivity"
             ]
+        multipleOutputAlgs = [
+            "dsgtools:unbuildpolygonsalgorithm",
+            "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm"
+        ]
         # for alg in self.readAvailableAlgs(self.DEFAULT_ALG_PATH):
         for alg in algs:
             try:
                 results[alg] = self.testAlg(alg)
             except KeyError:
                 results[alg] = "No tests registered."
+        for alg in multipleOutputAlgs:
+            try:
+                results[alg] = self.testAlg(
+                    alg,
+                    multipleOutputs=True,
+                    attributeBlackList=['path']
+                )
+            except KeyError:
+                results[alg] = "No tests registered."
         return results
+    
+    def test_identifyoutofboundsangles(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyoutofboundsangles"), ""
+        )
+
+    # def test_identifyoutofboundsanglesincoverage(self):
+    #     with warnings.catch_warnings():
+    #         warnings.simplefilter("ignore")
+    #         self.assertEqual(
+    #             self.testAlg("dsgtools:identifyoutofboundsanglesincoverage"), ""
+    #         )
+
+    # def test_identifygaps(self):
+    #     with warnings.catch_warnings():
+    #         warnings.simplefilter("ignore")
+    #         self.assertEqual(
+    #             self.testAlg("dsgtools:identifygaps"), ""
+    #         )
+    
+    def test_identifyandfixinvalidgeometries(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyandfixinvalidgeometries"), ""
+        )
+    
+    def test_identifyduplicatedfeatures(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyduplicatedfeatures"), ""
+        )
+
+    def test_identifyduplicatedgeometries(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyduplicatedgeometries"), ""
+        )
+
+    def test_identifyduplicatedlinesoncoverage(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyduplicatedlinesoncoverage"), ""
+        )
+    
+    def test_identifyduplicatedpointsoncoverage(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyduplicatedpointsoncoverage"), ""
+        )
+
+    def test_identifysmalllines(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifysmalllines"), ""
+        )
+
+    def test_identifyduplicatedpolygonsoncoverage(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyduplicatedpolygonsoncoverage"), ""
+        )
+
+    def test_identifysmallpolygons(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifysmallpolygons"), ""
+        )
+
+    def test_identifydangles(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifydangles"), ""
+        )
+    
+    def test_identifyunsharedvertexonintersectionsalgorithm(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyunsharedvertexonintersectionsalgorithm"), ""
+        )
+    
+    def test_identifyvertexnearedges(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyvertexnearedges"), ""
+        )
+    
+    # def test_overlayelementswithareas(self):
+    #     self.assertEqual(
+    #         self.testAlg("dsgtools:overlayelementswithareas"), ""
+    #     )
+    
+    def test_deaggregategeometries(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:deaggregategeometries", addControlKey=True), ""
+        )
+    
+    def test_dissolvepolygonswithsameattributes(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:dissolvepolygonswithsameattributes", addControlKey=True), ""
+        )
+    
+    def test_removeemptyandupdate(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:removeemptyandupdate"), ""
+        )
+    
+    def test_snaplayeronlayer(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:snaplayeronlayer"), ""
+        )
+
+    def test_adjustnetworkconnectivity(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:adjustnetworkconnectivity"), ""
+        )
+    
+    def test_unbuildpolygonsalgorithm(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:unbuildpolygonsalgorithm",
+                multipleOutputs=True,
+                attributeBlackList=['path'],
+                addControlKey=True
+            ),
+            ""
+        )
+    
+    def test_buildpolygonsfromcenterpointsandboundariesalgorithm(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
+                multipleOutputs=True,
+                addControlKey=True
+            ),
+            ""
+        )
+
+def run_all(filterString=None):
+    """Default function that is called by the runner if nothing else is specified"""
+    filterString = 'test_' if filterString is None else filterString
+    suite = unittest.TestSuite()
+    suite.addTests(unittest.makeSuite(Tester, filterString))
+    unittest.TextTestRunner(verbosity=3, stream=sys.stdout).run(suite)

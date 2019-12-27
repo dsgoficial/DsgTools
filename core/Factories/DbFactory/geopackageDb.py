@@ -196,10 +196,16 @@ class GeopackageDb(SpatialiteDb):
             raise Exception(self.tr("Problem getting geom tuple list: ")+query.lastError().text())
         geomList = []
         while query.next():
-            if edgvVersion in ['2.1.3','FTer_2a_Ed']:
-                geomList.append((query.value(0).split('_')[0], '_'.join(query.value(0).split('_')[1::]), query.value(1), query.value(2), 'BASE TABLE'))
-            else:
-                geomList.append((query.value(0).split('_')[0], '_'.join(query.value(0).split('_')[1::]), query.value(1), self.getResolvedGeomType(int(query.value(2))), 'BASE TABLE'))
+            geomList.append(
+                (
+                    query.value(0).split('_')[0],
+                    '_'.join(query.value(0).split('_')[1::]),
+                    query.value(1),
+                    self.getResolvedGeomType(query.value(2)),
+                    'BASE TABLE'
+                )
+            )
+
         return geomList
     
     def getResolvedGeomType(self, geometryType):
@@ -218,7 +224,7 @@ class GeopackageDb(SpatialiteDb):
                     12:'MULTISURFACE',
                     13:'CURVE',
                     14:'SURFACE'}
-        return geomDict[geometryType]
+        return geometryType if geometryType in geomDict.values() else geomDict[int(geometryType)]
 
     def getType(self):
         """
