@@ -1,0 +1,12 @@
+{
+"type": "FeatureCollection",
+"name": "edgv3-hid_vala_l",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::32721" } },
+"features": [
+{ "type": "Feature", "properties": { "id": 1, "nome": null, "geometriaaproximada": false, "tipoalterantrop": 9999, "operacional": 9999, "situacaofisica": 9999, "matconstr": 9999, "usoprincipal": 9999, "finalidade": 9999, "lenght_otf": 54079.006788945488 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 8004627.918938768096268, 10311155.39588775113225 ], [ 8008593.255951183848083, 10214665.528585627675056 ] ] ] } },
+{ "type": "Feature", "properties": { "id": 2, "nome": null, "geometriaaproximada": false, "tipoalterantrop": 9999, "operacional": 9999, "situacaofisica": 9999, "matconstr": 9999, "usoprincipal": 9999, "finalidade": 9999, "lenght_otf": 49314.073038327799 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 8049568.405079483985901, 10307190.058875335380435 ], [ 8050890.184083621948957, 10218630.865598043426871 ] ] ] } },
+{ "type": "Feature", "properties": { "id": 3, "nome": null, "geometriaaproximada": false, "tipoalterantrop": 9999, "operacional": 9999, "situacaofisica": 9999, "matconstr": 9999, "usoprincipal": 9999, "finalidade": 9999, "lenght_otf": 25196.410435138954 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 8004627.918938768096268, 10311155.39588775113225 ], [ 8049568.405079483985901, 10307190.058875335380435 ] ] ] } },
+{ "type": "Feature", "properties": { "id": 4, "nome": null, "geometriaaproximada": false, "tipoalterantrop": 9999, "operacional": 9999, "situacaofisica": 9999, "matconstr": 9999, "usoprincipal": 9999, "finalidade": 9999, "lenght_otf": 36670.450598953998 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 8049568.405079483985901, 10307190.058875335380435 ], [ 8115657.35528641846031, 10309833.616883613169193 ] ] ] } },
+{ "type": "Feature", "properties": { "id": 5, "nome": null, "geometriaaproximada": false, "tipoalterantrop": 9999, "operacional": 9999, "situacaofisica": 9999, "matconstr": 9999, "usoprincipal": 9999, "finalidade": 9999, "lenght_otf": 48154.959759914273 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 8115657.35528641846031, 10309833.616883613169193 ], [ 8115657.35528641846031, 10222596.202610459178686 ] ] ] } }
+]
+}
