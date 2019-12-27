@@ -1395,7 +1395,7 @@ class LayerHandler(QObject):
         )
         multiStepFeedback.setCurrentStep(1)
         splitSegmentsLyr = algRunner.runExplodeLines(
-            mergedLineLyr,
+            linesLyr,
             context,
             feedback=multiStepFeedback
         )
@@ -1449,7 +1449,7 @@ class LayerHandler(QObject):
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(3)
-        polygonList, flagList = self.getPolygonListAndFlagListFromBuiltPolygonToCenterPointDict(
+        polygonList, flagList = self.getPolygonListAndFlagDictFromBuiltPolygonToCenterPointDict(
             builtPolygonToCenterPointDict,
             constraintPolygonLyrSpatialIdx,
             constraintPolygonLyrIdDict,
@@ -1471,10 +1471,10 @@ class LayerHandler(QObject):
         iterator, featCount = self.getFeatureList(builtPolygonLyr, onlySelected=False)
         size = 100/featCount if featCount else 0
         columns = self.getAttributesFromBlackList(
-            builtPolygonLyr,
+            inputCenterPointLyr,
             attributeBlackList=attributeBlackList
         )
-        for current, feat in builtPolygonLyr.getFeatures():
+        for current, feat in enumerate(builtPolygonLyr.getFeatures()):
             if feedback is not None and feedback.isCanceled():
                 break
             featGeom = feat.geometry()
@@ -1490,20 +1490,21 @@ class LayerHandler(QObject):
                 if feedback is not None and feedback.isCanceled():
                     break
                 if engine.intersects(pointFeat.geometry().constGet()):
-                    attrKey = ','.join(['{}'.format(feat[column]) for column in columns])
+                    attrKey = ','.join(['{}'.format(pointFeat[column]) for column in columns])
                     builtPolygonToCenterPointDict[geomKey][attrKey].append(pointFeat)
             if feedback is not None:
                 feedback.setCurrentStep(current * size)
         return builtPolygonToCenterPointDict
 
-    def getPolygonListAndFlagListFromBuiltPolygonToCenterPointDict(self, builtPolygonToCenterPointDict,\
+    def getPolygonListAndFlagDictFromBuiltPolygonToCenterPointDict(self, builtPolygonToCenterPointDict,\
             constraintPolygonLyrSpatialIdx, constraintPolygonLyrIdDict, feedback=None):
         """
         returns polygonList, flagList
         """
         keyCount = len(builtPolygonToCenterPointDict)
         size = 100/keyCount if keyCount else 0
-        polygonList, flagList = []
+        polygonList = []
+        flagDict = dict()
         for current, geomKey in enumerate(builtPolygonToCenterPointDict):
             if feedback is not None and feedback.isCanceled():
                 break
@@ -1513,8 +1514,8 @@ class LayerHandler(QObject):
             if len(structureLen) == 1:
                 # actual polygon, must get center point attributes and build final feat
                 pointFeatList = list(builtPolygonToCenterPointDict[geomKey].values())
-                newFeat = QgsFeature(pointFeatList[0].fields())
-                newFeat.setAttributes(pointFeatList[0].attributes())
+                newFeat = QgsFeature(pointFeatList[0][0].fields())
+                newFeat.setAttributes(pointFeatList[0][0].attributes())
                 newFeat.setGeometry(geom)
                 polygonList.append(newFeat)
             else:
@@ -1522,8 +1523,9 @@ class LayerHandler(QObject):
                 for candidateId in constraintPolygonLyrSpatialIdx.intersects(geom.boundingBox()):
                     if feedback is not None and feedback.isCanceled():
                         break
-                    if geom.within(constraintPolygonLyrIdDict[candidateId]) or\
-                        geom.equals(constraintPolygonLyrIdDict[candidateId]):
+                    if geomKey not in flagDict or \
+                        geom.isGeosEqual(constraintPolygonLyrIdDict[candidateId].geometry()) or \
+                        geom.within(constraintPolygonLyrIdDict[candidateId].geometry()):
                         insideConstraint = True
                         break
                 if not insideConstraint:
@@ -1531,12 +1533,7 @@ class LayerHandler(QObject):
                     # set. Must be verityed afterwards
                     flagText = self.tr("Polygon without center point.") if len(structureLen) == 0\
                         else self.tr("Polygon with more than one center point with conflicting attributes.")
-                    flagList.append(
-                        {
-                            'flagGeom' : geom,
-                            'flagText' : flagText
-                        }
-                    )
+                    flagDict[geomKey] = flagText
             if feedback is not None:
                 feedback.setCurrentStep(current * size)
-        return polygonList, flagList
+        return polygonList, flagDict

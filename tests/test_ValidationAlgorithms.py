@@ -123,10 +123,29 @@ class Tester(unittest.TestCase):
         for layer in ogr.Open(path):
             layername = layer.GetName()
             layers[layername] = QgsVectorLayer(
-                        "{0}|layername={1}".format(path, layername), 
-                        layername,
-                        "ogr"
-                    )
+                "{0}|layername={1}".format(path, layername), 
+                layername,
+                "ogr"
+            )
+        return layers
+
+    def readGeojson(self, path):
+        """
+        Reads a folder with Geojson files.
+        :param path: (str) path do the geojson folder.
+        :return: (dict) map to the geojson folder's layers.
+        """
+        layers = dict()
+        fileList = [f for f in next(os.walk(path))[2] if '.geojson' in f]
+        for f in fileList:
+            fullPath = os.path.join(path, f)
+            for layer in ogr.Open(fullPath):
+                layername = layer.GetName()
+                layers[layername] = QgsVectorLayer(
+                    fullPath,
+                    layername,
+                    "ogr"
+                )
         return layers
 
     def testingDataset(self, driver, dataset):
@@ -139,6 +158,7 @@ class Tester(unittest.TestCase):
         """
         spatiaLitePaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'SpatiaLite')
         gpkgPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'Geopackage')
+        geojsonPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'GeoJson')
         datasets = {
             "sqlite" : {
                 "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite')
@@ -148,12 +168,16 @@ class Tester(unittest.TestCase):
                 "testes_sirgas2000_23s" : os.path.join(gpkgPaths, 'testes_sirgas2000_23s.gpkg'),
                 "testes_sirgas2000_24s" : os.path.join(gpkgPaths, 'testes_sirgas2000_24s.gpkg'),
                 "test_dataset_unbuild_polygons" : os.path.join(gpkgPaths, 'test_dataset_unbuild_polygons.gpkg')
+            },
+            "geojson" : {
+                "land_cover_layers" : os.path.join(geojsonPaths, 'land_cover_layers')
             }
         }
         # switch-case for dataset reading
         funcs = {
-            "sqlite" : lambda ds : self.readSpatiaLite(datasets["sqlite"][ds]),
-            "gpkg" : lambda ds : self.readGeopackage(datasets["gpkg"][ds])
+            "sqlite" : lambda ds: self.readSpatiaLite(datasets["sqlite"][ds]),
+            "gpkg" : lambda ds: self.readGeopackage(datasets["gpkg"][ds]),
+            "geojson" : lambda ds: self.readGeojson(datasets["geojson"][ds])
         }
         layers = dict()
         if driver in datasets and dataset in datasets[driver]:
@@ -566,21 +590,39 @@ class Tester(unittest.TestCase):
                 {
                     '__comment' : "'Normal' test: checks if it works.",
                     'INPUT_POLYGONS' : self.getInputLayers(
-                        'gpkg', 'test_dataset_unbuild_polygons', ['vegetation']
+                        'geojson', 'land_cover_layers', ['vegetation']
                     )[0],
                     'SELECTED' : False,
                     'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
-                        'gpkg', 'test_dataset_unbuild_polygons', ['fence', 'road']
+                        'geojson', 'land_cover_layers', ['fence', 'road']
                     ),
                     'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
-                        'gpkg', 'test_dataset_unbuild_polygons', ['water']
+                        'geojson', 'land_cover_layers', ['water']
                     ),
                     'GEOGRAPHIC_BOUNDARY' : '',
                     'OUTPUT_CENTER_POINTS' : "memory:",
                     'OUTPUT_BOUNDARIES' : "memory:"
                 }
             ],
-
+            "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['center_points_test1']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                        'geojson', 'land_cover_layers', ['water']
+                    ),
+                    'GEOGRAPHIC_BOUNDARY' : '',
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
+                }
+            ],
             "dsgtools:ALG" : [
                 {
                     '__comment' : "'Normal' test: checks if it works."
@@ -627,14 +669,29 @@ class Tester(unittest.TestCase):
         :param test: (int) test being run.
         :return: (QgsVectorLayer) expected output layer.
         """
+        rootPath = os.path.join(
+            self.CURRENT_PATH, 'expected_outputs', algName.split(':')[-1]
+        )
+        gpkgOutput = False
+        for f in next(os.walk(rootPath))[2]:
+            if '.gpkg' in f:
+                gpkgOutput = True
+                break
         path = os.path.join(
-                    self.CURRENT_PATH, 'expected_outputs', algName.split(':')[-1],
-                    'test_{0}.gpkg'.format(test)
+                    rootPath,
+                    'test_{test_number}{extension}'.format(
+                        test_number=test,
+                        extension='.gpkg' if gpkgOutput else ''
+                        )
                 )
         if os.path.exists(path):
             if multipleOutputs:
-                return self.readGeopackage(path)
+                return self.readGeopackage(path) if gpkgOutput else self.readGeojson(path)
             else:
+                path = path if gpkgOutput else os.path.join(
+                    path,
+                    'test_{test_number}.geojson'.format(test_number=test)
+                )
                 return QgsVectorLayer(
                             path, 
                             "{alg}_test_{test}_output".format(alg=algName.split(':')[-1], test=test),
@@ -682,7 +739,7 @@ class Tester(unittest.TestCase):
             if featId not in targetFeatDict:
                 return "Feature id={0} was not found on output layer.".format(featId)
             testFeat = targetFeatDict[featId]
-            if not testFeat.geometry().equals(refFeat.geometry()):
+            if not testFeat.geometry().isGeosEqual(refFeat.geometry()):
                 return "Feature {fid} has incorrect geometry.".format(fid=featId)
             for attr in targetFieldNames:
                 if attr not in attributeBlackList and testFeat[attr] != refFeat[attr]:
@@ -823,10 +880,23 @@ class Tester(unittest.TestCase):
                 # network algs
                 "dsgtools:adjustnetworkconnectivity"
             ]
+        multipleOutputAlgs = [
+            "dsgtools:unbuildpolygonsalgorithm",
+            "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm"
+        ]
         # for alg in self.readAvailableAlgs(self.DEFAULT_ALG_PATH):
         for alg in algs:
             try:
                 results[alg] = self.testAlg(alg)
+            except KeyError:
+                results[alg] = "No tests registered."
+        for alg in multipleOutputAlgs:
+            try:
+                results[alg] = self.testAlg(
+                    alg,
+                    multipleOutputs=True,
+                    attributeBlackList=['path']
+                )
             except KeyError:
                 results[alg] = "No tests registered."
         return results
@@ -937,7 +1007,22 @@ class Tester(unittest.TestCase):
     
     def test_unbuildpolygonsalgorithm(self):
         self.assertEqual(
-            self.testAlg("dsgtools:unbuildpolygonsalgorithm", multipleOutputs=True, attributeBlackList=['path']), ""
+            self.testAlg(
+                "dsgtools:unbuildpolygonsalgorithm",
+                multipleOutputs=True,
+                attributeBlackList=['path'],
+                addControlKey=True
+            ),
+            ""
+        )
+    
+    def test_buildpolygonsfromcenterpointsandboundariesalgorithm(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
+                multipleOutputs=True
+            ),
+            ""
         )
 
 def run_all(filterString=None):

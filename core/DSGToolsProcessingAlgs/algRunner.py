@@ -554,12 +554,11 @@ class AlgRunner:
         return output['OUTPUT']
     
     def runJoinAttributesByLocation(self, inputLyr, joinLyr, context, predicateList=None, joinFields=None,\
-        method=None, discardNonMatching=True, feedback=None, outputLyr=None, unjoinnedLyr=None, returnNonMatching=False):
+        method=None, discardNonMatching=True, feedback=None, outputLyr=None, unjoinnedLyr=None):
         predicateList = [0] if predicateList is None else predicateList
         joinFields = [] if joinFields is None else joinFields
         method = 0 if method is None else method
         outputLyr = 'memory:' if outputLyr is None else outputLyr
-        unjoinnedLyr = 'memory:' if unjoinnedLyr is None else unjoinnedLyr
         parameters = {
             'INPUT' : inputLyr,
             'JOIN' : joinLyr,
@@ -568,8 +567,7 @@ class AlgRunner:
             'METHOD' : method,
             'DISCARD_NONMATCHING' : discardNonMatching,
             'PREFIX' : '',
-            'OUTPUT' : outputLyr,
-            'NON_MATCHING': unjoinnedLyr
+            'OUTPUT' : outputLyr
         }
         output = processing.run(
             "qgis:joinattributesbylocation",
@@ -577,7 +575,7 @@ class AlgRunner:
             context=context,
             feedback=feedback
         )
-        return output['OUTPUT'] if not returnNonMatching else output['OUTPUT'], parameters['NON_MATCHING']
+        return output['OUTPUT']
  
     def runLineIntersections(self, inputLyr, intersectLyr, context, feedback=None, outputLyr=None):
         outputLyr = 'memory:' if outputLyr is None else outputLyr

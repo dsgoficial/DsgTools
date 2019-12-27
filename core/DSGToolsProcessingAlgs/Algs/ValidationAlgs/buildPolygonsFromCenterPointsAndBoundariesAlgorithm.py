@@ -166,10 +166,10 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         self.prepareFlagSink(
             parameters,
             inputCenterPointLyr,
-            inputCenterPointLyr.wkbType(),
+            QgsWkbTypes.Polygon,
             context
         )
-        polygonFeatList, flagList = layerHandler.getPolygonsFromCenterPointsAndBoundaries(
+        polygonFeatList, flagDict = layerHandler.getPolygonsFromCenterPointsAndBoundaries(
             inputCenterPointLyr,
             geographicBoundaryLyr=geographicBoundaryLyr,
             constraintLineLyrList=constraintLineLyrList,
@@ -182,8 +182,8 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         output_polygon_sink.addFeatures(
             polygonFeatList, QgsFeatureSink.FastInsert
         )
-        for flagDict in flagList:
-            self.flagFeature(flagDict['flagGeom'], flagDict['flagText'])
+        for flagGeom, flagText in flagDict.items():
+            self.flagFeature(flagGeom, flagText, fromWkb=True)
 
         return {
             self.OUTPUT_POLYGONS : output_polygon_sink_id,
