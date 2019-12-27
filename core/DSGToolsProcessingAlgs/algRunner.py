@@ -554,7 +554,7 @@ class AlgRunner:
         return output['OUTPUT']
     
     def runJoinAttributesByLocation(self, inputLyr, joinLyr, context, predicateList=None, joinFields=None,\
-        method=None, discardNonMatching=True, feedback=None, outputLyr=None):
+        method=None, discardNonMatching=True, feedback=None, outputLyr=None, unjoinnedLyr=None):
         predicateList = [0] if predicateList is None else predicateList
         joinFields = [] if joinFields is None else joinFields
         method = 0 if method is None else method
@@ -564,7 +564,7 @@ class AlgRunner:
             'JOIN' : joinLyr,
             'PREDICATE' : predicateList,
             'JOIN_FIELDS' : joinFields,
-            'METHOD' : 0,
+            'METHOD' : method,
             'DISCARD_NONMATCHING' : discardNonMatching,
             'PREFIX' : '',
             'OUTPUT' : outputLyr
@@ -576,7 +576,7 @@ class AlgRunner:
             feedback=feedback
         )
         return output['OUTPUT']
-    
+ 
     def runLineIntersections(self, inputLyr, intersectLyr, context, feedback=None, outputLyr=None):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
