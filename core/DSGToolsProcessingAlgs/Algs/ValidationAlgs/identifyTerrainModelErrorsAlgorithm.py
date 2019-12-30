@@ -111,8 +111,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        spatialRealtionsHandler = SpatialRealtionsHandler()
-        algRunner = AlgRunner()
+        spatialRealtionsHandler = SpatialRelationsHandler()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
