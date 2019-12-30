@@ -99,7 +99,9 @@ class SpatialRelationsHandler(QObject):
             attributeName=heightFieldName,
             feedback=multiStepFeedback
         )
-        contourFlags = self.
+        # contourFlags = self.validateContourRelations(
+
+        # )
 
         return invalidDict
 
