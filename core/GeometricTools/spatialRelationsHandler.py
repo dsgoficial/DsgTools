@@ -82,6 +82,7 @@ class SpatialRelationsHandler(QObject):
         """
         Does several validation procedures with terrain elements.
         """
+        invalidDict = dict()
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback) #ajustar depois
         multiStepFeedback.setCurrentStep(0)
         splitLinesLyr = self.algRunner.runSplitLinesWithLines(
@@ -90,7 +91,17 @@ class SpatialRelationsHandler(QObject):
             context=context,
             feedback=multiStepFeedback
         )
+        multiStepFeedback.setCurrentStep(1)
+        (
+            contourSpatialIdx, contourIdDict, contourNodeDict, heightsDict
+        ) = self.buildSpatialIndexAndIdDictRelateNodesAndAttributeGroupDict(
+            inputLyr=contourLyr,
+            attributeName=heightFieldName,
+            feedback=multiStepFeedback
+        )
+        contourFlags = self.
 
+        return invalidDict
 
     def relateDrainagesWithContours(self, drainageLyr, contourLyr, frameLinesLyr, heightFieldName, threshold, topologyRadius, feedback=None):
         """
@@ -174,7 +185,8 @@ class SpatialRelationsHandler(QObject):
             contourIdDict
             )
 
-    def buildSpatialIndexAndIdDictAndRelateNodes(self, inputLyr, feedback=None, featureRequest=None):
+    def buildSpatialIndexAndIdDictAndRelateNodes(self, inputLyr, feedback=None,\
+            featureRequest=None):
         """
         creates a spatial index for the input layer
         :param inputLyr: (QgsVectorLayer) input layer;
@@ -186,8 +198,11 @@ class SpatialRelationsHandler(QObject):
         nodeDict = defaultdict(list)
         featCount = inputLyr.featureCount()
         size = 100/featCount if featCount else 0
-        iterator = inputLyr.getFeatures() if featureRequest is None else inputLyr.getFeatures(featureRequest)
-        firstAndLastNode = lambda x:self.geometryHandler.getFirstAndLastNode(inputLyr, x)
+        iterator = inputLyr.getFeatures() if featureRequest is None \
+            else inputLyr.getFeatures(featureRequest)
+        firstAndLastNode = lambda x:self.geometryHandler.getFirstAndLastNode(
+            inputLyr, x
+        )
         addFeatureAlias = lambda x : self.addFeatureToSpatialIndexAndNodeDict(
             current=x[0],
             feat=x[1],
@@ -200,28 +215,41 @@ class SpatialRelationsHandler(QObject):
         )
         list(map(addFeatureAlias, enumerate(iterator)))
         return spatialIdx, idDict, nodeDict
-    
-    def addFeatureToSpatialIndexAndNodeDict(self, current, feat, spatialIdx, idDict, nodeDict, size, firstAndLastNode, feedback):
+
+    def addFeatureToSpatialIndexAndNodeDict(self, current, feat, spatialIdx,\
+            idDict, nodeDict, size, firstAndLastNode, feedback):
         """
-        Adds feature to spatial index. Used along side with a python map operator
-        to improve performance.
+        Adds feature to spatial index. Used along side with a python map
+        operator to improve performance.
         :param current : (int) current index
-        :param feat : (QgsFeature) feature to be added on spatial index and on idDict
+        :param feat : (QgsFeature) feature to be added on spatial index and
+        on idDict
         :param spatialIdx: (QgsSpatialIndex) spatial index
         :param idDict: (dict) dictionary with format {feat.id(): feat}
-        :param nodeDict: (defaultdict(list)) dictionary with format {node:[list of features]}
+        :param nodeDict: (defaultdict(list)) dictionary with format
+        {node:[list of features]}
         :param size: (int) size to be used to update feedback
-        :param firstAndLastNode: (dict) dictionary used to relate nodes of features
-        :param feedback: (QgsProcessingFeedback) feedback to be used on processing
+        :param firstAndLastNode: (dict) dictionary used to relate nodes of
+        features
+        :param feedback: (QgsProcessingFeedback) feedback to be used on
+        processing
         """
         if feedback is not None and feedback.isCanceled():
             return
         firstNode, lastNode = firstAndLastNode(feat)
         nodeDict[firstNode] += [firstNode]
         nodeDict[lastNode] += [lastNode]
-        self.layerHandler.addFeatureToSpatialIndex(current, feat, spatialIdx, idDict, size, feedback)
+        self.layerHandler.addFeatureToSpatialIndex(
+            current,
+            feat,
+            spatialIdx,
+            idDict,
+            size,
+            feedback
+        )
 
-    def buildSpatialIndexAndIdDictRelateNodesAndAttributeGroupDict(self, inputLyr, attributeName, feedback=None, featureRequest=None):
+    def buildSpatialIndexAndIdDictRelateNodesAndAttributeGroupDict(self, inputLyr,\
+            attributeName, feedback=None, featureRequest=None):
         """
 
         """
@@ -248,7 +276,9 @@ class SpatialRelationsHandler(QObject):
         list(map(addFeatureAlias, enumerate(iterator)))
         return spatialIdx, idDict, nodeDict, attributeGroupDict
     
-    def addFeatureToSpatialIndexNodeDictAndAttributeGroupDict(self, current, feat, spatialIdx, idDict, nodeDict, size, firstAndLastNode, attributeGroupDict, attributeName, feedback):
+    def addFeatureToSpatialIndexNodeDictAndAttributeGroupDict(self, current, feat,\
+            spatialIdx, idDict, nodeDict, size, firstAndLastNode, attributeGroupDict,\
+            attributeName, feedback):
         """
         Adds feature to spatial index. Used along side with a python map operator
         to improve performance.
@@ -264,9 +294,19 @@ class SpatialRelationsHandler(QObject):
         if attrValue not in attributeGroupDict:
             attributeGroupDict[attrValue] = set()
         attributeGroupDict[attrValue].add(feat.geometry())
-        self.addFeatureToSpatialIndexAndNodeDict(current, feat, spatialIdx, idDict, nodeDict, size, firstAndLastNode, feedback)
+        self.addFeatureToSpatialIndexAndNodeDict(
+            current,
+            feat,
+            spatialIdx,
+            idDict,
+            nodeDict,
+            size,
+            firstAndLastNode,
+            feedback
+        )
     
-    def validateContourRelations(self, contourNodeDict, frameLinesDict, frameLinesSpatialIdx, heightFieldName, feedback=None):
+    def validateContourRelations(self, contourNodeDict, frameLinesDict,\
+            frameLinesSpatialIdx, heightFieldName, searchRadius=None, feedback=None):
         """
         param: contourNodeDict: (dict) dictionary with contour nodes
         Invalid contours:
@@ -281,21 +321,25 @@ class SpatialRelationsHandler(QObject):
             if feedback is not None and feedback.isCanceled():
                 break
             if len(contourList) == 1:
-                if self.isDangle(node, frameLinesDict, frameLinesSpatialIdx):
+                if searchRadius is None or self.isDangle(node, frameLinesDict, frameLinesSpatialIdx):
                     invalidDict[node] = self.tr(
-                        'Contour lines id=({ids}) touch each other and have different height values!'
-                        ).format(ids=', '.join(map(contourId, contourList)))
+                        'Contour lines must be closed or intersect the geographic boundary.'
+                        )
             if len(contourList) == 2 and contourList[0][heightFieldName] != contourList[1][heightFieldName]:
                 invalidDict[node] = self.tr(
                     'Contour lines id=({ids}) touch each other and have different height values!'
                     ).format(ids=', '.join(map(contourId, contourList)))
             if len(contourList) > 2:
                 invalidDict[node] = self.tr(
-                    'Contour lines id=({ids}) touch each other. Contour lines must touch itself or only one other.'
+                    'Contour lines id=({ids}) intersect each other. Contour lines must touch itself or only one other.'
                     ).format(ids=', '.join(map(contourId, contourList)))
             if feedback is not None:
                 feedback.setProgress(step * current)
         return invalidDict
+    
+    def isDangleInsideGeographicBounds(self, point, geoBoundsGeom, searchRadius=None):
+        return 
+
     
     def isDangle(self, point, featureDict, spatialIdx, searchRadius=10**-15):
         """
