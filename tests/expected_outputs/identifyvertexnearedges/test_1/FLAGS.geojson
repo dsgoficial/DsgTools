@@ -1,6 +1,6 @@
 {
 "type": "FeatureCollection",
-"name": "test1",
+"name": "FLAGS",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31984" } },
 "features": [
 { "type": "Feature", "properties": { "reason": "Vertex Point (591203.43731759104412049 8604187.93174950033426285) from feature 1 layer test1_vertexnearedge_a is near edge(s) LineString (591334.55707488488405943 8604186.95593817159533501, 591201.86210413312073797 8604187.38834835030138493)." }, "geometry": { "type": "Point", "coordinates": [ 591203.43731759104412, 8604187.931749500334263 ] } },
