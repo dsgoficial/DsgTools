@@ -798,7 +798,7 @@ class Tester(unittest.TestCase):
                     'CONTOUR_ATTR':'contour',
                     'CONTOUR_INTERVAL':10,
                     'TOPOLOGY_RADIUS':2,
-                    'GEOGRAPHIC_BOUNDARY' : self.getInputLayers(
+                    'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
                         'geojson', 'terrain_model_layers', ['geographic_bounds_test1']
                     )[0],
                     'FLAGS' : "memory:"
