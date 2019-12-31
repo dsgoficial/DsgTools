@@ -170,7 +170,8 @@ class Tester(unittest.TestCase):
                 "test_dataset_unbuild_polygons" : os.path.join(gpkgPaths, 'test_dataset_unbuild_polygons.gpkg')
             },
             "geojson" : {
-                "land_cover_layers" : os.path.join(geojsonPaths, 'land_cover_layers')
+                "land_cover_layers" : os.path.join(geojsonPaths, 'land_cover_layers'),
+                "terrain_model_layers" : os.path.join(geojsonPaths, 'terrain_model_layers')
             }
         }
         # switch-case for dataset reading
