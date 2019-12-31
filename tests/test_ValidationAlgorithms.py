@@ -158,7 +158,7 @@ class Tester(unittest.TestCase):
         """
         spatiaLitePaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'SpatiaLite')
         gpkgPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'Geopackage')
-        geojsonPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'GeoJson')
+        geojsonPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'GeoJSON')
         datasets = {
             "sqlite" : {
                 "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite')
@@ -784,7 +784,23 @@ class Tester(unittest.TestCase):
                     )[0],
                     'OUTPUT_POLYGONS' : "memory:",
                     'FLAGS' : "memory:"
-                }
+                }  
+            ],
+            "dsgtools:identifyterrainmodelerrorsalgorithm" : [
+                {
+                    '__comment' : "test 1",
+                    "INPUT" : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['contours_test1']
+                    )[0],
+                    'SELECTED' : False,
+                    'CONTOUR_ATTR':'contour',
+                    'CONTOUR_INTERVAL':10,
+                    'TOPOLOGY_RADIUS':2,
+                    'GEOGRAPHIC_BOUNDARY' : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['geographic_bounds_test1']
+                    )[0],
+                    'FLAGS' : "memory:"
+                }  
             ],
             "dsgtools:ALG" : [
                 {
@@ -1186,6 +1202,15 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg(
                 "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
+                multipleOutputs=True,
+                addControlKey=True
+            ),
+            ""
+        )
+    def test_identifyterrainmodelerrorsalgorithm(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:identifyterrainmodelerrorsalgorithm",
                 multipleOutputs=True,
                 addControlKey=True
             ),

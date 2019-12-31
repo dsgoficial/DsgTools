@@ -638,3 +638,22 @@ class AlgRunner:
             feedback=feedback
         )
         return output['OUTPUT']
+    
+    def runAggregate(self, inputLyr, context, groupBy=None, aggregates=None, \
+        feedback=None, outputLyr=None, onlySelected=False):
+        groupBy = 'NULL' if groupBy is None else groupBy
+        aggregates = [] if aggregates is None else aggregates
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'GROUP_BY' : groupBy,
+            'AGGREGATES' : aggregates,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "qgis:aggregate",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
