@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+import processing
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
                        QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
@@ -29,25 +30,27 @@ from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
                        QgsProcessingParameterEnum,
                        QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterField,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterNumber,
                        QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsSpatialIndex, QgsWkbTypes, QgsVectorLayerUtils)
+                       QgsSpatialIndex, QgsVectorLayerUtils, QgsWkbTypes)
 
-import processing
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
+from DsgTools.core.GeometricTools.spatialRelationsHandler import \
+    SpatialRelationsHandler
+
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
-    TOPOLOGY_RADIUS = 'TOPOLOGY_RADIUS'
     CONTOUR_INTERVAL = 'CONTOUR_INTERVAL'
     GEOGRAPHIC_BOUNDS = 'GEOGRAPHIC_BOUNDS'
     CONTOUR_ATTR = 'CONTOUR_ATTR'
+    FLAGS = 'FLAGS'
 
     def initAlgorithm(self, config):
         """
@@ -84,19 +87,11 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
-            QgsProcessingParameterNumber(
-                self.TOPOLOGY_RADIUS,
-                self.tr('Topology radius'),
-                minValue=0,
-                defaultValue=2
-            )
-        )
-        self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDS,
                 self.tr('Geographic bounds layer'),
                 [QgsProcessing.TypeVectorPolygon],
-                optional=True
+                optional=False
             )
         )
 
@@ -117,21 +112,19 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUT))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        contourFieldName = self.parameterAsField(
-            parameters, self.CONTOUR_ATTR, context)
+        heightFieldName = self.parameterAsFields(
+            parameters, self.CONTOUR_ATTR, context)[0]
         threshold = self.parameterAsDouble(
             parameters, self.CONTOUR_INTERVAL, context)
-        topology_radius = self.parameterAsDouble(
-            parameters, self.TOPOLOGY_RADIUS, context)
         geoBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDS, context)
         self.prepareFlagSink(parameters, inputLyr,
-                             QgsWkbTypes.Polygon, context)
+                             QgsWkbTypes.Point, context)
 
         invalidDict = spatialRealtionsHandler.validateTerrainModel(
             contourLyr=inputLyr,
             onlySelected=onlySelected,
-            contourFieldName=contourFieldName,
+            heightFieldName=heightFieldName,
             threshold=threshold,
             geoBoundsLyr=geoBoundsLyr,
             feedback=feedback

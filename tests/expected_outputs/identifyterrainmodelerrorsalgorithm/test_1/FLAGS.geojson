@@ -1,0 +1,13 @@
+{
+"type": "FeatureCollection",
+"name": "FLAGS",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "reason": "Contour lines intersect each other. Contour lines must touch itself or only one other with same height value." }, "geometry": { "type": "Point", "coordinates": [ 0.006344388028263, 0.145912733352004 ] } },
+{ "type": "Feature", "properties": { "reason": "Contour lines intersect each other. Contour lines must touch itself or only one other with same height value." }, "geometry": { "type": "Point", "coordinates": [ -0.335502500612857, 0.16277563328104 ] } },
+{ "type": "Feature", "properties": { "reason": "Contour lines must be closed or intersect the geographic boundary." }, "geometry": { "type": "Point", "coordinates": [ -0.407411057455405, 0.737025721888243 ] } },
+{ "type": "Feature", "properties": { "reason": "Contour lines touch each other and have different height values." }, "geometry": { "type": "Point", "coordinates": [ 0.61274897046041, 0.257555150656458 ] } },
+{ "type": "Feature", "properties": { "reason": "Contour lines must be closed or intersect the geographic boundary." }, "geometry": { "type": "Point", "coordinates": [ -0.472691435892382, 0.66890706612792 ] } },
+{ "type": "Feature", "properties": { "reason": "Contour lines touch each other and have different height values." }, "geometry": { "type": "Point", "coordinates": [ -0.648177894966599, 0.13593649464403 ] } }
+]
+}
