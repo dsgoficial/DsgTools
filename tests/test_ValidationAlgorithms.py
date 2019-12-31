@@ -171,7 +171,8 @@ class Tester(unittest.TestCase):
             },
             "geojson" : {
                 "land_cover_layers" : os.path.join(geojsonPaths, 'land_cover_layers'),
-                "terrain_model_layers" : os.path.join(geojsonPaths, 'terrain_model_layers')
+                "terrain_model_layers" : os.path.join(geojsonPaths, 'terrain_model_layers'),
+                "testes_sirgas2000_24s" : os.path.join(geojsonPaths, 'testes_sirgas2000_24s')
             }
         }
         # switch-case for dataset reading
@@ -1155,7 +1156,11 @@ class Tester(unittest.TestCase):
     
     def test_identifyvertexnearedges(self):
         self.assertEqual(
-            self.testAlg("dsgtools:identifyvertexnearedges", addControlKey=True), ""
+            self.testAlg(
+                "dsgtools:identifyvertexnearedges",
+                addControlKey=True,
+                multipleOutputs=True
+            ), ""
         )
     
     # def test_overlayelementswithareas(self):
