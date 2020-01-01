@@ -114,10 +114,11 @@ class SpatialRelationsHandler(QObject):
         )
         invalidDict.update(contourFlags)
         multiStepFeedback.setCurrentStep(4)
-        contourOutOfThresholdDict = {
-            v.asWkt() : self.tr('Contour out of threshold.') \
-                for (k,v) in heightsDict.items() if k % threshold != 0
-        }
+        contourOutOfThresholdDict = OrderedDict()
+        for (k,valueSet) in heightsDict.items():
+            for i in valueSet:
+                if k % threshold != 0:
+                    contourOutOfThresholdDict[i.asWkb()] = self.tr('Contour out of threshold.')
         invalidDict.update(contourOutOfThresholdDict)
         if len(invalidDict) > 0:
             return invalidDict

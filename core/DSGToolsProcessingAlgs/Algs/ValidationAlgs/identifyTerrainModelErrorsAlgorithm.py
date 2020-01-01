@@ -141,11 +141,11 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             feedback=feedback
         )
 
-        for geom, text in invalidDict.items():
-            if isinstance(geom, QgsGeometry):
-                self.flagFeature(geom, text, fromWkb=False, sink=line_flagSink)
-            else:
-                self.flagFeature(geom, text, fromWkb=True, sink=point_flagSink)
+        for flagGeom, text in invalidDict.items():
+            geom = QgsGeometry()
+            geom.fromWkb(flagGeom)
+            flagSink = line_flagSink if geom.type() == QgsWkbTypes.LineGeometry else point_flagSink
+            self.flagFeature(geom, text, fromWkb=False, sink=flagSink)
 
         return {self.POINT_FLAGS : point_flag_id, self.LINE_FLAGS : line_flag_id}
 
