@@ -801,7 +801,8 @@ class Tester(unittest.TestCase):
                     'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
                         'geojson', 'terrain_model_layers', ['geographic_bounds_test1']
                     )[0],
-                    'FLAGS' : "memory:"
+                    'POINT_FLAGS' : "memory:",
+                    'LINE_FLAGS' : "memory:"
                 }  
             ],
             "dsgtools:ALG" : [
