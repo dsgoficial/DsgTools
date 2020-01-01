@@ -50,7 +50,8 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
     CONTOUR_INTERVAL = 'CONTOUR_INTERVAL'
     GEOGRAPHIC_BOUNDS = 'GEOGRAPHIC_BOUNDS'
     CONTOUR_ATTR = 'CONTOUR_ATTR'
-    FLAGS = 'FLAGS'
+    POINT_FLAGS = 'POINT_FLAGS'
+    LINE_FLAGS = 'LINE_FLAGS'
 
     def initAlgorithm(self, config):
         """
@@ -97,8 +98,14 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.POINT_FLAGS,
+                self.tr('{0} Point Flags').format(self.displayName())
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.LINE_FLAGS,
+                self.tr('{0} Line Flags').format(self.displayName())
             )
         )
 
@@ -118,8 +125,12 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             parameters, self.CONTOUR_INTERVAL, context)
         geoBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDS, context)
-        self.prepareFlagSink(parameters, inputLyr,
-                             QgsWkbTypes.Point, context)
+        point_flagSink, point_flag_id = self.prepareAndReturnFlagSink(
+            parameters, inputLyr, QgsWkbTypes.Point, context, self.POINT_FLAGS
+        )
+        line_flagSink, line_flag_id = self.prepareAndReturnFlagSink(
+            parameters, inputLyr, QgsWkbTypes.LineString, context, self.LINE_FLAGS
+        )
 
         invalidDict = spatialRealtionsHandler.validateTerrainModel(
             contourLyr=inputLyr,
@@ -131,9 +142,12 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         )
 
         for geom, text in invalidDict.items():
-            self.flagFeature(geom, text, fromWkb=True)
+            if isinstance(geom, QgsGeometry):
+                self.flagFeature(geom, text, fromWkb=False, sink=line_flagSink)
+            else:
+                self.flagFeature(geom, text, fromWkb=True, sink=point_flagSink)
 
-        return {self.FLAGS: self.flag_id}
+        return {self.POINT_FLAGS : point_flag_id, self.LINE_FLAGS : line_flag_id}
 
     def name(self):
         """

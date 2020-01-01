@@ -23,7 +23,7 @@
 from __future__ import absolute_import
 
 from itertools import tee
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 from qgis.core import (Qgis,
                        QgsFeature,
@@ -82,7 +82,7 @@ class SpatialRelationsHandler(QObject):
         """
         Does several validation procedures with terrain elements.
         """
-        invalidDict = dict()
+        invalidDict = OrderedDict()
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback) #ajustar depois
         multiStepFeedback.setCurrentStep(0)
         splitLinesLyr = self.algRunner.runSplitLinesWithLines(
@@ -113,8 +113,15 @@ class SpatialRelationsHandler(QObject):
             geoBoundsGeomEngine=geoBoundsGeomEngine
         )
         invalidDict.update(contourFlags)
-
-        return invalidDict
+        multiStepFeedback.setCurrentStep(4)
+        contourOutOfThresholdDict = {
+            v.asWkt() : self.tr('Contour out of threshold.') \
+                for (k,v) in heightsDict.items() if k % threshold != 0
+        }
+        invalidDict.update(contourOutOfThresholdDict)
+        if len(invalidDict) > 0:
+            return invalidDict
+        
     
     def getGeoBoundsGeomEngine(self, geoBoundsLyr, context=None, feedback=None):
         """
