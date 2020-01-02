@@ -114,14 +114,19 @@ class SpatialRelationsHandler(QObject):
         )
         invalidDict.update(contourFlags)
         multiStepFeedback.setCurrentStep(4)
-        contourOutOfThresholdDict = OrderedDict()
-        for (k,valueSet) in heightsDict.items():
-            for i in valueSet:
-                if k % threshold != 0:
-                    contourOutOfThresholdDict[i.asWkb()] = self.tr('Contour out of threshold.')
+        contourOutOfThresholdDict = self.findContourOutOfThreshold(
+            heightsDict,
+            threshold,
+            feedback=multiStepFeedback
+        )
+
+
         invalidDict.update(contourOutOfThresholdDict)
         if len(invalidDict) > 0:
             return invalidDict
+        
+
+        return invalidDict
         
     
     def getGeoBoundsGeomEngine(self, geoBoundsLyr, context=None, feedback=None):
@@ -142,6 +147,21 @@ class SpatialRelationsHandler(QObject):
         engine = QgsGeometry.createGeometryEngine(mergedGeom.constGet())
         engine.prepareGeometry()
         return engine
+    
+    def findContourOutOfThreshold(self, heightsDict, threshold, feedback=None):
+        contourOutOfThresholdDict = OrderedDict()
+        size = 100/len(heightsDict) if len(heightsDict) else 0
+        for current, (k,valueSet) in enumerate(heightsDict.items()):
+            if feedback is not None and feedback.isCanceled():
+                break
+            for i in valueSet:
+                if feedback is not None and feedback.isCanceled():
+                    break
+                if k % threshold != 0:
+                    contourOutOfThresholdDict[i.asWkb()] = self.tr('Contour out of threshold.')
+            if feedback is not None:
+                feedback.setProgress(current * size)
+        return contourOutOfThresholdDict
 
     def relateDrainagesWithContours(self, drainageLyr, contourLyr, frameLinesLyr, heightFieldName, threshold, topologyRadius, feedback=None):
         """
