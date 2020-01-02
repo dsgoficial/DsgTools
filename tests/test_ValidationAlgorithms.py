@@ -833,7 +833,22 @@ class Tester(unittest.TestCase):
                     )[0],
                     'POINT_FLAGS' : "memory:",
                     'LINE_FLAGS' : "memory:"
-                }  
+                },
+                {
+                    '__comment' : "test 4",
+                    "INPUT" : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['contours_test4']
+                    )[0],
+                    'SELECTED' : False,
+                    'CONTOUR_ATTR':'contour',
+                    'CONTOUR_INTERVAL':10,
+                    'TOPOLOGY_RADIUS':2,
+                    'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['geographic_bounds_test4']
+                    )[0],
+                    'POINT_FLAGS' : "memory:",
+                    'LINE_FLAGS' : "memory:"
+                }
             ],
             "dsgtools:ALG" : [
                 {
