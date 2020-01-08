@@ -36,6 +36,7 @@ class ModelTester(unittest.TestCase):
         self.assertRaises(Exception, DsgToolsProcessingModel, name="")
         model = DsgToolsProcessingModel({}, "Invalid model")
         self.assertFalse(model.isValid())
+        self.assertEquals(model.name(), "Invalid model")
 
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
