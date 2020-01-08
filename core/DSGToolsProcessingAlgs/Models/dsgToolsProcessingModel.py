@@ -71,7 +71,7 @@ class DsgToolsProcessingModel(QgsTask):
             # "", QgsTask.CanCancel if flags is None else flags
             taskName or QCoreApplication.translate(
                 "DsgToolsProcessingModel",
-                "DSGTools Quality Assurance Model"
+                "DSGTools Quality Assurance Model: {0}".format(name)
             ),
             QgsTask.CanCancel if flags is None else flags
         )
