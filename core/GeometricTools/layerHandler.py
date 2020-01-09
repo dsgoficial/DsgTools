@@ -1195,6 +1195,17 @@ class LayerHandler(QObject):
         )
         return mergedLayer
 
+    def reprojectLayer(self, layer, targetEpsg, output=None):
+        """
+        Reprojects layer's CRS.
+        :param : (QgsVectorLayer) layer to be reprojected.
+        :param targetCrs: (QgsCoordinateReferenceSystem) CRS object for the
+                          output layer.
+        :param output: (QgsVectorLayer) layer accomodate reprojected layer.
+        :return: (QgsVectorLayer) reprojected layer
+        """
+        return AlgRunner().runReprojectLayer(layer, targetEpsg, output)
+
     def getMergedLayer(self, inputLayerList, onlySelected=False, feedback=None, context=None, algRunner=None):
         """
         This does almost the same of createAndPopulateUnifiedVectorLayer, but it

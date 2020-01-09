@@ -158,7 +158,7 @@ class Tester(unittest.TestCase):
         """
         spatiaLitePaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'SpatiaLite')
         gpkgPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'Geopackage')
-        geojsonPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'GeoJson')
+        geojsonPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'GeoJSON')
         datasets = {
             "sqlite" : {
                 "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite')
@@ -170,7 +170,9 @@ class Tester(unittest.TestCase):
                 "test_dataset_unbuild_polygons" : os.path.join(gpkgPaths, 'test_dataset_unbuild_polygons.gpkg')
             },
             "geojson" : {
-                "land_cover_layers" : os.path.join(geojsonPaths, 'land_cover_layers')
+                "land_cover_layers" : os.path.join(geojsonPaths, 'land_cover_layers'),
+                "terrain_model_layers" : os.path.join(geojsonPaths, 'terrain_model_layers'),
+                "testes_sirgas2000_24s" : os.path.join(geojsonPaths, 'testes_sirgas2000_24s')
             }
         }
         # switch-case for dataset reading
@@ -412,7 +414,7 @@ class Tester(unittest.TestCase):
                     '__comment' : "'Normal' test: checks if it works with polygon.",
                     'FLAGS': "memory:",
                     'INPUT': self.getInputLayers(
-                            'gpkg', 'testes_sirgas2000_24s', ['test1_vertexnearedge_a']
+                            'geojson', 'testes_sirgas2000_24s', ['test1_vertexnearedge_a']
                         )[0],
                     'SEARCH_RADIUS':1,
                     'SELECTED': False
@@ -421,7 +423,7 @@ class Tester(unittest.TestCase):
                     '__comment' : "'Normal' test: checks if it works with polygon.",
                     'FLAGS': "memory:",
                     'INPUT': self.getInputLayers(
-                            'gpkg', 'testes_sirgas2000_24s', ['test2_vertexnearedge_l']
+                            'geojson', 'testes_sirgas2000_24s', ['test2_vertexnearedge_l']
                         )[0],
                     'SEARCH_RADIUS':1,
                     'SELECTED': False
@@ -784,6 +786,83 @@ class Tester(unittest.TestCase):
                     )[0],
                     'OUTPUT_POLYGONS' : "memory:",
                     'FLAGS' : "memory:"
+                }  
+            ],
+            "dsgtools:identifyterrainmodelerrorsalgorithm" : [
+                {
+                    '__comment' : "test 1",
+                    "INPUT" : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['contours_test1']
+                    )[0],
+                    'SELECTED' : False,
+                    'CONTOUR_ATTR':'contour',
+                    'CONTOUR_INTERVAL':10,
+                    'TOPOLOGY_RADIUS':2,
+                    'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['geographic_bounds_test1']
+                    )[0],
+                    'POINT_FLAGS' : "memory:",
+                    'LINE_FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 2",
+                    "INPUT" : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['contours_test2']
+                    )[0],
+                    'SELECTED' : False,
+                    'CONTOUR_ATTR':'contour',
+                    'CONTOUR_INTERVAL':10,
+                    'TOPOLOGY_RADIUS':2,
+                    'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['geographic_bounds_test2']
+                    )[0],
+                    'POINT_FLAGS' : "memory:",
+                    'LINE_FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 3",
+                    "INPUT" : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['contours_test3']
+                    )[0],
+                    'SELECTED' : False,
+                    'CONTOUR_ATTR':'contour',
+                    'CONTOUR_INTERVAL':10,
+                    'TOPOLOGY_RADIUS':2,
+                    'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['geographic_bounds_test3']
+                    )[0],
+                    'POINT_FLAGS' : "memory:",
+                    'LINE_FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 4",
+                    "INPUT" : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['contours_test4']
+                    )[0],
+                    'SELECTED' : False,
+                    'CONTOUR_ATTR':'contour',
+                    'CONTOUR_INTERVAL':10,
+                    'TOPOLOGY_RADIUS':2,
+                    'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['geographic_bounds_test4']
+                    )[0],
+                    'POINT_FLAGS' : "memory:",
+                    'LINE_FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 5",
+                    "INPUT" : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['contours_test5']
+                    )[0],
+                    'SELECTED' : False,
+                    'CONTOUR_ATTR':'contour',
+                    'CONTOUR_INTERVAL':10,
+                    'TOPOLOGY_RADIUS':2,
+                    'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['geographic_bounds_test5']
+                    )[0],
+                    'POINT_FLAGS' : "memory:",
+                    'LINE_FLAGS' : "memory:"
                 }
             ],
             "dsgtools:ALG" : [
@@ -1138,7 +1217,11 @@ class Tester(unittest.TestCase):
     
     def test_identifyvertexnearedges(self):
         self.assertEqual(
-            self.testAlg("dsgtools:identifyvertexnearedges"), ""
+            self.testAlg(
+                "dsgtools:identifyvertexnearedges",
+                addControlKey=True,
+                multipleOutputs=True
+            ), ""
         )
     
     # def test_overlayelementswithareas(self):
@@ -1186,6 +1269,15 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg(
                 "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
+                multipleOutputs=True,
+                addControlKey=True
+            ),
+            ""
+        )
+    def test_identifyterrainmodelerrorsalgorithm(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:identifyterrainmodelerrorsalgorithm",
                 multipleOutputs=True,
                 addControlKey=True
             ),

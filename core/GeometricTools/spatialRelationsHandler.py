@@ -22,25 +22,49 @@
 """
 from __future__ import absolute_import
 
-from builtins import range
-from itertools import tee
-from collections import defaultdict
+from itertools import tee, combinations
+from collections import defaultdict, OrderedDict
 
+from qgis.core import (Qgis,
+                       QgsFeature,
+                       QgsProject,
+                       QgsGeometry,
+                       QgsVectorLayer,
+                       QgsSpatialIndex,
+                       QgsFeatureRequest,
+                       QgsProcessingContext,
+                       QgsProcessingMultiStepFeedback)
 from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
-from qgis.core import (Qgis, QgsCoordinateReferenceSystem,
-                       QgsCoordinateTransform, QgsExpression, QgsFeature,
-                       QgsFeatureRequest, QgsField, QgsGeometry, QgsMessageLog,
-                       QgsProcessingMultiStepFeedback, QgsProject,
-                       QgsSpatialIndex, QgsVectorDataProvider, QgsVectorLayer,
-                       QgsWkbTypes, edit)
-from qgis.PyQt.Qt import QObject, QVariant
+from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtCore import QCoreApplication
 
 from .featureHandler import FeatureHandler
 from .geometryHandler import GeometryHandler
 from .layerHandler import LayerHandler
-
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
 class SpatialRelationsHandler(QObject):
+    __predicates = (
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "equals"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is not equals"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "disjoint"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "intersects"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not intersect"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "touches"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not touch"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "crosses"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not cross"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "within"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "is not within"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "overlaps"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not overlap"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "contains"),
+            QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not contain")
+        )
+    EQUALS, NOTEQUALS, DISJOINT, INTERSECTS, NOTINTERSECTS, \
+        TOUCHES, NOTTOUCHES, CROSSES, NOTCROSSES, WITHIN, NOTWITHIN, OVERLAPS, \
+        NOTOVERLAPS, CONTAINS, NOTCONTAINS = range(len(__predicates))
+
     def __init__(self, iface = None, parent = None):
         super(SpatialRelationsHandler, self).__init__()
         self.parent = parent
@@ -50,7 +74,215 @@ class SpatialRelationsHandler(QObject):
         self.layerHandler = LayerHandler(iface)
         self.featureHandler = FeatureHandler(iface)
         self.geometryHandler = GeometryHandler(iface)
+        self.algRunner = AlgRunner()
+
+    def validateTerrainModel(self, contourLyr, heightFieldName, threshold,\
+        onlySelected=False, geoBoundsLyr=None, context=None, feedback=None):
+        """
+        Does several validation procedures with terrain elements.
+        """
+        invalidDict = OrderedDict()
+        multiStepFeedback = QgsProcessingMultiStepFeedback(7, feedback) #ajustar depois
+        multiStepFeedback.setCurrentStep(0)
+        splitLinesLyr = self.algRunner.runSplitLinesWithLines(
+            contourLyr,
+            contourLyr,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(1)
+        (
+            contourSpatialIdx, contourIdDict, contourNodeDict, heightsDict
+        ) = self.buildSpatialIndexAndIdDictRelateNodesAndAttributeGroupDict(
+            inputLyr=splitLinesLyr,
+            attributeName=heightFieldName,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(2)
+        geoBoundsGeomEngine = None if geoBoundsLyr is None\
+            else self.getGeoBoundsGeomEngine(
+                geoBoundsLyr,
+                context=context,
+                feedback=multiStepFeedback
+            )
+        multiStepFeedback.setCurrentStep(3)
+        contourFlags = self.validateContourRelations(
+            contourNodeDict,
+            heightFieldName,
+            geoBoundsGeomEngine=geoBoundsGeomEngine
+        )
+        invalidDict.update(contourFlags)
+        multiStepFeedback.setCurrentStep(4)
+        contourOutOfThresholdDict = self.findContourOutOfThreshold(
+            heightsDict,
+            threshold,
+            feedback=multiStepFeedback
+        )
+        invalidDict.update(contourOutOfThresholdDict)
+        if len(invalidDict) > 0:
+            return invalidDict
+        multiStepFeedback.setCurrentStep(5)
+        contourAreaDict = self.buildContourAreaDict(
+            inputLyr=splitLinesLyr,
+            geoBoundsLyr=geoBoundsLyr,
+            attributeName=heightFieldName,
+            contourSpatialIdx=contourSpatialIdx,
+            contourIdDict=contourIdDict,
+            depressionExpression=None,#TODO
+            context=context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(6)
+        misingContourDict = self.findMissingContours(
+            contourAreaDict,
+            threshold,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        invalidDict.update(misingContourDict)
+        return invalidDict
+
+    def getGeoBoundsGeomEngine(self, geoBoundsLyr, context=None, feedback=None):
+        """
+        returns an initiated QgsGeometryEngine from the merged polygon of geoBoundsLyr
+        """
+        if geoBoundsLyr is None:
+            return None
+        mergedPolygonLyr = self.algRunner.runAggregate(
+            geoBoundsLyr,
+            context=context,
+            feedback=feedback
+        )
+        mergedGeom = [i for i in mergedPolygonLyr.getFeatures()][0].geometry()\
+            if mergedPolygonLyr.featureCount() != 0 else None
+        if mergedGeom is None:
+            return None
+        engine = QgsGeometry.createGeometryEngine(mergedGeom.constGet())
+        engine.prepareGeometry()
+        return engine
+
+    def buildContourAreaDict(self, inputLyr, geoBoundsLyr, attributeName,\
+            contourSpatialIdx, contourIdDict, depressionExpression=None,\
+            context=None, feedback=None):
+        """
+        Builds a dict in the following format:
+        {
+            'areaSpatialIdx' : QgsSpatialIndex of the built areas,
+            'areaIdDict' : {id:feat}
+            'areaContourRelations' : {id : {height:[list of feats]}}
+        }
+        """
+        contourAreaDict = {
+            'areaSpatialIdx' : QgsSpatialIndex(),
+            'areaIdDict' : {},
+            'areaContourRelations' : {}
+        }
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        boundsLineLyr = self.algRunner.runPolygonsToLines(
+            geoBoundsLyr, context, feedback=multiStepFeedback
+        ) if geoBoundsLyr is not None else None
+        lineLyrList = [inputLyr] if boundsLineLyr is None else [inputLyr, boundsLineLyr]
+        multiStepFeedback.setCurrentStep(1)
+        linesLyr = self.algRunner.runMergeVectorLayers(
+            lineLyrList,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(2)
+        polygonLyr = self.algRunner.runPolygonize(
+            linesLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(3)
+        self.populateContourAreaDict(
+            polygonLyr,
+            boundsLineLyr,
+            attributeName,
+            contourAreaDict,
+            contourSpatialIdx,
+            contourIdDict,
+            feedback=multiStepFeedback
+        )
+        return contourAreaDict
     
+    def populateContourAreaDict(self, polygonLyr, boundsLineLyr, attributeName,
+        contourAreaDict, contourSpatialIdx, contourIdDict, feedback=None):
+        boundsGeom = [i for i in boundsLineLyr.getFeatures()][0].geometry() if boundsLineLyr is not None else None
+        nPolygons = polygonLyr.featureCount()
+        size = 100/nPolygons if nPolygons else 0
+        for current, feat in enumerate(polygonLyr.getFeatures()):
+            if feedback is not None and feedback.isCanceled():
+                break
+            featId = feat.id()
+            geom = feat.geometry()
+            featBB = geom.boundingBox()
+            contourAreaDict['areaSpatialIdx'].addFeature(feat)
+            contourAreaDict['areaIdDict'][featId] = feat
+            if featId not in contourAreaDict['areaContourRelations']:
+                contourAreaDict['areaContourRelations'][featId] = defaultdict(list)
+            for contourId in contourSpatialIdx.intersects(featBB):
+                if feedback is not None and feedback.isCanceled():
+                    break
+                candidateContourFeat = contourIdDict[contourId]
+                if candidateContourFeat.geometry().intersects(geom):
+                    contourValue = candidateContourFeat[attributeName]
+                    candidateContourGeom = candidateContourFeat.geometry()\
+                        if boundsGeom is not None and\
+                            not candidateContourFeat.geometry().intersects(boundsGeom)\
+                        else candidateContourFeat.geometry().intersection(boundsGeom)
+                    contourAreaDict['areaContourRelations'][featId][contourValue].append(candidateContourGeom)
+            if feedback is not None:
+                feedback.setProgress(current * size)
+
+    def findContourOutOfThreshold(self, heightsDict, threshold, feedback=None):
+        contourOutOfThresholdDict = OrderedDict()
+        size = 100/len(heightsDict) if len(heightsDict) else 0
+        for current, (k,valueSet) in enumerate(heightsDict.items()):
+            if feedback is not None and feedback.isCanceled():
+                break
+            for i in valueSet:
+                if feedback is not None and feedback.isCanceled():
+                    break
+                if k % threshold != 0:
+                    contourOutOfThresholdDict[i.asWkb()] = self.tr('Contour out of threshold.')
+            if feedback is not None:
+                feedback.setProgress(current * size)
+        return contourOutOfThresholdDict
+
+    def findMissingContours(self, contourAreaDict, threshold, context=None, feedback=None):
+        """
+        Can be more efficient, the first draft will be of several for inside for.
+        """
+        relationCount = len(contourAreaDict['areaContourRelations'])
+        size = 100 / relationCount if relationCount else 0
+        missingContourFlagDict = dict()
+        for current, (areaId, heightDict) in enumerate(contourAreaDict['areaContourRelations'].items()):
+            if feedback is not None and feedback.isCanceled():
+                break
+            if len(heightDict) < 2:
+                continue
+            for h1, h2 in combinations(heightDict.keys(), 2):
+                if abs(h1-h2) <= threshold:
+                    continue
+                min_h12 = min(h1, h2) #done to fix the way flags are built.
+                max_h12 = max(h1, h2)
+                for geom in heightDict[h1]:
+                    if feedback is not None and feedback.isCanceled():
+                        break
+                    shortestLineGeomList = [geom.shortestLine(i) for i in heightDict[h2]]
+                    missingContourFlagDict.update(
+                        {
+                            i.asWkb() : self.tr(
+                                    'Missing contour between contour lines of values {v1} and {v2}'
+                                ).format(v1=min_h12, v2=max_h12) for i in shortestLineGeomList
+                        }
+                    )
+            if feedback is not None:
+                feedback.setProgress(current * size)
+        return missingContourFlagDict
+
     def relateDrainagesWithContours(self, drainageLyr, contourLyr, frameLinesLyr, heightFieldName, threshold, topologyRadius, feedback=None):
         """
         Checks the conformity between directed drainages and contours.
@@ -133,7 +365,8 @@ class SpatialRelationsHandler(QObject):
             contourIdDict
             )
 
-    def buildSpatialIndexAndIdDictAndRelateNodes(self, inputLyr, feedback=None, featureRequest=None):
+    def buildSpatialIndexAndIdDictAndRelateNodes(self, inputLyr, feedback=None,\
+            featureRequest=None):
         """
         creates a spatial index for the input layer
         :param inputLyr: (QgsVectorLayer) input layer;
@@ -142,11 +375,14 @@ class SpatialRelationsHandler(QObject):
         """
         spatialIdx = QgsSpatialIndex()
         idDict = {}
-        nodeDict = {}
+        nodeDict = defaultdict(list)
         featCount = inputLyr.featureCount()
         size = 100/featCount if featCount else 0
-        iterator = inputLyr.getFeatures() if featureRequest is None else inputLyr.getFeatures(featureRequest)
-        firstAndLastNode = lambda x:self.geometryHandler.getFirstAndLastNode(inputLyr, x)
+        iterator = inputLyr.getFeatures() if featureRequest is None \
+            else inputLyr.getFeatures(featureRequest)
+        firstAndLastNode = lambda x:self.geometryHandler.getFirstAndLastNode(
+            inputLyr, x
+        )
         addFeatureAlias = lambda x : self.addFeatureToSpatialIndexAndNodeDict(
             current=x[0],
             feat=x[1],
@@ -159,40 +395,51 @@ class SpatialRelationsHandler(QObject):
         )
         list(map(addFeatureAlias, enumerate(iterator)))
         return spatialIdx, idDict, nodeDict
-    
-    def addFeatureToSpatialIndexAndNodeDict(self, current, feat, spatialIdx, idDict, nodeDict, size, firstAndLastNode, feedback):
+
+    def addFeatureToSpatialIndexAndNodeDict(self, current, feat, spatialIdx,\
+            idDict, nodeDict, size, feedback):
         """
-        Adds feature to spatial index. Used along side with a python map operator
-        to improve performance.
+        Adds feature to spatial index. Used along side with a python map
+        operator to improve performance.
         :param current : (int) current index
-        :param feat : (QgsFeature) feature to be added on spatial index and on idDict
+        :param feat : (QgsFeature) feature to be added on spatial index and
+        on idDict
         :param spatialIdx: (QgsSpatialIndex) spatial index
         :param idDict: (dict) dictionary with format {feat.id(): feat}
+        :param nodeDict: (defaultdict(list)) dictionary with format
+        {node:[list of features]}
         :param size: (int) size to be used to update feedback
-        :param firstAndLastNode: (dict) dictionary used to relate nodes of features
-        :param feedback: (QgsProcessingFeedback) feedback to be used on processing
+        :param feedback: (QgsProcessingFeedback) feedback to be used on
+        processing
         """
-        firstNode, lastNode = firstAndLastNode(feat)
-        if firstNode not in nodeDict:
-            nodeDict[firstNode] = []
-        nodeDict[firstNode] += [firstNode]
-        if lastNode not in nodeDict:
-            nodeDict[lastNode] = []
-        nodeDict[lastNode] += [lastNode]
-        self.layerHandler.addFeatureToSpatialIndex(current, feat, spatialIdx, idDict, size, feedback)
+        if feedback is not None and feedback.isCanceled():
+            return
+        firstNode, lastNode = self.geometryHandler.getFirstAndLastNodeFromGeom(
+            feat.geometry()
+        )
+        nodeDict[firstNode] += [feat]
+        nodeDict[lastNode] += [feat]
+        self.layerHandler.addFeatureToSpatialIndex(
+            current,
+            feat,
+            spatialIdx,
+            idDict,
+            size,
+            feedback
+        )
 
-    def buildSpatialIndexAndIdDictRelateNodesAndAttributeGroupDict(self, inputLyr, attributeName, feedback=None, featureRequest=None):
+    def buildSpatialIndexAndIdDictRelateNodesAndAttributeGroupDict(self, inputLyr,\
+            attributeName, feedback=None, featureRequest=None):
         """
 
         """
         spatialIdx = QgsSpatialIndex()
         idDict = {}
-        nodeDict = {}
+        nodeDict = defaultdict(list)
         attributeGroupDict = {}
         featCount = inputLyr.featureCount()
         size = 100/featCount if featCount else 0
         iterator = inputLyr.getFeatures() if featureRequest is None else inputLyr.getFeatures(featureRequest)
-        firstAndLastNode = lambda x:self.geometryHandler.getFirstAndLastNode(inputLyr, x)
         addFeatureAlias = lambda x : self.addFeatureToSpatialIndexNodeDictAndAttributeGroupDict(
             current=x[0],
             feat=x[1],
@@ -200,7 +447,6 @@ class SpatialRelationsHandler(QObject):
             idDict=idDict,
             nodeDict=nodeDict,
             size=size,
-            firstAndLastNode=firstAndLastNode,
             attributeGroupDict=attributeGroupDict,
             attributeName=attributeName,
             feedback=feedback
@@ -208,7 +454,9 @@ class SpatialRelationsHandler(QObject):
         list(map(addFeatureAlias, enumerate(iterator)))
         return spatialIdx, idDict, nodeDict, attributeGroupDict
     
-    def addFeatureToSpatialIndexNodeDictAndAttributeGroupDict(self, current, feat, spatialIdx, idDict, nodeDict, size, firstAndLastNode, attributeGroupDict, attributeName, feedback):
+    def addFeatureToSpatialIndexNodeDictAndAttributeGroupDict(self, current, feat,\
+            spatialIdx, idDict, nodeDict, size, attributeGroupDict,\
+            attributeName, feedback):
         """
         Adds feature to spatial index. Used along side with a python map operator
         to improve performance.
@@ -224,35 +472,46 @@ class SpatialRelationsHandler(QObject):
         if attrValue not in attributeGroupDict:
             attributeGroupDict[attrValue] = set()
         attributeGroupDict[attrValue].add(feat.geometry())
-        self.addFeatureToSpatialIndexAndNodeDict(current, feat, spatialIdx, idDict, nodeDict, size, firstAndLastNode, feedback)
+        self.addFeatureToSpatialIndexAndNodeDict(
+            current,
+            feat,
+            spatialIdx,
+            idDict,
+            nodeDict,
+            size,
+            feedback
+        )
     
-    def validateContourRelations(self, contourNodeDict, frameLinesDict, frameLinesSpatialIdx, heightFieldName, feedback=None):
+    def validateContourRelations(self, contourNodeDict, heightFieldName,\
+        geoBoundsGeomEngine=None, feedback=None):
         """
         param: contourNodeDict: (dict) dictionary with contour nodes
         Invalid contours:
         - Contours that relates to more than 2 other contours;
-        - Contours that do not relate to any other contour and does not touch frame lines;
+        - Contours that do not relate to any other contour and is inside the geographic
+        bounds;
         """
         invalidDict = dict()
-        contourId = lambda x : x.id()
         contoursNumber = len(contourNodeDict)
         step = 100/contoursNumber if contoursNumber else 0
         for current, (node, contourList) in enumerate(contourNodeDict.items()):
+            nodeGeom = QgsGeometry.fromPointXY(node)
+            nodeWkb = nodeGeom.asWkb()
             if feedback is not None and feedback.isCanceled():
                 break
-            if len(contourList) == 1:
-                if self.isDangle(node, frameLinesDict, frameLinesSpatialIdx):
-                    invalidDict[node] = self.tr(
-                        'Contour lines id=({ids}) touch each other and have different height values!'
-                        ).format(ids=', '.join(map(contourId, contourList)))
+            if len(contourList) == 1 and \
+                (geoBoundsGeomEngine is not None and geoBoundsGeomEngine.intersects(nodeGeom.constGet())):
+                invalidDict[nodeWkb] = self.tr(
+                    'Contour lines must be closed or intersect the geographic boundary.'
+                    )
             if len(contourList) == 2 and contourList[0][heightFieldName] != contourList[1][heightFieldName]:
-                invalidDict[node] = self.tr(
-                    'Contour lines id=({ids}) touch each other and have different height values!'
-                    ).format(ids=', '.join(map(contourId, contourList)))
+                invalidDict[nodeWkb] = self.tr(
+                    'Contour lines touch each other and have different height values.'
+                    )
             if len(contourList) > 2:
-                invalidDict[node] = self.tr(
-                    'Contour lines id=({ids}) touch each other. Contour lines must touch itself or only one other.'
-                    ).format(ids=', '.join(map(contourId, contourList)))
+                invalidDict[nodeWkb] = self.tr(
+                    'Contour lines intersect each other. Contour lines must touch itself or only one other with same height value.'
+                    )
             if feedback is not None:
                 feedback.setProgress(step * current)
         return invalidDict
@@ -442,7 +701,7 @@ class SpatialRelationsHandler(QObject):
         )
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(3)
-        flagList = self.identifyInvalidRelations(spatialDict, spatialRuleDict, feedback=multiStepFeedback):
+        flagList = self.identifyInvalidRelations(spatialDict, spatialRuleDict, feedback=multiStepFeedback)
         return flagList
 
     def buildSpatialDictFromRuleList(self, ruleList, feedback=None):
@@ -528,7 +787,6 @@ class SpatialRelationsHandler(QObject):
                 feedback.setProgress(current * progressStep)
         return spatialRuleDict
 
-    
     def buildSpatialRelationDictOnSpatialRuleDict(self, spatialDict, spatialRuleDict, feedback=None):
         """
         layerFeatureDict = {
@@ -561,7 +819,7 @@ class SpatialRelationsHandler(QObject):
         for inputKey, inputDict in spatialRuleDict.items():
             if feedback is not None and feedback.isCanceled():
                 break
-            keyRuleList = ['_'.join(i['candidate_layer'], i['candidate_layer_filter'] for i in inputDict['rule_list']]
+            keyRuleList = ['_'.join(i['candidate_layer'], i['candidate_layer_filter']) for i in inputDict['rule_list']]
             for featId, feat in spatialDict[inputKey]['feature_id_dict']:
                 if feedback is not None and feedback.isCanceled():
                     break
@@ -592,49 +850,7 @@ class SpatialRelationsHandler(QObject):
             steps += len(v['rule_list'])
             steps += len(spatialDict[k]['feature_id_dict'])
         return steps
-    
-    def prepareEngine(self, feat):
-        """
-        Prepairs the geometryEngine for spatial comparisons.
 
-        returns geom (QgsGeometry), geom_BB (QgsRectangle), engine (QgsGeometryEngine)
-        """
-        geom = feat.geometry()
-        geom_BB = geom.boundingBox()
-        #geometry engine is the fastest way of comparing geometries in QGIS 3.x series
-        engine = QgsGeometry.createGeometryEngine(geom.constGet())
-        engine.prepareGeometry()
-        return geom, geom_BB, engine
-                
-    def relateFeatureAccordingToPredicate(self, feat, rule, key, predicate, spatialDict):
-        geom, geom_BB, engine = self.prepareEngine(feat)
-        relationSet = set()
-        predicate = rule['predicate']
-        candidateSpatialIdx = spatialDict[key]['spatial_index']
-        candidateFeatureDict = spatialDict[key]['feature_id_dict']
-        for fid in candidateSpatialIdx.intersects(geom_BB):
-            test_feat = candidateFeatureDict[fid]
-            if getattr(engine, predicate)(test_feat.geometry().constGet()):
-                relationSet.add(test_feat)
-        return relationSet
-    
-    def parseCardinalityAndGetLambdaToIdentifyProblems(self, cardinality, necessity, isSameLayer=False):
-        """
-        Parses cardinality and returns a lambda to verify if the list of features 
-        that relates to the considered feature violates rule.
-        """
-        if cardinality is None:
-            lambdaCompair = lambda x: len(x) != 0
-            return lambdaCompair
-        min_card, max_card = cardinality.split('..')
-        if max_card != '*'
-            lambdaCompair = lambda x : len(x) < int(min_card)
-        elif min_card == max_card:
-            lambdaCompair = lambda x: len(x) != int(min_card)
-        else:
-            lambdaCompair = lambda x : len(x) < int(min_card) or len(x) > int(max_card)
-        return lambdaCompair
-    
     def identifyInvalidRelations(self, spatialDict, spatialRuleDict, feedback=None):
         """
         Identifies invalid spatial relations and returns a list with flags to be raised.
@@ -650,8 +866,8 @@ class SpatialRelationsHandler(QObject):
             for rule in inputDict['rule_list']:
                 if feedback is not None and feedback.isCanceled():
                         break
-                candidateLyrName = i['candidate_layer']
-                candidateKey = '_'.join(candidateLyrName, i['candidate_layer_filter']
+                candidateLyrName = inputDict['candidate_layer']
+                candidateKey = '_'.join(candidateLyrName, inputDict['candidate_layer_filter'])
                 sameLayer = True if inputKey == candidateKey else False
                 lambdaCompair = self.parseCardinalityAndGetLambdaToIdentifyProblems(
                     cardinality=rule['cardinality'],
@@ -696,6 +912,243 @@ class SpatialRelationsHandler(QObject):
             )
         return spatialFlags
 
+    def availablePredicates(self):
+        """
+        Returns the name of all available predicates.
+        :return: (tuple-of-str) list of available predicates.
+        """
+        return {i: p for i, p in enumerate(self.__predicates)}
 
-    
+    def getCardinalityTest(self, cardinality=None):
+        """
+        Parses cardinality string and gets a callable to check if the iterable
+        tested (e.g. list of features) complies with the cardinality.
+        :param cardinality: (str) cardinality string to be tested against.
+        :return: (function) testing method to be applied to an iterable.
+        """
+        if cardinality is None:
+            # default is "1..*"
+            return lambda x: len(x) > 0
+        min_card, max_card = cardinality.split('..')
+        if max_card == '*':
+            return lambda x: len(x) >= int(min_card)
+        elif min_card == max_card:
+            return lambda x: len(x) == int(min_card)
+        else:
+            return lambda x: len(x) >= int(min_card) and len(x) <= int(max_card)
+                
+    def testPredicate(self, predicate, engine, targetGeometries):
+        """
+        Applies a predicate test to a given feature from a list of features.
+        :param predicate: (int) topological relation code to be tested against.
+        :param engine: (QgsGeometryEngine) reference feature's QGIS structure
+                       for based on geometries for faster spatial operations.
+        :param targetGeometries: (dict) maps feature ids to their geometries
+                                 that will be tested.
+        :param cardinality: (str) cardinality string to be tested against.
+        :return: (set-of-int) feature IDs for those that the geometries do
+                 comply with given predicate/cardinality. 
+        """
+        # negatives are disregarded. method simply apply the predicate comparison
+        positives = set()
+        negatives = set()
+        methods = {
+            self.EQUALS : "isEqual",
+            self.DISJOINT : "disjoint",
+            self.INTERSECTS : "intersects",
+            self.TOUCHES : "touches",
+            self.CROSSES : "crosses",
+            self.WITHIN : "within",
+            self.OVERLAPS : "overlaps",
+            self.CONTAINS : "contains"
+        }
+        if predicate not in methods:
+            raise NotImplementedError(
+                self.tr("Invalid predicate ({0}).").format(predicate)
+            )
+        predicateMethod = methods[predicate]
+        for test_fid, test_geom in targetGeometries.items():
+            if getattr(engine, predicateMethod)(test_geom.constGet()):
+                positives.add(test_fid)
+        return positives
 
+    def checkPredicate(self, layerA, layerB, predicate, cardinality, ctx=None, feedback=None):
+        """
+        Checks if a duo of layers comply with a spatial predicate at a given
+        cardinality.
+        :param layerA: (QgsVectorLayer) reference layer.
+        :param layerB: (QgsVectorLayer) layer to have its features spatially
+                    compared to reference layer.
+        :param predicate: (str) topological comparison method to be applied.
+        :param cardinality: (str) a formatted string that informs minimum and
+                            maximum occurences of a spatial predicate.
+        
+        :param ctx: (QgsProcessingContext) processing context in which algorithm
+                    should be executed.
+        :param feedback: (QgsFeedback) QGIS progress tracking component.
+        :return: (dict) a map from offended feature IDs to the list of its
+                offending features.
+        """
+        flags = defaultdict(list)
+        predicates = self.availablePredicates()
+        denials = [
+            self.NOTEQUALS,
+            self.NOTINTERSECTS,
+            self.NOTTOUCHES,
+            self.NOTCROSSES,
+            self.NOTWITHIN,
+            self.NOTOVERLAPS,
+            self.NOTCONTAINS
+        ]
+        if predicate in denials:
+            # denials always follow the "affirmitives" (contains = 14 
+            # -> notcontains = 15), hence -1.
+            # denials are ALWAYS absolute (cardinality is not applicable)
+            predicate -= 1
+            cardinality = "0..0"
+        if predicate == self.DISJOINT:
+            predicateFlagText = self.tr("feature ID {{fid_a}} from {layer_a} "
+                                        "id not {pred} to {{size}} features of"
+                                        " {layer_b}")\
+                                .format(layer_a=layerA.name(),
+                                        pred=predicates[predicate],
+                                        layer_b=layerB.name())
+            cardinality = "0..0"
+        else:
+            predicateFlagText = self.tr("feature ID {{fid_a}} from {layer_a} "
+                                        "{pred} {{size}} features of "
+                                        "{layer_b}")\
+                                .format(layer_a=layerA.name(),
+                                        pred=predicates[predicate],
+                                        layer_b=layerB.name())
+        if predicate in (self.EQUALS, self.WITHIN):
+            getFlagGeometryMethod = lambda geom, _: geom
+        else:
+            getFlagGeometryMethod = lambda geomA, geomB: geomA.intersection(geomB)
+        testingMethod = self.getCardinalityTest(cardinality)
+        for featA in layerA.getFeatures():
+            geomA = featA.geometry()
+            engine = QgsGeometry.createGeometryEngine(geomA.constGet())
+            engine.prepareGeometry()
+            geometriesB = {
+                f.id(): f.geometry() \
+                    for f in layerB.getFeatures(geomA.boundingBox())
+            }
+            positives = self.testPredicate(predicate, engine, geometriesB)
+            if predicate == self.DISJOINT:
+                # disjoint comparison wants those that are NOT disjoint to flag
+                positives = set(geometriesB.keys()) - positives
+            if not testingMethod(positives):
+                fidA = featA.id()
+                size = len(positives)
+                if not size:
+                    flags[fidA].append({
+                        "text": predicateFlagText.format(fid_a=fidA, size=0),
+                        "geom": geomA
+                    })
+                    continue
+                if size > 1:
+                    predicateFlagText_ = "{0} (IDs {1})"\
+                        .format(predicateFlagText, ", ".join(map(str, positives)))
+                elif size == 1:
+                    predicateFlagText_ = "{0} (ID {1})"\
+                        .format(predicateFlagText, str(set(positives).pop()))
+                for fidB in positives:
+                    flags[fidA].append({
+                        "text": predicateFlagText_\
+                                    .format(fid_a=fidA, size=size),
+                        "geom": getFlagGeometryMethod(geomA, geometriesB[fidB])
+                    })
+        return {fid: flag for fid, flag in flags.items() if flag}
+
+    def setupLayer(self, layerName, exp, ctx=None, feedback=None):
+        """
+        Retrieves layer from canvas and applies filtering expression. If CRS is
+        different than project's, layer is reprojected.
+        :param layerName: (str) layer's name on canvas.
+        :param exp: (str) filtering expression to be applied to target layer.
+        :param ctx: (QgsProcessingContext) processing context in which algorithm
+                    should be executed.
+        :param feedback: (QgsFeedback) QGIS progress tracking component.
+        :return: (QgsVectorLayer) layer ready to be compared.
+        """
+        lh = LayerHandler()
+        ctx = ctx or QgsProcessingContext()
+        if exp:
+            layer = lh.filterByExpression(
+                layerName, exp, ctx, feedback
+            )
+        else:
+            # this will raise an error if layer is not loaded
+            layer = QgsProject.instance().mapLayersByName(layerName)
+            if not layer:
+                return
+            layer = layer[0]
+        projectCrs = QgsProject.instance().crs()
+        if layer.crs() != projectCrs:
+            layer = lh.reprojectLayer(layer, projectCrs)
+        return layer
+
+    def enforceRule(self, rule, ctx=None, feedback=None):
+        """
+        Applies a given set of spatial restrictions to a duo of layers.
+        :param rule: (dict) a map to spatial rule's parameters.
+        :param ctx: (QgsProcessingContext) processing context in which algorithm
+                    should be executed.
+        :param feedback: (QgsFeedback) QGIS progress tracking component.
+        :return: (dict) a map from offended feature's ID to offenders feature set.
+        """
+        lh = LayerHandler()
+        ctx = ctx or QgsProcessingContext()
+        layerA = self.setupLayer(
+            rule["layer_a"], rule["filter_a"], ctx, feedback
+        )
+        layerB = self.setupLayer(
+            rule["layer_b"], rule["filter_b"], ctx, feedback
+        )
+        return self.checkPredicate(
+            layerA, layerB, rule["predicate"], rule["cardinality"], ctx, feedback
+        )
+
+    def enforceRules(self, ruleSet, ctx=None, feedback=None):
+        """
+        Applies a set of spatial rules to current active layers on canvas.
+        :param ruleSet: (dict) all rules that should be applied to canvas.
+        :param ctx: (QgsProcessingContext) processing context in which algorithm
+                    should be executed.
+        :param feedback: (QgsFeedback) QGIS progress tracking component.
+        :return: (dict) a map of offended rules to its flags.
+        """
+        out = dict()
+        ctx = ctx or QgsProcessingContext()
+        size = len(ruleSet)
+        for idx, rule in enumerate(ruleSet):
+            ruleName = rule["name"]
+            if feedback is not None:
+                feedback.pushInfo(
+                    self.tr('Checking rule "{0}"... [{1}/{2}]').format(
+                        ruleName, idx + 1, size
+                    )
+                )
+            flags = self.enforceRule(rule, ctx, feedback)
+            if flags:
+                if ruleName in out:
+                    previous = out[ruleName]
+                    for fid in flags:
+                        if fid in previous:
+                            out[ruleName][fid] += flags[fid]
+                        else:
+                            out[ruleName][fid] = flags[fid]
+                else:
+                    out[ruleName] = flags
+                feedback.reportError(
+                    self.tr('Rule "{0}" raised flags\n').format(
+                        ruleName, idx + 1, size
+                    )
+                )
+            else:
+                feedback.pushDebugInfo(
+                    self.tr('Rule "{0}" did not raise any flags\n')
+                    .format(ruleName)
+                )
+        return out
