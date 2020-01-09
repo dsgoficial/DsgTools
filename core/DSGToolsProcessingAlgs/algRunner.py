@@ -23,8 +23,11 @@
 import uuid
 
 import processing
-from qgis.core import QgsProcessingUtils, QgsVectorLayer, Qgis
-
+from qgis.core import (Qgis,
+                       QgsVectorLayer,
+                       QgsProcessingUtils,
+                       QgsProcessingContext,
+                       QgsProcessingFeatureSourceDefinition)
 
 class AlgRunner:
     Break, Snap, RmDangle, ChDangle, RmBridge, ChBridge, RmDupl, RmDac, BPol, Prune, RmArea, RmLine, RMSA = range(13)
@@ -506,7 +509,30 @@ class AlgRunner:
             feedback=feedback
         )
         return output['OUTPUT']
-    
+
+    def runReprojectLayer(self, layer, targetCrs, output=None, ctx=None, feedback=None):
+        """
+        Reprojects layer's CRS.
+        :param : (QgsVectorLayer) layer to be reprojected.
+        :param targetCrs: (QgsCoordinateReferenceSystem) CRS object for the
+                          output layer.
+        :param output: (QgsVectorLayer) layer accomodate reprojected layer.
+        :param ctx: (QgsProcessingContext) processing context in which algorithm
+                    should be executed.
+        :param feedback: (QgsFeedback) QGIS progress tracking component.
+        :return: (QgsVectorLayer) reprojected layer.
+        """
+        return processing.run(
+            "native:reprojectlayer",
+            {
+                'INPUT' : layer,
+                'OUTPUT' : output or 'memory:',
+                'TARGET_CRS' : targetCrs
+            },
+            context=ctx or QgsProcessingContext(),
+            feedback=feedback
+        )['OUTPUT']
+
     def runPointOnSurface(self, inputLyr, context, allParts=True, feedback=None, outputLyr=None, onlySelected=False):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
@@ -593,4 +619,41 @@ class AlgRunner:
             feedback=feedback
         )
         return output['OUTPUT']
-        
+
+    def runSplitLinesWithLines(self, inputLyr, linesLyr, context, feedback=None, onlySelected=False, outputLyr=None):
+        usedInput = inputLyr if not onlySelected else \
+                QgsProcessingFeatureSourceDefinition(inputLyr.id(), True)
+        usedLines = linesLyr if not onlySelected else \
+                QgsProcessingFeatureSourceDefinition(linesLyr.id(), True)
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : usedInput,
+            'LINES' : usedLines,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "native:splitwithlines",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runAggregate(self, inputLyr, context, groupBy=None, aggregates=None, \
+        feedback=None, outputLyr=None, onlySelected=False):
+        groupBy = 'NULL' if groupBy is None else groupBy
+        aggregates = [] if aggregates is None else aggregates
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'GROUP_BY' : groupBy,
+            'AGGREGATES' : aggregates,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "qgis:aggregate",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']

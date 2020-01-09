@@ -173,6 +173,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyVertexNear
     IdentifyVertexNearEdgesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUnsharedVertexOnSharedEdgesAlgorithm import \
     IdentifyUnsharedVertexOnSharedEdgesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.enforceSpatialRulesAlgorithm import \
+    (EnforceSpatialRulesAlgorithm, ParameterSpatialRulesSetType)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unbuildPolygonsAlgorithm import \
     UnbuildPolygonsAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUnsharedVertexOnIntersectionsAlgorithm import \
@@ -183,6 +185,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.buildPolygonsFromC
     BuildPolygonsFromCenterPointsAndBoundariesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.multipleOutputUnitTestAlgorithm import \
     MultipleOutputUnitTestAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyTerrainModelErrorsAlgorithm import \
+    IdentifyTerrainModelErrorsAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -264,11 +268,13 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     IdentifyWrongBuildingAnglesAlgorithm(),
                     IdentifyVertexNearEdgesAlgorithm(),
                     IdentifyUnsharedVertexOnSharedEdgesAlgorithm(),
+                    EnforceSpatialRulesAlgorithm(),
                     UnbuildPolygonsAlgorithm(),
                     IdentifyUnsharedVertexOnIntersectionsAlgorithm(),
                     SetFreeHandToolParametersAlgorithm(),
                     BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(),
-                    MultipleOutputUnitTestAlgorithm()
+                    MultipleOutputUnitTestAlgorithm(),
+                    IdentifyTerrainModelErrorsAlgorithm()
                 ]
         return algList
 
@@ -283,6 +289,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         QgsApplication.instance().processingRegistry().addParameterType(self.parameterTypeSnapHierarchy)
         self.parameterTypeFMEManager = ParameterFMEManagerType()
         QgsApplication.instance().processingRegistry().addParameterType(self.parameterTypeFMEManager)
+        self.parameterSpatialRulesSetType = ParameterSpatialRulesSetType()
+        QgsApplication.instance().processingRegistry().addParameterType(self.parameterSpatialRulesSetType)
         self.refreshAlgorithms()
         return True
 
@@ -293,6 +301,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         ProcessingConfig.removeSetting('ACTIVATE_DSGTools')
         QgsApplication.instance().processingRegistry().removeParameterType(self.parameterTypeSnapHierarchy)
         QgsApplication.instance().processingRegistry().removeParameterType(self.parameterTypeFMEManager)
+        QgsApplication.instance().processingRegistry().removeParameterType(self.parameterSpatialRulesSetType)
 
     def isActive(self):
         """
