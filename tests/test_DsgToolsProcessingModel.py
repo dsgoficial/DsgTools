@@ -24,7 +24,7 @@
 import sys
 from qgis.testing import unittest
 
-from DsgTools.core.DSGToolsProcessingAlgs.dsgToolsProcessingModel import DsgToolsProcessingModel
+from DsgTools.core.DSGToolsProcessingAlgs.Models.dsgToolsProcessingModel import DsgToolsProcessingModel
 
 class ModelTester(unittest.TestCase):
 
