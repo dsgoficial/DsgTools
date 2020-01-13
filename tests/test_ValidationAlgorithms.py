@@ -586,6 +586,7 @@ class Tester(unittest.TestCase):
                     'FLAGS' : "memory:"
                 }
             ],
+
             "dsgtools:unbuildpolygonsalgorithm" : [
                 {
                     '__comment' : "'Normal' test: checks if it works.",
@@ -786,6 +787,162 @@ class Tester(unittest.TestCase):
                     'FLAGS' : "memory:"
                 }
             ],
+                    # '__comment' : "'Normal' test: checks if it works."
+
+            "dsgtools:enforcespatialrules" : [
+                {
+                    "RULES_SET":[
+                        {
+                            "cardinality": "1..1",
+                            "filter_a": "",
+                            "filter_b": "",
+                            "layer_a": "rel_pico_p",
+                            "layer_b": "rel_ponto_cotado_altimetrico_p",
+                            "name": "Pico deve estar em cima de um ponto cotado",
+                            "predicate": 0
+                        },
+                        {
+                            "cardinality": "1..*",
+                            "filter_a": "",
+                            "filter_b": "",
+                            "layer_a": "rel_ponto_cotado_altimetrico_p",
+                            "layer_b": "hid_massa_dagua_a",
+                            "name": "Pontos cotados altimétricos não podem estar sobre massa d’água",
+                            "predicate": 2
+                        },
+                        {
+                            "cardinality": "1..*",
+                            "filter_a": "",
+                            "filter_b": "",
+                            "layer_a": "enc_torre_energia_p",
+                            "layer_b": "enc_trecho_energia_l",
+                            "name": "Torres de energia devem estar sobre um ou mais trechos de energia",
+                            "predicate": 3
+                        },
+                        {
+                            "cardinality": "2..2",
+                            "filter_a": "",
+                            "filter_b": "",
+                            "layer_a": "hid_barragem_p",
+                            "layer_b": "hid_trecho_drenagem_l",
+                            "name": "Barragens tipo ponto estão entre 2 e somente trechos de drenagem",
+                            "predicate": 5
+                        },
+                        {
+                            "cardinality": "1..1",
+                            "filter_a": "",
+                            "filter_b": "",
+                            "layer_a": "veg_brejo_pantano_a",
+                            "layer_b": "hid_area_umida_a",
+                            "name": "Brejo/Pantano deve estar contido por uma Área Úmida",
+                            "predicate": 9
+                        },
+                        {
+                            "cardinality": "1..*",
+                            "filter_a": "\"modaluso\" = '5'",
+                            "filter_b": "",
+                            "layer_a": "tra_ponte_l",
+                            "layer_b": "fer_trecho_ferroviario_l",
+                            "name": "O modalUso de Ponte deve ser Ferroviario se esta intersectar um Trecho Ferroviario.",
+                            "predicate": 3
+                        },
+                        {
+                            "cardinality": "1..*",
+                            "filter_a": "\"modaluso\" != '5'",
+                            "filter_b": "",
+                            "layer_a": "tra_ponte_l",
+                            "layer_b": "fer_trecho_ferroviario_l",
+                            "name": "O modalUso de Ponte deve ser Ferroviario se esta intersectar um Trecho Ferroviario.",
+                            "predicate": 4
+                        },
+                        {
+                            "cardinality": "1..*",
+                            "filter_a": "",
+                            "filter_b": "",
+                            "layer_a": "hid_trecho_drenagem_l",
+                            "layer_b": "hid_vala_l",
+                            "name": "Valas não são sobrepostas por drenagens",
+                            "predicate": 12
+                        },
+                        {
+                            "cardinality": "0..1",
+                            "filter_a": "",
+                            "filter_b": "",
+                            "layer_a": "hid_barragem_a",
+                            "layer_b": "hid_trecho_drenagem_l",
+                            "name": "Barragens do tipo área contêm até uma drenagem",
+                            "predicate": 13
+                        },
+                        {
+                            "cardinality": "0..1",
+                            "filter_a": "",
+                            "filter_b": "",
+                            "layer_a": "linhas",
+                            "layer_b": "poligonos",
+                            "name": "Teste: 'linhas' não cruza 'poligonos'",
+                            "predicate": 7
+                        },
+                        {
+                            "cardinality": "1..*",
+                            "filter_a": "",
+                            "filter_b": "",
+                            "layer_a": "poligonos_2",
+                            "layer_b": "poligonos",
+                            "name": "Teste: 'poligonos_2' sobrepõe 'poligonos'",
+                            "predicate": 11
+                        },
+                        {
+                            "cardinality": "1..*",
+                            "filter_a": "",
+                            "filter_b": "",
+                            "layer_a": "linhas_2",
+                            "layer_b": "linhas",
+                            "name": "Teste: 'linhas_2' não é igual a 'linhas'",
+                            "predicate": 1
+                        },
+                        {
+                            "cardinality": "1..*",
+                            "filter_a": "",
+                            "filter_b": "",
+                            "layer_a": "poligonos",
+                            "layer_b": "poligonos_2",
+                            "name": "Teste: 'poligonos' não toca 'poligonos_2'",
+                            "predicate": 6
+                        },
+                        {
+                            "cardinality": "1..*",
+                            "filter_a": "",
+                            "filter_b": "",
+                            "layer_a": "linhas_2",
+                            "layer_b": "poligonos_2",
+                            "name": "Teste: 'linhas_2' não cruza 'poligonos_2'",
+                            "predicate": 8
+                        },
+                        {
+                            "cardinality": "1..*",
+                            "filter_a": "",
+                            "filter_b": "",
+                            "layer_a": "points",
+                            "layer_b": "poligonos_2",
+                            "name": "Teste: 'points' não está contido em 'poligonos_2'",
+                            "predicate": 10
+                        },
+                        {
+                            "cardinality": "1..*",
+                            "filter_a": "",
+                            "filter_b": "",
+                            "layer_a": "poligonos_2",
+                            "layer_b": "points",
+                            "name": "Teste: 'poligonos_2' não contém 'points'",
+                            "predicate": 14
+                        }
+                    ],
+                    "POINT_FLAGS":"memory:",
+                    "LINE_FLAGS":"memory:",
+                    "POLYGON_FLAGS":"memory:"
+                }
+            ],
+
             "dsgtools:ALG" : [
                 {
                     '__comment' : "'Normal' test: checks if it works."
@@ -1186,6 +1343,16 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg(
                 "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
+                multipleOutputs=True,
+                addControlKey=True
+            ),
+            ""
+        )
+    
+    def test_enforcespatialrules(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:enforcespatialrules",
                 multipleOutputs=True,
                 addControlKey=True
             ),
