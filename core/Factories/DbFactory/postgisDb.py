@@ -2824,7 +2824,8 @@ class PostgisDb(AbstractDb):
             self.db.transaction()
         query = QSqlQuery(self.db)
         for command in commands:
-            if not query.exec_(command):
+            command = command.strip()
+            if command and not query.exec_(command):
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(self.tr('Error on database creation! ')+query.lastError().text()+ self.tr(' Db will be dropped.'))

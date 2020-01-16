@@ -670,3 +670,11 @@ class GeometryHandler(QObject):
             return n[0][0], n[0][-1]
         elif n:
             return n[0], n[-1]
+
+    def multiToSinglePart(self, geom):
+        """
+        Converts a multipart geometry to a list of single part.
+        :param geom: (QgsGeometry) multipart geometry to be exploded.
+        :return: (list-of-QgsGeometry) list of single part geometries found.
+        """
+        return [part for part in geom.asGeometryCollection()]
