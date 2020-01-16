@@ -1380,7 +1380,9 @@ class Tester(unittest.TestCase):
                     vl.setName(rule[key])
                     self.loadLayerToCanvas(vl)
         msg = self.testAlg(
-            "dsgtools:enforcespatialrules", multipleOutputs=True
+            "dsgtools:enforcespatialrules",
+            multipleOutputs=True,
+            addControlKey=True
         )
         # since layers were manually removed, cache is going to refer to 
         # non-existing layers
