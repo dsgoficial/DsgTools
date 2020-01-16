@@ -792,6 +792,7 @@ class Tester(unittest.TestCase):
 
             "dsgtools:enforcespatialrules" : [
                 {
+                    '__comment' : "Tests 1 - tests every single topological relation to its simplest state",
                     "RULES_SET":[
                         {
                             "cardinality": "1..1",
