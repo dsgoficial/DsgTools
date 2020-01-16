@@ -170,7 +170,8 @@ class Tester(unittest.TestCase):
                 "test_dataset_unbuild_polygons" : os.path.join(gpkgPaths, 'test_dataset_unbuild_polygons.gpkg')
             },
             "geojson" : {
-                "land_cover_layers" : os.path.join(geojsonPaths, 'land_cover_layers')
+                "land_cover_layers" : os.path.join(geojsonPaths, 'land_cover_layers'),
+                "spatial_rules_alg" : os.path.join(geojsonPaths, 'spatial_rules_alg')
             }
         }
         # switch-case for dataset reading
@@ -1074,6 +1075,20 @@ class Tester(unittest.TestCase):
                     )
         return ""
 
+    def loadLayerToCanvas(self, layer):
+        """
+        Load a layer to canvas in order for it to be accessible using the
+        processing context.
+        :param layer: (QgsVectorLayer) layer object to be loaded to canvas.
+        """
+        QgsProject.instance().addMapLayer(layer, True)
+
+    def clearProject(self):
+        """
+        Clears all loaded layers from canvas.
+        """
+        QgsProject.instance().clear()
+
     def testAlg(self, algName, feedback=None, context=None, loadLayers=False, multipleOutputs=False, attributeBlackList=None, addControlKey=False):
         """
         Tests if the output of a given algorithm is the expected one.
@@ -1085,6 +1100,8 @@ class Tester(unittest.TestCase):
         :return: (str) failing reason.
         """
         parameters = self.algorithmParameters(algName)
+        context = context or QgsProcessingContext()
+        context.setProject(QgsProject.instance())
         if parameters == dict():
             return "Unable to read a set of parameters for {alg}'s tests.".format(
                     alg=algName
@@ -1350,14 +1367,29 @@ class Tester(unittest.TestCase):
         )
     
     def test_enforcespatialrules(self):
+        """Tests for Enforce Spatial Rules algorithm"""
+        testsParameters = self.algorithmParameters("dsgtools:enforcespatialrules")
+        # this algorithm, specifically, has to set layers Context-reading ready
+        layers = self.testingDataset("geojson", "spatial_rules_alg")
+        layers = {l.split("-")[-1]: vl for l, vl in layers.items()}
+        for parameters in testsParameters:
+            for rule in parameters["RULES_SET"]:
+                for key in ["layer_a", "layer_b"]:
+                    vl = layers[rule[key]]
+                    # these layers are saved as "edgv3-*"
+                    vl.setName(rule[key])
+                    self.loadLayerToCanvas(vl)
         self.assertEqual(
             self.testAlg(
                 "dsgtools:enforcespatialrules",
-                multipleOutputs=True,
-                addControlKey=True
+                multipleOutputs=True
             ),
             ""
         )
+        self.clearProject()
+        # since layers were manually removed, cache is going to refer to 
+        # non-existing layers
+        del self.datasets["geojson:spatial_rules_alg"]
 
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
