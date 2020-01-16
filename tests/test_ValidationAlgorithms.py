@@ -1368,28 +1368,25 @@ class Tester(unittest.TestCase):
     
     def test_enforcespatialrules(self):
         """Tests for Enforce Spatial Rules algorithm"""
-        testsParameters = self.algorithmParameters("dsgtools:enforcespatialrules")
+        testsParams = self.algorithmParameters("dsgtools:enforcespatialrules")
         # this algorithm, specifically, has to set layers Context-reading ready
         layers = self.testingDataset("geojson", "spatial_rules_alg")
         layers = {l.split("-")[-1]: vl for l, vl in layers.items()}
-        for parameters in testsParameters:
+        for parameters in testsParams:
             for rule in parameters["RULES_SET"]:
                 for key in ["layer_a", "layer_b"]:
                     vl = layers[rule[key]]
                     # these layers are saved as "edgv3-*"
                     vl.setName(rule[key])
                     self.loadLayerToCanvas(vl)
-        self.assertEqual(
-            self.testAlg(
-                "dsgtools:enforcespatialrules",
-                multipleOutputs=True
-            ),
-            ""
+        msg = self.testAlg(
+            "dsgtools:enforcespatialrules", multipleOutputs=True
         )
-        self.clearProject()
         # since layers were manually removed, cache is going to refer to 
         # non-existing layers
         del self.datasets["geojson:spatial_rules_alg"]
+        self.clearProject()
+        self.assertEqual(msg, "")
 
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
