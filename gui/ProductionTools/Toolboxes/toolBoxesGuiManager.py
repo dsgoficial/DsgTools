@@ -29,6 +29,7 @@ from qgis.PyQt.QtCore import QObject, Qt
 
 from .AttributeTools.code_list import CodeList
 from .FieldToolBox.field_toolbox import FieldToolbox
+from .FieldToolBox.customFeatureTool import CustomFeatureTool
 from .ContourTool.calc_contour import CalcContour
 from .ComplexTools.complexWindow import ComplexWindow
 from .QualityAssuranceToolBox.qualityAssuranceDockWidget import QualityAssuranceDockWidget
@@ -92,7 +93,8 @@ class ToolBoxesGuiManager(QObject):
         if self.fieldToolbox:
             self.iface.removeDockWidget(self.fieldToolbox)
         else:
-            self.fieldToolbox = FieldToolbox(self.iface)
+            # self.fieldToolbox = FieldToolbox(self.iface)
+            self.fieldToolbox = CustomFeatureTool()
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.fieldToolbox) 
 
     def showQaToolBox(self):
