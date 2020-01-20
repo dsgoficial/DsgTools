@@ -199,7 +199,7 @@
     <item row="3" column="0">
      <widget class="QgsCollapsibleGroupBox" name="buttonGroupBox">
       <property name="title">
-       <string>Available button</string>
+       <string>Available buttons</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="1" column="0">

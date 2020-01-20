@@ -99,3 +99,63 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         ret = dlg.exec_()
         if ret:
             pass
+
+class CustomFeatureButton(QObject):
+    """
+    Class designed to handle actions, properties and settings for buttons. It
+    includes info about its styling, shortcuts and other user-defined
+    caracteristics. This object MUST be serializable, since it'll be used for
+    data perpetuation and state definition/loading.
+    """
+    # enumerator for working layer mode
+    ActiveLayer, AllLayers = range(2)
+
+    def __init__(self, props=None):
+        """
+        Class constructor.
+        :param props: (dict) a map to button's properties.
+        """
+        super(CustomFeatureButton, self).__init__()
+        self._props = {
+            "openForm": False,
+            "color": "#ffffff",
+            "tooltip": "",
+            "category": "",
+            "shortcut": "",
+            "layerMode": CustomFeatureButton.ActiveLayer
+        }
+        self.setProperties(props)
+
+    def setProperties(self, props):
+        """
+        Modify current button properties. Only valid properties are modified
+        (caveat: it still may accept invalid values).
+        :param props: (dict) a map to button's new properties.
+        :return: (dict) a map to current button properties.
+        """
+        if props is not None:
+            for prop in self._props.keys():
+                if prop in props:
+                    self._props[prop] = props[prop]
+        return dict(self._props)
+
+    def setOpenForm(self, policy):
+        """
+        Defines whether current button suppresses feature form.
+        :param policy: (bool) whether form should be displayed.
+        """
+        if type(policy) == bool: 
+            self._props["openForm"] = policy
+        else:
+            raise TypeError(
+                self.tr("Policy must be a boolean ({0}).").format(type(policy))
+            )
+
+    def openForm(self):
+        """
+        Retrieves current form displaying policy.
+        :return: (bool) whether form is set to be displayed.
+        """
+        # methods should return a copy of value entry in order for it no to be
+        # accidentally modified 
+        return bool(self._props["openForm"])
