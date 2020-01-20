@@ -24,8 +24,11 @@
 import os
 
 from qgis.PyQt import uic
+from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QDockWidget, QLineEdit, QPushButton
+
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.buttonPropWidget import ButtonPropWidget
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'customFeatureTool.ui'))
@@ -83,3 +86,16 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             pb.setToolTip(tooltip)
         pb.setBaseSize(24, 24)
         return pb
+
+    @pyqtSlot(bool, name="on_buttonPropsPushButton_clicked")
+    def setupCurrentButton(self):
+        """
+        Opens setup form.
+        """
+        # button = self.currentButton()
+        # props = button.properties()
+        # dlg = ButtonPropWidget(props)
+        dlg = ButtonPropWidget()
+        ret = dlg.exec_()
+        if ret:
+            pass

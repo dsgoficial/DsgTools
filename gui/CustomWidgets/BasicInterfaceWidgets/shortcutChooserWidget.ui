@@ -20,7 +20,7 @@
    <item row="0" column="2">
     <widget class="QPushButton" name="clearPushButton">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="MinimumExpanding">
+      <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -40,7 +40,7 @@
    <item row="0" column="0">
     <widget class="QPushButton" name="assignShortcutPushButton">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
