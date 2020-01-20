@@ -502,47 +502,49 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
             self.moveRowDown(row)
             if row != lastRow:
                 rows.remove(row)
-    
-    def exportState(self):
-        """
-        Exports the state of the interface
-        The state of the interface is a dictionary used to populate it.
-        :return: (dict) a map to each value read from the table.
-        """
-        state = dict()
-        for row in self.rowCount():
-            state[row] = dict()
-            for col in self.columnCount():
-                state[row][col] = self.getValue(row, col)
-        return state
 
-    def importState(self, filepath):
+    def contents(self):
         """
-        Imports table contents from a JSON file and sets it to a dict map.
-        :param filepath: (str) of the state of the interface. The state
-        of the interface is a dictionary used to populate it.
+        Exports table's contents to a mapping object.
+        :return: (dict) table's data.
+        """
+        data = dict()
+        for row in self.rowCount():
+            data[row] = self.row(row)
+        return data
+
+    def restore(self, stateDict):
+        """
+        Imports table's contents from a JSON file and sets it to a dict map.
+        Note that importation clears any previous data.
+        :param stateDict: (dict) of the state of the interface.
+        :return: (bool) whether data was fully loaded to OTW.
         """
         self.clear()
         for row, colValues in stateDict.items():
             for col, value in self.items():
                 self.setValue(row, col, value)
-        return stateDict = 
-
-    def save(self):
-        """
-        Exports table contents to a JSON file.
-        """
-        pass
+        return stateDict == self.contents()
 
     def load(self, filepath):
         """
         Imports table contents from a JSON file.
         :param filepath: (str) file path for the JSON file.
         """
-        self.clear()
         try:
             with open(filepath, "r") as f:
-                self.importState(json.load(f))
+                self.restore(json.load(f))
+        except:
+            # raise an error message and make sure GUI is cleared of any debrees
+            self.setHeaders(self.headers)
+
+    def save(self, filepath):
+        """
+        Exports current input data to a JSON file.
+        """
+        try:
+            with open(filepath, "w") as f:
+                json.dump(self.contents(), f)
         except:
             # raise an error message and make sure GUI is cleared of any debrees
             self.setHeaders(self.headers)
