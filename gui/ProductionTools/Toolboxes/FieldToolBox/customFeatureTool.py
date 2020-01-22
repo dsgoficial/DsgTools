@@ -426,3 +426,17 @@ class CustomFeatureSetup(QObject):
             del self._props[name]
             return True
         return False
+
+    def checkKeyword(self, word, checkShortcut=False):
+        """
+        Checks for a keyword match on buttons metadata.
+        :param word: (str) word or expression to be matched.
+        :param checkShortcut: (bool) whether shortcuts should be checked.
+        :return: (list-of-CustomFeatureButton) buttons that have matched the
+                 expression.
+        """
+        matches = []
+        for button in self._buttons.values():
+            if button.checkKeyword(word, checkShortcut):
+                matches.append(button)
+        return matches
