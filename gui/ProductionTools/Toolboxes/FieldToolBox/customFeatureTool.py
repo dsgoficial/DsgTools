@@ -104,6 +104,8 @@ class CustomFeatureButton(QObject):
     characteristics. This object MUST be serializable, since it'll be used for
     data perpetuation and state definition/loading.
     """
+    # metadata of current properties map version
+    __MAP_VERSION = 0.1
 
     def __init__(self, props=None):
         """
@@ -133,7 +135,7 @@ class CustomFeatureButton(QObject):
     def copy(self):
         """
         Provides a copy of current CustomFeatureButton object.
-        :return: (CustomFeatureObject) copy of current's instance.
+        :return: (CustomFeatureButton) copy of current's instance.
         """
         return CustomFeatureButton(self.properties())
 
@@ -362,5 +364,65 @@ class CustomFeatureButton(QObject):
                 return True
         if checkShortcut and word in self.shortcut().lower().replace(" ", ""):
             # this ignores spacing - 'Alt+R' = 'Alt + R'
+            return True
+        return False
+
+class CustomFeatureSetup(QObject):
+    """
+    Class designed to provide objects for button management. 
+    """
+    # metadata of current properties map version
+    __MAP_VERSION = 0.1
+
+    def __init__(self, buttonsProps=None):
+        """
+        Class constructor.
+        :param buttonsProps: (set) a set of buttons' properties to be loaded to
+                             the interface.
+        """
+        super(CustomFeatureButton, self).__init__()
+        self._buttons = dict()
+        if buttons:
+            self.setButtons(buttons)
+
+    def setButtons(self, buttons):
+        """
+        Replaces current active buttons for new ones from thei properties set.
+        Buttons with the same are not tolerated and only one of them will be
+        kept.
+        :param buttons: (set) a set of buttons' properties to be setup.
+        """
+        for props in buttons:
+            self._buttons[props["name"]] = CustomFeatureButton(props)
+
+    def getButton(self, name):
+        """
+        Retrieves a button from its name.
+        :param name: (str) button's name.
+        :return: (CustomFeatureButton) identified button.
+        """
+        if name in self._buttons:
+            return self._buttons[name]
+
+    def addButton(self, props, replace=False):
+        """
+        Adds a button the set of controlled buttons.
+        :param props: (dict) a map to buttons properties.
+        :param replace: (bool) whether a button with the same name, if found,
+                        should be replaced.
+        :return: (bool) operation status
+        """
+        if props["name"] in self._buttons and not replace:
+            return False
+        self._buttons[props["name"]] = CustomFeatureButton(props)
+        return True
+
+    def removeButton(self, name):
+        """
+        Removes a button from setup config.
+        :param name: (str) button's name to be removed.
+        """
+        if name in self._props:
+            del self._props[name]
             return True
         return False
