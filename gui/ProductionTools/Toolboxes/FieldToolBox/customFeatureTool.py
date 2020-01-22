@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-import os
+import os, re
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot, QObject
@@ -101,11 +101,9 @@ class CustomFeatureButton(QObject):
     """
     Class designed to handle actions, properties and settings for buttons. It
     includes info about its styling, shortcuts and other user-defined
-    caracteristics. This object MUST be serializable, since it'll be used for
+    characteristics. This object MUST be serializable, since it'll be used for
     data perpetuation and state definition/loading.
     """
-    # enumerator for working layer mode
-    ActiveLayer, AllLayers = range(2)
 
     def __init__(self, props=None):
         """
@@ -114,14 +112,30 @@ class CustomFeatureButton(QObject):
         """
         super(CustomFeatureButton, self).__init__()
         self._props = {
+            "name": self.tr("New button"),
             "openForm": False,
             "color": "#ffffff",
             "tooltip": "",
             "category": "",
             "shortcut": "",
-            "layerMode": CustomFeatureButton.ActiveLayer
+            "keywords": set()
         }
         self.setProperties(props)
+
+    def __eq__(self, obj):
+        """
+        Method reimplementation for object comparison.
+        """
+        if not hasattr(obj, "_props"):
+            return False
+        return obj._props == self._props
+
+    def copy(self):
+        """
+        Provides a copy of current CustomFeatureButton object.
+        :return: (CustomFeatureObject) copy of current's instance.
+        """
+        return CustomFeatureButton(self.properties())
 
     def setProperties(self, props):
         """
@@ -142,17 +156,43 @@ class CustomFeatureButton(QObject):
         :return: (dict) a map to current button properties.
         """
         # methods should return a copy of value entry in order for it no to be
-        # accidentally modified 
-        return dict(self._props)
+        # accidentally modified
+        return {
+            "name": self.name(),
+            "openForm": self.openForm(),
+            "color": self.color(),
+            "tooltip": self.toolTip(),
+            "category": self.category(),
+            "shortcut": self.shortcut(),
+            "keywords": self.keywords()
+        }
 
-    def toggleLayerMethod(self):
+    def setName(self, name):
         """
-        Toggles current layer method selection mode.
-        :return: (int) current layer selection mode.
+        Defines button's name, which is used to compose the display name.
+        :param name: (str) button's name.
         """
-        mode = self._props["layerMode"] ^ 1
-        self._props["layerMode"] = mode
-        return mode
+        if type(name) == str: 
+            self._props["name"] = name
+        else:
+            raise TypeError(
+                self.tr("Policy must be a str ({0}).").format(type(name))
+            )
+
+    def name(self):
+        """
+        Retrives button's name.
+        :return: (str) button's name.
+        """
+        return str(self._props["name"])
+
+    def displayName(self):
+        """
+        Retrives button's display text (the one which will be exposed on GUI).
+        """
+        if self.shortcut():
+            return "{0} [{1}]".format(self.name(), self.shortcut())
+        return str(self._props["name"])
 
     def setOpenForm(self, policy):
         """
@@ -173,16 +213,41 @@ class CustomFeatureButton(QObject):
         """
         return bool(self._props["openForm"])
 
+    def setColor(self, color):
+        """
+        Defines button color.
+        :param color: (str) button's color.
+        """
+        if type(color) in (bool, tuple): 
+            self._props["color"] = color
+        else:
+            raise TypeError(
+                self.tr("Color must be a str or tuple of int ({0}).")\
+                    .format(type(color))
+            )
+
+    def color(self):
+        """
+        Button's color.
+        :return: (str/tuple-of-int) button's color.
+        """
+        c = self._props["color"]
+        if isinstance(c, str):
+            c = str(c)
+        else:
+            c = tuple([n for n in c])
+        return c
+
     def setToolTip(self, tooltip):
         """
         Defines button tool tip text.
         :param tooltip: (str) button's tool tip text.
         """
-        if type(policy) == bool: 
+        if type(tooltip) == str: 
             self._props["tooltip"] = tooltip
         else:
             raise TypeError(
-                self.tr("Tool tip must be a str ({0}).").format(type(policy))
+                self.tr("Tool tip must be a str ({0}).").format(type(tooltip))
             )
 
     def toolTip(self):
@@ -190,23 +255,112 @@ class CustomFeatureButton(QObject):
         Button's tool tip text.
         :return: (str) button's tool tip text.
         """
-        return bool(self._props["tooltip"])
+        return str(self._props["tooltip"])
 
-    def setToolTip(self, tooltip):
+    def setCategory(self, cat):
         """
-        Defines button tool tip text.
-        :param tooltip: (str) button's tool tip text.
+        Sets button's category property, which is used for button grouping.
+        :param cat: (str) button's tool tip text.
         """
-        if type(policy) == bool: 
-            self._props["tooltip"] = tooltip
+        if type(cat) == str: 
+            self._props["category"] = cat
         else:
             raise TypeError(
-                self.tr("Tool tip must be a str ({0}).").format(type(policy))
+                self.tr("Category must be a str ({0}).").format(type(cat))
             )
 
-    def toolTip(self):
+    def category(self):
         """
-        Button's tool tip text.
+        Property used for button grouping.
         :return: (str) button's tool tip text.
         """
-        return bool(self._props["tooltip"])
+        return str(self._props["category"])
+
+    def setShortcut(self, s):
+        """
+        Sets button's action shortcut.
+        :param s: (str) button's action shortcut.
+        """
+        if type(s) == str: 
+            self._props["shortcut"] = s
+        else:
+            raise TypeError(
+                self.tr("Category must be a str ({0}).").format(type(s))
+            )
+
+    def shortcut(self):
+        """
+        Retrieves button's action shortcut.
+        :return: (str) button's action shortcut.
+        """
+        return str(self._props["shortcut"])
+
+    def addKeyword(self, kw):
+        """
+        Adds a keyword to button's keywords set.
+        :param kw: (str) keyword to be added.
+        """
+        if type(kw) == str: 
+            self._props["keywords"].add(kw)
+        else:
+            raise TypeError(
+                self.tr("Keyword must be a str ({0}).").format(type(kw))
+            )
+
+    def addKeywords(self, kws):
+        """
+        Adds a set of keywords to the current keyword set.
+        :param kws: (set) set of keywords to be added.
+        """
+        if type(kws) == set: 
+            self._props["keywords"] |= kws
+        else:
+            raise TypeError(
+                self.tr("Keyword must be a set ({0}).").format(type(kws))
+            )
+
+    def removeKeyword(self, kw):
+        """
+        Removes a keyword from button's keywords set.
+        :param kw: (str) keyword to be removed.
+        """
+        self._props["keywords"].discard(kw)
+
+    def setKeywords(self, kws):
+        """
+        Replaces button's registered keywords.
+        :param kws: (set) button's new keywords.
+        """
+        if type(kws) == set: 
+            self._props["keywords"] = kws
+        else:
+            raise TypeError(
+                self.tr("Keyword must be a set ({0}).").format(type(kws))
+            )
+
+    def keywords(self):
+        """
+        Retrieves button's registered keywords.
+        :return: (set) button's keywords.
+        """
+        return set(self._props["keywords"])
+
+    def checkKeyword(self, word, checkShortcut=False):
+        """
+        Checks if a given word is among button's keywords or name. It may look
+        into shortcut as well.
+        :word: (str) word to be checked.
+        :param checkShortcut: (bool) whether word should be matched to shortcut
+                              as well.
+        :return: (bool) whether word is found among button's metadata.
+        """
+        word = word.lower().strip()
+        if word in self.name().lower():
+            return True
+        for kw in self.keywords():
+            if word in kw.lower():
+                return True
+        if checkShortcut and word in self.shortcut().lower().replace(" ", ""):
+            # this ignores spacing - 'Alt+R' = 'Alt + R'
+            return True
+        return False
