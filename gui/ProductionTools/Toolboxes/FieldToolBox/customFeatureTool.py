@@ -173,6 +173,8 @@ class CustomFeatureButton(QObject):
             for prop in self._props.keys():
                 if prop in props:
                     self._props[prop] = props[prop]
+        # set properties to the push button related to this obj
+        self._widget = self.newWidget()
         return dict(self._props)
 
     def properties(self):
@@ -192,6 +194,33 @@ class CustomFeatureButton(QObject):
             "keywords": self.keywords()
         }
 
+    def widget(self):
+        """
+        This instance's widget configured with current defined properties.
+        :return: (QPushButton) current widget.
+        """
+        return self._widget
+
+    def newWidget(self):
+        """
+        A new instance of widget configured with current defined properties.
+        :return: (QPushButton) new instance of a widget with current defined
+                 properties.
+        """
+        pb = QPushButton()
+        pb.setText(self.displayName())
+        pb.setToolTip(self.toolTip())
+        pal = QPalette()
+        col = self.color()
+        if isinstance(col, str):
+            col = QColor(col)
+        else:
+            col = QColor(*col)
+        pal.setColor(pal.Button, col)
+        pb.setPalette(pal)
+        pb.update()
+        return pb
+
     def setName(self, name):
         """
         Defines button's name, which is used to compose the display name.
@@ -199,6 +228,8 @@ class CustomFeatureButton(QObject):
         """
         if type(name) == str: 
             self._props["name"] = name
+            self._widget.setText(self.displayName())
+            self._widget.update()
         else:
             raise TypeError(
                 self.tr("Policy must be a str ({0}).").format(type(name))
@@ -243,8 +274,17 @@ class CustomFeatureButton(QObject):
         Defines button color.
         :param color: (str) button's color.
         """
-        if type(color) in (bool, tuple): 
+        if type(color) in (str, tuple): 
             self._props["color"] = color
+            pal = QPalette()
+            col = self.color()
+            if isinstance(col, str):
+                col = QColor(col)
+            else:
+                col = QColor(*col)
+            pal.setColor(pal.Button, col)
+            self._widget.setPalette(pal)
+            self._widget.update()
         else:
             raise TypeError(
                 self.tr("Color must be a str or tuple of int ({0}).")\
@@ -270,6 +310,7 @@ class CustomFeatureButton(QObject):
         """
         if type(tooltip) == str: 
             self._props["tooltip"] = tooltip
+            self._widget.setToolTip(tooltip)
         else:
             raise TypeError(
                 self.tr("Tool tip must be a str ({0}).").format(type(tooltip))
@@ -308,6 +349,8 @@ class CustomFeatureButton(QObject):
         """
         if type(s) == str: 
             self._props["shortcut"] = s
+            self._widget.setText(self.displayName())
+            self._widget.update()
         else:
             raise TypeError(
                 self.tr("Category must be a str ({0}).").format(type(s))
@@ -432,6 +475,17 @@ class CustomFeatureSetup(QObject):
         if name in self._buttons:
             return self._buttons[name]
 
+    def buttonWidget(self, name, newInstance=False):
+        """
+        Retrieves an instance of button's widget from its name.
+        :param name: (str) button's name.
+        :param newInstance: (bool) indicates whether widget should be a new
+                            instance setup with current button's properties.
+        :return: (QPushButton) button GUI-ready (e.g. with all props applied).
+        """
+        return self._buttons[name].newWidget() if newInstance \
+                else self._buttons[name].widget()
+
     def buttons(self):
         """
         Retrieves all registered buttons.
@@ -439,6 +493,15 @@ class CustomFeatureSetup(QObject):
         :return: (list-of-CustomFeatureButton) identified button.
         """
         return list(self._buttons.values())
+
+    def widgets(self, newInstance=False):
+        """
+        Retrieves a map of all button widgets of registered buttons.
+        :param newInstance: (bool) indicates whether widget should be a new
+                            instance setup with current button's properties.
+        :return: (dict) a map from button name to its widget instance.
+        """
+        return { self.buttonWidget(n, newInstance) for n in self._buttons }
 
     def addButton(self, props, replace=False):
         """
