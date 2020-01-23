@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>333</width>
-    <height>242</height>
+    <width>343</width>
+    <height>278</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,38 +16,104 @@
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QRadioButton" name="newRadioButton">
-        <property name="text">
-         <string>New feature</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="reclassifyRadioButton">
-        <property name="text">
-         <string>Reclassify feature</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
+     <widget class="QgsCollapsibleGroupBox" name="mGroupBox_2">
+      <property name="title">
+       <string>Tool behaviour</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QRadioButton" name="newRadioButton">
+           <property name="text">
+            <string>New feature</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="reclassifyRadioButton">
+           <property name="text">
+            <string>Reclassify feature</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="buttonPropsPushButton">
+           <property name="toolTip">
+            <string>Define display button properties</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../../resources.qrc">
+             <normaloff>:/plugins/DsgTools/icons/config.png</normaloff>:/plugins/DsgTools/icons/config.png</iconset>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QgsCollapsibleGroupBox" name="mGroupBox">
+      <property name="title">
+       <string>Reclassify - layer selection behaviour</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QRadioButton" name="activeRadioButton">
+           <property name="text">
+            <string>Active layer</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="allRadioButton">
+           <property name="text">
+            <string>All selected features</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -58,34 +124,6 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
-        </property>
-        <zorder>layoutWidget_2</zorder>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="buttonPropsPushButton">
-        <property name="toolTip">
-         <string>Define display button properties</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../../../../resources.qrc">
-          <normaloff>:/plugins/DsgTools/icons/config.png</normaloff>:/plugins/DsgTools/icons/config.png</iconset>
         </property>
        </widget>
       </item>
@@ -148,15 +186,19 @@
      </spacer>
     </item>
    </layout>
-   <zorder>layoutWidget</zorder>
-   <zorder>buttonComboBox</zorder>
    <zorder>orderedTableWidget</zorder>
    <zorder>verticalSpacer</zorder>
-   <zorder>layoutWidget_3</zorder>
-   <zorder>layoutWidget_2</zorder>
+   <zorder>mGroupBox</zorder>
+   <zorder>mGroupBox_2</zorder>
   </widget>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>QgsCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>qgscollapsiblegroupbox.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>DsgCustomComboBox</class>
    <extends>QWidget</extends>
