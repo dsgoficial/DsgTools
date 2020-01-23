@@ -21,7 +21,9 @@
  ***************************************************************************/
 """
 
-import os, re
+import os
+from datetime import datetime
+from collections import defaultdict
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot, QObject
@@ -126,11 +128,32 @@ class CustomFeatureButton(QObject):
 
     def __eq__(self, obj):
         """
-        Method reimplementation for object comparison.
+        Method reimplementation for object comparison. This comparison is
+        stablished through property comparison, hence buttons that share the
+        same set of attributes, even if they are different objects, will return
+        when compared for object equality.
+        :param obj: (*) any other object that is compared to this instance.
+        :return: (bool) whether this is instance is equal to the reference obj.
         """
         if not hasattr(obj, "_props"):
             return False
         return obj._props == self._props
+
+    def __str__(self):
+        """
+        Method reimplementation for object stringfication.
+        :return: (str) stringfied instance.
+        """
+        return "<DSGTools CustomFeatureButton instance\n{0}>"\
+                .format(str(self._props))
+
+    def __hash__(self):
+        """
+        Method reimplementation for object hashing in order to allow
+        CustomFeatureButton as dictionary keys (main reason).
+        :return: (int) instance's hash value.
+        """
+        return hash(str(self))
 
     def copy(self):
         """
@@ -380,10 +403,10 @@ class CustomFeatureSetup(QObject):
         :param buttonsProps: (set) a set of buttons' properties to be loaded to
                              the interface.
         """
-        super(CustomFeatureButton, self).__init__()
+        super(CustomFeatureSetup, self).__init__()
         self._buttons = dict()
-        if buttons:
-            self.setButtons(buttons)
+        if buttonsProps:
+            self.setButtons(buttonsProps)
 
     def setButtons(self, buttons):
         """
@@ -392,10 +415,15 @@ class CustomFeatureSetup(QObject):
         kept.
         :param buttons: (set) a set of buttons' properties to be setup.
         """
+        if not buttons:
+            for key in self._buttons:
+                del self._buttons[key]
+            del self._buttons
+            self._buttons = dict()
         for props in buttons:
             self._buttons[props["name"]] = CustomFeatureButton(props)
 
-    def getButton(self, name):
+    def button(self, name):
         """
         Retrieves a button from its name.
         :param name: (str) button's name.
@@ -403,6 +431,14 @@ class CustomFeatureSetup(QObject):
         """
         if name in self._buttons:
             return self._buttons[name]
+
+    def buttons(self):
+        """
+        Retrieves all registered buttons.
+        :param name: (str) button's name.
+        :return: (list-of-CustomFeatureButton) identified button.
+        """
+        return list(self._buttons.values())
 
     def addButton(self, props, replace=False):
         """
@@ -440,3 +476,64 @@ class CustomFeatureSetup(QObject):
             if button.checkKeyword(word, checkShortcut):
                 matches.append(button)
         return matches
+
+    def categories(self, reverse=False):
+        """
+        Identifies all categories comprising current set of buttons.
+        :return: (list-of-str) ordered list of categories.
+        """
+        return sorted(
+            set(button.category() for button in self._buttons.values()),
+            reverse=reverse
+        )
+
+    def groupButtons(self):
+        """
+        Maps and groups all buttons in regard to their categories.
+        :return: (dict) map to all buttons using category as key.
+        """
+        groups = defaultdict(set)
+        for b in self._buttons.values():
+            groups[b.category()].add(b)
+        return groups
+
+    def now(self):
+        """
+        Gets time and date from the system. Format: "dd/mm/yyyy HH:MM:SS".
+        :return: (str) current's date and time
+        """
+        paddle = lambda n : str(n) if n > 9 else "0{0}".format(n)
+        now = datetime.now()
+        return "{day}/{month}/{year} {hour}:{minute}:{second}".format(
+            year=now.year,
+            month=paddle(now.month),
+            day=paddle(now.day),
+            hour=paddle(now.hour),
+            minute=paddle(now.minute),
+            second=paddle(now.second)
+        )
+
+    def state(self):
+        """
+        Exports current setup instance to a map object.
+        :return: (dict) a map to all instances attributes.
+        """
+        return {
+            "version": self.__MAP_VERSION,
+            "lastModified": self.now(),
+            "buttons": [b.properties() for b in self.buttons()]
+        }
+
+    def setState(self, state):
+        """
+        Tries to import state from a map object.
+        :param state: (dict) a map to state to be imported.
+        """
+        if self.__MAP_VERSION != state["version"]:
+            # warn user that versions are different and state may be
+            # incompatible
+            pass
+        # clear current state
+        self.setButtons({})
+        for props in state["buttons"]:
+            self.addButton(props)
