@@ -18,7 +18,7 @@
     <widget class="QgsColorButton" name="mColorButton"/>
    </item>
    <item row="6" column="1" colspan="2">
-    <widget class="QLineEdit" name="customCategoryLineEdit">
+    <widget class="QLineEdit" name="categoryLineEdit">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -46,7 +46,7 @@
     </widget>
    </item>
    <item row="6" column="0">
-    <widget class="QCheckBox" name="customCategoryCheckBox">
+    <widget class="QCheckBox" name="categoryCheckBox">
      <property name="text">
       <string>Custom category</string>
      </property>
@@ -79,7 +79,7 @@
     </widget>
    </item>
    <item row="1" column="1" colspan="2">
-    <widget class="QLineEdit" name="buttonNameLineEdit">
+    <widget class="QLineEdit" name="nameLineEdit">
      <property name="sizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
        <horstretch>0</horstretch>
@@ -144,7 +144,7 @@
    <item row="0" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QComboBox" name="comboBox">
+      <widget class="QComboBox" name="buttonComboBox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
