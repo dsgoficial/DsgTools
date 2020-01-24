@@ -144,15 +144,15 @@ class CustomFeatureButton(QObject):
         pb = QPushButton()
         pb.setText(self.displayName())
         pb.setToolTip(self.toolTip())
+        pal = QPalette()
         if self.useColor():
-            pal = QPalette()
             col = self.color()
             if isinstance(col, str):
                 col = QColor(col)
             else:
                 col = QColor(*col)
                 pal.setColor(pal.Button, col)
-            pb.setPalette(pal)
+        pb.setPalette(pal)
         pb.update()
         return pb
 
@@ -211,15 +211,16 @@ class CustomFeatureButton(QObject):
         """
         if type(color) in (str, tuple): 
             self._props["color"] = color
-            pal = QPalette()
-            col = self.color()
-            if isinstance(col, str):
-                col = QColor(col)
-            else:
-                col = QColor(*col)
-            pal.setColor(pal.Button, col)
-            self._widget.setPalette(pal)
-            self._widget.update()
+            if self.useColor():
+                pal = QPalette()
+                col = self.color()
+                if isinstance(col, str):
+                    col = QColor(col)
+                else:
+                    col = QColor(*col)
+                pal.setColor(pal.Button, col)
+                self._widget.setPalette(pal)
+                self._widget.update()
         else:
             raise TypeError(
                 self.tr("Color must be a str or tuple of int ({0}).")\
@@ -245,7 +246,10 @@ class CustomFeatureButton(QObject):
         """
         if type(useColor) == bool: 
             self._props["useColor"] = useColor
-            self._widget.setToolTip(useColor)
+            if not useColor:
+                self.widget().setPalette(QPalette())
+            else:
+                self.setColor(self.color())
         else:
             raise TypeError(
                 self.tr("Color usage must be a bool ({0}).")\
@@ -286,7 +290,6 @@ class CustomFeatureButton(QObject):
         """
         if type(cat) == str: 
             self._props["category"] = cat
-            self._props[prop] = props[prop]
         else:
             raise TypeError(
                 self.tr("Category must be a str ({0}).").format(type(cat))
