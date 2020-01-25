@@ -104,7 +104,7 @@ class ButtonPropWidget(QDialog, FORM_CLASS):
         return self.buttonSetup.button(self.currentButtonName())
 
     @pyqtSlot(int, name="on_buttonComboBox_currentIndexChanged")
-    def setCurrentButton(self, button):
+    def setActiveButton(self, button):
         """
         Changes current active button.
         :button: (CustomFeatureButton) button to be set as active.
@@ -131,19 +131,40 @@ class ButtonPropWidget(QDialog, FORM_CLASS):
         self.shortcutWidget.setShortcut(button.shortcut())
         self.openFormCheckBox.setChecked(button.openForm())
 
-    @pyqtSlot(bool)
-    def on_savePushButton_clicked(self, props):
+    def validateData(self):
         """
-        Current data will be store as current buttons properties
+        Validates all data entries.
+        :return: (str) invalidation reason.
         """
-        pass
+        return ""
+
+    def isValid(self):
+        """
+        Identifies whether all input data is valid.
+        :return: (bool) input data is validity status.
+        """
+        return self.validateData() == ""
+
+    @pyqtSlot(bool, name="on_savePushButton_clicked")
+    def updateCurrentButton(self, props):
+        """
+        Current data will be stored as current button's properties.
+        :param props: (dict) a map to button's properties to be updated.
+        """
+        if isinstance(props, bool):
+            # then it came from signal emition
+            props = self.readButton().properties()
+        msg = self.validateData()
+        if msg == "":
+            self.buttonSetup.updateButton(self.currentButton(), props)
+            # self.setActiveButton()
 
     @pyqtSlot(bool)
     def on_undoPushButton_clicked(self):
         """
-        Current data will be store as current buttons properties
+        Restores stored data from current button and sets it to GUI.
         """
-        self.setCurrentButton(self.currentButton())
+        self.setActiveButton(self.currentButton())
 
     @pyqtSlot(bool, name="on_addPushButton_clicked")
     def addButton(self):
@@ -162,11 +183,18 @@ class ButtonPropWidget(QDialog, FORM_CLASS):
             button.setName(name)
         self.buttonSetup.addButton(button.properties())
         self.buttonComboBox.addItem(name)
-        self.setCurrentButton(button)
+        self.setActiveButton(button)
 
     @pyqtSlot(bool)
     def on_removePushButton_clicked(self):
         """
-        Current data will be store as current buttons properties
+        Removes the current button from setup.
         """
-        pass
+        # ADD CONFIRMATION BOX
+        button = self.currentButton()
+        name = button.name()
+        if name == "":
+            # ignore the "Select a button..."
+            return
+        self.buttonSetup.removeButton(name)
+        self.buttonComboBox.removeItem(self.buttonComboBox.findText(name))

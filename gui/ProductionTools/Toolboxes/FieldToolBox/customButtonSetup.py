@@ -482,14 +482,28 @@ class CustomButtonSetup(QObject):
         self.buttonAdded.emit(self.button(props["name"]))
         return True
 
+    def updateButton(self, prevName, newProps):
+        """
+        Updates button's properties.
+        :param prevName: (str) name for the button that will be updated.
+        :param newProps: (dict) a map to new attributes to be set.
+        """
+        button = self.button(name)
+        if button is None:
+            # button is not registered
+            return
+        button.setProperties(props)
+        self.removeButton(name)
+        self.addButton(button.properties())
+
     def removeButton(self, name):
         """
         Removes a button from setup config.
         :param name: (str) button's name to be removed.
         """
-        if name in self._props:
+        if name in self._buttons:
             button = self.button(name)
-            del self._props[name]
+            del self._buttons[name]
             self.buttonRemoved.emit(button)
             return True
         return False
