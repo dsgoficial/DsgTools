@@ -59,7 +59,6 @@ from qgis.core import (QgsProcessing,
 
 class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
     INPUT = 'INPUT'
-    ATTRIBUTE_INDEX = 'ATTRIBUTE_INDEX'
     ATTRIBUTE_ID = 'ATTRIBUTE_ID'
     ID_VALUE = 'ID_VALUE'
     CROSSES_X = 'CROSSES_X'
@@ -82,16 +81,6 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
                 self.INPUT,
                 self.tr('Input Layer'),
                 [QgsProcessing.TypeVectorPolygon]
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterField(
-                self.ATTRIBUTE_INDEX, 
-                self.tr('INOM Field'),
-                None, 
-                'INPUT', 
-                QgsProcessingParameterField.Any
             )
         )
 
@@ -141,7 +130,7 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
                 self.tr('UTM Grid Spacing'),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Integer,
-                defaultValue=4000
+                defaultValue=1000
             )
         )
 
@@ -220,7 +209,6 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
-        attribute = self.parameterAsFields(parameters, self.ATTRIBUTE_INDEX, context)[0]
         id_attribute = self.parameterAsFields(parameters, self.ATTRIBUTE_ID, context)[0]
         id_value = self.parameterAsInt(parameters, self.ID_VALUE, context)
         spacing = self.parameterAsInt(parameters, self.SPACING, context)
@@ -232,7 +220,7 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
         font = self.parameterAsFont(parameters, self.FONT, context)
         fontLL = self.parameterAsFont(parameters, self.FONT_LL, context)
         llcolor = self.parameterAsColor(parameters, self.COLOR_LL, context)
-        GridAndLabelCreator().geo_test(inputLyr, attribute, id_attribute, id_value, spacing, crossX, crossY, scale, color, fontSize, font, fontLL, llcolor)
+        GridAndLabelCreator().geo_test(inputLyr, id_attribute, id_value, spacing, crossX, crossY, scale, color, fontSize, font, fontLL, llcolor)
 
         return {self.OUTPUT: inputLyr}
 
