@@ -46,7 +46,7 @@ class ButtonPropWidget(QDialog, FORM_CLASS):
         """
         super(ButtonPropWidget, self).__init__(parent)
         self.setupUi(self)
-        self.buttonSetup = buttonSetup or CustomButtonSetup()
+        self._buttonSetup = buttonSetup or CustomButtonSetup()
         self.refresh()
 
     def setup(self):
@@ -54,7 +54,7 @@ class ButtonPropWidget(QDialog, FORM_CLASS):
         Retrieves the object responsible for button management.
         :return: (CustomButtonSetup) button setup object.
         """
-        return self.buttonSetup
+        return self._buttonSetup
 
     def clear(self):
         """
@@ -69,7 +69,7 @@ class ButtonPropWidget(QDialog, FORM_CLASS):
         self.clear()
         self.buttonComboBox.addItem(self.tr("Select a button..."))
         self.buttonComboBox.addItems([
-            b.name() for b in self.buttonSetup.buttons()
+            b.name() for b in self.setup().buttons()
         ])
 
     def readButton(self):
@@ -108,7 +108,7 @@ class ButtonPropWidget(QDialog, FORM_CLASS):
             button = CustomFeatureButton()
             button.setName("")
             return button
-        return self.buttonSetup.button(self.currentButtonName())
+        return self.setup().button(self.currentButtonName())
 
     @pyqtSlot(int, name="on_buttonComboBox_currentIndexChanged")
     def setActiveButton(self, button):
@@ -138,11 +138,12 @@ class ButtonPropWidget(QDialog, FORM_CLASS):
         self.shortcutWidget.setShortcut(button.shortcut())
         self.openFormCheckBox.setChecked(button.openForm())
 
-    def validateData(self):
+    def validateData(self, data=None):
         """
         Validates all data entries.
         :return: (str) invalidation reason.
         """
+        data = data or self.readButton().properties()
         return ""
 
     def isValid(self):
@@ -166,7 +167,7 @@ class ButtonPropWidget(QDialog, FORM_CLASS):
         if msg == "":
             button = self.currentButton()
             prevName = button.name()
-            self.buttonSetup.updateButton(prevName, props)
+            self.setup().updateButton(prevName, props)
             newName = button.name()
             if prevName != newName:
                 self.buttonComboBox.removeItem(
@@ -189,7 +190,7 @@ class ButtonPropWidget(QDialog, FORM_CLASS):
         """
         button = CustomFeatureButton()
         name = button.name()
-        names = [b.name() for b in self.buttonSetup.buttons()]
+        names = [b.name() for b in self.setup().buttons()]
         if name in names:
             i = 1
             name = "{0} {1}".format(name, i)
@@ -197,7 +198,7 @@ class ButtonPropWidget(QDialog, FORM_CLASS):
                 name = "{0} {1}".format(button.name(), i)
                 i += 1
             button.setName(name)
-        self.buttonSetup.addButton(button.properties())
+        self.setup().addButton(button.properties())
         self.buttonComboBox.addItem(name)
         self.setActiveButton(button)
 
@@ -211,5 +212,26 @@ class ButtonPropWidget(QDialog, FORM_CLASS):
         if name == "":
             # ignore the "Select a button..."
             return
-        self.buttonSetup.removeButton(name)
+        self.setup().removeButton(name)
         self.buttonComboBox.removeItem(self.buttonComboBox.findText(name))
+
+    def state(self):
+        """
+        Retrieves dialog's data display state.
+        :return: (dict) a map to object's state.
+        """
+        return {
+            "item": self.buttonComboBox.currentIndex(),
+            "buttons": [b.properties() for b in self.setup().buttons()],
+            "activeData": {} # this may be a modified button not yet saved
+        }
+
+    def setState(self, state):
+        """
+        Restores a saved state to current dialog's instance.
+        :param state: (dict) a map to object's state.
+        """
+        msg = self.validateData(state)
+        if msg == "":
+            self.setup()
+        
