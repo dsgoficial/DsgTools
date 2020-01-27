@@ -49,6 +49,13 @@ class ButtonPropWidget(QDialog, FORM_CLASS):
         self.buttonSetup = buttonSetup or CustomButtonSetup()
         self.refresh()
 
+    def setup(self):
+        """
+        Retrieves the object responsible for button management.
+        :return: (CustomButtonSetup) button setup object.
+        """
+        return self.buttonSetup
+
     def clear(self):
         """
         Clears all data from interface.
@@ -71,16 +78,16 @@ class ButtonPropWidget(QDialog, FORM_CLASS):
         :return: (CustomFeatureButton) button read from the interface.
         """
         b = CustomFeatureButton()
-        b.setName(self.nameLineEdit.text())
+        b.setName(self.nameLineEdit.text().strip())
         b.setUseColor(self.colorCheckBox.isChecked())
         if self.colorCheckBox.isChecked():
             b.setColor(self.mColorButton.color().getRgb())
         if self.tooltipCheckBox.isChecked():
-            b.setToolTip(self.toolTipLineEdit.text())
+            b.setToolTip(self.toolTipLineEdit.text().strip())
         if self.categoryCheckBox.isChecked():
-            b.setCategory(self.categoryLineEdit.text())
+            b.setCategory(self.categoryLineEdit.text().strip())
         if self.shortcutCheckBox.isChecked():
-            b.setShortcut(self.shortcutWidget.getShortcut())
+            b.setShortcut(self.shortcutWidget.getShortcut().strip())
         b.setOpenForm(self.openFormCheckBox.isChecked())
         return b
 
@@ -152,12 +159,21 @@ class ButtonPropWidget(QDialog, FORM_CLASS):
         :param props: (dict) a map to button's properties to be updated.
         """
         if isinstance(props, bool):
-            # then it came from signal emition
+            # if button pressing was the triggering event, current data will be
+            # store into current button
             props = self.readButton().properties()
         msg = self.validateData()
         if msg == "":
-            self.buttonSetup.updateButton(self.currentButton(), props)
-            # self.setActiveButton()
+            button = self.currentButton()
+            prevName = button.name()
+            self.buttonSetup.updateButton(prevName, props)
+            newName = button.name()
+            if prevName != newName:
+                self.buttonComboBox.removeItem(
+                    self.buttonComboBox.findText(prevName)
+                )
+                self.buttonComboBox.addItem(newName)
+                self.buttonComboBox.setCurrentText(newName)
 
     @pyqtSlot(bool)
     def on_undoPushButton_clicked(self):
@@ -191,8 +207,7 @@ class ButtonPropWidget(QDialog, FORM_CLASS):
         Removes the current button from setup.
         """
         # ADD CONFIRMATION BOX
-        button = self.currentButton()
-        name = button.name()
+        name = self.currentButton().name()
         if name == "":
             # ignore the "Select a button..."
             return

@@ -110,6 +110,31 @@ class CustomFeatureButton(QObject):
         self._widget = self.newWidget()
         return dict(self._props)
 
+    def update(self, newProps):
+        """
+        Updates current button properties from a given property map.
+        :param newProps: (dict) new properties value map.
+        :return: (bool) whether any property value was set from newProps.
+        """
+        updated = False
+        tempButton = CustomFeatureButton(newProps)
+        methodMap = {
+            "name": lambda x: self.setName(x),
+            "openForm": lambda x: self.setOpenForm(x),
+            "useColor": lambda x: self.setUseColor(x),
+            "color": lambda x: self.setColor(x),
+            "tooltip": lambda x: self.setToolTip(x),
+            "category": lambda x: self.setCategory(x),
+            "shortcut": lambda x: self.setShortcut(x),
+            "keywords": lambda x: self.setKeywords(x)
+        }
+        for propName, propValue in tempButton.properties().items():
+            if propName in newProps and propValue == newProps[propName]:
+                # only non-defaulted values will be applied to the button
+                methodMap[propName](propValue)
+                updated = True
+        return updated
+
     def properties(self):
         """
         Retrieves button's properties.
@@ -401,7 +426,7 @@ class CustomButtonSetup(QObject):
     __MAP_VERSION = 0.1
     buttonAdded = pyqtSignal(CustomFeatureButton)
     buttonRemoved = pyqtSignal(CustomFeatureButton)
-    buttonModified = pyqtSignal(CustomFeatureButton)
+    buttonUpdated = pyqtSignal(CustomFeatureButton)
 
     def __init__(self, buttonsProps=None):
         """
@@ -419,17 +444,17 @@ class CustomButtonSetup(QObject):
         Replaces current active buttons for new ones from thei properties set.
         Buttons with the same are not tolerated and only one of them will be
         kept.
-        :param buttons: (set) a set of buttons' properties to be setup.
+        :param buttons: (list) a list of buttons' properties to be setup.
         """
         if not buttons:
-            for key in self._buttons:
+            for key in list(self._buttons.keys()):
                 del self._buttons[key]
             del self._buttons
             self._buttons = dict()
         for props in buttons:
             button = CustomFeatureButton(props)
             self._buttons[props["name"]] = button
-            button.categoryChanged.connect(self.buttonModified)
+            # button.categoryChanged.connect(self.buttonUpdated)
 
     def button(self, name):
         """
@@ -454,10 +479,16 @@ class CustomButtonSetup(QObject):
     def buttons(self):
         """
         Retrieves all registered buttons.
-        :param name: (str) button's name.
         :return: (list-of-CustomFeatureButton) identified button.
         """
         return list(self._buttons.values())
+
+    def buttonNames(self):
+        """
+        Retrieves the names for all registered buttons.
+        :return: (list-of-CustomFeatureButton) names for the buttons.
+        """
+        return list(self._buttons.keys())
 
     def widgets(self, newInstance=False):
         """
@@ -487,14 +518,18 @@ class CustomButtonSetup(QObject):
         Updates button's properties.
         :param prevName: (str) name for the button that will be updated.
         :param newProps: (dict) a map to new attributes to be set.
+        :return: (bool) whether button was updated.
         """
-        button = self.button(name)
+        button = self.button(prevName)
         if button is None:
             # button is not registered
-            return
-        button.setProperties(props)
-        self.removeButton(name)
-        self.addButton(button.properties())
+            return False
+        updated = button.update(newProps)
+        if prevName != button.name():
+            self._buttons[button.name()] = self._buttons.pop(prevName)
+        if updated:
+            self.buttonUpdated.emit(button)
+        return updated
 
     def removeButton(self, name):
         """
