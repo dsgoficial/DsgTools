@@ -26,7 +26,7 @@ from collections import defaultdict
 
 from qgis.PyQt.QtCore import pyqtSignal, QObject
 from qgis.PyQt.QtGui import QIcon, QColor, QPalette
-from qgis.PyQt.QtWidgets import QPushButton
+from qgis.PyQt.QtWidgets import QPushButton, QAction
 
 class CustomFeatureButton(QObject):
     """
@@ -55,6 +55,9 @@ class CustomFeatureButton(QObject):
             "shortcut": "",
             "keywords": set()
         }
+        self._callback = lambda: None
+        self._action = QAction()
+        self._action.triggered.connect(self._callback)
         self.setProperties(props)
 
     def __eq__(self, obj):
@@ -91,7 +94,10 @@ class CustomFeatureButton(QObject):
         Provides a copy of current CustomFeatureButton object.
         :return: (CustomFeatureButton) copy of current's instance.
         """
-        return CustomFeatureButton(self.properties())
+        b = CustomFeatureButton(self.properties())
+        b.setCallback(self._callback)
+        b.setAction(self._action)
+        return b
 
     def setProperties(self, props):
         """
@@ -179,6 +185,7 @@ class CustomFeatureButton(QObject):
                 pal.setColor(pal.Button, col)
         pb.setPalette(pal)
         pb.update()
+        pb.clicked.connect(self._action.trigger)
         return pb
 
     def setName(self, name):
@@ -417,6 +424,40 @@ class CustomFeatureButton(QObject):
             # this ignores spacing - 'Alt+R' = 'Alt + R'
             return True
         return False
+
+    def setCallback(self, callback):
+        """
+        Sets callback to be triggered whenever button is pushed.
+        :param callback: (*) any callable object.
+        """
+        if not callable(callback):
+            raise Exception(self.tr("Callback must be a callable object."))
+        self._action.triggered.disconnect(self._callback)
+        self._callback = callback
+        self._action.triggered.connect(self._callback)
+
+    def setAction(self, action):
+        """
+        Sets callback to be triggered whenever button is pushed.
+        :param action: (QAction) action to be set.
+        """
+        if not isinstance(action, QAction):
+            raise Exception(self.tr("Action must be instance of QAction."))
+        self._action.triggered.disconnect(self._callback)
+        # other callbacks might have been associated with current action
+        self._action.blockSignals(True)
+        self._widget.clicked.disconnect(self._action.trigger)
+        del self._action
+        self._action = action
+        self._action.triggered.connect(self._callback)
+        self._widget.clicked.connect(self._action.trigger)
+
+    def action(self):
+        """
+        Gets the QAction associated with the button push event.
+        :return: (QAction) current action.
+        """
+        return self._action
 
 class CustomButtonSetup(QObject):
     """
