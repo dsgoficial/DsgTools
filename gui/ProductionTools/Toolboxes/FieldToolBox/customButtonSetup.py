@@ -26,9 +26,10 @@ from datetime import datetime
 from collections import defaultdict
 
 from qgis.utils import iface
+from qgis.core import QgsProject
 from qgis.PyQt.QtCore import pyqtSignal, QObject
-from qgis.PyQt.QtGui import QIcon, QColor, QPalette, QKeySequence
 from qgis.PyQt.QtWidgets import QPushButton, QAction
+from qgis.PyQt.QtGui import QIcon, QColor, QPalette, QKeySequence
 
 class CustomFeatureButton(QObject):
     """
@@ -57,6 +58,7 @@ class CustomFeatureButton(QObject):
             "tooltip": "",
             "category": "",
             "shortcut": "",
+            "layer": "",
             "keywords": set()
         }
         self._callback = callback if callback else lambda: None
@@ -147,6 +149,7 @@ class CustomFeatureButton(QObject):
             "tooltip": lambda x: self.setToolTip(x),
             "category": lambda x: self.setCategory(x),
             "shortcut": lambda x: self.setShortcut(x),
+            "layer": lambda x: self.setLayer(x),
             "keywords": lambda x: self.setKeywords(x)
         }
         for propName, propValue in tempButton.properties().items():
@@ -170,6 +173,7 @@ class CustomFeatureButton(QObject):
             "color": self.color(),
             "tooltip": self.toolTip(),
             "category": self.category(),
+            "layer": self.layer(),
             "shortcut": self.shortcut(),
             "keywords": self.keywords()
         }
@@ -433,6 +437,8 @@ class CustomFeatureButton(QObject):
         word = word.lower().strip()
         if word in self.name().lower():
             return True
+        if word in self.layer().lower():
+            return True
         for kw in self.keywords():
             if word in kw.lower():
                 return True
@@ -489,6 +495,33 @@ class CustomFeatureButton(QObject):
         :return: (QAction) current action.
         """
         return self._action if hasattr(self, "_action") else None
+
+    def setLayer(self, layer):
+        """
+        Updates target layer name property.
+        :param layer: (str) new layer name to be worked on.
+        """
+        if type(layer) == str: 
+            self._props["layer"] = layer
+        else:
+            raise TypeError(
+                self.tr("Layer name must be a str ({0}).").format(type(layer))
+            )
+
+    def layer(self):
+        """
+        Name for the layer that will be targeted for button's reclassification
+        or feature creation.
+        :return: (str) name for the layer to be used.
+        """
+        return str(self._props["layer"])
+
+    def checkLayer(self):
+        """
+        Checks whether current layer is loaded on canvas.
+        :return: (bool) whether layer is found on canvas.
+        """
+        return len(QgsProject.instance().mapLayersByName(self.layer())) > 0
 
 class CustomButtonSetup(QObject):
     """
