@@ -138,12 +138,18 @@ class ButtonPropWidget(QDialog, FORM_CLASS):
         self.shortcutWidget.setShortcut(button.shortcut())
         self.openFormCheckBox.setChecked(button.openForm())
 
-    def validateData(self, data=None):
+    def validateData(self, data=None, new=True):
         """
-        Validates all data entries.
+        Validates if a given set of button properties is valid accordingly to
+        current button setup context.
+        :param data: (dict) map of button properties to be validated.
+        :param new: (bool) indicates if the property map is for a button that
+                    is already saved into current setup, or if it is supposed
+                    to be added to it.
         :return: (str) invalidation reason.
         """
-        data = data or self.readButton().properties()
+        b = CustomFeatureButton(data or self.readButton().properties())
+        s = self.setup()
         return ""
 
     def isValid(self):

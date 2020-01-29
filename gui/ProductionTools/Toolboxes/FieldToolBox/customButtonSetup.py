@@ -7,7 +7,7 @@
                              -------------------
         begin                : 2020-01-17
         git sha              : $Format:%H$
-        copyright            : (C) 2020 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        copyright            : (C) 2020 by João P. Esperidião - Cartographic Engineer @ Brazilian Army
         email                : esperidiao.joao@eb.mil.br
  ***************************************************************************/
 
@@ -21,11 +21,13 @@
  ***************************************************************************/
 """
 
+import os
 from datetime import datetime
 from collections import defaultdict
 
+from qgis.utils import iface
 from qgis.PyQt.QtCore import pyqtSignal, QObject
-from qgis.PyQt.QtGui import QIcon, QColor, QPalette
+from qgis.PyQt.QtGui import QIcon, QColor, QPalette, QKeySequence
 from qgis.PyQt.QtWidgets import QPushButton, QAction
 
 class CustomFeatureButton(QObject):
@@ -39,10 +41,12 @@ class CustomFeatureButton(QObject):
     __MAP_VERSION = 0.1
     categoryChanged = pyqtSignal(QObject)
 
-    def __init__(self, props=None):
+    def __init__(self, props=None, callback=None):
         """
         Class constructor.
         :param props: (dict) a map to button's properties.
+        :param callback: (*) any callable object to be set as callback for the
+                         push button event.
         """
         super(CustomFeatureButton, self).__init__()
         self._props = {
@@ -55,10 +59,9 @@ class CustomFeatureButton(QObject):
             "shortcut": "",
             "keywords": set()
         }
-        self._callback = lambda: None
-        self._action = QAction()
-        self._action.triggered.connect(self._callback)
+        self._callback = callback if callback else lambda: None
         self.setProperties(props)
+        self.setAction(QAction())
 
     def __eq__(self, obj):
         """
@@ -88,6 +91,18 @@ class CustomFeatureButton(QObject):
         :return: (int) instance's hash value.
         """
         return hash(str(self))
+
+    def __del__(self):
+        """
+        Reimplementation of object removal method.
+        """
+        iface.unregisterMainWindowAction(self._action)
+        self._action.blockSignals(True)
+        self._widget.clicked.disconnect(self._action.trigger)
+        self._widget.blockSignals(True)
+        del self._widget
+        del self._action
+        del self
 
     def copy(self):
         """
@@ -185,7 +200,8 @@ class CustomFeatureButton(QObject):
                 pal.setColor(pal.Button, col)
         pb.setPalette(pal)
         pb.update()
-        pb.clicked.connect(self._action.trigger)
+        if hasattr(self, "_action"):
+            pb.clicked.connect(self._action.trigger)
         return pb
 
     def setName(self, name):
@@ -195,8 +211,8 @@ class CustomFeatureButton(QObject):
         """
         if type(name) == str: 
             self._props["name"] = name
-            self._widget.setText(self.displayName())
-            self._widget.update()
+            self.widget().setText(self.displayName())
+            self.widget().update()
         else:
             raise TypeError(
                 self.tr("Policy must be a str ({0}).").format(type(name))
@@ -251,8 +267,8 @@ class CustomFeatureButton(QObject):
                 else:
                     col = QColor(*col)
                 pal.setColor(pal.Button, col)
-                self._widget.setPalette(pal)
-                self._widget.update()
+                self.widget().setPalette(pal)
+                self.widget().update()
         else:
             raise TypeError(
                 self.tr("Color must be a str or tuple of int ({0}).")\
@@ -302,7 +318,7 @@ class CustomFeatureButton(QObject):
         """
         if type(tooltip) == str: 
             self._props["tooltip"] = tooltip
-            self._widget.setToolTip(tooltip)
+            self.widget().setToolTip(tooltip)
         else:
             raise TypeError(
                 self.tr("Tool tip must be a str ({0}).").format(type(tooltip))
@@ -341,8 +357,8 @@ class CustomFeatureButton(QObject):
         """
         if type(s) == str: 
             self._props["shortcut"] = s
-            self._widget.setText(self.displayName())
-            self._widget.update()
+            self.widget().setText(self.displayName())
+            self.widget().update()
         else:
             raise TypeError(
                 self.tr("Category must be a str ({0}).").format(type(s))
@@ -425,11 +441,13 @@ class CustomFeatureButton(QObject):
             return True
         return False
 
-    def setCallback(self, callback):
+    def setCallback(self, callback=None):
         """
         Sets callback to be triggered whenever button is pushed.
         :param callback: (*) any callable object.
         """
+        if callback is None:
+            callback = lambda: None
         if not callable(callback):
             raise Exception(self.tr("Callback must be a callable object."))
         self._action.triggered.disconnect(self._callback)
@@ -443,21 +461,34 @@ class CustomFeatureButton(QObject):
         """
         if not isinstance(action, QAction):
             raise Exception(self.tr("Action must be instance of QAction."))
-        self._action.triggered.disconnect(self._callback)
-        # other callbacks might have been associated with current action
-        self._action.blockSignals(True)
-        self._widget.clicked.disconnect(self._action.trigger)
-        del self._action
+        if hasattr(self, "_action"):
+            # first call does not an "_action" attribute
+            self._action.triggered.disconnect(self._callback)
+            # other callbacks might have been associated with current action
+            iface.unregisterMainWindowAction(self._action)
+            self._action.blockSignals(True)
+            self.widget().clicked.disconnect(self._action.trigger)
+            del self._action
         self._action = action
+        self._action.setText(
+            self.tr("DSGTools: Custom Feature Toolbox - button {0}")\
+                .format(self.name())
+        )
+        self._action.setIcon(
+            QIcon(':/plugins/DsgTools/icons/fieldToolbox.png')
+        )
         self._action.triggered.connect(self._callback)
-        self._widget.clicked.connect(self._action.trigger)
+        self.widget().clicked.connect(self._action.trigger)
+        self._action.setShortcut(QKeySequence.fromString(self.shortcut()))
+        self.widget().setShortcut(QKeySequence.fromString(self.shortcut()))
+        iface.registerMainWindowAction(self._action, self.shortcut())
 
     def action(self):
         """
         Gets the QAction associated with the button push event.
         :return: (QAction) current action.
         """
-        return self._action
+        return self._action if hasattr(self, "_action") else None
 
 class CustomButtonSetup(QObject):
     """
