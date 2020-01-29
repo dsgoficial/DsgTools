@@ -523,6 +523,41 @@ class CustomFeatureButton(QObject):
         """
         return len(QgsProject.instance().mapLayersByName(self.layer())) > 0
 
+    def fieldMap(self):
+        """
+        Retrieves field map for current select layer.
+        :return: (dict) object that maps each field from selected layer to its
+                 value map.
+        """
+        fm = dict()
+        if self.checkLayer():
+            # do things
+            pass
+        return fm
+
+    def setAttributeMap(self, attr):
+        """
+        Updates the attribute map for output features on reclassification or
+        feature creation.
+        :param attr: (str) new attribute map.
+        """
+        if type(attr) == dict:
+            # validate attribute map and update property
+            # self._props["layer"] = layer
+        else:
+            raise TypeError(
+                self.tr("Attribute map must be a dict ({0}).")
+                    .format(type(attr))
+            )
+
+    def attributeMap(self):
+        """
+        Attribute map for output features on reclassification or feature
+        creation.
+        :return: (dict) attribute map for new/updated features.
+        """
+        return dict()
+
 class CustomButtonSetup(QObject):
     """
     Class designed to provide objects for button management. 
