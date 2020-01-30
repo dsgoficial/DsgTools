@@ -544,9 +544,10 @@ class CustomFeatureButton(QObject):
         if type(attr) == dict:
             # validate attribute map and update property
             # self._props["layer"] = layer
+            pass
         else:
             raise TypeError(
-                self.tr("Attribute map must be a dict ({0}).")
+                self.tr("Attribute map must be a dict ({0}).")\
                     .format(type(attr))
             )
 
@@ -568,16 +569,33 @@ class CustomButtonSetup(QObject):
     buttonRemoved = pyqtSignal(CustomFeatureButton)
     buttonUpdated = pyqtSignal(CustomFeatureButton)
 
-    def __init__(self, buttonsProps=None):
+    def __init__(self, buttonsProps=None, displayName=None):
         """
         Class constructor.
         :param buttonsProps: (set) a set of buttons' properties to be loaded to
                              the interface.
+        :param displayName: (str) friendly name for the button collection to be
+                            displayed on the interface.
         """
         super(CustomButtonSetup, self).__init__()
         self._buttons = dict()
+        self._name = displayName or self.tr("Custom Button Setup")
         if buttonsProps:
             self.setButtons(buttonsProps)
+
+    def setName(self, name):
+        """
+        Defines setup's display name.
+        :param name: (str) new setup's display name.
+        """
+        self._name = name
+
+    def name(self):
+        """
+        Retrives button's name.
+        :return: (str) button's name.
+        """
+        return str(self._name)
 
     def setButtons(self, buttons):
         """
