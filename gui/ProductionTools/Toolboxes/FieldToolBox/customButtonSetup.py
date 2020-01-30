@@ -31,6 +31,8 @@ from qgis.PyQt.QtCore import pyqtSignal, QObject
 from qgis.PyQt.QtWidgets import QPushButton, QAction
 from qgis.PyQt.QtGui import QIcon, QColor, QPalette, QKeySequence
 
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+
 class CustomFeatureButton(QObject):
     """
     Class designed to handle actions, properties and settings for buttons. It
@@ -59,7 +61,8 @@ class CustomFeatureButton(QObject):
             "category": "",
             "shortcut": "",
             "layer": "",
-            "keywords": set()
+            "keywords": set(),
+            "attributeMap": dict()
         }
         self._callback = callback if callback else lambda: None
         self.setProperties(props)
@@ -140,6 +143,7 @@ class CustomFeatureButton(QObject):
         :return: (bool) whether any property value was set from newProps.
         """
         updated = False
+        oldProps = self.properties()
         tempButton = CustomFeatureButton(newProps)
         methodMap = {
             "name": lambda x: self.setName(x),
@@ -150,13 +154,20 @@ class CustomFeatureButton(QObject):
             "category": lambda x: self.setCategory(x),
             "shortcut": lambda x: self.setShortcut(x),
             "layer": lambda x: self.setLayer(x),
-            "keywords": lambda x: self.setKeywords(x)
+            "keywords": lambda x: self.setKeywords(x),
+            "attributeMap": lambda x: self.setAttributeMap(x)
         }
-        for propName, propValue in tempButton.properties().items():
-            if propName in newProps and propValue == newProps[propName]:
-                # only non-defaulted values will be applied to the button
-                methodMap[propName](propValue)
-                updated = True
+        try:
+            for propName, propValue in tempButton.properties().items():
+                if propName in newProps and propValue == newProps[propName]:
+                    # only non-defaulted values will be applied to the button
+                    methodMap[propName](propValue)
+                    updated = True
+        except Exception as e:
+            # reset previous props and re-raise the error message
+            self.update(oldProps)
+            raise Exception(self.tr("Error while updating '{0}' ({1})")\
+                                .format(propName, str(e)))
         return updated
 
     def properties(self):
@@ -175,7 +186,8 @@ class CustomFeatureButton(QObject):
             "category": self.category(),
             "layer": self.layer(),
             "shortcut": self.shortcut(),
-            "keywords": self.keywords()
+            "keywords": self.keywords(),
+            "attributeMap": self.attributeMap()
         }
 
     def widget(self):
@@ -516,12 +528,20 @@ class CustomFeatureButton(QObject):
         """
         return str(self._props["layer"])
 
+    def vectorLayer(self):
+        """
+        Reads the vector layer object from canvas using the layer property.
+        :return: (str) name for the layer to be used.
+        """
+        vl = QgsProject.instance().mapLayersByName(self.layer())
+        return vl[0] if vl else None
+
     def checkLayer(self):
         """
         Checks whether current layer is loaded on canvas.
         :return: (bool) whether layer is found on canvas.
         """
-        return len(QgsProject.instance().mapLayersByName(self.layer())) > 0
+        return self.vectorLayer() is not None
 
     def fieldMap(self):
         """
@@ -531,20 +551,37 @@ class CustomFeatureButton(QObject):
         """
         fm = dict()
         if self.checkLayer():
-            # do things
-            pass
+            return LayerHandler().fieldMap(self.vectorLayer())
         return fm
 
-    def setAttributeMap(self, attr):
+    def setAttributeMap(self, attrMap):
         """
         Updates the attribute map for output features on reclassification or
         feature creation.
-        :param attr: (str) new attribute map.
+        :param attrMap: (str) new attribute map.
         """
-        if type(attr) == dict:
-            # validate attribute map and update property
-            # self._props["layer"] = layer
-            pass
+        prevAttrMap = self.attributeMap()
+        if type(attrMap) == dict:
+            if self.checkLayer():
+                fMap = self.fieldMap()
+                for field in self.vectorLayer().fields():
+                    # iterating over layer's fields ignores passed attributes
+                    # that does not exist on layer
+                    fieldName = field.name()
+                    if fieldName not in attrMap:
+                        continue
+                    value = attrMap[fieldName]
+                    if fieldName in fMap and \
+                      str(value) not in list(fMap[fieldName].values()):
+                        # restore previous values and raise error
+                        self._props["attributeMap"] = prevAttrMap
+                        raise ValueError(
+                            self.tr("{0} is not a valid value for field {1}.")\
+                                .format(value, fieldName)
+                        )
+                    self._props["attributeMap"][fieldName] = value
+            else:
+                self._props["attributeMap"] = attrMap
         else:
             raise TypeError(
                 self.tr("Attribute map must be a dict ({0}).")\
@@ -557,7 +594,7 @@ class CustomFeatureButton(QObject):
         creation.
         :return: (dict) attribute map for new/updated features.
         """
-        return dict()
+        return dict(self._props["attributeMap"])
 
 class CustomButtonSetup(QObject):
     """
