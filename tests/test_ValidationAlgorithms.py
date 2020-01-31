@@ -167,6 +167,7 @@ class Tester(unittest.TestCase):
                 "testes_wgs84" : os.path.join(gpkgPaths, 'testes_wgs84.gpkg'),
                 "testes_sirgas2000_23s" : os.path.join(gpkgPaths, 'testes_sirgas2000_23s.gpkg'),
                 "testes_sirgas2000_24s" : os.path.join(gpkgPaths, 'testes_sirgas2000_24s.gpkg'),
+                "testes_sirgas2000_24s" : os.path.join(gpkgPaths, 'testes_sirgas2000_24s.gpkg'),
                 "test_dataset_unbuild_polygons" : os.path.join(gpkgPaths, 'test_dataset_unbuild_polygons.gpkg')
             },
             "geojson" : {
@@ -1305,6 +1306,13 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg("dsgtools:identifydangles"), ""
         )
+
+
+def run_all():
+    """Default function that is called by the runner if nothing else is specified"""
+    suite = unittest.TestSuite()
+    suite.addTests(unittest.makeSuite(Tester, 'test_'))
+    unittest.TextTestRunner(verbosity=3, stream=sys.stdout).run(suite)
     
     def test_identifyunsharedvertexonintersectionsalgorithm(self):
         self.assertEqual(

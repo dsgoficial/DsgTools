@@ -7,7 +7,7 @@
                               -------------------
         begin                : 2019-08-23
         git sha              : $Format:%H$
-        copyright            : (C) 2018 by  Jossan Costa - Surveying Technician @ Brazilian Army
+        copyright            : (C) 2019 by  Jossan Costa - Surveying Technician @ Brazilian Army
         email                : jossan.costa@eb.mil.br
  ***************************************************************************/
 /***************************************************************************
@@ -20,22 +20,27 @@
  ***************************************************************************/
 """
 from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtXml import QDomDocument
 
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
                        QgsProcessing, QgsProcessingAlgorithm,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterString,
                        QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterFile,
                        QgsProcessingParameterVectorLayer, 
                        QgsWkbTypes,
                        QgsVectorLayer,
                        QgsProject)
 
+from qgis.utils import iface
+
 class ExportToMemoryLayer(QgsProcessingAlgorithm):
-    INPUT = 'INPUT'
+    INPUT = 'INPUT_LAYER'
+    OUTPUT_NAME = 'OUTPUT_NAME'
+    OUTPUT_QML_STYLE = 'OUTPUT_QML_STYLE'
 
     def initAlgorithm(self, config):
         """
@@ -44,7 +49,23 @@ class ExportToMemoryLayer(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input layer')
+                self.tr('Camada de entrada')
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.OUTPUT_NAME,
+                self.tr('Nome da camada de saída'),
+                optional=True,
+                defaultValue='resultado'
+            )
+        )   
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.OUTPUT_QML_STYLE,
+                self.tr('Estilo da camada de saída'),
+                multiLine = True,
+                optional=True
             )
         )
 
@@ -53,22 +74,25 @@ class ExportToMemoryLayer(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         layer = self.parameterAsVectorLayer(parameters, self.INPUT, context)
-        feats = [ feat for feat in layer.getFeatures() ]
         geom_types = {
             0 : 'Point',
             1 : 'LineString',
             2 : 'Polygon',
         }
+        outputLayerName = self.parameterAsString(parameters, self.OUTPUT_NAME, context)
+        outputLayerStyle = self.parameterAsString(parameters, self.OUTPUT_QML_STYLE, context)
         temp = QgsVectorLayer(
             '{0}?crs={1}'.format(geom_types[layer.geometryType()], layer.crs().authid()), 
-            "result", 
+            "{0}".format(outputLayerName), 
             "memory"
         )
+        doc = QDomDocument()
+        doc.setContent(outputLayerStyle)
+        temp.importNamedStyle(doc)
         temp_data = temp.dataProvider()
-        attr = layer.dataProvider().fields().toList()
-        temp_data.addAttributes(attr)
+        temp_data.addAttributes(layer.dataProvider().fields().toList())
         temp.updateFields()
-        temp_data.addFeatures(feats)
+        temp_data.addFeatures([ feat for feat in layer.getFeatures() ])
         QgsProject().instance().addMapLayer(temp)
         return {}
 
@@ -87,7 +111,7 @@ class ExportToMemoryLayer(QgsProcessingAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Export To Memory Layer')
+        return self.tr('Export To Memory Layer (works only on models)')
 
     def group(self):
         """
