@@ -23,8 +23,10 @@
 import uuid
 
 import processing
-from qgis.core import QgsProcessingUtils, QgsVectorLayer
-
+from qgis.core import (Qgis,
+                       QgsVectorLayer,
+                       QgsProcessingUtils,
+                       QgsProcessingContext)
 
 class AlgRunner:
     Break, Snap, RmDangle, ChDangle, RmBridge, ChBridge, RmDupl, RmDac, BPol, Prune, RmArea, RmLine, RMSA = range(13)
@@ -414,3 +416,206 @@ class AlgRunner:
         }
         output = processing.run('dsgtools:matchandapplyqmlstylestolayersalgorithm', parameters, context = context, feedback = feedback)
         return output['OUTPUT']
+    
+    def runAddAutoIncrementalField(self, inputLyr, context, feedback = None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'FIELD_NAME' : 'featid',
+            'START':1,
+            'GROUP_FIELDS':[],
+            'SORT_EXPRESSION':'',
+            'SORT_ASCENDING':True,
+            'SORT_NULLS_FIRST':False,
+            'OUTPUT':outputLyr
+        }
+        output = processing.run(
+            'native:addautoincrementalfield',
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runPolygonsToLines(self, inputLyr, context, feedback = None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT':inputLyr,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            'native:polygonstolines' if Qgis.QGIS_VERSION_INT >= 30600 \
+                else 'qgis:polygonstolines',
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+
+    def runExtractVertices(self, inputLyr, context, feedback = None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            'native:extractvertices',
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runExplodeLines(self, inputLyr, context, feedback = None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            'native:explodelines',
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runMergeVectorLayers(self, inputList, context, feedback = None, outputLyr=None, crs=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'LAYERS' : inputList,
+            'CRS' : crs,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            'native:mergevectorlayers',
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runSaveSelectedFeatures(self, inputLyr, context, feedback = None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'LAYERS' : inputLyr,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "native:saveselectedfeatures",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+
+    def runReprojectLayer(self, layer, targetCrs, output=None, ctx=None, feedback=None):
+        """
+        Reprojects layer's CRS.
+        :param : (QgsVectorLayer) layer to be reprojected.
+        :param targetCrs: (QgsCoordinateReferenceSystem) CRS object for the
+                          output layer.
+        :param output: (QgsVectorLayer) layer accomodate reprojected layer.
+        :param ctx: (QgsProcessingContext) processing context in which algorithm
+                    should be executed.
+        :param feedback: (QgsFeedback) QGIS progress tracking component.
+        :return: (QgsVectorLayer) reprojected layer.
+        """
+        return processing.run(
+            "native:reprojectlayer",
+            {
+                'INPUT' : layer,
+                'OUTPUT' : output or 'memory:',
+                'TARGET_CRS' : targetCrs
+            },
+            context=ctx or QgsProcessingContext(),
+            feedback=feedback
+        )['OUTPUT']
+
+    def runPointOnSurface(self, inputLyr, context, allParts=True, feedback=None, outputLyr=None, onlySelected=False):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'ALL_PARTS' : allParts,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "native:pointonsurface",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runRemoveDuplicatedGeometries(self, inputLyr, context, feedback=None, outputLyr=None, onlySelected=False):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'SELECTED' : onlySelected,
+            'FLAGS' : 'memory:',
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "dsgtools:removeduplicatedgeometries",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runPolygonize(self, inputLyr, context, keepFields=False, feedback=None, outputLyr=None, onlySelected=False):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'KEEP_FIELDS' : keepFields,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "qgis:polygonize",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runJoinAttributesByLocation(self, inputLyr, joinLyr, context, predicateList=None, joinFields=None,\
+        method=None, discardNonMatching=True, feedback=None, outputLyr=None, unjoinnedLyr=None):
+        predicateList = [0] if predicateList is None else predicateList
+        joinFields = [] if joinFields is None else joinFields
+        method = 0 if method is None else method
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'JOIN' : joinLyr,
+            'PREDICATE' : predicateList,
+            'JOIN_FIELDS' : joinFields,
+            'METHOD' : method,
+            'DISCARD_NONMATCHING' : discardNonMatching,
+            'PREFIX' : '',
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "qgis:joinattributesbylocation",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+ 
+    def runLineIntersections(self, inputLyr, intersectLyr, context, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'INTERSECT' : intersectLyr,
+            'INPUT_FIELDS' : [],
+            'INTERSECT_FIELDS' : [],
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "native:lineintersections",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+

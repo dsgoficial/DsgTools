@@ -7,7 +7,6 @@
 |master|[![Build Status](https://travis-ci.com/dsgoficial/DsgTools.svg?branch=master)](https://travis-ci.com/dsgoficial/DsgTools)|
 |dev|[![Build Status](https://travis-ci.com/dsgoficial/DsgTools.svg?branch=dev)](https://travis-ci.com/dsgoficial/DsgTools)|
 
-
 ------------------------------------
 # DSGTools Plugin (English Version)
 

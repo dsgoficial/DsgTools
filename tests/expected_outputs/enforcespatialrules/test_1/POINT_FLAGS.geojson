@@ -1,0 +1,20 @@
+{
+"type": "FeatureCollection",
+"name": "POINT_FLAGS",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "reason": "Rule \"Pico deve estar em cima de um ponto cotado\" broken: feature ID 1 from rel_pico_p equals 2 features of rel_ponto_cotado_altimetrico_p (IDs 1, 2)" }, "geometry": { "type": "Point", "coordinates": [ -0.796935542800459, -0.05370040848156 ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Pico deve estar em cima de um ponto cotado\" broken: feature ID 1 from rel_pico_p equals 2 features of rel_ponto_cotado_altimetrico_p (IDs 1, 2)" }, "geometry": { "type": "Point", "coordinates": [ -0.796935542800459, -0.05370040848156 ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Pico deve estar em cima de um ponto cotado\" broken: feature ID 3 from rel_pico_p equals 0 features of rel_ponto_cotado_altimetrico_p" }, "geometry": { "type": "Point", "coordinates": [ -0.416819605223887, -0.101666281919465 ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Pontos cotados altimétricos não podem estar sobre massa d’água\" broken: feature ID 3 from rel_ponto_cotado_altimetrico_p id not disjoint to 1 features of hid_massa_dagua_a (ID 1)" }, "geometry": { "type": "Point", "coordinates": [ -0.621305951376881, 0.077879803769753 ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Torres de energia devem estar sobre um ou mais trechos de energia\" broken: feature ID 1 from enc_torre_energia_p intersects 0 features of enc_trecho_energia_l" }, "geometry": { "type": "Point", "coordinates": [ -1.860162830878102, 0.513651989816058 ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Torres de energia devem estar sobre um ou mais trechos de energia\" broken: feature ID 2 from enc_torre_energia_p intersects 0 features of enc_trecho_energia_l" }, "geometry": { "type": "Point", "coordinates": [ -1.386182334454009, 0.407492250046549 ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Barragens tipo ponto estão entre 2 e somente trechos de drenagem\" broken: feature ID 1 from hid_barragem_p touches 0 features of hid_trecho_drenagem_l" }, "geometry": { "type": "Point", "coordinates": [ -0.61384128750646, 0.635561759209865 ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Barragens tipo ponto estão entre 2 e somente trechos de drenagem\" broken: feature ID 3 from hid_barragem_p touches 1 features of hid_trecho_drenagem_l (ID 1)" }, "geometry": { "type": "Point", "coordinates": [ -0.539147522179788, 0.15432363912526 ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Barragens tipo ponto estão entre 2 e somente trechos de drenagem\" broken: feature ID 4 from hid_barragem_p touches 0 features of hid_trecho_drenagem_l" }, "geometry": { "type": "Point", "coordinates": [ 0.05678490915708, 0.609197282180692 ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"O modalUso de Ponte deve ser Ferroviario se esta intersectar um Trecho Ferroviario.\" broken: feature ID 1 from tra_ponte_l intersects 1 features of fer_trecho_ferroviario_l (ID 2)" }, "geometry": { "type": "Point", "coordinates": [ 1.371763959324402, -0.190135089514023 ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Teste: 'poligonos' não toca 'poligonos_2'\" broken: feature ID 0 from poligonos touches 2 features of poligonos_2 (IDs 1, 2)" }, "geometry": { "type": "Point", "coordinates": [ 0.780031667238857, 1.472873108467932 ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Teste: 'points' não está contido em 'poligonos_2'\" broken: feature ID 0 from points within 1 features of poligonos_2 (ID 3)" }, "geometry": { "type": "Point", "coordinates": [ -0.631782383661051, 1.516021354489684 ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Teste: 'poligonos_2' não contém 'points'\" broken: feature ID 3 from poligonos_2 contains 1 features of points (ID 0)" }, "geometry": { "type": "Point", "coordinates": [ -0.631782383661051, 1.516021354489684 ] } }
+]
+}

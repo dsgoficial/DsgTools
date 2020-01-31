@@ -225,3 +225,10 @@ class SpatialiteSqlGenerator(SqlGenerator):
                 FROM geometry_columns
                 ORDER BY f_table_name ASC"""
         return sql
+        
+    def implementationVersion(self):
+        """
+        Query to retrieve database's implementation version, if available.
+        :return: (str) query to database's implementation version (e.g. '5.2').
+        """
+        return """SELECT dbimplversion FROM public_db_metadata;"""
