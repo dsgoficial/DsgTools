@@ -197,7 +197,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
             widget = self.tableWidget.cellWidget(row, column)
             if not setter:
                 raise Exception(
-                    self.tr('Setter mthod must be defined for widget type.')
+                    self.tr('Setter method must be defined for widget type.')
                 )
             getattr(widget, setter)(value)
 
@@ -262,7 +262,10 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         Adds a new row of items and fill it into table.
         :param row: (int) position to add the new row.
         """
-        row = row if row is not None else self.rowCount()
+        row = self.rowCount() if row is None else \
+                0 if row < 0 else \
+                row if row <= self.rowCount() else self.rowCount()
+        # row = row if row is not None else self.rowCount()
         self.tableWidget.insertRow(row)
         for col, properties in self.headers.items():
             if properties["type"] == "item":
@@ -283,7 +286,9 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param row: (int) position to add the new row.
         :param contents: (dict) a map to items to be filled.
         """
-        row = row if row is not None else self.rowCount()
+        row = self.rowCount() if row is None else \
+                0 if row < 0 else \
+                row if row <= self.rowCount() else self.rowCount()
         self.tableWidget.insertRow(row)
         for col, properties in self.headers.items():
             value = contents[col] if col in contents else None
@@ -458,7 +463,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         rows = self.selectedRows()
         if rows:
             row = max(rows) + 1
-            self.addRow({}, row)
+            self.addNewRow(row)
             self.selectRow(row)
         else:
             self.addRow({})

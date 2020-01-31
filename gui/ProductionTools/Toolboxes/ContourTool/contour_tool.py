@@ -42,7 +42,7 @@ class ContourTool(object):
         #spatial index
         self.index = QgsSpatialIndex()
         for feat in self.reference.getFeatures():
-            self.index.insertFeature(feat)
+            self.index.addFeature(feat)
             
     def getCandidates(self, bbox):
         """

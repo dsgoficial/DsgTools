@@ -1,1 +1,263 @@
-<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'><qgis version="2.6.0-Brighton" minimumScale="1" maximumScale="1" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" simplifyMaxScale="1" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0"><edittypes><edittype widgetv2type="TextEdit" name="id"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="TextEdit" name="OGC_FID"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="TextEdit" name="id_org_industrial"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="ValueMap" name="chamine"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Sim" value="1"/><value key="Não" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="operacional"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Desconhecido" value="0"/><value key="Sim" value="1"/><value key="Não" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="matconstr"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Outros" value="99"/><value key="Desconhecido" value="0"/><value key="Alvenaria" value="1"/><value key="Não Aplicável" value="97"/><value key="Metal" value="3"/><value key="Madeira" value="5"/><value key="Rocha" value="4"/><value key="Concreto" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="geometriaaproximada"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Sim" value="1"/><value key="Não" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="situacaofisica"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Desconhecida" value="0"/><value key="Em Construção" value="3"/><value key="Abandonada" value="1"/><value key="Destruída" value="2"/><value key="Construída" value="5"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="tipodivisaocnae"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Confecção de Artigos do Vestuário e Acessórios" value="18"/><value key="Fabricação de Outros Equipamentos de Transporte" value="35"/><value key="Fabricação de Móveis e Industrias Diversas" value="36"/><value key="Fabricação de Produtos de Minerais Não-Metálicos" value="26"/><value key="Fabricação de Máquinas e Equipamentos" value="29"/><value key="Fabricação de Produtos Químicos" value="24"/><value key="Fabricação de Material Eletrônicode Aparelhos e Equipamentos de Comunicações" value="32"/><value key="Fabricação de Equipamentos de Instrumentação Médico-Hospitalares Instumentos de Precisão e Ópticos Equipamentos para Automação Industrial Cronômetros e Relógios" value="33"/><value key="Preparação de couros e Fabricação de Artefatos de Couro Artigos de Viagem e Calçados" value="19"/><value key="Fabricação de Produtos do Fumo" value="16"/><value key="Construção" value="45"/><value key="Fabricação Alimentícia e Bebidas" value="15"/><value key="Edição Impressão e Reprodução de Gravações" value="22"/><value key="Outros" value="99"/><value key="Desconhecido" value="0"/><value key="Fabricação de Coque Refino de Petróleo Elaboração de Combustíveis Nucleares e Produção de Álcool" value="23"/><value key="Fabricação de Máquinas Aparelhos e Materiais Elétricos" value="31"/><value key="Fabricação de Produtos Têxteis" value="17"/><value key="Fabricação de Artigos de Borracha e Material Plástico" value="25"/><value key="Fabricação de produtos de Madeira e Celulose" value="20"/><value key="Reciclagem" value="37"/><value key="Fabricação e Montagem de Veículos Automotores Reboques e Carrocerias" value="34"/><value key="Metalurgia Básica" value="27"/><value key="Fabricação de Máquinas de Escritório e Equipamentos de Informática" value="30"/><value key="Fabricação de Produtos de Metal Exclusive Máquinas e Equipamentos" value="28"/><value key="Fabricação de Celulose Papel e Produtos de Papel" value="21"/></widgetv2config></edittype></edittypes></qgis>
+<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
+<qgis maxScale="0" simplifyDrawingHints="0" readOnly="0" simplifyDrawingTol="1" version="3.7.0-Master" labelsEnabled="0" hasScaleBasedVisibilityFlag="0" styleCategories="AllStyleCategories" simplifyMaxScale="1" minScale="1e+8" simplifyLocal="1" simplifyAlgorithm="0">
+  <flags>
+    <Identifiable>1</Identifiable>
+    <Removable>1</Removable>
+    <Searchable>1</Searchable>
+  </flags>
+  <renderer-v2 enableorderby="0" forceraster="0" type="singleSymbol" symbollevels="0">
+    <symbols>
+      <symbol alpha="1" type="marker" name="0" clip_to_extent="1" force_rhr="0">
+        <layer pass="0" locked="0" enabled="1" class="SimpleMarker">
+          <prop v="0" k="angle"/>
+          <prop v="190,207,80,255" k="color"/>
+          <prop v="1" k="horizontal_anchor_point"/>
+          <prop v="bevel" k="joinstyle"/>
+          <prop v="circle" k="name"/>
+          <prop v="0,0" k="offset"/>
+          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
+          <prop v="MM" k="offset_unit"/>
+          <prop v="35,35,35,255" k="outline_color"/>
+          <prop v="solid" k="outline_style"/>
+          <prop v="0" k="outline_width"/>
+          <prop v="3x:0,0,0,0,0,0" k="outline_width_map_unit_scale"/>
+          <prop v="MM" k="outline_width_unit"/>
+          <prop v="diameter" k="scale_method"/>
+          <prop v="2" k="size"/>
+          <prop v="3x:0,0,0,0,0,0" k="size_map_unit_scale"/>
+          <prop v="MM" k="size_unit"/>
+          <prop v="1" k="vertical_anchor_point"/>
+          <data_defined_properties>
+            <Option type="Map">
+              <Option value="" type="QString" name="name"/>
+              <Option name="properties"/>
+              <Option value="collection" type="QString" name="type"/>
+            </Option>
+          </data_defined_properties>
+        </layer>
+      </symbol>
+    </symbols>
+    <rotation/>
+    <sizescale/>
+  </renderer-v2>
+  <customproperties/>
+  <blendMode>0</blendMode>
+  <featureBlendMode>0</featureBlendMode>
+  <layerOpacity>1</layerOpacity>
+  <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
+    <activeChecks type="StringList">
+      <Option value="" type="QString"/>
+    </activeChecks>
+    <checkConfiguration/>
+  </geometryOptions>
+  <fieldConfiguration>
+    <field name="id">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="nome">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="nomeabrev">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="geometriaaproximada">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="2" type="QString" name="Não"/>
+              <Option value="1" type="QString" name="Sim"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="operacional">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="2" type="QString" name="Não"/>
+              <Option value="1" type="QString" name="Sim"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="situacaofisica">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="1" type="QString" name="Abandonada"/>
+              <Option value="5" type="QString" name="Construída"/>
+              <Option value="0" type="QString" name="Desconhecida"/>
+              <Option value="2" type="QString" name="Destruída"/>
+              <Option value="3" type="QString" name="Em Construção"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="matconstr">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="1" type="QString" name="Alvenaria"/>
+              <Option value="8" type="QString" name="Cerca viva"/>
+              <Option value="2" type="QString" name="Concreto"/>
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="5" type="QString" name="Madeira"/>
+              <Option value="3" type="QString" name="Metal"/>
+              <Option value="97" type="QString" name="Não Aplicável"/>
+              <Option value="99" type="QString" name="Outros"/>
+              <Option value="4" type="QString" name="Rocha"/>
+              <Option value="7" type="QString" name="Tela ou Alambrado"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="chamine">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="2" type="QString" name="Não"/>
+              <Option value="1" type="QString" name="Sim"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="tipodivisaocnae">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="18" type="QString" name="Confecção de Artigos do Vestuário e Acessórios"/>
+              <Option value="45" type="QString" name="Construção"/>
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="22" type="QString" name="Edição Impressão e Reprodução de Gravações"/>
+              <Option value="15" type="QString" name="Fabricação Alimentícia e Bebidas"/>
+              <Option value="25" type="QString" name="Fabricação de Artigos de Borracha e Material Plástico"/>
+              <Option value="21" type="QString" name="Fabricação de Celulose Papel e Produtos de Papel"/>
+              <Option value="23" type="QString" name="Fabricação de Coque Refino de Petróleo Elaboração de Combustíveis Nucleares e Produção de Álcool"/>
+              <Option value="33" type="QString" name="Fabricação de Equipamentos de Instrumentação Médico-Hospitalares Instumentos de Precisão e Ópticos Equipamentos para Automação Industrial Cronômetros e Relógios"/>
+              <Option value="32" type="QString" name="Fabricação de Material Eletrônicode Aparelhos e Equipamentos de Comunicações"/>
+              <Option value="31" type="QString" name="Fabricação de Máquinas Aparelhos e Materiais Elétricos"/>
+              <Option value="30" type="QString" name="Fabricação de Máquinas de Escritório e Equipamentos de Informática"/>
+              <Option value="29" type="QString" name="Fabricação de Máquinas e Equipamentos"/>
+              <Option value="36" type="QString" name="Fabricação de Móveis e Industrias Diversas"/>
+              <Option value="35" type="QString" name="Fabricação de Outros Equipamentos de Transporte"/>
+              <Option value="24" type="QString" name="Fabricação de Produtos Químicos"/>
+              <Option value="17" type="QString" name="Fabricação de Produtos Têxteis"/>
+              <Option value="28" type="QString" name="Fabricação de Produtos de Metal Exclusive Máquinas e Equipamentos"/>
+              <Option value="26" type="QString" name="Fabricação de Produtos de Minerais Não-Metálicos"/>
+              <Option value="16" type="QString" name="Fabricação de Produtos do Fumo"/>
+              <Option value="20" type="QString" name="Fabricação de produtos de Madeira e Celulose"/>
+              <Option value="34" type="QString" name="Fabricação e Montagem de Veículos Automotores Reboques e Carrocerias"/>
+              <Option value="27" type="QString" name="Metalurgia Básica"/>
+              <Option value="99" type="QString" name="Outros"/>
+              <Option value="19" type="QString" name="Preparação de couros e Fabricação de Artefatos de Couro Artigos de Viagem e Calçados"/>
+              <Option value="37" type="QString" name="Reciclagem"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="id_org_industrial">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+  </fieldConfiguration>
+  <aliases>
+    <alias field="id" index="0" name=""/>
+    <alias field="nome" index="1" name=""/>
+    <alias field="nomeabrev" index="2" name=""/>
+    <alias field="geometriaaproximada" index="3" name=""/>
+    <alias field="operacional" index="4" name=""/>
+    <alias field="situacaofisica" index="5" name=""/>
+    <alias field="matconstr" index="6" name=""/>
+    <alias field="chamine" index="7" name=""/>
+    <alias field="tipodivisaocnae" index="8" name=""/>
+    <alias field="id_org_industrial" index="9" name=""/>
+  </aliases>
+  <excludeAttributesWMS/>
+  <excludeAttributesWFS/>
+  <defaults>
+    <default applyOnUpdate="0" field="id" expression=""/>
+    <default applyOnUpdate="0" field="nome" expression=""/>
+    <default applyOnUpdate="0" field="nomeabrev" expression=""/>
+    <default applyOnUpdate="0" field="geometriaaproximada" expression=""/>
+    <default applyOnUpdate="0" field="operacional" expression=""/>
+    <default applyOnUpdate="0" field="situacaofisica" expression=""/>
+    <default applyOnUpdate="0" field="matconstr" expression=""/>
+    <default applyOnUpdate="0" field="chamine" expression=""/>
+    <default applyOnUpdate="0" field="tipodivisaocnae" expression=""/>
+    <default applyOnUpdate="0" field="id_org_industrial" expression=""/>
+  </defaults>
+  <constraints>
+    <constraint unique_strength="1" field="id" constraints="3" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="nome" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="nomeabrev" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="geometriaaproximada" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="operacional" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="situacaofisica" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="matconstr" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="chamine" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="tipodivisaocnae" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="id_org_industrial" constraints="0" exp_strength="0" notnull_strength="0"/>
+  </constraints>
+  <constraintExpressions>
+    <constraint exp="" desc="" field="id"/>
+    <constraint exp="" desc="" field="nome"/>
+    <constraint exp="" desc="" field="nomeabrev"/>
+    <constraint exp="" desc="" field="geometriaaproximada"/>
+    <constraint exp="" desc="" field="operacional"/>
+    <constraint exp="" desc="" field="situacaofisica"/>
+    <constraint exp="" desc="" field="matconstr"/>
+    <constraint exp="" desc="" field="chamine"/>
+    <constraint exp="" desc="" field="tipodivisaocnae"/>
+    <constraint exp="" desc="" field="id_org_industrial"/>
+  </constraintExpressions>
+  <expressionfields/>
+  <attributeactions/>
+  <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
+    <columns/>
+  </attributetableconfig>
+  <conditionalstyles>
+    <rowstyles/>
+    <fieldstyles/>
+  </conditionalstyles>
+  <editform tolerant="1"></editform>
+  <editforminit/>
+  <editforminitcodesource>0</editforminitcodesource>
+  <editforminitfilepath></editforminitfilepath>
+  <editforminitcode><![CDATA[]]></editforminitcode>
+  <featformsuppress>0</featformsuppress>
+  <editorlayout>generatedlayout</editorlayout>
+  <editable/>
+  <labelOnTop/>
+  <widgets/>
+  <previewExpression></previewExpression>
+  <mapTip></mapTip>
+  <layerGeometryType>0</layerGeometryType>
+</qgis>

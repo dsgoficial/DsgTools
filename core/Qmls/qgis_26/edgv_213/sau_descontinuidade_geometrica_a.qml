@@ -1,1 +1,140 @@
-<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'><qgis version="2.6.0-Brighton" minimumScale="1" maximumScale="1" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" simplifyMaxScale="1" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0"><edittypes><edittype widgetv2type="TextEdit" name="id"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="TextEdit" name="OGC_FID"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="ValueMap" name="geometriaaproximada"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Sim" value="1"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="motivodescontinuidade"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Descontinuidade por falta de acurácia" value="4"/><value key="Descontinuidade por excesso" value="7"/><value key="Descontinuidade Temporal" value="1"/><value key="Descontinuidade por omissão" value="6"/><value key="Descontinuidade devido a transformação" value="2"/><value key="Descontinuidade por diferente interpretação das classes" value="5"/><value key="Descontinuidade por escala de insumo" value="3"/></widgetv2config></edittype></edittypes></qgis>
+<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
+<qgis maxScale="0" simplifyDrawingHints="0" readOnly="0" simplifyDrawingTol="1" version="3.7.0-Master" labelsEnabled="0" hasScaleBasedVisibilityFlag="0" styleCategories="AllStyleCategories" simplifyMaxScale="1" minScale="1e+8" simplifyLocal="1" simplifyAlgorithm="0">
+  <flags>
+    <Identifiable>1</Identifiable>
+    <Removable>1</Removable>
+    <Searchable>1</Searchable>
+  </flags>
+  <renderer-v2 enableorderby="0" forceraster="0" type="singleSymbol" symbollevels="0">
+    <symbols>
+      <symbol alpha="1" type="fill" name="0" clip_to_extent="1" force_rhr="0">
+        <layer pass="0" locked="0" enabled="1" class="SimpleFill">
+          <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
+          <prop v="196,60,57,255" k="color"/>
+          <prop v="bevel" k="joinstyle"/>
+          <prop v="0,0" k="offset"/>
+          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
+          <prop v="MM" k="offset_unit"/>
+          <prop v="35,35,35,255" k="outline_color"/>
+          <prop v="solid" k="outline_style"/>
+          <prop v="0.26" k="outline_width"/>
+          <prop v="MM" k="outline_width_unit"/>
+          <prop v="solid" k="style"/>
+          <data_defined_properties>
+            <Option type="Map">
+              <Option value="" type="QString" name="name"/>
+              <Option name="properties"/>
+              <Option value="collection" type="QString" name="type"/>
+            </Option>
+          </data_defined_properties>
+        </layer>
+      </symbol>
+    </symbols>
+    <rotation/>
+    <sizescale/>
+  </renderer-v2>
+  <customproperties/>
+  <blendMode>0</blendMode>
+  <featureBlendMode>0</featureBlendMode>
+  <layerOpacity>1</layerOpacity>
+  <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
+    <activeChecks type="StringList">
+      <Option value="" type="QString"/>
+    </activeChecks>
+    <checkConfiguration/>
+  </geometryOptions>
+  <fieldConfiguration>
+    <field name="id">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="geometriaaproximada">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="1" type="QString" name="Sim"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="motivodescontinuidade">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="1" type="QString" name="Descontinuidade Temporal"/>
+              <Option value="2" type="QString" name="Descontinuidade devido a transformação"/>
+              <Option value="5" type="QString" name="Descontinuidade por diferente interpretação das classes"/>
+              <Option value="3" type="QString" name="Descontinuidade por escala de insumo"/>
+              <Option value="7" type="QString" name="Descontinuidade por excesso"/>
+              <Option value="4" type="QString" name="Descontinuidade por falta de acurácia"/>
+              <Option value="6" type="QString" name="Descontinuidade por omissão"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="area_otf">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+  </fieldConfiguration>
+  <aliases>
+    <alias field="id" index="0" name=""/>
+    <alias field="geometriaaproximada" index="1" name=""/>
+    <alias field="motivodescontinuidade" index="2" name=""/>
+    <alias field="area_otf" index="3" name=""/>
+  </aliases>
+  <excludeAttributesWMS/>
+  <excludeAttributesWFS/>
+  <defaults>
+    <default applyOnUpdate="0" field="id" expression=""/>
+    <default applyOnUpdate="0" field="geometriaaproximada" expression=""/>
+    <default applyOnUpdate="0" field="motivodescontinuidade" expression=""/>
+    <default applyOnUpdate="0" field="area_otf" expression=""/>
+  </defaults>
+  <constraints>
+    <constraint unique_strength="1" field="id" constraints="3" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="geometriaaproximada" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="motivodescontinuidade" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="area_otf" constraints="0" exp_strength="0" notnull_strength="0"/>
+  </constraints>
+  <constraintExpressions>
+    <constraint exp="" desc="" field="id"/>
+    <constraint exp="" desc="" field="geometriaaproximada"/>
+    <constraint exp="" desc="" field="motivodescontinuidade"/>
+    <constraint exp="" desc="" field="area_otf"/>
+  </constraintExpressions>
+  <expressionfields>
+    <field precision="0" comment="" length="0" typeName="" expression="$area" type="6" name="area_otf" subType="0"/>
+  </expressionfields>
+  <attributeactions/>
+  <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
+    <columns/>
+  </attributetableconfig>
+  <conditionalstyles>
+    <rowstyles/>
+    <fieldstyles/>
+  </conditionalstyles>
+  <editform tolerant="1"></editform>
+  <editforminit/>
+  <editforminitcodesource>0</editforminitcodesource>
+  <editforminitfilepath></editforminitfilepath>
+  <editforminitcode><![CDATA[]]></editforminitcode>
+  <featformsuppress>0</featformsuppress>
+  <editorlayout>generatedlayout</editorlayout>
+  <editable/>
+  <labelOnTop/>
+  <widgets/>
+  <previewExpression></previewExpression>
+  <mapTip></mapTip>
+  <layerGeometryType>2</layerGeometryType>
+</qgis>
