@@ -47,7 +47,7 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
         "dsgtools:identifyduplicatedlinesoncoverage", "dsgtools:identifysmalllines",
         "dsgtools:identifyduplicatedpolygonsoncoverage", "dsgtools:identifysmallpolygons",
         "dsgtools:identifydangles", "dsgtools:identifyduplicatedpointsoncoverage",
-        "dsgtools:identifyoverlaps",
+        "dsgtools:identifyoverlaps", "dsgtools:identifyvertexnearedges",
         # correction algs
         "dsgtools:removeduplicatedfeatures", "dsgtools:removeduplicatedgeometries",
         "dsgtools:removesmalllines", "dsgtools:removesmallpolygons",
@@ -57,7 +57,8 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
         "dsgtools:dissolvepolygonswithsameattributes", "dsgtools:removeemptyandupdate",
         "dsgtools:snaplayeronlayer",
         # network algs
-        "dsgtools:adjustnetworkconnectivity"
+        "dsgtools:adjustnetworkconnectivity",
+        "dsgtools:identifyunsharedvertexonintersectionsalgorithm"
     ]
     INPUT_ALGS = 'INPUT_ALGS'
     OUTPUT = 'OUTPUT'

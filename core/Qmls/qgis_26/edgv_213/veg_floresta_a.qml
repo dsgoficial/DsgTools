@@ -1,1 +1,245 @@
-<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'><qgis version="2.6.0-Brighton" minimumScale="1" maximumScale="1" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" simplifyMaxScale="1" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0"><edittypes><edittype widgetv2type="TextEdit" name="id"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="TextEdit" name="OGC_FID"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="ValueMap" name="antropizada"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Desconhecido" value="0"/><value key="Sim" value="1"/><value key="Não" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="denso"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Desconhecido" value="0"/><value key="Sim" value="1"/><value key="Não" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="classificacaoporte"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Misto" value="98"/><value key="Desconhecido" value="0"/><value key="Arbustiva" value="2"/><value key="Arbórea" value="1"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="caracteristicafloresta"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Floresta" value="1"/><value key="Bosque" value="3"/><value key="Desconhecido" value="0"/><value key="Mata" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="geometriaaproximada"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Sim" value="1"/><value key="Não" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="especiepredominante"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Araucária" value="27"/><value key="Sororoca" value="12"/><value key="Cipó" value="10"/><value key="Bambu" value="11"/><value key="Babaçu" value="41"/><value key="Misto" value="98"/><value key="Palmeira" value="17"/><value key="Não identificado" value="96"/></widgetv2config></edittype></edittypes></qgis>
+<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
+<qgis maxScale="0" simplifyDrawingHints="0" readOnly="0" simplifyDrawingTol="1" version="3.7.0-Master" labelsEnabled="0" hasScaleBasedVisibilityFlag="0" styleCategories="AllStyleCategories" simplifyMaxScale="1" minScale="1e+8" simplifyLocal="1" simplifyAlgorithm="0">
+  <flags>
+    <Identifiable>1</Identifiable>
+    <Removable>1</Removable>
+    <Searchable>1</Searchable>
+  </flags>
+  <renderer-v2 enableorderby="0" forceraster="0" type="singleSymbol" symbollevels="0">
+    <symbols>
+      <symbol alpha="1" type="fill" name="0" clip_to_extent="1" force_rhr="0">
+        <layer pass="0" locked="0" enabled="1" class="SimpleFill">
+          <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
+          <prop v="114,155,111,255" k="color"/>
+          <prop v="bevel" k="joinstyle"/>
+          <prop v="0,0" k="offset"/>
+          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
+          <prop v="MM" k="offset_unit"/>
+          <prop v="35,35,35,255" k="outline_color"/>
+          <prop v="solid" k="outline_style"/>
+          <prop v="0.26" k="outline_width"/>
+          <prop v="MM" k="outline_width_unit"/>
+          <prop v="solid" k="style"/>
+          <data_defined_properties>
+            <Option type="Map">
+              <Option value="" type="QString" name="name"/>
+              <Option name="properties"/>
+              <Option value="collection" type="QString" name="type"/>
+            </Option>
+          </data_defined_properties>
+        </layer>
+      </symbol>
+    </symbols>
+    <rotation/>
+    <sizescale/>
+  </renderer-v2>
+  <customproperties/>
+  <blendMode>0</blendMode>
+  <featureBlendMode>0</featureBlendMode>
+  <layerOpacity>1</layerOpacity>
+  <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
+    <activeChecks type="StringList">
+      <Option value="" type="QString"/>
+    </activeChecks>
+    <checkConfiguration/>
+  </geometryOptions>
+  <fieldConfiguration>
+    <field name="id">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="nome">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="nomeabrev">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="geometriaaproximada">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="2" type="QString" name="Não"/>
+              <Option value="1" type="QString" name="Sim"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="denso">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="2" type="QString" name="Não"/>
+              <Option value="1" type="QString" name="Sim"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="antropizada">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="2" type="QString" name="Não"/>
+              <Option value="1" type="QString" name="Sim"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="especiepredominante">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="27" type="QString" name="Araucária"/>
+              <Option value="41" type="QString" name="Babaçu"/>
+              <Option value="11" type="QString" name="Bambu"/>
+              <Option value="10" type="QString" name="Cipó"/>
+              <Option value="98" type="QString" name="Misto"/>
+              <Option value="96" type="QString" name="Não identificado"/>
+              <Option value="17" type="QString" name="Palmeira"/>
+              <Option value="12" type="QString" name="Sororoca"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="caracteristicafloresta">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="3" type="QString" name="Bosque"/>
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="1" type="QString" name="Floresta"/>
+              <Option value="2" type="QString" name="Mata"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="alturamediaindividuos">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="classificacaoporte">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="2" type="QString" name="Arbustiva"/>
+              <Option value="1" type="QString" name="Arbórea"/>
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="98" type="QString" name="Misto"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="area_otf">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+  </fieldConfiguration>
+  <aliases>
+    <alias field="id" index="0" name=""/>
+    <alias field="nome" index="1" name=""/>
+    <alias field="nomeabrev" index="2" name=""/>
+    <alias field="geometriaaproximada" index="3" name=""/>
+    <alias field="denso" index="4" name=""/>
+    <alias field="antropizada" index="5" name=""/>
+    <alias field="especiepredominante" index="6" name=""/>
+    <alias field="caracteristicafloresta" index="7" name=""/>
+    <alias field="alturamediaindividuos" index="8" name=""/>
+    <alias field="classificacaoporte" index="9" name=""/>
+    <alias field="area_otf" index="10" name=""/>
+  </aliases>
+  <excludeAttributesWMS/>
+  <excludeAttributesWFS/>
+  <defaults>
+    <default applyOnUpdate="0" field="id" expression=""/>
+    <default applyOnUpdate="0" field="nome" expression=""/>
+    <default applyOnUpdate="0" field="nomeabrev" expression=""/>
+    <default applyOnUpdate="0" field="geometriaaproximada" expression=""/>
+    <default applyOnUpdate="0" field="denso" expression=""/>
+    <default applyOnUpdate="0" field="antropizada" expression=""/>
+    <default applyOnUpdate="0" field="especiepredominante" expression=""/>
+    <default applyOnUpdate="0" field="caracteristicafloresta" expression=""/>
+    <default applyOnUpdate="0" field="alturamediaindividuos" expression=""/>
+    <default applyOnUpdate="0" field="classificacaoporte" expression=""/>
+    <default applyOnUpdate="0" field="area_otf" expression=""/>
+  </defaults>
+  <constraints>
+    <constraint unique_strength="1" field="id" constraints="3" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="nome" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="nomeabrev" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="geometriaaproximada" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="denso" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="antropizada" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="especiepredominante" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="caracteristicafloresta" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="alturamediaindividuos" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="classificacaoporte" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="area_otf" constraints="0" exp_strength="0" notnull_strength="0"/>
+  </constraints>
+  <constraintExpressions>
+    <constraint exp="" desc="" field="id"/>
+    <constraint exp="" desc="" field="nome"/>
+    <constraint exp="" desc="" field="nomeabrev"/>
+    <constraint exp="" desc="" field="geometriaaproximada"/>
+    <constraint exp="" desc="" field="denso"/>
+    <constraint exp="" desc="" field="antropizada"/>
+    <constraint exp="" desc="" field="especiepredominante"/>
+    <constraint exp="" desc="" field="caracteristicafloresta"/>
+    <constraint exp="" desc="" field="alturamediaindividuos"/>
+    <constraint exp="" desc="" field="classificacaoporte"/>
+    <constraint exp="" desc="" field="area_otf"/>
+  </constraintExpressions>
+  <expressionfields>
+    <field precision="0" comment="" length="0" typeName="" expression="$area" type="6" name="area_otf" subType="0"/>
+  </expressionfields>
+  <attributeactions/>
+  <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
+    <columns/>
+  </attributetableconfig>
+  <conditionalstyles>
+    <rowstyles/>
+    <fieldstyles/>
+  </conditionalstyles>
+  <editform tolerant="1"></editform>
+  <editforminit/>
+  <editforminitcodesource>0</editforminitcodesource>
+  <editforminitfilepath></editforminitfilepath>
+  <editforminitcode><![CDATA[]]></editforminitcode>
+  <featformsuppress>0</featformsuppress>
+  <editorlayout>generatedlayout</editorlayout>
+  <editable/>
+  <labelOnTop/>
+  <widgets/>
+  <previewExpression></previewExpression>
+  <mapTip></mapTip>
+  <layerGeometryType>2</layerGeometryType>
+</qgis>

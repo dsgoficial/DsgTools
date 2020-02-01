@@ -57,7 +57,7 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry ]
+                [QgsProcessing.TypeVectorAnyGeometry]
             )
         )
         self.addParameter(
@@ -69,11 +69,11 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterDistance(
-                self.TOLERANCE, 
-                self.tr('Tolerance'), 
-                parentParameterName=self.INPUT,                                         
-                minValue=0, 
-                defaultValue=0.0001
+                self.TOLERANCE,
+                self.tr('Tolerance'),
+                parentParameterName=self.INPUT,
+                minValue=0,
+                defaultValue=0.001
             )
         )
         self.addOutput(
@@ -117,7 +117,7 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
             feedback=multiStepFeedback
             )
-        
+
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(
             self.tr(

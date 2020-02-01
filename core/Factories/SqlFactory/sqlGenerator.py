@@ -138,3 +138,10 @@ class SqlGenerator(object):
     
     def getTableExtent(self, tableSchema, tableName):
         return None
+
+    def implementationVersion(self):
+        """
+        Query to retrieve database's implementation version, if available.
+        :return: (str) database's implementation version (e.g. '5.2').
+        """
+        return None
