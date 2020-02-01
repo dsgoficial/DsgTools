@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "water",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "fid": 1 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -0.365, 0.79 ], [ -0.307, -0.788 ], [ 0.286, -0.788 ], [ 0.201, -0.09 ], [ 0.155, 0.33 ], [ 0.102, 0.824 ], [ -0.365, 0.79 ] ] ] } },
+{ "type": "Feature", "properties": { "fid": 2 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -1.125, 0.273 ], [ -0.891, 0.238 ], [ -0.783, 0.104 ], [ -0.815, -0.081 ], [ -1.048, -0.194 ], [ -1.231, -0.023 ], [ -1.231, 0.085 ], [ -1.203, 0.176 ], [ -1.125, 0.273 ] ] ] } },
+{ "type": "Feature", "properties": { "fid": 3 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 0.155, 0.33 ], [ 0.649, 0.848 ], [ 0.995, 0.866 ], [ 0.201, -0.09 ], [ 0.155, 0.33 ] ] ] } }
+]
+}

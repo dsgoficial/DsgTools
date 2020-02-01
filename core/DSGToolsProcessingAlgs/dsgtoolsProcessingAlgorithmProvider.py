@@ -42,8 +42,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignMeasure
     AssignMeasureColumnToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignValueMapToLayersAlgorithm import \
     AssignValueMapToLayersAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildJoinsOnLayersAlgorithm import \
-    BuildJoinsOnLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.groupLayersAlgorithm import \
     GroupLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadLayersFromPostgisAlgorithm import \
@@ -171,6 +169,23 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlg
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWrongBuildingAnglesAlgorithm import \
     IdentifyWrongBuildingAnglesAlgorithm
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyVertexNearEdgesAlgorithm import \
+    IdentifyVertexNearEdgesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUnsharedVertexOnSharedEdgesAlgorithm import \
+    IdentifyUnsharedVertexOnSharedEdgesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.enforceSpatialRulesAlgorithm import \
+    (EnforceSpatialRulesAlgorithm, ParameterSpatialRulesSetType)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unbuildPolygonsAlgorithm import \
+    UnbuildPolygonsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUnsharedVertexOnIntersectionsAlgorithm import \
+    IdentifyUnsharedVertexOnIntersectionsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.setFreeHandToolParametersAlgorithm import \
+    SetFreeHandToolParametersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.buildPolygonsFromCenterPointsAndBoundariesAlgorithm import \
+    BuildPolygonsFromCenterPointsAndBoundariesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.multipleOutputUnitTestAlgorithm import \
+    MultipleOutputUnitTestAlgorithm
+
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
 from qgis.PyQt.QtGui import QIcon
@@ -248,7 +263,15 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     BuildJoinsOnLayersAlgorithm(),
                     BatchRunAlgorithm(),
                     StringCsvToLayerListAlgorithm(),
-                    IdentifyWrongBuildingAnglesAlgorithm()
+                    IdentifyWrongBuildingAnglesAlgorithm(),
+                    IdentifyVertexNearEdgesAlgorithm(),
+                    IdentifyUnsharedVertexOnSharedEdgesAlgorithm(),
+                    EnforceSpatialRulesAlgorithm(),
+                    UnbuildPolygonsAlgorithm(),
+                    IdentifyUnsharedVertexOnIntersectionsAlgorithm(),
+                    SetFreeHandToolParametersAlgorithm(),
+                    BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(),
+                    MultipleOutputUnitTestAlgorithm()
                 ]
         return algList
 
@@ -263,6 +286,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         QgsApplication.instance().processingRegistry().addParameterType(self.parameterTypeSnapHierarchy)
         self.parameterTypeFMEManager = ParameterFMEManagerType()
         QgsApplication.instance().processingRegistry().addParameterType(self.parameterTypeFMEManager)
+        self.parameterSpatialRulesSetType = ParameterSpatialRulesSetType()
+        QgsApplication.instance().processingRegistry().addParameterType(self.parameterSpatialRulesSetType)
         self.refreshAlgorithms()
         return True
 
@@ -273,6 +298,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         ProcessingConfig.removeSetting('ACTIVATE_DSGTools')
         QgsApplication.instance().processingRegistry().removeParameterType(self.parameterTypeSnapHierarchy)
         QgsApplication.instance().processingRegistry().removeParameterType(self.parameterTypeFMEManager)
+        QgsApplication.instance().processingRegistry().removeParameterType(self.parameterSpatialRulesSetType)
 
     def isActive(self):
         """
