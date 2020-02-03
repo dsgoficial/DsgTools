@@ -373,6 +373,7 @@ class CustomFeatureButton(QObject):
         """
         if type(s) == str: 
             self._props["shortcut"] = s
+            self.action().setShortcut(QKeySequence.fromString(s))
             self.widget().setText(self.displayName())
             self.widget().update()
         else:
@@ -498,7 +499,7 @@ class CustomFeatureButton(QObject):
         self._action.triggered.connect(self._callback)
         self.widget().clicked.connect(self._action.trigger)
         self._action.setShortcut(QKeySequence.fromString(self.shortcut()))
-        self.widget().setShortcut(QKeySequence.fromString(self.shortcut()))
+        # self.widget().setShortcut(QKeySequence.fromString(self.shortcut()))
         iface.registerMainWindowAction(self._action, self.shortcut())
 
     def action(self):
@@ -549,10 +550,9 @@ class CustomFeatureButton(QObject):
         :return: (dict) object that maps each field from selected layer to its
                  value map.
         """
-        fm = dict()
         if self.checkLayer():
             return LayerHandler().fieldMap(self.vectorLayer())
-        return fm
+        return dict()
 
     def setAttributeMap(self, attrMap):
         """
@@ -573,7 +573,6 @@ class CustomFeatureButton(QObject):
                     value = attrMap[fieldName]
                     if fieldName in fMap and \
                       str(value) not in list(fMap[fieldName].values()):
-                        # restore previous values and raise error
                         self._props["attributeMap"] = prevAttrMap
                         raise ValueError(
                             self.tr("{0} is not a valid value for field {1}.")\
@@ -605,6 +604,7 @@ class CustomButtonSetup(QObject):
     buttonAdded = pyqtSignal(CustomFeatureButton)
     buttonRemoved = pyqtSignal(CustomFeatureButton)
     buttonUpdated = pyqtSignal(CustomFeatureButton)
+    buttonOrderChanged = pyqtSignal()
 
     def __init__(self, buttonsProps=None, displayName=None):
         """
@@ -772,6 +772,12 @@ class CustomButtonSetup(QObject):
         for b in self._buttons.values():
             groups[b.category()].add(b)
         return groups
+
+    def setButtonOrder(self, _):
+        """
+        Updates button order.
+        """
+        self.buttonOrderChanged.emit(self)
 
     def now(self):
         """
