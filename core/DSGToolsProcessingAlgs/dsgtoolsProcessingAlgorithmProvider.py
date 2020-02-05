@@ -185,6 +185,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.buildPolygonsFromC
     BuildPolygonsFromCenterPointsAndBoundariesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.multipleOutputUnitTestAlgorithm import \
     MultipleOutputUnitTestAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyTerrainModelErrorsAlgorithm import \
+    IdentifyTerrainModelErrorsAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -271,7 +273,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     IdentifyUnsharedVertexOnIntersectionsAlgorithm(),
                     SetFreeHandToolParametersAlgorithm(),
                     BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(),
-                    MultipleOutputUnitTestAlgorithm()
+                    MultipleOutputUnitTestAlgorithm(),
+                    IdentifyTerrainModelErrorsAlgorithm()
                 ]
         return algList
 
