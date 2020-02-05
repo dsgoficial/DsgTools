@@ -1080,13 +1080,13 @@ class SpatialRelationsHandler(QObject):
             )
         else:
             # this will raise an error if layer is not loaded
-            layer = QgsProject.instance().mapLayersByName(layerName)
+            layer = ctx.getMapLayer(layerName)
             if not layer:
-                return
-            layer = layer[0]
+                raise Exception(self.tr("Layer not found on canvas."))
         projectCrs = QgsProject.instance().crs()
         if layer.crs() != projectCrs:
             layer = lh.reprojectLayer(layer, projectCrs)
+            layer.setName(layerName)
         return layer
 
     def enforceRule(self, rule, ctx=None, feedback=None):
