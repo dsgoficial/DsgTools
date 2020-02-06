@@ -26,6 +26,7 @@ import os, json
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt, pyqtSlot, pyqtSignal
 from qgis.PyQt.QtWidgets import (QWidget,
+                                 QFileDialog,
                                  QHeaderView,
                                  QTableWidgetItem,
                                  QAbstractItemView)
@@ -42,20 +43,35 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
     ORDER_MODE_COUNT = 2
     ASC_ORDER, DESC_ORDER = range(ORDER_MODE_COUNT)
 
-    def __init__(self, parent=None, headerMap=None):
+    def __init__(self, parent=None, headerMap=None, showButtons=False,
+                 fileType=None, extension=None):
         """
         Class constructor.
         :param headerMap: (dict) a map from each header to be shown and type of
                            cell content (e.g. widget or item).
         :param parent: (QtWidgets.*) any widget parent to current instance.
+        :param showButtons: (bool) whether buttons are visible.
+        :param fileType: (str) ex/import file type extension name (e.g. JSON 
+                         file).
+        :param fileType: (str) ex/import file type extension (e.g. .json).
         """
         super(OrderedTableWidget, self).__init__(parent)
         self.parent = parent
         self.setupUi(self)
-        self.setHeaders(self.headers)
+        self.fileType = fileType or "JSON file"
+        self.extension = extension or ".json"
+        self.showSaveLoadButtons(showButtons)
+        self.setHeaders(headerMap or {})
         self.setHeaderDoubleClickBehaviour()
         self.tableWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
 
+    def showSaveLoadButtons(self, showButtons=False):
+        """
+        Sets save and load buttons visibility.
+        :param showButtons: (bool) whether buttons are visible.
+        """
+        getattr(self.savePushButton, "show" if showButtons else "hide")()
+        getattr(self.loadPushButton, "show" if showButtons else "hide")()
 
     def setHeaders(self, headerMap):
         """
@@ -509,7 +525,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :return: (dict) table's data.
         """
         data = dict()
-        for row in self.rowCount():
+        for row in range(self.rowCount()):
             data[row] = self.row(row)
         return data
 
@@ -522,8 +538,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         self.clear()
         for row, colValues in stateDict.items():
-            for col, value in self.items():
-                self.setValue(row, col, value)
+            self.addRow({int(c): v for c, v in colValues.items()}, int(row))
         return stateDict == self.contents()
 
     def load(self, filepath):
@@ -532,8 +547,8 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param filepath: (str) file path for the JSON file.
         """
         try:
-            with open(filepath, "r") as f:
-                self.restore(json.load(f))
+            with open(filepath, "r", encoding="utf-8") as f:
+                self.restore(json.loads(f.read()))
         except:
             # raise an error message and make sure GUI is cleared of any debrees
             self.setHeaders(self.headers)
@@ -543,8 +558,42 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         Exports current input data to a JSON file.
         """
         try:
-            with open(filepath, "w") as f:
-                json.dump(self.contents(), f)
+            with open(filepath, "w", encoding="utf-8") as f:
+                f.write(json.dumps(self.contents(), sort_keys=True, indent=4))
         except:
-            # raise an error message and make sure GUI is cleared of any debrees
-            self.setHeaders(self.headers)
+            # raise an error message advise user
+            pass
+
+    @pyqtSlot()
+    def on_loadPushButton_clicked(self):
+        """
+        Collects filepath and 
+        """
+        fd = QFileDialog()
+        # fd.setDirectory(QDir.homePath())
+        filepath = fd.getOpenFileName(
+            caption=self.tr("Select a {0} to export data from")\
+                        .format(self.fileType),
+            filter=self.tr("{0} (*{1})")\
+                       .format(self.fileType, self.extension),
+        )
+        filepath = filepath[0] if isinstance(filepath, tuple) else filepath
+        if filepath:
+            self.load(filepath)
+
+    @pyqtSlot()
+    def on_savePushButton_clicked(self):
+        """
+        Collects filepath and 
+        """
+        fd = QFileDialog()
+        # fd.setDirectory(QDir.homePath())
+        filepath = fd.getSaveFileName(
+            caption=self.tr("Select a {0} to export data to")\
+                        .format(self.fileType),
+            filter=self.tr("{0} (*{1})")\
+                       .format(self.fileType, self.extension),
+        )
+        filepath = filepath[0] if isinstance(filepath, tuple) else filepath
+        if filepath:
+            self.save(filepath)
