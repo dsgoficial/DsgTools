@@ -304,6 +304,9 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
     
     def createWidget(self):
         self.panel = self.createPanel()
+        self.panel.showSaveLoadButtons(True)
+        self.panel.extension = ".rules"
+        self.panel.fileType = self.tr("Set of DSGTools Spatial Rules")
         return self.panel
     
     def parentLayerChanged(self, layer=None):
