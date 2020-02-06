@@ -22,12 +22,15 @@
 """
 
 import os, json
+from datetime import datetime
 
 from qgis.PyQt import uic
+from qgis.utils import iface
 from qgis.PyQt.QtCore import Qt, pyqtSlot, pyqtSignal
 from qgis.PyQt.QtWidgets import (QWidget,
                                  QFileDialog,
                                  QHeaderView,
+                                 QMessageBox,
                                  QTableWidgetItem,
                                  QAbstractItemView)
 
@@ -538,6 +541,8 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         self.clear()
         for row, colValues in stateDict.items():
+            if row == "metadata":
+                continue
             self.addRow({int(c): v for c, v in colValues.items()}, int(row))
         return stateDict == self.contents()
 
@@ -549,8 +554,13 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         try:
             with open(filepath, "r", encoding="utf-8") as f:
                 self.restore(json.loads(f.read()))
-        except:
+        except Exception as e:
             # raise an error message and make sure GUI is cleared of any debrees
+            QMessageBox.warning(
+                iface.mainWindow(),
+                self.tr("Unable to import {0}").format(filepath),
+                "Check file {0}:\n{1}".format(filepath, "\n".join(e.args))
+            )
             self.setHeaders(self.headers)
 
     def save(self, filepath):
@@ -559,10 +569,15 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         try:
             with open(filepath, "w", encoding="utf-8") as f:
-                f.write(json.dumps(self.contents(), sort_keys=True, indent=4))
-        except:
-            # raise an error message advise user
-            pass
+                data = {"metadata": self.metadata(True)}
+                data.update(self.contents())
+                f.write(json.dumps(data, indent=4))
+        except Exception as e:
+            QMessageBox.warning(
+                iface.mainWindow(),
+                self.tr("Unable to import {0}").format(filepath),
+                "Check file {0}:\n{1}".format(filepath, "\n".join(e.args))
+            )
 
     @pyqtSlot()
     def on_loadPushButton_clicked(self):
@@ -580,6 +595,45 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         filepath = filepath[0] if isinstance(filepath, tuple) else filepath
         if filepath:
             self.load(filepath)
+
+    def now(self):
+        """
+        Gets time and date from the system. Format: "dd/mm/yyyy HH:MM:SS".
+        :return: (str) current's date and time
+        """
+        paddle = lambda n : str(n) if n > 9 else "0{0}".format(n)
+        now = datetime.now()
+        return "{day}/{month}/{year} {hour}:{minute}:{second}".format(
+            year=now.year,
+            month=paddle(now.month),
+            day=paddle(now.day),
+            hour=paddle(now.hour),
+            minute=paddle(now.minute),
+            second=paddle(now.second)
+        )
+
+    def metadata(self, updated=False):
+        """
+        Reads current metadata associated to filled data.
+        :return: (dict) information set by user, such as map version or
+                 modification history.
+        """
+        if not hasattr(self, "_metadata"):
+            self._metadata = {
+                "lastModified": self.now()
+            }
+        elif updated:
+            self._metadata["lastModified"] = self.now()
+        return dict(self._metadata)
+
+    def setMetadata(self, metadata, updated=True):
+        """
+        Sets current dataset metadata.
+        :param metadata: (dict) a map to all data's information.
+        """
+        self._metadata = metadata
+        if updated:
+            self._metadata["lastModified"] = self.now()
 
     @pyqtSlot()
     def on_savePushButton_clicked(self):
