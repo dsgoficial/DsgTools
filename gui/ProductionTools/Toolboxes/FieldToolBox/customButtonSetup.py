@@ -27,8 +27,8 @@ from collections import defaultdict
 
 from qgis.utils import iface
 from qgis.core import QgsProject
-from qgis.PyQt.QtCore import pyqtSignal, QObject
-from qgis.PyQt.QtWidgets import QPushButton, QAction
+from qgis.PyQt.QtCore import Qt, pyqtSignal, QObject
+from qgis.PyQt.QtWidgets import QPushButton, QShortcut, QAction
 from qgis.PyQt.QtGui import QIcon, QColor, QPalette, QKeySequence
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
@@ -65,8 +65,11 @@ class CustomFeatureButton(QObject):
             "attributeMap": dict()
         }
         self._callback = callback if callback else lambda: None
+        self._shortcut = QShortcut(iface.mainWindow())
+        self._shortcut.setContext(Qt.ApplicationShortcut)
         self.setProperties(props)
         self.setAction(QAction())
+        self.setShortcut(self.shortcut())
 
     def __eq__(self, obj):
         """
@@ -101,6 +104,9 @@ class CustomFeatureButton(QObject):
         """
         Reimplementation of object removal method.
         """
+        self._shortcut.activated.disconnect(self._action.trigger)
+        self._shortcut.setKey(QKeySequence.fromString(""))
+        del self._shortcut
         iface.unregisterMainWindowAction(self._action)
         self._action.blockSignals(True)
         self._widget.clicked.disconnect(self._action.trigger)
@@ -373,7 +379,9 @@ class CustomFeatureButton(QObject):
         """
         if type(s) == str: 
             self._props["shortcut"] = s
-            self.action().setShortcut(QKeySequence.fromString(s))
+            sKeySeq = QKeySequence.fromString(s)
+            self.action().setShortcut(sKeySeq)
+            self._shortcut.setKey(sKeySeq)
             self.widget().setText(self.displayName())
             self.widget().update()
         else:
@@ -487,6 +495,7 @@ class CustomFeatureButton(QObject):
             iface.unregisterMainWindowAction(self._action)
             self._action.blockSignals(True)
             self.widget().clicked.disconnect(self._action.trigger)
+            self._shortcut.activated.disconnect(self._action.trigger)
             del self._action
         self._action = action
         self._action.setText(
@@ -499,7 +508,7 @@ class CustomFeatureButton(QObject):
         self._action.triggered.connect(self._callback)
         self.widget().clicked.connect(self._action.trigger)
         self._action.setShortcut(QKeySequence.fromString(self.shortcut()))
-        # self.widget().setShortcut(QKeySequence.fromString(self.shortcut()))
+        self._shortcut.activated.connect(self.action().trigger)
         iface.registerMainWindowAction(self._action, self.shortcut())
 
     def action(self):
