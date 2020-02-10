@@ -6,22 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>343</width>
-    <height>278</height>
+    <width>371</width>
+    <height>535</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>DSGTools: Custom Feature Toolbox</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0" colspan="2">
      <widget class="QgsCollapsibleGroupBox" name="mGroupBox_2">
       <property name="title">
        <string>Tool behaviour</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
+       <item row="1" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QRadioButton" name="newRadioButton">
@@ -53,26 +53,12 @@
            </property>
           </spacer>
          </item>
-         <item>
-          <widget class="QPushButton" name="buttonPropsPushButton">
-           <property name="toolTip">
-            <string>Define display button properties</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../../../../resources.qrc">
-             <normaloff>:/plugins/DsgTools/icons/config.png</normaloff>:/plugins/DsgTools/icons/config.png</iconset>
-           </property>
-          </widget>
-         </item>
         </layout>
        </item>
       </layout>
      </widget>
     </item>
-    <item>
+    <item row="1" column="0" colspan="2">
      <widget class="QgsCollapsibleGroupBox" name="mGroupBox">
       <property name="title">
        <string>Reclassify - layer selection behaviour</string>
@@ -82,6 +68,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <widget class="QRadioButton" name="activeRadioButton">
+           <property name="toolTip">
+            <string>Reclassification tool only works on features from current active layer</string>
+           </property>
            <property name="text">
             <string>Active layer</string>
            </property>
@@ -92,6 +81,9 @@
          </item>
          <item>
           <widget class="QRadioButton" name="allRadioButton">
+           <property name="toolTip">
+            <string>Reclassification will affect all compatible selected features from all loaded layers, regardless of it being an active layer</string>
+           </property>
            <property name="text">
             <string>All selected features</string>
            </property>
@@ -115,24 +107,184 @@
       </layout>
      </widget>
     </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <item row="2" column="0" colspan="2">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="DsgCustomComboBox" name="buttonComboBox" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <item>
+         <widget class="QComboBox" name="setupComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSplitter" name="splitter">
+          <property name="toolTip">
+           <string>Adds a set of buttons setup (profile) from a file</string>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="QPushButton" name="importPushButton">
+           <property name="maximumSize">
+            <size>
+             <width>31</width>
+             <height>33</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Imports a set of buttons setup (profile) from a file</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../../resources.qrc">
+             <normaloff>:/plugins/DsgTools/icons/import.png</normaloff>:/plugins/DsgTools/icons/import.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>16</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="editSetupPushButton">
+           <property name="maximumSize">
+            <size>
+             <width>31</width>
+             <height>33</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Edits current buttons setup (profile) from a file</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../../resources.qrc">
+             <normaloff>:/plugins/DsgTools/icons/config.png</normaloff>:/plugins/DsgTools/icons/config.png</iconset>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="addPushButton">
+           <property name="maximumSize">
+            <size>
+             <width>31</width>
+             <height>33</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Adds a buttons setup (profile)</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../../resources.qrc">
+             <normaloff>:/plugins/DsgTools/icons/plus.png</normaloff>:/plugins/DsgTools/icons/plus.png</iconset>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="removePushButton">
+           <property name="maximumSize">
+            <size>
+             <width>31</width>
+             <height>33</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Removes current buttons setup (profile)</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../../resources.qrc">
+             <normaloff>:/plugins/DsgTools/icons/remove.png</normaloff>:/plugins/DsgTools/icons/remove.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>16</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="bFilterLineEdit">
+        <property name="placeholderText">
+         <string>Type in to filter buttons...</string>
         </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTabWidget" name="tabWidget">
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="tab">
+         <attribute name="title">
+          <string>Tab 1</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="QScrollArea" name="scrollArea">
+            <property name="widgetResizable">
+             <bool>true</bool>
+            </property>
+            <widget class="QWidget" name="scrollAreaWidgetContents">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>329</width>
+               <height>81</height>
+              </rect>
+             </property>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tab_2">
+         <attribute name="title">
+          <string>Tab 2</string>
+         </attribute>
+        </widget>
        </widget>
       </item>
      </layout>
     </item>
-    <item>
-     <widget class="OrderedTableWidget" name="orderedTableWidget" native="true"/>
+    <item row="4" column="0">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>80</height>
+       </size>
+      </property>
+     </spacer>
     </item>
-    <item>
+    <item row="3" column="0" colspan="2">
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
        <widget class="QLabel" name="label_6">
@@ -172,24 +324,14 @@
       </item>
      </layout>
     </item>
-    <item>
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>80</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
    </layout>
-   <zorder>orderedTableWidget</zorder>
-   <zorder>verticalSpacer</zorder>
    <zorder>mGroupBox</zorder>
    <zorder>mGroupBox_2</zorder>
+   <zorder></zorder>
+   <zorder>bFilterLineEdit</zorder>
+   <zorder>scrollArea</zorder>
+   <zorder>verticalSpacer</zorder>
+   <zorder></zorder>
   </widget>
  </widget>
  <customwidgets>
@@ -197,18 +339,6 @@
    <class>QgsCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
    <header>qgscollapsiblegroupbox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>DsgCustomComboBox</class>
-   <extends>QWidget</extends>
-   <header>DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>OrderedTableWidget</class>
-   <extends>QWidget</extends>
-   <header>DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedTableWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

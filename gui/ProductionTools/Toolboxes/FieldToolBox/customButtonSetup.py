@@ -615,17 +615,20 @@ class CustomButtonSetup(QObject):
     buttonUpdated = pyqtSignal(CustomFeatureButton)
     buttonOrderChanged = pyqtSignal()
 
-    def __init__(self, buttonsProps=None, displayName=None):
+    def __init__(self, buttonsProps=None, displayName=None, description=None):
         """
         Class constructor.
         :param buttonsProps: (set) a set of buttons' properties to be loaded to
                              the interface.
         :param displayName: (str) friendly name for the button collection to be
                             displayed on the interface.
+        :param description: (str) a short text to describe current set of
+                            buttons.
         """
         super(CustomButtonSetup, self).__init__()
         self._buttons = dict()
         self._name = displayName or self.tr("Custom Button Setup")
+        self._description = description
         if buttonsProps:
             self.setButtons(buttonsProps)
 
@@ -642,6 +645,20 @@ class CustomButtonSetup(QObject):
         :return: (str) button's name.
         """
         return str(self._name)
+
+    def setDescription(self, name):
+        """
+        Defines setup's description text.
+        :param name: (str) new setup's description text.
+        """
+        self._name = description
+
+    def description(self):
+        """
+        Retrives button's description.
+        :return: (str) setup's description text.
+        """
+        return str(self._description)
 
     def setButtons(self, buttons):
         """
