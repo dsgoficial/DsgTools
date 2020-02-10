@@ -35,71 +35,110 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'customFeatureTool.ui'))
 
 class CustomFeatureTool(QDockWidget, FORM_CLASS):
-    def __init__(self, parent=None, buttonProps=None):
+    def __init__(self, parent=None, profiles=None):
         """
         Class constructor.
         :param parent: (QtWidgets.*) any widget that 'contains' this tool.
-        :param buttonProps: (dict) a map to pre-set buttons to be setup on the
-                            interface.
+        :param profiles: (list-of-dict) a list of states for CustomButtonSetup
+                         objects to be set to the GUI.
         """
         super(CustomFeatureTool, self).__init__(parent)
         self.setupUi(self)
-        self.buttonSetup = CustomButtonSetup(buttonProps)
-        self.tableSetup()
+        self._setups = dict()
+        if profiles:
+            self.setButtonProfiles(profiles)
 
-    def tableSetup(self):
+    def setButtonProfiles(self, profiles):
         """
-        Configures table for button display.
+        Replaces/defines current setup associated to this GUI.
+        :param profiles: (list-of-dict) a list of states for CustomButtonSetup
+                         objects to be set to the GUI.
         """
-        table = self.orderedTableWidget
-        table.clear()
-        table.setHeaders({
-            0 : {
-                "header" : self.tr("Custom button"),
-                "type" : "widget",
-                "widget" : self.newButton,
-                "setter" : "setText",
-                "getter" : "text"
-            }
-        })
-        table.setSectionResizeMode(0, "interactive")
-        table.setSectionResizeMode(0, "resizetocontents")
-        table.moveUpPushButton.hide()
-        table.moveDownPushButton.hide()
-        # table.addPushButton.hide()
-        # table.removePushButton.hide()
+        self.setupComboBox.clear()
+        self.setupComboBox.addItem(self.tr("Select a button profile..."))
+        for s in self._setup:
+            del self._setups[s]
+        for p in profiles:
+            s = CustomButtonSetup()
+            s.setState(p)
+            self._setups[s.name()] = s
+        self.setupComboBox.addItems(self.buttonProfiles("asc"))
 
-    def newButton(self, props=None):
+    def buttonProfiles(self, order=None):
         """
-        Get a new instance of a CustomFeatureButton based on its properties.
-        :param props: (dict) a map to custom button properties.
-        :return: (QPushButton/CustomFeatureButton) new custom feature button.
+        Retrieves current available button profiles (setups) names. 
+        :return: (list-of-str) available profiles names.
         """
-        from random import randint
-        if props is None:
-            pb = QPushButton()
-            pb.setText("Created button [{0}]".format(chr(randint(48, 57))))
-            pb.setToolTip(self.tr("No button property was given."))
+        return {
+            "asc": sorted(self._setups.keys()),
+            "desc": sorted(self._setups.keys(), reverse=True),
+            None: list(self._setup.keys())
+        }[order]
+
+    def buttonProfile(self, profile):
+        """
+        Retrieves a button profile object from its name. 
+        :param profile: (str) profile to be retrieved.
+        :return: (CustomButtonSetup) requested profile.
+        """
+        return self._setups[profile] if profile in self._setups else None
+
+    def currentButtonProfileName(self):
+        """
+        Retrieves current active button profile name.
+        :return: (str) current profile's name.
+        """
+        if self.setupComboBox.currentIndex() == 0:
+            return ""
+        return self.setupComboBox.currentText()
+
+    def currentButtonProfile(self):
+        """
+        Retrieves current active button profile.
+        :return: (CustomButtonSetup) requested profile.
+        """
+        return self.buttonProfile(self.currentButtonProfileName())
+
+    def clearTabs(self):
+        """
+        Clears all tabs created for the buttons.
+        """
+        pass
+
+    def createTabs(self):
+        """
+        Creates and populates all tabs for current button profile.
+        """
+        pass
+
+    def createResearchTab(self):
+        """
+        Creates a tab for researched buttons.
+        """
+        pass
+
+    @pyqtSlot(int, name="on_setupComboBox_currentIndexChanged")
+    def setCurrentButtonProfile(self, profile=None):
+        """
+        Sets GUI to a new profile.
+        """
+        # check if it comes from signal emition
+        if profile not in self.buttonProfiles():
+            # raise a message and do nothing
+            return
         else:
-            # handle CustomFeatureButton obj in here
-            pb = QPushButton()
-        pal = QPalette()
-        pal.setColor(
-            pal.Button,
-            QColor(randint(0, 255), randint(0, 255), randint(0, 255), 100)
-        )
-        pb.setPalette(pal)
-        pb.update()
-        return pb
+            self.setupComboBox.setCurrentText(self.currentButtonProfileName())
+        setup = self.currentButtonProfile()
+        self.clearTabs()
+        self.createTabs()
+        # test later if remove research tab is necessary - but it should, at
+        # least be cleared
 
     @pyqtSlot(bool, name="on_buttonPropsPushButton_clicked")
     def setupCurrentButton(self):
         """
         Opens setup form.
         """
-        # button = self.currentButton()
-        # props = button.properties()
-        # dlg = ButtonPropWidget(props)
         dlg = ButtonPropWidget()
         ret = dlg.exec_()
         if ret:
