@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="pt_BR">
+<!DOCTYPE TS><TS version="2.0" language="pt_BR" sourcelanguage="">
 <context>
     <name>@default</name>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/FreeHandTool/controllers/acquisitionFreeController.py" line="150"/>
+        <location filename="../gui/ProductionTools/MapTools/FreeHandTool/controllers/acquisitionFreeController.py" line="158"/>
         <source>Probably too many smoothing iteration, try reducing it (3 usually is enough). Geometry was not smoothened.</source>
         <translation>Provável execução de excessivos ciclos de suavização, tente reduzir o número de ciclos (em geral, 3 é suficiente). Geometria não foi suavizada.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/FreeHandTool/controllers/acquisitionFreeController.py" line="151"/>
+        <location filename="../gui/ProductionTools/MapTools/FreeHandTool/controllers/acquisitionFreeController.py" line="159"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
@@ -274,6 +273,20 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: ${version}&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/ui_about_.ui" line="89"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.SF NS Text&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 4.1-dev&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AbstractDb</name>
@@ -398,7 +411,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erro abrindo banco de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="705"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="724"/>
         <source>Problem inserting frame: </source>
         <translation>Problema inserindo moldura: </translation>
     </message>
@@ -408,7 +421,7 @@ p, li { white-space: pre-wrap; }
         <translation>Feições com chave estrangeira do tipo uuid inválidas:</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="742"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="761"/>
         <source>Problem getting qmlRecordDict: </source>
         <translation>Problema ao obter qmlRecordDict: </translation>
     </message>
@@ -443,7 +456,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="75"/>
         <source>Geopackage (create new database)</source>
-        <translation>Geopackage (criar nova base de dados)</translation>
+        <translation type="obsolete">Geopackage (criar nova base de dados)</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="207"/>
@@ -675,7 +688,7 @@ Tecla Ctrl: ferramenta é pausada enquanto Ctrl é pressionado.</translation>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="73"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="75"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -690,46 +703,46 @@ Tecla Ctrl: ferramenta é pausada enquanto Ctrl é pressionado.</translation>
         <translation type="obsolete">Problema alterando password do usuário: </translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="75"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="77"/>
         <source>Success!</source>
         <translation>Sucesso!</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="75"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="77"/>
         <source>User </source>
         <translation>Usuário </translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="58"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="60"/>
         <source>Password mismatch! Password not altered!</source>
         <translation>Senhas são diferentes! Senha não alterada!</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="75"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="77"/>
         <source> password successfully updated on database </source>
         <translation> senha atualizada com sucesso no banco de dados </translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="89"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="91"/>
         <source>Alter operation on server </source>
         <translation>Operação de alteração no servidor </translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="89"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="91"/>
         <source> complete!
 </source>
         <translation> concluída!
 </translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="98"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="100"/>
         <source>
 Successful users: </source>
         <translation>
 Usuários com sucesso: </translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="101"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="103"/>
         <source>Operation Complete!</source>
         <translation>Operação completa!</translation>
     </message>
@@ -739,19 +752,19 @@ Usuários com sucesso: </translation>
         <translation type="obsolete">Usuários com erro:</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="113"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="115"/>
         <source>
 Error messages for each user were output in qgis log.</source>
         <translation>
 Mensagens de erro para cada usuário foram registradas no log do QGIS.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="115"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="117"/>
         <source>Error for user </source>
         <translation>Erro para o usuário </translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="111"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="113"/>
         <source>
 Users with error:</source>
         <translation>
@@ -759,16 +772,219 @@ Usuários com erro:</translation>
     </message>
 </context>
 <context>
+    <name>ApplyStylesFromDatabaseToLayersAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/applyStylesFromDatabaseToLayersAlgorithm.py" line="69"/>
+        <source>Input Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/applyStylesFromDatabaseToLayersAlgorithm.py" line="77"/>
+        <source>Style Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/applyStylesFromDatabaseToLayersAlgorithm.py" line="84"/>
+        <source>Original layers with styles applied column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/applyStylesFromDatabaseToLayersAlgorithm.py" line="147"/>
+        <source>Apply Styles from Database to Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/applyStylesFromDatabaseToLayersAlgorithm.py" line="154"/>
+        <source>Layer Management Algorithms</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AssignAliasesToLayersAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignAliasesToLayersAlgorithm.py" line="134"/>
+        <source>Assign Aliases to Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignAliasesToLayersAlgorithm.py" line="141"/>
+        <source>Layer Management Algorithms</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AssignBandValueTool</name>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/assignBandValueTool.py" line="268"/>
+        <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/assignBandValueTool.py" line="263"/>
         <source>Warning</source>
         <translation>Atenção</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/assignBandValueTool.py" line="268"/>
+        <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/assignBandValueTool.py" line="263"/>
         <source>Select a point vector layer as the active layer</source>
         <translation>Selecione uma camada vetorial do tipo ponto como a camada ativa</translation>
+    </message>
+</context>
+<context>
+    <name>AssignBoundingBoxFilterToLayersAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignBoundingBoxFilterToLayersAlgorithm.py" line="69"/>
+        <source>Input Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignBoundingBoxFilterToLayersAlgorithm.py" line="77"/>
+        <source>Filter</source>
+        <translation type="unfinished">Filtro</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignBoundingBoxFilterToLayersAlgorithm.py" line="84"/>
+        <source>Append to existing filter with AND clause</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignBoundingBoxFilterToLayersAlgorithm.py" line="85"/>
+        <source>Append to existing filter with OR clause</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignBoundingBoxFilterToLayersAlgorithm.py" line="86"/>
+        <source>Replace filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignBoundingBoxFilterToLayersAlgorithm.py" line="89"/>
+        <source>Behavior</source>
+        <translation type="unfinished">Comportamento</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignBoundingBoxFilterToLayersAlgorithm.py" line="98"/>
+        <source>Original layers with assigned styles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignBoundingBoxFilterToLayersAlgorithm.py" line="129"/>
+        <source>Operation only defined for postgres provider. Layer {layer} will be skipped.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignBoundingBoxFilterToLayersAlgorithm.py" line="179"/>
+        <source>Assign Bounding Box Filter to Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignBoundingBoxFilterToLayersAlgorithm.py" line="186"/>
+        <source>Layer Management Algorithms</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AssignCustomFormAndFormatRulesToLayersAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignCustomFormAndFormatRulesToLayersAlgorithm.py" line="75"/>
+        <source>Clean before assign format rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignCustomFormAndFormatRulesToLayersAlgorithm.py" line="82"/>
+        <source>Assing only custom form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignCustomFormAndFormatRulesToLayersAlgorithm.py" line="83"/>
+        <source>Assign only format rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignCustomFormAndFormatRulesToLayersAlgorithm.py" line="84"/>
+        <source>Assign custom form and format rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignCustomFormAndFormatRulesToLayersAlgorithm.py" line="87"/>
+        <source>Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignCustomFormAndFormatRulesToLayersAlgorithm.py" line="267"/>
+        <source>Assign Custom Form and Format Rules to Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignCustomFormAndFormatRulesToLayersAlgorithm.py" line="274"/>
+        <source>Layer Management Algorithms</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AssignFilterToLayersAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignFilterToLayersAlgorithm.py" line="68"/>
+        <source>Input Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignFilterToLayersAlgorithm.py" line="76"/>
+        <source>Filter</source>
+        <translation type="unfinished">Filtro</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignFilterToLayersAlgorithm.py" line="83"/>
+        <source>Append to existing filter with AND clause</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignFilterToLayersAlgorithm.py" line="84"/>
+        <source>Append to existing filter with OR clause</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignFilterToLayersAlgorithm.py" line="85"/>
+        <source>Replace filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignFilterToLayersAlgorithm.py" line="88"/>
+        <source>Behavior</source>
+        <translation type="unfinished">Comportamento</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignFilterToLayersAlgorithm.py" line="97"/>
+        <source>Original layers with assigned styles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignFilterToLayersAlgorithm.py" line="160"/>
+        <source>Assign Filter to Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignFilterToLayersAlgorithm.py" line="167"/>
+        <source>Layer Management Algorithms</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AssignMeasureColumnToLayersAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignMeasureColumnToLayersAlgorithm.py" line="66"/>
+        <source>Input Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignMeasureColumnToLayersAlgorithm.py" line="74"/>
+        <source>Original layers with measure column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignMeasureColumnToLayersAlgorithm.py" line="135"/>
+        <source>Assign Measure Column to Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignMeasureColumnToLayersAlgorithm.py" line="142"/>
+        <source>Layer Management Algorithms</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -822,6 +1038,39 @@ Usuários com erro:</translation>
         <location filename="../gui/DatabaseTools/UserTools/assign_profiles.py" line="189"/>
         <source>Select at least one profile and try again!</source>
         <translation>Selecione pelo menos uma permissão de usuário e tente de novo!</translation>
+    </message>
+</context>
+<context>
+    <name>AssignValueMapToLayersAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignValueMapToLayersAlgorithm.py" line="41"/>
+        <source>Input Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignValueMapToLayersAlgorithm.py" line="48"/>
+        <source>Json file with value maps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignValueMapToLayersAlgorithm.py" line="55"/>
+        <source>Json data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignValueMapToLayersAlgorithm.py" line="63"/>
+        <source>Original layers with values mapped</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignValueMapToLayersAlgorithm.py" line="190"/>
+        <source>Assign Value Map to Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignValueMapToLayersAlgorithm.py" line="197"/>
+        <source>Layer Management Algorithms</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -961,33 +1210,33 @@ Usuários com erro:</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/attributeRulesEditor.ui" line="14"/>
         <source>Attribute Rules Editor</source>
-        <translation>Editor de Regras de Atributo</translation>
+        <translation type="obsolete">Editor de Regras de Atributo</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/attributeRulesEditor.ui" line="46"/>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation type="obsolete">Ok</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/attributeRulesEditor.ui" line="53"/>
         <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <translation type="obsolete">Cancelar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/attributeRulesEditor.py" line="61"/>
         <source>Critical!</source>
-        <translation>Crítico!</translation>
+        <translation type="obsolete">Crítico!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/attributeRulesEditor.py" line="61"/>
         <source>Errors on interface! Check log for details!</source>
-        <translation>Erros na interface! Verifique o log para mais detalhes!</translation>
+        <translation type="obsolete">Erros na interface! Verifique o log para mais detalhes!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/attributeRulesEditor.py" line="92"/>
         <source>Invalid tags for attributeRulesEditor!
 </source>
-        <translation>Tag inválida para o editor de regras de atributo!
+        <translation type="obsolete">Tag inválida para o editor de regras de atributo!
 </translation>
     </message>
 </context>
@@ -1643,41 +1892,183 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     </message>
 </context>
 <context>
+    <name>BatchRunAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/batchRunAlgorithm.py" line="73"/>
+        <source>Comma separated Input Layer Names</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/batchRunAlgorithm.py" line="79"/>
+        <source>Name of the algorithm with provider</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/batchRunAlgorithm.py" line="85"/>
+        <source>Name of the key of the input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/batchRunAlgorithm.py" line="91"/>
+        <source>Json parameter dict</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/batchRunAlgorithm.py" line="99"/>
+        <source>Output layer parameter name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/batchRunAlgorithm.py" line="107"/>
+        <source>Batch run output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/batchRunAlgorithm.py" line="146"/>
+        <source>Step {idx}/{total}: Running algorithm {algName} on {layerName}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/batchRunAlgorithm.py" line="157"/>
+        <source>Layer {layerName} not found. Skipping step.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/batchRunAlgorithm.py" line="244"/>
+        <source>Batch Run Algorithm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/batchRunAlgorithm.py" line="251"/>
+        <source>Other Algorithms</source>
+        <translation type="unfinished">Outros Algoritmos</translation>
+    </message>
+</context>
+<context>
+    <name>BuildJoinsOnLayersAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/buildJoinsOnLayersAlgorithm.py" line="55"/>
+        <source>Input Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/buildJoinsOnLayersAlgorithm.py" line="62"/>
+        <source>Start Editing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/buildJoinsOnLayersAlgorithm.py" line="69"/>
+        <source>Original reorganized layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/buildJoinsOnLayersAlgorithm.py" line="153"/>
+        <source>Build Joins on Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/buildJoinsOnLayersAlgorithm.py" line="160"/>
+        <source>Layer Management Algorithms</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BuildPolygonsFromCenterPointsAndBoundariesAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="56"/>
+        <source>Center Point Layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="63"/>
+        <source>Process only selected features</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="69"/>
+        <source>Fields to ignore</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="80"/>
+        <source>Line Constraint Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="88"/>
+        <source>Polygon Constraint Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="96"/>
+        <source>Geographic Boundary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="104"/>
+        <source>Output Polygons</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="110"/>
+        <source>{0} Flags</source>
+        <translation type="unfinished">{0} Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="208"/>
+        <source>Build Polygons From Center Points and Boundaries</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="215"/>
+        <source>Quality Assurance Tools (Manipulation Processes)</source>
+        <translation type="unfinished">Ferramentas de Validação (Processos de Manipulação)</translation>
+    </message>
+</context>
+<context>
     <name>ButtonPropWidget</name>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="23"/>
         <source>Optional Parameters</source>
-        <translation>Parâmetros Opcionais</translation>
+        <translation type="obsolete">Parâmetros Opcionais</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="39"/>
         <source>Assign Color</source>
-        <translation>Atribuir Cor</translation>
+        <translation type="obsolete">Atribuir Cor</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="72"/>
         <source>Assign Tooltip</source>
-        <translation>Atribuir Dica de Uso</translation>
+        <translation type="obsolete">Atribuir Dica de Uso</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="86"/>
         <source>Assign Shortcut</source>
-        <translation>Atribuir Atalho</translation>
+        <translation type="obsolete">Atribuir Atalho</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="93"/>
         <source>Custom category</source>
-        <translation>Categoria personalizada</translation>
+        <translation type="obsolete">Categoria personalizada</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="100"/>
         <source>Open feature form when digitizing</source>
-        <translation>Abrir formulário de feições após digitalizar</translation>
+        <translation type="obsolete">Abrir formulário de feições após digitalizar</translation>
+    </message>
+</context>
+<context>
+    <name>ButtonSetupWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="49"/>
+        <source>Insert a short description for current button setup...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2296,12 +2687,12 @@ camada</translation>
         <translation type="obsolete">Visualizar Code List e Valores</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.py" line="112"/>
+        <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.py" line="121"/>
         <source>Select a layer...</source>
         <translation>Selecione uma camada...</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.py" line="179"/>
+        <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.py" line="188"/>
         <source>Select a field...</source>
         <translation>Selecione um atributo...</translation>
     </message>
@@ -2969,64 +3360,147 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
 </context>
 <context>
+    <name>CreateEditingGridAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="80"/>
+        <source>Input Layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="88"/>
+        <source>INOM Field</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="98"/>
+        <source>ID Field</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="108"/>
+        <source>ID Field Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="118"/>
+        <source>Number of horizontal crosses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="128"/>
+        <source>Number of vertical crosses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="138"/>
+        <source>UTM Grid Spacing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="148"/>
+        <source>Map scale (in thousands)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="158"/>
+        <source>Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="167"/>
+        <source>Font of the label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="176"/>
+        <source>Font Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="186"/>
+        <source>Font of the LatLong label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="195"/>
+        <source>Lat Long Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="204"/>
+        <source>Original layer with assigned styles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="254"/>
+        <source>Create Editing Grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="261"/>
+        <source>Editing Algorithms</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CreateFrameAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="84"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="85"/>
         <source>Base scale</source>
         <translation>Scala Base</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="93"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="94"/>
         <source>Desired scale</source>
         <translation>Escala Desejada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="105"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="106"/>
         <source>Index type</source>
         <translation>Tipo de Índice</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="113"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="114"/>
         <source>Index</source>
         <translation>Índice</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="119"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="120"/>
         <source>CRS</source>
         <translation>SRC</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="125"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="126"/>
         <source>Created Frames</source>
         <translation>Criar Molduras</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="142"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="143"/>
         <source>The desired scale denominator must not be bigger than the base scale denominator.</source>
         <translation>O denominador da escala desejada não pode ser maior que o da escala base.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="146"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="147"/>
         <source>Invalid {index}</source>
         <translation>{index} inválido</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="149"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="150"/>
         <source>Invalid {index} format.</source>
         <translation>Formato de {index} inválido.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="152"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="153"/>
         <source>Invalid CRS.</source>
         <translation>SRC inválido.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="185"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="186"/>
         <source>Generate Systematic Grid</source>
         <translation>Gerar Grid Sistematicamente</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="192"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="193"/>
         <source>Other Algorithms</source>
         <translation>Outros Algoritmos</translation>
     </message>
@@ -3552,6 +4026,105 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
 </context>
 <context>
+    <name>CustomButtonSetup</name>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py" line="630"/>
+        <source>Custom Button Setup</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CustomFeatureButton</name>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py" line="56"/>
+        <source>New button</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py" line="175"/>
+        <source>Error while updating &apos;{0}&apos; ({1})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py" line="239"/>
+        <source>Policy must be a str ({0}).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py" line="266"/>
+        <source>Policy must be a boolean ({0}).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py" line="295"/>
+        <source>Color must be a str or tuple of int ({0}).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py" line="324"/>
+        <source>Color usage must be a bool ({0}).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py" line="345"/>
+        <source>Tool tip must be a str ({0}).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py" line="388"/>
+        <source>Category must be a str ({0}).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py" line="407"/>
+        <source>Keyword must be a str ({0}).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py" line="438"/>
+        <source>Keyword must be a set ({0}).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py" line="479"/>
+        <source>Callback must be a callable object.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py" line="490"/>
+        <source>Action must be instance of QAction.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py" line="501"/>
+        <source>DSGTools: Custom Feature Toolbox - button {0}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py" line="529"/>
+        <source>Layer name must be a str ({0}).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py" line="586"/>
+        <source>{0} is not a valid value for field {1}.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py" line="594"/>
+        <source>Attribute map must be a dict ({0}).</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CustomFeatureTool</name>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.py" line="58"/>
+        <source>Select a button profile...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CustomReferenceAndLayersParameterSelector</name>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customReferenceAndLayersParameterSelector.ui" line="20"/>
@@ -3630,7 +4203,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Gerenciar bancos de dados de um servidor</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.ui" line="47"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.ui" line="56"/>
         <source>Postgis</source>
         <translation>PostGIS</translation>
     </message>
@@ -3645,7 +4218,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation type="obsolete">Carregar EDGV v. FTer_2a_Ed</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.ui" line="120"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.ui" line="129"/>
         <source>Spatialite</source>
         <translation>SpatiaLite</translation>
     </message>
@@ -3660,7 +4233,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Banco de dados Spatialite (*.sqlite)</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="276"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="278"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -3702,7 +4275,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.ui" line="183"/>
         <source>Geopackage</source>
-        <translation>Geopackage</translation>
+        <translation type="obsolete">Geopackage</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="68"/>
@@ -3712,12 +4285,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="71"/>
         <source>Select a DSGTools Geopackage File</source>
-        <translation>Selecione um arquivo Geopackage</translation>
+        <translation type="obsolete">Selecione um arquivo Geopackage</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="72"/>
         <source>Geopackage Database Files (*.gpkg)</source>
-        <translation>Banco de dados Geopackage (*.gpkg)</translation>
+        <translation type="obsolete">Banco de dados Geopackage (*.gpkg)</translation>
     </message>
 </context>
 <context>
@@ -3744,7 +4317,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="84"/>
-        <source>Area in mm²</source>
+        <source>Area in mm&#xb2;</source>
         <translation type="obsolete">Área em mm²</translation>
     </message>
     <message>
@@ -3783,7 +4356,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="84"/>
-        <source>Area in mmÂ²</source>
+        <source>Area in mm&#xc2;&#xb2;</source>
         <translation>Área em mm²</translation>
     </message>
 </context>
@@ -3995,6 +4568,136 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
 </context>
 <context>
+    <name>DataValidationTool</name>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.ui" line="26"/>
+        <source>Form</source>
+        <translation type="unfinished">Formulário</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.ui" line="50"/>
+        <source>Validation Toolbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.ui" line="115"/>
+        <source>Refresh model list.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.ui" line="154"/>
+        <source>Add a model  to default path.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.ui" line="193"/>
+        <source>Remove current model from default path (caution: it DELETES the file).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.ui" line="232"/>
+        <source>Run current model.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="135"/>
+        <source>Select a model...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="169"/>
+        <source>Confirm Action</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="252"/>
+        <source>Select a QGIS processing model to be added</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="252"/>
+        <source>QGIS Processing Model (*.model *.model3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="259"/>
+        <source>Model seems to be already registered, would you like to overwrite it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="266"/>
+        <source>Model {model} was not imported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="279"/>
+        <source>Model {model} imported to {dest}.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="300"/>
+        <source>Remove model &apos;{modelName}&apos;?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="308"/>
+        <source>Unable to remove &apos;{model}&apos;:
+{error}.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="329"/>
+        <source>Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="329"/>
+        <source>model {model} seems to have been deleted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="341"/>
+        <source>Would you like to run {model}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="346"/>
+        <source>Sucess</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="346"/>
+        <source>model {model} finished.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="352"/>
+        <source>Model {model} finished running with no errors. You may check model output on Processing log tab.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="371"/>
+        <source>Unable to run (check Processing tab for details on model execution log) {model}:
+{error}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="375"/>
+        <source>Model {model} failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="375"/>
+        <source>check log for more information.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="401"/>
+        <source>DSGTools: Validation Toolbar - Run Processing Model</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>DatabaseFileLineEdit</name>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="56"/>
@@ -4033,6 +4736,16 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <location filename="../gui/DatabaseTools/databaseManager.py" line="47"/>
         <source>Database Tools</source>
         <translation>Ferramentas de BD</translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/databaseManager.py" line="84"/>
+        <source>Create a PostGIS or SpatiaLite Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/databaseManager.py" line="93"/>
+        <source>Create batches of PostGIS or SpatiaLite Databases</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4305,7 +5018,7 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <translation>Modo de conversão</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="648"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="649"/>
         <source>Select a datasource</source>
         <translation>Selecione uma fonte de dados</translation>
     </message>
@@ -4315,7 +5028,7 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <translation type="obsolete">Fan-Out utilizando as feições filtradas da camada de referência</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="640"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="641"/>
         <source>Choose Conversion Mode</source>
         <translation>Escolha o modo de conversão</translation>
     </message>
@@ -4325,7 +5038,7 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <translation type="obsolete">Mapear NoData</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="209"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="210"/>
         <source>Strict Conversion</source>
         <translation>Conversão rigorosa</translation>
     </message>
@@ -4370,77 +5083,77 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <translation type="obsolete">{0} ({1} feature)</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="637"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="638"/>
         <source>new</source>
         <translation>nova</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="711"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="712"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="622"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="623"/>
         <source>No datasets were selected (input or output)</source>
         <translation>Alguma fonte de dados não foi definida (entrada ou saída)</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="641"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="642"/>
         <source>Conversion mode not selected for input {0} (row {1})</source>
         <translation>Modo de conversão não selecionado para a entrada {0} (linha {1})</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="644"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="645"/>
         <source>Conversion map unavailable for {0} to {1} (row {2})</source>
         <translation>Mapa de conversão não disponível para conversão entre {0} e {1} (linha {2})</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="649"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="650"/>
         <source>Output datasource not selected for {0} (row {1})</source>
         <translation>Fonte de dados de saída não selecionado para a entrada {0} (linha {1})</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="656"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="657"/>
         <source>Output datasource {0} was not used.</source>
         <translation>Fonte de dados de saída {0} não utilizado.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="656"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="657"/>
         <source>Output datasources {0} were not used.</source>
         <translation>Fontes de dados de saída {0} não utilizados.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="672"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="673"/>
         <source>&lt;span style=&quot;color: #ff0000;&quot;&gt;&lt;br&gt;&lt;p&gt;CONVERSION TASK WAS CANCELLED.&lt;/span&gt;&lt;/p&gt;</source>
         <translation>&lt;span style=&quot;color: #ff0000;&quot;&gt;&lt;br&gt;&lt;p&gt;TAREFA DE CONVERSÃO FOI CANCELADA.&lt;/span&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="694"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="695"/>
         <source>DSGTools Dataset Conversion</source>
         <translation>Ferramenta de Conversão de Fontes de Dados do DSGTools</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="744"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="745"/>
         <source>Convert Databases</source>
         <translation>Converter Bancos de Dados</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="209"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="210"/>
         <source>Flexible Conversion</source>
         <translation>Conversão Flexível</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="702"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="703"/>
         <source>Dataset conversion has finished with some errors. Check conversion log for details.</source>
         <translation>A conversão terminou com erros. Verifique o log da conversão para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="710"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="711"/>
         <source>Dataset conversion has failed: &apos;{0}&apos;</source>
         <translation>Conversão falhou: &apos;{0}&apos;</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="638"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="639"/>
         <source>EDGV 2.1.3 F Ter model was terminated. DSGTools no longer support its creation (row {1})</source>
         <translation>O modelo EDGV 2.1.3 F Ter foi descontinuado. Sua criação não é mais suportada pelo DSGTools (linha {1})</translation>
     </message>
@@ -4499,12 +5212,12 @@ geométrica</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="68"/>
         <source>Shapefile (create new database)</source>
-        <translation>Shapefile (criar nova base de dados)</translation>
+        <translation type="obsolete">Shapefile (criar nova base de dados)</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="70"/>
         <source>Geopackage (create new database)</source>
-        <translation>Geopackage (criar nova base de dados)</translation>
+        <translation type="obsolete">Geopackage (criar nova base de dados)</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="77"/>
@@ -4630,7 +5343,7 @@ Passo de conversão {0} iniciado...
     <message>
         <location filename="../core/Factories/DbCustomizationFactory/dbCustomizationFactory.py" line="54"/>
         <source>Customization type not defined.</source>
-        <translation type="obsolete">Tipo de Customização não definido.</translation>
+        <translation type="unfinished">Tipo de Customização não definido.</translation>
     </message>
 </context>
 <context>
@@ -5630,107 +6343,107 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="14"/>
         <source>Validation Rules</source>
-        <translation>Regras de Validação</translation>
+        <translation type="obsolete">Regras de Validação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="214"/>
         <source>Layer #1</source>
-        <translation>Camada #1</translation>
+        <translation type="obsolete">Camada #1</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="219"/>
         <source>Necessity</source>
-        <translation>Necessidade</translation>
+        <translation type="obsolete">Necessidade</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="53"/>
         <source>must (be)</source>
-        <translation>deve (ser)</translation>
+        <translation type="obsolete">deve (ser)</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="58"/>
         <source>must not (be)</source>
-        <translation>não deve (ser)</translation>
+        <translation type="obsolete">não deve (ser)</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="70"/>
         <source>Spatial predicate</source>
-        <translation>Predicado espacial</translation>
+        <translation type="obsolete">Predicado espacial</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="78"/>
         <source>equal</source>
-        <translation>igual</translation>
+        <translation type="obsolete">igual</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="83"/>
         <source>disjoint</source>
-        <translation>disjunto</translation>
+        <translation type="obsolete">disjunto</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="88"/>
         <source>intersect</source>
-        <translation>intersectar</translation>
+        <translation type="obsolete">intersectar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="93"/>
         <source>touch</source>
-        <translation>tocar</translation>
+        <translation type="obsolete">tocar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="98"/>
         <source>cross</source>
-        <translation>cruzar</translation>
+        <translation type="obsolete">cruzar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="103"/>
         <source>within</source>
-        <translation>dentro</translation>
+        <translation type="obsolete">dentro</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="108"/>
         <source>overlap</source>
-        <translation>sobrepor</translation>
+        <translation type="obsolete">sobrepor</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="113"/>
         <source>contain</source>
-        <translation>conter</translation>
+        <translation type="obsolete">conter</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="118"/>
         <source>cover</source>
-        <translation>cobrir</translation>
+        <translation type="obsolete">cobrir</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="123"/>
         <source>covered by</source>
-        <translation>coberto por</translation>
+        <translation type="obsolete">coberto por</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="229"/>
         <source>Layer #2</source>
-        <translation>Camada #2</translation>
+        <translation type="obsolete">Camada #2</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="234"/>
         <source>Cardinality</source>
-        <translation>Cardinalidade</translation>
+        <translation type="obsolete">Cardinalidade</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="190"/>
         <source>Insert Rule</source>
-        <translation>Inserir Regra</translation>
+        <translation type="obsolete">Inserir Regra</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="197"/>
         <source>Remove Rule</source>
-        <translation>Remover Regra</translation>
+        <translation type="obsolete">Remover Regra</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="224"/>
         <source>Predicate</source>
-        <translation>Predicado</translation>
+        <translation type="obsolete">Predicado</translation>
     </message>
     <message>
         <location filename="../ValidationTools/workspace_editor.ui" line="149"/>
@@ -6069,6 +6782,101 @@ camada</translation>
         <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.ui" line="40"/>
         <source>Reload</source>
         <translation>Recarregar</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="14"/>
+        <source>DSGTools: Custom Feature Toolbox</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="21"/>
+        <source>Tool behaviour</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="29"/>
+        <source>New feature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="39"/>
+        <source>Reclassify feature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="64"/>
+        <source>Reclassify - layer selection behaviour</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="72"/>
+        <source>Reclassification tool only works on features from current active layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="75"/>
+        <source>Active layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="85"/>
+        <source>Reclassification will affect all compatible selected features from all loaded layers, regardless of it being an active layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="88"/>
+        <source>All selected features</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="127"/>
+        <source>Adds a set of buttons setup (profile) from a file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="140"/>
+        <source>Imports a set of buttons setup (profile) from a file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="167"/>
+        <source>Edits current buttons setup (profile) from a file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="185"/>
+        <source>Adds a buttons setup (profile)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="206"/>
+        <source>Removes current buttons setup (profile)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="232"/>
+        <source>Type in to filter buttons...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="243"/>
+        <source>Tab 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="267"/>
+        <source>Tab 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="298"/>
+        <source>Small</source>
+        <translation type="unfinished">Pequeno</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui" line="321"/>
+        <source>Big</source>
+        <translation type="unfinished">Grande</translation>
     </message>
 </context>
 <context>
@@ -6614,6 +7422,55 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     </message>
 </context>
 <context>
+    <name>DsgToolsProcessingModel</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="70"/>
+        <source>DSGTools Quality Assurance Model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="87"/>
+        <source>Thread not started yet.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="116"/>
+        <source>Model source is not defined.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="119"/>
+        <source>Input model type is not supported (or missing).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="122"/>
+        <source>Input model source was not identified.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="222"/>
+        <source>Model {name} v{version} ({lastModified}) by {author}.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="260"/>
+        <source>DSGTools Validation Model ({0})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="383"/>
+        <source>DSGTools Quality Assurance Models</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="429"/>
+        <source>Model has failed:
+&apos;{error}&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>EDGVLayer</name>
     <message>
         <location filename="Factories/LayerFactory/edgv_layer.py" line="78"/>
@@ -6639,17 +7496,17 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Área</translation>
     </message>
     <message>
-        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="99"/>
+        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="100"/>
         <source>area_otf</source>
         <translation>area_otf</translation>
     </message>
     <message>
-        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="101"/>
+        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="102"/>
         <source>lenght_otf</source>
         <translation>comprimento_otf</translation>
     </message>
     <message>
-        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="198"/>
+        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="202"/>
         <source>Error for lyr </source>
         <translation>Erro para camada </translation>
     </message>
@@ -6659,7 +7516,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="173"/>
+        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="177"/>
         <source>Domains</source>
         <translation>Domínios</translation>
     </message>
@@ -6819,6 +7676,172 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     </message>
 </context>
 <context>
+    <name>EnforceSpatialRuleWrapper</name>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="50"/>
+        <source>Set a name for this spatial rule...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="69"/>
+        <source>Type a vector layer&apos;s name...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="243"/>
+        <source>Rule name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="243"/>
+        <source>Layer A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="243"/>
+        <source>Filter A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="243"/>
+        <source>Predicate</source>
+        <translation type="unfinished">Predicado</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="243"/>
+        <source>Layer B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="243"/>
+        <source>Filter B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="243"/>
+        <source>Cardinality</source>
+        <translation type="unfinished">Cardinalidade</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="342"/>
+        <source>Spatial Rule #{n}</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>EnforceSpatialRulesAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="50"/>
+        <source>Spatial Rules Set</source>
+        <translation type="unfinished">Conjunto de regras espaciais</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="59"/>
+        <source>{0} flags (points)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="66"/>
+        <source>{0} flags (lines)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="73"/>
+        <source>{0} flags (polygons)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="98"/>
+        <source>Enforce Spatial Rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="105"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation type="unfinished">Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="142"/>
+        <source>Rule &quot;{name}&quot; broken: {{text}}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <source>equals</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <source>is not equals</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <source>disjoint</source>
+        <translation type="unfinished">disjunto</translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <source>intersects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <source>does not intersect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <source>touches</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <source>does not touch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <source>crosses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <source>does not cross</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <source>within</source>
+        <translation type="unfinished">dentro</translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <source>is not within</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <source>overlaps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <source>does not overlap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <source>contains</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <source>does not contain</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ExploreDb</name>
     <message>
         <location filename="../gui/ServerTools/exploreDb.py" line="111"/>
@@ -6917,6 +7940,24 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="104"/>
         <source>Loading databases from server... </source>
         <translation>Carregando bancos de dados de servidor... </translation>
+    </message>
+</context>
+<context>
+    <name>ExportToMemoryLayer</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/exportToMemoryLayer.py" line="44"/>
+        <source>Input layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/exportToMemoryLayer.py" line="90"/>
+        <source>Export To Memory Layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/exportToMemoryLayer.py" line="97"/>
+        <source>Other Algorithms</source>
+        <translation type="unfinished">Outros Algoritmos</translation>
     </message>
 </context>
 <context>
@@ -7535,6 +8576,99 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     </message>
 </context>
 <context>
+    <name>FixNetworkAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="59"/>
+        <source>Input layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="66"/>
+        <source>Process only selected features</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="72"/>
+        <source>Topology radius</source>
+        <translation type="unfinished">Raio topológico</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="81"/>
+        <source>Fields to ignore</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="92"/>
+        <source>Ignore virtual fields</source>
+        <translation type="unfinished">Ignorar campos virtuais</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="99"/>
+        <source>Ignore primary key fields</source>
+        <translation type="unfinished">Ignorar campos de chaves primárias</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="106"/>
+        <source>Original layer with merged lines</source>
+        <translation type="unfinished">Camada original com linhas unidas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="164"/>
+        <source>Building auxiliar layer...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="175"/>
+        <source>Identifying dangles on {layer}...</source>
+        <translation type="unfinished">Identificando pontas soltas na camada {layer}...</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="192"/>
+        <source>Snapping layer {layer} to dangles...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="204"/>
+        <source>Snapping layer {layer} with {layer}...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="216"/>
+        <source>Running clean on {layer}...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="217"/>
+        <source>Running clean on unified layer...</source>
+        <translation type="unfinished">Executando a limpeza na camada unificada...</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="234"/>
+        <source>Removing duplicated features from {layer}...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="246"/>
+        <source>Merging lines from {layer} with same attribute set...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="249"/>
+        <source>Updating original layers...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="274"/>
+        <source>Topological adjustment of the connectivity of lines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py" line="281"/>
+        <source>Quality Assurance Tools (Network Processes)</source>
+        <translation type="unfinished">Ferramentas de Validação (Processos de Rede)</translation>
+    </message>
+</context>
+<context>
     <name>FlipLine</name>
     <message>
         <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="45"/>
@@ -7656,7 +8790,7 @@ Feição(ões) não invertidas: </translation>
 <context>
     <name>Form</name>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="135"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="145"/>
         <source>Form</source>
         <translation>Formulário</translation>
     </message>
@@ -7711,12 +8845,12 @@ Feição(ões) não invertidas: </translation>
         <translation type="obsolete">Selecione um banco de dados</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="140"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="149"/>
         <source>Inspect Features Tool</source>
         <translation>Ferramenta de inspeção de feições</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="138"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="147"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Back inspect&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inspecionar anterior&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -7733,7 +8867,7 @@ aproximação:</translation>
 de feição</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="139"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="148"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Next inspect&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inspecionar próximo&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -7753,7 +8887,7 @@ de feição</translation>
         <translation>Código</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.ui" line="64"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="147"/>
         <source>Value</source>
         <translation>Valor</translation>
     </message>
@@ -7795,10 +8929,10 @@ Ativa</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="136"/>
         <source>Scale</source>
-        <translation>Escala</translation>
+        <translation type="obsolete">Escala</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="137"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="146"/>
         <source>ID: </source>
         <translation>ID: </translation>
     </message>
@@ -7823,12 +8957,12 @@ Ativa</translation>
         <translation>Inverter Seleção</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiPostgisSelectorWidget.ui" line="147"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.ui" line="133"/>
         <source>Ok</source>
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiPostgisSelectorWidget.ui" line="154"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.ui" line="146"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -7847,11 +8981,96 @@ Ativa</translation>
         <source>GroupBox</source>
         <translation></translation>
     </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.ui" line="128"/>
+        <source>%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.ui" line="14"/>
+        <source>DSGTools: Custom Feature - Button setup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.ui" line="30"/>
+        <source>Type in a name for current buttons setup...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="20"/>
+        <source>Button name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="33"/>
+        <source>Type in the text to identify this button...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="40"/>
+        <source>Acquisition tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="50"/>
+        <source>Assign Color</source>
+        <translation type="unfinished">Atribuir Cor</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="60"/>
+        <source>Assign Tooltip</source>
+        <translation type="unfinished">Atribuir Dica de Uso</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="74"/>
+        <source>Custom category</source>
+        <translation type="unfinished">Categoria personalizada</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="88"/>
+        <source>Button keywords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="98"/>
+        <source>Keywords should be space separated, avoid punctuations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="104"/>
+        <source>Type in keywords for button quick search...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="111"/>
+        <source>Assign Shortcut</source>
+        <translation type="unfinished">Atribuir Atalho</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="131"/>
+        <source>Open feature form when digitizing</source>
+        <translation type="unfinished">Abrir formulário de feições após digitalizar</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="142"/>
+        <source>Attribute</source>
+        <translation type="unfinished">Atributo</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="152"/>
+        <source>Editable</source>
+        <translation type="unfinished">Editável</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="157"/>
+        <source>Ignored</source>
+        <translation type="unfinished">Ignorado</translation>
+    </message>
 </context>
 <context>
     <name>FreeHandMain</name>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/FreeHandTool/freeHandMain.py" line="41"/>
+        <location filename="../gui/ProductionTools/MapTools/FreeHandTool/freeHandMain.py" line="42"/>
         <source>DSGTools: Free Hand Acquisition</source>
         <translation>DSGTools: Ferramenta de Aquisição à Mão Livre</translation>
     </message>
@@ -7860,9 +9079,29 @@ Ativa</translation>
         <source>DSGTools: Free Hand Acquisition
 Acquires polygon or linestring features with mouse movement.
 If CTRL is held, overlapped feature is reshaped.</source>
-        <translation>DSGTools: Aquisição à Mão Livre
+        <translation type="obsolete">DSGTools: Aquisição à Mão Livre
 Adquire feições do tipo polígono ou linha com o movimento do mouse.
 Se a tecla Control for pressionada, feições que cruzam a geometria desenhada são remodeladas.</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/FreeHandTool/freeHandMain.py" line="42"/>
+        <source>DSGTools: Free Hand Acquisition
+Acquires polygon or line features from mouse movement.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FreeHandReshape</name>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/FreeHandTool/freeHandReshape.py" line="33"/>
+        <source>DSGTools: Free Hand Reshape</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/FreeHandTool/freeHandReshape.py" line="33"/>
+        <source>DSGTools: Free Hand Reshape
+Reshapes polygon or line features from mouse movement.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8586,12 +9825,12 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
 <context>
     <name>GeometryHandler</name>
     <message>
-        <location filename="../core/GeometricTools/geometryHandler.py" line="520"/>
+        <location filename="../core/GeometricTools/geometryHandler.py" line="550"/>
         <source>Lines id={0} and id={1} have conflicting directions ({2:.2f} deg).</source>
         <translation>Linhas id={0} e id={1} possuem direções conflitantes ({2:.2f} graus).</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/geometryHandler.py" line="532"/>
+        <location filename="../core/GeometricTools/geometryHandler.py" line="562"/>
         <source>Cannot infer directions for lines {0} and {1} (Right Angle)</source>
         <translation>Não foi possível inferir as direções das linhas {0} e {1} (ângulo reto)</translation>
     </message>
@@ -8666,69 +9905,117 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     </message>
 </context>
 <context>
+    <name>GroupLayersAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/groupLayersAlgorithm.py" line="54"/>
+        <source>Input Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/groupLayersAlgorithm.py" line="61"/>
+        <source>Expression used to find out the category</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/groupLayersAlgorithm.py" line="68"/>
+        <source>Original reorganized layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/groupLayersAlgorithm.py" line="94"/>
+        <source>Point</source>
+        <translation type="unfinished">Ponto</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/groupLayersAlgorithm.py" line="95"/>
+        <source>Line</source>
+        <translation type="unfinished">Linha</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/groupLayersAlgorithm.py" line="96"/>
+        <source>Polygon</source>
+        <translation type="unfinished">Polígono</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/groupLayersAlgorithm.py" line="97"/>
+        <source>Non spatial</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/groupLayersAlgorithm.py" line="190"/>
+        <source>Group Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/groupLayersAlgorithm.py" line="197"/>
+        <source>Layer Management Algorithms</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>HierarchicalSnapLayerOnLayerAndUpdateAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="57"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="53"/>
         <source>Snap hierarchy</source>
         <translation>Hierarquia de Snaps</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="66"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="62"/>
         <source>Process only selected features</source>
         <translation>Processar Apenas Feições Selecionadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="73"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="69"/>
         <source>Prefer aligning nodes, insert extra vertices where required</source>
         <translation>Priorizar alinhamento de nós, inserção de vértices extras quando necessário</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="74"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="70"/>
         <source>Prefer closest point, insert extra vertices where required</source>
         <translation>Priorizar ponto mais próximo, inserção de vértices extras quando necessário</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="75"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="71"/>
         <source>Prefer aligning nodes, don&apos;t insert new vertices</source>
         <translation>Priorizar alinhamento de nós, não inserir novos vértices</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="76"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="72"/>
         <source>Prefer closest point, don&apos;t insert new vertices</source>
         <translation>Priorizar ponto mais próximo, não inserir novos vértices</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="77"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="73"/>
         <source>Move end points only, prefer aligning nodes</source>
         <translation>Mover apenas o último ponto, priorizar alinhamento de nós</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="78"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="74"/>
         <source>Move end points only, prefer closest point</source>
         <translation>Mover apenas o último ponto, priorizar ponto mais próximo</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="79"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="75"/>
         <source>Snap end points to end points only</source>
         <translation>União apenas entre os últimos pontos</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="81"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="77"/>
         <source>Behavior</source>
         <translation>Comportamento</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="114"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="121"/>
         <source>Snapping geometries from layer {input} to {reference} with snap {snap}...</source>
         <translation>Unindo geometrias da camada {input} à {reference} com snap de {snap}...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="147"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="154"/>
         <source>Hierarchical Snap layer on layer</source>
         <translation>Snap Hierárquico Entre Camadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="154"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="161"/>
         <source>Quality Assurance Tools (Manipulation Processes)</source>
         <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
@@ -9166,17 +10453,17 @@ Camada</translation>
 <context>
     <name>IdentifyDuplicatedGeometriesAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="47"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="44"/>
         <source>Input layer</source>
         <translation>Camada de entrada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="55"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="52"/>
         <source>Process only selected features</source>
         <translation>Processar Apenas Feições Selecionadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="62"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="59"/>
         <source>{0} Flags</source>
         <translation>{0} Flags</translation>
     </message>
@@ -9186,17 +10473,17 @@ Camada</translation>
         <translation type="obsolete">Feições da camada {0} com ids=({1}) possuem geometrias duplicadas.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="122"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="116"/>
         <source>Identify Duplicated Geometries</source>
         <translation>Identificar Geometrias Duplicadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="129"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="123"/>
         <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="103"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="96"/>
         <source>Features from layer {0} with ids=({1}) have the same set of attributes.</source>
         <translation>Feições da camada {0} com ids=({1}) possuem o mesmo conjunto de atributos.</translation>
     </message>
@@ -10045,37 +11332,37 @@ Camada</translation>
 <context>
     <name>IdentifyOutOfBoundsAnglesAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="48"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="49"/>
         <source>Input layer</source>
         <translation>Camada de entrada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="56"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="57"/>
         <source>Process only selected features</source>
         <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="63"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="64"/>
         <source>Minimum angle</source>
         <translation>Ângulo mínimo</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="72"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="73"/>
         <source>{0} Flags</source>
         <translation>{0} Flags</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="101"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="102"/>
         <source>Feature from layer {0} with id={1} has angle of value {2} degrees, which is lesser than the tolerance of {3} degrees.</source>
         <translation>Feição da camada {0} com id={1} possui ângulo de {2} graus, que é menor que a tolerância ({3} graus).</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="123"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="124"/>
         <source>Identify Out Of Bounds Angles</source>
         <translation>Identificar Ângulos Fora de Limites</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="130"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="131"/>
         <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
@@ -10699,6 +11986,97 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>IdentifyUnsharedVertexOnIntersectionsAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnIntersectionsAlgorithm.py" line="52"/>
+        <source>Linestring Layers</source>
+        <translation type="unfinished">Camadas do tipo linha</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnIntersectionsAlgorithm.py" line="60"/>
+        <source>Polygon Layers</source>
+        <translation type="unfinished">Camadas do tipo polígono</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnIntersectionsAlgorithm.py" line="69"/>
+        <source>Process only selected features</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnIntersectionsAlgorithm.py" line="76"/>
+        <source>{0} Flags</source>
+        <translation type="unfinished">{0} Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnIntersectionsAlgorithm.py" line="99"/>
+        <source>Select at least one layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnIntersectionsAlgorithm.py" line="133"/>
+        <source>Unshared vertex between the intersections of input layers.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnIntersectionsAlgorithm.py" line="157"/>
+        <source>Identify Unshared Vertex on Intersections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnIntersectionsAlgorithm.py" line="164"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation type="unfinished">Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+</context>
+<context>
+    <name>IdentifyUnsharedVertexOnSharedEdgesAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnSharedEdgesAlgorithm.py" line="53"/>
+        <source>Linestring Layers</source>
+        <translation type="unfinished">Camadas do tipo linha</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnSharedEdgesAlgorithm.py" line="61"/>
+        <source>Polygon Layers</source>
+        <translation type="unfinished">Camadas do tipo polígono</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnSharedEdgesAlgorithm.py" line="70"/>
+        <source>Process only selected features</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnSharedEdgesAlgorithm.py" line="77"/>
+        <source>Search Radius</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnSharedEdgesAlgorithm.py" line="85"/>
+        <source>{0} Flags</source>
+        <translation type="unfinished">{0} Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnSharedEdgesAlgorithm.py" line="108"/>
+        <source>Select at least one layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnSharedEdgesAlgorithm.py" line="155"/>
+        <source>Vertex {vertex_geom} is near edge(s) {edge_text}.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnSharedEdgesAlgorithm.py" line="180"/>
+        <source>Identify Unshared Vertex on Shared Edges</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnSharedEdgesAlgorithm.py" line="187"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation type="unfinished">Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+</context>
+<context>
     <name>IdentifyVertexNearEdgeProcess</name>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="33"/>
@@ -10824,19 +12202,95 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>IdentifyVertexNearEdgesAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyVertexNearEdgesAlgorithm.py" line="46"/>
+        <source>Input layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyVertexNearEdgesAlgorithm.py" line="57"/>
+        <source>Process only selected features</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyVertexNearEdgesAlgorithm.py" line="64"/>
+        <source>Search Radius</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyVertexNearEdgesAlgorithm.py" line="72"/>
+        <source>{0} Flags</source>
+        <translation type="unfinished">{0} Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyVertexNearEdgesAlgorithm.py" line="135"/>
+        <source>Vertex {vertex_geom} from feature {feat_id} layer {lyr_name} is near edge(s) {edge_text}.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyVertexNearEdgesAlgorithm.py" line="162"/>
+        <source>Identify Vertex Near Edges</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyVertexNearEdgesAlgorithm.py" line="169"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation type="unfinished">Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+</context>
+<context>
+    <name>IdentifyWrongBuildingAnglesAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongBuildingAnglesAlgorithm.py" line="48"/>
+        <source>Input layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongBuildingAnglesAlgorithm.py" line="56"/>
+        <source>Process only selected features</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongBuildingAnglesAlgorithm.py" line="62"/>
+        <source>Angular tolerance in decimal degrees</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongBuildingAnglesAlgorithm.py" line="72"/>
+        <source>{0} Flags</source>
+        <translation type="unfinished">{0} Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongBuildingAnglesAlgorithm.py" line="101"/>
+        <source>Feature from layer {name} with id={id} has invalid building angle ({angle})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongBuildingAnglesAlgorithm.py" line="127"/>
+        <source>Identify Wrong Building Angles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongBuildingAnglesAlgorithm.py" line="134"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation type="unfinished">Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+</context>
+<context>
     <name>InspectFeatures</name>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="241"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="261"/>
         <source>ERROR:</source>
         <translation>ERRO:</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="241"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="261"/>
         <source>&lt;font color=red&gt;There are no features in the current layer:&lt;br&gt;&lt;/font&gt;&lt;font color=blue&gt;Add features and try again!&lt;/font&gt;</source>
         <translation>&lt;font color=red&gt;Não há feições na camada atual:&lt;br&gt;&lt;/font&gt;&lt;font color=blue&gt;Adicione feições e tente de novo!&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="180"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="375"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
@@ -10848,32 +12302,47 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="171"/>
         <source>Selected id does not exist in layer {0}. Returned to previous id.</source>
-        <translation>O ID selecionado não existe na camada {0}. Retornando ao ID anterior.</translation>
+        <translation type="obsolete">O ID selecionado não existe na camada {0}. Retornando ao ID anterior.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="300"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="322"/>
         <source>Select a vector layer to enable tool</source>
         <translation>Selecione uma camada vetorial para ativar a ferramenta</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="63"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="72"/>
         <source>DSGTools: Inspect Features</source>
         <translation>DSGTools: Ferramenta de Inspeção de Feições</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="180"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="200"/>
         <source>Invalid attribute filter!</source>
         <translation>Filtro de atributo inválido!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="67"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="76"/>
         <source>DSGTools: Back Inspect</source>
         <translation>DSGTools: Inspecionar Anterior</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="71"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="80"/>
         <source>DSGTools: Next Inspect</source>
         <translation>DSGTools: Inspecionar Próximo</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="84"/>
+        <source>DSGTools: Set Active Layer on Feature Inspector</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="87"/>
+        <source>Set current layer as selected layer on inspect tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="375"/>
+        <source>Active layer is not valid to be used in this tool.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10973,16 +12442,94 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>LabelTogglingTool</name>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/LabelTogglingTool/labelTogglingTool.py" line="44"/>
+        <source>DSGTools: Toggle all labels visibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/LabelTogglingTool/labelTogglingTool.py" line="59"/>
+        <source>DSGTools: Toggle selected layers&apos; labels visibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/LabelTogglingTool/labelTogglingTool.py" line="60"/>
+        <source>DSGTools: Toggle selected layers&apos; label visibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/LabelTogglingTool/labelTogglingTool.py" line="75"/>
+        <source>DSGTools: Toggle active layer&apos; label visibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>LayerHandler</name>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="97"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="100"/>
         <source>DsgTools reclassification</source>
         <translation>Reclassificação do DSGTools</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="361"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="365"/>
         <source>Merging Lines</source>
         <translation>Unindo linhas</translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="937"/>
+        <source>Creating index</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1261"/>
+        <source>Building auxiliar search structures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="953"/>
+        <source>Getting flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1122"/>
+        <source>Getting lines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1091"/>
+        <source>Building vertex near edge dict</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1131"/>
+        <source>Building intersections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1139"/>
+        <source>Finding vertexes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1146"/>
+        <source>Finding unshared vertexes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1400"/>
+        <source>Getting constraint lines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1548"/>
+        <source>Polygon without center point.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1549"/>
+        <source>Polygon with more than one center point with conflicting attributes.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11557,6 +13104,64 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>LoadLayersFromPostgisAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="66"/>
+        <source>Host</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="72"/>
+        <source>Port</source>
+        <translation type="unfinished">Porta</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="78"/>
+        <source>Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="84"/>
+        <source>User</source>
+        <translation type="unfinished">Usuário</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="90"/>
+        <source>Password</source>
+        <translation type="unfinished">Senha</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="96"/>
+        <source>Layer List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="102"/>
+        <source>Load layers to canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="109"/>
+        <source>Unique load</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="117"/>
+        <source>Loaded layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="207"/>
+        <source>Load Layers From Postgis</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="214"/>
+        <source>Layer Management Algorithms</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>LoadLayersFromServer</name>
     <message>
         <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="54"/>
@@ -11672,7 +13277,70 @@ camada</translation>
     <message>
         <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="56"/>
         <source>Selected Geopackages</source>
-        <translation>Geopackages selecionados</translation>
+        <translation type="obsolete">Geopackages selecionados</translation>
+    </message>
+</context>
+<context>
+    <name>LoadNonSpatialLayersFromPostgreSQLAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadNonSpatialLayersFromPostgreSQLAlgorithm.py" line="68"/>
+        <source>Host</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadNonSpatialLayersFromPostgreSQLAlgorithm.py" line="74"/>
+        <source>Port</source>
+        <translation type="unfinished">Porta</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadNonSpatialLayersFromPostgreSQLAlgorithm.py" line="80"/>
+        <source>Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadNonSpatialLayersFromPostgreSQLAlgorithm.py" line="86"/>
+        <source>User</source>
+        <translation type="unfinished">Usuário</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadNonSpatialLayersFromPostgreSQLAlgorithm.py" line="92"/>
+        <source>Password</source>
+        <translation type="unfinished">Senha</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadNonSpatialLayersFromPostgreSQLAlgorithm.py" line="98"/>
+        <source>Layer List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadNonSpatialLayersFromPostgreSQLAlgorithm.py" line="104"/>
+        <source>Load layers to canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadNonSpatialLayersFromPostgreSQLAlgorithm.py" line="111"/>
+        <source>Unique load</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadNonSpatialLayersFromPostgreSQLAlgorithm.py" line="118"/>
+        <source>Schema name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadNonSpatialLayersFromPostgreSQLAlgorithm.py" line="124"/>
+        <source>Loaded layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadNonSpatialLayersFromPostgreSQLAlgorithm.py" line="235"/>
+        <source>Load Non-Spatial Layers From PostgreSQL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadNonSpatialLayersFromPostgreSQLAlgorithm.py" line="242"/>
+        <source>Layer Management Algorithms</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11973,6 +13641,34 @@ Usuários com erro:</translation>
         <location filename="../gui/DatabaseTools/UserTools/user_profiles.py" line="347"/>
         <source>Select a profile first!</source>
         <translation>Selecione uma permissão de usuário primeiro!</translation>
+    </message>
+</context>
+<context>
+    <name>MatchAndApplyQmlStylesToLayersAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py" line="68"/>
+        <source>Input Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py" line="76"/>
+        <source>Input QML Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py" line="84"/>
+        <source>Original layers with measure column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py" line="150"/>
+        <source>Match and Apply QML Styles to Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py" line="157"/>
+        <source>Layer Management Algorithms</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12299,6 +13995,59 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>MultipleOutputUnitTestAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py" line="56"/>
+        <source>Algorithms to be tested</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py" line="66"/>
+        <source>DSGTools Multiple Output Algorithms Unit Tests</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py" line="88"/>
+        <source>Multiple Output Algorithms Unit Test</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py" line="95"/>
+        <source>Other Algorithms</source>
+        <translation type="unfinished">Outros Algoritmos</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py" line="147"/>
+        <source>Testing {alg}&apos;s...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py" line="155"/>
+        <source>Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py" line="155"/>
+        <source>Passed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py" line="158"/>
+        <source>All tests for {alg} are OK.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py" line="170"/>
+        <source>{0} algorithms failed their unit tests.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py" line="172"/>
+        <source>All algorithms passed their unit tests.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>NetworkHandler</name>
     <message>
         <location filename="../core/GeometricTools/networkHandler.py" line="51"/>
@@ -12391,112 +14140,112 @@ Camada</translation>
         <translation>Nó com fluxo incorreto</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="811"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="815"/>
         <source>Lines id={0} and id={1} have conflicting directions ({2:.2f} deg).</source>
         <translation>Linhas id={0} e id={1} possuem direções conflitantes ({2:.2f} graus).</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="823"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="827"/>
         <source>Cannot infer directions for lines {0} and {1} (Right Angle)</source>
         <translation>Não foi possível inferir as direções das linhas {0} e {1} (ângulo reto)</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="867"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="871"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="867"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="871"/>
         <source>There are unclassified nodes! Node (re)creation process is recommended before this process.</source>
         <translation>Existem nós sem classificação! É recomendo a execução do processo de criação/classificação de nós antes deste processo.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="896"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="900"/>
         <source>Node was flagged upon classification (probably cannot be an ending hidrography node).</source>
         <translation>Nó inválido desde sua classificação (provavelmente não pode ser um nó final na rede).</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="885"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="889"/>
         <source>Redundant node. Connected lines ({0}, {1}) share the same set of attributes.</source>
         <translation>Nó redundante. Está conectado a linhas ({0}, {1}) que compartilham o mesmo conjunto de atributos.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="903"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="907"/>
         <source>Line {0} disconnected from network.</source>
         <translation>Linha {0} desconectada da rede.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="905"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="909"/>
         <source>Node is overloaded - 4 or more lines are flowing in (&gt;= 2 lines) and out (&gt;= 2 lines).</source>
         <translation>Nó está sobrecarregado - 4 ou mais linhas fluem a partir (&gt;= 2 linhas) ou para (&gt;= 2 linhas) o nó.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="931"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="935"/>
         <source>Line id={0} does not end at a node with IN flow type (node type is {1}). </source>
         <translation>Linhas id={0} termina em um nó com fluxo de ENTRADA (nó do tipo {1}). </translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="938"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="942"/>
         <source>Line id={0} does not start at a node with OUT flow type (node type is {1}). </source>
         <translation>Linhas id={0} termina em um nó com fluxo de SAÍDA (nó do tipo {1}). </translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="944"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="948"/>
         <source>Lines are either flowing only in or out of node. Node classification is {0}.</source>
         <translation>Linhas possuem apenas fluxo de saída ou entrada no nó. Nó é do tipo {0}.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="953"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="957"/>
         <source>Line {0} seems to be invalid (unable to point specific reason).</source>
         <translation>Linha {0} aparentemente é inválida (incapaz de especificar o motivo).</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1093"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1097"/>
         <source>No network starting point was found</source>
         <translation>Não foi possível identificar pontos de início da rede</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1197"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1201"/>
         <source>does not end at a node with IN flow type</source>
         <translation>termina em um nó com fluxo de ENTRADA</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1198"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1202"/>
         <source>does not start at a node with OUT flow type</source>
         <translation>termina em um nó com fluxo de SAÍDA</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1199"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1203"/>
         <source>have conflicting directions</source>
         <translation>possuem direções conflitantes</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1200"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1204"/>
         <source>Redundant node.</source>
         <translation>Nó redundante.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1201"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1205"/>
         <source>Node was flagged upon classification</source>
         <translation>Nó inválido desde sua classificação</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1225"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1229"/>
         <source>id=</source>
         <translation>id=</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1230"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1234"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1296"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1300"/>
         <source>{0} to {1}</source>
         <translation>{0} a {1}</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1429"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1433"/>
         <source>Lines that were flipped while directioning hidrography lines: {0}
 
 </source>
@@ -12505,7 +14254,7 @@ Camada</translation>
 </translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1431"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1435"/>
         <source>Lines that were merged while directioning hidrography lines: {0}
 
 </source>
@@ -12514,7 +14263,7 @@ Camada</translation>
 </translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1435"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1439"/>
         <source>
 Verify Network Directioning: Flipped/Merged Lines
 </source>
@@ -12523,32 +14272,32 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
 </translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1495"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1499"/>
         <source>Connected to invalid hidrography node.</source>
         <translation>Conectada a um nó inválido.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1496"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1500"/>
         <source>Line not yet visited.</source>
         <translation>Linha ainda não verificada.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1589"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1593"/>
         <source>Cycle {0}/{1} completed.</source>
         <translation>Ciclo {0}/{1} concluído.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1605"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1609"/>
         <source>Invalid lines were exposed in line flags layer.</source>
         <translation>Linhas inválidas expostas na camada de flags do tipo linha.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1630"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1634"/>
         <source>{0} nodes may be invalid ({1:.2f}% of network is well directed). Check flags.</source>
         <translation>{0} nós podem estar inválidos ({1:.2f}%) da rede está direcionada corretamente). Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1633"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1637"/>
         <source>{1:.2f}% of network is well directed.</source>
         <translation>{1:.2f}%) da rede está direcionada corretamente.</translation>
     </message>
@@ -12870,37 +14619,37 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <translation>Opções do DSGTools</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="30"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="20"/>
         <source>Free Hand&apos;s Parameters</source>
         <translation>Parâmetros da Ferramenta de Aquisição à Mão Livre</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="46"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="49"/>
         <source>Smooth Iterations</source>
         <translation>Iterações de suavização</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="60"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="86"/>
         <source>Algorithm Iterations</source>
         <translation>Iterações de algoritmo</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="67"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="29"/>
         <source>Tolerance</source>
         <translation>Tolerância</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="81"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="66"/>
         <source>Smooth offset</source>
         <translation>Offset de suavização</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="102"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="100"/>
         <source>Number of points removed on undo action</source>
         <translation>Nr. de pontos removidos ao desfazer ação</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="112"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="140"/>
         <source>Generic Selector&apos;s Parameters</source>
         <translation>Parâmetro da Ferramenta Seletor Genérico</translation>
     </message>
@@ -12915,44 +14664,89 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <translation type="obsolete">Nome da Camada a ser ignorada (blacklist)</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="52"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="61"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="49"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="58"/>
         <source>Fill in a value before adding!</source>
         <translation>Preencha um valor antes de adicioná-lo!</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="52"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="61"/>
         <source>Value already in black list!</source>
         <translation>Valor já existente na blacklist!</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="168"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="222"/>
         <source>Raster Info Tool&apos;s Parameters</source>
         <translation>Parametros da Ferramenta de Informação de Raster</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="174"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="228"/>
         <source>Value setter tool precision (decimal points)</source>
         <translation>Precisão da ferramenta Definir Valor de Pontos (quantidade de casas decimais)</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="194"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="196"/>
         <source>Right Angle Tool Parameters</source>
         <translation>Parâmetros da Ferramenta de Aquisição com Ângulos Retos</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="200"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="202"/>
         <source>Minimum Segment Distance (meters)</source>
         <translation>Distância mínima para segmento (metros)</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="157"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="185"/>
         <source>moldura</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="117"/>
+        <source>Final Simplify Tolerance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="248"/>
+        <source>Validation Toolbar Parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="273"/>
+        <source>Models&apos; reading directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="280"/>
+        <source>Ask for user confirmation before running models</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="290"/>
+        <source>Remove added models when exiting the application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="297"/>
+        <source>Remove added models when swtiching QGIS project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="310"/>
+        <source>Add a custom path to look for QGIS Processing models.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="324"/>
+        <source>Automatically load output layers to canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="253"/>
+        <source>Select a directory for DSGTools Validation Toolbar to look for QGIS Processing models</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12976,7 +14770,7 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
     <message>
         <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedHierarchicalSnapLayerWidget.py" line="47"/>
         <source>Snap Order</source>
-        <translation>Ordem de snap</translation>
+        <translation type="obsolete">Ordem de snap</translation>
     </message>
 </context>
 <context>
@@ -13028,6 +14822,44 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
     </message>
 </context>
 <context>
+    <name>OrderedTableWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished">Formulário</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.ui" line="36"/>
+        <source>Move up</source>
+        <translation type="unfinished">Subir</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.ui" line="60"/>
+        <source>Add</source>
+        <translation type="unfinished">Adicionar</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.ui" line="84"/>
+        <source>Remove</source>
+        <translation type="unfinished">Remover</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.ui" line="108"/>
+        <source>Move down</source>
+        <translation type="unfinished">Descer</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.py" line="178"/>
+        <source>Getter method must be defined for widget type.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.py" line="199"/>
+        <source>Setter method must be defined for widget type.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>OrderedValidationProcessesWidget</name>
     <message>
         <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedValidationProcessesWidget.py" line="41"/>
@@ -13040,7 +14872,7 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
     <message>
         <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedValidationWorkflowItemsWidget.py" line="42"/>
         <source>QGIS Models</source>
-        <translation>Modelos do QGIS</translation>
+        <translation type="obsolete">Modelos do QGIS</translation>
     </message>
 </context>
 <context>
@@ -13273,87 +15105,87 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="45"/>
         <source>Rules Setting</source>
-        <translation>Configuração de regras</translation>
+        <translation type="obsolete">Configuração de regras</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="49"/>
         <source>Snap</source>
-        <translation>Snap</translation>
+        <translation type="obsolete">Snap</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="53"/>
         <source>Minimum area</source>
-        <translation>Área mínima</translation>
+        <translation type="obsolete">Área mínima</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="57"/>
         <source>Layers</source>
-        <translation>Camada</translation>
+        <translation type="obsolete">Camada</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="61"/>
         <source>Only Selected</source>
-        <translation>Somente selecionados</translation>
+        <translation type="obsolete">Somente selecionados</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="65"/>
         <source>Maximum dissolved area</source>
-        <translation>Área máx. a ser dissolvida</translation>
+        <translation type="obsolete">Área máx. a ser dissolvida</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="77"/>
         <source>Ordered Layers</source>
-        <translation>Camadas ordenadas</translation>
+        <translation type="obsolete">Camadas ordenadas</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="73"/>
         <source>Ignore search radius on inner layer search</source>
-        <translation>Ignorar raio de busca na própria camada</translation>
+        <translation type="obsolete">Ignorar raio de busca na própria camada</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="81"/>
         <source>Identification Type</source>
-        <translation>Tipo de identificação</translation>
+        <translation type="obsolete">Tipo de identificação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="89"/>
         <source>Reference and Layers</source>
-        <translation>Referência e camadas</translation>
+        <translation type="obsolete">Referência e camadas</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="93"/>
         <source>Only First Order Lines</source>
-        <translation>Somente linhas de primeira ordem</translation>
+        <translation type="obsolete">Somente linhas de primeira ordem</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="97"/>
         <source>Tolerance</source>
-        <translation>Tolerância</translation>
+        <translation type="obsolete">Tolerância</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="101"/>
         <source>Attribute Black List (comma separated)</source>
-        <translation>Blacklist de atributos (separado por vírgulas)</translation>
+        <translation type="obsolete">Blacklist de atributos (separado por vírgulas)</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="105"/>
         <source>Overlay layer and layers to be overlayed</source>
-        <translation>Camada de referência e camadas a serem cortadas</translation>
+        <translation type="obsolete">Camada de referência e camadas a serem cortadas</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="109"/>
         <source>Overlay type</source>
-        <translation>Tipo de corte</translation>
+        <translation type="obsolete">Tipo de corte</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="113"/>
         <source>Coordinate Precision</source>
-        <translation>Precisão de coordenadas</translation>
+        <translation type="obsolete">Precisão de coordenadas</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="123"/>
         <source>Process parameters setter for process(es) {0}</source>
-        <translation>Configurador de parâmetros do(s) processo(s) {0}</translation>
+        <translation type="obsolete">Configurador de parâmetros do(s) processo(s) {0}</translation>
     </message>
 </context>
 <context>
@@ -13715,12 +15547,12 @@ Camada</translation>
         <translation type="obsolete">Domínios</translation>
     </message>
     <message>
-        <location filename="../core/Factories/LayerLoaderFactory/postgisLayerLoader.py" line="175"/>
+        <location filename="../core/Factories/LayerLoaderFactory/postgisLayerLoader.py" line="179"/>
         <source>Error for layer </source>
         <translation>Erro para a camada </translation>
     </message>
     <message>
-        <location filename="../core/Factories/LayerLoaderFactory/postgisLayerLoader.py" line="158"/>
+        <location filename="../core/Factories/LayerLoaderFactory/postgisLayerLoader.py" line="162"/>
         <source>Loading layers... </source>
         <translation>Carregando Camadas... </translation>
     </message>
@@ -13749,52 +15581,52 @@ Camada</translation>
         <translation type="obsolete">Erro!</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2018"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2019"/>
         <source>Operation not defined for this database version!</source>
         <translation>Operação não definida para esta versão de banco de dados!</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="527"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="528"/>
         <source>Problem disassociating complex from complex: </source>
         <translation>Problema disassociando complexo de complexo: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="623"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="624"/>
         <source>Problem assigning profile: </source>
         <translation>Problema atribuindo perfil: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="641"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="642"/>
         <source>Problem removing profile: </source>
         <translation>Problema removendo perfil: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="654"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="655"/>
         <source>Problem altering user&apos;s password: </source>
         <translation>Problema alterando senha do usuário: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="668"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="669"/>
         <source>Problem creating user: </source>
         <translation>Problema criando usuário: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2723"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2878"/>
         <source>Problem removing user: </source>
         <translation>Problema removendo usuário: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="693"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="694"/>
         <source>Problem granting profile: </source>
         <translation>Problema ao atribuir perfil: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="706"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="707"/>
         <source>Problem revoking profile: </source>
         <translation>Problema ao revogar perfil: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="907"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="908"/>
         <source>Problem dropping database: </source>
         <translation>Problema apagando o banco de dados: </translation>
     </message>
@@ -13804,7 +15636,7 @@ Camada</translation>
         <translation type="obsolete">Problema acessando banco de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="934"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="935"/>
         <source>Problem creating views: </source>
         <translation>Problema criando visões: </translation>
     </message>
@@ -13814,57 +15646,57 @@ Camada</translation>
         <translation type="obsolete">Problema obtendo a versão do banco de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="196"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="197"/>
         <source>Problem listing geom classes: </source>
         <translation>Problema ao listar classes geométricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="232"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="233"/>
         <source>Problem listing complex classes: </source>
         <translation>Problema ao listar classes complexas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="299"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="300"/>
         <source>Problem getting database structure: </source>
         <translation>Problema ao obter a estrutura do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2024"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2025"/>
         <source>Problem executing query: </source>
         <translation>Problema ao executar a query: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="446"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="447"/>
         <source>Problem obtaining link column: </source>
         <translation>Problema obtendo a coluna de ligação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="494"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="495"/>
         <source>Problem loading associated features: </source>
         <translation>Problema ao carregar feições associadas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2713"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2868"/>
         <source>Problem getting users: </source>
         <translation>Problema ao obter usuários: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="559"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="560"/>
         <source>Problem getting user roles: </source>
         <translation>Problema ao obter permissões de usuários: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="583"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="584"/>
         <source>Problem getting roles: </source>
         <translation>Problema ao obter permissões: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="738"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="739"/>
         <source>Problem getting role privileges: </source>
         <translation>Problema ao obter privilégios da permissão: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="790"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="791"/>
         <source>Problem getting EDGV databases: </source>
         <translation>Problema ao obter bancos EDGV: </translation>
     </message>
@@ -13879,57 +15711,57 @@ Camada</translation>
         <translation type="obsolete">Problema ao acessar bancos de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="846"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="847"/>
         <source>Problem getting databases: </source>
         <translation>Problema ao obter bancos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="864"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="865"/>
         <source>Problem checking user: </source>
         <translation>Problema ao checar usuário: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="962"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="963"/>
         <source>Problem getting invalid geometries: </source>
         <translation>Problema obtendo geometrias inválidas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="999"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1000"/>
         <source>Problem inserting flags: </source>
         <translation>Problema inserindo flags: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1020"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1021"/>
         <source>Problem deleting flags: </source>
         <translation>Problema removendo flags: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3442"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3597"/>
         <source>Problem creating structure: </source>
         <translation>Problema criando estrutura: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1074"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1075"/>
         <source>Problem acquiring status: </source>
         <translation>Problema adquirindo status: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1089"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1090"/>
         <source>Problem setting status: </source>
         <translation>Problema ajustando o status: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1099"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1100"/>
         <source>Problem getting running process: </source>
         <translation>Problema obtendo processo atual: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1128"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1129"/>
         <source>Problem testing spatial rule: </source>
         <translation>Problema testando regra espacial: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1148"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1149"/>
         <source>Problem getting dimension: </source>
         <translation>Problema obtendo dimensão: </translation>
     </message>
@@ -13939,157 +15771,157 @@ Camada</translation>
         <translation type="obsolete">Problema explodindo geometrias: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1226"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1227"/>
         <source>Problem getting duplicated geometries: </source>
         <translation>Problema obtendo geometrias duplicadas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1244"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1245"/>
         <source>Problem getting small areas: </source>
         <translation>Problema obtendo áreas pequenas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1263"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1264"/>
         <source>Problem getting small lines: </source>
         <translation>Problema obtendo linhas pequenas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1288"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1289"/>
         <source>Problem preparing auxiliary structure: </source>
         <translation>Problema preparando estrutura auxiliar: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1297"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1298"/>
         <source>Problem getting vertex near edges: </source>
         <translation>Problema obtendo vértice próximo à arestas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1323"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1324"/>
         <source>Problem deleting features from </source>
         <translation>Problema deletando feições de </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1341"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1342"/>
         <source>Problem getting not simple geometries: </source>
         <translation>Problema obtendo geometrias não simples: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1360"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1361"/>
         <source>Problem getting not out of bounds angles: </source>
         <translation>Problema obtendo ângulos fora dos limites: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1377"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1378"/>
         <source>Problem getting flags dict: </source>
         <translation>Problema obtendo dicionário de flags: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1408"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1409"/>
         <source>Problem forcing validity of features from </source>
         <translation>Problema forçando validade de feições de </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1423"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1424"/>
         <source>Problem getting table extent: </source>
         <translation>Problema obtendo extensão da tabela: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1456"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1457"/>
         <source>Problem getting orphan tables: </source>
         <translation>Problema obtendo tabelas órfãs: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1463"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1464"/>
         <source>Problem counting orphan table: </source>
         <translation>Problema contando tabelas órfãs: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1486"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1487"/>
         <source>Problem updating geometries: </source>
         <translation>Problema atualizando geometrias: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1492"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1493"/>
         <source>Problem deleting geometries: </source>
         <translation>Problema deletando geometrias: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1504"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1505"/>
         <source>Problem checking structure: </source>
         <translation>Problema checando estrutura: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1536"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1537"/>
         <source>Problem creating centroid structure: </source>
         <translation>Problema criando estrutura de centróides: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1556"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1557"/>
         <source>Problem getting earth coverage tables: </source>
         <translation>Problema obtendo tabelas de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1654"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1655"/>
         <source>Problem getting earth coverage structure: </source>
         <translation>Problema obtendo estrutura de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1587"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1588"/>
         <source>Problem setting earth coverage structure: </source>
         <translation>Problema ajustando a estrutura de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1630"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1631"/>
         <source>Problem dropping centroids: </source>
         <translation>Problema apagando centróides: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1672"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1673"/>
         <source>Problem getting class name: </source>
         <translation>Problema obtendo nome da classe: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1701"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1702"/>
         <source>Problem snapping to grid: </source>
         <translation>Problema ao realizar snap para o grid: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1722"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1723"/>
         <source>Problem snapping to frame: </source>
         <translation>Problema ao realizar snap para a moldura: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1739"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1740"/>
         <source>Problem densifying frame: </source>
         <translation>Problema densificando moldura: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1757"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1758"/>
         <source>Problem creating recursive snap function: </source>
         <translation>Problema criando função de snap recursivo: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1763"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1764"/>
         <source>Problem snapping class: </source>
         <translation>Problema ao realizar snap na classe: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2740"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2895"/>
         <source>Problem deleting flag: </source>
         <translation>Problema deletando flag: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="718"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="719"/>
         <source>Problem getting tables from database: </source>
         <translation>Problema ao obter tabelas do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2758"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2913"/>
         <source>Problem removing empty geometries: </source>
         <translation>Problema removendo geometrias vazias: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="799"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="800"/>
         <source>Reading selected databases... </source>
         <translation>Lendo bancos de dados selecionados... </translation>
     </message>
@@ -14114,52 +15946,52 @@ Camada</translation>
         <translation type="obsolete">Problema ao apagar a tabela temporária: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1849"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1850"/>
         <source>Problem creating style table: </source>
         <translation>Problema criando tabela de estilos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1838"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1839"/>
         <source>Problem getting style table: </source>
         <translation>Problema obtendo tabela de estilos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1980"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1981"/>
         <source>Problem getting styles from db: </source>
         <translation>Problema obtendo estilos do db: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1926"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1927"/>
         <source>Problem importing style</source>
         <translation>Problema importanto estilo</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1936"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1937"/>
         <source>Style </source>
         <translation>Estilo </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1936"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1937"/>
         <source> does not match the version of database </source>
         <translation> não combina com a versão do banco de dados </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1959"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1960"/>
         <source>Problem importing style </source>
         <translation>Problema importando estilos </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2003"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2004"/>
         <source>Problem running sql </source>
         <translation>Problema ao rodar sql </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3767"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3922"/>
         <source>Problem getting geom schemas from db: </source>
         <translation>Problema obtendo esquemas geométricos do db: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2066"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2067"/>
         <source>Problem getting geom tables from db: </source>
         <translation>Problema obtendo tabelas geométricas do db: </translation>
     </message>
@@ -14169,37 +16001,37 @@ Camada</translation>
         <translation type="obsolete">Versão de EDGV não reconhecida!</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2295"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2300"/>
         <source>Problem getting geom types from db: </source>
         <translation>Problema obtendo tipos geométricos do db: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2318"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2323"/>
         <source>Problem getting geom column dict: </source>
         <translation>Problema obtendo dicionário de colunas geométricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2414"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2568"/>
         <source>Problem getting not null dict: </source>
         <translation>Problema obtendo dicionário de não nulos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2431"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2585"/>
         <source>Problem getting domain dict from table </source>
         <translation>Problema obtendo dicionário de domínios da tabela </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2443"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2597"/>
         <source>Problem getting layer column dict from table </source>
         <translation>Problema obtendo dicionário de colunas da tabela </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2466"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2620"/>
         <source>Problem getting geom struct dict: </source>
         <translation>Problema obtendo dicionário de estruturas geométricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2489"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2643"/>
         <source>Problem creating from template: </source>
         <translation>Problema criando a partir de template: </translation>
     </message>
@@ -14209,47 +16041,47 @@ Camada</translation>
         <translation type="obsolete">Problema ajustando srid: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2567"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2721"/>
         <source>Problem setting as template: </source>
         <translation>Problema ajustando template: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2778"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2933"/>
         <source>Problem creating database: </source>
         <translation>Problema criando banco de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2619"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2773"/>
         <source>Problem setting database as template: </source>
         <translation>Problema ajustando banco como template: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2681"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2836"/>
         <source>Error on database creation! </source>
         <translation>Erro na criação de banco de dados! </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2681"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2836"/>
         <source> Db will be dropped.</source>
         <translation> Db será apagado.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2699"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2854"/>
         <source>Problem altering search path: </source>
         <translation>Problema alterando search path: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1162"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1163"/>
         <source>Problem exploding candidates: </source>
         <translation>Problema explodindo candidatos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1681"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1682"/>
         <source>Problem getting db oid: </source>
         <translation>Problema obtendo oid do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1966"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1967"/>
         <source>Problem getting table schema from db: </source>
         <translation>Problema obtendo esquema de tabela do db: </translation>
     </message>
@@ -14261,182 +16093,182 @@ Camada</translation>
 </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2628"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2782"/>
         <source>Problem checking  template: </source>
         <translation>Problema checando template: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2788"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2943"/>
         <source>Problem looking for admindb: </source>
         <translation>Problema procurando pelo admindb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2802"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2957"/>
         <source>Problem getting roles dict: </source>
         <translation>Problema ao obter dicionário de perfis: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3156"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3311"/>
         <source>Error! Operation not defined for non dsgtools_admindb</source>
         <translation>Erro! Operação não definida para bancos nãodsgtools_admindb</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2821"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2976"/>
         <source>Problem inserting into permission profile: </source>
         <translation>Problema inserindo no perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2832"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2987"/>
         <source>Problem dropping profile: </source>
         <translation>Problema apagando perfil: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2842"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2997"/>
         <source>Problem getting roles from adminDb: </source>
         <translation>Problema obtendo perfis do adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2854"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3009"/>
         <source>Problem getting all roles from adminDb: </source>
         <translation>Problema obtendo todos os perfis do adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2869"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3024"/>
         <source>Problem deleting permission profile: </source>
         <translation>Problema deletando perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2880"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3035"/>
         <source>Problem getting granted roles dict: </source>
         <translation>Problema ao obter dicionário de perfis permitidos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2899"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3054"/>
         <source>Problem updating permission profile: </source>
         <translation>Problema atualizando perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2909"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3064"/>
         <source>Problem getting domain tables: </source>
         <translation>Problema obtendo tabelas de domínio: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2923"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3078"/>
         <source>Problem getting geometric schema list: </source>
         <translation>Problema obtendo lista de esquemas geométricos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2937"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3092"/>
         <source>Problem getting geometric table list: </source>
         <translation>Problema obtendo lista de tabelas geométricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3016"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3171"/>
         <source>Problem getting inheritance: </source>
         <translation>Problema obtendo herança: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3054"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3209"/>
         <source>Problem getting attribute list: </source>
         <translation>Problema obtendo lista de atributos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3115"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3270"/>
         <source>Problem constraint dict from db: </source>
         <translation>Problema obtendo dicionário de constraints do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3145"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3300"/>
         <source>Problem getting default from db: </source>
         <translation>Problema obtendo default do db: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3160"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3315"/>
         <source>Problem inserting property </source>
         <translation>Problema inserindo propriedade </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3160"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3315"/>
         <source> into dsgtools_admindb: </source>
         <translation> no banco dsgtools_admindb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3179"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3334"/>
         <source>Problem getting setting from adminDb: </source>
         <translation>Problema obtendo ajuste do adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3193"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3348"/>
         <source>Problem getting settings from adminDb: </source>
         <translation>Problema obtendo ajustes do adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3208"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3363"/>
         <source>Problem deleting permission setting: </source>
         <translation>Problema deletando ajuste de permissão: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3221"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3376"/>
         <source>Problem upgrading postgis: </source>
         <translation>Problema atualizando o PostGIS: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3230"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3385"/>
         <source>Problem getting postgis version: </source>
         <translation>Problema obtendo versão do PostGIS: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3256"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3411"/>
         <source>Problem getting applied customizations: </source>
         <translation>Problema obtendo customizações aplicadas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3272"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3427"/>
         <source>Problem creating Setting table: </source>
         <translation>Problema criando tabela de ajustes: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3281"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3436"/>
         <source>Problem getting checking if table exists: </source>
         <translation>Problema checando se tabela existe: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3296"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3451"/>
         <source>Problem getting getting record from adminDb: </source>
         <translation>Problema obtendo registro do adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3309"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3464"/>
         <source>Invalid property with database version.</source>
         <translation>Propriedade invalida com versão de banco.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3317"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3472"/>
         <source>Problem inserting record inside property table: </source>
         <translation>Problema inserindo registro na tabela de propriedades: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3328"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3483"/>
         <source>Problem getting getting property dict: </source>
         <translation>Problema obtendo dicionário de domínios: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3351"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3506"/>
         <source>Problem inserting installed record into adminDb: </source>
         <translation>Problema inserindo registro no adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3392"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3547"/>
         <source>Problem removing installed record into db: </source>
         <translation>Problema removendo registro do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3401"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3556"/>
         <source>Problem getting primary key column: </source>
         <translation>Problema ao identificar a coluna de chave primária: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2284"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2289"/>
         <source>Problem getting tables dict from db: </source>
         <translation>Problema obtendo tabelas do bd: </translation>
     </message>
@@ -14446,83 +16278,83 @@ Camada</translation>
         <translation type="obsolete">É obrigatório informar a versão! </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2350"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2488"/>
         <source>Problem getting geom tuple list: </source>
         <translation>Problema ao obter a lista de tuplas geometricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="811"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="812"/>
         <source>Problem opening databases: </source>
         <translation>Problema ao abrir os seguintes bancos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2221"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2222"/>
         <source>Error parsing check constraint!
 :</source>
         <translation>Erro ao decodificar o check constraint! :</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3414"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3569"/>
         <source>Problem dropping database conections: </source>
         <translation>Problema ao derrubar as conexões ao banco de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2481"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2635"/>
         <source>Creating database {0} from template {1}... </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2501"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2655"/>
         <source>Problem getting view definition: </source>
         <translation>Problema ao tentar obter uma definição de view: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2514"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2668"/>
         <source>Updating SRIDs from {0}... </source>
         <translation>Atualizando os sistemas de referência de {0}... </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2550"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2704"/>
         <source>Problem dropping views: </source>
         <translation>Problema ao tentar apagar views: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3424"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3579"/>
         <source>Problem getting attributes from table {0}.{1}: {2}</source>
         <translation>Problema ao tentar obter os atributos da tabela {0}.{1}:{2}</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1133"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1134"/>
         <source>Feature id {} from {} violates rule {} {}</source>
         <translation>Feição id {} de {} viola a regra {} {}</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3468"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3623"/>
         <source>Problem creating coverage temp table: </source>
         <translation>Problema criando tabela de cobertura temporária: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3496"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3651"/>
         <source>Problem populating coverage temp table: </source>
         <translation>Problema populando tabela de cobertura temporária: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3501"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3656"/>
         <source>Problem creating spatial index on coverage temp table: </source>
         <translation>Problema criando índice espacial na tabela de cobertura temporária: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3600"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3755"/>
         <source>Problem getting gaps: </source>
         <translation>Problema obtendo gaps: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3517"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3672"/>
         <source>Gap between the frame layer and coverage layer</source>
         <translation>Gap entre a camada de referência e a camada de cobertura</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3537"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3692"/>
         <source>Problem getting overlaps: </source>
         <translation>Problema obtendo overlaps: </translation>
     </message>
@@ -14532,32 +16364,32 @@ Camada</translation>
         <translation type="obsolete">Overlap entre a camada de referência e a camada de cobertura</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3539"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3694"/>
         <source>Overlap between the features of the layer</source>
         <translation>Overlap entre as feições da camada</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1799"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1800"/>
         <source>Problem creating temp table {}: </source>
         <translation>Problema criando tabela temporária {}: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1804"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1805"/>
         <source>Problem creating spatial index on temp table {}: </source>
         <translation>Problema criando índice espacial na tabela temporária {}: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1817"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1818"/>
         <source>Problem dropping temp table {}: </source>
         <translation>Problema ao apagar a tabela temporária {}: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3586"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3741"/>
         <source>Problem filtering flags: </source>
         <translation>Problema filtrando as flags: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3602"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3757"/>
         <source>Gap between the features of the layer</source>
         <translation>Gap entre as feições da camada</translation>
     </message>
@@ -14567,44 +16399,59 @@ Camada</translation>
         <translation type="obsolete">Problema ao obter o histórico dos processos de validação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="890"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="891"/>
         <source>Problem getting implementation version: </source>
         <translation>Problema ao obter a versão de implementação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="909"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="910"/>
         <source>Problem dropping database: user must have permission for that.</source>
         <translation>Problema ao tentar apagar banco de dados: o usuário deve ter permissão para tal procedimento.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3615"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3770"/>
         <source>Problem while retrieving flags dict: </source>
         <translation>Problema ao obter dicionário de flags: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3664"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3819"/>
         <source>Problem while retrieving validation processes history table: </source>
         <translation>Problema ao tentar ler a tabela de histórico dos processos de validação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3678"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3833"/>
         <source>Problem while creating compact validation processes history table: </source>
         <translation>Problema ao tentar criar a tabela compacta de histórico de processos de validação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3685"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3840"/>
         <source>Problem while populating compact validation processes history table: </source>
         <translation>Problema ao tentar popular a tabela compacta de histórico de processos de validação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3715"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3870"/>
         <source>Problem getting list of attributes with filter: </source>
         <translation>Problema obtendo lista de atributos com filtros: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3729"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3884"/>
         <source>Problem getting domain json list: </source>
         <translation>Problemas ao tentar ler lista de JSON de domínios: </translation>
+    </message>
+    <message>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2421"/>
+        <source>Problem getting AttributeDomainDict: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2449"/>
+        <source>Problem getting filter: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2535"/>
+        <source>Problem getting getDomainDictFromDomainTable from table {table_name}:{query_error}</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -14655,60 +16502,60 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="122"/>
         <source>Select classes</source>
-        <translation>Selecione as classes</translation>
+        <translation type="obsolete">Selecione as classes</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="130"/>
         <source>Select layers to be snapped</source>
-        <translation>Selecione as camadas a serem atraídas</translation>
+        <translation type="obsolete">Selecione as camadas a serem atraídas</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="134"/>
         <source>Category</source>
-        <translation>Categoria</translation>
+        <translation type="obsolete">Categoria</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="134"/>
         <source>Layer Name</source>
-        <translation>Nome da 
+        <translation type="obsolete">Nome da 
 camada</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="134"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna 
+        <translation type="obsolete">Coluna 
 geométrica</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="134"/>
         <source>Geometry
 Type</source>
-        <translation>Tipo 
+        <translation type="obsolete">Tipo 
 geométrico</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="134"/>
         <source>Layer
 Type</source>
-        <translation>Tipo da 
+        <translation type="obsolete">Tipo da 
 camada</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="133"/>
         <source>Select layers</source>
-        <translation>Selecione as camadas</translation>
+        <translation type="obsolete">Selecione as camadas</translation>
     </message>
 </context>
 <context>
     <name>Processing</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/dsgtoolsProcessingAlgorithmProvider.py" line="122"/>
+        <location filename="../core/DSGToolsProcessingAlgs/dsgtoolsProcessingAlgorithmProvider.py" line="198"/>
         <source>Snap Hierarchy</source>
         <translation>Snap Hierárquico</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/dsgtoolsProcessingAlgorithmProvider.py" line="123"/>
+        <location filename="../core/DSGToolsProcessingAlgs/dsgtoolsProcessingAlgorithmProvider.py" line="199"/>
         <source>FME Manager Parameters</source>
         <translation>Parâmetros do FME Manager</translation>
     </message>
@@ -14718,7 +16565,7 @@ camada</translation>
         <translation>Parâmetros do FME Manager. Utilizado na Execução Remota do FME Workspace</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="190"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="197"/>
         <source>An hierarchical snapping type. Used in the Hierarchical Snap Layer on Layer algorithm.</source>
         <translation>Um tipo de snap hierárquico. Usando no algoritmo Snap Hierárquico Entre Camadas.</translation>
     </message>
@@ -14733,14 +16580,34 @@ camada</translation>
         <translation>Um tipo de regras de atributo. Usado no algoritmo Identificar Combinações Inválidas de Atributos.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/spatialRulesCheckerAlgorithm.py" line="134"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="227"/>
         <source>Spatial Rules Set</source>
         <translation>Conjunto de regras espaciais</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/spatialRulesCheckerAlgorithm.py" line="140"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="233"/>
         <source>Set of spatial rules. Used on Spatial Rules Checker.</source>
         <translation>Conjunto de regras espaciais serem utilizadas no Verificador de Regras Espaciais.</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="292"/>
+        <source>Font Parameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="298"/>
+        <source>Font parameter.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="341"/>
+        <source>Color Parameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py" line="347"/>
+        <source>Color parameter.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -14928,7 +16795,7 @@ Usuários com erro:</translation>
 <context>
     <name>ProgressWidget</name>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/progressWidget.py" line="47"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/progressWidget.py" line="48"/>
         <source>INFO: </source>
         <translation>INFO: </translation>
     </message>
@@ -14944,6 +16811,194 @@ Usuários com erro:</translation>
         <location filename="../core/Misc/QmlTools/qmlParser.py" line="102"/>
         <source>QML file not loaded properly. Enum values won&apos;t be available.</source>
         <translation>Arquivo QML não carregado corretamente. Os mapas de valores não estarão disponíveis.</translation>
+    </message>
+</context>
+<context>
+    <name>QualityAssuranceDockWidget</name>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="72"/>
+        <source>Not yet run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="73"/>
+        <source>Running...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="74"/>
+        <source>On hold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="75"/>
+        <source>Halted on flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="76"/>
+        <source>Canceled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="77"/>
+        <source>Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="78"/>
+        <source>Completed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="79"/>
+        <source>Completed (raised flags)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="101"/>
+        <source>DSGTools Q&amp;A Tool Box: Confirm action</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="205"/>
+        <source>Model name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="205"/>
+        <source>Status</source>
+        <translation type="unfinished">Estado</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="205"/>
+        <source>Progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="215"/>
+        <source>Select a workflow...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="223"/>
+        <source>Workflow author: {author}
+Workflow version: {version}
+Last modification: {lastModified}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="288"/>
+        <source>Are you sure you want to remove workflow {0}?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="738"/>
+        <source>DSGTools Q&amp;A Tool Box</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="322"/>
+        <source>modified name is already set for other workflow. Nothing changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="334"/>
+        <source>{0} updated (make sure you exported it).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="339"/>
+        <source>{1} renamed to {0} and updated (make sure you exported it).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="691"/>
+        <source>DSGTools Q&amp;A Toolbox</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="425"/>
+        <source>model {0} status changed to {1}.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="441"/>
+        <source>Model {0} status changed to {1}.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="484"/>
+        <source>Model author: {0}
+Model version: {1}
+Last modification: {2}
+
+{3}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="685"/>
+        <source>workflow {0} finished with flags.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="689"/>
+        <source>workflow {0} finished.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="710"/>
+        <source>please select a valid Workflow.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="724"/>
+        <source>Select Workflow files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="724"/>
+        <source>DSGTools Workflow (*.workflow *.json)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="738"/>
+        <source>workflow &apos;{path}&apos; was not imported: &apos;{msg}&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="760"/>
+        <source>Model {model} imported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QualityAssuranceWorkflow</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/qualityAssuranceWorkflow.py" line="56"/>
+        <source>Invalid workflow parameter:
+{msg}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/qualityAssuranceWorkflow.py" line="72"/>
+        <source>DSGTools Validation Workflow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/qualityAssuranceWorkflow.py" line="74"/>
+        <source>Workflow seems to have no models associated with it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/qualityAssuranceWorkflow.py" line="78"/>
+        <source>Model {model} is invalid: &apos;{reason}&apos;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/qualityAssuranceWorkflow.py" line="130"/>
+        <source>Workflow {name} v{version} ({lastModified}) by {author}.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -15605,35 +17660,48 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>RuleStatisticsAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/ruleStatisticsAlgorithm.py" line="182"/>
+        <source>Rule Statistics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/ruleStatisticsAlgorithm.py" line="189"/>
+        <source>Other Algorithms</source>
+        <translation type="unfinished">Outros Algoritmos</translation>
+    </message>
+</context>
+<context>
     <name>RulesEditor</name>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.py" line="184"/>
         <source>Warning!</source>
-        <translation>Atenção!</translation>
+        <translation type="obsolete">Atenção!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.py" line="123"/>
         <source>Problem reading file! 
 </source>
-        <translation>Problema lendo arquivo! 
+        <translation type="obsolete">Problema lendo arquivo! 
 </translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.py" line="181"/>
         <source>Problem saving file! 
 </source>
-        <translation>Problema ao tentar salvar arquivo! 
+        <translation type="obsolete">Problema ao tentar salvar arquivo! 
 </translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.py" line="184"/>
         <source>Profile saved successfully!</source>
-        <translation>Perfil salvo com sucesso!</translation>
+        <translation type="obsolete">Perfil salvo com sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.py" line="164"/>
         <source>disjoint</source>
-        <translation>disjunto</translation>
+        <translation type="obsolete">disjunto</translation>
     </message>
 </context>
 <context>
@@ -15680,6 +17748,64 @@ Camada</translation>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="147"/>
         <source>Other Algorithms</source>
         <translation>Outros Algoritmos</translation>
+    </message>
+</context>
+<context>
+    <name>SapLoadLayersAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/sapLoadLayersAlgorithm.py" line="66"/>
+        <source>Host</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/sapLoadLayersAlgorithm.py" line="72"/>
+        <source>Port</source>
+        <translation type="unfinished">Porta</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/sapLoadLayersAlgorithm.py" line="78"/>
+        <source>Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/sapLoadLayersAlgorithm.py" line="84"/>
+        <source>User</source>
+        <translation type="unfinished">Usuário</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/sapLoadLayersAlgorithm.py" line="90"/>
+        <source>Password</source>
+        <translation type="unfinished">Senha</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/sapLoadLayersAlgorithm.py" line="96"/>
+        <source>Layer List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/sapLoadLayersAlgorithm.py" line="102"/>
+        <source>Load layers to canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/sapLoadLayersAlgorithm.py" line="109"/>
+        <source>Unique load</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/sapLoadLayersAlgorithm.py" line="117"/>
+        <source>Loaded layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/sapLoadLayersAlgorithm.py" line="195"/>
+        <source>SAP Load Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/sapLoadLayersAlgorithm.py" line="202"/>
+        <source>Layer Management Algorithms</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -16093,6 +18219,44 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     </message>
 </context>
 <context>
+    <name>SetFreeHandToolParametersAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EnvironmentSetterAlgs/setFreeHandToolParametersAlgorithm.py" line="121"/>
+        <source>Free hand tolerance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EnvironmentSetterAlgs/setFreeHandToolParametersAlgorithm.py" line="85"/>
+        <source>Free hand smooth iterations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EnvironmentSetterAlgs/setFreeHandToolParametersAlgorithm.py" line="94"/>
+        <source>Free hand smooth offset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EnvironmentSetterAlgs/setFreeHandToolParametersAlgorithm.py" line="103"/>
+        <source>Free hand algorithm iterations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EnvironmentSetterAlgs/setFreeHandToolParametersAlgorithm.py" line="112"/>
+        <source>Number of points removed on undo action</source>
+        <translation type="unfinished">Nr. de pontos removidos ao desfazer ação</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EnvironmentSetterAlgs/setFreeHandToolParametersAlgorithm.py" line="168"/>
+        <source>Set Free Hand Tool Parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/EnvironmentSetterAlgs/setFreeHandToolParametersAlgorithm.py" line="175"/>
+        <source>Environment Setters</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SetupEarthCoverage</name>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.ui" line="20"/>
@@ -16416,6 +18580,72 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     </message>
 </context>
 <context>
+    <name>ShortcutTool</name>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/ShortcutTool/shortcutTool.py" line="42"/>
+        <source>DSGTools: Active Layer visibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/ShortcutTool/shortcutTool.py" line="56"/>
+        <source>DSGTools: Toggle vertex&apos;s marker visibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SingleOutputUnitTestAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/singleOutputUnitTestAlgorithm.py" line="73"/>
+        <source>Algorithms to be tested</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/singleOutputUnitTestAlgorithm.py" line="83"/>
+        <source>DSGTools Single Output Algorithms Unit Tests</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/singleOutputUnitTestAlgorithm.py" line="105"/>
+        <source>Single Output Algorithms Unit Test</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/singleOutputUnitTestAlgorithm.py" line="112"/>
+        <source>Other Algorithms</source>
+        <translation type="unfinished">Outros Algoritmos</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/singleOutputUnitTestAlgorithm.py" line="164"/>
+        <source>Testing {alg}&apos;s...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/singleOutputUnitTestAlgorithm.py" line="167"/>
+        <source>Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/singleOutputUnitTestAlgorithm.py" line="167"/>
+        <source>Passed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/singleOutputUnitTestAlgorithm.py" line="170"/>
+        <source>All tests for {alg} are OK.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/singleOutputUnitTestAlgorithm.py" line="182"/>
+        <source>{0} algorithms failed their unit tests.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/singleOutputUnitTestAlgorithm.py" line="184"/>
+        <source>All algorithms passed their unit tests.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SnapChooserWidget</name>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapChooserWidget.ui" line="32"/>
@@ -16598,6 +18828,64 @@ Camada</translation>
         <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="156"/>
         <source>All features were snapped.</source>
         <translation type="obsolete">Todas as feições foram atraídas.</translation>
+    </message>
+</context>
+<context>
+    <name>SnapHierarchyWrapper</name>
+    <message>
+        <location filename="../gui/ProcessingUI/snapHierarchyWrapper.py" line="54"/>
+        <source>Set layer name...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/snapHierarchyWrapper.py" line="63"/>
+        <source>Prefer aligning nodes, insert extra vertices where required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/snapHierarchyWrapper.py" line="63"/>
+        <source>Prefer closest point, insert extra vertices where required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/snapHierarchyWrapper.py" line="63"/>
+        <source>Prefer aligning nodes, don&apos;t insert new vertices</source>
+        <translation type="unfinished">Priorizar alinhamento de nós, não inserir novos vértices</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/snapHierarchyWrapper.py" line="63"/>
+        <source>Prefer closest point, don&apos;t insert new vertices</source>
+        <translation type="unfinished">Priorizar ponto mais próximo, não inserir novos vértices</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/snapHierarchyWrapper.py" line="63"/>
+        <source>Move end points only, prefer aligning nodes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/snapHierarchyWrapper.py" line="63"/>
+        <source>Move end points only, prefer closest point</source>
+        <translation type="unfinished">Mover apenas o último ponto, priorizar ponto mais próximo</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/snapHierarchyWrapper.py" line="63"/>
+        <source>Snap end points to end points only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/snapHierarchyWrapper.py" line="117"/>
+        <source>Layer</source>
+        <translation type="unfinished">Camada</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/snapHierarchyWrapper.py" line="117"/>
+        <source>Snap</source>
+        <translation type="unfinished">Snap</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/snapHierarchyWrapper.py" line="117"/>
+        <source>Snap mode</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -17072,46 +19360,88 @@ Camada</translation>
 <context>
     <name>SpatialRelationsHandler</name>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="84"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="108"/>
         <source>Building contour structures...</source>
-        <translation type="obsolete">Construindo estruturas de curvas de nível...</translation>
+        <translation type="unfinished">Construindo estruturas de curvas de nível...</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="97"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="121"/>
         <source>Validating contour structures. Check 1/4...</source>
-        <translation type="obsolete">Validando estruturas de curvas de nível. Verificado 1/4...</translation>
+        <translation type="unfinished">Validando estruturas de curvas de nível. Verificado 1/4...</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="113"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="137"/>
         <source>Building drainage spatial index...</source>
-        <translation type="obsolete">Contruindo índice espacial da drenagem...</translation>
+        <translation type="unfinished">Contruindo índice espacial da drenagem...</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="125"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="149"/>
         <source>Relating contours with drainages...</source>
-        <translation type="obsolete">Relacionando curvas de nível com a drenagem...</translation>
+        <translation type="unfinished">Relacionando curvas de nível com a drenagem...</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="249"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="273"/>
         <source>Contour lines id=({ids}) touch each other and have different height values!</source>
-        <translation type="obsolete">Curvas de nível id=({ids}) se tocam e possuem diferentes valores de cota!</translation>
+        <translation type="unfinished">Curvas de nível id=({ids}) se tocam e possuem diferentes valores de cota!</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="253"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="277"/>
         <source>Contour lines id=({ids}) touch each other. Contour lines must touch itself or only one other.</source>
-        <translation type="obsolete">Curvas de nível id=({ids}) se tocam. Curvas de nível podem apenas se tocar ou tocar outra em um único ponto.</translation>
+        <translation type="unfinished">Curvas de nível id=({ids}) se tocam. Curvas de nível podem apenas se tocar ou tocar outra em um único ponto.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="314"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="338"/>
         <source>Contour id={c_id} intersects drainage id={d_id} in more than one point</source>
-        <translation type="obsolete">Curva de nível id={c_id} intersecta a drenagem id={d_id} em mais de um ponto</translation>
+        <translation type="unfinished">Curva de nível id={c_id} intersecta a drenagem id={d_id} em mais de um ponto</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="372"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="396"/>
         <source>Difference between contour with values {id1}                         and {id2} do not match equidistance {equidistance}.                        Probably one contour is                         missing or one of the contours have wrong value.
 </source>
-        <translation type="obsolete">Diferença de cotas das curvas {id1} e {id2} são diferentes da equidistância {equidistance}. É possível que estejam faltando curvas de nível ou uma delas possui valor de cota incorreto.
+        <translation type="unfinished">Diferença de cotas das curvas {id1} e {id2} são diferentes da equidistância {equidistance}. É possível que estejam faltando curvas de nível ou uma delas possui valor de cota incorreto.
 </translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="665"/>
+        <source>Feature from {input} with id {input_id} violates the following predicate with feature from {candidate} with id {candidate_id}: {predicate_text}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="731"/>
+        <source>Invalid predicate ({0}).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="775"/>
+        <source>feature ID {{fid_a}} from {layer_a} id not {pred} to {{size}} features of {layer_b}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="783"/>
+        <source>feature ID {{fid_a}} from {layer_a} {pred} {{size}} features of {layer_b}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="850"/>
+        <source>Layer not found on canvas.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="893"/>
+        <source>Checking rule &quot;{0}&quot;... [{1}/{2}]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="909"/>
+        <source>Rule &quot;{0}&quot; raised flags
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="915"/>
+        <source>Rule &quot;{0}&quot; did not raise any flags
+</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -17396,6 +19726,29 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>StringCsvToLayerListAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/stringCsvToLayerListAlgorithm.py" line="48"/>
+        <source>Comma separated Input Layer Names</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/stringCsvToLayerListAlgorithm.py" line="55"/>
+        <source>Multiple layer list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/stringCsvToLayerListAlgorithm.py" line="100"/>
+        <source>String CSV to Layer List Algorithm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/stringCsvToLayerListAlgorithm.py" line="107"/>
+        <source>Other Algorithms</source>
+        <translation type="unfinished">Outros Algoritmos</translation>
+    </message>
+</context>
+<context>
     <name>StyleManagerTool</name>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.ui" line="26"/>
@@ -17413,32 +19766,32 @@ Camada</translation>
         <translation>Recarregar lista de bancos de dados</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="70"/>
+        <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="72"/>
         <source>Select Database</source>
         <translation>Selecione o banco de dados</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="96"/>
         <source>Loading style {0}</source>
-        <translation>Carregando o estilo {0}</translation>
+        <translation type="obsolete">Carregando o estilo {0}</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="113"/>
+        <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="130"/>
         <source>Error setting style </source>
         <translation>Erro ao tentar carregar o estilo </translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="195"/>
+        <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="213"/>
         <source>Select Style</source>
         <translation>Selecione um estilo</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="154"/>
+        <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="171"/>
         <source>No available styles</source>
         <translation>Sem estilos disponíveis</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="179"/>
+        <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="196"/>
         <source>Feature only implemented for PostGIS and Spatialite</source>
         <translation>Funcionalidade implementada apenas para PostGIS e SpatiaLite</translation>
     </message>
@@ -17515,7 +19868,7 @@ Camada</translation>
         <translation>SpatiaLite</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/SelectionWidgets/tabDbSelectorWidget.py" line="92"/>
+        <location filename="../gui/CustomWidgets/SelectionWidgets/tabDbSelectorWidget.py" line="86"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -17525,7 +19878,7 @@ Camada</translation>
         <translation>Selecione um servidor!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/SelectionWidgets/tabDbSelectorWidget.py" line="92"/>
+        <location filename="../gui/CustomWidgets/SelectionWidgets/tabDbSelectorWidget.py" line="86"/>
         <source>Select a folder!</source>
         <translation>Selecione uma diretório!</translation>
     </message>
@@ -17538,11 +19891,6 @@ Camada</translation>
         <location filename="../gui/CustomWidgets/SelectionWidgets/tabDbSelectorWidget.py" line="62"/>
         <source>Select a path to save the Geopackage database</source>
         <translation>Selecione um diretório para salvar a base Geopackage</translation>
-    </message>
-    <message>
-        <location filename="../gui/CustomWidgets/SelectionWidgets/tabDbSelectorWidget.ui" line="64"/>
-        <source>Geopackage</source>
-        <translation></translation>
     </message>
 </context>
 <context>
@@ -17561,24 +19909,29 @@ Camada</translation>
 <context>
     <name>ToolBoxesGuiManager</name>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="53"/>
+        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="54"/>
         <source>Feature Classification Tool</source>
         <translation>Ferramenta de Classificação de Feição</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="55"/>
+        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="56"/>
         <source>Assign Contour Values</source>
         <translation>Linha Cotadora</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="57"/>
+        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="58"/>
         <source>View Code List Codes and Values</source>
         <translation>Visualizar Code List e Valores</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="59"/>
+        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="60"/>
         <source>Build Complex Structures</source>
         <translation>Construir Estruturas Complexas</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="52"/>
+        <source>Geospatial Data Quality Assurance Tool</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -17953,6 +20306,54 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>TopologicalLineConnectivityAdjustment</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalLineConnectivityAdjustmentAlgorithm.py" line="55"/>
+        <source>Linestring Layers</source>
+        <translation type="unfinished">Camadas do tipo linha</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalLineConnectivityAdjustmentAlgorithm.py" line="62"/>
+        <source>Process only selected features</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalLineConnectivityAdjustmentAlgorithm.py" line="68"/>
+        <source>Snap radius</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalLineConnectivityAdjustmentAlgorithm.py" line="97"/>
+        <source>Building unified layer...</source>
+        <translation type="unfinished">Construindo camada unificada...</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalLineConnectivityAdjustmentAlgorithm.py" line="107"/>
+        <source>Identifying dangles on {layer}...</source>
+        <translation type="unfinished">Identificando pontas soltas na camada {layer}...</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalLineConnectivityAdjustmentAlgorithm.py" line="114"/>
+        <source>Snapping layer {layer} to dangles...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalLineConnectivityAdjustmentAlgorithm.py" line="118"/>
+        <source>Updating original layers...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalLineConnectivityAdjustmentAlgorithm.py" line="142"/>
+        <source>Topological adjustment of the connectivity of lines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalLineConnectivityAdjustmentAlgorithm.py" line="149"/>
+        <source>Quality Assurance Tools (Network Processes)</source>
+        <translation type="unfinished">Ferramentas de Validação (Processos de Rede)</translation>
+    </message>
+</context>
+<context>
     <name>UnbuildEarthCoveragePolygonsProcess</name>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/unbuildEarthCoveragePolygonsProcess.py" line="101"/>
@@ -17968,6 +20369,64 @@ Camada</translation>
         <location filename="../core/ValidationTools/ValidationProcesses/unbuildEarthCoveragePolygonsProcess.py" line="103"/>
         <source>Running</source>
         <translation type="obsolete">Rodando</translation>
+    </message>
+</context>
+<context>
+    <name>UnbuildPolygonsAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/unbuildPolygonsAlgorithm.py" line="55"/>
+        <source>Polygon Layers</source>
+        <translation type="unfinished">Camadas do tipo polígono</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/unbuildPolygonsAlgorithm.py" line="62"/>
+        <source>Process only selected features</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/unbuildPolygonsAlgorithm.py" line="68"/>
+        <source>Line Constraint Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/unbuildPolygonsAlgorithm.py" line="76"/>
+        <source>Polygon Constraint Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/unbuildPolygonsAlgorithm.py" line="84"/>
+        <source>Geographic Boundary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/unbuildPolygonsAlgorithm.py" line="92"/>
+        <source>Output Center Points</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/unbuildPolygonsAlgorithm.py" line="98"/>
+        <source>Output Boundaries</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/unbuildPolygonsAlgorithm.py" line="127"/>
+        <source>Input polygon layers must not be in constraint polygon list.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/unbuildPolygonsAlgorithm.py" line="148"/>
+        <source>Building single polygon layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/unbuildPolygonsAlgorithm.py" line="212"/>
+        <source>Unbuild Polygons</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/unbuildPolygonsAlgorithm.py" line="219"/>
+        <source>Quality Assurance Tools (Manipulation Processes)</source>
+        <translation type="unfinished">Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
 </context>
 <context>
@@ -18024,7 +20483,7 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_config.ui" line="33"/>
         <source>Validation Configuration</source>
-        <translation>Configuração de Validação</translation>
+        <translation type="obsolete">Configuração de Validação</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_config.ui" line="46"/>
@@ -18094,7 +20553,60 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_config.ui" line="56"/>
         <source>Close</source>
-        <translation>Fechar</translation>
+        <translation type="obsolete">Fechar</translation>
+    </message>
+</context>
+<context>
+    <name>ValidationDockWidget</name>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="14"/>
+        <source>&amp;DSGTools: Geospatial Data Quality Assurance Toolbox</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="36"/>
+        <source>Adds a workflow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="57"/>
+        <source>Edits current selected workflow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="78"/>
+        <source>Removes current selected workflow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="105"/>
+        <source>Imports a workflow from a file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="135"/>
+        <source>Model Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="140"/>
+        <source>Status</source>
+        <translation type="unfinished">Estado</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="145"/>
+        <source>Progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="264"/>
+        <source>Run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui" line="290"/>
+        <source>Resume from last model</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -18102,17 +20614,17 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.ui" line="36"/>
         <source>Validation History</source>
-        <translation>Histórico de Validação</translation>
+        <translation type="obsolete">Histórico de Validação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.ui" line="86"/>
         <source>Close</source>
-        <translation>Fechar</translation>
+        <translation type="obsolete">Fechar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py" line="56"/>
         <source>Critical!</source>
-        <translation>Crítico!</translation>
+        <translation type="obsolete">Crítico!</translation>
     </message>
     <message>
         <location filename="../ValidationTools/validation_history.py" line="50"/>
@@ -18122,37 +20634,37 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py" line="48"/>
         <source>Select a username...</source>
-        <translation>Selecione um nome de usuário...</translation>
+        <translation type="obsolete">Selecione um nome de usuário...</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py" line="49"/>
         <source>Processes with no user set</source>
-        <translation>Processos sem usuário identificado</translation>
+        <translation type="obsolete">Processos sem usuário identificado</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py" line="50"/>
         <source>Unable to get database username.</source>
-        <translation>Não foi possível obter o usuário do banco de dados.</translation>
+        <translation type="obsolete">Não foi possível obter o usuário do banco de dados.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py" line="56"/>
         <source>A problem occurred! Check log for details. (Did you select a database?)</source>
-        <translation>Problema ao tentar obter a versão do banco de dados! Por favor, verifique o log para mais detalhes. (escolheu um banco?)</translation>
+        <translation type="obsolete">Problema ao tentar obter a versão do banco de dados! Por favor, verifique o log para mais detalhes. (escolheu um banco?)</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py" line="120"/>
         <source>Database username:</source>
-        <translation>Usuário do banco:</translation>
+        <translation type="obsolete">Usuário do banco:</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py" line="142"/>
         <source>{0}</source>
-        <translation>{0}</translation>
+        <translation type="obsolete">{0}</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py" line="149"/>
         <source>Database username: {0}</source>
-        <translation>Usuário do banco de dados: {0}</translation>
+        <translation type="obsolete">Usuário do banco de dados: {0}</translation>
     </message>
 </context>
 <context>
@@ -18362,7 +20874,7 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="37"/>
         <source>Processes</source>
-        <translation type="unfinished">Processos</translation>
+        <translation type="obsolete">Processos</translation>
     </message>
     <message>
         <location filename="../ValidationTools/validation_toolbox.ui" line="31"/>
@@ -18377,12 +20889,12 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="231"/>
         <source>Open History</source>
-        <translation type="unfinished">Abrir Histórico</translation>
+        <translation type="obsolete">Abrir Histórico</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="143"/>
         <source>Run Process</source>
-        <translation type="unfinished">Rodar Processo</translation>
+        <translation type="obsolete">Rodar Processo</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.ui" line="62"/>
@@ -18412,7 +20924,7 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="102"/>
         <source>#</source>
-        <translation type="unfinished">#</translation>
+        <translation type="obsolete">#</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.ui" line="113"/>
@@ -18421,13 +20933,13 @@ Não foi possível obter o tempo total gasto.</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.ui" line="118"/>
-        <source>Situação</source>
+        <source>Situa&#xe7;&#xe3;o</source>
         <translation type="obsolete">Situação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="158"/>
         <source>Flags</source>
-        <translation type="unfinished">Flags</translation>
+        <translation type="obsolete">Flags</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.ui" line="129"/>
@@ -18452,7 +20964,7 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="97"/>
         <source>Zoom to flag</source>
-        <translation>Zoom para a flag</translation>
+        <translation type="obsolete">Zoom para a flag</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.py" line="81"/>
@@ -18467,33 +20979,33 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="414"/>
         <source>Critical!</source>
-        <translation>Crítico!</translation>
+        <translation type="obsolete">Crítico!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="278"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
+        <translation type="obsolete">Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="285"/>
         <source>Process error. Check log for details.</source>
-        <translation>Erro de processamento! Verifique o log para mais detalhes.</translation>
+        <translation type="obsolete">Erro de processamento! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="289"/>
         <source>Success!</source>
-        <translation>Sucesso!</translation>
+        <translation type="obsolete">Sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="289"/>
         <source>Process successfully executed!</source>
-        <translation>Processo executado com sucesso!</translation>
+        <translation type="obsolete">Processo executado com sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="363"/>
         <source>Database not loaded or a problem occurred.
 </source>
-        <translation>Banco de dados não carregado ou um problema ocorreu.
+        <translation type="obsolete">Banco de dados não carregado ou um problema ocorreu.
 </translation>
     </message>
     <message>
@@ -18504,7 +21016,7 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="112"/>
         <source>Status</source>
-        <translation type="unfinished">Estado</translation>
+        <translation type="obsolete">Estado</translation>
     </message>
     <message>
         <location filename="../ValidationTools/validation_toolbox.ui" line="186"/>
@@ -18519,17 +21031,17 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="203"/>
         <source>Error loading db: </source>
-        <translation>Erro carregando db: </translation>
+        <translation type="obsolete">Erro carregando db: </translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="287"/>
         <source>Information!</source>
-        <translation>Informação!</translation>
+        <translation type="obsolete">Informação!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="287"/>
         <source>Process canceled by user!</source>
-        <translation>Processo cancelado pelo usuário!</translation>
+        <translation type="obsolete">Processo cancelado pelo usuário!</translation>
     </message>
     <message>
         <location filename="../ValidationTools/validation_toolbox.ui" line="14"/>
@@ -18544,17 +21056,17 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="271"/>
         <source>Select a process to run!</source>
-        <translation>Selecione um processo para executar!</translation>
+        <translation type="obsolete">Selecione um processo para executar!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="74"/>
         <source>Process Name</source>
-        <translation>Nome do Processo</translation>
+        <translation type="obsolete">Nome do Processo</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="74"/>
         <source>Class Name</source>
-        <translation>Nome da classe</translation>
+        <translation type="obsolete">Nome da classe</translation>
     </message>
     <message>
         <location filename="../ValidationTools/validation_toolbox.ui" line="146"/>
@@ -18564,96 +21076,96 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="220"/>
         <source>Clear All Flags</source>
-        <translation type="unfinished">Limpar Todas as Flags</translation>
+        <translation type="obsolete">Limpar Todas as Flags</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="391"/>
         <source>Question</source>
-        <translation>Pergunta</translation>
+        <translation type="obsolete">Pergunta</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="373"/>
         <source>Do you really want to clear all flags?</source>
-        <translation>Você realmente deseja limpar todas as flags?</translation>
+        <translation type="obsolete">Você realmente deseja limpar todas as flags?</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="414"/>
         <source>Flags not deleted.
 </source>
-        <translation>Flags não apagadas.
+        <translation type="obsolete">Flags não apagadas.
 </translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="123"/>
         <source>Re-Run Last Process</source>
-        <translation type="unfinished">Re-Rodar Último Processo</translation>
+        <translation type="obsolete">Re-Rodar Último Processo</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="209"/>
         <source>Clear Filtered Flags</source>
-        <translation type="unfinished">Limpar flags filtradas</translation>
+        <translation type="obsolete">Limpar flags filtradas</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="98"/>
         <source>Remove flag</source>
-        <translation>Remover flag</translation>
+        <translation type="obsolete">Remover flag</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="242"/>
         <source>Select a database to run process!</source>
-        <translation>Selecione um banco de dados para executar o processo!</translation>
+        <translation type="obsolete">Selecione um banco de dados para executar o processo!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="259"/>
         <source>No previous process run this session.</source>
-        <translation>Não execuções anteriores deste processo durante esta sessão.</translation>
+        <translation type="obsolete">Não execuções anteriores deste processo durante esta sessão.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="391"/>
         <source>Do you really want to clear those flags?</source>
-        <translation>Você realmente deseja apagar estas flags?</translation>
+        <translation type="obsolete">Você realmente deseja apagar estas flags?</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="406"/>
         <source>Flags not deleted as no Process nor Class was chosen.
 </source>
-        <translation>Flags não deletadas pois nenhum processo ou classe foram escolhidos.
+        <translation type="obsolete">Flags não deletadas pois nenhum processo ou classe foram escolhidos.
 </translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="121"/>
         <source>No flags were selected!</source>
-        <translation>Nenhuma flag foi selecionada!</translation>
+        <translation type="obsolete">Nenhuma flag foi selecionada!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="14"/>
         <source>&amp;DSGTools: Validation Toolbox</source>
-        <translation type="unfinished">&amp;DSGTools: Caixa de Ferramentas de Validação</translation>
+        <translation type="obsolete">&amp;DSGTools: Caixa de Ferramentas de Validação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="71"/>
         <source>Validation Workflow</source>
-        <translation type="unfinished">Fluxo de Trabalho de Validação</translation>
+        <translation type="obsolete">Fluxo de Trabalho de Validação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="107"/>
         <source>Task</source>
-        <translation type="unfinished">Tarefa</translation>
+        <translation type="obsolete">Tarefa</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="126"/>
         <source>Re-Run Workflow</source>
-        <translation type="unfinished">Rodar Novamente Fluxo de Trabalho</translation>
+        <translation type="obsolete">Rodar Novamente Fluxo de Trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="146"/>
         <source>Run Workflow</source>
-        <translation type="unfinished">Executar Fluxo de Trabalho</translation>
+        <translation type="obsolete">Executar Fluxo de Trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="78"/>
         <source>Perform database validation (quality assurance)</source>
-        <translation>Executar validação de banco de dados (verificação de qualidade)</translation>
+        <translation type="obsolete">Executar validação de banco de dados (verificação de qualidade)</translation>
     </message>
 </context>
 <context>
@@ -18682,64 +21194,64 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="20"/>
         <source>Create Validation Workspace</source>
-        <translation>Criar Workspace de Validação</translation>
+        <translation type="obsolete">Criar Workspace de Validação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="28"/>
         <source>Workflow Name</source>
-        <translation>Nome do Fluxo de Trabalho</translation>
+        <translation type="obsolete">Nome do Fluxo de Trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="35"/>
         <source>Enter a workflow name</source>
-        <translation>Insira o nome do fluxo de trabalho</translation>
+        <translation type="obsolete">Insira o nome do fluxo de trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="42"/>
         <source>Author Name</source>
-        <translation>Nome do Autor</translation>
+        <translation type="obsolete">Nome do Autor</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="49"/>
         <source>Enter a workflow author name</source>
-        <translation>Insira o nome do autor do fluxo de trabalho</translation>
+        <translation type="obsolete">Insira o nome do autor do fluxo de trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="56"/>
         <source>Workflow Version</source>
-        <translation>Versão do fluxo
+        <translation type="obsolete">Versão do fluxo
 de trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="63"/>
         <source>Enter a workflow version</source>
-        <translation>Insira a versão do fluxo de trabalho</translation>
+        <translation type="obsolete">Insira a versão do fluxo de trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="70"/>
         <source>Workflow Version Date</source>
-        <translation>Data da versão do
+        <translation type="obsolete">Data da versão do
 fluxo de trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="77"/>
         <source>dd/MM/yyyy</source>
-        <translation>dd/MM/yyyy</translation>
+        <translation type="obsolete">dd/MM/yyyy</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.py" line="57"/>
         <source>Critical!</source>
-        <translation>Crítico!</translation>
+        <translation type="obsolete">Crítico!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.py" line="57"/>
         <source>Errors on interface! Check log for details!</source>
-        <translation>Erros na interface! Verifique o log para mais detalhes!</translation>
+        <translation type="obsolete">Erros na interface! Verifique o log para mais detalhes!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.py" line="71"/>
         <source>Invalid tag for attributeRulesEditor!</source>
-        <translation>Tag inválida para o editor de regras de atributo!</translation>
+        <translation type="obsolete">Tag inválida para o editor de regras de atributo!</translation>
     </message>
 </context>
 <context>
@@ -19030,6 +21542,219 @@ fluxo de trabalho</translation>
         <location filename="../gui/ServerTools/viewServers.py" line="330"/>
         <source>Select a connection before closing!</source>
         <translation>Selecione uma conexão antes de fechar!</translation>
+    </message>
+</context>
+<context>
+    <name>WorkflowSetupDialog</name>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.ui" line="14"/>
+        <source>DSGTools: Workflow Setup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.ui" line="20"/>
+        <source>Ok</source>
+        <translation type="unfinished">Ok</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.ui" line="27"/>
+        <source>Workflow Metadata</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.ui" line="35"/>
+        <source>Workflow version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.ui" line="42"/>
+        <source>Author name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.ui" line="49"/>
+        <source>Enter a workflow author name</source>
+        <translation type="unfinished">Insira o nome do autor do fluxo de trabalho</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.ui" line="56"/>
+        <source>Workflow name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.ui" line="63"/>
+        <source>Enter a workflow version</source>
+        <translation type="unfinished">Insira a versão do fluxo de trabalho</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.ui" line="70"/>
+        <source>Enter a workflow name</source>
+        <translation type="unfinished">Insira o nome do fluxo de trabalho</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.ui" line="95"/>
+        <source>Export current model to a JSON file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.ui" line="109"/>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.ui" line="116"/>
+        <source>Import workflow from a JSON file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="53"/>
+        <source>Halt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="54"/>
+        <source>Warn</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="55"/>
+        <source>Ignore</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="75"/>
+        <source>Model name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="75"/>
+        <source>Model source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="75"/>
+        <source>On flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="75"/>
+        <source>Load output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="153"/>
+        <source>Confirm Action</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="177"/>
+        <source>Set a name for the model...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="193"/>
+        <source>Select a model...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="195"/>
+        <source>Select a QGIS Processing model file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="196"/>
+        <source>Select a QGIS Processing model (*.model *.model3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="361"/>
+        <source>Model &apos;{0}&apos; is already imported would you like to overwrite it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="389"/>
+        <source>Missing model&apos;s name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="391"/>
+        <source>Model is empty or file was not found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="417"/>
+        <source>Check if no model name is repeated.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="451"/>
+        <source>Workflow&apos;s name needs to be filled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="453"/>
+        <source>Workflow&apos;s author needs to be filled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="455"/>
+        <source>Workflow&apos;s version needs to be filled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="574"/>
+        <source>Invalid workflow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="482"/>
+        <source>Export DSGTools Workflow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="482"/>
+        <source>DSGTools Workflow (*.workflow)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="546"/>
+        <source>Unable to export workflow to &apos;{fp}&apos; ({error}).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="505"/>
+        <source>Workflow exported to {fp}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="505"/>
+        <source>Unable to export workflow to &apos;{fp}&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="508"/>
+        <source>Workflow exportation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="535"/>
+        <source>Select a Workflow file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="535"/>
+        <source>DSGTools Workflow (*.workflow *.json)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="555"/>
+        <source>Success</source>
+        <translation type="unfinished">Sucesso</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="555"/>
+        <source>Workflow &apos;{fp}&apos; imported!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -28,7 +28,7 @@ from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtGui import QColor, QPalette
 from qgis.PyQt.QtWidgets import QDockWidget, QPushButton
 
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.buttonPropWidget import ButtonPropWidget
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.buttonSetupWidget import ButtonSetupWidget
 from DsgTools.gui.ProductionTools.Toolboxes.FieldToolBox.customButtonSetup import CustomButtonSetup
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -122,24 +122,22 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         Sets GUI to a new profile.
         """
-        # check if it comes from signal emition
-        if profile not in self.buttonProfiles():
+        if isinstance(profile, str) and profile in self.buttonProfiles():
+            self.setupComboBox.setCurrentText(self.currentButtonProfileName())
+        self.clearTabs()
+        if self.currentButtonProfile() is None:
             # raise a message and do nothing
             return
-        else:
-            self.setupComboBox.setCurrentText(self.currentButtonProfileName())
-        setup = self.currentButtonProfile()
-        self.clearTabs()
         self.createTabs()
         # test later if remove research tab is necessary - but it should, at
         # least be cleared
 
-    @pyqtSlot(bool, name="on_buttonPropsPushButton_clicked")
+    @pyqtSlot(bool, name="on_editSetupPushButton_clicked")
     def setupCurrentButton(self):
         """
         Opens setup form.
         """
-        dlg = ButtonPropWidget()
+        dlg = ButtonSetupWidget()
         ret = dlg.exec_()
         if ret:
             pass

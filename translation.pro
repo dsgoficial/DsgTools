@@ -18,18 +18,33 @@
 					core/DbModels/SpatiaLite/__init__.py \
 					core/DbModels/Geopackage/__init__.py \
 					core/DbModels/__init__.py \
+					core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py \
+					core/DSGToolsProcessingAlgs/Models/qualityAssuranceWorkflow.py \
+					core/DSGToolsProcessingAlgs/Models/__init__.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/raiseFlagsAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/pecCalculatorAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/stringCsvToLayerListAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/fileInventoryAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/singleOutputUnitTestAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/batchRunAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/exportToMemoryLayer.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/updateOriginalLayerAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/ruleStatisticsAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/convertLayer2LayerAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/__init__.py \
+					core/DSGToolsProcessingAlgs/Algs/EnvironmentSetterAlgs/setFreeHandToolParametersAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/EnvironmentSetterAlgs/__init__.py \
+					core/DSGToolsProcessingAlgs/Algs/EditingAlgs/createEditingGridAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/EditingAlgs/__init__.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanLinesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeDuplicatedGeometriesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOverlapsAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/unbuildPolygonsAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/snapLayerOnLayerAndUpdateAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/deaggregateGeometriesAlgorithm.py \
@@ -39,10 +54,12 @@
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeSmallLinesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/spatialRulesCheckerAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsBetweenLayersAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeSmallPolygonsAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyNetworkDirectioningAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsBetweenLayersAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/snapToGridAndUpdateAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py \
@@ -52,9 +69,13 @@
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallLinesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeEmptyAndUpdateAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalLineConnectivityAdjustmentAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallPolygonsAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnIntersectionsAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnSharedEdgesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasSimplificationAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyAndFixInvalidGeometriesAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyVertexNearEdgesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeDuplicatedFeaturesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py \
@@ -63,11 +84,26 @@
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyContourLineOutOfThresholdAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/createNetworkNodesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongBuildingAnglesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesBetweenLayersAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/__init__.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/dissolvePolygonsWithSameAttributesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/__init__.py \
+					core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/applyStylesFromDatabaseToLayersAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignCustomFormAndFormatRulesToLayersAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignMeasureColumnToLayersAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/sapLoadLayersAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignBoundingBoxFilterToLayersAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/groupLayersAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadNonSpatialLayersFromPostgreSQLAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignAliasesToLayersAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/buildJoinsOnLayersAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignValueMapToLayersAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/__init__.py \
+					core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignFilterToLayersAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/__init__.py \
 					core/DSGToolsProcessingAlgs/dsgtoolsProcessingAlgorithmProvider.py \
 					core/DSGToolsProcessingAlgs/__init__.py \
@@ -76,6 +112,18 @@
 					core/Utils/FrameTools/map_index.py \
 					core/Utils/FrameTools/__init__.py \
 					core/Utils/__init__.py \
+					core/Factories/DbCustomizationFactory/newDomainTableCustomization.py \
+					core/Factories/DbCustomizationFactory/defaultCustomization.py \
+					core/Factories/DbCustomizationFactory/nullityCustomization.py \
+					core/Factories/DbCustomizationFactory/codeNameCustomization.py \
+					core/Factories/DbCustomizationFactory/classCustomization.py \
+					core/Factories/DbCustomizationFactory/dbCustomizationFactory.py \
+					core/Factories/DbCustomizationFactory/domainValueCustomization.py \
+					core/Factories/DbCustomizationFactory/dbCustomization.py \
+					core/Factories/DbCustomizationFactory/attributeCustomization.py \
+					core/Factories/DbCustomizationFactory/filterCustomization.py \
+					core/Factories/DbCustomizationFactory/newDomainValueCustomization.py \
+					core/Factories/DbCustomizationFactory/__init__.py \
 					core/Factories/ThreadFactory/threadFactory.py \
 					core/Factories/ThreadFactory/genericThread.py \
 					core/Factories/ThreadFactory/inventoryThread.py \
@@ -96,6 +144,7 @@
 					core/Factories/DbFactory/abstractDb.py \
 					core/Factories/DbFactory/__init__.py \
 					core/Factories/SqlFactory/geopackageSqlGenerator.py \
+					core/Factories/SqlFactory/postgisSqlGenerator.py \
 					core/Factories/SqlFactory/spatialiteSqlGenerator.py \
 					core/Factories/SqlFactory/sqlGenerator.py \
 					core/Factories/SqlFactory/__init__.py \
@@ -108,16 +157,28 @@
 					core/Factories/LayerLoaderFactory/edgvLayerLoader.py \
 					core/Factories/LayerLoaderFactory/__init__.py \
 					core/Factories/LayerLoaderFactory/layerLoaderFactory.py \
+					core/LayerTools/CustomFormTools/formsCustom/__init__.py \
+					core/LayerTools/CustomFormTools/customInitCodeGenerator.py \
+					core/LayerTools/CustomFormTools/customFormGenerator.py \
+					core/LayerTools/CustomFormTools/__init__.py \
 					core/NetworkTools/BDGExRequestHandler.py \
 					core/NetworkTools/__init__.py \
+					core/Qmls/qgis_37_impl_2/edgv_3_pro/__init__.py \
+					core/Qmls/qgis_37/edgv_3_pro/__init__.py \
 					core/Qmls/qgis_26/edgv_3_pro/__init__.py \
 					core/Qmls/qgis_26/edgv_213_pro/__init__.py \
 					core/GeometricTools/featureHandler.py \
 					core/GeometricTools/attributeHandler.py \
 					core/GeometricTools/layerHandler.py \
+					core/GeometricTools/spatialRelationsHandler.py \
 					core/GeometricTools/geometryHandler.py \
 					core/GeometricTools/networkHandler.py \
 					core/GeometricTools/__init__.py \
+					core/EditingTools/productExporter.py \
+					core/EditingTools/enviromentSetter.py \
+					core/EditingTools/gridAndLabelCreator.py \
+					core/EditingTools/editingHandler.py \
+					core/EditingTools/__init__.py \
 					core/Misc/QmlTools/qmlParser.py \
 					core/Misc/QmlTools/qml_creator.py \
 					core/Misc/QmlTools/__init__.py \
@@ -132,8 +193,6 @@
 					core/dsgEnums.py \
 					core/__init__.py \
 					resources.py \
-					tests/test_ValidationAlgorithms.py \
-					tests/__init__.py \
 					dsg_tools.py \
 					plugin_upload.py \
 					gui/AboutAndFurtherInfo/aboutdialog.py \
@@ -174,10 +233,6 @@
 					gui/guiManager.py \
 					gui/LayerTools/loadAuxStruct.py \
 					gui/LayerTools/layerToolsGuiManager.py \
-					gui/LayerTools/CustomFormTools/generatorCustomForm.py \
-					gui/LayerTools/CustomFormTools/formsCustom/__init__.py \
-					gui/LayerTools/CustomFormTools/generatorCustomInitCode.py \
-					gui/LayerTools/CustomFormTools/__init__.py \
 					gui/LayerTools/CreateFrameTool/ui_create_inom_dialog.py \
 					gui/LayerTools/CreateFrameTool/__init__.py \
 					gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py \
@@ -191,6 +246,7 @@
 					gui/ProductionTools/MapTools/FreeHandTool/models/acquisitionFree.py \
 					gui/ProductionTools/MapTools/FreeHandTool/models/__init__.py \
 					gui/ProductionTools/MapTools/FreeHandTool/__init__.py \
+					gui/ProductionTools/MapTools/FreeHandTool/freeHandReshape.py \
 					gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py \
 					gui/ProductionTools/MapTools/GenericSelectionTool/__init__.py \
 					gui/ProductionTools/MapTools/Acquisition/toolTip.py \
@@ -201,9 +257,14 @@
 					gui/ProductionTools/MapTools/Acquisition/distanceToolTip.py \
 					gui/ProductionTools/MapTools/Acquisition/__init__.py \
 					gui/ProductionTools/MapTools/mapToolsGuiManager.py \
+					gui/ProductionTools/MapTools/ShortcutTool/shortcutTool.py \
+					gui/ProductionTools/MapTools/ShortcutTool/__init__.py \
+					gui/ProductionTools/MapTools/LabelTogglingTool/labelTogglingTool.py \
+					gui/ProductionTools/MapTools/LabelTogglingTool/__init__.py \
 					gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py \
 					gui/ProductionTools/MapTools/FlipLineTool/__init__.py \
 					gui/ProductionTools/MapTools/__init__.py \
+					gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py \
 					gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py \
 					gui/ProductionTools/Toolbars/InspectFeatures/__init__.py \
 					gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py \
@@ -220,9 +281,14 @@
 					gui/ProductionTools/Toolbars/DsgRasterInfoTool/__init__.py \
 					gui/ProductionTools/Toolbars/DsgRasterInfoTool/assignBandValueTool.py \
 					gui/ProductionTools/Toolbars/__init__.py \
+					gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py \
+					gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py \
+					gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/__init__.py \
 					gui/ProductionTools/Toolboxes/FieldToolBox/acquisition_tools.py \
 					gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py \
 					gui/ProductionTools/Toolboxes/FieldToolBox/FieldSetupConfigs/__init__.py \
+					gui/ProductionTools/Toolboxes/FieldToolBox/customButtonSetup.py \
+					gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.py \
 					gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py \
 					gui/ProductionTools/Toolboxes/FieldToolBox/__init__.py \
 					gui/ProductionTools/Toolboxes/AttributeTools/__init__.py \
@@ -235,16 +301,6 @@
 					gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py \
 					gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py \
 					gui/ProductionTools/Toolboxes/ComplexTools/__init__.py \
-					gui/ProductionTools/Toolboxes/ValidationToolbox/ValidationRules/__init__.py \
-					gui/ProductionTools/Toolboxes/ValidationToolbox/attributeRulesEditor.py \
-					gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.py \
-					gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py \
-					gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py \
-					gui/ProductionTools/Toolboxes/ValidationToolbox/validation_config.py \
-					gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py \
-					gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.py \
-					gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py \
-					gui/ProductionTools/Toolboxes/ValidationToolbox/__init__.py \
 					gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py \
 					gui/ProductionTools/Toolboxes/__init__.py \
 					gui/ProductionTools/__init__.py \
@@ -302,10 +358,9 @@
 					gui/CustomWidgets/OrderedPropertyWidgets/orderedAttributeRuleTypesWidget.py \
 					gui/CustomWidgets/OrderedPropertyWidgets/orderedValidationProcessesWidget.py \
 					gui/CustomWidgets/OrderedPropertyWidgets/orderedAttributeRulesWidget.py \
+					gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.py \
 					gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.py \
-					gui/CustomWidgets/OrderedPropertyWidgets/orderedHierarchicalSnapLayerWidget.py \
 					gui/CustomWidgets/OrderedPropertyWidgets/orderedRecursiveSnapWidget.py \
-					gui/CustomWidgets/OrderedPropertyWidgets/orderedValidationWorkflowItemsWidget.py \
 					gui/CustomWidgets/OrderedPropertyWidgets/__init__.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/geopackageWidget.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/newPostgisWidget.py \
@@ -359,6 +414,7 @@
 					gui/CustomWidgets/__init__.py \
 					gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/progressWidget.py \
+					gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/genericDialogLayout.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/snapWithLayerChooserWidget.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/dsgCustomComboBox.py \
@@ -370,9 +426,12 @@
 					gui/CustomWidgets/AdvancedInterfaceWidgets/auxLayerSelector.py \
 					gui/CustomWidgets/AdvancedInterfaceWidgets/__init__.py \
 					gui/ProcessingUI/fmeManagerWrapper.py \
+					gui/ProcessingUI/enforceSpatialRuleWrapper.py \
 					gui/ProcessingUI/attributeRulesWrapper.py \
+					gui/ProcessingUI/fontWidgetWrapper.py \
 					gui/ProcessingUI/snapHierarchyWrapper.py \
 					gui/ProcessingUI/__init__.py \
+					gui/ProcessingUI/colorWidgetWrapper.py \
 					gui/__init__.py \
 					gui/ServerTools/serverDBExplorer.py \
 					gui/ServerTools/ViewServersGui/viewServersGui.py \
@@ -390,7 +449,9 @@
 					gui/ServerTools/__init__.py \
 					__init__.py
 
- FORMS         =	gui/AboutAndFurtherInfo/ui_about.ui \
+
+ FORMS         =	gui/AboutAndFurtherInfo/ui_about_.ui \
+					gui/AboutAndFurtherInfo/ui_about.ui \
 					gui/AboutAndFurtherInfo/Options/options.ui \
 					gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.ui \
 					gui/DatabaseTools/DbTools/BatchDbCreator/batchDbCreator.ui \
@@ -416,24 +477,22 @@
 					gui/LayerTools/load_by_class_base.ui \
 					gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui \
 					gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.ui \
+					gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.ui \
 					gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.ui \
 					gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.ui \
 					gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.ui \
 					gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.ui \
 					gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.ui \
+					gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui \
+					gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.ui \
 					gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.ui \
 					gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui \
+					gui/ProductionTools/Toolboxes/FieldToolBox/customFeatureTool.ui \
 					gui/ProductionTools/Toolboxes/AttributeTools/code_list.ui \
 					gui/ProductionTools/Toolboxes/ContourTool/contour_value.ui \
 					gui/ProductionTools/Toolboxes/ContourTool/calc_contour.ui \
 					gui/ProductionTools/Toolboxes/ComplexTools/complexWindow_base.ui \
 					gui/ProductionTools/Toolboxes/ComplexTools/ui_manageComplex.ui \
-					gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui \
-					gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui \
-					gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui \
-					gui/ProductionTools/Toolboxes/ValidationToolbox/validation_config.ui \
-					gui/ProductionTools/Toolboxes/ValidationToolbox/attributeRulesEditor.ui \
-					gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.ui \
 					gui/Misc/ToolboxTools/models_and_scripts_installer.ui \
 					gui/Misc/InventoryTools/ui_inventoryTools.ui \
 					gui/Misc/PostgisCustomization/createDatabaseCustomization.ui \
@@ -464,6 +523,7 @@
 					gui/CustomWidgets/ValidationWidgets/validationProcessWidget.ui \
 					gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.ui \
 					gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.ui \
+					gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.ui \
 					gui/CustomWidgets/DatabaseConversionWidgets/filterDialog.ui \
 					gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.ui \
 					gui/CustomWidgets/DatabaseConversionWidgets/datasourceInfoTable.ui \
@@ -489,6 +549,7 @@
 					gui/CustomWidgets/SelectionWidgets/datasourceSelectionWidget.ui \
 					gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.ui \
 					gui/CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.ui \
+					gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.ui \
 					gui/CustomWidgets/BasicInterfaceWidgets/snapWithLayerChooserWidget.ui \
 					gui/CustomWidgets/BasicInterfaceWidgets/snapChooserWidget.ui \
 					gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui \
@@ -503,6 +564,6 @@
 					gui/ServerTools/batchDbManager.ui \
 					gui/ServerTools/ui_serverConfigurator.ui
 
- TRANSLATIONS    = i18n/DsgTools_pt.ts
+TRANSLATIONS   =	i18n/DsgTools_pt.ts
 
 RESOURCES += resources.qrc
