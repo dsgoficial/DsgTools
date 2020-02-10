@@ -31,7 +31,7 @@ from qgis.PyQt.QtSql import QSqlQuery
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QMessageBox, QRadioButton
 
-from DsgTools.gui.ProductionTools.Toolboxes.FieldToolBox.customButtonSetup import CustomButtonSetup, CustomFeatureButton
+from DsgTools.gui.ProductionTools.Toolboxes.FieldToolBox.customButtonSetup import CustomButtonSetup
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'buttonSetupWidget.ui'))
@@ -46,5 +46,34 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         super(ButtonSetupWidget, self).__init__(parent)
         self.setupUi(self)
+        self.orderedTableWidget.setHeaders({
+            0: {
+                "header" : self.tr("Buttons"),
+                "type" : "widget",
+                "widget" : self.newButton,
+                "setter" : "setProperties",
+                "getter" : "properties"
+            }
+        })
+        self.orderedTableWidget.setSectionResizeMode(0, "stretch")
         self.textEdit.setPlaceholderText(
             self.tr("Insert a short description for current button setup..."))
+        self.setup = buttonSetup or CustomButtonSetup()
+
+    def newButton(self):
+        """
+        Generates a new button, adds it to buttons manager object and retrieve
+        its widget.
+        :return: (QPushButton) widget associated with a new instance of button.
+        """
+        b = self.setup.newButton()
+        self.buttonComboBox.addItem(b.name())
+        self.setCurrentButton(b)
+        return b.widget()
+
+    def setCurrentButton(self, button):
+        """
+        Sets button properties to the GUI.
+        :param button:  (CustomFeatureButton) button to be set to the GUI.
+        """
+        pass

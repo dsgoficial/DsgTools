@@ -711,6 +711,20 @@ class CustomButtonSetup(QObject):
         """
         return list(self._buttons.keys())
 
+    def newButton(self):
+        """
+        Creates a new button and sets it to the setup.
+        :return: (CustomFeatureButton) created button.
+        """
+        b = CustomFeatureButton()
+        baseName = b.name()
+        i = 0
+        while b.name() in self.buttonNames():
+            i += 1
+            b.setName("{0} {1}".format(baseName, i))
+        self.addButton(b.properties())
+        return b
+
     def widgets(self, newInstance=False):
         """
         Retrieves a map of all button widgets of registered buttons.

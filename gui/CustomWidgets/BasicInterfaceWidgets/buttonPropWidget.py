@@ -26,28 +26,51 @@ import os
 from qgis.core import QgsMessageLog
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtSql import QSqlQuery
+from qgis.PyQt.QtGui import QIcon, QColor
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QMessageBox, QRadioButton
+from qgis.PyQt.QtWidgets import QWidget, QFileDialog, QMessageBox, QRadioButton
 
 from DsgTools.gui.ProductionTools.Toolboxes.FieldToolBox.customButtonSetup import CustomButtonSetup, CustomFeatureButton
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'buttonPropWidget.ui'))
 
-class ButtonPropWidget(QDialog, FORM_CLASS):
-    def __init__(self, parent=None, buttonSetup=None):
+class ButtonPropWidget(QWidget, FORM_CLASS):
+    def __init__(self, parent=None, button=None):
         """
         Class constructor.
         :param parent: (QtWidgets.*) any widget that 'contains' this tool.
-        :param buttonSetup: (CustomButtonSetup) object that handles all
-                            buttons displayed and configured through this GUI.
+        :param buttonProps: (CustomFeatureButton) button to be managed.
         """
         super(ButtonPropWidget, self).__init__(parent)
         self.setupUi(self)
-        # self._buttonSetup = buttonSetup or CustomButtonSetup()
-        # self.refresh()
+        self.button = button or CustomFeatureButton()
+        self.fillToolComboBox()
+
+    def fillToolComboBox(self):
+        """
+        Sets a up available feature extraction tool to GUI.
+        """
+        self.toolComboBox.clear()
+        # tools = {
+        #     "default": self.tr("QGIS default feature extraction tool"),
+        #     "freeHand": self.("DSGTools: Free Hand"),
+        #     "circle": self.("QGIS Circle extraction tool"),
+        #     "rightAngle": self.("DSGTools: Right Degree Angle Digitizing")
+        # }
+        tools = {
+            self.tr("QGIS default feature extraction tool"): QIcon(""),
+            self.tr("DSGTools: Free Hand Acquisition"): \
+                QIcon(':/plugins/DsgTools/icons/free_hand.png'),
+            self.tr("QGIS Circle extraction tool"): \
+                QIcon(':/plugins/DsgTools/icons/circle.png'),
+            self.tr("DSGTools: Right Degree Angle Digitizing"): \
+                QIcon(':/plugins/DsgTools/icons/home.png')
+        }
+        for idx, (tool, icon) in enumerate(tools.items()):
+            self.toolComboBox.insertItem(idx, tool)
+            if idx != 0:
+                self.toolComboBox.setItemIcon(idx, icon)
 
     # def setup(self):
     #     """
