@@ -29,7 +29,7 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtSql import QSqlQuery
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QMessageBox, QRadioButton
+from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QMessageBox, QRadioButton, QHeaderView
 
 from DsgTools.gui.ProductionTools.Toolboxes.FieldToolBox.customButtonSetup import CustomButtonSetup
 
@@ -55,7 +55,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
                 "getter" : "properties"
             }
         })
-        self.orderedTableWidget.setSectionResizeMode(0, "stretch")
+        self.orderedTableWidget.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
         self.textEdit.setPlaceholderText(
             self.tr("Insert a short description for current button setup..."))
         self.setup = buttonSetup or CustomButtonSetup()
