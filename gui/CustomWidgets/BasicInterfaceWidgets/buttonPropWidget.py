@@ -29,6 +29,7 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QIcon, QColor, QKeySequence
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtWidgets import (QWidget,
+                                 QCheckBox,
                                  QFileDialog,
                                  QMessageBox,
                                  QRadioButton,
@@ -80,12 +81,6 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             self.toolComboBox.insertItem(idx, tool)
             if idx != 0:
                 self.toolComboBox.setItemIcon(idx, icon)
-
-    # def clear(self):
-    #     """
-    #     Clears all data from interface.
-    #     """
-    #     pass
 
     def setButtonName(self, name):
         """
@@ -193,6 +188,13 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         pass
 
+    def readAttributeMap(self):
+        """
+        Reads the field map data and set it to a button attribute map format.
+        :return: (dict) read attribute map. 
+        """
+        return dict()
+
     def setLayer(self, layer):
         """
         Sets current layer selection on GUI.
@@ -205,23 +207,23 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         Updates current displayed fields based on current layer selection.
         :param layer: (QgsVectorLayer) layer to have its fields exposed. 
         """
-        # if this method is called from signal emition, then it should not
-        # worry about current layer (a.k.a. layer was given from it)
         layer = layer or self.mMapLayerComboBox.currentLayer()
         self.attributeTableWidget.setRowCount(0)
         fields = layer.fields()
         self.attributeTableWidget.setRowCount(len(fields))
         for row, field in enumerate(fields):
             item = QTableWidgetItem()
+            item.setFlags(Qt.ItemIsEditable) # not editable
             item.setText(field.name())
             self.attributeTableWidget.setItem(row, 0, item)
+            self.attributeTableWidget.setCellWidget(row, 2, QCheckBox())
+            self.attributeTableWidget.setCellWidget(row, 3, QCheckBox())
 
-    def setCurrentButton(self, button):
+    def setButton(self, button):
         """
         Sets button properties to the GUI.
         :param button:  (CustomFeatureButton) button to be set to the GUI.
         """
-        self.buttonComboBox.setCurrentText(button.name())
         self.setButtonName(button.name())
         self.setAcquisitionTool(button.acquisitionTool())
         self.setUseColor(button.useColor())
@@ -236,16 +238,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         self.setShortcurt(button.shortcut())
         self.setOpenForm(button.openForm())
         self.setAttributeMap(button.attributeMap())
-
-    # def refresh(self):
-    #     """
-    #     Clears interface data and resets it to its default.
-    #     """
-    #     self.clear()
-    #     self.buttonComboBox.addItem(self.tr("Select a button..."))
-    #     self.buttonComboBox.addItems([
-    #         b.name() for b in self.setup().buttons()
-    #     ])
+        self.button.update(self.readButton().properties())
 
     def readButton(self):
         """
@@ -264,6 +257,8 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         if self.shortcutCheckBox.isChecked():
             b.setShortcut(self.shortcutWidget.getShortcut().strip())
         b.setOpenForm(self.openFormCheckBox.isChecked())
+        b.setLayer(self.mMapLayerComboBox.currentText())
+        b.setAttributeMap(self.readAttributeMap())
         return b
 
     def currentButtonName(self):
@@ -271,19 +266,14 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         Retrieves currently selected button on button combo box.
         :return: (CustomFeatureButton) button read from the setup object.
         """
-        text = self.buttonComboBox.currentText()
-        return text if text != self.tr("Select a button...") else ""
-
-    # def currentButton(self):
-    #     """
-    #     Retrieves currently selected button on button combo box.
-    #     :return: (CustomFeatureButton) button read from the setup object.
-    #     """
-    #     if not self.currentButtonName():
-    #         button = CustomFeatureButton()
-    #         button.setName("")
-    #         return button
-    #     return self.setup().button(self.currentButtonName())
+        return self.button.name()
+    
+    def currentButton(self):
+        """
+        Retrieves currently SAVED button.
+        :return: (CustomFeatureButton) current button.
+        """
+        return self.button
 
     # @pyqtSlot(int, name="on_buttonComboBox_currentIndexChanged")
     # def setActiveButton(self, button):
@@ -415,4 +405,3 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
     #     msg = self.validateData(state)
     #     if msg == "":
     #         self.setup()
-        

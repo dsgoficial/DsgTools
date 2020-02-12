@@ -178,26 +178,27 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         self.buttonPropWidget.setAttributeMap(attrMap)
 
+    def currentButton(self):
+        """
+        Retrives button active on GUI that has a saved state (on its last saved
+        state).
+        :return: (CustomFeatureButton) current button.
+        """
+        return self.buttonPropWidget.currentButton()
+
+    @pyqtSlot(int, name="on_buttonComboBox_currentIndexChanged")
     def setCurrentButton(self, button):
         """
         Sets button properties to the GUI.
         :param button:  (CustomFeatureButton) button to be set to the GUI.
         """
+        if isinstance(button, int):
+            button = self.setup.button(self.buttonComboBox.itemText(button))
+        if button.name() not in self.setup.buttonNames():
+            # create a new one with that button?
+            pass
         self.buttonComboBox.setCurrentText(button.name())
-        self.setButtonName(button.name())
-        self.setAcquisitionTool(button.acquisitionTool())
-        self.setUseColor(button.useColor())
-        self.setColor(button.color())
-        self.setUseToolTip(bool(button.toolTip()))
-        self.setToolTip(button.toolTip())
-        self.setUseCategory(bool(button.category()))
-        self.setCategory(button.category())
-        self.setUseKeywords(bool(button.keywords()))
-        self.setKeywords(button.keywords())
-        self.setUseShortcut(bool(button.shortcut()))
-        self.setShortcurt(button.shortcut())
-        self.setOpenForm(button.openForm())
-        self.setAttributeMap(button.attributeMap())
+        self.buttonPropWidget.setButton(button)
 
     def addButton(self, button=None):
         """
