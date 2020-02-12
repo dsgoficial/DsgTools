@@ -97,6 +97,15 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         tool = CustomFeatureButton().supportedTools()[tool]
         self.toolComboBox.setCurrentText(tool)
 
+    def acquisitionTool(self):
+        """
+        Reads current acquisition tool.
+        :return: (str) current acquisition tool.
+        """
+        tools = {v: k for k, v in \
+                    CustomFeatureButton().supportedTools().items()}
+        return tools[self.toolComboBox.currentText()]
+
     def setUseColor(self, useColor):
         """
         Sets button's acquisition tool to GUI.
@@ -247,6 +256,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         b = CustomFeatureButton()
         b.setName(self.nameLineEdit.text().strip())
+        b.setAcquisitionTool(self.acquisitionTool())
         b.setUseColor(self.colorCheckBox.isChecked())
         if self.colorCheckBox.isChecked():
             b.setColor(self.mColorButton.color().getRgb())
@@ -323,29 +333,6 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
     #     :return: (bool) input data is validity status.
     #     """
     #     return self.validateData() == ""
-
-    # @pyqtSlot(bool, name="on_savePushButton_clicked")
-    # def updateCurrentButton(self, props):
-    #     """
-    #     Current data will be stored as current button's properties.
-    #     :param props: (dict) a map to button's properties to be updated.
-    #     """
-    #     if isinstance(props, bool):
-    #         # if button pressing was the triggering event, current data will be
-    #         # store into current button
-    #         props = self.readButton().properties()
-    #     msg = self.validateData()
-    #     if msg == "":
-    #         button = self.currentButton()
-    #         prevName = button.name()
-    #         self.setup().updateButton(prevName, props)
-    #         newName = button.name()
-    #         if prevName != newName:
-    #             self.buttonComboBox.removeItem(
-    #                 self.buttonComboBox.findText(prevName)
-    #             )
-    #             self.buttonComboBox.addItem(newName)
-    #             self.buttonComboBox.setCurrentText(newName)
 
     # @pyqtSlot(bool)
     # def on_undoPushButton_clicked(self):

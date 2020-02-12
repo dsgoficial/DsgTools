@@ -186,6 +186,13 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         return self.buttonPropWidget.currentButton()
 
+    def readButton(self):
+        """
+        Reads current data on GUI and gets a button with those properties.
+        :return: (CustomFeatureButton) current button as from GUI.
+        """
+        return self.buttonPropWidget.readButton()
+
     @pyqtSlot(int, name="on_buttonComboBox_currentIndexChanged")
     def setCurrentButton(self, button):
         """
@@ -214,3 +221,27 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         self.buttonComboBox.addItem(button.name())
         self.setCurrentButton(button)
         return button
+
+    @pyqtSlot(bool, name="on_savePushButton_clicked")
+    def updateCurrentButton(self, props):
+        """
+        Current data will be stored as current button's properties.
+        :param props: (dict) a map to button's properties to be updated.
+        """
+        if isinstance(props, bool):
+            # if button pressing was the triggering event, current data will be
+            # store into current button
+            props = self.readButton().properties()
+        # msg = self.validateData()
+        msg = ""
+        if msg == "":
+            button = self.currentButton()
+            prevName = button.name()
+            self.setup.updateButton(prevName, props)
+            newName = button.name()
+            if prevName != newName:
+                self.buttonComboBox.removeItem(
+                    self.buttonComboBox.findText(prevName)
+                )
+                self.buttonComboBox.addItem(newName)
+                self.buttonComboBox.setCurrentText(newName)
