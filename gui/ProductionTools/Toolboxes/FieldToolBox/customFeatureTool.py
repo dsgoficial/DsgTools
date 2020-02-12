@@ -70,10 +70,10 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         :return: (list-of-str) available profiles names.
         """
         return {
-            "asc": sorted(self._setups.keys()),
-            "desc": sorted(self._setups.keys(), reverse=True),
-            None: list(self._setup.keys())
-        }[order]
+            "asc": lambda: sorted(self._setups.keys()),
+            "desc": lambda: sorted(self._setups.keys(), reverse=True),
+            None: lambda: list(self._setup.keys())
+        }[order]()
 
     def buttonProfile(self, profile):
         """

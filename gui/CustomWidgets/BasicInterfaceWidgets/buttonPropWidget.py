@@ -26,9 +26,13 @@ import os
 from qgis.core import QgsMessageLog
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtGui import QIcon, QColor
+from qgis.PyQt.QtGui import QIcon, QColor, QKeySequence
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from qgis.PyQt.QtWidgets import QWidget, QFileDialog, QMessageBox, QRadioButton
+from qgis.PyQt.QtWidgets import (QWidget,
+                                 QFileDialog,
+                                 QMessageBox,
+                                 QRadioButton,
+                                 QTableWidgetItem)
 
 from DsgTools.gui.ProductionTools.Toolboxes.FieldToolBox.customButtonSetup import CustomButtonSetup, CustomFeatureButton
 
@@ -46,6 +50,17 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         self.setupUi(self)
         self.button = button or CustomFeatureButton()
         self.fillToolComboBox()
+        self.colorCheckBox.toggled.connect(self.mColorButton.setEnabled)
+        self.tooltipCheckBox.toggled.connect(self.toolTipLineEdit.setEnabled)
+        self.categoryCheckBox.toggled.connect(self.categoryLineEdit.setEnabled)
+        self.keywordCheckBox.toggled.connect(self.keywordLineEdit.setEnabled)
+        self.shortcutCheckBox.toggled.connect(self.shortcutWidget.setEnabled)
+        self.mMapLayerComboBox.layerChanged.connect(self.updateFieldTable)
+        self.attributeTableWidget.setHorizontalHeaderLabels([
+            self.tr("Attribute"), self.tr("Value"),
+            self.tr("Editable"), self.tr("Ignored")
+        ])
+        self.updateFieldTable()
 
     def fillToolComboBox(self):
         """
@@ -66,18 +81,161 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             if idx != 0:
                 self.toolComboBox.setItemIcon(idx, icon)
 
-    # def setup(self):
-    #     """
-    #     Retrieves the object responsible for button management.
-    #     :return: (CustomButtonSetup) button setup object.
-    #     """
-    #     return self._buttonSetup
-
     # def clear(self):
     #     """
     #     Clears all data from interface.
     #     """
     #     pass
+
+    def setButtonName(self, name):
+        """
+        Sets button name to GUI.
+        :param name: (str) name to be set to GUI.
+        """
+        self.nameLineEdit.setText(name)
+
+    def setAcquisitionTool(self, tool):
+        """
+        Sets button's acquisition tool to GUI.
+        :param tool: (str) a supported acquisition tool to be set.
+        """
+        tool = CustomFeatureButton().supportedTools()[tool]
+        self.toolComboBox.setCurrentText(tool)
+
+    def setUseColor(self, useColor):
+        """
+        Sets button's acquisition tool to GUI.
+        :param useColor: (bool) whether button should use a custom color
+                         palette.
+        """
+        self.colorCheckBox.setChecked(useColor)
+
+    def setColor(self, color):
+        """
+        Sets custom color to the color widget.
+        :param color: (str/tuple) color to be set.
+        """
+        if isinstance(color, str):
+            color = QColor(color)
+        else:
+            color = QColor(*color)
+        self.mColorButton.setColor(color)
+
+    def setUseToolTip(self, useToolTip):
+        """
+        Sets button's acquisition tool to GUI.
+        :param useToolTip: (bool) whether button will have a tool tip assigned.
+        """
+        self.tooltipCheckBox.setChecked(useToolTip)
+
+    def setToolTip(self, tooltip):
+        """
+        Sets a tool tip for the active button widget.
+        :param tooltip: (str) tool tip to be set.
+        """
+        self.toolTipLineEdit.setText(tooltip)
+
+    def setUseCategory(self, useCat):
+        """
+        Sets button's acquisition tool to GUI.
+        :param useCat: (bool) whether button will have a category assigned.
+        """
+        self.categoryCheckBox.setChecked(useCat)
+
+    def setCategory(self, cat):
+        """
+        Assigns a group to the active button.
+        :param cat: (str) category to be set.
+        """
+        self.categoryLineEdit.setText(cat)
+
+    def setUseKeywords(self, useKw):
+        """
+        Sets whether active button should have keywords for button searching.
+        :param useKw: (bool) whether button will have keywords assigned to it.
+        """
+        self.keywordCheckBox.setChecked(useKw)
+
+    def setKeywords(self, kws):
+        """
+        Sets button's keywords for button searching.
+        :param kws: (set-of-str) set of keywords to be assigned to the button.
+        """
+        self.keywordLineEdit.setText(" ".join(kws))
+
+    def setUseShortcut(self, useShortcut):
+        """
+        Sets whether active button should have a shortcut assigned to it.
+        :param useShortcut: (bool) whether button will have a shortcut assigned.
+        """
+        self.shortcutCheckBox.setChecked(useShortcut)
+
+    def setShortcurt(self, s):
+        """
+        Assigns a shortcut to trigger active button's action.
+        :param s: (str) new shortcut to be set.
+        """
+        # check if shortcut is already assigned to some other action on QGIS
+        self.shortcutWidget.setShortcut(QKeySequence.fromString(s))
+
+    def setOpenForm(self, openForm):
+        """
+        Defines whether (re)classification tool will open feature form while
+        being used.
+        :param openForm: (bool) whether feature form should be opened.
+        """
+        self.openFormCheckBox.setChecked(openForm)
+
+    def setAttributeMap(self, attrMap):
+        """
+        Sets the attribute value map for current button to GUI.
+        :param attrMap: (dict) a map from each field and its value to be set. 
+        """
+        pass
+
+    def setLayer(self, layer):
+        """
+        Sets current layer selection on GUI.
+        :param layer: (str) name for the layer to be set.
+        """
+        pass
+
+    def updateFieldTable(self, layer=None):
+        """
+        Updates current displayed fields based on current layer selection.
+        :param layer: (QgsVectorLayer) layer to have its fields exposed. 
+        """
+        # if this method is called from signal emition, then it should not
+        # worry about current layer (a.k.a. layer was given from it)
+        layer = layer or self.mMapLayerComboBox.currentLayer()
+        self.attributeTableWidget.setRowCount(0)
+        fields = layer.fields()
+        self.attributeTableWidget.setRowCount(len(fields))
+        for row, field in enumerate(fields):
+            item = QTableWidgetItem()
+            item.setText(field.name())
+            self.attributeTableWidget.setItem(row, 0, item)
+
+    def setCurrentButton(self, button):
+        """
+        Sets button properties to the GUI.
+        :param button:  (CustomFeatureButton) button to be set to the GUI.
+        """
+        self.buttonComboBox.setCurrentText(button.name())
+        self.setButtonName(button.name())
+        self.setAcquisitionTool(button.acquisitionTool())
+        self.setUseColor(button.useColor())
+        self.setColor(button.color())
+        self.setUseToolTip(bool(button.toolTip()))
+        self.setToolTip(button.toolTip())
+        self.setUseCategory(bool(button.category()))
+        self.setCategory(button.category())
+        self.setUseKeywords(bool(button.keywords()))
+        self.setKeywords(button.keywords())
+        self.setUseShortcut(bool(button.shortcut()))
+        self.setShortcurt(button.shortcut())
+        self.setOpenForm(button.openForm())
+        self.setAttributeMap(button.attributeMap())
 
     # def refresh(self):
     #     """
@@ -89,32 +247,32 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
     #         b.name() for b in self.setup().buttons()
     #     ])
 
-    # def readButton(self):
-    #     """
-    #     Reads data from the interface and sets it to a button object.
-    #     :return: (CustomFeatureButton) button read from the interface.
-    #     """
-    #     b = CustomFeatureButton()
-    #     b.setName(self.nameLineEdit.text().strip())
-    #     b.setUseColor(self.colorCheckBox.isChecked())
-    #     if self.colorCheckBox.isChecked():
-    #         b.setColor(self.mColorButton.color().getRgb())
-    #     if self.tooltipCheckBox.isChecked():
-    #         b.setToolTip(self.toolTipLineEdit.text().strip())
-    #     if self.categoryCheckBox.isChecked():
-    #         b.setCategory(self.categoryLineEdit.text().strip())
-    #     if self.shortcutCheckBox.isChecked():
-    #         b.setShortcut(self.shortcutWidget.getShortcut().strip())
-    #     b.setOpenForm(self.openFormCheckBox.isChecked())
-    #     return b
+    def readButton(self):
+        """
+        Reads data from the interface and sets it to a button object.
+        :return: (CustomFeatureButton) button read from the interface.
+        """
+        b = CustomFeatureButton()
+        b.setName(self.nameLineEdit.text().strip())
+        b.setUseColor(self.colorCheckBox.isChecked())
+        if self.colorCheckBox.isChecked():
+            b.setColor(self.mColorButton.color().getRgb())
+        if self.tooltipCheckBox.isChecked():
+            b.setToolTip(self.toolTipLineEdit.text().strip())
+        if self.categoryCheckBox.isChecked():
+            b.setCategory(self.categoryLineEdit.text().strip())
+        if self.shortcutCheckBox.isChecked():
+            b.setShortcut(self.shortcutWidget.getShortcut().strip())
+        b.setOpenForm(self.openFormCheckBox.isChecked())
+        return b
 
-    # def currentButtonName(self):
-    #     """
-    #     Retrieves currently selected button on button combo box.
-    #     :return: (CustomFeatureButton) button read from the setup object.
-    #     """
-    #     text = self.buttonComboBox.currentText()
-    #     return text if text != self.tr("Select a button...") else ""
+    def currentButtonName(self):
+        """
+        Retrieves currently selected button on button combo box.
+        :return: (CustomFeatureButton) button read from the setup object.
+        """
+        text = self.buttonComboBox.currentText()
+        return text if text != self.tr("Select a button...") else ""
 
     # def currentButton(self):
     #     """
