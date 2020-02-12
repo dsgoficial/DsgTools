@@ -52,12 +52,6 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         Sets a up available feature extraction tool to GUI.
         """
         self.toolComboBox.clear()
-        # tools = {
-        #     "default": self.tr("QGIS default feature extraction tool"),
-        #     "freeHand": self.("DSGTools: Free Hand"),
-        #     "circle": self.("QGIS Circle extraction tool"),
-        #     "rightAngle": self.("DSGTools: Right Degree Angle Digitizing")
-        # }
         tools = {
             self.tr("QGIS default feature extraction tool"): QIcon(""),
             self.tr("DSGTools: Free Hand Acquisition"): \

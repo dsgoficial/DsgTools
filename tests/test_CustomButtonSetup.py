@@ -42,6 +42,7 @@ class ButtonTester(unittest.TestCase):
         self.assertEquals(b.layer(), "")
         self.assertEquals(b.keywords(), set())
         self.assertEquals(b.attributeMap(), dict())
+        self.assertEquals(b.acquisitionTool(), "default")
         p = {
             "name": "New button",
             "openForm": False,
@@ -52,9 +53,33 @@ class ButtonTester(unittest.TestCase):
             "layer": "",
             "shortcut": "",
             "keywords": set(),
-            "attributeMap": dict()
+            "attributeMap": dict(),
+            "acquisitionTool": "default"
         }
         self.assertEquals(b.properties(), p)
+
+    def test_supportedTools(self):
+        """Tests if supported tools are correctly set"""
+        b = CustomFeatureButton()
+        tools = {
+            "default": "QGIS default feature extraction tool",
+            "freeHand": "DSGTools: Free Hand",
+            "circle": "QGIS Circle extraction tool",
+            "rightAngle": "DSGTools: Right Degree Angle Digitizing"
+        }
+        self.assertEquals(b.supportedTools(), tools)
+
+    def test_setAcquisitionTool(self):
+        """Tests acquisition tool setting method"""
+        b = CustomFeatureButton()
+        with self.assertRaises(TypeError):
+            b.setAcquisitionTool(1)
+        with self.assertRaises(ValueError):
+            b.setAcquisitionTool("qgis")
+        self.assertEquals(b.acquisitionTool(), "default")
+        for tool in b.supportedTools():
+            b.setAcquisitionTool(tool)
+        self.assertEquals(b.acquisitionTool(), tool)
 
 class SetupTester(unittest.TestCase):
 

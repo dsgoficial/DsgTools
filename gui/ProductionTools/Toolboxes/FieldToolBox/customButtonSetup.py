@@ -62,7 +62,8 @@ class CustomFeatureButton(QObject):
             "shortcut": "",
             "layer": "",
             "keywords": set(),
-            "attributeMap": dict()
+            "attributeMap": dict(),
+            "acquisitionTool": "default"
         }
         self._callback = callback if callback else lambda: None
         self._shortcut = QShortcut(iface.mainWindow())
@@ -161,7 +162,8 @@ class CustomFeatureButton(QObject):
             "shortcut": lambda x: self.setShortcut(x),
             "layer": lambda x: self.setLayer(x),
             "keywords": lambda x: self.setKeywords(x),
-            "attributeMap": lambda x: self.setAttributeMap(x)
+            "attributeMap": lambda x: self.setAttributeMap(x),
+            "acquisitionTool": lambda x: self.setAcquisitionTool(x)
         }
         try:
             for propName, propValue in tempButton.properties().items():
@@ -193,7 +195,8 @@ class CustomFeatureButton(QObject):
             "layer": self.layer(),
             "shortcut": self.shortcut(),
             "keywords": self.keywords(),
-            "attributeMap": self.attributeMap()
+            "attributeMap": self.attributeMap(),
+            "acquisitionTool": self.acquisitionTool()
         }
 
     def widget(self):
@@ -253,7 +256,7 @@ class CustomFeatureButton(QObject):
         """
         if self.shortcut():
             return "{0} [{1}]".format(self.name(), self.shortcut())
-        return str(self._props["name"])
+        return self.name()
 
     def setOpenForm(self, policy):
         """
@@ -603,6 +606,41 @@ class CustomFeatureButton(QObject):
         :return: (dict) attribute map for new/updated features.
         """
         return dict(self._props["attributeMap"])
+
+    def supportedTools(self):
+        """
+        A map from supported feature extraction tools to their user-friendly
+        names. 
+        """
+        return {
+            "default": self.tr("QGIS default feature extraction tool"),
+            "freeHand": self.tr("DSGTools: Free Hand"),
+            "circle": self.tr("QGIS Circle extraction tool"),
+            "rightAngle": self.tr("DSGTools: Right Degree Angle Digitizing")
+        }
+
+    def setAcquisitionTool(self, tool):
+        """
+        Defines button's name, which is used to compose the display name.
+        :param tool: (str) button's name.
+        """
+        if type(tool) == str:
+            if tool not in self.supportedTools():
+                raise ValueError(self.tr("'{0}' not supported.").format(tool))
+            self._props["acquisitionTool"] = tool
+        else:
+            raise TypeError(
+                self.tr("Acquisition tool prop must be a str ({0}).")\
+                    .format(type(tool))
+            )
+
+    def acquisitionTool(self):
+        """
+        Retrives button's name.
+        :return: (str) button's name.
+        """
+        return str(self._props["acquisitionTool"])
+
 
 class CustomButtonSetup(QObject):
     """
