@@ -60,11 +60,11 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         self.textEdit.setPlaceholderText(
             self.tr("Insert a short description for current button setup..."))
         self.setup = buttonSetup or CustomButtonSetup()
-
-    def buttonGetter(self, button):
-        """
-        A method to be passed to all new buttons in order to 
-        """
+        self.buttonComboBox.addItem(self.tr("No button selected"))
+        bEnabled = self.buttonComboBox.currentIndex() > 0
+        for w in ("savePushButton", "undoPushButton", "removePushButton",
+                  "buttonPropWidget"):
+            getattr(self, w).setEnabled(bEnabled)
 
     def newButton(self):
         """
@@ -78,6 +78,13 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         self.setCurrentButton(b)
         return b.widget()
 
+    def getButtonByName(self, name):
+        """
+        Retrieves a registered button from its name.
+        :param name: (str) name for the requested button.
+        """
+        return self.setup.button(name)
+
     def setButtonName(self, name):
         """
         Sets button name to GUI.
@@ -85,12 +92,33 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         self.buttonPropWidget.setButtonName(name)
 
+    def buttonName(self):
+        """
+        Reads button name from GUI.
+        :return: (str) button name read from GUI.
+        """
+        return self.buttonPropWidget.buttonName()
+
+    def registeredButtonNames(self):
+        """
+        All names for registered buttons on current profile.
+        :return: (list-of-str) list of button names.
+        """
+        return self.setup.buttonNames()
+
     def setAcquisitionTool(self, tool):
         """
         Sets button's acquisition tool to GUI.
         :param tool: (str) a supported acquisition tool to be set.
         """
         self.buttonPropWidget.setAcquisitionTool(tool)
+
+    def acquisitionTool(self):
+        """
+        Reads current acquisition tool from GUI.
+        :return: (str) current acquisition tool.
+        """
+        return self.buttonPropWidget.acquisitionTool()
 
     def setUseColor(self, useColor):
         """
@@ -100,12 +128,27 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         self.buttonPropWidget.setUseColor(useColor)
 
+    def useColor(self):
+        """
+        Reads whether button will have a custom color from GUI.
+        :return: (bool) whether button should use a custom color
+                        palette.
+        """
+        return self.buttonPropWidget.useColor()
+
     def setColor(self, color):
         """
         Sets custom color to the color widget.
         :param color: (str/tuple) color to be set.
         """
         self.buttonPropWidget.setColor(color)
+
+    def color(self):
+        """
+        Reads custom color to be set to widget as read from GUI.
+        :return: (tuple) color to be used.
+        """
+        return self.buttonPropWidget.color()
 
     def setUseToolTip(self, useToolTip):
         """
@@ -114,12 +157,26 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         self.buttonPropWidget.setUseToolTip(useToolTip)
 
+    def useToolTip(self):
+        """
+        Reads if the button will have a tool tip assigned to it from GUI.
+        :return: (bool) whether the button will have a tool tip assigned.
+        """
+        return self.buttonPropWidget.useToolTip()
+
     def setToolTip(self, tooltip):
         """
         Sets a tool tip for the active button widget.
         :param tooltip: (str) tool tip to be set.
         """
         self.buttonPropWidget.setToolTip(tooltip)
+
+    def toolTip(self):
+        """
+        Reads the tool tip for the button from GUI.
+        :param tooltip: (str) tool tip to be used.
+        """
+        return self.buttonPropWidget.toolTip()
 
     def setUseCategory(self, useCat):
         """
@@ -128,12 +185,26 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         self.buttonPropWidget.setUseCategory(useCat)
 
+    def useCategory(self):
+        """
+        Reads button's category/group from GUI.
+        :return: (bool) whether button will have a category assigned.
+        """
+        return self.buttonPropWidget.useCategory()
+
     def setCategory(self, cat):
         """
         Assigns a group to the active button.
         :param cat: (str) category to be set.
         """
         self.buttonPropWidget.setCategory(cat)
+
+    def category(self):
+        """
+        Reads the assigned category/group to the active button from GUI.
+        :return: (str) category to be used.
+        """
+        return self.buttonPropWidget.category()
 
     def setUseKeywords(self, useKw):
         """
@@ -142,6 +213,14 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         self.buttonPropWidget.setUseKeywords(useKw)
 
+    def useKeywords(self):
+        """
+        Reads whether active button should have keywords for button searching
+        from GUI.
+        :return: (bool) whether button will have keywords assigned to it.
+        """
+        return self.buttonPropWidget.useKeywords()
+
     def setKeywords(self, kws):
         """
         Sets button's keywords for button searching.
@@ -149,12 +228,26 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         self.buttonPropWidget.setKeywords(kws)
 
+    def keywords(self):
+        """
+        Reads button's keywords for button searching from GUI.
+        :return: (set-of-str) set of keywords to be assigned to the button.
+        """
+        return self.buttonPropWidget.keywords()
+
     def setUseShortcut(self, useShortcut):
         """
         Sets whether active button should have a shortcut assigned to it.
         :param useShortcut: (bool) whether button will have a shortcut assigned.
         """
         self.buttonPropWidget.setUseShortcut(useShortcut)
+
+    def useShortcut(self):
+        """
+        Reads whether active button should have a shortcut assigned to it from GUI.
+        :return: (bool) whether button will have a shortcut assigned.
+        """
+        return self.buttonPropWidget.useShortcut()
 
     def setShortcurt(self, s, autoReplace):
         """
@@ -165,6 +258,13 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         self.buttonPropWidget.setShortcurt(s, autoReplace)
 
+    def shorcut(self):
+        """
+        Assigned shortcut read from GUI.
+        :return: (str) shortcut to be used.
+        """
+        return self.buttonPropWidget.shorcut()
+
     def setOpenForm(self, openForm):
         """
         Defines whether (re)classification tool will open feature form while
@@ -173,12 +273,41 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         self.buttonPropWidget.setOpenForm(openForm)
 
+    def openForm(self):
+        """
+        Defines whether (re)classification tool will open feature form while
+        being used.
+        :return: (bool) whether feature form should be opened.
+        """
+        return self.buttonPropWidget.openForm()
+
     def setAttributeMap(self, attrMap):
         """
         Sets the attribute value map for current button to GUI.
         :param attrMap: (dict) a map from each field and its value to be set. 
         """
         self.buttonPropWidget.setAttributeMap(attrMap)
+
+    def attributeMap(self):
+        """
+        Reads the field map data and set it to a button attribute map format.
+        :return: (dict) read attribute map. 
+        """
+        return self.buttonPropWidget.attributeMap()
+
+    def setLayer(self, layer):
+        """
+        Sets current layer selection on GUI.
+        :param layer: (str) name for the layer to be set.
+        """
+        self.buttonPropWidget.setLayer(layer)
+
+    def layer(self):
+        """
+        Reads current layer selection from GUI.
+        :return: (str) name for the selected layer.
+        """
+        self.buttonPropWidget.layer() 
 
     def currentButton(self):
         """
@@ -195,6 +324,30 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         return self.buttonPropWidget.readButton()
 
+    def buttonIsModified(self):
+        """
+        Checks whether current button is modified.
+        :return: (bool) whether button is modified.
+        """
+        return self.currentButton() != self.readButton()
+
+    def updateButton(self, buttonName, newProps):
+        """
+        Updates a registered button with a new set of properties.
+        :param button: (str) name for the button to be updated.
+        :param newProps: (dict) new set of properties.
+        """
+        self.setup.updateButton(buttonName, newProps)
+
+    def confirmAction(self, msg, title=None, showNo=True):
+        """
+        Raises a message box that asks for user confirmation.
+        :param msg: (str) message requesting for confirmation to be shown.
+        :param showNo: (bool) whether No button should be exposed.
+        :return: (bool) whether action was confirmed.
+        """
+        self.buttonPropWidget.confirmAction(msg, title, showNo)
+
     @pyqtSlot(int, name="on_buttonComboBox_currentIndexChanged")
     def setCurrentButton(self, button):
         """
@@ -202,24 +355,38 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         :param button:  (CustomFeatureButton) button to be set to the GUI.
         """
         if isinstance(button, int):
-            button = self.setup.button(self.buttonComboBox.itemText(button))
+            if button == 0:
+                button = CustomFeatureButton()
+                button.setName("")
+            else:
+                button = self.getButtonByName(
+                    self.buttonComboBox.itemText(button))
         if button.name() not in self.setup.buttonNames():
             # create a new one with that button?
             pass
         self.buttonComboBox.setCurrentText(button.name())
         self.buttonPropWidget.setButton(button)
+        bEnabled = self.buttonComboBox.currentIndex() > 0
+        for w in ("savePushButton", "undoPushButton", "removePushButton",
+                  "buttonPropWidget"):
+            getattr(self, w).setEnabled(bEnabled)
 
-    def addButton(self, button=None):
+    def addButton(self, button=None, newButton=True):
         """
         Adds a button to the setup.
-        :button: (CustomFeatureButton) a pre-existent button to be set. 
+        :param button: (CustomFeatureButton) a pre-existent button to be set.
+        :param newButton: (bool) indicates if added button is new to the setup.
+        :return: (CustomFeatureButton) added button.
         """
-        if button is not None:
-            if button.name() in self.setup.buttonNames():
-                # raise a warning and ask if data should be replaced.
-                pass
-        else:
-            button = self.setup.newButton()
+        if button is not None and not newButton:
+            if button in self.registeredButtons():
+                msg = self.tr("Button {b} already exists. Would you like to "
+                              "replace it?").format(b=button.name())
+                cnf = self.confirmAction(msg,
+                    self.tr("Replace existing button"))
+                if not conf:
+                    return self.getButtonByName(button.name())
+        button = button or self.setup.newButton()
         self.buttonComboBox.addItem(button.name())
         self.setCurrentButton(button)
         return button
@@ -237,13 +404,34 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         # msg = self.validateData()
         msg = ""
         if msg == "":
-            button = self.currentButton()
-            prevName = button.name()
-            self.setup.updateButton(prevName, props)
+            prevName = self.currentButton().name()
+            button = self.getButtonByName(prevName)
+            self.updateButton(prevName, props)
             newName = button.name()
+            self.buttonPropWidget.button = button
             if prevName != newName:
                 self.buttonComboBox.removeItem(
                     self.buttonComboBox.findText(prevName)
                 )
                 self.buttonComboBox.addItem(newName)
                 self.buttonComboBox.setCurrentText(newName)
+
+    @pyqtSlot(bool, name="on_undoPushButton_clicked")
+    def undoButtonModifications(self):
+        """
+        Restores stored data from current button and sets it to GUI.
+        """
+        self.buttonPropWidget.setButton(self.currentButton())
+
+    @pyqtSlot(bool, name="on_removePushButton_clicked")
+    def removeButton(self):
+        """
+        Removes the current button from setup.
+        """
+        name = self.buttonName()
+        txt = self.tr("Confirm button '{b}' removeal?").format(name)
+        if name == "":
+            # ignore the "Select a button..."
+            return
+        self.setup().removeButton(name)
+        self.buttonComboBox.removeItem(self.buttonComboBox.findText(name))

@@ -72,7 +72,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         mb = QMessageBox()
         title = msg or self.tr("Confirm action")
-        if showCancel:
+        if showNo:
             return QMessageBox.question(
                 self, title, msg, QMessageBox.Yes | QMessageBox.No
             ) == QMessageBox.Yes
@@ -291,7 +291,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         if not autoReplace and action != "":
             txt = self.tr("Shortcut {s} is already assigned to {a}, would you "
                         "like to replace it?").format(s=s, a=action)
-            if not self.confirmAction(self.tr("Replace shortcut"), txt):
+            if not self.confirmAction(txt, self.tr("Replace shortcut")):
                 return
         self.shortcutWidget.setShortcut(QKeySequence.fromString(s))
 
@@ -387,6 +387,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         self.setLayer(button.layer())
         self.updateFieldTable()
         self.setAttributeMap(button.attributeMap())
+        self.button = button
 
     def readButton(self):
         """
@@ -424,33 +425,26 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         return self.button
 
-    # @pyqtSlot(int, name="on_buttonComboBox_currentIndexChanged")
-    # def setActiveButton(self, button):
-    #     """
-    #     Changes current active button.
-    #     :button: (CustomFeatureButton) button to be set as active.
-    #     """
-    #     isButton = bool(self.currentButtonName())
-    #     self.savePushButton.setEnabled(isButton)
-    #     self.undoPushButton.setEnabled(isButton)
-    #     self.removePushButton.setEnabled(isButton)
-    #     if isinstance(button, int):
-    #         # then this came from the signal input
-    #         button = self.currentButton()
-    #     self.buttonComboBox.setCurrentText(button.name())
-    #     self.nameLineEdit.setText(button.name())
-    #     self.colorCheckBox.setChecked(button.useColor())
-    #     if button.useColor():
-    #         col = button.color()
-    #         col = QColor(col) if isinstance(col, str) else QColor(*col)
-    #         self.mColorButton.setColor(col)
-    #     self.tooltipCheckBox.setChecked(bool(button.toolTip()))
-    #     self.toolTipLineEdit.setText(button.toolTip())
-    #     self.categoryCheckBox.setChecked(bool(button.category()))
-    #     self.categoryLineEdit.setText(button.category())
-    #     self.shortcutCheckBox.setChecked(bool(button.shortcut()))
-    #     self.shortcutWidget.setShortcut(button.shortcut())
-    #     self.openFormCheckBox.setChecked(button.openForm())
+    def setEnabled(self, enabled):
+        """
+        Defines whether all widgets should be enabled.
+        :param enabled: (bool) widgets enabling status.
+        """
+        self.nameLineEdit.setEnabled(enabled)
+        self.toolComboBox.setEnabled(enabled)
+        self.colorCheckBox.setEnabled(enabled)
+        self.mColorButton.setEnabled(enabled)
+        self.tooltipCheckBox.setEnabled(enabled)
+        self.toolTipLineEdit.setEnabled(enabled)
+        self.categoryCheckBox.setEnabled(enabled)
+        self.categoryLineEdit.setEnabled(enabled)
+        self.keywordCheckBox.setEnabled(enabled)
+        self.keywordLineEdit.setEnabled(enabled)
+        self.shortcutCheckBox.setEnabled(enabled)
+        # self.shortcutWidget.setEnabled(enabled)
+        self.openFormCheckBox.setEnabled(enabled)
+        self.mMapLayerComboBox.setEnabled(enabled)
+        self.attributeTableWidget.setEnabled(enabled)
 
     # def validateData(self, data=None, new=True):
     #     """
@@ -473,12 +467,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
     #     """
     #     return self.validateData() == ""
 
-    # @pyqtSlot(bool)
-    # def on_undoPushButton_clicked(self):
-    #     """
-    #     Restores stored data from current button and sets it to GUI.
-    #     """
-    #     self.setActiveButton(self.currentButton())
+    
 
     # @pyqtSlot(bool, name="on_addPushButton_clicked")
     # def addButton(self):
@@ -499,18 +488,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
     #     self.buttonComboBox.addItem(name)
     #     self.setActiveButton(button)
 
-    # @pyqtSlot(bool)
-    # def on_removePushButton_clicked(self):
-    #     """
-    #     Removes the current button from setup.
-    #     """
-    #     # ADD CONFIRMATION BOX
-    #     name = self.currentButton().name()
-    #     if name == "":
-    #         # ignore the "Select a button..."
-    #         return
-    #     self.setup().removeButton(name)
-    #     self.buttonComboBox.removeItem(self.buttonComboBox.findText(name))
+    
 
     # def state(self):
     #     """
