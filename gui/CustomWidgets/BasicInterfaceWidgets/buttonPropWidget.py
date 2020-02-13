@@ -63,11 +63,30 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         ])
         self.updateFieldTable()
 
+    def confirmAction(self, msg, title=None, showNo=True):
+        """
+        Raises a message box that asks for user confirmation.
+        :param msg: (str) message requesting for confirmation to be shown.
+        :param showNo: (bool) whether No button should be exposed.
+        :return: (bool) whether action was confirmed.
+        """
+        mb = QMessageBox()
+        title = msg or self.tr("Confirm action")
+        if showCancel:
+            return QMessageBox.question(
+                self, title, msg, QMessageBox.Yes | QMessageBox.No
+            ) == QMessageBox.Yes
+        else:
+            return QMessageBox.question(
+                self, title, msg, QMessageBox.Ok) == QMessageBox.Ok
+
     def fillToolComboBox(self):
         """
         Sets a up available feature extraction tool to GUI.
         """
         self.toolComboBox.clear()
+        # make sure those keys are EXACTLY the same as in "supportedTools"
+        # method, from CustomFeatureButton
         tools = {
             self.tr("QGIS default feature extraction tool"): QIcon(""),
             self.tr("DSGTools: Free Hand Acquisition"): \
@@ -89,6 +108,13 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         self.nameLineEdit.setText(name)
 
+    def buttonName(self):
+        """
+        Reads button name from GUI.
+        :return: (str) button name read from GUI.
+        """
+        return self.nameLineEdit.text().strip()
+    
     def setAcquisitionTool(self, tool):
         """
         Sets button's acquisition tool to GUI.
@@ -108,11 +134,19 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
 
     def setUseColor(self, useColor):
         """
-        Sets button's acquisition tool to GUI.
+        Sets whether button will have a custom color set as read from GUI.
         :param useColor: (bool) whether button should use a custom color
                          palette.
         """
         self.colorCheckBox.setChecked(useColor)
+
+    def useColor(self):
+        """
+        Reads whether button will have a custom color from GUI.
+        :return: (bool) whether button should use a custom color
+                        palette.
+        """
+        return self.colorCheckBox.isChecked()
 
     def setColor(self, color):
         """
@@ -125,12 +159,26 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             color = QColor(*color)
         self.mColorButton.setColor(color)
 
+    def color(self):
+        """
+        Reads custom color to be set to widget as read from GUI.
+        :return: (tuple) color to be used.
+        """
+        return self.mColorButton.color().getRgb()
+
     def setUseToolTip(self, useToolTip):
         """
-        Sets button's acquisition tool to GUI.
+        Defines if button will have a tool tip assigned to it as read from GUI.
         :param useToolTip: (bool) whether button will have a tool tip assigned.
         """
         self.tooltipCheckBox.setChecked(useToolTip)
+
+    def useToolTip(self):
+        """
+        Reads if the button will have a tool tip assigned to it from GUI.
+        :return: (bool) whether the button will have a tool tip assigned.
+        """
+        return self.tooltipCheckBox.isChecked()
 
     def setToolTip(self, tooltip):
         """
@@ -139,19 +187,40 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         self.toolTipLineEdit.setText(tooltip)
 
+    def toolTip(self):
+        """
+        Reads the tool tip for the button from GUI.
+        :param tooltip: (str) tool tip to be used.
+        """
+        return self.toolTipLineEdit.text()
+
     def setUseCategory(self, useCat):
         """
-        Sets button's acquisition tool to GUI.
+        Sets button's category/group to GUI.
         :param useCat: (bool) whether button will have a category assigned.
         """
         self.categoryCheckBox.setChecked(useCat)
 
+    def useCategory(self):
+        """
+        Reads button's category/group from GUI.
+        :return: (bool) whether button will have a category assigned.
+        """
+        return self.categoryCheckBox.isChecked()
+
     def setCategory(self, cat):
         """
-        Assigns a group to the active button.
+        Assigns a category/group to the active button.
         :param cat: (str) category to be set.
         """
         self.categoryLineEdit.setText(cat)
+
+    def category(self):
+        """
+        Reads the assigned category/group to the active button from GUI.
+        :return: (str) category to be used.
+        """
+        return self.categoryLineEdit.text()
 
     def setUseKeywords(self, useKw):
         """
@@ -160,12 +229,27 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         self.keywordCheckBox.setChecked(useKw)
 
+    def useKeywords(self):
+        """
+        Reads whether active button should have keywords for button searching
+        from GUI.
+        :return: (bool) whether button will have keywords assigned to it.
+        """
+        return self.keywordCheckBox.isChecked()
+
     def setKeywords(self, kws):
         """
         Sets button's keywords for button searching.
         :param kws: (set-of-str) set of keywords to be assigned to the button.
         """
         self.keywordLineEdit.setText(" ".join(kws))
+
+    def keywords(self):
+        """
+        Reads button's keywords for button searching from GUI.
+        :return: (set-of-str) set of keywords to be assigned to the button.
+        """
+        return set(self.keywordLineEdit.text.split(" "))
 
     def setUseShortcut(self, useShortcut):
         """
@@ -174,13 +258,49 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         self.shortcutCheckBox.setChecked(useShortcut)
 
-    def setShortcurt(self, s):
+    def useShortcut(self):
+        """
+        Reads whether active button should have a shortcut assigned to it from GUI.
+        :return: (bool) whether button will have a shortcut assigned.
+        """
+        return self.shortcutCheckBox.isChecked()
+
+    def checkShortcut(self, s):
+        """
+        Verifies if a shortcut is already set to any action on QGIS.
+        :param s: (str) shortcut to be checked.
+        :return: (str) action associated with given shortcut.
+        """
+        if s == "":
+            return ""
+        for m in dir(iface):
+            if m.startswith("action") and \
+               getattr(iface, m)().shortcut().toString().lower() == s.lower():
+                return getattr(iface, m)().text()
+        return ""
+
+    def setShortcurt(self, s, autoReplace=True):
         """
         Assigns a shortcut to trigger active button's action.
         :param s: (str) new shortcut to be set.
+        :param autoReplace: (bool) whether a confirmation from the user is
+                            necessary in order to replace existing shortcuts.
         """
-        # check if shortcut is already assigned to some other action on QGIS
+        s = s.replace(" ", "")
+        action = self.checkShortcut(s)
+        if not autoReplace and action != "":
+            txt = self.tr("Shortcut {s} is already assigned to {a}, would you "
+                        "like to replace it?").format(s=s, a=action)
+            if not self.confirmAction(self.tr("Replace shortcut"), txt):
+                return
         self.shortcutWidget.setShortcut(QKeySequence.fromString(s))
+
+    def shorcut(self):
+        """
+        Assigned shortcut read from GUI.
+        :return: (str) shortcut to be used.
+        """
+        return self.shortcutWidget.getShortcut(True).toString()
 
     def setOpenForm(self, openForm):
         """
@@ -190,6 +310,14 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         self.openFormCheckBox.setChecked(openForm)
 
+    def openForm(self):
+        """
+        Defines whether (re)classification tool will open feature form while
+        being used.
+        :return: (bool) whether feature form should be opened.
+        """
+        return self.openFormCheckBox.isChecked()
+
     def setAttributeMap(self, attrMap):
         """
         Sets the attribute value map for current button to GUI.
@@ -197,7 +325,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         pass
 
-    def readAttributeMap(self):
+    def attributeMap(self):
         """
         Reads the field map data and set it to a button attribute map format.
         :return: (dict) read attribute map. 
@@ -209,7 +337,17 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         Sets current layer selection on GUI.
         :param layer: (str) name for the layer to be set.
         """
-        pass
+        if layer != "":
+            self.mMapLayerComboBox.setCurrentText(layer)
+        else:
+            self.mMapLayerComboBox.setCurrentIndex(0)
+
+    def layer(self):
+        """
+        Reads current layer selection from GUI.
+        :return: (str) name for the selected layer.
+        """
+        return self.mMapLayerComboBox.currentText()
 
     def updateFieldTable(self, layer=None):
         """
@@ -246,8 +384,9 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         self.setUseShortcut(bool(button.shortcut()))
         self.setShortcurt(button.shortcut())
         self.setOpenForm(button.openForm())
+        self.setLayer(button.layer())
+        self.updateFieldTable()
         self.setAttributeMap(button.attributeMap())
-        self.button.update(self.readButton().properties())
 
     def readButton(self):
         """
@@ -255,20 +394,20 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         :return: (CustomFeatureButton) button read from the interface.
         """
         b = CustomFeatureButton()
-        b.setName(self.nameLineEdit.text().strip())
+        b.setName(self.buttonName())
         b.setAcquisitionTool(self.acquisitionTool())
-        b.setUseColor(self.colorCheckBox.isChecked())
-        if self.colorCheckBox.isChecked():
-            b.setColor(self.mColorButton.color().getRgb())
-        if self.tooltipCheckBox.isChecked():
-            b.setToolTip(self.toolTipLineEdit.text().strip())
-        if self.categoryCheckBox.isChecked():
-            b.setCategory(self.categoryLineEdit.text().strip())
-        if self.shortcutCheckBox.isChecked():
-            b.setShortcut(self.shortcutWidget.getShortcut().strip())
-        b.setOpenForm(self.openFormCheckBox.isChecked())
-        b.setLayer(self.mMapLayerComboBox.currentText())
-        b.setAttributeMap(self.readAttributeMap())
+        b.setUseColor(self.useColor())
+        if self.useColor():
+            b.setColor(self.color())
+        if self.useToolTip():
+            b.setToolTip(self.toolTip())
+        if self.useCategory():
+            b.setCategory(self.category())
+        if self.useShortcut():
+            b.setShortcut(self.shortcut())
+        b.setOpenForm(self.openForm())
+        b.setLayer(self.layer())
+        b.setAttributeMap(self.attributeMap())
         return b
 
     def currentButtonName(self):

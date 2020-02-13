@@ -156,12 +156,14 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         self.buttonPropWidget.setUseShortcut(useShortcut)
 
-    def setShortcurt(self, s):
+    def setShortcurt(self, s, autoReplace):
         """
         Assigns a shortcut to trigger active button's action.
         :param s: (str) new shortcut to be set.
+        :param autoReplace: (bool) whether a confirmation from the user is
+                            necessary in order to replace existing shortcuts.
         """
-        self.buttonPropWidget.setShortcurt(s)
+        self.buttonPropWidget.setShortcurt(s, autoReplace)
 
     def setOpenForm(self, openForm):
         """
