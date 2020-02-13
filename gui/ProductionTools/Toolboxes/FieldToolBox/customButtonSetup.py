@@ -684,12 +684,12 @@ class CustomButtonSetup(QObject):
         """
         return str(self._name)
 
-    def setDescription(self, name):
+    def setDescription(self, description):
         """
         Defines setup's description text.
-        :param name: (str) new setup's description text.
+        :param description: (str) new setup's description text.
         """
-        self._name = description
+        self._description = description
 
     def description(self):
         """
@@ -879,6 +879,8 @@ class CustomButtonSetup(QObject):
         :return: (dict) a map to all instances attributes.
         """
         return {
+            "name": self.name(),
+            "description": self.description(),
             "version": self.__MAP_VERSION,
             "lastModified": self.now(),
             "buttons": [b.properties() for b in self.buttons()]
@@ -897,3 +899,5 @@ class CustomButtonSetup(QObject):
         self.setButtons({})
         for props in state["buttons"]:
             self.addButton(props)
+        self.setName(state["name"])
+        self.setDescription(state["description"])

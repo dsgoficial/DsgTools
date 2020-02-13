@@ -23,9 +23,9 @@
 
 import os
 
-from qgis.core import QgsMessageLog
-
 from qgis.PyQt import uic
+from qgis.utils import iface
+from qgis.core import QgsMessageLog
 from qgis.PyQt.QtGui import QIcon, QColor, QKeySequence
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtWidgets import (QWidget,
@@ -295,7 +295,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                 return
         self.shortcutWidget.setShortcut(QKeySequence.fromString(s))
 
-    def shorcut(self):
+    def shortcut(self):
         """
         Assigned shortcut read from GUI.
         :return: (str) shortcut to be used.
