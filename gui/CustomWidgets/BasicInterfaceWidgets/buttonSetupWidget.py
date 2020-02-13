@@ -46,18 +46,6 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         super(ButtonSetupWidget, self).__init__(parent)
         self.setupUi(self)
-        self.orderedTableWidget.setHeaders({
-            0: {
-                "header" : self.tr("Buttons"),
-                "type" : "widget",
-                "widget" : self.newButton,
-                "setter" : "setProperties",
-                "getter" : "properties"
-            }
-        })
-        self.orderedTableWidget.rowRemoved.connect(self.removeButton)
-        self.orderedTableWidget.horizontalHeader().setSectionResizeMode(
-            0, QHeaderView.Stretch)
         self.textEdit.setPlaceholderText(
             self.tr("Insert a short description for current button setup..."))
         self.setup = CustomButtonSetup()
@@ -132,55 +120,13 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         # self.setup.setState(newSetup.state())
         self.buttonComboBox.blockSignals(True)
-        self.orderedTableWidget.clear()
         for button in newSetup.buttons():
-            self.newButton(button)
+            self.addButton(button)
         self.setSetupName(newSetup.name())
         self.setCurrentSetupName(newSetup.name())
         self.setDescription(newSetup.description())
         self.setCurrentDescription(newSetup.description())
         self.buttonComboBox.blockSignals(False)
-
-    def addButton(self, button=None):
-        """
-        Adds a button to the setup.
-        :param button: (CustomFeatureButton) a pre-existent button to be set.
-        :return: (CustomFeatureButton) added button.
-        """
-        if button is not None:
-            buttonName = button.name()
-            if buttonName in self.registeredButtonNames():
-                msg = self.tr("Button {b} already exists. Would you like to "
-                              "replace it?").format(b=buttonName)
-                cnf = self.confirmAction(msg,
-                    self.tr("Replace existing button"))
-                if not cnf:
-                    return self.getButtonByName(buttonName)
-                self.updateButton(buttonName, button.properties())
-            else:
-                props = button.properties()
-                button = self.setup.newButton()
-                self.buttonComboBox.addItem(buttonName)
-                self.updateButton(button.name(), props)
-            # we want the button passed by reference from setup
-            button = self.getButtonByName(buttonName)
-        else:
-            button = self.setup.newButton()
-            self.buttonComboBox.addItem(button.name())
-        self.setCurrentButton(button)
-        return button
-
-    def newButton(self, button=None):
-        """
-        Generates a new button, adds it to buttons manager object and retrieve
-        its widget.
-        :return: (QPushButton) widget associated with a new instance of button.
-        """
-        b = self.addButton(button)
-        b.widget().properties = b.properties
-        b.widget().setProperties = lambda p: self.updateButton(b.name(), p)
-        self.setCurrentButton(b)
-        return b.widget()
 
     def getButtonByName(self, name):
         """
@@ -507,20 +453,82 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         self.buttonPropWidget.setButton(self.currentButton())
 
-    @pyqtSlot(int)
+    @pyqtSlot(bool, name="on_addPushButton_clicked")
+    def addButton(self, button=None):
+        """
+        Adds a button to the setup.
+        :param button: (CustomFeatureButton) a pre-existent button to be set.
+        :return: (CustomFeatureButton) added button.
+        """
+        if button is not None and not isinstance(button, bool):
+            buttonName = button.name()
+            if buttonName in self.registeredButtonNames():
+                msg = self.tr("Button {b} already exists. Would you like to "
+                              "replace it?").format(b=buttonName)
+                cnf = self.confirmAction(msg,
+                    self.tr("Replace existing button"))
+                if not cnf:
+                    return self.getButtonByName(buttonName)
+                self.updateButton(buttonName, button.properties())
+            else:
+                props = button.properties()
+                button = self.setup.newButton()
+                self.buttonComboBox.addItem(buttonName)
+                self.updateButton(button.name(), props)
+            # we want the button passed by reference from setup
+            button = self.getButtonByName(buttonName)
+        else:
+            button = self.setup.newButton()
+            self.buttonComboBox.addItem(button.name())
+        self.setCurrentButton(button)
+        self.addButtonToTable(button)
+        return button
+
+
     @pyqtSlot(bool, name="on_removePushButton_clicked")
-    def removeButton(self, row=None):
+    def removeButton(self):
         """
         Removes the current button from setup.
-        :param row: (int) row on OTW that was removed.
         """
-        if type(row) == int:
-            name = self.buttonComboBox.itemText(row + 1)
-        else:
-            name = self.buttonName()
+        name = self.buttonName()
         txt = self.tr("Confirm button '{b}' removal?").format(b=name)
         if name == "":
             # ignore the "Select a button..."
             return
         self.setup.removeButton(name)
         self.buttonComboBox.removeItem(self.buttonComboBox.findText(name))
+
+    def addButtonToTable(self, button):
+        """
+        Adds widget to table widget.
+        """
+        row = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(row)
+        self.tableWidget.setCellWidget(row, 0, button.widget())
+
+    def removeButtonFromTable(self, button):
+        """
+        Removes the button widget from buttons table.
+        :param button: (CustomFeatureButton) button to be removed.
+        """
+        name = button.displayName()
+        for row in range(self.tableWidget.rowCount()):
+            bName = self.tableWidget.cellWidget(row, 0).text().split(" [")[0]
+            if bName == name:
+                self.tableWidget.removeRow(row)
+
+    def readButtonTable(self):
+        """
+        Reads all registered buttons from button table and returns it, in
+        order.
+        :return: (list-of-CustomFeature)
+        """
+        buttons = list()
+        count = self.tableWidget.rowCount()
+        if count > 0:
+            for row in range(count):
+                buttons.append(
+                    self.tableWidget.cellWidget(row, 0).text().split(" [")[0]\
+                        .replace("&", "") # Qt mnemonic shtct for it widgets...
+                )
+        return buttons
