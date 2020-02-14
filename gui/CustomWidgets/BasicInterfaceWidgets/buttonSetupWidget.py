@@ -444,6 +444,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         if prevName != newName:
             idx = self.buttonComboBox.findText(prevName)
             self.buttonComboBox.setItemText(idx, newName)
+        self.setCurrentButton(button)
         self.updateButtonWidget(button)
 
     @pyqtSlot(bool, name="on_undoPushButton_clicked")
@@ -662,6 +663,8 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
             if row != 0:
                 # this row is never aftected, hence it is "fixed"
                 rows.remove(row)
+        row = max(self.selectedRows())
+        self.setCurrentButton(self.buttonFromRow(row))
 
     @pyqtSlot()
     def on_moveDownPushButton_clicked(self):
@@ -678,3 +681,5 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
             self.moveRowDown(row)
             if row != lastRow:
                 rows.remove(row)
+        row = max(self.selectedRows())
+        self.setCurrentButton(self.buttonFromRow(row))
