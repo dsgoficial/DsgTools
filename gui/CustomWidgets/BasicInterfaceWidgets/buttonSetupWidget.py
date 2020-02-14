@@ -29,7 +29,12 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtSql import QSqlQuery
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QMessageBox, QRadioButton, QHeaderView
+from qgis.PyQt.QtWidgets import (QDialog,
+                                 QFileDialog,
+                                 QMessageBox,
+                                 QHeaderView,
+                                 QRadioButton,
+                                 QAbstractItemView)
 
 from DsgTools.gui.ProductionTools.Toolboxes.FieldToolBox.customButtonSetup import CustomButtonSetup, CustomFeatureButton
 
@@ -409,8 +414,8 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
                 button = CustomFeatureButton()
                 button.setName("")
             else:
-                button = self.getButtonByName(
-                    self.buttonComboBox.itemText(button))
+                # table row is less 1 due to "no button" option
+                button = self.buttonFromRow(button - 1)
         if button.name() not in self.registeredButtonNames():
             # create a new one with that button?
             pass
@@ -431,20 +436,15 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
             # if button pressing was the triggering event, current data will be
             # store into current button
             props = self.readButton().properties()
-        # msg = self.validateData()
-        msg = ""
-        if msg == "":
-            prevName = self.currentButton().name()
-            button = self.getButtonByName(prevName)
-            self.updateButton(prevName, props)
-            newName = button.name()
-            self.buttonPropWidget.button = button
-            if prevName != newName:
-                self.buttonComboBox.removeItem(
-                    self.buttonComboBox.findText(prevName)
-                )
-                self.buttonComboBox.addItem(newName)
-                self.buttonComboBox.setCurrentText(newName)
+        prevName = self.currentButton().name()
+        button = self.getButtonByName(prevName)
+        self.updateButton(prevName, props)
+        newName = button.name()
+        self.buttonPropWidget.button = button
+        if prevName != newName:
+            idx = self.buttonComboBox.findText(prevName)
+            self.buttonComboBox.setItemText(idx, newName)
+        self.updateButtonWidget(button)
 
     @pyqtSlot(bool, name="on_undoPushButton_clicked")
     def undoButtonModifications(self):
@@ -484,7 +484,6 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         self.addButtonToTable(button)
         return button
 
-
     @pyqtSlot(bool, name="on_removePushButton_clicked")
     def removeButton(self):
         """
@@ -495,16 +494,35 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         if name == "":
             # ignore the "Select a button..."
             return
+        self.removeButtonFromTable(self.currentButton())
         self.setup.removeButton(name)
         self.buttonComboBox.removeItem(self.buttonComboBox.findText(name))
+
+    def buttonFromRow(self, row):
+        """
+        Retrieves the button object from table row.
+        :param row: (int) target row to get its button.
+        :return: (CustomFeatureButton) retrieved button.
+        """
+        # combo box includes "no button", table does not -> row + 1
+        return self.getButtonByName(self.buttonComboBox.itemText(row + 1))
 
     def addButtonToTable(self, button):
         """
         Adds widget to table widget.
+        :param button: (CustomFeatureButton) button to have its widget added.
         """
         row = self.tableWidget.rowCount()
         self.tableWidget.insertRow(row)
-        self.tableWidget.setCellWidget(row, 0, button.widget())
+        self.tableWidget.setCellWidget(row, 0, button.newWidget())
+
+    def updateButtonWidget(self, button):
+        """
+        Replaces button widget in order to propagate button properties update.
+        :param button: (CustomFeatureButton) button to have its widget updated.
+        """
+        row = self.buttonComboBox.findText(button.name()) - 1
+        self.tableWidget.setCellWidget(row, 0, button.newWidget())
 
     def removeButtonFromTable(self, button):
         """
@@ -513,22 +531,150 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         name = button.displayName()
         for row in range(self.tableWidget.rowCount()):
-            bName = self.tableWidget.cellWidget(row, 0).text().split(" [")[0]
+            bName = self.tableWidget.cellWidget(row, 0).text().replace("&", "")
             if bName == name:
                 self.tableWidget.removeRow(row)
+                return
 
     def readButtonTable(self):
         """
         Reads all registered buttons from button table and returns it, in
         order.
-        :return: (list-of-CustomFeature)
+        :return: (list-of-CustomFeature) ordered buttons.
         """
         buttons = list()
         count = self.tableWidget.rowCount()
         if count > 0:
             for row in range(count):
                 buttons.append(
-                    self.tableWidget.cellWidget(row, 0).text().split(" [")[0]\
-                        .replace("&", "") # Qt mnemonic shtct for it widgets...
-                )
+                    self.tableWidget.cellWidget(row, 0).text()\
+                        .rsplit(" [", 1)[0].replace("&", "")
+                ) # Qt mnemonic shtct for it widgets introduces "&"...
         return buttons
+
+    def selectedIndexes(self):
+        """
+        :return: (list-of-QModelIndex) table's selected indexes.
+        """
+        return self.tableWidget.selectedIndexes()
+
+    def selectedRows(self, reverseOrder=False):
+        """
+        List of all rows that have selected items on the table.
+        :param reverOrder: (bool) indicates if the row order is reversed.
+        :return: (list-of-int) ordered list of selected rows' indexes.
+        """
+        rows = self.tableWidget.selectionModel().selectedRows()
+        return sorted(set(i.row() for i in rows), reverse=reverseOrder)
+
+    def selectedColumns(self, reverseOrder=False):
+        """
+        List of all columns that have selected items on the table.
+        :param reverOrder: (bool) indicates if the column order is reversed.
+        :return: (list-of-int) ordered list of selected columns' indexes.
+        """
+        return sorted(
+            set(i.column() for i in self.selectedIndexes()),
+            reverse=reverseOrder
+        )
+
+    def selectRow(self, row):
+        """
+        Clears all selected rows and selects row.
+        :param row: (int) index for the row to be select.
+        """
+        self.clearRowSelection()
+        self.addRowToSelection(row)
+
+    def addRowToSelection(self, row):
+        """
+        Adds a row to selection.
+        :param row: (int) index for the row to be added to selection.
+        """
+        if row not in self.selectedRows():
+            self.tableWidget.setSelectionMode(QAbstractItemView.MultiSelection)
+            self.tableWidget.selectRow(row)
+            self.tableWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+
+    def removeRowFromSelection(self, row):
+        """
+        Removes a row from selection.
+        :param row: (int) index for the row to be removed from selection.
+        """
+        if row in self.selectedRows():
+            self.tableWidget.setSelectionMode(QAbstractItemView.MultiSelection)
+            self.tableWidget.selectRow(row)
+            self.tableWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+
+    def clearRowSelection(self):
+        """
+        Removes all selected rows from selection.
+        """
+        for row in self.selectedRows():
+            self.removeRowFromSelection(row)
+
+    def moveRowUp(self, row):
+        """
+        Moves a row one position up, if possible.
+        :param row: (int) row be moved.
+        """
+        if row <= 0:
+            return
+        button = self.buttonFromRow(row)
+        upperButton = self.buttonFromRow(row - 1)
+        self.tableWidget.setCellWidget(row - 1, 0, button.newWidget())
+        self.buttonComboBox.setItemText(row, button.name())
+        self.tableWidget.setCellWidget(row, 0, upperButton.newWidget())
+        self.buttonComboBox.setItemText(row + 1, upperButton.name())
+        self.addRowToSelection(row - 1)
+        self.removeRowFromSelection(row)
+
+    def moveRowDown(self, row):
+        """
+        Moves a row one position up, if possible.
+        :param row: (int) row be moved.
+        """
+        if row >= self.tableWidget.rowCount() - 1:
+            return
+        button = self.buttonFromRow(row)
+        lowerButton = self.buttonFromRow(row + 1)
+        self.tableWidget.setCellWidget(row + 1, 0, button.newWidget())
+        self.buttonComboBox.setItemText(row + 1 + 1, button.name())
+        self.tableWidget.setCellWidget(row, 0, lowerButton.newWidget())
+        self.buttonComboBox.setItemText(row + 1, lowerButton.name())
+        self.addRowToSelection(row + 1)
+        self.removeRowFromSelection(row)
+
+    @pyqtSlot()
+    def on_moveUpPushButton_clicked(self):
+        """
+        Method triggered when move row up button is clicked.
+        """
+        rows = self.selectedRows()
+        if not rows:
+            return
+        for row in self.selectedRows():
+            if row - 1 in rows:
+                # rows is a copy of selected rows that is updated after the
+                # item is moved
+                continue
+            self.moveRowUp(row)
+            if row != 0:
+                # this row is never aftected, hence it is "fixed"
+                rows.remove(row)
+
+    @pyqtSlot()
+    def on_moveDownPushButton_clicked(self):
+        """
+        Method triggered when move row down button is clicked.
+        """
+        rows = self.selectedRows(True)
+        if not rows:
+            return
+        lastRow = self.tableWidget.rowCount() - 1
+        for row in self.selectedRows(True):
+            if row + 1 in rows:
+                continue
+            self.moveRowDown(row)
+            if row != lastRow:
+                rows.remove(row)

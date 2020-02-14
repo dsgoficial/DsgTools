@@ -300,7 +300,8 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         Assigned shortcut read from GUI.
         :return: (str) shortcut to be used.
         """
-        return self.shortcutWidget.getShortcut(True).toString()
+        s = self.shortcutWidget.getShortcut(True)
+        return s.toString() if s != 0 else ""
 
     def setOpenForm(self, openForm):
         """
