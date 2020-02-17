@@ -667,6 +667,7 @@ class CustomButtonSetup(QObject):
         self._buttons = dict()
         self._name = displayName or self.tr("Custom Button Setup")
         self._description = description
+        self._dynamicShortcut = True
         if buttonsProps:
             self.setButtons(buttonsProps)
 
@@ -698,6 +699,22 @@ class CustomButtonSetup(QObject):
         """
         return str(self._description)
 
+    def setDynamicShortcut(self, ds):
+        """
+        Defines if setup will assign shortcuts from 1-9 for the first 9 buttons
+        displayed on GUI (current category).
+        :param ds: (bool) whether setup should assign dynamic shortcuts.
+        """
+        self._dynamicShortcut = ds
+
+    def dynamicShortcut(self):
+        """
+        Whether setup will assign shortcuts from 1-9 for the first 9 buttons
+        displayed on GUI (current category).
+        :return: (bool) whether setup should assign dynamic shortcuts.
+        """
+        return bool(self._dynamicShortcut)
+
     def setButtons(self, buttons):
         """
         Replaces current active buttons for new ones from thei properties set.
@@ -705,11 +722,10 @@ class CustomButtonSetup(QObject):
         kept.
         :param buttons: (list) a list of buttons' properties to be setup.
         """
-        if not buttons:
-            for key in list(self._buttons.keys()):
-                del self._buttons[key]
-            del self._buttons
-            self._buttons = dict()
+        for key in list(self._buttons.keys()):
+            del self._buttons[key]
+        del self._buttons
+        self._buttons = dict()
         for props in buttons:
             button = CustomFeatureButton(props)
             self._buttons[props["name"]] = button
@@ -829,6 +845,21 @@ class CustomButtonSetup(QObject):
             if button.checkKeyword(word, checkShortcut):
                 matches.append(button)
         return matches
+
+    def checkKeywordSet(self, kws, checkShortcut=False):
+        """
+        Match a set of keywords to all registered buttons.
+        :param kws: (set-of-str) keywords to be matched.
+        :param checkShortcut: (bool) whether shortcuts should be checked.
+        :return: (list-of-CustomFeatureButton) matched buttons.
+        """
+        matches = None
+        for w in kws:
+            if matches is None:
+                matches = set(self.checkKeyword(w, checkShortcut))
+            else:
+                matches &= set(self.checkKeyword(w, checkShortcut))
+        return list(matches)
 
     def categories(self, reverse=False):
         """

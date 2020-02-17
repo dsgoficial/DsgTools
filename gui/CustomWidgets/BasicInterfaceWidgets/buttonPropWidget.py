@@ -249,7 +249,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         Reads button's keywords for button searching from GUI.
         :return: (set-of-str) set of keywords to be assigned to the button.
         """
-        return set(self.keywordLineEdit.text.split(" "))
+        return set(self.keywordLineEdit.text().strip().split(" "))
 
     def setUseShortcut(self, useShortcut):
         """
@@ -401,12 +401,10 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         b.setUseColor(self.useColor())
         if self.useColor():
             b.setColor(self.color())
-        if self.useToolTip():
-            b.setToolTip(self.toolTip())
-        if self.useCategory():
-            b.setCategory(self.category())
-        if self.useShortcut():
-            b.setShortcut(self.shortcut())
+        b.setToolTip(self.toolTip() if self.useToolTip() else "")
+        b.setCategory(self.category() if self.useCategory() else "")
+        b.setKeywords(self.keywords() if self.useKeywords() else set(""))
+        b.setShortcut(self.shortcut() if self.useShortcut() else "")
         b.setOpenForm(self.openForm())
         b.setLayer(self.layer())
         b.setAttributeMap(self.attributeMap())
@@ -467,46 +465,3 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
     #     :return: (bool) input data is validity status.
     #     """
     #     return self.validateData() == ""
-
-    
-
-    # @pyqtSlot(bool, name="on_addPushButton_clicked")
-    # def addButton(self):
-    #     """
-    #     Adds a new button to the interface.
-    #     """
-    #     button = CustomFeatureButton()
-    #     name = button.name()
-    #     names = [b.name() for b in self.setup().buttons()]
-    #     if name in names:
-    #         i = 1
-    #         name = "{0} {1}".format(name, i)
-    #         while name in names:
-    #             name = "{0} {1}".format(button.name(), i)
-    #             i += 1
-    #         button.setName(name)
-    #     self.setup().addButton(button.properties())
-    #     self.buttonComboBox.addItem(name)
-    #     self.setActiveButton(button)
-
-    
-
-    # def state(self):
-    #     """
-    #     Retrieves dialog's data display state.
-    #     :return: (dict) a map to object's state.
-    #     """
-    #     return {
-    #         "item": self.buttonComboBox.currentIndex(),
-    #         "buttons": [b.properties() for b in self.setup().buttons()],
-    #         "activeData": {} # this may be a modified button not yet saved
-    #     }
-
-    # def setState(self, state):
-    #     """
-    #     Restores a saved state to current dialog's instance.
-    #     :param state: (dict) a map to object's state.
-    #     """
-    #     msg = self.validateData(state)
-    #     if msg == "":
-    #         self.setup()

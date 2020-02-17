@@ -57,6 +57,8 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         if buttonSetup:
             self.setSetup(buttonSetup)
         self.buttonComboBox.addItem(self.tr("No button selected"))
+        self.tableWidget.verticalHeader().sectionDoubleClicked.connect(
+            self.setButtonFromRow)
         bEnabled = self.buttonComboBox.currentIndex() > 0
         for w in ("savePushButton", "undoPushButton", "removePushButton",
                   "buttonPropWidget"):
@@ -102,7 +104,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         Reads button's setup description from GUI.
         :return: (str) description for button's setup.
         """
-        return self.textEdit.text()
+        return self.textEdit.toPlainText()
 
     def setCurrentDescription(self, name):
         """
@@ -118,12 +120,53 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         return self.setup.description()
 
+    def setDynamicShortcut(self, ds):
+        """
+        Defines setup's dynamic shortcut option on GUI.
+        :param ds: (bool) dynamic shortcut assignment option.
+        """
+        self.dsCheckBox.setChecked(ds)
+
+    def dynamicShortcut(self):
+        """
+        Retrieves button's setup dynamic shortcut option read from GUI.
+        :param ds: (bool) dynamic shortcut assignment option.
+        """
+        return self.dsCheckBox.isChecked()
+
+    def setCurrentDynamicShortcut(self, ds):
+        """
+        Defines current button's setup dynamic shortcut option.
+        :param ds: (bool) dynamic shortcut assignment option.
+        """
+        return self.setup.setDynamicShortcut(ds)
+
+    def currentDynamicShortcut(self):
+        """
+        Retrieves current button's description.
+        :return: (bool) dynamic shortcut assignment option.
+        :param name: (str) description for button's setup.
+        """
+        return self.setup.dynamicShortcut()
+
+    def readSetup(self):
+        """
+        Reads setup from GUI.
+        :return: (CustomButtonSetup) reads all data from GUI as a setup.
+        """
+        s = CustomButtonSetup()
+        s.setName(self.setupName())
+        s.setDescription(self.description())
+        for row in range(self.tableWidget.rowCount()):
+            s.addButton(self.buttonFromRow(row).properties())
+        s.setDynamicShortcut(self.dynamicShortcut())
+        return s
+
     def setSetup(self, newSetup):
         """
         Imports buttons setup definitions from another buttons setup.
         :param newSetup: (CustomButtonSetup) setup to be imported. 
         """
-        # self.setup.setState(newSetup.state())
         self.buttonComboBox.blockSignals(True)
         for button in newSetup.buttons():
             self.addButton(button)
@@ -131,6 +174,8 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         self.setCurrentSetupName(newSetup.name())
         self.setDescription(newSetup.description())
         self.setCurrentDescription(newSetup.description())
+        self.setDynamicShortcut(newSetup.dynamicShortcut())
+        self.setCurrentDynamicShortcut(newSetup.dynamicShortcut())
         self.buttonComboBox.blockSignals(False)
 
     def getButtonByName(self, name):
@@ -159,7 +204,11 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         All names for registered buttons on current profile.
         :return: (list-of-str) list of button names.
         """
-        return self.setup.buttonNames()
+        buttons = list()
+        for row in range(self.tableWidget.rowCount()):
+            b = self.buttonFromRow(row)
+            buttons.append(b.name())
+        return buttons
 
     def setAcquisitionTool(self, tool):
         """
@@ -508,6 +557,14 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         # combo box includes "no button", table does not -> row + 1
         return self.getButtonByName(self.buttonComboBox.itemText(row + 1))
 
+    def setButtonFromRow(self, row):
+        """
+        Fills GUI with a button's properties from its row.
+        :param row: (int) target row to get its button.
+        """
+        b = self.getButtonByName(self.buttonComboBox.itemText(row + 1))
+        self.setCurrentButton(b)
+
     def addButtonToTable(self, button):
         """
         Adds widget to table widget.
@@ -683,3 +740,22 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
                 rows.remove(row)
         row = max(self.selectedRows())
         self.setCurrentButton(self.buttonFromRow(row))
+
+    @pyqtSlot()
+    def on_okPushButton_clicked(self):
+        """
+        Closes setup dialog and returns a confirmation code.
+        :return: (int) confirmation code.
+        """
+        self.setCurrentSetupName(self.setupName())
+        self.setCurrentDescription(self.description())
+        self.setCurrentDynamicShortcut(self.dynamicShortcut())
+        self.done(1)
+
+    @pyqtSlot()
+    def on_cancelPushButton_clicked(self):
+        """
+        Closes setup dialog and returns a refusal code.
+        :return: (int) confirmation code.
+        """
+        self.done(0)

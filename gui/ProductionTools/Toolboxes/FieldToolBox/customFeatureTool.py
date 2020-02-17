@@ -24,9 +24,9 @@
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtGui import QColor, QPalette
-from qgis.PyQt.QtWidgets import QDockWidget, QPushButton
+from qgis.PyQt.QtWidgets import QDockWidget, QPushButton, QWidget, QVBoxLayout
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.buttonSetupWidget import ButtonSetupWidget
 from DsgTools.gui.ProductionTools.Toolboxes.FieldToolBox.customButtonSetup import CustomButtonSetup
@@ -47,8 +47,18 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self._setups = dict()
         if profiles:
             self.setButtonProfiles(profiles)
+        self.fillSetupComboBox()
+        self.bFilterLineEdit.editingFinished.connect(self.createResearchTab)
 
-    def setButtonProfiles(self, profiles):
+    def fillSetupComboBox(self):
+        """
+        Fills profiles' combo boxes with available setup items.
+        """
+        self.setupComboBox.clear()
+        self.setupComboBox.addItem(self.tr("Select a buttons profile..."))
+        self.setupComboBox.addItems(list(self._setups.keys()))
+
+    def setButtonSetups(self, profiles):
         """
         Replaces/defines current setup associated to this GUI.
         :param profiles: (list-of-dict) a list of states for CustomButtonSetup
@@ -64,7 +74,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             self._setups[s.name()] = s
         self.setupComboBox.addItems(self.buttonProfiles("asc"))
 
-    def buttonProfiles(self, order=None):
+    def buttonSetups(self, order=None):
         """
         Retrieves current available button profiles (setups) names. 
         :return: (list-of-str) available profiles names.
@@ -72,10 +82,10 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         return {
             "asc": lambda: sorted(self._setups.keys()),
             "desc": lambda: sorted(self._setups.keys(), reverse=True),
-            None: lambda: list(self._setup.keys())
+            None: lambda: list(self._setups.keys())
         }[order]()
 
-    def buttonProfile(self, profile):
+    def buttonSetup(self, profile):
         """
         Retrieves a button profile object from its name. 
         :param profile: (str) profile to be retrieved.
@@ -83,7 +93,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         return self._setups[profile] if profile in self._setups else None
 
-    def currentButtonProfileName(self):
+    def currentButtonSetupName(self):
         """
         Retrieves current active button profile name.
         :return: (str) current profile's name.
@@ -92,40 +102,89 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             return ""
         return self.setupComboBox.currentText()
 
-    def currentButtonProfile(self):
+    def currentButtonSetup(self):
         """
         Retrieves current active button profile.
         :return: (CustomButtonSetup) requested profile.
         """
-        return self.buttonProfile(self.currentButtonProfileName())
+        return self.buttonSetup(self.currentButtonSetupName())
 
     def clearTabs(self):
         """
         Clears all tabs created for the buttons.
         """
-        pass
+        for tab in range(self.tabWidget.count()):
+            self.tabWidget.removeTab(tab)
+
+    def newTab(self, tabTitle, buttonList=None):
+        """
+        Adds a new tab to tab widget.
+        :param tabTitle: (str) tab title text.
+        :param buttonList: (list-of-CustomFeatureButton) buttons to be added to
+                           the new tab.
+        """
+        w = QWidget()
+        layout = QVBoxLayout()
+        w.setLayout(layout)
+        self.tabWidget.addTab(w, tabTitle)
+        if buttonList is not None:
+            for row, b in enumerate(buttonList):
+                layout.insertWidget(row, b.newWidget())
 
     def createTabs(self):
         """
         Creates and populates all tabs for current button profile.
         """
-        pass
+        s = self.currentButtonSetup()
+        if s is None:
+            return
+        groups = s.groupButtons()
+        for cat in s.categories():
+            self.newTab(cat or self.tr("All buttons"), groups[cat])
 
+    def readButtonKeywords(self):
+        """
+        Reads typed in keywords from GUI.
+        :return: (set-of-str) all typed in keywords.
+        """
+        words = self.bFilterLineEdit.text().strip()
+        return set([w for w in words.split(" ") if w.strip()])
+
+    def checkKeywordSet(self, kws):
+        """
+        Matches buttons to all given keywords.
+        :param kws: (set-of-str) keywords to be matched.
+        :return: (list-of-CustomFeatureButton) all matched buttons.
+        """
+        return self.currentButtonSetup().checkKeywordSet(kws)
+
+    @pyqtSlot()
     def createResearchTab(self):
         """
-        Creates a tab for researched buttons.
+        Creates a tab for researched buttons. If research tab is already
+        created, it is cleared and repopulated.
         """
-        pass
+        kws = self.readButtonKeywords()
+        for tab in range(self.tabWidget.count(), 0, -1):
+            if self.tabWidget.tabText(tab) == self.tr("Searched buttons"):
+                self.tabWidget.removeTab(tab)
+                break
+        buttons = self.checkKeywordSet(kws)
+        self.newTab(self.tr("Searched buttons"), buttons)
+        self.tabWidget.setCurrentIndex(self.tabWidget.count() - 1)
 
     @pyqtSlot(int, name="on_setupComboBox_currentIndexChanged")
-    def setCurrentButtonProfile(self, profile=None):
+    def setCurrentButtonSetup(self, profile=None):
         """
         Sets GUI to a new profile.
         """
-        if isinstance(profile, str) and profile in self.buttonProfiles():
-            self.setupComboBox.setCurrentText(self.currentButtonProfileName())
         self.clearTabs()
-        if self.currentButtonProfile() is None:
+        if self.setupComboBox.currentIndex() == 0:
+            return
+        if isinstance(profile, str) and profile in self.buttonSetups():
+            self.setupComboBox.setCurrentText(self.currentButtonSetupName())
+        self.clearTabs()
+        if self.currentButtonSetup() is None:
             # raise a message and do nothing
             return
         self.createTabs()
@@ -133,11 +192,59 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         # least be cleared
 
     @pyqtSlot(bool, name="on_editSetupPushButton_clicked")
-    def setupCurrentButton(self):
+    def editCurrentSetup(self):
         """
-        Opens setup form.
+        Opens button setup configuration GUI to edit current button setup.
+        """
+        setup = self.currentButtonSetup()
+        dlg = ButtonSetupWidget()
+        dlg.setSetup(setup)
+        ret = dlg.exec_()
+        if ret:
+            newSetup = dlg.readSetup()
+            newName = newSetup.name()
+            if newName != setup.name():
+                i = 0
+                while newSetup.name() in self.buttonSetups():
+                    i += 1
+                    newSetup.setName("{0} {1}".format(newName, i))
+                idx = self.setupComboBox.currentIndex()
+                self.setupComboBox.setItemText(idx, newSetup.name())
+            setup.setState(newSetup.state())
+            self.setCurrentButtonSetup(setup)
+
+    def addButtonSetup(self, setup):
+        """
+        Adds a setup to the available setups. Newly added profile will set as
+        active.
+        :param setup: (CustomButtonSetup) button setup to be added.
+        """
+        if setup.name() in self.buttonSetups():
+            # raise error message
+            return
+        self._setups[setup.name()] = setup
+        self.setupComboBox.addItem(setup.name())
+        self.setupComboBox.setItemData(
+            self.setupComboBox.findText(setup.name()),
+            setup.description(),
+            Qt.ToolTipRole
+        )
+        self.setupComboBox.setCurrentText(setup.name())
+
+    @pyqtSlot()
+    def on_addPushButton_clicked(self):
+        """
+        Adds a configured setup to the available profiles.
         """
         dlg = ButtonSetupWidget()
         ret = dlg.exec_()
         if ret:
-            pass
+            s = dlg.readSetup()
+            if s.name() in self.buttonSetups():
+                baseName = 0
+                i = 0
+                setups = self.buttonSetups()
+                while s.name() in setups:
+                    i += 1
+                    s.setName("{0} {1}".format(baseName, i))
+            self.addButtonSetup(s)
