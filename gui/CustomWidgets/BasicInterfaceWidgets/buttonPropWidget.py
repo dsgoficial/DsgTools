@@ -388,6 +388,11 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         self.setLayer(button.layer())
         self.updateFieldTable()
         self.setAttributeMap(button.attributeMap())
+        self.mColorButton.setEnabled(button.useColor())
+        self.toolTipLineEdit.setEnabled(bool(button.toolTip()))
+        self.categoryLineEdit.setEnabled(bool(button.category()))
+        self.keywordLineEdit.setEnabled(bool(button.keywords()))
+        self.shortcutWidget.setEnabled(bool(button.shortcut()))
         self.button = button
 
     def readButton(self):

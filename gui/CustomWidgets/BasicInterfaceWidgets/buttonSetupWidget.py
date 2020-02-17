@@ -469,11 +469,11 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
             # create a new one with that button?
             pass
         self.buttonComboBox.setCurrentText(button.name())
-        self.buttonPropWidget.setButton(button)
         bEnabled = self.buttonComboBox.currentIndex() > 0
         for w in ("savePushButton", "undoPushButton", "removePushButton",
                   "buttonPropWidget"):
             getattr(self, w).setEnabled(bEnabled)
+        self.buttonPropWidget.setButton(button)
 
     @pyqtSlot(bool, name="on_savePushButton_clicked")
     def updateCurrentButton(self, props):

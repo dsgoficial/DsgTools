@@ -26,7 +26,12 @@ import os
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtGui import QColor, QPalette
-from qgis.PyQt.QtWidgets import QDockWidget, QPushButton, QWidget, QVBoxLayout
+from qgis.PyQt.QtWidgets import (QWidget,
+                                 QPushButton,
+                                 QDockWidget,
+                                 QVBoxLayout,
+                                 QSpacerItem,
+                                 QSizePolicy)
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.buttonSetupWidget import ButtonSetupWidget
 from DsgTools.gui.ProductionTools.Toolboxes.FieldToolBox.customButtonSetup import CustomButtonSetup
@@ -109,12 +114,19 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         return self.buttonSetup(self.currentButtonSetupName())
 
+    def allButtons(self):
+        """
+        Retrieves all buttons from current buttons setup.
+        :return: (list-of-CustomFeatureButton) all buttons from current setup.
+        """
+        s = self.currentButtonSetup()
+        return s.buttons() if s is not None else []
+
     def clearTabs(self):
         """
         Clears all tabs created for the buttons.
         """
-        for tab in range(self.tabWidget.count()):
-            self.tabWidget.removeTab(tab)
+        self.tabWidget.clear()
 
     def newTab(self, tabTitle, buttonList=None):
         """
@@ -130,6 +142,11 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if buttonList is not None:
             for row, b in enumerate(buttonList):
                 layout.insertWidget(row, b.newWidget())
+            layout.addItem(
+                QSpacerItem(
+                    20, 40, QSizePolicy.Expanding, QSizePolicy.Expanding
+                )
+            )
 
     def createTabs(self):
         """
@@ -169,7 +186,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             if self.tabWidget.tabText(tab) == self.tr("Searched buttons"):
                 self.tabWidget.removeTab(tab)
                 break
-        buttons = self.checkKeywordSet(kws)
+        buttons = self.checkKeywordSet(kws) if kws else self.allButtons()
         self.newTab(self.tr("Searched buttons"), buttons)
         self.tabWidget.setCurrentIndex(self.tabWidget.count() - 1)
 
@@ -183,13 +200,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             return
         if isinstance(profile, str) and profile in self.buttonSetups():
             self.setupComboBox.setCurrentText(self.currentButtonSetupName())
-        self.clearTabs()
-        if self.currentButtonSetup() is None:
-            # raise a message and do nothing
-            return
         self.createTabs()
-        # test later if remove research tab is necessary - but it should, at
-        # least be cleared
 
     @pyqtSlot(bool, name="on_editSetupPushButton_clicked")
     def editCurrentSetup(self):
@@ -205,11 +216,13 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             newName = newSetup.name()
             if newName != setup.name():
                 i = 0
+                oldName = setup.name()
                 while newSetup.name() in self.buttonSetups():
                     i += 1
                     newSetup.setName("{0} {1}".format(newName, i))
                 idx = self.setupComboBox.currentIndex()
                 self.setupComboBox.setItemText(idx, newSetup.name())
+                self._setups[newName] = self._setups.pop(oldName)
             setup.setState(newSetup.state())
             self.setCurrentButtonSetup(setup)
 
