@@ -223,6 +223,11 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 idx = self.setupComboBox.currentIndex()
                 self.setupComboBox.setItemText(idx, newSetup.name())
                 self._setups[newName] = self._setups.pop(oldName)
+            self.setupComboBox.setItemData(
+                self.setupComboBox.currentIndex(),
+                newSetup.description(),
+                Qt.ToolTipRole
+            )
             setup.setState(newSetup.state())
             self.setCurrentButtonSetup(setup)
 

@@ -27,7 +27,7 @@ from collections import defaultdict
 
 from qgis.utils import iface
 from qgis.core import QgsProject
-from qgis.PyQt.QtCore import Qt, pyqtSignal, QObject
+from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot, QObject
 from qgis.PyQt.QtWidgets import QPushButton, QShortcut, QAction
 from qgis.PyQt.QtGui import QIcon, QColor, QPalette, QKeySequence
 
@@ -63,13 +63,13 @@ class CustomFeatureButton(QObject):
             "layer": "",
             "keywords": set(),
             "attributeMap": dict(),
-            "acquisitionTool": "default"
+            "acquisitionTool": "default",
+            "isCheckable": False,
+            "isChecked": False
         }
         self._callback = callback if callback else lambda: None
-        self._shortcut = QShortcut(iface.mainWindow())
-        self._shortcut.setContext(Qt.ApplicationShortcut)
+        self.setAction()
         self.setProperties(props)
-        self.setAction(QAction())
         self.setShortcut(self.shortcut())
 
     def __eq__(self, obj):
@@ -105,10 +105,10 @@ class CustomFeatureButton(QObject):
         """
         Reimplementation of object removal method.
         """
+        iface.unregisterMainWindowAction(self._action)
         self._shortcut.activated.disconnect(self._action.trigger)
         self._shortcut.setKey(QKeySequence.fromString(""))
         del self._shortcut
-        iface.unregisterMainWindowAction(self._action)
         self._action.blockSignals(True)
         self._widget.clicked.disconnect(self._action.trigger)
         self._widget.blockSignals(True)
@@ -123,7 +123,6 @@ class CustomFeatureButton(QObject):
         """
         b = CustomFeatureButton(self.properties())
         b.setCallback(self._callback)
-        b.setAction(self._action)
         return b
 
     def setProperties(self, props):
@@ -163,7 +162,9 @@ class CustomFeatureButton(QObject):
             "layer": lambda x: self.setLayer(x),
             "keywords": lambda x: self.setKeywords(x),
             "attributeMap": lambda x: self.setAttributeMap(x),
-            "acquisitionTool": lambda x: self.setAcquisitionTool(x)
+            "acquisitionTool": lambda x: self.setAcquisitionTool(x),
+            "isCheckable": lambda x: self.setCheckable(x),
+            "isChecked": lambda x: self.setChecked(x)
         }
         try:
             for propName, propValue in tempButton.properties().items():
@@ -196,7 +197,9 @@ class CustomFeatureButton(QObject):
             "shortcut": self.shortcut(),
             "keywords": self.keywords(),
             "attributeMap": self.attributeMap(),
-            "acquisitionTool": self.acquisitionTool()
+            "acquisitionTool": self.acquisitionTool(),
+            "isCheckable": self.isCheckable(),
+            "isChecked": self.isChecked()
         }
 
     def widget(self):
@@ -213,6 +216,11 @@ class CustomFeatureButton(QObject):
                  properties.
         """
         pb = QPushButton()
+        pb.setCheckable(self.isCheckable())
+        pb.toggled.connect(self.setChecked)
+        pb.setChecked(self.isChecked())
+        if not self.isCheckable():
+            pb.clicked.connect(self._action.trigger)
         pb.setText(self.displayName())
         pb.setToolTip(self.toolTip())
         pal = QPalette()
@@ -225,8 +233,6 @@ class CustomFeatureButton(QObject):
                 pal.setColor(pal.Button, col)
         pb.setPalette(pal)
         pb.update()
-        if hasattr(self, "_action"):
-            pb.clicked.connect(self._action.trigger)
         return pb
 
     def setName(self, name):
@@ -238,6 +244,11 @@ class CustomFeatureButton(QObject):
             self._props["name"] = name
             self.widget().setText(self.displayName())
             self.widget().update()
+            if hasattr(self, "_action"):
+                self._action.setText(
+                    self.tr("DSGTools: Custom Feature Toolbox - button {0}")\
+                        .format(self.name())
+                )
         else:
             raise TypeError(
                 self.tr("Policy must be a str ({0}).").format(type(name))
@@ -389,7 +400,7 @@ class CustomFeatureButton(QObject):
             self.widget().update()
         else:
             raise TypeError(
-                self.tr("Category must be a str ({0}).").format(type(s))
+                self.tr("Action shortcut must be a str ({0}).").format(type(s))
             )
 
     def shortcut(self):
@@ -480,27 +491,17 @@ class CustomFeatureButton(QObject):
             callback = lambda: None
         if not callable(callback):
             raise Exception(self.tr("Callback must be a callable object."))
-        self._action.triggered.disconnect(self._callback)
+        if self.callbackIsConnected():
+            self._action.triggered.disconnect(self._callback)
         self._callback = callback
         self._action.triggered.connect(self._callback)
+        self.__callbackConnected = True
 
-    def setAction(self, action):
+    def setAction(self):
         """
         Sets callback to be triggered whenever button is pushed.
-        :param action: (QAction) action to be set.
         """
-        if not isinstance(action, QAction):
-            raise Exception(self.tr("Action must be instance of QAction."))
-        if hasattr(self, "_action"):
-            # first call does not an "_action" attribute
-            self._action.triggered.disconnect(self._callback)
-            # other callbacks might have been associated with current action
-            iface.unregisterMainWindowAction(self._action)
-            self._action.blockSignals(True)
-            self.widget().clicked.disconnect(self._action.trigger)
-            self._shortcut.activated.disconnect(self._action.trigger)
-            del self._action
-        self._action = action
+        self._action = QAction()
         self._action.setText(
             self.tr("DSGTools: Custom Feature Toolbox - button {0}")\
                 .format(self.name())
@@ -508,18 +509,47 @@ class CustomFeatureButton(QObject):
         self._action.setIcon(
             QIcon(':/plugins/DsgTools/icons/fieldToolbox.png')
         )
-        self._action.triggered.connect(self._callback)
-        self.widget().clicked.connect(self._action.trigger)
-        self._action.setShortcut(QKeySequence.fromString(self.shortcut()))
+        self._shortcut = QShortcut(iface.mainWindow())
+        self._shortcut.setContext(Qt.ApplicationShortcut)
+        sKeySeq = QKeySequence.fromString(self.shortcut())
+        self._action.setShortcut(sKeySeq)
+        self._shortcut.setKey(sKeySeq)
         self._shortcut.activated.connect(self.action().trigger)
         iface.registerMainWindowAction(self._action, self.shortcut())
+        self._action.triggered.connect(self._callback)
+        self.__callbackConnected = True
 
     def action(self):
         """
         Gets the QAction associated with the button push event.
         :return: (QAction) current action.
         """
-        return self._action if hasattr(self, "_action") else None
+        return self._action
+
+    def callbackIsConnected(self):
+        """
+        Identifies if callback is currently connected to action trigger signal.
+        :return: (bool) whether callback is connected to action.
+        """
+        return bool(self.__callbackConnected)
+
+    def handleActionCallback(self):
+        """
+        Checks button behaviour and connects or disconnects callback from
+        action accordingly. Action may trigger the callback when:
+        1- button is not checkable;
+        2- button is checkable and it is currently checked
+        """
+        if self.isCheckable():
+            if self.isChecked() and not self.callbackIsConnected():
+                self.action().triggered.connect(self._callback)
+                self.__callbackConnected = True
+            elif not self.isChecked() and self.callbackIsConnected():
+                self.action().triggered.disconnect(self._callback)
+                self.__callbackConnected = False
+        elif not self.callbackIsConnected():
+            self.action().triggered.connect(self._callback)
+            self.__callbackConnected = True
 
     def setLayer(self, layer):
         """
@@ -640,7 +670,64 @@ class CustomFeatureButton(QObject):
         :return: (str) button's name.
         """
         return str(self._props["acquisitionTool"])
+        
+    def setCheckable(self, checkable):
+        """
+        Defines if button may be toggled (or "clickable").
+        :param checkable: (bool) whether button may be toggled.
+        """
+        if type(checkable) == bool:
+            self._props["isCheckable"] = checkable
+            self.widget().setCheckable(checkable)
+            try:
+                # signal may or may not be connected. case when it needs to
+                # stay connected is handled by the connect command below
+                self.widget().clicked.disconnect(self.action().trigger)
+            except:
+                pass
+            if not checkable:
+                self.setChecked(False)
+                self.widget().clicked.connect(self.action().trigger)
+            else:
+                self.handleActionCallback()
+        else:
+            raise TypeError(
+                self.tr("Toggling usage must be a bool ({0}).")\
+                    .format(type(checkable))
+            )
 
+    def isCheckable(self):
+        """
+        Checks if button may be toggled (or "clickable").
+        :return: (bool) whether button may be toggled.
+        """
+        return bool(self._props["isCheckable"])
+
+    @pyqtSlot(bool)
+    def setChecked(self, checked):
+        """
+        Defines if button is toggled (or "clickable").
+        :param checked: (bool) whether button is toggled.
+        """
+        if type(checked) == bool:
+            checked = self.isCheckable() and checked
+            self._props["isChecked"] = checked
+            if self.sender() is None:
+                self.widget().setChecked(checked)
+            self.widget().update()
+            self.handleActionCallback()
+        else:
+            raise TypeError(
+                self.tr("Toggling status must be a bool ({0}).")\
+                    .format(type(checked))
+            )
+
+    def isChecked(self):
+        """
+        Checks if button is toggled (or "clickable").
+        :return: (bool) whether button may be toggled.
+        """
+        return bool(self._props["isChecked"])
 
 class CustomButtonSetup(QObject):
     """
