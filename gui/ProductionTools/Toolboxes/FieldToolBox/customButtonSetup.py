@@ -230,7 +230,7 @@ class CustomFeatureButton(QObject):
                 col = QColor(col)
             else:
                 col = QColor(*col)
-                pal.setColor(pal.Button, col)
+            pal.setColor(pal.Button, col)
         pb.setPalette(pal)
         pb.update()
         return pb

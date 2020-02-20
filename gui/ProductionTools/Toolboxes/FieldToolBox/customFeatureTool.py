@@ -7,7 +7,7 @@
                              -------------------
         begin                : 2020-01-17
         git sha              : $Format:%H$
-        copyright            : (C) 2020 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        copyright            : (C) 2020 by João P. Esperidião - Cartographic Engineer @ Brazilian Army
         email                : esperidiao.joao@eb.mil.br
  ***************************************************************************/
 
@@ -30,6 +30,7 @@ from qgis.PyQt.QtWidgets import (QWidget,
                                  QPushButton,
                                  QDockWidget,
                                  QVBoxLayout,
+                                 QScrollArea,
                                  QSpacerItem,
                                  QSizePolicy)
 
@@ -53,7 +54,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if profiles:
             self.setButtonProfiles(profiles)
         self.fillSetupComboBox()
-        self.bFilterLineEdit.editingFinished.connect(self.createResearchTab)
+        self.bFilterLineEdit.returnPressed.connect(self.createResearchTab)
 
     def fillSetupComboBox(self):
         """
@@ -135,10 +136,11 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         :param buttonList: (list-of-CustomFeatureButton) buttons to be added to
                            the new tab.
         """
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
         w = QWidget()
         layout = QVBoxLayout()
-        w.setLayout(layout)
-        self.tabWidget.addTab(w, tabTitle)
+        self.tabWidget.addTab(scroll, tabTitle)
         if buttonList is not None:
             for row, b in enumerate(buttonList):
                 layout.insertWidget(row, b.newWidget())
@@ -147,6 +149,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                     20, 40, QSizePolicy.Expanding, QSizePolicy.Expanding
                 )
             )
+        w.setLayout(layout)
+        scroll.setWidget(w)
 
     def createTabs(self):
         """

@@ -43,6 +43,8 @@ class ButtonTester(unittest.TestCase):
         self.assertEquals(b.keywords(), set())
         self.assertEquals(b.attributeMap(), dict())
         self.assertEquals(b.acquisitionTool(), "default")
+        self.assertEquals(b.isCheckable(), False)
+        self.assertEquals(b.isChecked(), False)
         p = {
             "name": "New button",
             "openForm": False,
@@ -54,7 +56,9 @@ class ButtonTester(unittest.TestCase):
             "shortcut": "",
             "keywords": set(),
             "attributeMap": dict(),
-            "acquisitionTool": "default"
+            "acquisitionTool": "default",
+            "isCheckable": False,
+            "isChecked": False
         }
         self.assertEquals(b.properties(), p)
 
@@ -63,7 +67,7 @@ class ButtonTester(unittest.TestCase):
         b = CustomFeatureButton()
         tools = {
             "default": "QGIS default feature extraction tool",
-            "freeHand": "DSGTools: Free Hand",
+            "freeHand": "DSGTools: Free Hand Acquisition",
             "circle": "QGIS Circle extraction tool",
             "rightAngle": "DSGTools: Right Degree Angle Digitizing"
         }
