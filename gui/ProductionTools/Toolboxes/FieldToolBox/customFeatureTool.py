@@ -51,6 +51,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         super(CustomFeatureTool, self).__init__(parent)
         self.setupUi(self)
         self._setups = dict()
+        self._order = dict()
         if profiles:
             self.setButtonProfiles(profiles)
         self.fillSetupComboBox()
@@ -142,6 +143,9 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         layout = QVBoxLayout()
         self.tabWidget.addTab(scroll, tabTitle)
         if buttonList is not None:
+            # buttons must respect order defined by user on setup GUI
+            order = self._order[self.currentButtonSetupName()]
+            buttonList = sorted(buttonList, key=lambda i: order[i.name()])
             for row, b in enumerate(buttonList):
                 layout.insertWidget(row, b.newWidget())
             layout.addItem(
@@ -218,9 +222,11 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if ret:
             newSetup = dlg.readSetup()
             newName = newSetup.name()
+            self._order[newName] = dlg.buttonsOrder()
             if newName != setup.name():
                 i = 0
                 oldName = setup.name()
+                del self._order[oldName]
                 while newSetup.name() in self.buttonSetups():
                     i += 1
                     newSetup.setName("{0} {1}".format(newName, i))
@@ -262,6 +268,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         ret = dlg.exec_()
         if ret:
             s = dlg.readSetup()
+            self._order[s.name()] = dlg.buttonsOrder()
             if s.name() in self.buttonSetups():
                 baseName = 0
                 i = 0

@@ -610,6 +610,18 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
                 ) # Qt mnemonic shtct for it widgets introduces "&"...
         return buttons
 
+    def buttonsOrder(self):
+        """
+        Retrieves button order to be used for button setup.
+        :return: (dict) a map from button name to its position on GUI.
+        """
+        buttons = dict()
+        for row in range(self.tableWidget.rowCount()):
+            button = self.tableWidget.cellWidget(row, 0).text()\
+                         .rsplit(" [", 1)[0].replace("&", "")
+            buttons[button] = row
+        return buttons
+
     def selectedIndexes(self):
         """
         :return: (list-of-QModelIndex) table's selected indexes.
