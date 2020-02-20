@@ -55,6 +55,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if profiles:
             self.setButtonProfiles(profiles)
         self.fillSetupComboBox()
+        self.tabWidget.setTabPosition(self.tabWidget.West)
         self.bFilterLineEdit.returnPressed.connect(self.createResearchTab)
 
     def fillSetupComboBox(self):

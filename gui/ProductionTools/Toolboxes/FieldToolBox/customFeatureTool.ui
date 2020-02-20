@@ -242,19 +242,6 @@
       </item>
      </layout>
     </item>
-    <item row="4" column="0">
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>80</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
     <item row="3" column="0" colspan="2">
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
@@ -299,7 +286,6 @@
    <zorder>mGroupBox</zorder>
    <zorder>mGroupBox_2</zorder>
    <zorder></zorder>
-   <zorder>verticalSpacer</zorder>
    <zorder></zorder>
   </widget>
  </widget>
