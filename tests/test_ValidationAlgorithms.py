@@ -1467,12 +1467,13 @@ class Tester(unittest.TestCase):
         layers = self.testingDataset("geojson", "spatial_rules_alg")
         for lyrName, lyr in layers.items():
             self.loadLayerToCanvas(lyr)
-        self.assertEqual(
-            self.testAlg(
+        msg = self.testAlg(
                 "dsgtools:enforcespatialrules",
                 multipleOutputs=True,
                 addControlKey=True
-            ),
+            )
+        self.assertEqual(
+            msg,
             ""
         )
         self.clearProject()
