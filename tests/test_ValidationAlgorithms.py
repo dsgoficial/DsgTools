@@ -1462,6 +1462,14 @@ class Tester(unittest.TestCase):
     
     def test_enforcespatialrules(self):
         """Tests for Enforce Spatial Rules algorithm"""
+        testsParams = self.algorithmParameters("dsgtools:enforcespatialrules")
+        # this algorithm, specifically, has to set layers Context-reading ready
+        layers = self.testingDataset("geojson", "spatial_rules_alg")
+        for parameters in testsParams:
+            for rule in parameters["RULES_SET"]:
+                for key in ["layer_a", "layer_b"]:
+                    vl = layers[rule[key]]
+                    self.loadLayerToCanvas(vl)
         self.assertEqual(
             self.testAlg(
                 "dsgtools:enforcespatialrules",
@@ -1470,6 +1478,7 @@ class Tester(unittest.TestCase):
             ),
             ""
         )
+        self.clearProject()
 
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
