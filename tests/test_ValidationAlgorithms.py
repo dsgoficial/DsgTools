@@ -166,8 +166,6 @@ class Tester(unittest.TestCase):
             "gpkg" : {
                 "testes_wgs84" : os.path.join(gpkgPaths, 'testes_wgs84.gpkg'),
                 "testes_sirgas2000_23s" : os.path.join(gpkgPaths, 'testes_sirgas2000_23s.gpkg'),
-                "testes_sirgas2000_24s" : os.path.join(gpkgPaths, 'testes_sirgas2000_24s.gpkg'),
-                "testes_sirgas2000_24s" : os.path.join(gpkgPaths, 'testes_sirgas2000_24s.gpkg'),
                 "test_dataset_unbuild_polygons" : os.path.join(gpkgPaths, 'test_dataset_unbuild_polygons.gpkg')
             },
             "geojson" : {
