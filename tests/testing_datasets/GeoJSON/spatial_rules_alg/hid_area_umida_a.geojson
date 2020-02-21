@@ -1,6 +1,6 @@
 {
 "type": "FeatureCollection",
-"name": "edgv3-hid_area_umida_a",
+"name": "hid_area_umida_a",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::32721" } },
 "features": [
 { "type": "Feature", "properties": { "id": 1, "nome": null, "geometriaaproximada": false, "tipoareaumida": 9999, "area_otf": 1527360286.7782614 }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 7936353.204745144583285, 9903273.150843260809779 ], [ 7890860.638324659317732, 9834191.846278820186853 ], [ 7997009.959972457960248, 9785329.460123483091593 ], [ 7936353.204745144583285, 9903273.150843260809779 ] ] ] ] } },
