@@ -1472,11 +1472,12 @@ class Tester(unittest.TestCase):
                 multipleOutputs=True,
                 addControlKey=True
             )
+        del self.datasets["geojson:spatial_rules_alg"]
+        self.clearProject()
         self.assertEqual(
             msg,
             ""
         )
-        self.clearProject()
 
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
