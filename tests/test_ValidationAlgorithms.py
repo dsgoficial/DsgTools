@@ -1465,12 +1465,8 @@ class Tester(unittest.TestCase):
         testsParams = self.algorithmParameters("dsgtools:enforcespatialrules")
         # this algorithm, specifically, has to set layers Context-reading ready
         layers = self.testingDataset("geojson", "spatial_rules_alg")
-        for parameters in testsParams:
-            for rule in parameters["RULES_SET"]:
-                for key in ["layer_a", "layer_b"]:
-                    if key in rule and rule[key] in layers:
-                        vl = layers[rule[key]]
-                        self.loadLayerToCanvas(vl)
+        for lyrName, lyr in layers.items():
+            self.loadLayerToCanvas(lyr)
         self.assertEqual(
             self.testAlg(
                 "dsgtools:enforcespatialrules",
