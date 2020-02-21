@@ -24,34 +24,14 @@
        <item row="1" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QRadioButton" name="newRadioButton">
-           <property name="text">
-            <string>New feature</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
+          <widget class="SwitchButton" name="toolBehaviourSwitch" native="true"/>
          </item>
+        </layout>
+       </item>
+       <item row="2" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QRadioButton" name="reclassifyRadioButton">
-           <property name="text">
-            <string>Reclassify feature</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_3">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
+          <widget class="SwitchButton" name="layerSelectionSwitch" native="true"/>
          </item>
         </layout>
        </item>
@@ -59,55 +39,6 @@
      </widget>
     </item>
     <item row="1" column="0" colspan="2">
-     <widget class="QgsCollapsibleGroupBox" name="mGroupBox">
-      <property name="title">
-       <string>Reclassify - layer selection behaviour</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <widget class="QRadioButton" name="activeRadioButton">
-           <property name="toolTip">
-            <string>Reclassification tool only works on features from current active layer</string>
-           </property>
-           <property name="text">
-            <string>Active layer</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="allRadioButton">
-           <property name="toolTip">
-            <string>Reclassification will affect all compatible selected features from all loaded layers, regardless of it being an active layer</string>
-           </property>
-           <property name="text">
-            <string>All selected features</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="2" column="0" colspan="2">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -242,7 +173,7 @@
       </item>
      </layout>
     </item>
-    <item row="3" column="0" colspan="2">
+    <item row="2" column="0" colspan="2">
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
        <widget class="QLabel" name="label_6">
@@ -283,7 +214,6 @@
      </layout>
     </item>
    </layout>
-   <zorder>mGroupBox</zorder>
    <zorder>mGroupBox_2</zorder>
    <zorder></zorder>
    <zorder></zorder>
@@ -294,6 +224,12 @@
    <class>QgsCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
    <header>qgscollapsiblegroupbox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SwitchButton</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.switchButton.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

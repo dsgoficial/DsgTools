@@ -55,6 +55,15 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if profiles:
             self.setButtonProfiles(profiles)
         self.fillSetupComboBox()
+        self.layerSelectionSwitch.setStateAName(self.tr("Active layer"))
+        self.layerSelectionSwitch.setStateBName(self.tr("All layers"))
+        self.layerSelectionSwitch.hide()
+        self.toolBehaviourSwitch.setStateAName(self.tr("Feature extraction"))
+        self.toolBehaviourSwitch.setStateBName(self.tr("Reclassify"))
+        self.toolBehaviourSwitch.stateChanged.connect(
+            lambda x: getattr(self.layerSelectionSwitch,
+                                "show" if x else "hide")()
+        )
         self.tabWidget.setTabPosition(self.tabWidget.West)
         self.bFilterLineEdit.returnPressed.connect(self.createResearchTab)
 
