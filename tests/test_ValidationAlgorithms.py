@@ -1058,10 +1058,9 @@ class Tester(unittest.TestCase):
         :param feedback: (QgsProcessingFeedback) QGIS progress tracking object.
         :param context: (QgsProcessingContext) execution's environmental parameters.
         """
-        return processing.run(algName, parameters, None,\
-                    feedback or QgsProcessingFeedback(),
-                    context or QgsProcessingContext()
-                )
+        feedback = QgsProcessingFeedback() if feedback is None else feedback
+        context = QgsProcessingContext() if context is None else context
+        return processing.run(algName, parameters, feedback, context)
 
     def expectedOutput(self, algName, test, multipleOutputs=False):
         """
