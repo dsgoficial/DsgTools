@@ -1468,8 +1468,9 @@ class Tester(unittest.TestCase):
         for parameters in testsParams:
             for rule in parameters["RULES_SET"]:
                 for key in ["layer_a", "layer_b"]:
-                    vl = layers[rule[key]]
-                    self.loadLayerToCanvas(vl)
+                    if key in rule and rule[key] in layers:
+                        vl = layers[rule[key]]
+                        self.loadLayerToCanvas(vl)
         self.assertEqual(
             self.testAlg(
                 "dsgtools:enforcespatialrules",
