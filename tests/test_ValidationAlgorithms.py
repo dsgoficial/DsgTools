@@ -308,6 +308,7 @@ class Tester(unittest.TestCase):
                     'INPUT' : self.getInputLayers(
                             'sqlite', 'banco_capacitacao', ['cb_veg_campo_a']
                         )[0],
+                    'IGNORE_CLOSED' : False,
                     'SELECTED' : False,
                     'TYPE' : False
                 }
@@ -1386,13 +1387,6 @@ class Tester(unittest.TestCase):
             self.testAlg("dsgtools:identifydangles"), ""
         )
 
-
-def run_all():
-    """Default function that is called by the runner if nothing else is specified"""
-    suite = unittest.TestSuite()
-    suite.addTests(unittest.makeSuite(Tester, 'test_'))
-    unittest.TextTestRunner(verbosity=3, stream=sys.stdout).run(suite)
-    
     def test_identifyunsharedvertexonintersectionsalgorithm(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifyunsharedvertexonintersectionsalgorithm"), ""

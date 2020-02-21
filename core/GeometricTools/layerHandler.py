@@ -843,7 +843,7 @@ class LayerHandler(QObject):
             localLyr = algRunner.runIntersection(localLyr, context, overlayLyr=filterLyr)
         return localLyr
     
-    def identifyAndFixInvalidGeometries(self, inputLyr, fixInput=False, onlySelected=False, feedback=None):
+    def identifyAndFixInvalidGeometries(self, inputLyr, ignoreClosed=False, fixInput=False, onlySelected=False, feedback=None):
         iterator, featCount = self.getFeatureList(inputLyr, onlySelected=onlySelected)
         stepSize = 100/featCount if featCount else 0
         flagDict = dict()
@@ -869,7 +869,8 @@ class LayerHandler(QObject):
                     if error.hasWhere():
                         errorPointXY = error.where()
                         flagGeom = QgsGeometry.fromPointXY(errorPointXY)
-                        if geom.type() == QgsWkbTypes.LineGeometry and self.isClosedAndFlagIsAtStartOrEnd(geom, flagGeom):
+                        if geom.type() == QgsWkbTypes.LineGeometry and ignoreClosed and\
+                            self.isClosedAndFlagIsAtStartOrEnd(geom, flagGeom):
                             continue
                         if errorPointXY not in flagDict:
                             flagDict[errorPointXY] = {
