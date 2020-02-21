@@ -1060,7 +1060,7 @@ class Tester(unittest.TestCase):
         """
         feedback = QgsProcessingFeedback() if feedback is None else feedback
         context = QgsProcessingContext() if context is None else context
-        return processing.run(algName, parameters, feedback, context)
+        return processing.run(algName, parameters, context=context, feedback=feedback)
 
     def expectedOutput(self, algName, test, multipleOutputs=False):
         """
