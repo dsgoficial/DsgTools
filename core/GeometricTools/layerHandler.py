@@ -900,7 +900,11 @@ class LayerHandler(QObject):
     def isClosedAndFlagIsAtStartOrEnd(self, geom, flagGeom):
         for part in geom.asGeometryCollection():
             startPoint, endPoint = self.geometryHandler.getFirstAndLastNodeFromGeom(part)
-            if flagGeom.equals(QgsGeometry.fromPointXY(startPoint)) or flagGeom.equals(QgsGeometry.fromPointXY(endPoint)):
+            startPointGeom = QgsGeometry.fromPointXY(startPoint)
+            endPointGeom = QgsGeometry.fromPointXY(endPoint)
+            if not startPointGeom.equals(endPointGeom):
+                continue
+            if flagGeom.equals(startPointGeom) or flagGeom.equals(endPointGeom):
                 return True
         return False
 
