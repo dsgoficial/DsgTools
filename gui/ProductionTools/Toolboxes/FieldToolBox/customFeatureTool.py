@@ -175,7 +175,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             return
         groups = s.groupButtons()
         for cat in s.categories():
-            self.newTab(cat or self.tr("All buttons"), groups[cat])
+            self.newTab(cat or self.tr("No category"), groups[cat])
 
     def readButtonKeywords(self):
         """
@@ -214,8 +214,9 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         Sets GUI to a new profile.
         """
         self.clearTabs()
-        if self.setupComboBox.currentIndex() == 0:
-            return
+        isSetup = self.setupComboBox.currentIndex() != 0
+        self.editSetupPushButton.setEnabled(isSetup)
+        self.removePushButton.setEnabled(isSetup)
         if isinstance(profile, str) and profile in self.buttonSetups():
             self.setupComboBox.setCurrentText(self.currentButtonSetupName())
         self.createTabs()

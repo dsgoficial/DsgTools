@@ -23,12 +23,16 @@
 
 import os
 
-from qgis.core import QgsMessageLog
-
+from qgis.core import Qgis, QgsMessageLog
+from qgis.gui import QgsMessageBar
 from qgis.PyQt import uic
+from qgis.PyQt.QtCore import (Qt,
+                              QSize,
+                              pyqtSlot,
+                              QSettings,
+                              pyqtSignal)
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtSql import QSqlQuery
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtWidgets import (QDialog,
                                  QFileDialog,
                                  QMessageBox,
@@ -51,6 +55,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         super(ButtonSetupWidget, self).__init__(parent)
         self.setupUi(self)
+        self.messageBar = QgsMessageBar(self)
         self.textEdit.setPlaceholderText(
             self.tr("Insert a short description for current button setup..."))
         self.setup = CustomButtonSetup()
@@ -63,6 +68,34 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         for w in ("savePushButton", "undoPushButton", "removePushButton",
                   "buttonPropWidget"):
             getattr(self, w).setEnabled(bEnabled)
+
+    def raiseWarning(self, msg, duration=5):
+        """
+        Raises a warning message to the user on a message bar and logs it to
+        QGIS logger.
+        :param msg: (str) message to be displayed.
+        :param duration: (int) warning message display time.
+        """
+        self.messageBar.pushMessage(
+            self.tr('Invalid workflow'), msg,
+            level=Qgis.Warning, duration=duration
+        )
+        # msg = self.tr("Buttons setup definion invalid: {m}").format(m=msg)
+        QgsMessageLog.logMessage(msg, 'DSGTools Plugin', Qgis.Warning)
+
+    def resizeEvent(self, e):
+        """
+        Reimplementation in order to use this window's resize event.
+        On this object, this method makes sure that message bar is always the
+        same size as the window.
+        :param e: (QResizeEvent) resize event.
+        """
+        self.messageBar.resize(
+            QSize(
+                self.geometry().size().width(),
+                40 # this felt nicer than the original height (30)
+            )
+        )
 
     def setSetupName(self, name):
         """
@@ -452,6 +485,36 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         self.buttonPropWidget.confirmAction(msg, title, showNo)
 
+    def validate(self):
+        """
+        Validates current input data, giving invalidation reason.
+        :return: (str) invalidation reason.
+        """
+        if self.setupName() == "":
+            return self.tr("No name provided for current setup.")
+        buttons = self.readSetup().buttons()
+        if not buttons:
+            return self.tr("Please register at least one button.")
+        # for button in buttons:
+        #     # validate attribute map
+        #     pass
+        return ""
+
+    def isValid(self):
+        """
+        Validates current input data, giving invalidation reason.
+        :return: (bool) current input data validity.
+        """
+        if self.setupName() == "":
+            return False
+        buttons = self.readSetup().buttons()
+        if not buttons:
+            return False
+        # for button in buttons:
+        #     # validate attribute map
+        #     pass
+        return True
+
     @pyqtSlot(int, name="on_buttonComboBox_currentIndexChanged")
     def setCurrentButton(self, button):
         """
@@ -759,6 +822,10 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         Closes setup dialog and returns a confirmation code.
         :return: (int) confirmation code.
         """
+        if not self.isValid():
+            msg = self.tr("Invalid input data: {r}").format(r=self.validate())
+            self.raiseWarning(msg)
+            return
         self.setCurrentSetupName(self.setupName())
         self.setCurrentDescription(self.description())
         self.setCurrentDynamicShortcut(self.dynamicShortcut())
