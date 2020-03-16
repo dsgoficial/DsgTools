@@ -71,7 +71,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         :return: (bool) whether action was confirmed.
         """
         mb = QMessageBox()
-        title = msg or self.tr("Confirm action")
+        title = title or self.tr("Confirm action")
         if showNo:
             return QMessageBox.question(
                 self, title, msg, QMessageBox.Yes | QMessageBox.No
@@ -357,7 +357,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         layer = layer or self.mMapLayerComboBox.currentLayer()
         self.attributeTableWidget.setRowCount(0)
-        fields = layer.fields()
+        fields = layer.fields() if layer else []
         self.attributeTableWidget.setRowCount(len(fields))
         for row, field in enumerate(fields):
             item = QTableWidgetItem()

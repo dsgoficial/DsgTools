@@ -483,7 +483,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         :param showNo: (bool) whether No button should be exposed.
         :return: (bool) whether action was confirmed.
         """
-        self.buttonPropWidget.confirmAction(msg, title, showNo)
+        return self.buttonPropWidget.confirmAction(msg, title, showNo)
 
     def validate(self):
         """
@@ -539,12 +539,12 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         self.buttonPropWidget.setButton(button)
 
     @pyqtSlot(bool, name="on_savePushButton_clicked")
-    def updateCurrentButton(self, props):
+    def updateCurrentButton(self, props=None):
         """
         Current data will be stored as current button's properties.
         :param props: (dict) a map to button's properties to be updated.
         """
-        if isinstance(props, bool):
+        if isinstance(props, bool) or props is None:
             # if button pressing was the triggering event, current data will be
             # store into current button
             props = self.readButton().properties()
@@ -826,6 +826,11 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
             msg = self.tr("Invalid input data: {r}").format(r=self.validate())
             self.raiseWarning(msg)
             return
+        msg = self.tr("Current button has been modified and not saved. Would "
+                        "you like to save it?")
+        title = self.tr("Unsaved modifications")
+        if self.buttonIsModified() and self.confirmAction(msg, title):
+            self.updateCurrentButton()
         self.setCurrentSetupName(self.setupName())
         self.setCurrentDescription(self.description())
         self.setCurrentDynamicShortcut(self.dynamicShortcut())

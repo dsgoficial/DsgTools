@@ -56,7 +56,7 @@ class CustomFeatureButton(QObject):
             "name": self.tr("New button"),
             "openForm": False,
             "useColor": True,
-            "color": "#ffffff",
+            "color": (255, 255, 255, 255),
             "tooltip": "",
             "category": "",
             "shortcut": "",
@@ -738,7 +738,6 @@ class CustomButtonSetup(QObject):
     buttonAdded = pyqtSignal(CustomFeatureButton)
     buttonRemoved = pyqtSignal(CustomFeatureButton)
     buttonUpdated = pyqtSignal(CustomFeatureButton)
-    buttonOrderChanged = pyqtSignal()
 
     def __init__(self, buttonsProps=None, displayName=None, description=None):
         """
@@ -968,12 +967,6 @@ class CustomButtonSetup(QObject):
         for b in self._buttons.values():
             groups[b.category()].add(b)
         return groups
-
-    def setButtonOrder(self, _):
-        """
-        Updates button order.
-        """
-        self.buttonOrderChanged.emit(self)
 
     def now(self):
         """

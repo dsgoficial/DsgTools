@@ -41,19 +41,19 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'customFeatureTool.ui'))
 
 class CustomFeatureTool(QDockWidget, FORM_CLASS):
-    def __init__(self, parent=None, profiles=None):
+    def __init__(self, parent=None, setups=None):
         """
         Class constructor.
         :param parent: (QtWidgets.*) any widget that 'contains' this tool.
-        :param profiles: (list-of-dict) a list of states for CustomButtonSetup
-                         objects to be set to the GUI.
+        :param setups: (list-of-dict) a list of states for CustomButtonSetup
+                       objects to be set to the GUI.
         """
         super(CustomFeatureTool, self).__init__(parent)
         self.setupUi(self)
         self._setups = dict()
         self._order = dict()
-        if profiles:
-            self.setButtonProfiles(profiles)
+        if setups:
+            self.setButtonSetups(setups)
         self.fillSetupComboBox()
         self.layerSelectionSwitch.setStateAName(self.tr("Active layer"))
         self.layerSelectionSwitch.setStateBName(self.tr("All layers"))
@@ -75,21 +75,21 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.setupComboBox.addItem(self.tr("Select a buttons profile..."))
         self.setupComboBox.addItems(list(self._setups.keys()))
 
-    def setButtonSetups(self, profiles):
+    def setButtonSetups(self, setups):
         """
         Replaces/defines current setup associated to this GUI.
-        :param profiles: (list-of-dict) a list of states for CustomButtonSetup
+        :param setups: (list-of-dict) a list of states for CustomButtonSetup
                          objects to be set to the GUI.
         """
         self.setupComboBox.clear()
         self.setupComboBox.addItem(self.tr("Select a button profile..."))
         for s in self._setup:
             del self._setups[s]
-        for p in profiles:
+        for p in setups:
             s = CustomButtonSetup()
             s.setState(p)
             self._setups[s.name()] = s
-        self.setupComboBox.addItems(self.buttonProfiles("asc"))
+        self.setupComboBox.addItems(self.buttonSetups("asc"))
 
     def buttonSetups(self, order=None):
         """
@@ -201,11 +201,12 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         kws = self.readButtonKeywords()
         for tab in range(self.tabWidget.count(), 0, -1):
-            if self.tabWidget.tabText(tab) == self.tr("Searched buttons"):
+            if self.tr("Searched buttons") in self.tabWidget.tabText(tab):
                 self.tabWidget.removeTab(tab)
                 break
         buttons = self.checkKeywordSet(kws) if kws else self.allButtons()
-        self.newTab(self.tr("Searched buttons"), buttons)
+        txt = self.tr("Searched buttons ({0})").format(len(buttons))
+        self.newTab(txt, buttons)
         self.tabWidget.setCurrentIndex(self.tabWidget.count() - 1)
 
     @pyqtSlot(int, name="on_setupComboBox_currentIndexChanged")
@@ -217,6 +218,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         isSetup = self.setupComboBox.currentIndex() != 0
         self.editSetupPushButton.setEnabled(isSetup)
         self.removePushButton.setEnabled(isSetup)
+        self.bFilterLineEdit.setEnabled(isSetup)
         if isinstance(profile, str) and profile in self.buttonSetups():
             self.setupComboBox.setCurrentText(self.currentButtonSetupName())
         self.createTabs()
@@ -233,17 +235,18 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if ret:
             newSetup = dlg.readSetup()
             newName = newSetup.name()
-            self._order[newName] = dlg.buttonsOrder()
             if newName != setup.name():
                 i = 0
                 oldName = setup.name()
                 del self._order[oldName]
                 while newSetup.name() in self.buttonSetups():
                     i += 1
-                    newSetup.setName("{0} {1}".format(newName, i))
+                    newSetup.setName("{0} ({1})".format(newName, i))
+                newName = newSetup.name()
+                self._setups[newName] = self._setups.pop(oldName)
                 idx = self.setupComboBox.currentIndex()
                 self.setupComboBox.setItemText(idx, newSetup.name())
-                self._setups[newName] = self._setups.pop(oldName)
+            self._order[newName] = dlg.buttonsOrder()
             self.setupComboBox.setItemData(
                 self.setupComboBox.currentIndex(),
                 newSetup.description(),
@@ -279,12 +282,12 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         ret = dlg.exec_()
         if ret:
             s = dlg.readSetup()
-            self._order[s.name()] = dlg.buttonsOrder()
-            if s.name() in self.buttonSetups():
-                baseName = 0
+            baseName = s.name()
+            if baseName in self.buttonSetups():
                 i = 0
                 setups = self.buttonSetups()
                 while s.name() in setups:
                     i += 1
-                    s.setName("{0} {1}".format(baseName, i))
+                    s.setName("{0} ({1})".format(baseName, i))
+            self._order[s.name()] = dlg.buttonsOrder()
             self.addButtonSetup(s)
