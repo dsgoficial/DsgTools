@@ -34,6 +34,9 @@ from qgis.PyQt.QtWidgets import (QWidget,
                                  QSpacerItem,
                                  QSizePolicy)
 
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
+from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.buttonSetupWidget import ButtonSetupWidget
 from DsgTools.gui.ProductionTools.Toolboxes.FieldToolBox.customButtonSetup import CustomButtonSetup
 
@@ -215,6 +218,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         Sets GUI to a new profile.
         """
         self.clearTabs()
+        self.bFilterLineEdit.setText()
         isSetup = self.setupComboBox.currentIndex() != 0
         self.editSetupPushButton.setEnabled(isSetup)
         self.removePushButton.setEnabled(isSetup)
@@ -257,8 +261,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
 
     def addButtonSetup(self, setup):
         """
-        Adds a setup to the available setups. Newly added profile will set as
-        active.
+        Adds a setup to the available setups. Newly added profile will be set
+        as active.
         :param setup: (CustomButtonSetup) button setup to be added.
         """
         if setup.name() in self.buttonSetups():
@@ -291,3 +295,51 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                     s.setName("{0} ({1})".format(baseName, i))
             self._order[s.name()] = dlg.buttonsOrder()
             self.addButtonSetup(s)
+
+    def createFeature(self, fields, geom, attributeMap, layerDefs, coordTransformer=None):
+        """
+        Creates a new feature to be added to a layer. These features may be
+        pre-set with a collection of attributes.
+        :param fields: (QgsFields) all feature's fields.
+        :param geom: (QgsGeometry) new feature's geometry.
+        :param attributeMap: (dict) a map from field name to its value.
+        :param layerDefs: (dict) a map to layer definitions such as geometry
+                          type, multipart definition, etc.
+        :param coordTransformer: () object for coordinate transformation.
+        """
+        fh = FeatureHandler()
+        gh = GeometryHandler()
+        if coordTransformer is not None:
+            geom = gh.reprojectWithCoordinateTransformer(geom, coordTransformer)
+        return fh.newFeature(geom, fields, attributeMap)
+
+    def reclassifyFeatures(self, featList, prevLayer, newLayer, newAttributeMap):
+        """
+        Reclassifies a list of feature.
+        :param featList: (list-of-QgsFeature) all features to be reclassified.
+        :param prevLayer: (QgsVectorLayer) layer to have its reclassified from.
+        :param newLayer: (QgsVectorLayer) layer to receive reclassified
+                         features.
+        :param newAttributeMap: (dict) a map to new features' attribute values.
+        :return: (list-of-QgsFeature) all reclassified features.
+        """
+        fh = FeatureHandler()
+        lh = LayerHandler()
+        defs = lh.getDestinationParameters(newLayer)
+        transformer = lh.getCoordinateTransformer(prevLayer, newLayer)
+        removeFeats = list()
+        addFeats = set()
+        fields = newLayer.fields()
+        for f in featList:
+            addFeats.add(
+                self.createFeature(
+                    fields, f.geometry(), newAttributeMap, defs, transformer)
+            )
+            removeFeats.append(f.id())
+        prevLayer.startEditing()
+        prevLayer.deleteFeatures(removeFeats)
+        prevLayer.updateExtents()
+        newLayer.startEditing()
+        newLayer.addFeatures(addFeats)
+        newLayer.updateExtents()
+        return addFeats
