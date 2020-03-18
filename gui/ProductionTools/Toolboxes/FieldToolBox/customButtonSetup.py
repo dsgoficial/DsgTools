@@ -31,7 +31,10 @@ from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot, QObject
 from qgis.PyQt.QtWidgets import QPushButton, QShortcut, QAction
 from qgis.PyQt.QtGui import QIcon, QColor, QPalette, QKeySequence
 
+from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+
+utils = Utils()
 
 class CustomFeatureButton(QObject):
     """
@@ -670,7 +673,33 @@ class CustomFeatureButton(QObject):
         :return: (str) button's name.
         """
         return str(self._props["acquisitionTool"])
-        
+
+    def activateMapTool(self, tool):
+        """
+        Sets current map tool.
+        :param tool: (str) tool name to be activated
+        """
+        dsgToolsMapTools = utils.dsgToolsMapTools()
+        qgisMapTools = utils.qgisMapTools()
+        vl = iface.mapCanvas().currentLayer()
+        if vl is not None:
+            vl.startEditing()
+        if tool == "default" or tool not in self.supportedTools():
+            ts = [
+                self.tr("Add Line Feature"),
+                self.tr("Add Polygon Feature"),
+                self.tr("Add Point Feature")
+            ]
+            for t in ts:
+                if t in qgisMapTools:
+                    qgisMapTools[t].trigger()
+                    return
+        elif tool == "circle":
+            qgisMapTools[self.tr("Add Circle from 2 Points")].trigger()
+        else:
+            toolName = self.supportedTools()[tool]
+            dsgToolsMapTools[toolName].trigger()
+
     def setCheckable(self, checkable):
         """
         Defines if button may be toggled (or "clickable").

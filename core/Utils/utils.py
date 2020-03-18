@@ -20,15 +20,17 @@
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import range
-from builtins import object
-import json
+
 import os
+import json
 import requests
 from xml.dom.minidom import parse, parseString
-from qgis.PyQt.QtWidgets import QTreeWidgetItem
-from qgis.PyQt.QtCore import QSettings
+
+from qgis.gui import QgsMapTool
+from qgis.utils import iface
 from qgis.PyQt import QtGui, QtWidgets
+from qgis.PyQt.QtCore import QSettings
+from qgis.PyQt.QtWidgets import QToolBar, QTreeWidgetItem
 
 class Utils(object):
 
@@ -301,3 +303,31 @@ class Utils(object):
         password = settings.value('proxyPassword')
         settings.endGroup()
         return enabled, host, port, user, password
+
+    def qgisMapTools(self):
+        """
+        A list of QGIS map tools.
+        :return: (dict) a map from map tool name to its action.
+        """
+        tools = dict()
+        for m in dir(iface):
+            if m.lower().startswith("action"):
+                action = getattr(iface, m)()
+                name = action.text().replace("&", "")
+                tools[name] = action
+        return tools
+
+    def dsgToolsMapTools(self):
+        """
+        A list of DSGTools map tools.
+        :return: (dict) a map from map tool name to its action.
+        """
+        tools = dict()
+        for toolbar in iface.mainWindow().findChildren(QToolBar):
+            if toolbar.objectName().lower() == "dsgtools":
+                for o in toolbar.children():
+                    if hasattr(o, "actions"):
+                        for a in o.actions():
+                            tools[a.text().replace("&", "")] = a
+                break
+        return tools
