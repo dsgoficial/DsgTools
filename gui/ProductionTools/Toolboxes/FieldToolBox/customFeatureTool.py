@@ -218,7 +218,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         Sets GUI to a new profile.
         """
         self.clearTabs()
-        self.bFilterLineEdit.setText()
+        self.bFilterLineEdit.setText("")
         isSetup = self.setupComboBox.currentIndex() != 0
         self.editSetupPushButton.setEnabled(isSetup)
         self.removePushButton.setEnabled(isSetup)

@@ -29,7 +29,9 @@ from qgis.core import QgsMessageLog
 from qgis.PyQt.QtGui import QIcon, QColor, QKeySequence
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtWidgets import (QWidget,
+                                 QLineEdit,
                                  QCheckBox,
+                                 QComboBox,
                                  QFileDialog,
                                  QMessageBox,
                                  QRadioButton,
@@ -358,12 +360,26 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         layer = layer or self.mMapLayerComboBox.currentLayer()
         self.attributeTableWidget.setRowCount(0)
         fields = layer.fields() if layer else []
+        attrMap = self.button.attributeMap()
+        b = self.readButton()
+        fieldMap = b.fieldMap()
         self.attributeTableWidget.setRowCount(len(fields))
         for row, field in enumerate(fields):
+            fName = field.name()
             item = QTableWidgetItem()
             item.setFlags(Qt.ItemIsEditable) # not editable
-            item.setText(field.name())
+            item.setText(fName)
             self.attributeTableWidget.setItem(row, 0, item)
+            if fName in fieldMap:
+                vWidget = QComboBox()
+                vWidget.addItems(list(fieldMap[fName].keys()))
+                if attrMap and fName in attrMap:
+                    vWidget.setCurrentText(attrMap[fName])
+            else:
+                vWidget = QLineEdit()
+                vWidget.setPlaceholderText(
+                    self.tr("Type the value for {0}").format(fName))
+            self.attributeTableWidget.setCellWidget(row, 1, vWidget)
             self.attributeTableWidget.setCellWidget(row, 2, QCheckBox())
             self.attributeTableWidget.setCellWidget(row, 3, QCheckBox())
 
