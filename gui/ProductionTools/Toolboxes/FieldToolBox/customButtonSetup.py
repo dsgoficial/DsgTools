@@ -610,10 +610,13 @@ class CustomFeatureButton(QObject):
             if self.checkLayer():
                 fMap = self.fieldMap()
                 for field in self.vectorLayer().fields():
-                    # iterating over layer's fields ignores passed attributes
-                    # that does not exist on layer
                     fieldName = field.name()
                     if fieldName not in attrMap:
+                        self._props["attributeMap"][fieldName] = {
+                            "value": None,
+                            "editable": True,
+                            "ignored": True
+                        }
                         continue
                     value = attrMap[fieldName]["value"]
                     if fieldName in fMap and value is not None \
@@ -623,7 +626,11 @@ class CustomFeatureButton(QObject):
                             self.tr("{0} is not a valid value for field {1}.")\
                                 .format(value, fieldName)
                         )
-                    self._props["attributeMap"][fieldName] = value
+                    self._props["attributeMap"][fieldName] = {
+                        "value": value,
+                        "editable": attrMap[fieldName]["editable"],
+                        "ignored": attrMap[fieldName]["ignored"]  
+                    }
             else:
                 self._props["attributeMap"] = attrMap
         else:

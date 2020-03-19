@@ -333,7 +333,21 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         Sets the attribute value map for current button to GUI.
         :param attrMap: (dict) a map from each field and its value to be set. 
         """
-        pass
+        if not attrMap:
+            return
+        self.updateFieldTable()
+        table = self.attributeTableWidget
+        for row in range(table.rowCount()):
+            attr = table.item(row, 0).text()
+            valueWidget = table.cellWidget(row, 1)
+            {
+                QLineEdit: lambda v: valueWidget.setText(v or ""),
+                QSpinBox: lambda v: valueWidget.setValue(v or 0),
+                QDoubleSpinBox: lambda v: valueWidget.setValue(v or 0.0),
+                QComboBox: lambda v: valueWidget.setCurrentText(v)
+            }[type(valueWidget)](attrMap[attr]["value"])
+            table.cellWidget(row, 2).cb.setChecked(attrMap[attr]["editable"])
+            table.cellWidget(row, 3).cb.setChecked(attrMap[attr]["ignored"])
 
     def attributeMap(self):
         """
@@ -414,26 +428,26 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             if fName in fieldMap:
                 vWidget = QComboBox()
                 vWidget.addItems(set(fieldMap[fName].keys()))
-                if attrMap and fName in attrMap:
-                    vWidget.setCurrentText(attrMap[fName])
+                if attrMap and fName in attrMap and attrMap[fName]["value"]:
+                    vWidget.setCurrentText(attrMap[fName]["value"])
             elif utils.fieldIsFloat(field):
                 vWidget = QDoubleSpinBox()
                 vWidget.setMaximum(99999999)
                 vWidget.setMinimum(-99999999)
                 if attrMap and fName in attrMap:
-                    vWidget.setValue(attrMap[fName])
+                    vWidget.setValue(attrMap[fName]["value"] or 0.0)
             elif utils.fieldIsInt(field):
                 vWidget = QSpinBox()
                 vWidget.setMaximum(99999999)
                 vWidget.setMinimum(-99999999)
                 if attrMap and fName in attrMap:
-                    vWidget.setValue(attrMap[fName])
+                    vWidget.setValue(attrMap[fName]["value"] or 0)
             else:
                 vWidget = QLineEdit()
                 vWidget.setPlaceholderText(
                     self.tr("Type the value for {0}").format(fName))
                 if attrMap and fName in attrMap:
-                    vWidget.setText(attrMap[fName])
+                    vWidget.setText(attrMap[fName]["value"] or "")
             self.attributeTableWidget.setCellWidget(row, 1, vWidget)
             self.attributeTableWidget.setCellWidget(
                 row, 2, self.centeredCheckBox())
