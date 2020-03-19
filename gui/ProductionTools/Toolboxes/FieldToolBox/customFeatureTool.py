@@ -343,16 +343,3 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         newLayer.addFeatures(addFeats)
         newLayer.updateExtents()
         return addFeats
-
-    def setActiveMapTool(self, tool):
-        """
-        Sets a map tool as active on QGIS canvas.
-        :param tool: (str) tool's name.
-        """
-        actions = {
-            self.tr("Pan Map"): None,
-            self.tr("QGIS default feature extraction tool"): None,
-            self.tr("DSGTools: Free Hand Acquisition"): None,
-            self.tr("QGIS Circle extraction tool"): None,
-            self.tr("DSGTools: Right Degree Angle Digitizing"): None
-        }

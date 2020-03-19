@@ -22,25 +22,32 @@
 """
 
 import os
+from functools import partial
 
 from qgis.PyQt import uic
 from qgis.utils import iface
 from qgis.core import QgsMessageLog
 from qgis.PyQt.QtGui import QIcon, QColor, QKeySequence
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
+from qgis.PyQt.QtCore import Qt, pyqtSlot, pyqtSignal, QSettings
 from qgis.PyQt.QtWidgets import (QWidget,
+                                 QSpinBox,
                                  QLineEdit,
                                  QCheckBox,
                                  QComboBox,
+                                 QHBoxLayout,
                                  QFileDialog,
                                  QMessageBox,
                                  QRadioButton,
+                                 QDoubleSpinBox,
                                  QTableWidgetItem)
 
+from DsgTools.core.Utils.utils import Utils
 from DsgTools.gui.ProductionTools.Toolboxes.FieldToolBox.customButtonSetup import CustomButtonSetup, CustomFeatureButton
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'buttonPropWidget.ui'))
+
+utils = Utils()
 
 class ButtonPropWidget(QWidget, FORM_CLASS):
     def __init__(self, parent=None, button=None):
@@ -333,7 +340,24 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         Reads the field map data and set it to a button attribute map format.
         :return: (dict) read attribute map. 
         """
-        return dict()
+        attrMap = dict()
+        table = self.attributeTableWidget
+        for row in range(table.rowCount()):
+            attr = table.item(row, 0).text()
+            attrMap[attr] = dict()
+            valueWidget = table.cellWidget(row, 1)
+            attrMap[attr]["ignored"] = table.cellWidget(row, 3).cb.isChecked()
+            if attrMap[attr]["ignored"]:
+                attrMap[attr]["value"] = None
+            else:
+                attrMap[attr]["value"] = {
+                    QLineEdit: lambda: valueWidget.text(),
+                    QSpinBox: lambda: valueWidget.value(),
+                    QDoubleSpinBox: lambda: valueWidget.value(),
+                    QComboBox: lambda: valueWidget.currentText()
+                }[type(valueWidget)]()
+            attrMap[attr]["editable"] = table.cellWidget(row, 2).cb.isChecked()
+        return attrMap
 
     def setLayer(self, layer):
         """
@@ -352,6 +376,21 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         return self.mMapLayerComboBox.currentText()
 
+    def centeredCheckBox(self):
+        """
+        Instantiates a centered check box.
+        :return: (QWidget) a QCheckBox centered on a widget.
+        """
+        w = QWidget()
+        l = QHBoxLayout()
+        l.setAlignment(Qt.AlignCenter)
+        cb = QCheckBox()
+        # just an easy way to access the cb
+        w.cb = cb
+        l.addWidget(cb)
+        w.setLayout(l)
+        return w
+
     def updateFieldTable(self, layer=None):
         """
         Updates current displayed fields based on current layer selection.
@@ -364,6 +403,8 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         b = self.readButton()
         fieldMap = b.fieldMap()
         self.attributeTableWidget.setRowCount(len(fields))
+        def setDisabled(w, status):
+            w.setEnabled(not status)
         for row, field in enumerate(fields):
             fName = field.name()
             item = QTableWidgetItem()
@@ -372,16 +413,33 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             self.attributeTableWidget.setItem(row, 0, item)
             if fName in fieldMap:
                 vWidget = QComboBox()
-                vWidget.addItems(list(fieldMap[fName].keys()))
+                vWidget.addItems(set(fieldMap[fName].keys()))
                 if attrMap and fName in attrMap:
                     vWidget.setCurrentText(attrMap[fName])
+            elif utils.fieldIsFloat(field):
+                vWidget = QDoubleSpinBox()
+                vWidget.setMaximum(99999999)
+                vWidget.setMinimum(-99999999)
+                if attrMap and fName in attrMap:
+                    vWidget.setValue(attrMap[fName])
+            elif utils.fieldIsInt(field):
+                vWidget = QSpinBox()
+                vWidget.setMaximum(99999999)
+                vWidget.setMinimum(-99999999)
+                if attrMap and fName in attrMap:
+                    vWidget.setValue(attrMap[fName])
             else:
                 vWidget = QLineEdit()
                 vWidget.setPlaceholderText(
                     self.tr("Type the value for {0}").format(fName))
+                if attrMap and fName in attrMap:
+                    vWidget.setText(attrMap[fName])
             self.attributeTableWidget.setCellWidget(row, 1, vWidget)
-            self.attributeTableWidget.setCellWidget(row, 2, QCheckBox())
-            self.attributeTableWidget.setCellWidget(row, 3, QCheckBox())
+            self.attributeTableWidget.setCellWidget(
+                row, 2, self.centeredCheckBox())
+            ccb = self.centeredCheckBox()
+            ccb.cb.toggled.connect(partial(setDisabled, vWidget))
+            self.attributeTableWidget.setCellWidget(row, 3, ccb)
 
     def setButton(self, button):
         """
@@ -465,24 +523,3 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         self.openFormCheckBox.setEnabled(enabled)
         self.mMapLayerComboBox.setEnabled(enabled)
         self.attributeTableWidget.setEnabled(enabled)
-
-    # def validateData(self, data=None, new=True):
-    #     """
-    #     Validates if a given set of button properties is valid accordingly to
-    #     current button setup context.
-    #     :param data: (dict) map of button properties to be validated.
-    #     :param new: (bool) indicates if the property map is for a button that
-    #                 is already saved into current setup, or if it is supposed
-    #                 to be added to it.
-    #     :return: (str) invalidation reason.
-    #     """
-    #     b = CustomFeatureButton(data or self.readButton().properties())
-    #     s = self.setup()
-    #     return ""
-
-    # def isValid(self):
-    #     """
-    #     Identifies whether all input data is valid.
-    #     :return: (bool) input data is validity status.
-    #     """
-    #     return self.validateData() == ""

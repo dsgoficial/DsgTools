@@ -615,9 +615,9 @@ class CustomFeatureButton(QObject):
                     fieldName = field.name()
                     if fieldName not in attrMap:
                         continue
-                    value = attrMap[fieldName]
-                    if fieldName in fMap and \
-                      str(value) not in list(fMap[fieldName].values()):
+                    value = attrMap[fieldName]["value"]
+                    if fieldName in fMap and value is not None \
+                       and value not in fMap[fieldName]:
                         self._props["attributeMap"] = prevAttrMap
                         raise ValueError(
                             self.tr("{0} is not a valid value for field {1}.")\

@@ -29,7 +29,7 @@ from xml.dom.minidom import parse, parseString
 from qgis.gui import QgsMapTool
 from qgis.utils import iface
 from qgis.PyQt import QtGui, QtWidgets
-from qgis.PyQt.QtCore import QSettings
+from qgis.PyQt.QtCore import QSettings, QVariant
 from qgis.PyQt.QtWidgets import QToolBar, QTreeWidgetItem
 
 class Utils(object):
@@ -331,3 +331,33 @@ class Utils(object):
                             tools[a.text().replace("&", "")] = a
                 break
         return tools
+
+    def fieldIsFloat(self, field):
+        """
+        Checks if a field is filled with any float type data.
+        :param field: (QgsField) field to be checked.
+        :return: (bool) if data is float.
+        """
+        floatTypes = [QVariant.Double]
+        return field.type() in floatTypes
+
+    def fieldIsInt(self, field):
+        """
+        Checks if a field is filled with any int type data.
+        :param field: (QgsField) field to be checked.
+        :return: (bool) if data is a whole number.
+        """
+        intTypes = [
+            QVariant.Int,
+            QVariant.UInt,
+            QVariant.LongLong,
+            QVariant.ULongLong]
+        return field.type() in intTypes
+
+    def fieldIsNumeric(self, field):
+        """
+        Checks if a field is filled with any numeric type data.
+        :param field: (QgsField) field to be checked.
+        :return: (bool) if data is numeric.
+        """
+        return self.fieldIsFloat(field) or self.fieldIsInt(field)
