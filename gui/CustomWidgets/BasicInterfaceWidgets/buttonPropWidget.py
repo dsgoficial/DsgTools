@@ -333,13 +333,17 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         Sets the attribute value map for current button to GUI.
         :param attrMap: (dict) a map from each field and its value to be set. 
         """
-        if not attrMap:
-            return
         self.updateFieldTable()
         table = self.attributeTableWidget
         for row in range(table.rowCount()):
             attr = table.item(row, 0).text()
             valueWidget = table.cellWidget(row, 1)
+            if not attrMap or attr not in attrMap:
+                attrMap[attr] = {
+                    "value": None,
+                    "editable": False,
+                    "ignored": False
+                }
             {
                 QLineEdit: lambda v: valueWidget.setText(v or ""),
                 QSpinBox: lambda v: valueWidget.setValue(v or 0),
