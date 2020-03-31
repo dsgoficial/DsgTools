@@ -359,7 +359,7 @@ class QualityAssuranceWorkflow(QObject):
         def modelCompleted(model, step):
             self.output[model.name()] = model.output
             self._multiStepFeedback.setCurrentStep(step)
-            # self.handleFlags(model)
+            self.handleFlags(model)
         if firstModelName is not None:
             for idx, model in self._executionOrder.items():
                 if model.name() == firstModelName:
@@ -374,17 +374,16 @@ class QualityAssuranceWorkflow(QObject):
         for idx, currentModel in self._executionOrder.items():
             if idx < initialIdx:
                 continue
-            currentModel.begun.connect(
-                partial(self.modelStarted.emit, currentModel)
-            )
             # all models MUST pass through this postprocessing method
             currentModel.taskCompleted.connect(
                 partial(modelCompleted, currentModel, idx + 1)
             )
+            currentModel.begun.connect(
+                partial(self.modelStarted.emit, currentModel)
+            )
             currentModel.taskTerminated.connect(
                 partial(self.modelFailed.emit, currentModel)
             )
-            currentModel.setOnFinished(partial(self.handleFlags, currentModel))
             if idx != modelCount - 1:
                 self._executionOrder[idx + 1].addSubTask(
                     currentModel,

@@ -80,7 +80,6 @@ class DsgToolsProcessingModel(QgsTask):
         # self.setTitle(taskName or self.displayName())
         self.feedback = feedback or QgsProcessingFeedback()
         self.feedback.canceled.connect(self.cancel)
-        self.setOnFinished()
         self.output = {
             "result" : dict(),
             "status" : False,
@@ -436,24 +435,6 @@ class DsgToolsProcessingModel(QgsTask):
                 return True
         return False
 
-    def setOnFinished(self, callback=None):
-        """
-        Defines a callback to be activated once model is finished. This 
-        callable will be ADDED to the normal behaviour and is called from
-        'finished' metho, hence from the main thread.
-        :param callback: (callable) callable to be triggered.
-        """
-        if callback is None or not callable(callback):
-            self._callback = lambda: None
-        self._callback = callback
-
-    def onFinished(self, status):
-        """
-        Method that runs a callback associated with current model right after
-        it finishes its execution. Model's finishing status may be used.
-        """
-        self._callback()
-
     def finished(self, result):
         """
         Reimplemented from parent QgsTask. Method works a postprocessing one,
@@ -468,5 +449,4 @@ class DsgToolsProcessingModel(QgsTask):
             self.output["finishStatus"] = 'failed'
         else:
             self.output["finishStatus"] = 'finished'
-        self.onFinished(self.output["finishStatus"])
         self.modelFinished.emit(self)
