@@ -80,6 +80,7 @@ class DsgToolsProcessingModel(QgsTask):
         # self.setTitle(taskName or self.displayName())
         self.feedback = feedback or QgsProcessingFeedback()
         self.feedback.canceled.connect(self.cancel)
+        self.setOnFinished()
         self.output = {
             "result" : dict(),
             "status" : False,
@@ -403,13 +404,19 @@ class DsgToolsProcessingModel(QgsTask):
         try:
             if not self.feedback.isCanceled() or not self.isCanceled():
                 self.output = {
-                    "result" : {
-                        k.split(":", 2)[-1] : v \
-                            for k, v in self.runModel(self.feedback).items()
-                    },
+                    "result": dict(),
                     "status" : True,
                     "errorMessage" : ""
                 }
+                for paramName, vl in self.runModel(self.feedback).items():
+                    baseName = paramName.split(":", 2)[-1]
+                    name = baseName
+                    idx = 1
+                    while name in self.output["result"]:
+                        name = "{0} ({1})".format(baseName, idx)
+                        idx += 1
+                    vl.setName(name)
+                    self.output["result"][name] = vl
         except Exception as e:
             self.output = {
                 "result" : {},
@@ -425,10 +432,28 @@ class DsgToolsProcessingModel(QgsTask):
         Iterates over the results and finds if there are flags.
         """
         for lyr in self.output['result'].values():
-            if isinstance(lyr, QgsMapLayer) and lyr.featureCount() > 0:
+            if isinstance(lyr, QgsMapLayer) and lyr.featureCount() > 0:    
                 return True
         return False
-    
+
+    def setOnFinished(self, callback=None):
+        """
+        Defines a callback to be activated once model is finished. This 
+        callable will be ADDED to the normal behaviour and is called from
+        'finished' metho, hence from the main thread.
+        :param callback: (callable) callable to be triggered.
+        """
+        if callback is None or not callable(callback):
+            self._callback = lambda: None
+        self._callback = callback
+
+    def onFinished(self, status):
+        """
+        Method that runs a callback associated with current model right after
+        it finishes its execution. Model's finishing status may be used.
+        """
+        self._callback()
+
     def finished(self, result):
         """
         Reimplemented from parent QgsTask. Method works a postprocessing one,
@@ -443,4 +468,5 @@ class DsgToolsProcessingModel(QgsTask):
             self.output["finishStatus"] = 'failed'
         else:
             self.output["finishStatus"] = 'finished'
+        self.onFinished(self.output["finishStatus"])
         self.modelFinished.emit(self)
