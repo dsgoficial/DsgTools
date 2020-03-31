@@ -409,7 +409,7 @@ class DsgToolsProcessingModel(QgsTask):
                     "errorMessage" : ""
                 }
                 for paramName, vl in self.runModel(self.feedback).items():
-                    baseName = paramName.split(":", 2)[-1]
+                    baseName = paramName.rsplit(":", 1)[-1]
                     name = baseName
                     idx = 1
                     while name in self.output["result"]:
