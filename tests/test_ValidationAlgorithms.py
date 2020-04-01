@@ -1025,6 +1025,18 @@ class Tester(unittest.TestCase):
                 }
             ],
 
+            "dsgtools:gridzonegenerator" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'START_SCALE':3,
+                    'STOP_SCALE':5,
+                    'INDEX_TYPE':0,
+                    'INDEX':'2215',
+                    'CRS':'EPSG:31983',
+                    'OUTPUT':'memory:'
+                }
+            ],
+
             "dsgtools:ALG" : [
                 {
                     '__comment' : "'Normal' test: checks if it works."
@@ -1455,6 +1467,16 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg(
                 "dsgtools:identifyterrainmodelerrorsalgorithm",
+                multipleOutputs=True,
+                addControlKey=True
+            ),
+            ""
+        )
+    
+    def test_createframealgorithm(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:gridzonegenerator",
                 multipleOutputs=True,
                 addControlKey=True
             ),
