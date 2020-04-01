@@ -1,6 +1,6 @@
 {
 "type": "FeatureCollection",
-"name": "edgv3-enc_trecho_energia_l",
+"name": "enc_trecho_energia_l",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::32721" } },
 "features": [
 { "type": "Feature", "properties": { "id": 1, "nome": null, "geometriaaproximada": false, "especie": 9999, "posicaorelativa": 9999, "operacional": 9999, "situacaofisica": 5, "largurafaixaservidao": null, "sin": 9999 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 7869499.898516720160842, 10027916.181763753294945 ], [ 7878641.798765239305794, 10071797.302956646308303 ], [ 7923132.379974700510502, 10130305.464547172188759 ], [ 7987125.681714337319136, 10143713.584911666810513 ] ] ] } }
