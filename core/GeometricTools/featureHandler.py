@@ -218,7 +218,8 @@ class FeatureHandler(QObject):
             featureList.append(newFeat)
         else:
             scaleId = self.utmGrid.getScaleIdFromiNomen(index)
-            sufixIterator = list(itertools.chain.from_iterable(
+            sufixIterator = list(
+                itertools.chain.from_iterable(
                     self.utmGrid.scaleText[scaleId+1]
                 ) #flatten list into one single list
             )
@@ -235,8 +236,10 @@ class FeatureHandler(QObject):
                     newPart=line)
                 if constraintDict is not None \
                     and self.createGridItem(
-                        inomen2, coordinateTransformer, constraintDict
-                    ) is None:
+                            inomen2,
+                            coordinateTransformer,
+                            constraintDict
+                        ) is None:
                     continue
                 self.getSystematicGridFeatures(
                     featureList,
@@ -271,14 +274,13 @@ class FeatureHandler(QObject):
         if feedback is not None and feedback.isCanceled():
             return
         predicate = 'intersects' if predicate is None else predicate
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Creating spatial index'))
         spatialIdx, idDict = self.buildSpatialIndexAndIdDict(
             inputLyr,
             feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr('Getting candidate start indexes'))
         xmin, ymin, xmax, ymax = self.getLyrUnprojectedGeographicBounds(
             inputLyr
@@ -286,7 +288,7 @@ class FeatureHandler(QObject):
         inomenList = self.utmGrid.get_INOM_range_from_BB(
             xmin, ymin, xmax, ymax
         )
-        multiStepFeedback.setCurrentStep(3)
+        multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr('Building grid'))
         gridMultistepFeedback = QgsProcessingMultiStepFeedback(
             len(inomenList),
