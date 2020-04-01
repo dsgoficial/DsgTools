@@ -59,21 +59,21 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.POINT_FLAGS,
-                self.tr('{0} flags (points)').format(self.displayName())
+                self.tr('Point Flags')
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.LINE_FLAGS,
-                self.tr('{0} flags (lines)').format(self.displayName())
+                self.tr('Linestring Flags')
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.POLYGON_FLAGS,
-                self.tr('{0} flags (polygons)').format(self.displayName())
+                self.tr('Polygon Flags')
             )
         )
 

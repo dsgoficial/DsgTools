@@ -1,6 +1,6 @@
 {
 "type": "FeatureCollection",
-"name": "edgv3-rel_pico_p",
+"name": "rel_pico_p",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::32721" } },
 "features": [
 { "type": "Feature", "properties": { "id": 12, "nome": null, "geometriaaproximada": false, "tipoelemnat": 9999 }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 8112101.567413220182061, 9989247.860791744664311 ] ] } },

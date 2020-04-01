@@ -1,6 +1,6 @@
 {
 "type": "FeatureCollection",
-"name": "edgv3-hid_barragem_p",
+"name": "hid_barragem_p",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::32721" } },
 "features": [
 { "type": "Feature", "properties": { "id": 1, "nome": null, "geometriaaproximada": false, "matconstr": 9999, "usoprincipal": 9999, "operacional": 9999, "situacaofisica": 9999 }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 8148023.126088275574148, 10127867.624480901286006 ] ] } },

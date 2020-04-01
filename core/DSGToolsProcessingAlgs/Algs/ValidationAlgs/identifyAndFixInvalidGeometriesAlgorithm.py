@@ -46,6 +46,7 @@ from qgis.core import (QgsProcessing,
 class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
+    IGNORE_CLOSED = 'IGNORE_CLOSED'
     TYPE = 'TYPE'
     FLAGS = 'FLAGS'
     OUTPUT = 'OUTPUT'
@@ -65,6 +66,13 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterBoolean(
                 self.SELECTED,
                 self.tr('Process only selected features')
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.IGNORE_CLOSED,
+                self.tr('Ignore flags on start point or end points of closed linestrings'),
+                defaultValue=False
             )
         )
         self.addParameter(
@@ -94,6 +102,7 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
         layerHandler = LayerHandler()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        ignoreClosed = self.parameterAsBool(parameters, self.IGNORE_CLOSED, context)
         fixInput = self.parameterAsBool(parameters, self.TYPE, context)
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
 
@@ -101,6 +110,7 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(0)
         flagDict = layerHandler.identifyAndFixInvalidGeometries(
             inputLyr=inputLyr,
+            ignoreClosed=ignoreClosed,
             fixInput=fixInput,
             onlySelected=onlySelected,
             feedback=multiStepFeedback
