@@ -174,7 +174,8 @@ class Tester(unittest.TestCase):
                 "land_cover_layers" : os.path.join(geojsonPaths, 'land_cover_layers'),
                 "terrain_model_layers" : os.path.join(geojsonPaths, 'terrain_model_layers'),
                 "testes_sirgas2000_24s" : os.path.join(geojsonPaths, 'testes_sirgas2000_24s'),
-                "spatial_rules_alg" : os.path.join(geojsonPaths, 'spatial_rules_alg')
+                "spatial_rules_alg" : os.path.join(geojsonPaths, 'spatial_rules_alg'),
+                "create_frames_layers" : os.path.join(geojsonPaths, 'create_frames_layers')
             }
         }
         # switch-case for dataset reading
@@ -1037,6 +1038,17 @@ class Tester(unittest.TestCase):
                 }
             ],
 
+            "dsgtools:createframeswithconstraintalgorithm" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'INPUT' : self.getInputLayers(
+                        'geojson', 'create_frames_layers', ['polygon1']
+                    )[0],
+                    'STOP_SCALE': 5,
+                    'OUTPUT': 'memory:',
+                }
+            ],
+
             "dsgtools:ALG" : [
                 {
                     '__comment' : "'Normal' test: checks if it works."
@@ -1477,6 +1489,16 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg(
                 "dsgtools:gridzonegenerator",
+                multipleOutputs=True,
+                addControlKey=True
+            ),
+            ""
+        )
+    
+    def test_createframeswithconstraintalgorithm(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:createframeswithconstraintalgorithm",
                 multipleOutputs=True,
                 addControlKey=True
             ),
