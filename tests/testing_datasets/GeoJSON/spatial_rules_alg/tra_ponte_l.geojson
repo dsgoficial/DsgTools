@@ -1,6 +1,6 @@
 {
 "type": "FeatureCollection",
-"name": "edgv3-tra_ponte_l",
+"name": "tra_ponte_l",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::32721" } },
 "features": [
 { "type": "Feature", "properties": { "id": 1, "nome": null, "geometriaaproximada": false, "modaluso": 5, "matconstr": 9999, "operacional": 9999, "situacaofisica": 9999, "necessitamanutencao": 9999, "nrpistas": 1, "nrfaixas": null, "posicaopista": 9999, "largura": null, "extensao": null, "tipopavimentacao": 9999, "tipoponte": 9999, "vaolivrehoriz": null, "vaovertical": null, "cargasuportmaxima": null, "lenght_otf": 69673.694988341711 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 8247835.255700287409127, 9909334.578629586845636 ], [ 8302028.194869973696768, 9871002.987509565427899 ], [ 8317889.54291963763535, 9810201.153319185599685 ] ] ] } },

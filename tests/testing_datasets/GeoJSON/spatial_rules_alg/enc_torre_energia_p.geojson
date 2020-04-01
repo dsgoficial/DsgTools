@@ -1,6 +1,6 @@
 {
 "type": "FeatureCollection",
-"name": "edgv3-enc_torre_energia_p",
+"name": "enc_torre_energia_p",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::32721" } },
 "features": [
 { "type": "Feature", "properties": { "id": 3, "nome": null, "geometriaaproximada": false, "operacional": 9999, "situacaofisica": 9999, "ovgd": 9999, "alturaestimada": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 7900105.56008162163198, 10100023.619208328425884 ] ] } },

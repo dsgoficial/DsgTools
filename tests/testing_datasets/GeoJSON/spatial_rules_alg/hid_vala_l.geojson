@@ -1,6 +1,6 @@
 {
 "type": "FeatureCollection",
-"name": "edgv3-hid_vala_l",
+"name": "hid_vala_l",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::32721" } },
 "features": [
 { "type": "Feature", "properties": { "id": 1, "nome": null, "geometriaaproximada": false, "tipoalterantrop": 9999, "operacional": 9999, "situacaofisica": 9999, "matconstr": 9999, "usoprincipal": 9999, "finalidade": 9999, "lenght_otf": 54079.006788945488 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 8004627.918938768096268, 10311155.39588775113225 ], [ 8008593.255951183848083, 10214665.528585627675056 ] ] ] } },

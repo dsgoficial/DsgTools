@@ -166,8 +166,6 @@ class Tester(unittest.TestCase):
             "gpkg" : {
                 "testes_wgs84" : os.path.join(gpkgPaths, 'testes_wgs84.gpkg'),
                 "testes_sirgas2000_23s" : os.path.join(gpkgPaths, 'testes_sirgas2000_23s.gpkg'),
-                "testes_sirgas2000_24s" : os.path.join(gpkgPaths, 'testes_sirgas2000_24s.gpkg'),
-                "testes_sirgas2000_24s" : os.path.join(gpkgPaths, 'testes_sirgas2000_24s.gpkg'),
                 "test_dataset_unbuild_polygons" : os.path.join(gpkgPaths, 'test_dataset_unbuild_polygons.gpkg')
             },
             "geojson" : {
@@ -309,6 +307,7 @@ class Tester(unittest.TestCase):
                     'INPUT' : self.getInputLayers(
                             'sqlite', 'banco_capacitacao', ['cb_veg_campo_a']
                         )[0],
+                    'IGNORE_CLOSED' : False,
                     'SELECTED' : False,
                     'TYPE' : False
                 }
@@ -1083,10 +1082,9 @@ class Tester(unittest.TestCase):
         :param feedback: (QgsProcessingFeedback) QGIS progress tracking object.
         :param context: (QgsProcessingContext) execution's environmental parameters.
         """
-        return processing.run(algName, parameters, None,\
-                    feedback or QgsProcessingFeedback(),
-                    context or QgsProcessingContext()
-                )
+        feedback = QgsProcessingFeedback() if feedback is None else feedback
+        context = QgsProcessingContext() if context is None else context
+        return processing.run(algName, parameters, context=context, feedback=feedback)
 
     def expectedOutput(self, algName, test, multipleOutputs=False):
         """
@@ -1409,7 +1407,7 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg("dsgtools:identifydangles"), ""
         )
-    
+
     def test_identifyunsharedvertexonintersectionsalgorithm(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifyunsharedvertexonintersectionsalgorithm"), ""
@@ -1484,7 +1482,7 @@ class Tester(unittest.TestCase):
             ),
             ""
         )
-    
+
     def test_gridzonegenerator(self):
         self.assertEqual(
             self.testAlg(
@@ -1504,7 +1502,7 @@ class Tester(unittest.TestCase):
             ),
             ""
         )
-    
+
     # def test_enforcespatialrules(self):
     #     """Tests for Enforce Spatial Rules algorithm"""
     #     testsParams = self.algorithmParameters("dsgtools:enforcespatialrules")

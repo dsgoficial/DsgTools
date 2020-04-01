@@ -1,6 +1,6 @@
 {
 "type": "FeatureCollection",
-"name": "edgv3-hid_trecho_drenagem_l",
+"name": "hid_trecho_drenagem_l",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::32721" } },
 "features": [
 { "type": "Feature", "properties": { "id": 1, "nome": null, "geometriaaproximada": false, "tipotrechodrenagem": 9999, "navegavel": 9999, "larguramedia": null, "regime": 1, "encoberto": false }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 8164187.939384238794446, 10031113.367386044934392 ], [ 8148023.126088275574148, 10127867.624480901286006 ], [ 8148023.126088275574148, 10194908.226303378120065 ] ] ] } },

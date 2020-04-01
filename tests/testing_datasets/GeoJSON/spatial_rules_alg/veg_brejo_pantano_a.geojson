@@ -1,6 +1,6 @@
 {
 "type": "FeatureCollection",
-"name": "edgv3-veg_brejo_pantano_a",
+"name": "veg_brejo_pantano_a",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::32721" } },
 "features": [
 { "type": "Feature", "properties": { "id": 1, "nome": null, "geometriaaproximada": false, "classificacaoporte": 9999, "antropizada": 9999, "densidade": 9999, "secundaria": 9999 }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 7927086.200474304147065, 9868732.498561043292284 ], [ 7913185.69406804535538, 9852304.627353645861149 ], [ 7949411.256217691116035, 9862414.086558196693659 ], [ 7927086.200474304147065, 9868732.498561043292284 ] ] ] ] } },
