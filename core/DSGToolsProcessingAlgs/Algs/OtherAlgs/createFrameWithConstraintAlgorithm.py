@@ -148,7 +148,14 @@ class CreateFrameWithConstraintAlgorithm(QgsProcessingAlgorithm):
             crs,
             QgsProject.instance()
             )
-        featureHandler.getSystematicGridFeatures(featureList, index, stopScale, coordinateTransformer, fields, feedback=feedback)
+        featureHandler.getSystematicGridFeaturesWithConstraint(
+            featureList,
+            inputLyr,
+            stopScale,
+            coordinateTransformer,
+            fields,
+            feedback=feedback
+        )
         for feat in featureList:
             output_sink.addFeature(feat, QgsFeatureSink.FastInsert)
 

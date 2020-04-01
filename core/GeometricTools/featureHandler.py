@@ -218,9 +218,10 @@ class FeatureHandler(QObject):
             featureList.append(newFeat)
         else:
             scaleId = self.utmGrid.getScaleIdFromiNomen(index)
-            sufixIterator = itertools.chain.from_iterable(
-                self.utmGrid.scaleText[scaleId+1]
-            ) #flatten list into one single list
+            sufixIterator = list(itertools.chain.from_iterable(
+                    self.utmGrid.scaleText[scaleId+1]
+                ) #flatten list into one single list
+            )
             localMultiStepFeedback = QgsProcessingMultiStepFeedback(
                 len(sufixIterator),
                 feedback
@@ -229,23 +230,35 @@ class FeatureHandler(QObject):
                 if feedback is not None and feedback.isCanceled():
                     break
                 localMultiStepFeedback.setCurrentStep(i)
-                inomen2 = '{oldInomem}-{newPart}'.format(oldInomem=index, newPart=line)
-                if coordinateTransformer is not None \
+                inomen2 = '{oldInomem}-{newPart}'.format(
+                    oldInomem=index,
+                    newPart=line)
+                if constraintDict is not None \
                     and self.createGridItem(
                         inomen2, coordinateTransformer, constraintDict
                     ) is None:
                     continue
-                self.getSystematicGridFeatures(featureList, inomen2, stopScale, coordinateTransformer, fields, feedback=feedback)
+                self.getSystematicGridFeatures(
+                    featureList,
+                    inomen2,
+                    stopScale,
+                    coordinateTransformer,
+                    fields,
+                    constraintDict=constraintDict,
+                    feedback=localMultiStepFeedback
+                )
 
     def createGridItem(self, index, coordinateTransformer, constraintDict):
         frameGeom = self.utmGrid.getQgsPolygonFrame(index)
         frameGeom.transform(coordinateTransformer)
+        if constraintDict is None:
+            return frameGeom
         frameBB = frameGeom.boundingBox()
         engine = QgsGeometry.createGeometryEngine(frameGeom.constGet())
         engine.prepareGeometry()
         for fid in constraintDict['spatialIdx'].intersects(frameBB):
             if getattr(engine, constraintDict['predicate'])(
-                    constraintDict['idDict'][fid].geom().constGet()
+                    constraintDict['idDict'][fid].geometry().constGet()
                 ):
                 return frameGeom
         return None
@@ -295,7 +308,7 @@ class FeatureHandler(QObject):
                 coordinateTransformer,
                 fields,
                 constraintDict=constraintDict,
-                feedback=None
+                feedback=gridMultistepFeedback
             )
 
 
@@ -353,7 +366,7 @@ class FeatureHandler(QObject):
             QgsProject.instance()
         )
         reprojectedGeographicBB = coordinateTransformer.transformBoundingBox(
-            inputLyr.boundingBox()
+            inputLyr.extent()
         )
         xmin = reprojectedGeographicBB.xMinimum()
         ymin = reprojectedGeographicBB.yMinimum()
