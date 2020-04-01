@@ -25,7 +25,8 @@ from builtins import range
 import itertools
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
-                      QgsCoordinateTransform, QgsWkbTypes, QgsProcessingMultiStepFeedback, QgsVectorLayerUtils
+                      QgsCoordinateTransform, QgsWkbTypes, QgsProcessingMultiStepFeedback,\
+                      QgsVectorLayerUtils, QgsCoordinateReferenceSystem, QgsProject
 from qgis.PyQt.Qt import QObject, QVariant
 
 from .geometryHandler import GeometryHandler
@@ -33,7 +34,7 @@ from .attributeHandler import AttributeHandler
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 
 class FeatureHandler(QObject):
-    def __init__(self, iface = None, parent = None):
+    def __init__(self, iface=None, parent=None):
         super(FeatureHandler, self).__init__()
         self.parent = parent
         self.iface = iface
@@ -200,28 +201,162 @@ class FeatureHandler(QObject):
         feat.setGeometry(geom)
         return feat
     
-    def getSystematicGridFeatures(self, featureList, index, stopScale, coordinateTransformer, fields, feedback=None):
+    def getSystematicGridFeatures(self, featureList, index, stopScale, coordinateTransformer,\
+        fields, constraintDict=None, feedback=None):
         if feedback is not None and feedback.isCanceled():
             return
         scale = self.utmGrid.getScale(index)
-        if (self.stepsTotal == 0):
-            self.stepsTotal = self.utmGrid.computeNumberOfSteps(self.utmGrid.getScaleIdFromScale(scale), self.utmGrid.getScaleIdFromScale(stopScale))
-            self.stepsDone = 0
-            self.stepPerc = 100/self.stepsTotal
         if scale == stopScale:
-            frameGeom = self.utmGrid.getQgsPolygonFrame(index)
-            frameGeom.transform(coordinateTransformer)
+            frameGeom = self.createGridItem(
+                index,
+                coordinateTransformer,
+                constraintDict
+            )
+            if frameGeom is None:
+                return
             newFeat = self.getNewGridFeat(index, frameGeom, fields)
             featureList.append(newFeat)
-            self.stepsDone += 1
-            feedback.setProgress(self.stepPerc * self.stepsDone)
         else:
             scaleId = self.utmGrid.getScaleIdFromiNomen(index)
-            sufixIterator = itertools.chain.from_iterable(self.utmGrid.scaleText[scaleId+1]) #flatten list into one single list
-            for line in sufixIterator:
-                if feedback is not None:
-                    if feedback.isCanceled():
-                        break
+            sufixIterator = itertools.chain.from_iterable(
+                self.utmGrid.scaleText[scaleId+1]
+            ) #flatten list into one single list
+            localMultiStepFeedback = QgsProcessingMultiStepFeedback(
+                len(sufixIterator),
+                feedback
+            )
+            for i, line in enumerate(sufixIterator):
+                if feedback is not None and feedback.isCanceled():
+                    break
+                localMultiStepFeedback.setCurrentStep(i)
                 inomen2 = '{oldInomem}-{newPart}'.format(oldInomem=index, newPart=line)
+                if coordinateTransformer is not None \
+                    and self.createGridItem(
+                        inomen2, coordinateTransformer, constraintDict
+                    ) is None:
+                    continue
                 self.getSystematicGridFeatures(featureList, inomen2, stopScale, coordinateTransformer, fields, feedback=feedback)
 
+    def createGridItem(self, index, coordinateTransformer, constraintDict):
+        frameGeom = self.utmGrid.getQgsPolygonFrame(index)
+        frameGeom.transform(coordinateTransformer)
+        frameBB = frameGeom.boundingBox()
+        engine = QgsGeometry.createGeometryEngine(frameGeom.constGet())
+        engine.prepareGeometry()
+        for fid in constraintDict['spatialIdx'].intersects(frameBB):
+            if getattr(engine, constraintDict['predicate'])(
+                    constraintDict['idDict'][fid].geom().constGet()
+                ):
+                return frameGeom
+        return None
+
+    def getSystematicGridFeaturesWithConstraint(self, featureList, inputLyr, stopScale,\
+                            coordinateTransformer, fields, feedback=None, predicate=None):
+        """
+        TODO: Progress
+        """
+        if feedback is not None and feedback.isCanceled():
+            return
+        predicate = 'intersects' if predicate is None else predicate
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Creating spatial index'))
+        spatialIdx, idDict = self.buildSpatialIndexAndIdDict(
+            inputLyr,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Getting candidate start indexes'))
+        xmin, ymin, xmax, ymax = self.getLyrUnprojectedGeographicBounds(
+            inputLyr
+        )
+        inomenList = self.utmGrid.get_INOM_range_from_BB(
+            xmin, ymin, xmax, ymax
+        )
+        multiStepFeedback.setCurrentStep(3)
+        multiStepFeedback.pushInfo(self.tr('Building grid'))
+        gridMultistepFeedback = QgsProcessingMultiStepFeedback(
+            len(inomenList),
+            multiStepFeedback
+        )
+        constraintDict = {
+            'spatialIdx' : spatialIdx,
+            'idDict' : idDict,
+            'predicate' : predicate
+        }
+        for i, inomen in enumerate(inomenList):
+            gridMultistepFeedback.setCurrentStep(i)
+            if gridMultistepFeedback.isCanceled():
+                break
+            self.getSystematicGridFeatures(
+                featureList,
+                inomen,
+                stopScale,
+                coordinateTransformer,
+                fields,
+                constraintDict=constraintDict,
+                feedback=None
+            )
+
+
+    def buildSpatialIndexAndIdDict(self, inputLyr, feedback=None,\
+                                                    featureRequest=None):
+        """
+        creates a spatial index for the input layer
+        :param inputLyr: (QgsVectorLayer) input layer;
+        :param feedback: (QgsProcessingFeedback) processing feedback;
+        :param featureRequest: (QgsFeatureRequest) optional feature request;
+        """
+        spatialIdx = QgsSpatialIndex()
+        idDict = {}
+        featCount = inputLyr.featureCount()
+        size = 100/featCount if featCount else 0
+        iterator = inputLyr.getFeatures() if featureRequest is None\
+            else inputLyr.getFeatures(featureRequest)
+        addFeatureAlias = lambda x: self.addFeatureToSpatialIndex(
+            current=x[0],
+            feat=x[1],
+            spatialIdx=spatialIdx,
+            idDict=idDict,
+            size=size,
+            feedback=feedback
+        )
+        list(map(addFeatureAlias, enumerate(iterator)))
+        return spatialIdx, idDict
+
+    def addFeatureToSpatialIndex(self, current, feat, spatialIdx,\
+                                                idDict, size, feedback):
+        """
+        Adds feature to spatial index. Used along side with a
+        python map operator to improve performance.
+        :param current : (int) current index
+        :param feat : (QgsFeature) feature to be added on spatial
+        index and on idDict
+        :param spatialIdx: (QgsSpatialIndex) spatial index
+        :param idDict: (dict) dictionary with format {feat.id(): feat}
+        :param size: (int) size to be used to update feedback
+        :param feedback: (QgsProcessingFeedback) feedback to be used
+        on processing
+        """
+        if feedback is not None and feedback.isCanceled():
+            return
+        idDict[feat.id()] = feat
+        spatialIdx.addFeature(feat)
+        if feedback is not None:
+            feedback.setProgress(size * current)
+
+    def getLyrUnprojectedGeographicBounds(self, inputLyr):
+        crs = inputLyr.crs()
+        coordinateTransformer = QgsCoordinateTransform(
+            crs,
+            QgsCoordinateReferenceSystem(crs.geographicCrsAuthId()),
+            QgsProject.instance()
+        )
+        reprojectedGeographicBB = coordinateTransformer.transformBoundingBox(
+            inputLyr.boundingBox()
+        )
+        xmin = reprojectedGeographicBB.xMinimum()
+        ymin = reprojectedGeographicBB.yMinimum()
+        xmax = reprojectedGeographicBB.xMaximum()
+        ymax = reprojectedGeographicBB.yMaximum()
+        return xmin, xmax, ymin, ymax
