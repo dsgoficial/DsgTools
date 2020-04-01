@@ -1044,7 +1044,7 @@ class Tester(unittest.TestCase):
                     'INPUT' : self.getInputLayers(
                         'geojson', 'create_frames_layers', ['polygon1']
                     )[0],
-                    'STOP_SCALE': 3,
+                    'STOP_SCALE': 1,
                     'OUTPUT': 'memory:',
                 }
             ],
@@ -1485,7 +1485,7 @@ class Tester(unittest.TestCase):
             ""
         )
     
-    def test_createframealgorithm(self):
+    def test_gridzonegenerator(self):
         self.assertEqual(
             self.testAlg(
                 "dsgtools:gridzonegenerator",
