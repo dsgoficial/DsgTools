@@ -1044,7 +1044,7 @@ class Tester(unittest.TestCase):
                     'INPUT' : self.getInputLayers(
                         'geojson', 'create_frames_layers', ['polygon1']
                     )[0],
-                    'STOP_SCALE': 5,
+                    'STOP_SCALE': 3,
                     'OUTPUT': 'memory:',
                 }
             ],
