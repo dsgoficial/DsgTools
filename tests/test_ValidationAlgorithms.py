@@ -1460,26 +1460,6 @@ class Tester(unittest.TestCase):
             ""
         )
 
-    def test_gridzonegenerator(self):
-        self.assertEqual(
-            self.testAlg(
-                "dsgtools:gridzonegenerator",
-                multipleOutputs=True,
-                addControlKey=True
-            ),
-            ""
-        )
-    
-    def test_createframeswithconstraintalgorithm(self):
-        self.assertEqual(
-            self.testAlg(
-                "dsgtools:createframeswithconstraintalgorithm",
-                multipleOutputs=True,
-                addControlKey=True
-            ),
-            ""
-        )
-
     # def test_enforcespatialrules(self):
     #     """Tests for Enforce Spatial Rules algorithm"""
     #     testsParams = self.algorithmParameters("dsgtools:enforcespatialrules")
