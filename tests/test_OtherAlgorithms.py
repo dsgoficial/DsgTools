@@ -51,11 +51,11 @@ class Tester(GenericAlgorithmsTest, AlgorithmsTest):
 
     @classmethod
     def setUpClass(cls):
-        start_app()
         cls.cleanup_paths = []
 
     @classmethod
     def tearDownClass(cls):
+        QgsProject.instance().clear()
         for path in cls.cleanup_paths:
             shutil.rmtree(path)
 
