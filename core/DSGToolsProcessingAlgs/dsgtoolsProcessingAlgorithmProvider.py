@@ -187,6 +187,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.multipleOutputUnitTestA
     MultipleOutputUnitTestAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyTerrainModelErrorsAlgorithm import \
     IdentifyTerrainModelErrorsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFramesWithConstraintAlgorithm import \
+    CreateFramesWithConstraintAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -274,7 +276,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     SetFreeHandToolParametersAlgorithm(),
                     BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(),
                     MultipleOutputUnitTestAlgorithm(),
-                    IdentifyTerrainModelErrorsAlgorithm()
+                    IdentifyTerrainModelErrorsAlgorithm(),
+                    CreateFramesWithConstraintAlgorithm()
                 ]
         return algList
 

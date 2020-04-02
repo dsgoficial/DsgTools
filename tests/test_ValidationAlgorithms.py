@@ -172,7 +172,8 @@ class Tester(unittest.TestCase):
                 "land_cover_layers" : os.path.join(geojsonPaths, 'land_cover_layers'),
                 "terrain_model_layers" : os.path.join(geojsonPaths, 'terrain_model_layers'),
                 "testes_sirgas2000_24s" : os.path.join(geojsonPaths, 'testes_sirgas2000_24s'),
-                "spatial_rules_alg" : os.path.join(geojsonPaths, 'spatial_rules_alg')
+                "spatial_rules_alg" : os.path.join(geojsonPaths, 'spatial_rules_alg'),
+                "create_frames_layers" : os.path.join(geojsonPaths, 'create_frames_layers')
             }
         }
         # switch-case for dataset reading
@@ -1458,25 +1459,30 @@ class Tester(unittest.TestCase):
             ),
             ""
         )
-    
+
     # def test_enforcespatialrules(self):
     #     """Tests for Enforce Spatial Rules algorithm"""
     #     testsParams = self.algorithmParameters("dsgtools:enforcespatialrules")
     #     # this algorithm, specifically, has to set layers Context-reading ready
     #     layers = self.testingDataset("geojson", "spatial_rules_alg")
-    #     for lyrName, lyr in layers.items():
-    #         self.loadLayerToCanvas(lyr)
+    #     layers = {l.split("-")[-1]: vl for l, vl in layers.items()}
+    #     for parameters in testsParams:
+    #         for rule in parameters["RULES_SET"]:
+    #             for key in ["layer_a", "layer_b"]:
+    #                 vl = layers[rule[key]]
+    #                 # these layers are saved as "edgv3-*"
+    #                 vl.setName(rule[key])
+    #                 self.loadLayerToCanvas(vl)
     #     msg = self.testAlg(
-    #             "dsgtools:enforcespatialrules",
-    #             multipleOutputs=True,
-    #             addControlKey=True
-    #         )
+    #         "dsgtools:enforcespatialrules",
+    #         multipleOutputs=True,
+    #         addControlKey=True
+    #     )
+    #     # since layers were manually removed, cache is going to refer to 
+    #     # non-existing layers
     #     del self.datasets["geojson:spatial_rules_alg"]
     #     self.clearProject()
-    #     self.assertEqual(
-    #         msg,
-    #         ""
-    #     )
+    #     self.assertEqual(msg, "")
 
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
