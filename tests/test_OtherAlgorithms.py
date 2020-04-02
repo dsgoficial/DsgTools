@@ -49,6 +49,16 @@ from DsgTools.tests.algorithmsTestBase import AlgorithmsTest, GenericAlgorithmsT
 
 class Tester(GenericAlgorithmsTest, AlgorithmsTest):
 
+    @classmethod
+    def setUpClass(cls):
+        start_app()
+        cls.cleanup_paths = []
+
+    @classmethod
+    def tearDownClass(cls):
+        for path in cls.cleanup_paths:
+            shutil.rmtree(path)
+
     def get_definition_file(self):
         return 'otherAlgorithms.yaml'
 
