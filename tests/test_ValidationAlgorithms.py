@@ -1025,29 +1025,6 @@ class Tester(unittest.TestCase):
                 }
             ],
 
-            "dsgtools:gridzonegenerator" : [
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'START_SCALE':3,
-                    'STOP_SCALE':5,
-                    'INDEX_TYPE':0,
-                    'INDEX':'2215',
-                    'CRS':'EPSG:31983',
-                    'OUTPUT':'memory:'
-                }
-            ],
-
-            "dsgtools:createframeswithconstraintalgorithm" : [
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'INPUT' : self.getInputLayers(
-                        'geojson', 'create_frames_layers', ['polygon1']
-                    )[0],
-                    'STOP_SCALE': 1,
-                    'OUTPUT': 'memory:',
-                }
-            ],
-
             "dsgtools:ALG" : [
                 {
                     '__comment' : "'Normal' test: checks if it works."
