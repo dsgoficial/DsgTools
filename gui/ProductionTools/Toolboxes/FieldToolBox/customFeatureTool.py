@@ -44,6 +44,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'customFeatureTool.ui'))
 
 class CustomFeatureTool(QDockWidget, FORM_CLASS):
+    # tool mode codes
+    Extract, Reclassify = range(2)
+
     def __init__(self, parent=None, setups=None):
         """
         Class constructor.
@@ -55,6 +58,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.setupUi(self)
         self._setups = dict()
         self._order = dict()
+        self.activeButton = None
         if setups:
             self.setButtonSetups(setups)
         self.fillSetupComboBox()
@@ -65,8 +69,9 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.toolBehaviourSwitch.setStateBName(self.tr("Reclassify"))
         self.toolBehaviourSwitch.stateChanged.connect(
             lambda x: getattr(self.layerSelectionSwitch,
-                                "show" if x else "hide")()
-        )
+                                "show" if x else "hide")())
+        self.toolBehaviourSwitch.stateChanged.connect(
+            lambda x: self.currentButtonSetup().setButtonsCheckable(bool(x)))
         self.tabWidget.setTabPosition(self.tabWidget.West)
         self.bFilterLineEdit.returnPressed.connect(self.createResearchTab)
 
@@ -225,6 +230,9 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.bFilterLineEdit.setEnabled(isSetup)
         if isinstance(profile, str) and profile in self.buttonSetups():
             self.setupComboBox.setCurrentText(self.currentButtonSetupName())
+        if isSetup:
+            isRec = self.toolMode() == self.Reclassify
+            self.currentButtonSetup().setButtonsCheckable(isRec)
         self.createTabs()
 
     @pyqtSlot(bool, name="on_editSetupPushButton_clicked")
@@ -296,7 +304,64 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             self._order[s.name()] = dlg.buttonsOrder()
             self.addButtonSetup(s)
 
-    def createFeature(self, fields, geom, attributeMap, layerDefs, coordTransformer=None):
+    def toolMode(self):
+        """
+        Identifies current set tool mode, whether it's either feature
+        extraction or layer and field update (reclassification).
+        :return: (int) tool mode code.
+        """
+        return self.toolBehaviourSwitch.currentState()
+
+    def setToolMode(self, mode):
+        """
+        Defines whether tool will perform feature extraction or layer and field
+        update (reclassification). Method defaults to feature extraction.
+        :param mode: (int) tool mode code.
+        """
+        mode = mode if mode in (0, 1) else self.Extract
+        self.toolBehaviourSwitch.setState(mode)
+
+    @pyqtSlot()
+    def toolModeChanged(self, newMode):
+        """
+        A slot to handle tool mode updates.
+        :param newMode: (int) new mode code.
+        """
+        if newMode == self.Extract:
+            self.currentButtonSetup().setButtonsCheckable(False)
+        else:
+            self.currentButtonSetup().setButtonsCheckable(True)
+
+    def unsetActiveButton(self):
+        """
+        Unsets current active button, if possible.
+        """
+        if self.activeButton is None:
+            return
+        
+    @pyqtSlot()
+    def identifyButtonToggling(self):
+        """
+        Slot designed to be connected to all handled button's toggling signal.
+        It manages which button is pushed in order to identify button's active
+        status on tool.
+        """
+        b = self.sender()
+        if b is None:
+            return
+        b = self.currentButtonSetup().button(b.text())
+
+    def setActiveButton(self, button):
+        """
+        Sets a button as tool's reclassification active button. Manages toggled
+        buttons in order to have, at maximum, one toggled at any time.
+        :param button: () current button's property
+        """
+        self.unsetActiveButton()
+
+
+    def createFeature(self, fields, geom, attributeMap, layerDefs, 
+                        coordTransformer=None):
         """
         Creates a new feature to be added to a layer. These features may be
         pre-set with a collection of attributes.
@@ -343,3 +408,29 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         newLayer.addFeatures(addFeats)
         newLayer.updateExtents()
         return addFeats
+
+    def toolState(self):
+        """
+        Retrieves a map with all parameters that indicates current tool setup.
+        :return: (dict) a map to all parameters for current tool state.
+        """
+        return dict()
+
+    def setToolState(self, state):
+        """
+        Sets tool to a given state.
+        :param state: (dict) a map to all parameters for current tool state.
+        """
+        pass
+
+    def saveStateToProject(self):
+        """
+        Saves current tool state to the QGIS project.
+        """
+        pass
+
+    def restoreStateFromProject(self):
+        """
+        Restores current tool state from project variable state.
+        """
+        pass

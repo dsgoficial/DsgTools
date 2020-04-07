@@ -910,6 +910,14 @@ class CustomButtonSetup(QObject):
         """
         return { n: self.buttonWidget(n, newInstance) for n in self._buttons }
 
+    def setButtonsCheckable(self, checkable):
+        """
+        Sets all buttons checkable behaviour.
+        :param checkable: (bool) whether buttons are checkable.
+        """
+        for b in self.buttons():
+            b.setCheckable(checkable)
+
     def addButton(self, props, replace=False):
         """
         Adds a button the set of controlled buttons.
