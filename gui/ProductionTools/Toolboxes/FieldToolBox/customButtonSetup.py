@@ -234,6 +234,17 @@ class CustomFeatureButton(QObject):
         self._widgets = newList
         return self._widgets
 
+    def clearWidgets(self):
+        """
+        Clears all registered widgets for a given button. This method should be
+        carefully used as it might simply remove the reference to a set of
+        managed widgets and not propagating button properties updates to them.
+        :param name: (str) name for the button to have its wigdets references
+                     cleaned.
+        """
+        while self._widgets:
+            self._widgets.pop()
+
     def newWidget(self):
         """
         A new instance of widget configured with current defined properties.
@@ -1084,3 +1095,22 @@ class CustomButtonSetup(QObject):
             self.addButton(props)
         self.setName(state["name"])
         self.setDescription(state["description"])
+
+    def clearWidgetsFromButton(self, name):
+        """
+        Clears all registered widgets for a given button. This method should be
+        carefully used as it might simply remove the reference to a set of
+        managed widgets and not propagating button properties updates to them.
+        :param name: (str) name for the button to have its wigdets references
+                     cleaned.
+        """
+        self.button(button).clearWidgets()
+
+    def clearWidgets(self):
+        """
+        Widgets are created as requested and might get the application to
+        slowdown. This method clears the reference list of all widgets from all
+        buttons.
+        """
+        for b in self.buttons():
+            b.clearWidgets()

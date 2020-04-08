@@ -217,6 +217,13 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.newTab(txt, buttons)
         self.tabWidget.setCurrentIndex(self.tabWidget.count() - 1)
 
+    def resetButtonWidgets(self):
+        """
+        Button widgets are created eveytime a tab is created. In order to not
+        waste too much memory on non-used widgets, they'd be removed 
+        """
+        self.currentButtonSetup().clearWidgets()
+
     @pyqtSlot(int, name="on_setupComboBox_currentIndexChanged")
     def setCurrentButtonSetup(self, profile=None):
         """
@@ -233,6 +240,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if isSetup:
             isRec = self.toolMode() == self.Reclassify
             self.currentButtonSetup().setButtonsCheckable(isRec)
+            self.resetButtonWidgets()
         self.createTabs()
 
     @pyqtSlot(bool, name="on_editSetupPushButton_clicked")
