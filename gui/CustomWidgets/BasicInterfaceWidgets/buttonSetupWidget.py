@@ -557,7 +557,6 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
             idx = self.buttonComboBox.findText(prevName)
             self.buttonComboBox.setItemText(idx, newName)
         self.setCurrentButton(button)
-        self.updateButtonWidget(button)
 
     @pyqtSlot(bool, name="on_undoPushButton_clicked")
     def undoButtonModifications(self):
@@ -635,14 +634,6 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         row = self.tableWidget.rowCount()
         self.tableWidget.insertRow(row)
-        self.tableWidget.setCellWidget(row, 0, button.newWidget())
-
-    def updateButtonWidget(self, button):
-        """
-        Replaces button widget in order to propagate button properties update.
-        :param button: (CustomFeatureButton) button to have its widget updated.
-        """
-        row = self.buttonComboBox.findText(button.name()) - 1
         self.tableWidget.setCellWidget(row, 0, button.newWidget())
 
     def removeButtonFromTable(self, button):
