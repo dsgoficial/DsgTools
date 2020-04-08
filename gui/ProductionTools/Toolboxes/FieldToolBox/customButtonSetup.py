@@ -70,6 +70,7 @@ class CustomFeatureButton(QObject):
             "isCheckable": False,
             "isChecked": False
         }
+        self._widgets = list()
         self._callback = callback if callback else lambda: None
         self.setAction()
         self.setProperties(props)
@@ -113,11 +114,12 @@ class CustomFeatureButton(QObject):
         self._shortcut.setKey(QKeySequence.fromString(""))
         del self._shortcut
         self._action.blockSignals(True)
-        self._widget.clicked.disconnect(self._action.trigger)
-        self._widget.blockSignals(True)
-        del self._widget
+        for w in self.widgets():
+            w.clicked.disconnect(self._action.trigger)
+            w.blockSignals(True)
+            del w
+        del self._widgets
         del self._action
-        del self
 
     def copy(self):
         """
@@ -130,8 +132,9 @@ class CustomFeatureButton(QObject):
 
     def setProperties(self, props):
         """
-        Modify current button properties. Only valid properties are modified
-        (caveat: it still may accept invalid values).
+        Modify current button properties. Only valid properties are modified.
+        Method does not repaint existing widgets (caveat: it still may accept
+        invalid values).
         :param props: (dict) a map to button's new properties.
         :return: (dict) a map to current button properties.
         """
@@ -141,9 +144,7 @@ class CustomFeatureButton(QObject):
                     self._props[prop] = props[prop]
                     if prop == "category":
                         self.categoryChanged.emit(self)
-        # set properties to the push button related to this obj
-        self._widget = self.newWidget()
-        return dict(self._props)
+        return self.properties()
 
     def update(self, newProps):
         """
@@ -207,10 +208,31 @@ class CustomFeatureButton(QObject):
 
     def widget(self):
         """
-        This instance's widget configured with current defined properties.
+        This instance's widget configured with current defined properties. It's
+        an alias for newWidget method.
         :return: (QPushButton) current widget.
         """
-        return self._widget
+        return self.newWidget()
+
+    def widgets(self):
+        """
+        All created widgets from this custom button is tracked from a list.
+        These widgets might be deleted from the interface and Python reference
+        is kept even though the C++ object is removed. This method "clears" the
+        list every time it is called.
+        :return: (list-of-QPushButton) all valid managed buttons.
+        """
+        newList = list()
+        for b in self._widgets:
+            try:
+                b.objectName() # any calls to invalids them raises errors here
+                newList.append(b)
+            except:
+                # invalid buttons shall raise the lost reference error
+                pass
+        del self._widgets
+        self._widgets = newList
+        return self._widgets
 
     def newWidget(self):
         """
@@ -236,6 +258,9 @@ class CustomFeatureButton(QObject):
             pal.setColor(pal.Button, col)
         pb.setPalette(pal)
         pb.update()
+        # keeping track of all created widgets is necessary in order to update
+        # accordingly to CustomFeatureButton's properties 
+        self._widgets.append(pb)
         return pb
 
     def setName(self, name):
@@ -245,8 +270,9 @@ class CustomFeatureButton(QObject):
         """
         if type(name) == str: 
             self._props["name"] = name
-            self.widget().setText(self.displayName())
-            self.widget().update()
+            for w in self.widgets():
+                w.setText(self.displayName())
+                w.update()
             if hasattr(self, "_action"):
                 self._action.setText(
                     self.tr("DSGTools: Custom Feature Toolbox - button {0}")\
@@ -306,8 +332,9 @@ class CustomFeatureButton(QObject):
                 else:
                     col = QColor(*col)
                 pal.setColor(pal.Button, col)
-                self.widget().setPalette(pal)
-                self.widget().update()
+                for w in self.widgets():
+                    w.setPalette(pal)
+                    w.update()
         else:
             raise TypeError(
                 self.tr("Color must be a str or tuple of int ({0}).")\
@@ -334,7 +361,8 @@ class CustomFeatureButton(QObject):
         if type(useColor) == bool: 
             self._props["useColor"] = useColor
             if not useColor:
-                self.widget().setPalette(QPalette())
+                for w in self.widgets():
+                    w.setPalette(QPalette())
             else:
                 self.setColor(self.color())
         else:
@@ -357,7 +385,8 @@ class CustomFeatureButton(QObject):
         """
         if type(tooltip) == str: 
             self._props["tooltip"] = tooltip
-            self.widget().setToolTip(tooltip)
+            for w in self.widgets():
+                w.setToolTip(tooltip)
         else:
             raise TypeError(
                 self.tr("Tool tip must be a str ({0}).").format(type(tooltip))
@@ -399,8 +428,9 @@ class CustomFeatureButton(QObject):
             sKeySeq = QKeySequence.fromString(s)
             self.action().setShortcut(sKeySeq)
             self._shortcut.setKey(sKeySeq)
-            self.widget().setText(self.displayName())
-            self.widget().update()
+            for w in self.widgets():
+                w.setText(self.displayName())
+                w.update()
         else:
             raise TypeError(
                 self.tr("Action shortcut must be a str ({0}).").format(type(s))
@@ -714,17 +744,19 @@ class CustomFeatureButton(QObject):
         """
         if type(checkable) == bool:
             self._props["isCheckable"] = checkable
-            self.widget().setCheckable(checkable)
-            try:
-                # signal may or may not be connected. case when it needs to
-                # stay connected is handled by the connect command below
-                self.widget().clicked.disconnect(self.action().trigger)
-            except:
-                pass
-            if not checkable:
-                self.setChecked(False)
-                self.widget().clicked.connect(self.action().trigger)
-            else:
+            for w in self.widgets():
+                w.setCheckable(checkable)
+                try:
+                    # signal may or may not be connected. case when it needs to
+                    # stay connected is handled by the connect command below
+                    w.clicked.disconnect(self.action().trigger)
+                except:
+                    pass
+                if not checkable:
+                    self.setChecked(False)
+                    w.clicked.connect(self.action().trigger)
+            if checkable:
+                # action should be handled only once
                 self.handleActionCallback()
         else:
             raise TypeError(
@@ -749,8 +781,9 @@ class CustomFeatureButton(QObject):
             checked = self.isCheckable() and checked
             self._props["isChecked"] = checked
             if self.sender() is None:
-                self.widget().setChecked(checked)
-            self.widget().update()
+                for w in self.widgets():
+                    w.setChecked(checked)
+                    w.update()
             self.handleActionCallback()
         else:
             raise TypeError(
@@ -862,16 +895,13 @@ class CustomButtonSetup(QObject):
         if name in self._buttons:
             return self._buttons[name]
 
-    def buttonWidget(self, name, newInstance=False):
+    def buttonWidget(self, name):
         """
-        Retrieves an instance of button's widget from its name.
+        Retrieves a new instance of button's widget from its name.
         :param name: (str) button's name.
-        :param newInstance: (bool) indicates whether widget should be a new
-                            instance setup with current button's properties.
         :return: (QPushButton) button GUI-ready (e.g. with all props applied).
         """
-        return self._buttons[name].newWidget() if newInstance \
-                else self._buttons[name].widget()
+        return self._buttons[name].newWidget()
 
     def buttons(self):
         """
@@ -904,11 +934,9 @@ class CustomButtonSetup(QObject):
     def widgets(self, newInstance=False):
         """
         Retrieves a map of all button widgets of registered buttons.
-        :param newInstance: (bool) indicates whether widget should be a new
-                            instance setup with current button's properties.
-        :return: (dict) a map from button name to its widget instance.
+        :return: (dict) a map from button name to an instance of its widget.
         """
-        return { n: self.buttonWidget(n, newInstance) for n in self._buttons }
+        return { n: self.buttonWidget(n) for n in self._buttons }
 
     def setButtonsCheckable(self, checkable):
         """
