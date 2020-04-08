@@ -70,8 +70,11 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.toolBehaviourSwitch.stateChanged.connect(
             lambda x: getattr(self.layerSelectionSwitch,
                                 "show" if x else "hide")())
+        def setToolMode(mode):
+            for s in self.buttonSetups():
+                s.setButtonsCheckable(bool(mode))
         self.toolBehaviourSwitch.stateChanged.connect(
-            lambda x: self.currentButtonSetup().setButtonsCheckable(bool(x)))
+            lambda x: setToolMode(x))
         self.tabWidget.setTabPosition(self.tabWidget.West)
         self.bFilterLineEdit.returnPressed.connect(self.createResearchTab)
 
@@ -100,6 +103,20 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.setupComboBox.addItems(self.buttonSetups("asc"))
 
     def buttonSetups(self, order=None):
+        """
+        Retrieves current available button profiles (setups) names. 
+        :return: (list-of-CustomFeatureSetup) available profiles names.
+        """
+        return {
+            "asc": lambda: sorted(self._setups.values(),
+                                    key=lambda x: x.name()),
+            "desc": lambda: sorted(self._setups.values(),
+                                    key=lambda x: x.name(),
+                                    reverse=True),
+            None: lambda: list(self._setups.values())
+        }[order]()
+
+    def buttonSetupNames(self, order=None):
         """
         Retrieves current available button profiles (setups) names. 
         :return: (list-of-str) available profiles names.
@@ -225,9 +242,12 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.currentButtonSetup().clearWidgets()
 
     @pyqtSlot(int, name="on_setupComboBox_currentIndexChanged")
-    def setCurrentButtonSetup(self, profile=None):
+    def setCurrentButtonSetup(self, setup=None):
         """
-        Sets GUI to a new profile.
+        Sets GUI to a new setup.
+        :param setup: (str) button setup name.*
+        :*obs: param setup may be an int if this method is called from signal
+               triggerring.
         """
         self.clearTabs()
         self.bFilterLineEdit.setText("")
@@ -235,7 +255,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.editSetupPushButton.setEnabled(isSetup)
         self.removePushButton.setEnabled(isSetup)
         self.bFilterLineEdit.setEnabled(isSetup)
-        if isinstance(profile, str) and profile in self.buttonSetups():
+        if isinstance(setup, str) and setup in self.buttonSetupNames():
             self.setupComboBox.setCurrentText(self.currentButtonSetupName())
         if isSetup:
             isRec = self.toolMode() == self.Reclassify
@@ -259,7 +279,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 i = 0
                 oldName = setup.name()
                 del self._order[oldName]
-                while newSetup.name() in self.buttonSetups():
+                while newSetup.name() in self.buttonSetupNames():
                     i += 1
                     newSetup.setName("{0} ({1})".format(newName, i))
                 newName = newSetup.name()
@@ -281,7 +301,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         as active.
         :param setup: (CustomButtonSetup) button setup to be added.
         """
-        if setup.name() in self.buttonSetups():
+        if setup.name() in self.buttonSetupNames():
             # raise error message
             return
         self._setups[setup.name()] = setup
@@ -303,9 +323,9 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if ret:
             s = dlg.readSetup()
             baseName = s.name()
-            if baseName in self.buttonSetups():
+            if baseName in self.buttonSetupNames():
                 i = 0
-                setups = self.buttonSetups()
+                setups = self.buttonSetupNames()
                 while s.name() in setups:
                     i += 1
                     s.setName("{0} ({1})".format(baseName, i))
@@ -366,7 +386,6 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         :param button: () current button's property
         """
         self.unsetActiveButton()
-
 
     def createFeature(self, fields, geom, attributeMap, layerDefs, 
                         coordTransformer=None):

@@ -23,6 +23,7 @@
 
 import os
 from datetime import datetime
+from functools import partial
 from collections import defaultdict
 
 from qgis.utils import iface
@@ -46,6 +47,7 @@ class CustomFeatureButton(QObject):
     # metadata of current properties map version
     __MAP_VERSION = 0.1
     categoryChanged = pyqtSignal(QObject)
+    toggled = pyqtSignal(bool)
 
     def __init__(self, props=None, callback=None):
         """
@@ -254,6 +256,7 @@ class CustomFeatureButton(QObject):
         pb = QPushButton()
         pb.setCheckable(self.isCheckable())
         pb.toggled.connect(self.setChecked)
+        pb.toggled.connect(self.toggled)
         pb.setChecked(self.isChecked())
         if not self.isCheckable():
             pb.clicked.connect(self._action.trigger)
@@ -790,11 +793,18 @@ class CustomFeatureButton(QObject):
         """
         if type(checked) == bool:
             checked = self.isCheckable() and checked
+            before = self.isChecked()
             self._props["isChecked"] = checked
-            if self.sender() is None:
-                for w in self.widgets():
-                    w.setChecked(checked)
-                    w.update()
+            for w in self.widgets():
+                # we don't want to notify toggling N times
+                w.blockSignals(True)
+                w.setChecked(checked)
+                w.update()
+                w.blockSignals(False)
+            # if self.sender() is None and before != checked:
+            #     # jsut the once. If no sender is identified, method was
+            #     # manually called, hence it needs "manual" adviosry
+            #     self.toggled.emit(checked)
             self.handleActionCallback()
         else:
             raise TypeError(
@@ -889,13 +899,11 @@ class CustomButtonSetup(QObject):
         :param buttons: (list) a list of buttons' properties to be setup.
         """
         for key in list(self._buttons.keys()):
-            del self._buttons[key]
+            self.removeButton(key)
         del self._buttons
         self._buttons = dict()
         for props in buttons:
-            button = CustomFeatureButton(props)
-            self._buttons[props["name"]] = button
-            # button.categoryChanged.connect(self.buttonUpdated)
+            self.addButton(props)
 
     def button(self, name):
         """
@@ -959,15 +967,17 @@ class CustomButtonSetup(QObject):
 
     def addButton(self, props, replace=False):
         """
-        Adds a button the set of controlled buttons.
+        Adds a button to the set of controlled buttons.
         :param props: (dict) a map to buttons properties.
         :param replace: (bool) whether a button with the same name, if found,
                         should be replaced.
         :return: (bool) operation status
         """
         if props["name"] in self._buttons and not replace:
-            return False
-        self._buttons[props["name"]] = CustomFeatureButton(props)
+                return False
+        button = CustomFeatureButton(props)
+        button.toggled.connect(partial(self.toggleSingleButton, button))
+        self._buttons[props["name"]] = button
         self.buttonAdded.emit(self.button(props["name"]))
         return True
 
@@ -1114,3 +1124,19 @@ class CustomButtonSetup(QObject):
         """
         for b in self.buttons():
             b.clearWidgets()
+
+    def toggleSingleButton(self, button, toggled=False):
+        """
+        Handles all button widgets in order to allow only one of them button to
+        be toggled at any time.
+        :param bw: (QPushButton) push button to be managed.
+        """
+        if not toggled:
+            return
+        for b in self.buttons():
+            b.blockSignals(True)
+            b.setChecked(False)
+            b.blockSignals(False)
+        button.blockSignals(False)
+        button.setChecked(True)
+        button.blockSignals(False)
