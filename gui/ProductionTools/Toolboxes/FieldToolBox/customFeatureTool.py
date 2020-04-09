@@ -338,7 +338,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         type) on canvas or just the active layer.
         :return: (int) layer mode code.
         """
-        return self.ActiveLayer if self.toolBehaviourSwitch.currentState() == 0 \
+        return self.ActiveLayer if self.layerSelectionSwitch.currentState() == 0\
             else self.AllLayers
 
     def toolMode(self):

@@ -661,7 +661,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
                 buttons.append(
                     self.tableWidget.cellWidget(row, 0).text()\
                         .rsplit(" [", 1)[0].replace("&", "")
-                ) # Qt mnemonic shtct for it widgets introduces "&"...
+                ) # Qt mnemonic shortcut for it widgets introduces "&"...
         return buttons
 
     def buttonsOrder(self):
