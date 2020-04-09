@@ -24,6 +24,7 @@
 import os
 
 from qgis.PyQt import uic
+from qgis.utils import iface
 from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtGui import QColor, QPalette
 from qgis.PyQt.QtWidgets import (QWidget,
@@ -46,11 +47,12 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class CustomFeatureTool(QDockWidget, FORM_CLASS):
     # tool mode codes
     Extract, Reclassify = range(2)
+    ActiveLayer, AllLayers = range(100, 102)
 
     def __init__(self, parent=None, setups=None):
         """
         Class constructor.
-        :param parent: (QtWidgets.*) any widget that 'contains' this tool.
+        :param parent: (QWidget) any widget that 'contains' this tool.
         :param setups: (list-of-dict) a list of states for CustomButtonSetup
                        objects to be set to the GUI.
         """
@@ -58,7 +60,6 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.setupUi(self)
         self._setups = dict()
         self._order = dict()
-        self.activeButton = None
         if setups:
             self.setButtonSetups(setups)
         self.fillSetupComboBox()
@@ -84,7 +85,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         self.setupComboBox.clear()
         self.setupComboBox.addItem(self.tr("Select a buttons profile..."))
-        self.setupComboBox.addItems(list(self._setups.keys()))
+        self.setupComboBox.addItems(self.buttonSetupNames("asc"))
 
     def setButtonSetups(self, setups):
         """
@@ -92,15 +93,13 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         :param setups: (list-of-dict) a list of states for CustomButtonSetup
                          objects to be set to the GUI.
         """
-        self.setupComboBox.clear()
-        self.setupComboBox.addItem(self.tr("Select a button profile..."))
         for s in self._setup:
             del self._setups[s]
         for p in setups:
             s = CustomButtonSetup()
             s.setState(p)
             self._setups[s.name()] = s
-        self.setupComboBox.addItems(self.buttonSetups("asc"))
+        self.fillSetupComboBox()
 
     def buttonSetups(self, order=None):
         """
@@ -332,6 +331,16 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             self._order[s.name()] = dlg.buttonsOrder()
             self.addButtonSetup(s)
 
+    def layerMode(self):
+        """
+        Reads from GUI which mode did the user set for layer selection: either
+        reclassify selected features from all compatible loaded layers (geom
+        type) on canvas or just the active layer.
+        :return: (int) layer mode code.
+        """
+        return self.ActiveLayer if self.toolBehaviourSwitch.currentState() == 0 \
+            else self.AllLayers
+
     def toolMode(self):
         """
         Identifies current set tool mode, whether it's either feature
@@ -360,32 +369,41 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         else:
             self.currentButtonSetup().setButtonsCheckable(True)
 
-    def unsetActiveButton(self):
+    def reclassificationButton(self):
         """
-        Unsets current active button, if possible.
+        Retrieves currently checked button to be used as reclassification
+        button.
+        :return: (CustomFeatureButton) checked button.
         """
-        if self.activeButton is None:
-            return
-        
-    @pyqtSlot()
-    def identifyButtonToggling(self):
-        """
-        Slot designed to be connected to all handled button's toggling signal.
-        It manages which button is pushed in order to identify button's active
-        status on tool.
-        """
-        b = self.sender()
-        if b is None:
-            return
-        b = self.currentButtonSetup().button(b.text())
+        s = self.currentButtonSetup()
+        return s.checkedButton() if s is not None else None
 
-    def setActiveButton(self, button):
+    def featuresToBeReclassified(self):
         """
-        Sets a button as tool's reclassification active button. Manages toggled
-        buttons in order to have, at maximum, one toggled at any time.
-        :param button: () current button's property
+        Identifies all selected features from layers to be reclassified. It
+        looks for tool mode for layer search, and retrieves either currently
+        active layer's selected features or all selected features from all
+        layers. It is important to notice QGIS behaviour: all layers will only
+        consider visible layers (checked on layer list).
+        :return: (dict) a map from layer to its features for reclassification.
         """
-        self.unsetActiveButton()
+        rMap = dict()
+        b = self.reclassificationButton()
+        if b is not None and b.checkLayer():
+            geomType = b.vectorLayer().geometryType()
+            if self.layerMode() == self.AllLayers:
+                layers = iface.mapCanvas().layers()
+            else:
+                l = iface.activeLayer()
+                layers = [] if l is None else [l]
+            for l in layers:
+                # im not sure whether it's a recent modification, but map layers
+                # are hashable
+                if l.geometryType() == geomType:
+                    feats = l.selectedFeatures()
+                    if feats:
+                        rMap[l] = feats
+        return rMap
 
     def createFeature(self, fields, geom, attributeMap, layerDefs, 
                         coordTransformer=None):

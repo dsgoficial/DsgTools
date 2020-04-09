@@ -1140,3 +1140,12 @@ class CustomButtonSetup(QObject):
         button.blockSignals(False)
         button.setChecked(True)
         button.blockSignals(False)
+
+    def checkedButton(self):
+        """
+        Identifies whether a button is toggled and retrieves it.
+        :return: (CustomFeatureButton) currently checked button.
+        """
+        for b in self.buttons():
+            if b.isChecked():
+                return b
