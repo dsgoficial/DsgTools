@@ -25,6 +25,7 @@ import os
 
 from qgis.PyQt import uic
 from qgis.utils import iface
+from qgis.core import QgsProject
 from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtGui import QColor, QPalette
 from qgis.PyQt.QtWidgets import (QWidget,
@@ -453,6 +454,17 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         newLayer.addFeatures(addFeats)
         newLayer.updateExtents()
         return addFeats
+
+    def setMapTool(self, button):
+        """
+        Whenever a button is called it sets current map tool for feature
+        extraction as defined in its properties, or sets the DSGTools: Generic
+        Selector tool, if reclassification mode is set.
+        """
+        if self.toolMode() == self.Extract:
+            button.setMapTool()
+        else:
+            pass
 
     def toolState(self):
         """

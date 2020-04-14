@@ -46,7 +46,6 @@ class CustomFeatureButton(QObject):
     """
     # metadata of current properties map version
     __MAP_VERSION = 0.1
-    categoryChanged = pyqtSignal(QObject)
     toggled = pyqtSignal(bool)
 
     def __init__(self, props=None, callback=None):
@@ -70,7 +69,8 @@ class CustomFeatureButton(QObject):
             "attributeMap": dict(),
             "acquisitionTool": "default",
             "isCheckable": False,
-            "isChecked": False
+            "isChecked": False,
+            "isEnabled": False
         }
         self._widgets = list()
         self._callback = callback if callback else lambda: None
@@ -144,8 +144,6 @@ class CustomFeatureButton(QObject):
             for prop in self._props.keys():
                 if prop in props:
                     self._props[prop] = props[prop]
-                    if prop == "category":
-                        self.categoryChanged.emit(self)
         return self.properties()
 
     def update(self, newProps):
@@ -170,7 +168,8 @@ class CustomFeatureButton(QObject):
             "attributeMap": lambda x: self.setAttributeMap(x),
             "acquisitionTool": lambda x: self.setAcquisitionTool(x),
             "isCheckable": lambda x: self.setCheckable(x),
-            "isChecked": lambda x: self.setChecked(x)
+            "isChecked": lambda x: self.setChecked(x),
+            "isEnabled": lambda x: self.setEnabled(x)
         }
         try:
             for propName, propValue in tempButton.properties().items():
@@ -181,6 +180,7 @@ class CustomFeatureButton(QObject):
         except Exception as e:
             # reset previous props and re-raise the error message
             self.update(oldProps)
+            updated = False
             raise Exception(self.tr("Error while updating '{0}' ({1})")\
                                 .format(propName, str(e)))
         return updated
@@ -205,7 +205,8 @@ class CustomFeatureButton(QObject):
             "attributeMap": self.attributeMap(),
             "acquisitionTool": self.acquisitionTool(),
             "isCheckable": self.isCheckable(),
-            "isChecked": self.isChecked()
+            "isChecked": self.isChecked(),
+            "isEnabled": self.isEnabled()
         }
 
     def widget(self):
@@ -540,7 +541,10 @@ class CustomFeatureButton(QObject):
             raise Exception(self.tr("Callback must be a callable object."))
         if self.callbackIsConnected():
             self._action.triggered.disconnect(self._callback)
-        self._callback = callback
+        def callbackWrapper():
+            if self.isEnabled():
+                callback()
+        self._callback = callbackWrapper
         self._action.triggered.connect(self._callback)
         self.__callbackConnected = True
 
@@ -562,7 +566,8 @@ class CustomFeatureButton(QObject):
         self._action.setShortcut(sKeySeq)
         self._shortcut.setKey(sKeySeq)
         self._shortcut.activated.connect(self.action().trigger)
-        iface.registerMainWindowAction(self._action, self.shortcut())
+        if self.isEnabled():
+            iface.registerMainWindowAction(self._action, self.shortcut())
         self._action.triggered.connect(self._callback)
         self.__callbackConnected = True
 
@@ -751,6 +756,12 @@ class CustomFeatureButton(QObject):
             toolName = self.supportedTools()[tool]
             dsgToolsMapTools[toolName].trigger()
 
+    def setMapTool(self):
+        """
+        It sets defined acquisition tool as current active map tool.
+        """
+        self.setAcquisitionTool(self.acquisitionTool())
+
     def setCheckable(self, checkable):
         """
         Defines if button may be toggled (or "clickable").
@@ -818,6 +829,32 @@ class CustomFeatureButton(QObject):
         :return: (bool) whether button may be toggled.
         """
         return bool(self._props["isChecked"])
+
+    def setEnabled(self, enabled):
+        """
+        Disables or enables button from QGIS interface. When a button is
+        active, its action is registered to the main window and shortcut, if
+        set, is enabled.
+        :param enabled: (bool) whether buttons should be enabled.
+        """
+        if type(enabled) == bool:
+            if self.isEnabled() and not enabled:
+                iface.unregisterMainWindowAction(self.action())
+            elif not self.isEnabled() and enabled:
+                iface.registerMainWindowAction(self.action(), self.shortcut())
+            self._props["isEnabled"] = enabled
+        else:
+            raise TypeError(
+                self.tr("Enabled status must be a bool ({0}).")\
+                    .format(type(enabled))
+            )
+
+    def isEnabled(self):
+        """
+        Checks if button is enabled.
+        :return: (bool) whether button is enabled.
+        """
+        return bool(self._props["isEnabled"])
 
 class CustomButtonSetup(QObject):
     """
@@ -976,7 +1013,7 @@ class CustomButtonSetup(QObject):
         if props["name"] in self._buttons and not replace:
                 return False
         button = CustomFeatureButton(props)
-        button.toggled.connect(partial(self.toggleSingleButton, button))
+        button.toggled.connect(partial(self.toggleButton, button))
         self._buttons[props["name"]] = button
         self.buttonAdded.emit(self.button(props["name"]))
         return True
@@ -1125,7 +1162,7 @@ class CustomButtonSetup(QObject):
         for b in self.buttons():
             b.clearWidgets()
 
-    def toggleSingleButton(self, button, toggled=False):
+    def toggleButton(self, button, toggled=False):
         """
         Handles all button widgets in order to allow only one of them button to
         be toggled at any time.
@@ -1149,3 +1186,46 @@ class CustomButtonSetup(QObject):
         for b in self.buttons():
             if b.isChecked():
                 return b
+
+    def setButtonEnabled(self, button, enabled):
+        """
+        Disables or enables a button from QGIS interface. When a button is
+        active, its action is registered to the main window and shortcut, if
+        set, is enabled.
+        :param button: (str) button name to have its enabled status set.
+        :param enabled: (bool) whether button should be enabled.
+        """
+        b = self.button(button)
+        if b is not None:
+            b.setEnabled(enabled)
+
+    def setEnabled(self, enabled):
+        """
+        Disables or enables all buttons from QGIS interface. When a button is
+        active, its action is registered to the main window and shortcut, if
+        set, is enabled.
+        :param enabled: (bool) whether buttons should be enabled.
+        """
+        for b in self.buttons():
+            b.setEnabled(enabled)
+
+    def hasDisabledButtons(self):
+        """
+        Identifies whether setup has any disabled button.
+        :return: (bool) if setup has any disabled button.
+        """
+        for b in self.buttons():
+            if not b.isEnabled():
+                return True
+        return False
+
+    def disabledButtons(self):
+        """
+        Identifies all disabled buttons registered to setup.
+        :return: (list-of-CustomFeatureButton) all disabled buttons.
+        """
+        bl = list()
+        for b in self.buttons():
+            if not b.isEnabled():
+                bl.append(b)
+        return bl
