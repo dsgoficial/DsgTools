@@ -175,6 +175,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         w = QWidget()
+        w.setObjectName("buttonWidget") # to make it easier to find
         layout = QVBoxLayout()
         self.tabWidget.addTab(scroll, tabTitle)
         if buttonList is not None:
@@ -233,6 +234,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         txt = self.tr("Searched buttons ({0})").format(len(buttons))
         self.newTab(txt, buttons)
         self.tabWidget.setCurrentIndex(self.tabWidget.count() - 1)
+        self.setTabButtonsActive(self.tabWidget.count() - 1)
 
     def resetButtonWidgets(self):
         """
@@ -241,16 +243,53 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         self.currentButtonSetup().clearWidgets()
 
+    def getButtonsFromTab(self, tabIdx):
+        """
+        Gets all registered buttons on a given tab.
+        :param tabIdx: (int) targeted tab index.
+        :return: (list-of-CustomFeatureButton) registered buttons on tab.
+        """
+        bl = list()
+        s = self.currentButtonSetup()
+        w = self.tabWidget.currentWidget()
+        if tabIdx > -1 and w is not None:
+            for c in w.children():
+                if "viewport" in c.objectName().lower():
+                    for cc in c.children():
+                        if cc.objectName() == "buttonWidget":
+                            l = cc.layout()
+                            for i in range(l.count()):
+                                b = l.itemAt(i).widget()
+                                if b is None:
+                                    continue
+                                bl.append(s.button(b.text().rsplit(" [")[0]))
+                            break
+                    break
+        return bl
+
+    @pyqtSlot(int, name="on_tabWidget_currentChanged")
+    def setTabButtonsActive(self, idx):
+        """
+        Defines current tab buttons as active (all others are disabled).
+        :param idx: (int) tab index set as active.
+        """
+        self.currentButtonSetup().setEnabled(False)
+        for b in self.getButtonsFromTab(idx):
+            b.setEnabled(True)
+
     @pyqtSlot(int, name="on_setupComboBox_currentIndexChanged")
     def setCurrentButtonSetup(self, setup=None):
         """
         Sets GUI to a new setup.
-        :param setup: (str) button setup name.*
+        :param setup: (str) button setup name.
         :*obs: param setup may be an int if this method is called from signal
                triggerring.
         """
         self.clearTabs()
         self.bFilterLineEdit.setText("")
+        for s in self.buttonSetups():
+            if s is not None and s.isEnabled():
+                s.setEnabled(False)
         isSetup = self.setupComboBox.currentIndex() != 0
         self.editSetupPushButton.setEnabled(isSetup)
         self.removePushButton.setEnabled(isSetup)
@@ -261,6 +300,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             isRec = self.toolMode() == self.Reclassify
             self.currentButtonSetup().setButtonsCheckable(isRec)
             self.resetButtonWidgets()
+            self.setTabButtonsActive(0)
         self.createTabs()
 
     @pyqtSlot(bool, name="on_editSetupPushButton_clicked")
@@ -489,5 +529,11 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
     def restoreStateFromProject(self):
         """
         Restores current tool state from project variable state.
+        """
+        pass
+
+    def unload(self):
+        """
+        Clears all components.
         """
         pass

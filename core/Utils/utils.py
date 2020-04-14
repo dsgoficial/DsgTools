@@ -281,7 +281,7 @@ class Utils(object):
         if enabled and host:
             port_str = ':{}'.format(port) if port else ''
             for protocol in ['http', 'https', 'ftp']:
-                proxy_dict[protocol] = '{}://{}{}'.format(protocol, host, port_str)
+                proxy_dict[protocol] = '{}://{}:{}'.format(protocol, host, port_str)
 
         auth = requests.auth.HTTPProxyAuth(user, password) if enabled and user and password else None
 

@@ -111,13 +111,13 @@ class CustomFeatureButton(QObject):
         """
         Reimplementation of object removal method.
         """
-        iface.unregisterMainWindowAction(self._action)
-        self._shortcut.activated.disconnect(self._action.trigger)
+        iface.unregisterMainWindowAction(self.action())
+        self._shortcut.activated.disconnect(self.action().trigger)
         self._shortcut.setKey(QKeySequence.fromString(""))
         del self._shortcut
-        self._action.blockSignals(True)
+        self.action().blockSignals(True)
         for w in self.widgets():
-            w.clicked.disconnect(self._action.trigger)
+            w.clicked.disconnect(self.action().trigger)
             w.blockSignals(True)
             del w
         del self._widgets
@@ -135,15 +135,29 @@ class CustomFeatureButton(QObject):
     def setProperties(self, props):
         """
         Modify current button properties. Only valid properties are modified.
-        Method does not repaint existing widgets (caveat: it still may accept
-        invalid values).
         :param props: (dict) a map to button's new properties.
         :return: (dict) a map to current button properties.
         """
         if props is not None:
-            for prop in self._props.keys():
-                if prop in props:
-                    self._props[prop] = props[prop]
+            methodMap = {
+                "name": lambda x: self.setName(x),
+                "openForm": lambda x: self.setOpenForm(x),
+                "useColor": lambda x: self.setUseColor(x),
+                "color": lambda x: self.setColor(x),
+                "tooltip": lambda x: self.setToolTip(x),
+                "category": lambda x: self.setCategory(x),
+                "shortcut": lambda x: self.setShortcut(x),
+                "layer": lambda x: self.setLayer(x),
+                "keywords": lambda x: self.setKeywords(x),
+                "attributeMap": lambda x: self.setAttributeMap(x),
+                "acquisitionTool": lambda x: self.setAcquisitionTool(x),
+                "isCheckable": lambda x: self.setCheckable(x),
+                "isChecked": lambda x: self.setChecked(x),
+                "isEnabled": lambda x: self.setEnabled(x)
+            }
+            for prop, value in props.items():
+                if prop in methodMap:
+                    methodMap[prop](value)
         return self.properties()
 
     def update(self, newProps):
@@ -230,7 +244,7 @@ class CustomFeatureButton(QObject):
             try:
                 b.objectName() # any calls to invalids them raises errors here
                 newList.append(b)
-            except:
+            except RuntimeError:
                 # invalid buttons shall raise the lost reference error
                 pass
         del self._widgets
@@ -260,7 +274,7 @@ class CustomFeatureButton(QObject):
         pb.toggled.connect(self.toggled)
         pb.setChecked(self.isChecked())
         if not self.isCheckable():
-            pb.clicked.connect(self._action.trigger)
+            pb.clicked.connect(self.action().trigger)
         pb.setText(self.displayName())
         pb.setToolTip(self.toolTip())
         pal = QPalette()
@@ -289,7 +303,7 @@ class CustomFeatureButton(QObject):
                 w.setText(self.displayName())
                 w.update()
             if hasattr(self, "_action"):
-                self._action.setText(
+                self.action().setText(
                     self.tr("DSGTools: Custom Feature Toolbox - button {0}")\
                         .format(self.name())
                 )
@@ -540,12 +554,12 @@ class CustomFeatureButton(QObject):
         if not callable(callback):
             raise Exception(self.tr("Callback must be a callable object."))
         if self.callbackIsConnected():
-            self._action.triggered.disconnect(self._callback)
+            self.action().triggered.disconnect(self._callback)
         def callbackWrapper():
             if self.isEnabled():
                 callback()
         self._callback = callbackWrapper
-        self._action.triggered.connect(self._callback)
+        self.action().triggered.connect(self._callback)
         self.__callbackConnected = True
 
     def setAction(self):
@@ -919,6 +933,9 @@ class CustomButtonSetup(QObject):
         :param ds: (bool) whether setup should assign dynamic shortcuts.
         """
         self._dynamicShortcut = ds
+        if self.dynamicShortcut():
+            # handle previous shortcuts
+            pass
 
     def dynamicShortcut(self):
         """
@@ -1208,6 +1225,17 @@ class CustomButtonSetup(QObject):
         """
         for b in self.buttons():
             b.setEnabled(enabled)
+
+    def isEnabled(self):
+        """
+        For a setup to be considered enabled, at least one of its buttons
+        should be enabled. This method identifies that.
+        :return: (bool) whether setup has any enabled buttons.
+        """
+        for b in self.buttons():
+            if b.isEnabled():
+                return True
+        return False
 
     def hasDisabledButtons(self):
         """
