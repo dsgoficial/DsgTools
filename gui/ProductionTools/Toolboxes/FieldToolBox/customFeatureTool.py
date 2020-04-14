@@ -61,6 +61,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.setupUi(self)
         self._setups = dict()
         self._order = dict()
+        self._shortcuts = dict()
         if setups:
             self.setButtonSetups(setups)
         self.fillSetupComboBox()
@@ -243,6 +244,31 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         self.currentButtonSetup().clearWidgets()
 
+    def restoreShortcuts(self):
+        """
+        Dynamic shortcutting overrides defined shortcuts. This method restore
+        original shortcuts to all buttons from current setup.
+        """
+        for setup, shortcuts in self._shortcuts.items():
+            for b, s in shortcuts.items():
+                self.buttonSetup(setup).button(b).setShortcut(s)
+        # after that registered buttons may be cleared
+        self._shortcuts = dict()
+
+    def allocateDynamicShortcuts(self):
+        """
+        Allocates dynamic shortcuts (restricted to 1-9 keys) to current tab's
+        buttons.
+        """
+        # first registrate current button's shortcuts
+        self._shortcuts[self.currentButtonSetupName()] = dict()
+        d = self._shortcuts[self.currentButtonSetupName()]
+        for i, b in enumerate(self.getButtonsFromTab(self.tabWidget.currentIndex())):
+            if i == 9:
+                break
+            d[b.name()] = b.shortcut()
+            b.setShortcut(str(i + 1))
+
     def getButtonsFromTab(self, tabIdx):
         """
         Gets all registered buttons on a given tab.
@@ -273,9 +299,15 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         Defines current tab buttons as active (all others are disabled).
         :param idx: (int) tab index set as active.
         """
-        self.currentButtonSetup().setEnabled(False)
+        s = self.currentButtonSetup()
+        if s is None:
+            return
+        s.setEnabled(False)
         for b in self.getButtonsFromTab(idx):
             b.setEnabled(True)
+        self.restoreShortcuts()
+        if s.dynamicShortcut():
+            self.allocateDynamicShortcuts()
 
     @pyqtSlot(int, name="on_setupComboBox_currentIndexChanged")
     def setCurrentButtonSetup(self, setup=None):
@@ -298,10 +330,13 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             self.setupComboBox.setCurrentText(self.currentButtonSetupName())
         if isSetup:
             isRec = self.toolMode() == self.Reclassify
-            self.currentButtonSetup().setButtonsCheckable(isRec)
+            s = self.currentButtonSetup()
+            s.setButtonsCheckable(isRec)
             self.resetButtonWidgets()
-            self.setTabButtonsActive(0)
         self.createTabs()
+        if isSetup:
+            # this needs to be after tab creation
+            self.setTabButtonsActive(0)
 
     @pyqtSlot(bool, name="on_editSetupPushButton_clicked")
     def editCurrentSetup(self):

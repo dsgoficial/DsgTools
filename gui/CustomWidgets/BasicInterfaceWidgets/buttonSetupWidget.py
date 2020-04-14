@@ -144,7 +144,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         Defines current button's setup description.
         :param name: (str) description for button's setup.
         """
-        return self.setup.setDescription(name)
+        self.setup.setDescription(name)
 
     def currentDescription(self):
         """
@@ -172,7 +172,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         Defines current button's setup dynamic shortcut option.
         :param ds: (bool) dynamic shortcut assignment option.
         """
-        return self.setup.setDynamicShortcut(ds)
+        self.setup.setDynamicShortcut(ds)
 
     def currentDynamicShortcut(self):
         """

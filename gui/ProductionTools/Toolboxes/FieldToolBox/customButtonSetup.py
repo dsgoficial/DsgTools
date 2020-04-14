@@ -894,7 +894,7 @@ class CustomButtonSetup(QObject):
         self._buttons = dict()
         self._name = displayName or self.tr("Custom Button Setup")
         self._description = description
-        self._dynamicShortcut = True
+        self._dynamicShortcut = False
         if buttonsProps:
             self.setButtons(buttonsProps)
 
@@ -933,9 +933,6 @@ class CustomButtonSetup(QObject):
         :param ds: (bool) whether setup should assign dynamic shortcuts.
         """
         self._dynamicShortcut = ds
-        if self.dynamicShortcut():
-            # handle previous shortcuts
-            pass
 
     def dynamicShortcut(self):
         """
@@ -1139,6 +1136,7 @@ class CustomButtonSetup(QObject):
         return {
             "name": self.name(),
             "description": self.description(),
+            "dynamicShortcut": self.dynamicShortcut(),
             "version": self.__MAP_VERSION,
             "lastModified": self.now(),
             "buttons": [b.properties() for b in self.buttons()]
@@ -1155,10 +1153,11 @@ class CustomButtonSetup(QObject):
             pass
         # clear current state
         self.setButtons({})
+        self.setName(state["name"])
+        self.setDynamicShortcut(state["dynamicShortcut"])
+        self.setDescription(state["description"])
         for props in state["buttons"]:
             self.addButton(props)
-        self.setName(state["name"])
-        self.setDescription(state["description"])
 
     def clearWidgetsFromButton(self, name):
         """
