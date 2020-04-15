@@ -73,11 +73,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.toolBehaviourSwitch.stateChanged.connect(
             lambda x: getattr(self.layerSelectionSwitch,
                                 "show" if x else "hide")())
-        def setToolMode(mode):
-            for s in self.buttonSetups():
-                s.setButtonsCheckable(bool(mode))
-        self.toolBehaviourSwitch.stateChanged.connect(
-            lambda x: setToolMode(x))
+        self.toolBehaviourSwitch.stateChanged.connect(self.toolModeChanged)
         self.tabWidget.setTabPosition(self.tabWidget.West)
         self.bFilterLineEdit.returnPressed.connect(self.createResearchTab)
 
@@ -329,9 +325,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if isinstance(setup, str) and setup in self.buttonSetupNames():
             self.setupComboBox.setCurrentText(self.currentButtonSetupName())
         if isSetup:
-            isRec = self.toolMode() == self.Reclassify
-            s = self.currentButtonSetup()
-            s.setButtonsCheckable(isRec)
+            self.currentButtonSetup().setButtonsCheckable(
+                bool(self.toolMode() ^ 1))
             self.resetButtonWidgets()
         self.createTabs()
         # this needs to be after tab creation
@@ -435,16 +430,14 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         mode = mode if mode in (0, 1) else self.Extract
         self.toolBehaviourSwitch.setState(mode)
 
-    @pyqtSlot()
+    @pyqtSlot(int)
     def toolModeChanged(self, newMode):
         """
         A slot to handle tool mode updates.
         :param newMode: (int) new mode code.
         """
-        if newMode == self.Extract:
-            self.currentButtonSetup().setButtonsCheckable(False)
-        else:
-            self.currentButtonSetup().setButtonsCheckable(True)
+        for s in self.buttonSetups():
+            s.setButtonsCheckable(bool(newMode ^ 1))
 
     def reclassificationButton(self):
         """
