@@ -277,8 +277,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         bl = list()
         s = self.currentButtonSetup()
-        w = self.tabWidget.currentWidget()
-        if tabIdx > -1 and w is not None:
+        w = self.tabWidget.widget(tabIdx)
+        if w is not None:
             for c in w.children():
                 if "viewport" in c.objectName().lower():
                     for cc in c.children():
@@ -334,9 +334,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             s.setButtonsCheckable(isRec)
             self.resetButtonWidgets()
         self.createTabs()
-        if isSetup:
-            # this needs to be after tab creation
-            self.setTabButtonsActive(0)
+        # this needs to be after tab creation
+        self.setTabButtonsActive(0)
 
     @pyqtSlot(bool, name="on_editSetupPushButton_clicked")
     def editCurrentSetup(self):
@@ -344,6 +343,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         Opens button setup configuration GUI to edit current button setup.
         """
         setup = self.currentButtonSetup()
+        # before editing current, check restore any potential modified shortcut
+        self.restoreShortcuts()
         dlg = ButtonSetupWidget()
         dlg.setSetup(setup)
         ret = dlg.exec_()
