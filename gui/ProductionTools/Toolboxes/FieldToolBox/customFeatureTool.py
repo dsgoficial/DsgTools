@@ -325,9 +325,13 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if isinstance(setup, str) and setup in self.buttonSetupNames():
             self.setupComboBox.setCurrentText(self.currentButtonSetupName())
         if isSetup:
-            self.currentButtonSetup().setButtonsCheckable(
+            s = self.currentButtonSetup()
+            s.setButtonsCheckable(
                 bool(self.toolMode() ^ 1))
             self.resetButtonWidgets()
+            for b in s.buttons():
+                b.setCallback(self.toolCallback)
+                b.setShortcutCallback(self.shortcutActivated)
         self.createTabs()
         # this needs to be after tab creation
         self.setTabButtonsActive(0)
@@ -439,26 +443,26 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         for s in self.buttonSetups():
             s.setButtonsCheckable(bool(newMode ^ 1))
 
-    def reclassificationButton(self):
+    def featureExtractionButton(self):
         """
-        Retrieves currently checked button to be used as reclassification
+        Retrieves currently checked button to be used as feature extraction
         button.
         :return: (CustomFeatureButton) checked button.
         """
         s = self.currentButtonSetup()
         return s.checkedButton() if s is not None else None
 
-    def featuresToBeReclassified(self):
+    def featuresToBeReclassified(self, b):
         """
         Identifies all selected features from layers to be reclassified. It
         looks for tool mode for layer search, and retrieves either currently
         active layer's selected features or all selected features from all
         layers. It is important to notice QGIS behaviour: all layers will only
         consider visible layers (checked on layer list).
+        :param b: (CustomFeatureButton) button to be used for reclassification.
         :return: (dict) a map from layer to its features for reclassification.
         """
         rMap = dict()
-        b = self.reclassificationButton()
         if b is not None and b.checkLayer():
             geomType = b.vectorLayer().geometryType()
             if self.layerMode() == self.AllLayers:
@@ -523,6 +527,61 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         newLayer.addFeatures(addFeats)
         newLayer.updateExtents()
         return addFeats
+
+    def shortcutActivated(self):
+        """
+        Shortcut may be activated whilst tool is in extract mode and in that
+        mode, callbacks from action triggering is disconnected whenever the
+        button is unchecked. This method is connected to shortcut activation
+        event in order to make sure the requested button is properly set.
+        """
+        if self.toolMode() == self.Extract:
+            sh = self.sender()
+            sid = sh.id()
+            s = self.currentButtonSetup()
+            for b in s.buttons():
+                if b.shortcutId() == sid and not b.isChecked():
+                    s.toggleButton(b, True)
+                    b.action().trigger()
+                    return
+
+    def toolCallback(self):
+        """
+        Method that channels the incoming requests from setup buttons to the
+        correct action to be executed. Method is used as callback for every
+        registered button.
+        """
+        # callback is set from action triggering, hence it is the sender
+        a = self.sender()
+        s = self.currentButtonSetup()
+        if a is None or s is None:
+            return
+        for button in s.buttons():
+            if button.action().text() == a.text():
+                break
+        else:
+            # if button is not identified, somehow call was made from none of
+            # current setup's buttons
+            return
+        if self.toolMode() == self.Extract:
+            # check if the button that triggered this callback is checked, if
+            # not, set it as checked 
+            # set current toolmap from button
+            if not button.isChecked():
+                s.toggleButton(button, True)
+            print("Extracting feature for button {0}, using tool {1}"\
+                    .format(button.name(), button.acquisitionTool()))
+        else:
+            # in reclassification mode buttons are not toggable
+            # all is needed is to check which features are going to be
+            # reclassified and apply attribute map from caller button to them
+            reclassify = self.featuresToBeReclassified(button)
+            msg = ""
+            for l, fl in reclassify.items():
+                msg += "{0} ({1} features)\n".format(l.name(), len(fl))
+            print("Reclassifyin features for button {0} ({1})"\
+                    .format(button.name(), msg))
+            # create the custom form and opt for showing it or not to user
 
     def setMapTool(self, button):
         """

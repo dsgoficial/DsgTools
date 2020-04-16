@@ -112,12 +112,12 @@ class CustomFeatureButton(QObject):
         Reimplementation of object removal method.
         """
         iface.unregisterMainWindowAction(self.action())
+        self.setShortcutCallback() # clears any associated callback
         self._shortcut.activated.disconnect(self.action().trigger)
         self._shortcut.setKey(QKeySequence.fromString(""))
         del self._shortcut
         self.action().blockSignals(True)
         for w in self.widgets():
-            w.clicked.disconnect(self.action().trigger)
             w.blockSignals(True)
             del w
         del self._widgets
@@ -472,6 +472,15 @@ class CustomFeatureButton(QObject):
         """
         return str(self._props["shortcut"])
 
+    def shortcutId(self):
+        """
+        This object's shortcut (QShortcut) may be used for its own callback and
+        identifying the button from it may be requested. This method provides
+        this button instance's shortcut object identifier.
+        :return: (int) shortcut's object identifier.
+        """
+        return self._shortcut.id()
+
     def addKeyword(self, kw):
         """
         Adds a keyword to button's keywords set.
@@ -616,6 +625,28 @@ class CustomFeatureButton(QObject):
         elif not self.callbackIsConnected():
             self.action().triggered.connect(self._callback)
             self.__callbackConnected = True
+
+    def setShortcutCallback(self, callback=None):
+        """
+        Button may be used in a toggled mode and a callback might be associated
+        with the event of shortcur triggering despite of button's action
+        callback. This method sets a callable to be triggered on button's 
+        shortcut triggering event.
+        :param callback: (callable) any callable object to be triggered.
+        """
+        if callback is None:
+            callback = lambda: None
+        if not callable(callback):
+            raise Exception(self.tr("Callback must be a callable object."))
+        def callbackWrapper():
+            if self.isEnabled():
+                callback()
+        try:
+            self._shortcut.activated.disconnect(self._sCallback)
+        except:
+            pass
+        self._sCallback = callbackWrapper
+        self._shortcut.activated.connect(self._sCallback)
 
     def setLayer(self, layer):
         """
