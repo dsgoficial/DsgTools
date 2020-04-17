@@ -26,11 +26,11 @@ import json
 import requests
 from xml.dom.minidom import parse, parseString
 
-from qgis.gui import QgsMapTool
 from qgis.utils import iface
+from qgis.gui import QgsGui, QgsMapTool
 from qgis.PyQt import QtGui, QtWidgets
 from qgis.PyQt.QtCore import QSettings, QVariant
-from qgis.PyQt.QtWidgets import QToolBar, QTreeWidgetItem
+from qgis.PyQt.QtWidgets import QAction, QToolBar, QTreeWidgetItem
 
 class Utils(object):
 
@@ -331,6 +331,20 @@ class Utils(object):
                             tools[a.text().replace("&", "")] = a
                 break
         return tools
+
+    def allQgisActions(self):
+        """
+        Reads all registered actions on QGIS GUI.
+        :return: (dict) a map from action name to its action object.
+        """
+        sm = QgsGui.shortcutsManager()
+        actions = dict()
+        for item in sm.listAll():
+            if isinstance(item, QAction):
+                # remove the mnemonic shortcuts added by Qt (which might remove
+                # actual characters)
+                actions[item.text().replace("&", "")] = item
+        return actions
 
     def fieldIsFloat(self, field):
         """

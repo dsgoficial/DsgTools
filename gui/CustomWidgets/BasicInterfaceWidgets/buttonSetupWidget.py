@@ -201,14 +201,14 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         :param newSetup: (CustomButtonSetup) setup to be imported. 
         """
         self.buttonComboBox.blockSignals(True)
-        for button in newSetup.buttons():
-            self.addButton(button)
         self.setSetupName(newSetup.name())
         self.setCurrentSetupName(newSetup.name())
         self.setDescription(newSetup.description())
         self.setCurrentDescription(newSetup.description())
         self.setDynamicShortcut(newSetup.dynamicShortcut())
         self.setCurrentDynamicShortcut(newSetup.dynamicShortcut())
+        for button in newSetup.buttons():
+            self.addButton(button)
         self.buttonComboBox.blockSignals(False)
 
     def getButtonByName(self, name):
@@ -243,23 +243,23 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
             buttons.append(b.name())
         return buttons
 
-    def setAcquisitionTool(self, tool):
+    def setDigitizingTool(self, tool):
         """
-        Sets button's acquisition tool to GUI.
-        :param tool: (str) a supported acquisition tool to be set.
+        Sets button's digitizing tool to GUI.
+        :param tool: (str) a supported digitizing tool to be set.
         """
-        self.buttonPropWidget.setAcquisitionTool(tool)
+        self.buttonPropWidget.setDigitizingTool(tool)
 
-    def acquisitionTool(self):
+    def digitizingTool(self):
         """
-        Reads current acquisition tool from GUI.
-        :return: (str) current acquisition tool.
+        Reads current digitizing tool from GUI.
+        :return: (str) current digitizing tool.
         """
-        return self.buttonPropWidget.acquisitionTool()
+        return self.buttonPropWidget.digitizingTool()
 
     def setUseColor(self, useColor):
         """
-        Sets button's acquisition tool to GUI.
+        Sets button's digitizing tool to GUI.
         :param useColor: (bool) whether button should use a custom color
                          palette.
         """
@@ -289,7 +289,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
 
     def setUseToolTip(self, useToolTip):
         """
-        Sets button's acquisition tool to GUI.
+        Sets button's digitizing tool to GUI.
         :param useToolTip: (bool) whether button will have a tool tip assigned.
         """
         self.buttonPropWidget.setUseToolTip(useToolTip)
@@ -317,7 +317,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
 
     def setUseCategory(self, useCat):
         """
-        Sets button's acquisition tool to GUI.
+        Sets whether button should be assigned a category/group on GUI.
         :param useCat: (bool) whether button will have a category assigned.
         """
         self.buttonPropWidget.setUseCategory(useCat)

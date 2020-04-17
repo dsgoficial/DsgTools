@@ -124,18 +124,18 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         return self.nameLineEdit.text().strip()
     
-    def setAcquisitionTool(self, tool):
+    def setDigitizingTool(self, tool):
         """
-        Sets button's acquisition tool to GUI.
-        :param tool: (str) a supported acquisition tool to be set.
+        Sets button's digitizing tool to GUI.
+        :param tool: (str) a supported digitizing tool to be set.
         """
         tool = CustomFeatureButton().supportedTools()[tool]
         self.toolComboBox.setCurrentText(tool)
 
-    def acquisitionTool(self):
+    def digitizingTool(self):
         """
-        Reads current acquisition tool.
-        :return: (str) current acquisition tool.
+        Reads current digitizing tool.
+        :return: (str) current digitizing tool.
         """
         tools = {v: k for k, v in \
                     CustomFeatureButton().supportedTools().items()}
@@ -465,7 +465,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         :param button:  (CustomFeatureButton) button to be set to the GUI.
         """
         self.setButtonName(button.name())
-        self.setAcquisitionTool(button.acquisitionTool())
+        self.setDigitizingTool(button.digitizingTool())
         self.setUseColor(button.useColor())
         self.setColor(button.color())
         self.setUseToolTip(bool(button.toolTip()))
@@ -494,7 +494,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         b = CustomFeatureButton()
         b.setName(self.buttonName())
-        b.setAcquisitionTool(self.acquisitionTool())
+        b.setDigitizingTool(self.digitizingTool())
         b.setUseColor(self.useColor())
         if self.useColor():
             b.setColor(self.color())

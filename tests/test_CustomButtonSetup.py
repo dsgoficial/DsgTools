@@ -42,7 +42,7 @@ class ButtonTester(unittest.TestCase):
         self.assertEquals(b.layer(), "")
         self.assertEquals(b.keywords(), set())
         self.assertEquals(b.attributeMap(), dict())
-        self.assertEquals(b.acquisitionTool(), "default")
+        self.assertEquals(b.digitizingTool(), "default")
         self.assertEquals(b.isCheckable(), False)
         self.assertEquals(b.isChecked(), False)
         p = {
@@ -56,7 +56,7 @@ class ButtonTester(unittest.TestCase):
             "shortcut": "",
             "keywords": set(),
             "attributeMap": dict(),
-            "acquisitionTool": "default",
+            "digitizingTool": "default",
             "isCheckable": False,
             "isChecked": False
         }
@@ -73,17 +73,17 @@ class ButtonTester(unittest.TestCase):
         }
         self.assertEquals(b.supportedTools(), tools)
 
-    def test_setAcquisitionTool(self):
-        """Tests acquisition tool setting method"""
+    def test_setDigitizingTool(self):
+        """Tests digitizing tool setting method"""
         b = CustomFeatureButton()
         with self.assertRaises(TypeError):
-            b.setAcquisitionTool(1)
+            b.setDigitizingTool(1)
         with self.assertRaises(ValueError):
-            b.setAcquisitionTool("qgis")
-        self.assertEquals(b.acquisitionTool(), "default")
+            b.setDigitizingTool("qgis")
+        self.assertEquals(b.digitizingTool(), "default")
         for tool in b.supportedTools():
-            b.setAcquisitionTool(tool)
-        self.assertEquals(b.acquisitionTool(), tool)
+            b.setDigitizingTool(tool)
+        self.assertEquals(b.digitizingTool(), tool)
 
 class SetupTester(unittest.TestCase):
 

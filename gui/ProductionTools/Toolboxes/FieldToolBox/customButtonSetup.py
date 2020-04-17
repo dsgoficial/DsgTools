@@ -67,7 +67,7 @@ class CustomFeatureButton(QObject):
             "layer": "",
             "keywords": set(),
             "attributeMap": dict(),
-            "acquisitionTool": "default",
+            "digitizingTool": "default",
             "isCheckable": False,
             "isChecked": False,
             "isEnabled": False
@@ -111,17 +111,19 @@ class CustomFeatureButton(QObject):
         """
         Reimplementation of object removal method.
         """
-        iface.unregisterMainWindowAction(self.action())
-        self.setShortcutCallback() # clears any associated callback
+        self.setEnabled(False)
         self._shortcut.activated.disconnect(self.action().trigger)
         self._shortcut.setKey(QKeySequence.fromString(""))
+        self._shortcut.setParent(None)
         del self._shortcut
         self.action().blockSignals(True)
         for w in self.widgets():
             w.blockSignals(True)
+            w.setParent(None)
             del w
         del self._widgets
         del self._action
+        self.setParent(None)
 
     def copy(self):
         """
@@ -150,7 +152,7 @@ class CustomFeatureButton(QObject):
                 "layer": lambda x: self.setLayer(x),
                 "keywords": lambda x: self.setKeywords(x),
                 "attributeMap": lambda x: self.setAttributeMap(x),
-                "acquisitionTool": lambda x: self.setAcquisitionTool(x),
+                "digitizingTool": lambda x: self.setDigitizingTool(x),
                 "isCheckable": lambda x: self.setCheckable(x),
                 "isChecked": lambda x: self.setChecked(x),
                 "isEnabled": lambda x: self.setEnabled(x)
@@ -180,7 +182,7 @@ class CustomFeatureButton(QObject):
             "layer": lambda x: self.setLayer(x),
             "keywords": lambda x: self.setKeywords(x),
             "attributeMap": lambda x: self.setAttributeMap(x),
-            "acquisitionTool": lambda x: self.setAcquisitionTool(x),
+            "digitizingTool": lambda x: self.setDigitizingTool(x),
             "isCheckable": lambda x: self.setCheckable(x),
             "isChecked": lambda x: self.setChecked(x),
             "isEnabled": lambda x: self.setEnabled(x)
@@ -217,7 +219,7 @@ class CustomFeatureButton(QObject):
             "shortcut": self.shortcut(),
             "keywords": self.keywords(),
             "attributeMap": self.attributeMap(),
-            "acquisitionTool": self.acquisitionTool(),
+            "digitizingTool": self.digitizingTool(),
             "isCheckable": self.isCheckable(),
             "isChecked": self.isChecked(),
             "isEnabled": self.isEnabled()
@@ -753,7 +755,7 @@ class CustomFeatureButton(QObject):
             "rightAngle": self.tr("DSGTools: Right Degree Angle Digitizing")
         }
 
-    def setAcquisitionTool(self, tool):
+    def setDigitizingTool(self, tool):
         """
         Defines button's name, which is used to compose the display name.
         :param tool: (str) button's name.
@@ -761,51 +763,19 @@ class CustomFeatureButton(QObject):
         if type(tool) == str:
             if tool not in self.supportedTools():
                 raise ValueError(self.tr("'{0}' not supported.").format(tool))
-            self._props["acquisitionTool"] = tool
+            self._props["digitizingTool"] = tool
         else:
             raise TypeError(
-                self.tr("Acquisition tool prop must be a str ({0}).")\
+                self.tr("Digitizing tool prop must be a str ({0}).")\
                     .format(type(tool))
             )
 
-    def acquisitionTool(self):
+    def digitizingTool(self):
         """
         Retrives button's name.
         :return: (str) button's name.
         """
-        return str(self._props["acquisitionTool"])
-
-    def activateMapTool(self, tool):
-        """
-        Sets current map tool.
-        :param tool: (str) tool name to be activated
-        """
-        dsgToolsMapTools = utils.dsgToolsMapTools()
-        qgisMapTools = utils.qgisMapTools()
-        vl = iface.mapCanvas().currentLayer()
-        if vl is not None:
-            vl.startEditing()
-        if tool == "default" or tool not in self.supportedTools():
-            ts = [
-                self.tr("Add Line Feature"),
-                self.tr("Add Polygon Feature"),
-                self.tr("Add Point Feature")
-            ]
-            for t in ts:
-                if t in qgisMapTools:
-                    qgisMapTools[t].trigger()
-                    return
-        elif tool == "circle":
-            qgisMapTools[self.tr("Add Circle from 2 Points")].trigger()
-        else:
-            toolName = self.supportedTools()[tool]
-            dsgToolsMapTools[toolName].trigger()
-
-    def setMapTool(self):
-        """
-        It sets defined acquisition tool as current active map tool.
-        """
-        self.setAcquisitionTool(self.acquisitionTool())
+        return str(self._props["digitizingTool"])
 
     def setCheckable(self, checkable):
         """
@@ -1030,7 +1000,7 @@ class CustomButtonSetup(QObject):
             i += 1
             b.setName("{0} {1}".format(baseName, i))
         self.addButton(b.properties())
-        return b
+        return self.button(b.name())
 
     def widgets(self, newInstance=False):
         """

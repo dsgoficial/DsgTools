@@ -36,6 +36,7 @@ from qgis.PyQt.QtWidgets import (QWidget,
                                  QSpacerItem,
                                  QSizePolicy)
 
+from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
@@ -62,6 +63,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self._setups = dict()
         self._order = dict()
         self._shortcuts = dict()
+        self._qgisActions = Utils().allQgisActions()
         if setups:
             self.setButtonSetups(setups)
         self.fillSetupComboBox()
@@ -563,25 +565,25 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             # if button is not identified, somehow call was made from none of
             # current setup's buttons
             return
+        if button.checkLayer():
+            vl = button.vectorLayer()
+            if not vl.isEditable():
+                vl.startEditing()
+            iface.setActiveLayer(vl)
         if self.toolMode() == self.Extract:
-            # check if the button that triggered this callback is checked, if
-            # not, set it as checked 
-            # set current toolmap from button
             if not button.isChecked():
                 s.toggleButton(button, True)
             print("Extracting feature for button {0}, using tool {1}"\
-                    .format(button.name(), button.acquisitionTool()))
+                    .format(button.name(), button.digitizingTool()))
         else:
-            # in reclassification mode buttons are not toggable
-            # all is needed is to check which features are going to be
-            # reclassified and apply attribute map from caller button to them
             reclassify = self.featuresToBeReclassified(button)
             msg = ""
             for l, fl in reclassify.items():
                 msg += "{0} ({1} features)\n".format(l.name(), len(fl))
-            print("Reclassifyin features for button {0} ({1})"\
+            print("Reclassifying features for button {0} ({1})"\
                     .format(button.name(), msg))
             # create the custom form and opt for showing it or not to user
+        self.setMapTool(button)
 
     def setMapTool(self, button):
         """
@@ -590,9 +592,28 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         Selector tool, if reclassification mode is set.
         """
         if self.toolMode() == self.Extract:
-            button.setMapTool()
+            tool = button.digitizingTool()
+            if tool == "default":
+                ts = [
+                    self.tr("Add Line Feature"),
+                    self.tr("Add Polygon Feature"),
+                    self.tr("Add Point Feature")
+                ]
+                for t in ts:
+                    if t in self._qgisActions:
+                        toolName = t
+                        break
+            elif tool == "circle":
+                toolName = self.tr("Add Circle from 2 Points")
+            else:
+                toolName = button.supportedTools()[tool]
         else:
-            pass
+            toolName = self.tr("DSGTools: Generic Selector")
+        # incomplete i18n will raise errors in here... i don't know any other
+        # way of how to set map tools from their names as of now, though...
+        # not sure about this...
+        iface.mapCanvas().unsetMapTool(iface.mapCanvas().mapTool())
+        self._qgisActions[toolName].trigger()
 
     def toolState(self):
         """
