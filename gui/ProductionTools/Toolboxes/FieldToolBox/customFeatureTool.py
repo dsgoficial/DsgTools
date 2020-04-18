@@ -42,6 +42,7 @@ from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.buttonSetupWidget import ButtonSetupWidget
 from DsgTools.gui.ProductionTools.Toolboxes.FieldToolBox.customButtonSetup import CustomButtonSetup
+from DsgTools.gui.CustomWidgets.AdvancedInterfaceWidgets.customFeatureForm import CustomFeatureForm
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'customFeatureTool.ui'))
@@ -371,6 +372,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             )
             setup.setState(newSetup.state())
             self.setCurrentButtonSetup(setup)
+        elif setup is not None and setup.dynamicShortcut():
+            self.allocateDynamicShortcuts()
 
     def addButtonSetup(self, setup):
         """
@@ -444,6 +447,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         for s in self.buttonSetups():
             s.setButtonsCheckable(bool(newMode ^ 1))
+        iface.mapCanvas().unsetMapTool(iface.mapCanvas().mapTool())
+        self._qgisActions[self.tr("Pan Map")].trigger()
 
     def featureExtractionButton(self):
         """
@@ -565,24 +570,22 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             # if button is not identified, somehow call was made from none of
             # current setup's buttons
             return
-        if button.checkLayer():
-            vl = button.vectorLayer()
-            if not vl.isEditable():
-                vl.startEditing()
-            iface.setActiveLayer(vl)
+        if not button.checkLayer():
+            return
+        vl = button.vectorLayer()
+        if not vl.isEditable():
+            vl.startEditing()
         if self.toolMode() == self.Extract:
             if not button.isChecked():
                 s.toggleButton(button, True)
-            print("Extracting feature for button {0}, using tool {1}"\
-                    .format(button.name(), button.digitizingTool()))
         else:
             reclassify = self.featuresToBeReclassified(button)
-            msg = ""
-            for l, fl in reclassify.items():
-                msg += "{0} ({1} features)\n".format(l.name(), len(fl))
-            print("Reclassifying features for button {0} ({1})"\
-                    .format(button.name(), msg))
-            # create the custom form and opt for showing it or not to user
+            # if button.openForm():
+            form = CustomFeatureForm(
+                vl.fields(), reclassify, button.attributeMap())
+            if not form.exec_():
+                return
+            iface.setActiveLayer(vl)
         self.setMapTool(button)
 
     def setMapTool(self, button):
