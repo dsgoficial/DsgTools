@@ -25,7 +25,7 @@ import os
 
 from qgis.PyQt import uic
 from qgis.utils import iface
-from qgis.core import QgsProject
+from qgis.core import Qgis, QgsProject
 from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtGui import QColor, QPalette
 from qgis.PyQt.QtWidgets import (QWidget,
@@ -36,7 +36,7 @@ from qgis.PyQt.QtWidgets import (QWidget,
                                  QSpacerItem,
                                  QSizePolicy)
 
-from DsgTools.core.Utils.utils import Utils
+from DsgTools.core.Utils.utils import Utils, MessageRaiser
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
@@ -79,6 +79,31 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.toolBehaviourSwitch.stateChanged.connect(self.toolModeChanged)
         self.tabWidget.setTabPosition(self.tabWidget.West)
         self.bFilterLineEdit.returnPressed.connect(self.createResearchTab)
+        self.visibilityChanged.connect(self.setToolEnabled)
+
+    @pyqtSlot(bool)
+    def setToolEnabled(self, enabled):
+        """
+        Sets tools callbacks and buttons disabled / enabled, regardless of
+        current selection. This means shortcuts and all buttons, setups, signal
+        emittion and so forth will be blocked / unblocked.
+        :param enabled: (bool) whether this dock widget should be enabled.
+        """
+        for s in self.buttonSetups():
+            if s is not None and s.isEnabled():
+                s.setEnabled(False)
+        if enabled:
+            b = self.featureExtractionButton()
+            self.setCurrentButtonSetup(self.currentButtonSetup())
+            if b is not None:
+                self.setMapToolFromButton(b)
+                if b.checkLayer():
+                    self.setSuppressForm(b.vectorLayer(), b.openForm())
+        else:
+            iface.mapCanvas().unsetMapTool(iface.mapCanvas().mapTool())
+            self._qgisActions[self.tr("Pan Map")].trigger()
+            for l in QgsProject.instance().mapLayers().values():
+                self.setSuppressFormOption(l)
 
     def fillSetupComboBox(self):
         """
@@ -87,6 +112,30 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.setupComboBox.clear()
         self.setupComboBox.addItem(self.tr("Select a buttons profile..."))
         self.setupComboBox.addItems(self.buttonSetupNames("asc"))
+
+    def warnReclassified(self, recMap):
+        """
+        Raises warning message to the user that features have been reclassified
+        (and logs it).
+        :param recMap: (dict) map from layer name to feature count of
+                       reclassified feature successfully saved to output layer.
+        """
+        msgItems = list()
+        for l, featCount in recMap.items():
+            if featCount == 1:
+                msgItems.append(self.tr("{0} (1 feature)").format(l))
+            else:
+                msgItems.append(
+                    self.tr("{0} ({1} features)").format(l, featCount))
+        total = sum(recMap.values())
+        if total > 1:
+            title = self.tr("Reclassified features")
+        else:
+            title = self.tr("Reclassified feature")
+        mr = MessageRaiser()
+        msg = ", ".join(msgItems)
+        mr.raiseIfaceMessage(title, msg, Qgis.Success, 5)
+        mr.logMessage("{0}: {1}.".format(title, msg), level=Qgis.Success)
 
     def setButtonSetups(self, setups):
         """
@@ -239,7 +288,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
     def resetButtonWidgets(self):
         """
         Button widgets are created eveytime a tab is created. In order to not
-        waste too much memory on non-used widgets, they'd be removed 
+        waste too much memory on non-used widgets, they'd be removed.
         """
         self.currentButtonSetup().clearWidgets()
 
@@ -459,6 +508,24 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         s = self.currentButtonSetup()
         return s.checkedButton() if s is not None else None
 
+    def setSuppressFormOption(self, layer, openForm=None):
+        """
+        Sets whether feature form for a layer is suppressed.
+        :param layer: (QgsVectorLayer) layer to have its form suppression option
+                      set.
+        :param openForm: (bool) whether form should be displayed upon feature
+                         extraction.
+        :return: (CustomFeatureButton) checked button.
+        """
+        setup = layer.editFormConfig()
+        option = {
+            False: setup.SuppressOn,
+            True: setup.SuppressOff,
+            None: setup.SuppressDefault
+        }[openForm]
+        setup.setSuppress(option)
+        layer.setEditFormConfig(setup)
+
     def featuresToBeReclassified(self, b):
         """
         Identifies all selected features from layers to be reclassified. It
@@ -506,7 +573,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
 
     def reclassifyFeatures(self, featList, prevLayer, newLayer, newAttributeMap):
         """
-        Reclassifies a list of feature.
+        Gets a list of features from a layer and adds it to a new layer with a
+        new set of attributes and removes it from previous layer.
         :param featList: (list-of-QgsFeature) all features to be reclassified.
         :param prevLayer: (QgsVectorLayer) layer to have its reclassified from.
         :param newLayer: (QgsVectorLayer) layer to receive reclassified
@@ -534,6 +602,19 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         newLayer.addFeatures(addFeats)
         newLayer.updateExtents()
         return addFeats
+
+    def reclassify(self, recMap, layer, attrMap):
+        """
+        Applies feature reclassification method to the reclassification map.
+        :recMap: (dict) a map from layer to feature list to be reclassified.
+        :param attrMap: (dict) a map from field name to value on new layer.
+        :param layer: (QgsVectorLayer) layer to receive all reclassified feats.
+        """
+        addedFeats = dict()
+        for prevLayer, featList in recMap.items():
+            fl = self.reclassifyFeatures(featList, prevLayer, layer, attrMap)
+            addedFeats[prevLayer.name()] = len(fl)
+        return addedFeats
 
     def shortcutActivated(self):
         """
@@ -578,24 +659,33 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if self.toolMode() == self.Extract:
             if not button.isChecked():
                 s.toggleButton(button, True)
+            self.setSuppressFormOption(vl, button.openForm())
         else:
             reclassify = self.featuresToBeReclassified(button)
-            # if button.openForm():
-            form = CustomFeatureForm(
-                vl.fields(), reclassify, button.attributeMap())
-            if not form.exec_():
-                return
-            iface.setActiveLayer(vl)
-        self.setMapTool(button)
+            attrMap = button.attributeMap()
+            if button.openForm():
+                form = CustomFeatureForm(vl.fields(), reclassify, attrMap)
+                form.setWindowTitle(self.tr("{0} (receiving layer: {1})")\
+                        .format(form.windowTitle(), vl.name()))
+                if not form.exec_():
+                    return
+                # modified values should be used for feature reclassification
+                reclassify = form.readSelectedLayers()
+                attrMap = form.readFieldMap()
+            reclassified = self.reclassify(reclassify, vl, attrMap)
+            self.warnReclassified(reclassified)
+        iface.setActiveLayer(vl)
+        iface.mapCanvas().refresh()
+        self.setMapToolFromButton(button)
 
-    def setMapTool(self, button):
+    def setMapToolFromButton(self, button):
         """
         Whenever a button is called it sets current map tool for feature
         extraction as defined in its properties, or sets the DSGTools: Generic
         Selector tool, if reclassification mode is set.
         """
         if self.toolMode() == self.Extract:
-            tool = button.digitizingTool()
+            tool = button.digitizingTool() if button else "default"
             if tool == "default":
                 ts = [
                     self.tr("Add Line Feature"),

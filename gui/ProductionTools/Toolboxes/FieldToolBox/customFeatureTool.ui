@@ -14,8 +14,8 @@
    <string>DSGTools: Custom Feature Toolbox</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QGridLayout" name="gridLayout_3">
-    <item row="0" column="0" colspan="2">
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
      <widget class="QgsCollapsibleGroupBox" name="mGroupBox_2">
       <property name="title">
        <string>Tool behaviour</string>
@@ -38,7 +38,7 @@
       </layout>
      </widget>
     </item>
-    <item row="1" column="0" colspan="2">
+    <item row="1" column="0">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -54,9 +54,6 @@
         </item>
         <item>
          <widget class="QSplitter" name="splitter">
-          <property name="toolTip">
-           <string>Adds a set of buttons setup (profile) from a file</string>
-          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -85,6 +82,24 @@
            </property>
            <property name="flat">
             <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="exportPushButton">
+           <property name="maximumSize">
+            <size>
+             <width>31</width>
+             <height>33</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Exports current set of buttons setup (profile) to a file</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../../resources.qrc">
+             <normaloff>:/plugins/DsgTools/icons/save.png</normaloff>:/plugins/DsgTools/icons/save.png</iconset>
            </property>
           </widget>
           <widget class="QPushButton" name="editSetupPushButton">
@@ -173,7 +188,7 @@
       </item>
      </layout>
     </item>
-    <item row="2" column="0" colspan="2">
+    <item row="3" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
        <widget class="QLabel" name="label_6">
@@ -217,6 +232,7 @@
    <zorder>mGroupBox_2</zorder>
    <zorder></zorder>
    <zorder></zorder>
+   <zorder>splitter</zorder>
   </widget>
  </widget>
  <customwidgets>

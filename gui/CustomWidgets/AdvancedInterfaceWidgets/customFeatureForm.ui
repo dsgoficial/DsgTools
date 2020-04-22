@@ -71,14 +71,14 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="cancel_btn">
+      <widget class="QPushButton" name="cancelPushButton">
        <property name="text">
         <string>&amp;Cancelar</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="ok_btn">
+      <widget class="QPushButton" name="okPushButton">
        <property name="text">
         <string>&amp;Confirmar</string>
        </property>
@@ -97,14 +97,14 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>ok_btn</tabstop>
-  <tabstop>cancel_btn</tabstop>
+  <tabstop>okPushButton</tabstop>
+  <tabstop>cancelPushButton</tabstop>
   <tabstop>scrollArea</tabstop>
  </tabstops>
  <resources/>
  <connections>
   <connection>
-   <sender>cancel_btn</sender>
+   <sender>cancelPushButton</sender>
    <signal>clicked()</signal>
    <receiver>Dialog</receiver>
    <slot>reject()</slot>

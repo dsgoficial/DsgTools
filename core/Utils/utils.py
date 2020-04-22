@@ -27,9 +27,9 @@ import requests
 from xml.dom.minidom import parse, parseString
 
 from qgis.utils import iface
-from qgis.gui import QgsGui, QgsMapTool
-from qgis.PyQt import QtGui, QtWidgets
-from qgis.PyQt.QtCore import QSettings, QVariant
+from qgis.core import Qgis, QgsMessageLog
+from qgis.gui import QgsGui
+from qgis.PyQt.QtCore import QObject, QSettings, QVariant
 from qgis.PyQt.QtWidgets import QAction, QToolBar, QTreeWidgetItem
 
 class Utils(object):
@@ -220,7 +220,7 @@ class Utils(object):
             self.getAllItemsInDict(inputDict[key], itemList)
 
     def createWidgetItem(self, parent, text, column = None):
-        item = QtWidgets.QTreeWidgetItem(parent)
+        item = QTreeWidgetItem(parent)
         if isinstance(text,list) and column == None:
             for i in range(len(text)):
                 item.setText(i, text[i])
@@ -375,3 +375,30 @@ class Utils(object):
         :return: (bool) if data is numeric.
         """
         return self.fieldIsFloat(field) or self.fieldIsInt(field)
+
+
+class MessageRaiser(QObject):
+    """
+    Raises messages to QGIS interface, global log and message boxes.
+    """
+    def raiseIfaceMessage(self, title, msg, level=None, duration=None):
+        """
+        Raises messages to the user on a message box on the main QGIS window.
+        :param title: (str) text that will be displayed in bold, first on bar.
+        :param msg: (str) message to be displayed.
+        :param level: (int) level code (warning, critical, etc).
+        :param duration: (int) time in seconds message will be displayed.
+        """
+        level = Qgis.Info if level is None else level
+        duration = 3 if duration is None else duration
+        iface.messageBar().pushMessage(
+            title, msg, level=level, duration=duration)
+
+    def logMessage(self, msg, level=None):
+        """
+        Display a log message on QGIS log.
+        :param msg: (str) message to be displayed.
+        :param level: (int) level code (warning, critical, etc).
+        """
+        level = Qgis.Info if level is None else level
+        QgsMessageLog.logMessage(msg, 'DSGTools Plugin', level)

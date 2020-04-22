@@ -22,7 +22,9 @@
 
 import os, sys
 
-from qgis.PyQt.QtCore import Qt
+from qgis.core import Qgis
+from qgis.gui import QgsMessageBar
+from qgis.PyQt.QtCore import Qt, QSize, pyqtSlot
 from qgis.PyQt.QtWidgets import (QLabel,
                                  QDialog,
                                  QSpinBox,
@@ -66,6 +68,20 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
         self._fieldsWidgets = dict()
         self.setupFields()
         self.setWindowTitle(self.tr("DSGTools Feature Reclassification Form"))
+        self.messageBar = QgsMessageBar(self)
+
+    def resizeEvent(self, e):
+        """
+        Just make sure if any alert box is being displayed, it matches the
+        dialog size. Method reimplementation.
+        :param e: (QResizeEvent) resize event related to this widget resizing.
+        """
+        self.messageBar.resize(
+            QSize(
+                self.geometry().size().width(),
+                40 # this felt nicer than the original height (30)
+            )
+        )
 
     def setupReclassifiedLayers(self):
         """
@@ -93,7 +109,7 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
         row = 0 # in case no fields are provided
         for row, f in enumerate(self.fields):
             fName = f.name()
-            value = self.attributeMap[fName] if fName in self.attributeMap \
+            fMap = self.attributeMap[fName] if fName in self.attributeMap \
                         else None
             if fName in self.attributeMap:
                 fMap = self.attributeMap[fName]
@@ -101,7 +117,7 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
                     w = QLineEdit()
                     w.setEnabled(False)
                     w.setPlaceholderText(self.tr("Field is set to be ignored"))
-                    continue
+                    value = None
                 else:
                     value = fMap["value"]
                 enabled = fMap["editable"]
@@ -156,7 +172,41 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
         """
         filtered = dict()
         for l, fl in self.layerMap.items():
-            layerName = l.name()
-            if self._layersWidgets[layerName].isChecked():
-                filtered[layerName] = fl
+            if self._layersWidgets[l.name()].isChecked():
+                filtered[l] = fl
         return filtered
+
+    def readFieldMap(self):
+        """
+        Reads filled data into the form and sets it to a map from field name to
+        field value to be set. Only fields allowed to be reclassified shall be
+        exported in this method.
+        :return: (dict) a map from field name to its output value.
+        """
+        fMap = dict()
+        for fName, w in self._fieldsWidgets.items():
+            if not fName in self.attributeMap:
+                continue
+            w = self._fieldsWidgets[fName]
+            if isinstance(w, QSpinBox) or isinstance(w, QDoubleSpinBox):
+                fMap[fName] = w.value()
+            else:
+                fMap[fName] = w.text()
+        return fMap
+
+    @pyqtSlot()
+    def on_okPushButton_clicked(self):
+        """
+        Verifies if at least one layer is selected and either warn user to
+        select one, or closes with status 1 ("OK").
+        """
+        if len(self.readSelectedLayers()) > 0:
+            self.updateAttributeMap()
+            self.done(1)
+        else:
+            self.messageBar.pushMessage(
+                self.tr('Invalid layer selection'),
+                self.tr("select at least one layer for reclassification!"),
+                level=Qgis.Warning,
+                duration=5
+            )
