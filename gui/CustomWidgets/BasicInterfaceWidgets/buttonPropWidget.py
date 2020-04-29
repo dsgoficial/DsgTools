@@ -50,6 +50,8 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 utils = Utils()
 
 class ButtonPropWidget(QWidget, FORM_CLASS):
+    # col enum
+    ATTR_COL, PK_COL, VAL_COL, EDIT_COL, IGNORED_COL = range(5)
     def __init__(self, parent=None, button=None):
         """
         Class constructor.
@@ -67,7 +69,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         self.shortcutCheckBox.toggled.connect(self.shortcutWidget.setEnabled)
         self.mMapLayerComboBox.layerChanged.connect(self.updateFieldTable)
         self.attributeTableWidget.setHorizontalHeaderLabels([
-            self.tr("Attribute"), self.tr("Value"),
+            self.tr("Attribute"), self.tr("PK"), self.tr("Value"),
             self.tr("Editable"), self.tr("Ignored")
         ])
         self.updateFieldTable()
@@ -337,7 +339,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         table = self.attributeTableWidget
         for row in range(table.rowCount()):
             attr = table.item(row, 0).text()
-            valueWidget = table.cellWidget(row, 1)
+            valueWidget = table.cellWidget(row, self.VAL_COL)
             if not attrMap or attr not in attrMap:
                 attrMap[attr] = {
                     "value": None,
@@ -350,8 +352,10 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                 QDoubleSpinBox: lambda v: valueWidget.setValue(v or 0.0),
                 QComboBox: lambda v: valueWidget.setCurrentText(v)
             }[type(valueWidget)](attrMap[attr]["value"])
-            table.cellWidget(row, 2).cb.setChecked(attrMap[attr]["editable"])
-            table.cellWidget(row, 3).cb.setChecked(attrMap[attr]["ignored"])
+            table.cellWidget(row, self.EDIT_COL).cb.setChecked(
+                attrMap[attr]["editable"])
+            table.cellWidget(row, self.IGNORED_COL).cb.setChecked(
+                attrMap[attr]["ignored"])
 
     def attributeMap(self):
         """
@@ -361,10 +365,11 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         attrMap = dict()
         table = self.attributeTableWidget
         for row in range(table.rowCount()):
-            attr = table.item(row, 0).text()
+            attr = table.item(row, self.ATTR_COL).text()
             attrMap[attr] = dict()
-            valueWidget = table.cellWidget(row, 1)
-            attrMap[attr]["ignored"] = table.cellWidget(row, 3).cb.isChecked()
+            valueWidget = table.cellWidget(row, self.VAL_COL)
+            attrMap[attr]["ignored"] = table.cellWidget(row, self.IGNORED_COL)\
+                                            .cb.isChecked()
             if attrMap[attr]["ignored"]:
                 attrMap[attr]["value"] = None
             else:
@@ -374,7 +379,8 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                     QDoubleSpinBox: lambda: valueWidget.value(),
                     QComboBox: lambda: valueWidget.currentText()
                 }[type(valueWidget)]()
-            attrMap[attr]["editable"] = table.cellWidget(row, 2).cb.isChecked()
+            attrMap[attr]["editable"] = table.cellWidget(row, self.EDIT_COL)\
+                                             .cb.isChecked()
         return attrMap
 
     def setLayer(self, layer):
@@ -428,7 +434,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             item = QTableWidgetItem()
             item.setFlags(Qt.ItemIsEditable) # not editable
             item.setText(fName)
-            self.attributeTableWidget.setItem(row, 0, item)
+            self.attributeTableWidget.setItem(row, self.ATTR_COL, item)
             if fName in fieldMap:
                 vWidget = QComboBox()
                 vWidget.addItems(set(fieldMap[fName].keys()))
@@ -452,12 +458,12 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                     self.tr("Type the value for {0}").format(fName))
                 if attrMap and fName in attrMap:
                     vWidget.setText(attrMap[fName]["value"] or "")
-            self.attributeTableWidget.setCellWidget(row, 1, vWidget)
+            self.attributeTableWidget.setCellWidget(row, self.VAL_COL, vWidget)
             self.attributeTableWidget.setCellWidget(
-                row, 2, self.centeredCheckBox())
+                row, self.EDIT_COL, self.centeredCheckBox())
             ccb = self.centeredCheckBox()
             ccb.cb.toggled.connect(partial(setDisabled, vWidget))
-            self.attributeTableWidget.setCellWidget(row, 3, ccb)
+            self.attributeTableWidget.setCellWidget(row, self.IGNORED_COL, ccb)
 
     def setButton(self, button):
         """

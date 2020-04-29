@@ -1191,7 +1191,7 @@ class CustomButtonSetup(QObject):
             b.blockSignals(True)
             b.setChecked(False)
             b.blockSignals(False)
-        button.blockSignals(False)
+        button.blockSignals(True)
         button.setChecked(True)
         button.blockSignals(False)
 

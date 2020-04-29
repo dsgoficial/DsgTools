@@ -39,6 +39,11 @@
      </column>
      <column>
       <property name="text">
+       <string>PK</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
        <string>Value</string>
       </property>
      </column>
