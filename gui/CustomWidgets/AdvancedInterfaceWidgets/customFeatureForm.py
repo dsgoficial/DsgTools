@@ -25,6 +25,7 @@ import os, sys
 from qgis.core import Qgis
 from qgis.gui import QgsMessageBar
 from qgis.PyQt.QtCore import Qt, QSize, pyqtSlot
+from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import (QLabel,
                                  QDialog,
                                  QSpinBox,
@@ -53,7 +54,7 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
         :param fields: (QgsFields) set of fields that will be applied to new
                        feature(s).
         :param layerMap: (dict) a map from vector layer to feature list to be
-                         reclassified (allocate to another layer).
+                         reclassified (allocated to another layer).
         :param attributeMap: (dict) a map from attribute name to its
                              (reclassified) value.
         """
@@ -115,16 +116,25 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
                 fMap = self.attributeMap[fName]
                 if fMap["ignored"]:
                     w = QLineEdit()
-                    w.setEnabled(False)
-                    w.setPlaceholderText(self.tr("Field is set to be ignored"))
+                    w.setText(self.tr("Field is set to be ignored"))
                     value = None
+                    enabled = False
                 else:
                     value = fMap["value"]
-                enabled = fMap["editable"]
+                    enabled = fMap["editable"]
+                if fMap["isPk"]:
+                    # visually identify primary key attributes
+                    text = '<p>{0} <img src=":/plugins/DsgTools/icons/key.png" '\
+                           'width="16" height="16"></p>'.format(fName)
+                else:
+                    text = fName
             else:
                 value = None
                 enabled = True
-            if utils.fieldIsFloat(f):
+                text = fName
+            if fName in self.attributeMap and self.attributeMap[fName]["ignored"]:
+                pass
+            elif utils.fieldIsFloat(f):
                 w = QDoubleSpinBox()
                 w.setValue(0 if value is None else value)
             elif utils.fieldIsInt(f):
@@ -136,7 +146,7 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
             w.setEnabled(enabled)
             # also to make easier to read data
             self._fieldsWidgets[fName] = w
-            label = QLabel(fName)
+            label = QLabel(text)
             label.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
             w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
             self.widgetsLayout.addWidget(label, row, 0)

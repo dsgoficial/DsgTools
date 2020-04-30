@@ -52,7 +52,7 @@ utils = Utils()
 
 class ButtonPropWidget(QWidget, FORM_CLASS):
     # col enum
-    ATTR_COL, PK_COL, VAL_COL, EDIT_COL, IGNORED_COL = range(5)
+    ATTR_COL, VAL_COL, PK_COL, EDIT_COL, IGNORED_COL = range(5)
     def __init__(self, parent=None, button=None):
         """
         Class constructor.
@@ -70,7 +70,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         self.shortcutCheckBox.toggled.connect(self.shortcutWidget.setEnabled)
         self.mMapLayerComboBox.layerChanged.connect(self.updateFieldTable)
         self.attributeTableWidget.setHorizontalHeaderLabels([
-            self.tr("Attribute"), self.tr("PK"), self.tr("Value"),
+            self.tr("Attribute"), self.tr("Value"), self.tr("PK"),
             self.tr("Editable"), self.tr("Ignored")
         ])
         self.updateFieldTable()
@@ -366,7 +366,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
     def attributeMap(self):
         """
         Reads the field map data and set it to a button attribute map format.
-        :return: (dict) read attribute map. 
+        :return: (dict) read attribute map.
         """
         attrMap = dict()
         table = self.attributeTableWidget

@@ -589,7 +589,11 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         removeFeats = list()
         addFeats = set()
         fields = newLayer.fields()
+        pFields = [f.name() for f in prevLayer.fields()]
         for f in featList:
+            for field, propsMap in newAttributeMap.items():
+                if propsMap["ignored"]:
+                    propsMap["value"] = f[field] if field in pFields else None
             addFeats.add(
                 self.createFeature(
                     fields, f.geometry(), newAttributeMap, defs, transformer)
@@ -662,6 +666,15 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             self.setSuppressFormOption(vl, button.openForm())
         else:
             reclassify = self.featuresToBeReclassified(button)
+            if not reclassify:
+                msg = self.tr("could not reclassify using button {0} (no "
+                              "compatible features selected)")\
+                        .format(button.name())
+                MessageRaiser().raiseIfaceMessage(
+                    self.tr("DSGTools feature reclassification"),
+                    msg, Qgis.Warning, 5
+                )
+                return
             attrMap = button.attributeMap()
             if button.openForm():
                 form = CustomFeatureForm(vl.fields(), reclassify, attrMap)
@@ -671,7 +684,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                     return
                 # modified values should be used for feature reclassification
                 reclassify = form.readSelectedLayers()
-                attrMap = form.readFieldMap()
+                attrMap = form.attributeMap
             reclassified = self.reclassify(reclassify, vl, attrMap)
             self.warnReclassified(reclassified)
         iface.setActiveLayer(vl)

@@ -34,7 +34,7 @@ class AttributeHandler(QObject):
         self.parent = parent
         self.iface = iface
 
-    def setFeatureAttributes(self, newFeature, attributeDict, editBuffer=None):
+    def setFeatureAttributes(self, newFeature, attributeDict, editBuffer=None, oldFeat=None):
         """
         Changes attribute values according to the reclassification dict using the edit buffer
         newFeature: newly added
@@ -44,11 +44,14 @@ class AttributeHandler(QObject):
         fields = newFeature.fields()
         for attribute in attributeDict:
             idx = fields.lookupField(attribute)
+            reclass = attributeDict[attribute]
             if isinstance(reclass, dict):
                 value = reclass['value']
-                if reclass['isIgnored'] == '1': #ignore clause
+                if reclass['ignored']: #ignore clause
                     if oldFeat:
                         value = oldFeat[attribute]
+                    else:
+                        value = None
             else:
                 value = reclass
             if value == '':
