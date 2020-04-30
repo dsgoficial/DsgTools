@@ -34,7 +34,7 @@ class AttributeHandler(QObject):
         self.parent = parent
         self.iface = iface
 
-    def setFeatureAttributes(self, newFeature, attributeDict, editBuffer=None, oldFeat = None):
+    def setFeatureAttributes(self, newFeature, attributeDict, editBuffer=None):
         """
         Changes attribute values according to the reclassification dict using the edit buffer
         newFeature: newly added
@@ -44,10 +44,6 @@ class AttributeHandler(QObject):
         fields = newFeature.fields()
         for attribute in attributeDict:
             idx = fields.lookupField(attribute)
-            if attribute == 'buttonProp' or idx == -1:
-                continue
-            #value to be changed
-            reclass = attributeDict[attribute]
             if isinstance(reclass, dict):
                 value = reclass['value']
                 if reclass['isIgnored'] == '1': #ignore clause
@@ -67,7 +63,7 @@ class AttributeHandler(QObject):
         if not editBuffer:
             # we should return when under the normal behavior
             return newFeature
-    
+
     def getTuppleAttribute(self, feature, unifiedLyr, bList=None):
         bList = [] if bList is None else bList
         attributes = [field.name() for idx, field in enumerate(feature.fields()) if (field.type() != 6 and idx not in unifiedLyr.primaryKeyAttributes() and field.name() not in bList)]

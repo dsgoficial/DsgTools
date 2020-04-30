@@ -34,6 +34,7 @@ from qgis.PyQt.QtWidgets import (QWidget,
                                  QLineEdit,
                                  QCheckBox,
                                  QComboBox,
+                                 QPushButton,
                                  QHBoxLayout,
                                  QFileDialog,
                                  QMessageBox,
@@ -337,6 +338,8 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         self.updateFieldTable()
         table = self.attributeTableWidget
+        vl = self.vectorLayer()
+        pkIdxList = vl.primaryKeyAttributes() if vl else []
         for row in range(table.rowCount()):
             attr = table.item(row, 0).text()
             valueWidget = table.cellWidget(row, self.VAL_COL)
@@ -344,7 +347,8 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                 attrMap[attr] = {
                     "value": None,
                     "editable": False,
-                    "ignored": False
+                    "ignored": False,
+                    "isPk": False
                 }
             {
                 QLineEdit: lambda v: valueWidget.setText(v or ""),
@@ -356,6 +360,8 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                 attrMap[attr]["editable"])
             table.cellWidget(row, self.IGNORED_COL).cb.setChecked(
                 attrMap[attr]["ignored"])
+            table.setCellWidget(row, self.PK_COL,
+                self.pkWidget() if row in pkIdxList else QWidget())
 
     def attributeMap(self):
         """
@@ -379,6 +385,8 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                     QDoubleSpinBox: lambda: valueWidget.value(),
                     QComboBox: lambda: valueWidget.currentText()
                 }[type(valueWidget)]()
+            attrMap[attr]["isPk"] = isinstance(
+                table.cellWidget(row, self.PK_COL), QPushButton)
             attrMap[attr]["editable"] = table.cellWidget(row, self.EDIT_COL)\
                                              .cb.isChecked()
         return attrMap
@@ -395,10 +403,17 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
 
     def layer(self):
         """
-        Reads current layer selection from GUI.
+        Reads the name for the selected layer from GUI.
         :return: (str) name for the selected layer.
         """
         return self.mMapLayerComboBox.currentText()
+
+    def vectorLayer(self):
+        """
+        Reads current layer selection from GUI.
+        :return: (QgsVectorLayer) selected vector layer.
+        """
+        return self.mMapLayerComboBox.currentLayer()
 
     def centeredCheckBox(self):
         """
@@ -415,14 +430,28 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         w.setLayout(l)
         return w
 
+    def pkWidget(self):
+        """
+        Instanciates a push button with no border using a key as an icon to be
+        used on rows associated with primary key attributes.
+        """
+        pb = QPushButton()
+        pb.setIcon(QIcon(':/plugins/DsgTools/icons/key.png'))
+        pb.setFlat(True)
+        pb.blockSignals(True)
+        pb.setObjectName("pkWidget")
+        pb.setText("")
+        return pb
+
     def updateFieldTable(self, layer=None):
         """
         Updates current displayed fields based on current layer selection.
         :param layer: (QgsVectorLayer) layer to have its fields exposed. 
         """
-        layer = layer or self.mMapLayerComboBox.currentLayer()
+        layer = layer or self.vectorLayer()
         self.attributeTableWidget.setRowCount(0)
         fields = layer.fields() if layer else []
+        pkIdxList = layer.primaryKeyAttributes() if layer else []
         attrMap = self.button.attributeMap()
         b = self.readButton()
         fieldMap = b.fieldMap()
@@ -464,6 +493,9 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             ccb = self.centeredCheckBox()
             ccb.cb.toggled.connect(partial(setDisabled, vWidget))
             self.attributeTableWidget.setCellWidget(row, self.IGNORED_COL, ccb)
+            # since row is from an enum of fields, field idx = row
+            self.attributeTableWidget.setCellWidget(row, self.PK_COL,
+                self.pkWidget() if row in pkIdxList else QWidget())
 
     def setButton(self, button):
         """

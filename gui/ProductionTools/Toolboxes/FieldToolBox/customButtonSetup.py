@@ -705,13 +705,17 @@ class CustomFeatureButton(QObject):
         if type(attrMap) == dict:
             if self.checkLayer():
                 fMap = self.fieldMap()
-                for field in self.vectorLayer().fields():
+                vl = self.vectorLayer()
+                fields = vl.fields()
+                pkIdxList = vl.primaryKeyAttributes()
+                for field in fields:
                     fieldName = field.name()
                     if fieldName not in attrMap:
                         self._props["attributeMap"][fieldName] = {
                             "value": None,
                             "editable": True,
-                            "ignored": True
+                            "ignored": True,
+                            "isPk": fields.lookupField(fieldName) in pkIdxList
                         }
                         continue
                     value = attrMap[fieldName]["value"]
@@ -725,9 +729,11 @@ class CustomFeatureButton(QObject):
                     self._props["attributeMap"][fieldName] = {
                         "value": value,
                         "editable": attrMap[fieldName]["editable"],
-                        "ignored": attrMap[fieldName]["ignored"]  
+                        "ignored": attrMap[fieldName]["ignored"],
+                        "isPk": fields.lookupField(fieldName) in pkIdxList
                     }
             else:
+                # for now, attribute is not validated layer is not provided
                 self._props["attributeMap"] = attrMap
         else:
             raise TypeError(

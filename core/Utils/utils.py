@@ -374,7 +374,7 @@ class Utils(object):
         :param field: (QgsField) field to be checked.
         :return: (bool) if data is numeric.
         """
-        return self.fieldIsFloat(field) or self.fieldIsInt(field)
+        return field.isNumeric()
 
 
 class MessageRaiser(QObject):
