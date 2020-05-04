@@ -721,6 +721,38 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         iface.mapCanvas().unsetMapTool(iface.mapCanvas().mapTool())
         self._qgisActions[toolName].trigger()
 
+    def readZoomLevel(self):
+        """
+        Reads zoom level defined by user from GUI.
+        :return: (int) zoom level chosen by user. It is allowed 3 levels:
+                 normal (0 - 8px), large (1 - 12px) and largest (2 - 16px).
+        """
+        return int(self.slider.value())
+
+    def setZoomLevel(self, lvl):
+        """
+        Sets zoom level to the GUI and setups.
+        :param lvl: (int) zoom level chosen by user. It is allowed 3 levels:
+                    normal (0 - 8px), large (1 - 12px) and largest (2 - 16px).
+        """
+        if lvl == self.slider.value():
+            return
+        self.slider.setValue(lvl)
+        self.resizeButtons()
+
+    @pyqtSlot(int, name="on_slider_valueChanged")
+    def resizeButtons(self):
+        """
+        Sets the font size for each displayed button.
+        """
+        size = {
+            0: QPushButton().font().pointSize(),
+            1: int(QPushButton().font().pointSize() * 1.5),
+            2: QPushButton().font().pointSize() * 2,
+        }[self.readZoomLevel()]
+        for s in self.buttonSetups():
+            s.setButtonsSize(size)
+
     def toolState(self):
         """
         Retrieves a map with all parameters that indicates current tool setup.
