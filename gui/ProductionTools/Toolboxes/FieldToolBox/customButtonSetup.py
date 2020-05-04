@@ -62,6 +62,7 @@ class CustomFeatureButton(QObject):
             "useColor": True,
             "color": (255, 255, 255, 255),
             "tooltip": "",
+            "size": 12,
             "category": "",
             "shortcut": "",
             "layer": "",
@@ -146,6 +147,7 @@ class CustomFeatureButton(QObject):
                 "openForm": lambda x: self.setOpenForm(x),
                 "useColor": lambda x: self.setUseColor(x),
                 "color": lambda x: self.setColor(x),
+                "size": lambda x: self.setSize(x),
                 "tooltip": lambda x: self.setToolTip(x),
                 "category": lambda x: self.setCategory(x),
                 "shortcut": lambda x: self.setShortcut(x),
@@ -176,6 +178,7 @@ class CustomFeatureButton(QObject):
             "openForm": lambda x: self.setOpenForm(x),
             "useColor": lambda x: self.setUseColor(x),
             "color": lambda x: self.setColor(x),
+            "size": lambda x: self.setSize(x),
             "tooltip": lambda x: self.setToolTip(x),
             "category": lambda x: self.setCategory(x),
             "shortcut": lambda x: self.setShortcut(x),
@@ -213,6 +216,7 @@ class CustomFeatureButton(QObject):
             "openForm": self.openForm(),
             "useColor": self.useColor(),
             "color": self.color(),
+            "size": self.size(),
             "tooltip": self.toolTip(),
             "category": self.category(),
             "layer": self.layer(),
@@ -288,6 +292,9 @@ class CustomFeatureButton(QObject):
                 col = QColor(*col)
             pal.setColor(pal.Button, col)
         pb.setPalette(pal)
+        font = pb.font()
+        font.setPointSize(self.size())
+        pb.setFont(font)
         pb.update()
         # keeping track of all created widgets is necessary in order to update
         # accordingly to CustomFeatureButton's properties 
@@ -408,6 +415,31 @@ class CustomFeatureButton(QObject):
         :return: (bool) whether custom color will be applied.
         """
         return bool(self._props["useColor"])
+
+    def setSize(self, size):
+        """
+        Defines displaying text's size on the widget.
+        :param size: (int) text's size in pixels.
+        """
+        if type(size) == int: 
+            self._props["size"] = size
+            for w in self.widgets():
+                # setSize in here
+                font = w.font()
+                font.setPointSize(size)
+                w.setFont(font)
+                w.update()
+        else:
+            raise TypeError(
+                self.tr("Category must be an int ({0}).").format(type(size))
+            )
+
+    def size(self):
+        """
+        Retrieves displaying text's size on the widget.
+        :return: (int) text's size in pixels.
+        """
+        return int(self._props["size"])
 
     def setToolTip(self, tooltip):
         """
@@ -863,6 +895,8 @@ class CustomFeatureButton(QObject):
                 iface.unregisterMainWindowAction(self.action())
             elif not self.isEnabled() and enabled:
                 iface.registerMainWindowAction(self.action(), self.shortcut())
+            for w in self.widgets():
+                w.setEnabled(enabled)
             self._props["isEnabled"] = enabled
         else:
             raise TypeError(
@@ -990,7 +1024,7 @@ class CustomButtonSetup(QObject):
     def buttonNames(self):
         """
         Retrieves the names for all registered buttons.
-        :return: (list-of-CustomFeatureButton) names for the buttons.
+        :return: (list-of-str) names for the buttons.
         """
         return list(self._buttons.keys())
 
@@ -1022,6 +1056,22 @@ class CustomButtonSetup(QObject):
         """
         for b in self.buttons():
             b.setCheckable(checkable)
+
+    def setButtonSize(self, button, size):
+        """
+        Updates a button's font size.
+        :param button: (str) button's name.
+        :param size: (int) button's new font size in pixels.
+        """
+        self.button(button).setSize(size)
+
+    def setButtonsSize(self, size):
+        """
+        Updates all buttons' font size.
+        :param size: (int) button's new font size in pixels.
+        """
+        for b in self._buttons.values():
+            b.setSize(size)
 
     def addButton(self, props, replace=False):
         """
@@ -1174,7 +1224,7 @@ class CustomButtonSetup(QObject):
         :param name: (str) name for the button to have its wigdets references
                      cleaned.
         """
-        self.button(button).clearWidgets()
+        self.button(name).clearWidgets()
 
     def clearWidgets(self):
         """
