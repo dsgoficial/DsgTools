@@ -745,11 +745,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         Sets the font size for each displayed button.
         """
-        size = {
-            0: QPushButton().font().pointSize(),
-            1: int(QPushButton().font().pointSize() * 1.5),
-            2: QPushButton().font().pointSize() * 2,
-        }[self.readZoomLevel()]
+        defaultSize = QPushButton().font().pointSize()
+        size = int(defaultSize * (1 + 0.5 * self.readZoomLevel()))
         for s in self.buttonSetups():
             s.setButtonsSize(size)
 

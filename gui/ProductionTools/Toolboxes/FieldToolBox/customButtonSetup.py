@@ -62,7 +62,7 @@ class CustomFeatureButton(QObject):
             "useColor": True,
             "color": (255, 255, 255, 255),
             "tooltip": "",
-            "size": 8, # default QPushButton font size is 8
+            "size": QPushButton().font().pointSize(),
             "category": "",
             "shortcut": "",
             "layer": "",
