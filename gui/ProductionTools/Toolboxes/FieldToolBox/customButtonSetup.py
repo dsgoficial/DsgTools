@@ -62,7 +62,7 @@ class CustomFeatureButton(QObject):
             "useColor": True,
             "color": (255, 255, 255, 255),
             "tooltip": "",
-            "size": 12,
+            "size": 8, # default QPushButton font size is 8
             "category": "",
             "shortcut": "",
             "layer": "",
@@ -418,8 +418,8 @@ class CustomFeatureButton(QObject):
 
     def setSize(self, size):
         """
-        Defines displaying text's size on the widget.
-        :param size: (int) text's size in pixels.
+        Defines displaying text's font size on the widget.
+        :param size: (int) text's font size in pixels.
         """
         if type(size) == int: 
             self._props["size"] = size
@@ -436,7 +436,7 @@ class CustomFeatureButton(QObject):
 
     def size(self):
         """
-        Retrieves displaying text's size on the widget.
+        Retrieves displaying text's font size on the widget.
         :return: (int) text's size in pixels.
         """
         return int(self._props["size"])
