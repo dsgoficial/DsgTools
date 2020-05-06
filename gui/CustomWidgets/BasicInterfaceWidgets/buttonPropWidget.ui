@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>417</width>
+    <width>653</width>
     <height>429</height>
    </rect>
   </property>
@@ -27,42 +27,17 @@
      </property>
     </widget>
    </item>
-   <item row="10" column="0" colspan="3">
-    <widget class="QTableWidget" name="attributeTableWidget">
-     <property name="enabled">
-      <bool>true</bool>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Button name</string>
      </property>
-     <column>
-      <property name="text">
-       <string>Attribute</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>PK</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Value</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Editable</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Ignored</string>
-      </property>
-     </column>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QCheckBox" name="tooltipCheckBox">
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Assign Tooltip</string>
+      <string>Acquisition tool</string>
      </property>
     </widget>
    </item>
@@ -90,34 +65,6 @@
      </property>
      <property name="placeholderText">
       <string>Type in the text to identify this button...</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QCheckBox" name="keywordCheckBox">
-     <property name="text">
-      <string>Button keywords</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Button name</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="2">
-    <widget class="QLineEdit" name="categoryLineEdit">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Acquisition tool</string>
      </property>
     </widget>
    </item>
@@ -164,6 +111,27 @@
    <item row="1" column="2">
     <widget class="QComboBox" name="toolComboBox"/>
    </item>
+   <item row="5" column="0">
+    <widget class="QCheckBox" name="keywordCheckBox">
+     <property name="text">
+      <string>Button keywords</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QCheckBox" name="tooltipCheckBox">
+     <property name="text">
+      <string>Assign Tooltip</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QLineEdit" name="categoryLineEdit">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
    <item row="6" column="0">
     <widget class="QCheckBox" name="shortcutCheckBox">
      <property name="text">
@@ -174,12 +142,44 @@
    <item row="9" column="1" colspan="2">
     <widget class="QgsMapLayerComboBox" name="mMapLayerComboBox"/>
    </item>
+   <item row="10" column="0" colspan="3">
+    <widget class="QTableWidget" name="attributeTableWidget">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <column>
+      <property name="text">
+       <string>Attribute</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Value</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>PK</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Editable</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Ignored</string>
+      </property>
+     </column>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
    <class>QgsColorButton</class>
-   <extends>QPushButton</extends>
+   <extends>QToolButton</extends>
    <header>qgscolorbutton.h</header>
   </customwidget>
   <customwidget>

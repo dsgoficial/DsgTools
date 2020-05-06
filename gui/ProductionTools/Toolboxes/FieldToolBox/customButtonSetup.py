@@ -297,7 +297,7 @@ class CustomFeatureButton(QObject):
         pb.setFont(font)
         pb.update()
         # keeping track of all created widgets is necessary in order to update
-        # accordingly to CustomFeatureButton's properties 
+        # accordingly to CustomFeatureButton's properties
         self._widgets.append(pb)
         return pb
 
@@ -883,20 +883,31 @@ class CustomFeatureButton(QObject):
         """
         return bool(self._props["isChecked"])
 
-    def setEnabled(self, enabled):
+    def setWidgetsEnabled(self, enabled):
+        """
+        Modifies all managed widgets' enabled status.
+        :param enabled: (bool) whether buttons should be enabled.
+        """
+        for w in self.widgets():
+            w.setEnabled(enabled)
+
+    def setEnabled(self, enabled, updateWidgets=False):
         """
         Disables or enables button from QGIS interface. When a button is
         active, its action is registered to the main window and shortcut, if
-        set, is enabled.
+        set, is enabled. While enabled, button's actions are registered onto
+        the QGIS main window.
         :param enabled: (bool) whether buttons should be enabled.
+        :param updateWidgets: (bool) indicates whether widgets are also enabled
+                              or disabled.
         """
         if type(enabled) == bool:
             if self.isEnabled() and not enabled:
                 iface.unregisterMainWindowAction(self.action())
             elif not self.isEnabled() and enabled:
                 iface.registerMainWindowAction(self.action(), self.shortcut())
-            for w in self.widgets():
-                w.setEnabled(enabled)
+            if updateWidgets:
+                self.setWidgetsEnabled(enabled)
             self._props["isEnabled"] = enabled
         else:
             raise TypeError(
