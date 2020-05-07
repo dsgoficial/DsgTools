@@ -29,7 +29,8 @@ from qgis.core import Qgis, QgsProject, QgsVectorLayer
 from qgis.gui import QgsAttributeForm, QgsAttributeDialog
 from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtGui import QColor, QPalette
-from qgis.PyQt.QtWidgets import (QWidget,
+from qgis.PyQt.QtWidgets import (QAction,
+                                 QWidget,
                                  QPushButton,
                                  QDockWidget,
                                  QVBoxLayout,
@@ -109,7 +110,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             if b is not None:
                 self.setMapToolFromButton(b)
                 if b.checkLayer():
-                    self.setSuppressFormOption(b.vectorLayer(), b.openForm())
+                    self.setSuppressFormOption(b.vectorLayer(), False)
         else:
             iface.mapCanvas().unsetMapTool(iface.mapCanvas().mapTool())
             self._qgisActions[self.tr("Pan Map")].trigger()
@@ -405,7 +406,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             self.resetButtonWidgets()
             for b in s.buttons():
                 b.setCallback(self.toolCallback)
-                b.setShortcutCallback(self.shortcutActivated)
+                b.setShortcutCallback(self._shortcutActivated)
+                b.toggled.connect(self._buttonToggled)
                 l = b.vectorLayer()
                 if l is not None:
                     l.featureAdded.connect(self._handleAddedFeature)
@@ -550,16 +552,17 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             # if method was not sent from a vector layer, nothing to do either
             # only managed calls are from active button's layer
             return
-        self.setSuppressFormOption(inLayer, False)
         feature = inLayer.getFeature(featId)
         AttributeHandler(iface).setFeatureAttributes(feature, b.attributeMap())
         inLayer.updateFeature(feature)
         if b.openForm():
             form = QgsAttributeDialog(inLayer, feature, False)
             form.setMode(int(QgsAttributeForm.SingleEditMode))
-            form.exec_()
-            inLayer.updateFeature(feature)
-        self.setSuppressFormOption(inLayer)
+            if form.exec_():
+                inLayer.updateFeature(feature)
+            else:
+                inLayer.deleteFeature(featId)
+                iface.mapCanvas().refresh()
 
     def setSuppressFormOption(self, layer, openForm=None):
         """
@@ -673,7 +676,27 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             addedFeats[prevLayer.name()] = len(fl)
         return addedFeats
 
-    def shortcutActivated(self):
+    @pyqtSlot(bool)
+    def _buttonToggled(self, checked):
+        """
+        Handles tool setup and pre-callback handling when a button is toggled.
+        :param checked: (bool) whether button is being set to checked.
+        """
+        button = self.sender()
+        if button is None:
+            # method is supposed to be used exclusively as a slot
+            return
+        for layer in QgsProject.instance().mapLayers().values():
+            self.setSuppressFormOption(layer)
+        if checked:
+            # i think sender should change to action here, but it doesnt
+            button.action().trigger()
+        else:
+            # button is being disabled
+            iface.mapCanvas().unsetMapTool(iface.mapCanvas().mapTool())
+            self._qgisActions[self.tr("Pan Map")].trigger()
+
+    def _shortcutActivated(self):
         """
         Shortcut may be activated whilst tool is in extract mode and in that
         mode, callbacks from action triggering is disconnected whenever the
@@ -682,6 +705,9 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         if self.toolMode() == self.Extract:
             sh = self.sender()
+            if sh is None:
+                # method should be exclusively a slot to some signal
+                return
             sid = sh.id()
             s = self.currentButtonSetup()
             for b in s.buttons():
@@ -701,13 +727,17 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         s = self.currentButtonSetup()
         if a is None or s is None:
             return
-        for button in s.buttons():
-            if button.action().text() == a.text():
-                break
+        if isinstance(a, QAction):
+            for button in s.buttons():
+                if button.action().text() == a.text():
+                    break
+            else:
+                # if button is not identified, call isn't from current setup
+                return
         else:
-            # if button is not identified, somehow call was made from none of
-            # current setup's buttons
-            return
+            # somehow, event called from action leads to sender being the
+            # button in here through button toggling handling method 
+            button = a
         if not button.checkLayer():
             return
         vl = button.vectorLayer()
@@ -716,7 +746,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if self.toolMode() == self.Extract:
             if not button.isChecked():
                 s.toggleButton(button, True)
-            self.setSuppressFormOption(vl, button.openForm())
+            # forms are manually called and handled
+            self.setSuppressFormOption(vl, False)
         else:
             reclassify = self.featuresToBeReclassified(button)
             if not reclassify:
