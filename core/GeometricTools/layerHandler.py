@@ -1550,7 +1550,7 @@ class LayerHandler(QObject):
                 feedback.setCurrentStep(current * size)
         return polygonList, flagDict
 
-    def fieldMap(self, layer):
+    def valueMaps(self, layer):
         """
         Gets the value maps for each field of a given layer, if available.
         :param layer: (QgsVectorLayer) layer to have its fields read.
@@ -1570,13 +1570,15 @@ class LayerHandler(QObject):
                     else:
                         classFieldMap[fieldName].update(map_)
             else:
-                def sortingMethod(item):
+                def intify(i):
                     try:
-                        return int(item[1])
+                        return int(i)
                     except:
-                        return item[1]
+                        return i
+                def sortingMethod(item):
+                    return intify(item[1])
                 classFieldMap[fieldName] = {
-                    k: v for k, v in sorted(
+                    k: intify(v) for k, v in sorted(
                         fieldConfig['map'].items(), key=sortingMethod
                     )
                 }
