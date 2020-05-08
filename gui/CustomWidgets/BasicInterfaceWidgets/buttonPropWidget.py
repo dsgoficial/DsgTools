@@ -43,6 +43,7 @@ from qgis.PyQt.QtWidgets import (QWidget,
                                  QTableWidgetItem)
 
 from DsgTools.core.Utils.utils import Utils
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.gui.ProductionTools.Toolboxes.FieldToolBox.customButtonSetup import CustomButtonSetup, CustomFeatureButton
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -52,7 +53,8 @@ utils = Utils()
 
 class ButtonPropWidget(QWidget, FORM_CLASS):
     # col enum
-    ATTR_COL, VAL_COL, PK_COL, EDIT_COL, IGNORED_COL = range(5)
+    COL_COUNT = 5
+    ATTR_COL, VAL_COL, PK_COL, EDIT_COL, IGNORED_COL = range(COL_COUNT)
     def __init__(self, parent=None, button=None):
         """
         Class constructor.
@@ -339,9 +341,18 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         self.updateFieldTable()
         table = self.attributeTableWidget
         vl = self.vectorLayer()
+        valueMaps = dict()
+        # displayed values are always "aliased" when possible, so map needs to
+        # be reversed (e.g. set to actual value to display name)
+        for fName, vMap in LayerHandler().valueMaps(vl).items():
+            valueMaps[fName] = {v: k for k, v in vMap.items()}
+        def setMappedValue(cb, field, value):
+            if value is None:
+                return
+            cb.setCurrentText(valueMaps[field][value])
         pkIdxList = vl.primaryKeyAttributes() if vl else []
         for row in range(table.rowCount()):
-            attr = table.cellWidget(row, self.ATTR_COL).text().replace("&",)
+            attr = table.cellWidget(row, self.ATTR_COL).text().replace("&", "")
             valueWidget = table.cellWidget(row, self.VAL_COL)
             if not attrMap or attr not in attrMap:
                 attrMap[attr] = {
@@ -354,7 +365,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                 QLineEdit: lambda v: valueWidget.setText(v or ""),
                 QSpinBox: lambda v: valueWidget.setValue(v or 0),
                 QDoubleSpinBox: lambda v: valueWidget.setValue(v or 0.0),
-                QComboBox: lambda v: valueWidget.setCurrentText(v)
+                QComboBox: lambda v: setMappedValue(valueWidget, attr, v)
             }[type(valueWidget)](attrMap[attr]["value"])
             table.cellWidget(row, self.EDIT_COL).cb.setChecked(
                 attrMap[attr]["editable"])
@@ -370,8 +381,10 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         attrMap = dict()
         table = self.attributeTableWidget
+        vMaps = LayerHandler().valueMaps(self.vectorLayer()) \
+                    if self.vectorLayer() else {}
         for row in range(table.rowCount()):
-            attr = table.cellWidget(row, self.ATTR_COL).text().replace("&",)
+            attr = table.cellWidget(row, self.ATTR_COL).text().replace("&", "")
             attrMap[attr] = dict()
             valueWidget = table.cellWidget(row, self.VAL_COL)
             attrMap[attr]["ignored"] = table.cellWidget(row, self.IGNORED_COL)\
@@ -383,7 +396,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                     QLineEdit: lambda: valueWidget.text(),
                     QSpinBox: lambda: valueWidget.value(),
                     QDoubleSpinBox: lambda: valueWidget.value(),
-                    QComboBox: lambda: valueWidget.currentText()
+                    QComboBox: lambda: vMaps[attr][valueWidget.currentText()]
                 }[type(valueWidget)]()
             attrMap[attr]["isPk"] = isinstance(
                 table.cellWidget(row, self.PK_COL), QPushButton)
@@ -490,7 +503,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
     def updateFieldTable(self, layer=None):
         """
         Updates current displayed fields based on current layer selection.
-        :param layer: (QgsVectorLayer) layer to have its fields exposed. 
+        :param layer: (QgsVectorLayer) layer to have its fields exposed.
         """
         layer = layer or self.vectorLayer()
         self.attributeTableWidget.setRowCount(0)
@@ -498,11 +511,11 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         pkIdxList = layer.primaryKeyAttributes() if layer else []
         attrMap = self.button.attributeMap()
         b = self.readButton()
-        valueMaps = b.valueMaps()
-        # since we want to map values to their alias for filling up data, map
-        # is reversed
-        for vMap in valueMaps.values():
-            vMap = {v: k for k, v in vMap.items()}
+        valueMaps = dict()
+        # displayed values are always "aliased" when possible, so map needs to
+        # be reversed (e.g. set to actual value to display name)
+        for fName, vMap in b.valueMaps().items():
+            valueMaps[fName] = {v: k for k, v in vMap.items()}
         self.attributeTableWidget.setRowCount(len(fields))
         def setDisabled(w, status):
             w.setEnabled(not status)
@@ -510,21 +523,14 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             fName = field.name()
             self.attributeTableWidget.setCellWidget(
                 row, self.ATTR_COL, self.attributeNameWidget(fName))
-            if attrMap and fName in attrMap\
-               and attrMap[fName]["value"] is not None:
-                value = attrMap[fName]["value"]
-                if fName in valueMaps:
-                    # if field has a map value, the displayed text will be used
-                    # instead of its actual value (the 'alias')
-                    value = valueMaps[value]
+            value = attrMap[fName]["value"] if fName in attrMap else None
             if fName in valueMaps:
                 vWidget = QComboBox()
-                vWidget.addItems(set(valueMaps[fName].keys()))
+                vWidget.addItems(set(valueMaps[fName].values()))
                 if value is not None:
+                    value = valueMaps[fName][value]
                     vWidget.setCurrentText(value)
             else:
-                value = attrMap[fName]["value"] if attrMap \
-                            and fName in attrMap else None
                 vWidget = self.valueWidget(field, value)
             self.attributeTableWidget.setCellWidget(row, self.VAL_COL, vWidget)
             self.attributeTableWidget.setCellWidget(

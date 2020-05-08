@@ -752,7 +752,7 @@ class CustomFeatureButton(QObject):
                         continue
                     value = attrMap[fieldName]["value"]
                     if fieldName in fMap and value is not None \
-                       and value not in fMap[fieldName]:
+                       and value not in fMap[fieldName].values():
                         self._props["attributeMap"] = prevAttrMap
                         raise ValueError(
                             self.tr("{0} is not a valid value for field {1}.")\
@@ -1053,12 +1053,12 @@ class CustomButtonSetup(QObject):
         self.addButton(b.properties())
         return self.button(b.name())
 
-    def widgets(self, newInstance=False):
+    def widgets(self):
         """
         Retrieves a map of all button widgets of registered buttons.
         :return: (dict) a map from button name to an instance of its widget.
         """
-        return { n: self.buttonWidget(n) for n in self._buttons }
+        return {n: self.buttonWidget(n) for n in self._buttons}
 
     def setButtonsCheckable(self, checkable):
         """
@@ -1093,7 +1093,7 @@ class CustomButtonSetup(QObject):
         :return: (bool) operation status
         """
         if props["name"] in self._buttons and not replace:
-                return False
+            return False
         button = CustomFeatureButton(props)
         button.toggled.connect(partial(self.toggleButton, button))
         self._buttons[props["name"]] = button
