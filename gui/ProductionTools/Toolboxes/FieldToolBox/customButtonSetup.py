@@ -717,14 +717,14 @@ class CustomFeatureButton(QObject):
         """
         return self.vectorLayer() is not None
 
-    def fieldMap(self):
+    def valueMaps(self):
         """
-        Retrieves field map for current select layer.
+        Retrieves value maps for currently selected layer.
         :return: (dict) object that maps each field from selected layer to its
                  value map.
         """
         if self.checkLayer():
-            return LayerHandler().fieldMap(self.vectorLayer())
+            return LayerHandler().valueMaps(self.vectorLayer())
         return dict()
 
     def setAttributeMap(self, attrMap):
@@ -736,7 +736,7 @@ class CustomFeatureButton(QObject):
         prevAttrMap = self.attributeMap()
         if type(attrMap) == dict:
             if self.checkLayer():
-                fMap = self.fieldMap()
+                fMap = self.valueMaps()
                 vl = self.vectorLayer()
                 fields = vl.fields()
                 pkIdxList = vl.primaryKeyAttributes()

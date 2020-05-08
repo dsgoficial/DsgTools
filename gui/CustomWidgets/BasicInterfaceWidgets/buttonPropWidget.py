@@ -341,7 +341,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         vl = self.vectorLayer()
         pkIdxList = vl.primaryKeyAttributes() if vl else []
         for row in range(table.rowCount()):
-            attr = table.item(row, 0).text()
+            attr = table.cellWidget(row, self.ATTR_COL).text().replace("&",)
             valueWidget = table.cellWidget(row, self.VAL_COL)
             if not attrMap or attr not in attrMap:
                 attrMap[attr] = {
@@ -371,7 +371,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         attrMap = dict()
         table = self.attributeTableWidget
         for row in range(table.rowCount()):
-            attr = table.item(row, self.ATTR_COL).text()
+            attr = table.cellWidget(row, self.ATTR_COL).text().replace("&",)
             attrMap[attr] = dict()
             valueWidget = table.cellWidget(row, self.VAL_COL)
             attrMap[attr]["ignored"] = table.cellWidget(row, self.IGNORED_COL)\
@@ -443,6 +443,50 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         pb.setText("")
         return pb
 
+    def attributeNameWidget(self, fieldName):
+        """
+        Retrieves a widget to be used into field table to expose field's name.
+        :param fieldName: (str) fieldName to be exhibited.
+        :return: (QPushButton) a button ready to be setup to GUI.
+        """
+        pb = QPushButton()
+        pb.setText(fieldName)
+        pb.setFlat(True)
+        pb.setEnabled(False)
+        # note that styling should be handled in here for identifying mandatory
+        # fields, for instance 
+        pb.setStyleSheet("color: black;")
+        pb.setShortcut("") # to disable Qt's automatic mnemonic shortcut
+        return pb
+
+    def valueWidget(self, field, data):
+        """
+        Retrieves correct widget for a given field based on its type.
+        :param field: (QgsField) field to be represented.
+        :param data: (float/int/str) initial data to be set to widget.
+        :return: (QDoubleSpinBox/QSpinBox/QLineEdit) the adequate widget for
+                 field.
+        """
+        if utils.fieldIsFloat(field):
+            vWidget = QDoubleSpinBox()
+            vWidget.setMaximum(99999999)
+            vWidget.setMinimum(-99999999)
+            if data is not None:
+                vWidget.setValue(data)
+        elif utils.fieldIsInt(field):
+            vWidget = QSpinBox()
+            vWidget.setMaximum(99999999)
+            vWidget.setMinimum(-99999999)
+            if data is not None:
+                vWidget.setValue(data)
+        else:
+            vWidget = QLineEdit()
+            vWidget.setPlaceholderText(
+                self.tr("Type the value for {0}").format(field.name()))
+            if data is not None:
+                vWidget.setText(data)
+        return vWidget
+
     def updateFieldTable(self, layer=None):
         """
         Updates current displayed fields based on current layer selection.
@@ -454,39 +498,34 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         pkIdxList = layer.primaryKeyAttributes() if layer else []
         attrMap = self.button.attributeMap()
         b = self.readButton()
-        fieldMap = b.fieldMap()
+        valueMaps = b.valueMaps()
+        # since we want to map values to their alias for filling up data, map
+        # is reversed
+        for vMap in valueMaps.values():
+            vMap = {v: k for k, v in vMap.items()}
         self.attributeTableWidget.setRowCount(len(fields))
         def setDisabled(w, status):
             w.setEnabled(not status)
         for row, field in enumerate(fields):
             fName = field.name()
-            item = QTableWidgetItem()
-            item.setFlags(Qt.ItemIsEditable) # not editable
-            item.setText(fName)
-            self.attributeTableWidget.setItem(row, self.ATTR_COL, item)
-            if fName in fieldMap:
+            self.attributeTableWidget.setCellWidget(
+                row, self.ATTR_COL, self.attributeNameWidget(fName))
+            if attrMap and fName in attrMap\
+               and attrMap[fName]["value"] is not None:
+                value = attrMap[fName]["value"]
+                if fName in valueMaps:
+                    # if field has a map value, the displayed text will be used
+                    # instead of its actual value (the 'alias')
+                    value = valueMaps[value]
+            if fName in valueMaps:
                 vWidget = QComboBox()
-                vWidget.addItems(set(fieldMap[fName].keys()))
-                if attrMap and fName in attrMap and attrMap[fName]["value"]:
-                    vWidget.setCurrentText(attrMap[fName]["value"])
-            elif utils.fieldIsFloat(field):
-                vWidget = QDoubleSpinBox()
-                vWidget.setMaximum(99999999)
-                vWidget.setMinimum(-99999999)
-                if attrMap and fName in attrMap:
-                    vWidget.setValue(attrMap[fName]["value"] or 0.0)
-            elif utils.fieldIsInt(field):
-                vWidget = QSpinBox()
-                vWidget.setMaximum(99999999)
-                vWidget.setMinimum(-99999999)
-                if attrMap and fName in attrMap:
-                    vWidget.setValue(attrMap[fName]["value"] or 0)
+                vWidget.addItems(set(valueMaps[fName].keys()))
+                if value is not None:
+                    vWidget.setCurrentText(value)
             else:
-                vWidget = QLineEdit()
-                vWidget.setPlaceholderText(
-                    self.tr("Type the value for {0}").format(fName))
-                if attrMap and fName in attrMap:
-                    vWidget.setText(attrMap[fName]["value"] or "")
+                value = attrMap[fName]["value"] if attrMap \
+                            and fName in attrMap else None
+                vWidget = self.valueWidget(field, value)
             self.attributeTableWidget.setCellWidget(row, self.VAL_COL, vWidget)
             self.attributeTableWidget.setCellWidget(
                 row, self.EDIT_COL, self.centeredCheckBox())
