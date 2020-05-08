@@ -25,6 +25,18 @@
         <number>0</number>
        </property>
        <item>
+        <widget class="QLabel" name="label">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Setup settings</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QLineEdit" name="setupNameLineEdit">
          <property name="placeholderText">
           <string>Type in a name for current buttons setup...</string>
@@ -144,6 +156,19 @@
        <property name="spacing">
         <number>0</number>
        </property>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="font">
+          <font>
+           <family>Noto Sans</family>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Selected button settings</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <property name="spacing">
