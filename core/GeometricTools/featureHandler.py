@@ -136,9 +136,11 @@ class FeatureHandler(QObject):
             newFeat = QgsVectorLayerUtils.createFeature(lyr, geom)
             for idx, field in enumerate(lyr.fields()):
                 fieldName = field.name()
-                if idx not in lyr.primaryKeyAttributes() \
-                    and fieldName in newFeat and fieldName in feat:
-                    newFeat[field.name()] = feat[field.name()]
+                try:
+                    if idx not in lyr.primaryKeyAttributes():
+                        newFeat[fieldName] = feat[fieldName]
+                except KeyError:
+                    pass
             newFeatSet.add(newFeat)
         return newFeatSet
 
