@@ -349,7 +349,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                                 b = l.itemAt(i).widget()
                                 if b is None:
                                     continue
-                                bl.append(s.button(b.text().rsplit(" [", 1)[0]))
+                                bl.append(s.button(b.text().rsplit(" [", 1)[0]\
+                                           .replace("&", "")))
                             break
                     break
         return bl
