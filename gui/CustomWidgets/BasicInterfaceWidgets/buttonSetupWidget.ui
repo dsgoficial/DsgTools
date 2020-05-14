@@ -110,12 +110,16 @@
         </widget>
        </item>
        <item>
-        <widget class="QTextEdit" name="textEdit"/>
+        <widget class="QTextEdit" name="textEdit">
+         <property name="placeholderText">
+          <string>Insert a short description for current button setup...</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="dsCheckBox">
          <property name="toolTip">
-          <string>If this option is set, buttons will have its shortcuts dynamically assigned to values from 1-9, in order of exhibition</string>
+          <string>If this option is set, buttons will have their shortcuts dynamically assigned to values from 1-9, in order of exhibition on every tab</string>
          </property>
          <property name="text">
           <string>Use dynamic shortcuts</string>
@@ -132,6 +136,9 @@
          </property>
          <item row="0" column="0" rowspan="2">
           <widget class="QTableWidget" name="tableWidget">
+           <property name="toolTip">
+            <string>Buttons are displayed on Class. Tool following this order</string>
+           </property>
            <property name="columnCount">
             <number>1</number>
            </property>
@@ -140,7 +147,7 @@
            </attribute>
            <column>
             <property name="text">
-             <string>Buttons</string>
+             <string>Buttons' order</string>
             </property>
            </column>
           </widget>
@@ -255,6 +262,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="savePushButton">
+           <property name="toolTip">
+            <string>Saves current button's input data to selected button</string>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -266,6 +276,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="undoPushButton">
+           <property name="toolTip">
+            <string>Restores last saved state for the selected button</string>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -277,6 +290,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="addPushButton">
+           <property name="toolTip">
+            <string>Adds a new button to the setup</string>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -288,6 +304,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="removePushButton">
+           <property name="toolTip">
+            <string>Removes selected button from the setup</string>
+           </property>
            <property name="text">
             <string/>
            </property>

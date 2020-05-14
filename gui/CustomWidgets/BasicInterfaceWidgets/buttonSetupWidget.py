@@ -56,8 +56,6 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         super(ButtonSetupWidget, self).__init__(parent)
         self.setupUi(self)
         self.messageBar = QgsMessageBar(self)
-        self.textEdit.setPlaceholderText(
-            self.tr("Insert a short description for current button setup..."))
         self.setup = CustomButtonSetup()
         if buttonSetup:
             self.setSetup(buttonSetup)

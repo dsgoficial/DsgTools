@@ -174,6 +174,9 @@
       </item>
       <item>
        <widget class="QLineEdit" name="bFilterLineEdit">
+        <property name="toolTip">
+         <string>Words are space separated and case insensitive</string>
+        </property>
         <property name="placeholderText">
          <string>Type in to filter buttons...</string>
         </property>
@@ -222,7 +225,7 @@
       <item>
        <widget class="QLabel" name="label_7">
         <property name="text">
-         <string>Big</string>
+         <string>Large</string>
         </property>
        </widget>
       </item>
@@ -232,7 +235,6 @@
    <zorder>mGroupBox_2</zorder>
    <zorder></zorder>
    <zorder></zorder>
-   <zorder>splitter</zorder>
   </widget>
  </widget>
  <customwidgets>

@@ -87,6 +87,9 @@
      <property name="enabled">
       <bool>false</bool>
      </property>
+     <property name="placeholderText">
+      <string>Tooltip text to be exposed when button is hovered...</string>
+     </property>
     </widget>
    </item>
    <item row="5" column="2">
@@ -101,7 +104,7 @@
       <string/>
      </property>
      <property name="placeholderText">
-      <string>Type in keywords for button quick search...</string>
+      <string>Space separated keywords for button quick search...</string>
      </property>
     </widget>
    </item>
@@ -129,6 +132,9 @@
     <widget class="QLineEdit" name="categoryLineEdit">
      <property name="enabled">
       <bool>false</bool>
+     </property>
+     <property name="placeholderText">
+      <string>Group to which button will be assigned...</string>
      </property>
     </widget>
    </item>
