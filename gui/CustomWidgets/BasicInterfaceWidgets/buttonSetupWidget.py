@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-import os
+import os, json
 
 from qgis.core import Qgis, QgsMessageLog
 from qgis.gui import QgsMessageBar
@@ -67,7 +67,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
                   "buttonPropWidget"):
             getattr(self, w).setEnabled(bEnabled)
 
-    def raiseWarning(self, msg, duration=5):
+    def raiseWarning(self, msg, lvl=None, duration=None):
         """
         Raises a warning message to the user on a message bar and logs it to
         QGIS logger.
@@ -76,7 +76,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         self.messageBar.pushMessage(
             self.tr('Invalid workflow'), msg,
-            level=Qgis.Warning, duration=duration
+            level=lvl or Qgis.Warning, duration=duration or 5
         )
         # msg = self.tr("Buttons setup definion invalid: {m}").format(m=msg)
         QgsMessageLog.logMessage(msg, 'DSGTools Plugin', Qgis.Warning)
@@ -235,6 +235,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         All names for registered buttons on current profile.
         :return: (list-of-str) list of button names.
         """
+        return self.setup.buttonNames()
         buttons = list()
         for row in range(self.tableWidget.rowCount()):
             b = self.buttonFromRow(row)
@@ -832,3 +833,98 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         :return: (int) confirmation code.
         """
         self.done(0)
+
+    def state(self):
+        """
+        Exports current setup's state as read from the GUI.
+        :return: (dict) a map to tool's current state.
+        """
+        state = self.readSetup().state()
+        # buttons' keywords are stored as sets, which are not seriallizable
+        for idx, props in enumerate(state["buttons"]):
+            kws = props["keywords"]
+            state["buttons"][idx]["keywords"] = tuple(kws)
+        return {
+            "state": state,
+            "order": self.buttonsOrder()
+        }
+
+    def setState(self, state):
+        """
+        Restores the GUI to a given state.
+        :param state: (dict) a map to tool's state.
+        """
+        self.setup.setState(state)
+
+    @pyqtSlot(bool, name="on_importPushButton_clicked")
+    def importSetup(self):
+        """
+        Imports a setup from a file.
+        """
+        fd = QFileDialog()
+        filename = fd.getOpenFileName(
+            caption=self.tr("Import a DSGTools Button Setup (set of buttons)"),
+            filter=self.tr("DSGTools Buttons Setup (*.setup)")
+        )
+        filename = filename[0] if isinstance(filename, tuple) else filename
+        if not filename:
+            return
+        with open(filename, "r", encoding="utf-8") as fp:
+            state = json.load(fp)
+            order = [b[0] for b in \
+                        sorted(state["order"].items(), key=lambda i: i[1])]
+            state = state["state"]
+        # buttons' keywords are stored as tuple in order to be seriallizable
+        for idx, props in enumerate(state["buttons"]):
+            kws = props["keywords"]
+            state["buttons"][idx]["keywords"] = set(kws)
+            # tuples and list are misinterpreted when exported
+            col = props["color"]
+            state["buttons"][idx]["color"] = tuple(col)
+        self.setState(state)
+        self.buttonComboBox.blockSignals(True)
+        self.buttonComboBox.clear()
+        self.buttonComboBox.addItem(self.tr("No button selected"))
+        self.buttonComboBox.addItems(order)
+        for btn in order:
+            self.addButtonToTable(self.setup.button(btn))
+        self.buttonComboBox.blockSignals(False)
+        if order:
+            self.setCurrentButton(self.setup.button(order[0]))
+        else:
+            self.buttonComboBox.setCurrentIndex(0)
+            self.setCurrentButton()
+        self.setSetupName(self.setup.name())
+        self.setDescription(self.setup.description())
+        self.setDynamicShortcut(self.setup.dynamicShortcut())
+        msg = self.tr('Setup "{0}" imported from "{1}"')\
+                  .format(self.setup.name(), filename)
+        self.raiseWarning(msg, lvl=Qgis.Success)
+
+    @pyqtSlot(bool, name="on_exportPushButton_clicked")
+    def exportSetup(self):
+        """
+        Exports current setup's saved state to a file.
+        :return: (bool) whether setup was exported.
+        """
+        if not self.isValid():
+            msg = self.tr("Invalid input data: {r}").format(r=self.validate())
+            self.raiseWarning(msg)
+            return False
+        s = self.readSetup()
+        fd = QFileDialog()
+        filename = fd.getSaveFileName(
+            caption=self.tr('Export setup "{0}"'.format(s.name())),
+            filter=self.tr("DSGTools Buttons Setup (*.setup)")
+        )
+        filename = filename[0] if isinstance(filename, tuple) else filename
+        if not filename:
+            return False
+        with open(filename, "w", encoding="utf-8") as fp:
+            fp.write(json.dumps(self.state(), sort_keys=True, indent=4))
+        res = os.path.exists(filename)
+        if res:
+            msg = self.tr('Setup "{0}" exported to "{1}"')\
+                      .format(s.name(), filename)
+            self.raiseWarning(msg, lvl=Qgis.Success)
+        return res

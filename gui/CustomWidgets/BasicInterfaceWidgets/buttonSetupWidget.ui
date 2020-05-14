@@ -20,9 +20,9 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="importPushButton">
        <property name="toolTip">
-        <string>Import a set of buttons from a file</string>
+        <string>Import a set of buttons (setup) from a file</string>
        </property>
        <property name="text">
         <string>Import</string>
@@ -30,7 +30,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="exportPushButton">
        <property name="toolTip">
         <string>Exports current setup to a file</string>
        </property>

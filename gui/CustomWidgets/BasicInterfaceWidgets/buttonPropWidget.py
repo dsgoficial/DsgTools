@@ -344,8 +344,9 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         valueMaps = dict()
         # displayed values are always "aliased" when possible, so map needs to
         # be reversed (e.g. set to actual value to display name)
-        for fName, vMap in LayerHandler().valueMaps(vl).items():
-            valueMaps[fName] = {v: k for k, v in vMap.items()}
+        if vl is not None:
+            for fName, vMap in LayerHandler().valueMaps(vl).items():
+                valueMaps[fName] = {v: k for k, v in vMap.items()}
         def setMappedValue(cb, field, value):
             if value is None:
                 return
