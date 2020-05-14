@@ -899,7 +899,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         self.setDynamicShortcut(self.setup.dynamicShortcut())
         msg = self.tr('Setup "{0}" imported from "{1}"')\
                   .format(self.setup.name(), filename)
-        self.raiseWarning(msg, lvl=Qgis.Success)
+        self.raiseWarning(self.tr("Imported workflow"), msg, lvl=Qgis.Success)
 
     @pyqtSlot(bool, name="on_exportPushButton_clicked")
     def exportSetup(self):
@@ -926,5 +926,6 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         if res:
             msg = self.tr('Setup "{0}" exported to "{1}"')\
                       .format(s.name(), filename)
-            self.raiseWarning(msg, lvl=Qgis.Success)
+            self.raiseWarning(
+                self.tr("Exported workflow"), msg, lvl=Qgis.Success)
         return res
