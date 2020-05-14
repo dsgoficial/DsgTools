@@ -67,15 +67,17 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
                   "buttonPropWidget"):
             getattr(self, w).setEnabled(bEnabled)
 
-    def raiseWarning(self, msg, lvl=None, duration=None):
+    def raiseWarning(self, msg, title=None, lvl=None, duration=None):
         """
         Raises a warning message to the user on a message bar and logs it to
         QGIS logger.
         :param msg: (str) message to be displayed.
+        :param title: (str) pre-message on the warning bar.
+        :param lvl: (int) warning level enumerator as from Qgis module.
         :param duration: (int) warning message display time.
         """
         self.messageBar.pushMessage(
-            self.tr('Invalid workflow'), msg,
+            title or self.tr('Invalid workflow'), msg,
             level=lvl or Qgis.Warning, duration=duration or 5
         )
         # msg = self.tr("Buttons setup definion invalid: {m}").format(m=msg)
@@ -899,7 +901,8 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         self.setDynamicShortcut(self.setup.dynamicShortcut())
         msg = self.tr('Setup "{0}" imported from "{1}"')\
                   .format(self.setup.name(), filename)
-        self.raiseWarning(self.tr("Imported workflow"), msg, lvl=Qgis.Success)
+        self.raiseWarning(
+            msg, title=self.tr("Imported workflow"), lvl=Qgis.Success)
 
     @pyqtSlot(bool, name="on_exportPushButton_clicked")
     def exportSetup(self):
@@ -911,6 +914,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
             msg = self.tr("Invalid input data: {r}").format(r=self.validate())
             self.raiseWarning(msg)
             return False
+        # add check of modified button in here
         s = self.readSetup()
         fd = QFileDialog()
         filename = fd.getSaveFileName(
@@ -927,5 +931,5 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
             msg = self.tr('Setup "{0}" exported to "{1}"')\
                       .format(s.name(), filename)
             self.raiseWarning(
-                self.tr("Exported workflow"), msg, lvl=Qgis.Success)
+                msg, title=self.tr("Exported workflow"), lvl=Qgis.Success)
         return res
