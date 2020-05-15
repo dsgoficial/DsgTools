@@ -97,6 +97,16 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
             )
         )
 
+    def clear(self):
+        """
+        Clears all data filled into GUI.
+        """
+        for button in self.registeredButtonNames():
+            self.removeButtonFromTable(self.getButtonByName(button))
+            self.setup.removeButton(button)
+            self.buttonComboBox.removeItem(self.buttonComboBox.findText(button))
+        # self.setCurrentButton(0)
+
     def setSetupName(self, name):
         """
         Defines setup's name on GUI.
@@ -238,11 +248,6 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         :return: (list-of-str) list of button names.
         """
         return self.setup.buttonNames()
-        buttons = list()
-        for row in range(self.tableWidget.rowCount()):
-            b = self.buttonFromRow(row)
-            buttons.append(b.name())
-        return buttons
 
     def setDigitizingTool(self, tool):
         """
@@ -883,6 +888,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
             # tuples and list are misinterpreted when exported
             col = props["color"]
             state["buttons"][idx]["color"] = tuple(col)
+        self.clear()
         self.setState(state)
         self.buttonComboBox.blockSignals(True)
         self.buttonComboBox.clear()

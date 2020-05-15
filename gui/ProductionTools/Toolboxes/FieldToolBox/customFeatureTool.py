@@ -384,16 +384,23 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         for s in self.buttonSetups():
             if s.isEnabled():
                 s.setEnabled(False)
-            for b in s.buttons():
-                try:
+                for b in s.buttons():
                     l = b.vectorLayer()
                     if l is None:
-                        # if layer is not found, just ignore current button
                         continue
-                    l.featureAdded.disconnect(self._handleAddedFeature)
-                except TypeError:
-                    # when signal is not connecte, TypeError is raised
-                    pass
+                    try:
+                        l.featureAdded.disconnect(self._handleAddedFeature)
+                    except TypeError:
+                        pass
+        for l in QgsProject.instance().mapLayers().values():
+            self.setSuppressFormOption(l)
+        b = self.featureExtractionButton()
+        if b is not None:
+            self.setMapToolFromButton(b)
+            if b.checkLayer():
+                self.setSuppressFormOption(b.vectorLayer(), False)
+        else:
+            self.setMapTool("pan")
         isSetup = self.setupComboBox.currentIndex() != 0
         self.editSetupPushButton.setEnabled(isSetup)
         self.removePushButton.setEnabled(isSetup)
