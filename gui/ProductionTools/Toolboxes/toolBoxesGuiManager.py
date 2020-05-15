@@ -48,7 +48,7 @@ class ToolBoxesGuiManager(QObject):
         self.iconBasePath = ':/plugins/DsgTools/icons/'
     
     def initGui(self):
-        self.qaToolBox = QualityAssuranceDockWidget(self.iface)
+        self.qaToolBox = None
         self.addTool(self.showQaToolBox, 'validationtools.png', self.tr("Geospatial Data Quality Assurance Tool"), setDefaultAction=True)
         self.fieldToolbox = None
         self.addTool(self.showFieldToolbox, 'fieldToolbox.png', self.tr('Feature Classification Tool'))
@@ -66,8 +66,8 @@ class ToolBoxesGuiManager(QObject):
             callback=callback,
             add_to_menu=False,
             add_to_toolbar=False,
-            parentMenu = self.parentMenu,
-            parentButton = self.stackButton
+            parentMenu=self.parentMenu,
+            parentButton=self.stackButton
         )
         if setDefaultAction:
             self.stackButton.setDefaultAction(action)
