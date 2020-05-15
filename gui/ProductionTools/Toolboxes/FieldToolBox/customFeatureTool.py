@@ -50,6 +50,8 @@ from DsgTools.gui.CustomWidgets.AdvancedInterfaceWidgets.customFeatureForm impor
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'customFeatureTool.ui'))
 
+QGIS_ACTIONS = Utils().allQgisActions()
+
 class CustomFeatureTool(QDockWidget, FORM_CLASS):
     # tool mode codes
     Extract, Reclassify = range(2)
@@ -68,7 +70,6 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self._order = dict()
         self._shortcuts = dict()
         self._enabled = False
-        self._qgisActions = Utils().allQgisActions()
         if setups:
             self.setButtonSetups(setups)
         self.fillSetupComboBox()
@@ -112,8 +113,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 if b.checkLayer():
                     self.setSuppressFormOption(b.vectorLayer(), False)
         else:
-            iface.mapCanvas().unsetMapTool(iface.mapCanvas().mapTool())
-            self._qgisActions[self.tr("Pan Map")].trigger()
+            self.setMapTool("pan")
             for l in QgsProject.instance().mapLayers().values():
                 self.setSuppressFormOption(l)
         self._enabled = enabled
@@ -524,8 +524,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         for s in self.buttonSetups():
             s.setButtonsCheckable(bool(newMode ^ 1))
-        iface.mapCanvas().unsetMapTool(iface.mapCanvas().mapTool())
-        self._qgisActions[self.tr("Pan Map")].trigger()
+        self.setMapTool("pan")
 
     def featureExtractionButton(self):
         """
@@ -694,8 +693,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             button.action().trigger()
         else:
             # button is being disabled
-            iface.mapCanvas().unsetMapTool(iface.mapCanvas().mapTool())
-            self._qgisActions[self.tr("Pan Map")].trigger()
+            self.setMapTool("pan")
 
     def _shortcutActivated(self):
         """
@@ -776,6 +774,37 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         iface.mapCanvas().refresh()
         self.setMapToolFromButton(button)
 
+    def setMapTool(self, tool):
+        """
+        Sets current map tool based on its name.
+        :param tool: (str) non-i18n tool name to be set as active.
+        """
+        # this is necessary to access the "singleton" DsgTools object
+        # did not come up with a better solution yet
+        from DsgTools.core.Utils import Tools
+        iface.mapCanvas().unsetMapTool(iface.mapCanvas().mapTool())
+        if tool == "default":
+            # default feature extraction tool from QGIS
+            iface.actionAddFeature().trigger()
+        elif tool == "circle2points":
+            grand, minor, _ = Qgis.QGIS_VERSION.split(".", 2)
+            if grand == "3" and int(minor) <= 4:
+                # QGIS 3.4.x and less does not have "actionCircle2Points"
+                msg = self.tr("Circle tool supported on QGIS 3.6+!")
+                MessageRaiser().raiseIfaceMessage(
+                    self.tr("DSGTools feature reclassification"),
+                    msg, Qgis.Info, 5
+                )
+                iface.actionAddFeature().trigger()
+            else:
+                # QGIS circle extraction from 2 points
+                iface.actionCircle2Points().trigger()
+        elif tool == "pan":
+            # QGIS Pan Map tool (default navigation map tool)
+            iface.actionPan().trigger()
+        elif tool in Tools.mapToolsNames():
+            Tools.mapTool(tool).toolAction.trigger()
+
     def setMapToolFromButton(self, button):
         """
         Whenever a button is called it sets current map tool for feature
@@ -784,27 +813,9 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         if self.toolMode() == self.Extract:
             tool = button.digitizingTool() if button else "default"
-            if tool == "default":
-                ts = [
-                    self.tr("Add Line Feature"),
-                    self.tr("Add Polygon Feature"),
-                    self.tr("Add Point Feature")
-                ]
-                for t in ts:
-                    if t in self._qgisActions:
-                        toolName = t
-                        break
-            elif tool == "circle":
-                toolName = self.tr("Add Circle from 2 Points")
-            else:
-                toolName = button.supportedTools()[tool]
         else:
-            toolName = self.tr("DSGTools: Generic Selector")
-        # incomplete i18n will raise errors in here... i don't know any other
-        # way of how to set map tools from their names as of now, though...
-        # not sure about this...
-        iface.mapCanvas().unsetMapTool(iface.mapCanvas().mapTool())
-        self._qgisActions[toolName].trigger()
+            tool = button.digitizingTool() if button else "genericTool"
+        self.setMapTool(tool)
 
     def readZoomLevel(self):
         """

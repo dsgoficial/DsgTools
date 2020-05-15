@@ -23,6 +23,8 @@
 
 """
 Module designed to centralize the access to DSGTools tools.
+This module CANNOT be imported at the beginning of modules and must be called
+from within methods that are NOT the __init__! 
 """
 
 from DsgTools import dsgTools
@@ -143,3 +145,10 @@ def toolByName(name):
         return toolBar(name)
     else:
         return toolBox(name)
+
+def actions():
+    """
+    Retrieves all registered action on GuiManager.
+    :return: (list-of-QAction) all registered actions related to DSGTools tools
+    """
+    return dsgTools.guiManager.actions

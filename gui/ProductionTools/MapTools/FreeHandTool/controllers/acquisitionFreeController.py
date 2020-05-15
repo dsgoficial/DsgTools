@@ -65,6 +65,10 @@ class AcquisitionFreeController(object):
         #Parâmetro de retorno: self.actionAcquisitionFree (classe ActionAcquisitionFree)
         return self.actionAcquisitionFree 
 
+    @property
+    def toolAction(self):
+        return self.actionAcquisitionFree
+
     def setAcquisitionFree(self, acquisitionFree):
         #Método para definir a classe AcquisitionFree
         #Parâmetro de entrada: acquisitionFree (classe AcquisitionFree)

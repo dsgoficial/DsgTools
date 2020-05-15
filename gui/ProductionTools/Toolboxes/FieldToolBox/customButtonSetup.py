@@ -788,9 +788,9 @@ class CustomFeatureButton(QObject):
         """
         return {
             "default": self.tr("QGIS default feature extraction tool"),
-            "freeHand": self.tr("DSGTools: Free Hand Acquisition"),
-            "circle": self.tr("QGIS Circle extraction tool"),
-            "rightAngle": self.tr("DSGTools: Right Degree Angle Digitizing")
+            "freeHandAcquisiton": self.tr("DSGTools: Free Hand Acquisition"),
+            "circle2points": self.tr("QGIS Circle extraction tool"),
+            "acquisition": self.tr("DSGTools: Right Degree Angle Digitizing")
         }
 
     def setDigitizingTool(self, tool):
