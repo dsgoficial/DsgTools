@@ -101,11 +101,11 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         Clears all data filled into GUI.
         """
+        self.buttonComboBox.clear()
         for button in self.registeredButtonNames():
             self.removeButtonFromTable(self.getButtonByName(button))
             self.setup.removeButton(button)
             self.buttonComboBox.removeItem(self.buttonComboBox.findText(button))
-        # self.setCurrentButton(0)
 
     def setSetupName(self, name):
         """
@@ -528,7 +528,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         :param button:  (CustomFeatureButton) button to be set to the GUI.
         """
         if isinstance(button, int):
-            if button == 0:
+            if button <= 0:
                 button = CustomFeatureButton()
                 button.setName("")
             else:
@@ -891,7 +891,6 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         self.clear()
         self.setState(state)
         self.buttonComboBox.blockSignals(True)
-        self.buttonComboBox.clear()
         self.buttonComboBox.addItem(self.tr("No button selected"))
         self.buttonComboBox.addItems(order)
         for btn in order:

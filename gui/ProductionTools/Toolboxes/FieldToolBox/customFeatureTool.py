@@ -22,6 +22,7 @@
 """
 
 import os
+import json
 
 from qgis.PyQt import uic
 from qgis.utils import iface
@@ -31,6 +32,7 @@ from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtGui import QColor, QPalette
 from qgis.PyQt.QtWidgets import (QAction,
                                  QWidget,
+                                 QFileDialog,
                                  QPushButton,
                                  QDockWidget,
                                  QVBoxLayout,
@@ -56,6 +58,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
     # tool mode codes
     Extract, Reclassify = range(2)
     ActiveLayer, AllLayers = range(100, 102)
+    __VERSION = '0.1'
 
     def __init__(self, parent=None, setups=None):
         """
@@ -85,6 +88,20 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.tabWidget.setTabPosition(self.tabWidget.West)
         self.bFilterLineEdit.returnPressed.connect(self.createResearchTab)
         self.visibilityChanged.connect(self.setToolEnabled)
+
+    def clear(self):
+        """
+        Clears all input data and sets tool to its initial state.
+        """
+        self.clearTabs()
+        while self._setups:
+            _, s = self._setups.popitem()
+            s.setEnabled(False)
+            del s
+        self.fillSetupComboBox()
+        self.setToolMode(self.Extract)
+        self.setLayerMode(self.ActiveLayer)
+        self.setKeywordSet({})
 
     @pyqtSlot(bool)
     def setToolEnabled(self, enabled):
@@ -281,6 +298,13 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         return self.currentButtonSetup().checkKeywordSet(kws)
 
+    def setKeywordSet(self, kws):
+        """
+        Fills a keyword set to the GUI.
+        :param kws: (set-of-str) keywords to be set.
+        """
+        return self.bFilterLineEdit.setText(" ".join(kws))
+
     @pyqtSlot()
     def createResearchTab(self):
         """
@@ -401,7 +425,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 self.setSuppressFormOption(b.vectorLayer(), False)
         else:
             self.setMapTool("pan")
-        isSetup = self.setupComboBox.currentIndex() != 0
+        isSetup = self.setupComboBox.currentIndex() > 0
         self.editSetupPushButton.setEnabled(isSetup)
         self.removePushButton.setEnabled(isSetup)
         self.bFilterLineEdit.setEnabled(isSetup)
@@ -505,6 +529,13 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         return self.ActiveLayer if self.layerSelectionSwitch.currentState() == 0\
             else self.AllLayers
+
+    def setLayerMode(self, mode):
+        """
+        Sets layer mode to GUI.
+        :param mode: (int) layer mode code.
+        """
+        self.layerSelectionSwitch.setState(1 if mode == self.AllLayers else 0)
 
     def toolMode(self):
         """
@@ -693,13 +724,13 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if button is None:
             # method is supposed to be used exclusively as a slot
             return
-        for layer in QgsProject.instance().mapLayers().values():
-            self.setSuppressFormOption(layer)
         if checked:
             # i think sender should change to action here, but it doesnt
             button.action().trigger()
         else:
             # button is being disabled
+            for layer in QgsProject.instance().mapLayers().values():
+                self.setSuppressFormOption(layer)
             self.setMapTool("pan")
 
     def _shortcutActivated(self):
@@ -788,7 +819,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         # this is necessary to access the "singleton" DsgTools object
         # did not come up with a better solution yet
-        from DsgTools.core.Utils import Tools
+        from DsgTools.core.Utils import tools
         iface.mapCanvas().unsetMapTool(iface.mapCanvas().mapTool())
         if tool == "default":
             # default feature extraction tool from QGIS
@@ -797,7 +828,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             grand, minor, _ = Qgis.QGIS_VERSION.split(".", 2)
             if grand == "3" and int(minor) <= 4:
                 # QGIS 3.4.x and less does not have "actionCircle2Points"
-                msg = self.tr("Circle tool supported on QGIS 3.6+!")
+                msg = self.tr("circle tool supported on QGIS 3.6+!")
                 MessageRaiser().raiseIfaceMessage(
                     self.tr("DSGTools feature reclassification"),
                     msg, Qgis.Info, 5
@@ -809,8 +840,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         elif tool == "pan":
             # QGIS Pan Map tool (default navigation map tool)
             iface.actionPan().trigger()
-        elif tool in Tools.mapToolsNames():
-            Tools.mapTool(tool).toolAction.trigger()
+        elif tool in tools.mapToolsNames():
+            tools.mapTool(tool).toolAction.trigger()
 
     def setMapToolFromButton(self, button):
         """
@@ -858,7 +889,22 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         Retrieves a map with all parameters that indicates current tool setup.
         :return: (dict) a map to all parameters for current tool state.
         """
-        return dict()
+        """
+        Exports current setup's saved state to a file.
+        :return: (bool) whether setup was exported.
+        """
+        b = self.featureExtractionButton()
+        return {
+            "setups": {s.name(): s.state() for s in  self.buttonSetups()},
+            "currentSetup": self.currentButtonSetupName(),
+            "activeButton": "" if b is None else b.name(),
+            "toolMode": self.toolMode(),
+            "layerMode": self.layerMode(),
+            "activeTab": self.tabWidget.currentIndex(),
+            "size": self.readZoomLevel(),
+            "keywords": self.readButtonKeywords(),
+            "version": self.__VERSION
+        }
 
     def setToolState(self, state):
         """
@@ -871,7 +917,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         Saves current tool state to the QGIS project.
         """
-        pass
+        state = self.toolState()
 
     def restoreStateFromProject(self):
         """
