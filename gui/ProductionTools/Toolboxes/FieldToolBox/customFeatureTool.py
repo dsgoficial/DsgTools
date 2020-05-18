@@ -26,7 +26,10 @@ import json
 
 from qgis.PyQt import uic
 from qgis.utils import iface
-from qgis.core import Qgis, QgsProject, QgsVectorLayer
+from qgis.core import (Qgis,
+                       QgsProject,
+                       QgsVectorLayer,
+                       QgsExpressionContextUtils)
 from qgis.gui import QgsAttributeForm, QgsAttributeDialog
 from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtGui import QColor, QPalette
@@ -88,6 +91,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.tabWidget.setTabPosition(self.tabWidget.West)
         self.bFilterLineEdit.returnPressed.connect(self.createResearchTab)
         self.visibilityChanged.connect(self.setToolEnabled)
+        QgsProject.instance().projectSaved.connect(self.saveStateToProject)
+        iface.projectRead.connect(self.restoreStateFromProject)
 
     def clear(self):
         """
@@ -895,14 +900,16 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         b = self.featureExtractionButton()
         return {
-            "setups": {s.name(): s.state() for s in  self.buttonSetups()},
+            "setups": [
+                self._exportSetup(s.state()) for s in  self.buttonSetups()
+            ],
             "currentSetup": self.currentButtonSetupName(),
             "activeButton": "" if b is None else b.name(),
             "toolMode": self.toolMode(),
             "layerMode": self.layerMode(),
             "activeTab": self.tabWidget.currentIndex(),
             "size": self.readZoomLevel(),
-            "keywords": self.readButtonKeywords(),
+            "keywords": list(self.readButtonKeywords()),
             "version": self.__VERSION
         }
 
@@ -911,22 +918,62 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         Sets tool to a given state.
         :param state: (dict) a map to all parameters for current tool state.
         """
-        pass
+        for s in state["setups"]:
+            self._importSetup(s)
+
+    def _exportSetup(self, setup):
+        """
+        Some of setup's properties are not serializable. This method allows all
+        settings to be exported by adjusting such methods. Map is modified
+        in-place.
+        :param setup: (dict) map read from an imported JSON.
+        """
+        for idx, props in enumerate(setup["buttons"]):
+            kws = props["keywords"]
+            setup["buttons"][idx]["keywords"] = tuple(kws)
+        return setup
 
     def saveStateToProject(self):
         """
         Saves current tool state to the QGIS project.
         """
-        state = self.toolState()
+        QgsExpressionContextUtils.setProjectVariable(
+            QgsProject.instance(),
+            "dsgtools_cfttoolbox_state",
+            json.dumps(self.toolState())
+        )
+
+    def _importSetup(self, setup):
+        """
+        When exported to JSON, some of setup's settings have their type
+        modified, such as: sets/tuples are stored as lists. This method fixes
+        such modifications in order to avoid TypeError to be thrown. Map is
+        updated in-place.
+        :param setup: (dict) map read from an imported JSON.
+        """
+        for idx, props in enumerate(setup["buttons"]):
+            kws = props["keywords"]
+            setup["buttons"][idx]["keywords"] = set(kws)
+            # tuples and list are misinterpreted when exported
+            col = props["color"]
+            setup["buttons"][idx]["color"] = tuple(col)
+        print(setup)
 
     def restoreStateFromProject(self):
         """
         Restores current tool state from project variable state.
         """
-        pass
+        state = json.loads(
+            QgsExpressionContextUtils.projectScope(QgsProject.instance())\
+                    .variable("dsgtools_cfttoolbox_state") or "{}"
+        )
+        if state:
+            self.setToolState(state)
 
     def unload(self):
         """
         Clears all components.
         """
-        pass
+        self.visibilityChanged.disconnect(self.setToolEnabled)
+        QgsProject.instance().projectSaved.disconnect(self.saveStateToProject)
+        iface.projectRead.disconnect(self.restoreStateFromProject)
