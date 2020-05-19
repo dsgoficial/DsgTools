@@ -30,7 +30,7 @@ from qgis.utils import iface
 from qgis.core import Qgis, QgsMessageLog
 from qgis.gui import QgsGui
 from qgis.PyQt.QtCore import QObject, QSettings, QVariant
-from qgis.PyQt.QtWidgets import QAction, QToolBar, QTreeWidgetItem
+from qgis.PyQt.QtWidgets import QAction, QToolBar, QMessageBox, QTreeWidgetItem
 
 class Utils(object):
 
@@ -402,3 +402,20 @@ class MessageRaiser(QObject):
         """
         level = Qgis.Info if level is None else level
         QgsMessageLog.logMessage(msg, 'DSGTools Plugin', level)
+
+    def confirmAction(self, parent, msg, title=None, showNo=True):
+        """
+        Raises a message box that asks for user confirmation.
+        :param parent: (QWidget) any QWidget that will hold "possession" of mb.
+        :param msg: (str) message requesting for confirmation to be shown.
+        :param showNo: (bool) whether No button should be exposed.
+        :return: (bool) whether action was confirmed.
+        """
+        title = title or self.tr("Confirm action")
+        if showNo:
+            return QMessageBox.question(
+                parent, title, msg, QMessageBox.Yes | QMessageBox.No
+            ) == QMessageBox.Yes
+        else:
+            return QMessageBox.question(
+                parent, title, msg, QMessageBox.Ok) == QMessageBox.Ok

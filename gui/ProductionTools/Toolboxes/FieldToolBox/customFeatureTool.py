@@ -553,6 +553,10 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             # if a boolean is passed, call was from GUI button
             setup = self.currentButtonSetupName()
         if setup in self.buttonSetupNames():
+            title = self.tr("DSGTools Custom Feature Tool: confirm removal")
+            msg = self.tr("Would like to delete setup {0}?").format(setup)
+            if not MessageRaiser().confirmAction(self, msg, title):
+                return
             self._order.pop(setup, None)
             setup = self._setups.pop(setup, None)
             if setup is None:
