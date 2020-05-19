@@ -104,9 +104,12 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         self.clearTabs()
         while self._setups:
-            _, s = self._setups.popitem()
+            sName, s = self._setups.popitem()
+            self._order.pop(sName, None)
+            if s is None:
+                continue
             s.setEnabled(False)
-            del s
+            s.__del__() # setups were lingering, needed direct del call
         self.fillSetupComboBox()
         self.setToolMode(self.Extract)
         self.setLayerMode(self.ActiveLayer)
@@ -984,8 +987,6 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if not state or not state["setups"]:
             self.setToolEnabled(False)
             return
-        self.setToolEnabled(state["enabled"])
-        getattr(self, "show" if self._enabled else "hide")()
         self._order = state["buttonsOrder"]
         for s in state["setups"]:
             self._importSetup(s)

@@ -122,6 +122,7 @@ class CustomFeatureButton(QObject):
             w.blockSignals(True)
             w.setParent(None)
             del w
+        self.clearWidgets()
         del self._widgets
         del self._action
         self.setParent(None)
@@ -957,7 +958,7 @@ class CustomButtonSetup(QObject):
         """
         while self._buttons:
             _, b = self._buttons.popitem()
-            del b
+            b.__del__() # del was not being called and buttons were lingering
 
     def setName(self, name):
         """
