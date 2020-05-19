@@ -91,8 +91,12 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.tabWidget.setTabPosition(self.tabWidget.West)
         self.bFilterLineEdit.returnPressed.connect(self.createResearchTab)
         self.visibilityChanged.connect(self.setToolEnabled)
-        QgsProject.instance().projectSaved.connect(self.saveStateToProject)
-        iface.projectRead.connect(self.restoreStateFromProject)
+        project = QgsProject.instance()
+        project.writeProject.connect(self.saveStateToProject)
+        project.readProject.connect(self.restoreStateFromProject)
+        # at first, dock is not initiated (optimize loading time), so calls
+        # will not be perceived by toold => manual restoration on init
+        self.restoreStateFromProject()
 
     def clear(self):
         """
@@ -107,6 +111,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.setToolMode(self.Extract)
         self.setLayerMode(self.ActiveLayer)
         self.setKeywordSet({})
+        self.setZoomLevel(0)
 
     @pyqtSlot(bool)
     def setToolEnabled(self, enabled):
@@ -400,6 +405,15 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if s.dynamicShortcut():
             self.allocateDynamicShortcuts()
 
+    def setCurrentTab(self, tab):
+        """
+        Sets a tab as active.
+        :param tab: (int) tab index to be set as active.
+        """
+        if tab < self.tabWidget.count():
+            self.tabWidget.setCurrentIndex(tab)
+            self.setTabButtonsActive(tab)
+
     @pyqtSlot(int, name="on_setupComboBox_currentIndexChanged")
     def setCurrentButtonSetup(self, setup=None):
         """
@@ -485,6 +499,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             )
             setup.setState(newSetup.state())
             self.setCurrentButtonSetup(setup)
+            self.resizeButtons()
         elif setup is not None and setup.dynamicShortcut():
             self.allocateDynamicShortcuts()
 
@@ -524,6 +539,24 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                     s.setName("{0} ({1})".format(baseName, i))
             self._order[s.name()] = dlg.buttonsOrder()
             self.addButtonSetup(s)
+
+    @pyqtSlot(bool, name="on_removePushButton_clicked")
+    def removeButtonSetup(self, setup):
+        """
+        Removes a setup from current set of setups.
+        :param: (str) name for the setup to be removed.
+        """
+        if isinstance(setup, bool):
+            # if a boolean is passed, call was from GUI button
+            setup = self.currentButtonSetupName()
+        if setup in self.buttonSetupNames():
+            self._order.pop(setup, None)
+            setup = self._setups.pop(setup, None)
+            if setup is None:
+                return
+            setup.setEnabled(False)
+            del setup
+            self.setupComboBox.removeItem(self.setupComboBox.currentIndex())
 
     def layerMode(self):
         """
@@ -857,10 +890,10 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if self.toolMode() == self.Extract:
             tool = button.digitizingTool() if button else "default"
         else:
-            tool = button.digitizingTool() if button else "genericTool"
+            tool = "genericTool"
         self.setMapTool(tool)
 
-    def readZoomLevel(self):
+    def zoomLevel(self):
         """
         Reads zoom level defined by user from GUI.
         :return: (int) zoom level chosen by user. It is allowed 3 levels:
@@ -885,9 +918,21 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         Sets the font size for each displayed button.
         """
         defaultSize = QPushButton().font().pointSize()
-        size = int(defaultSize * (1 + 0.5 * self.readZoomLevel()))
+        size = int(defaultSize * (1 + 0.5 * self.zoomLevel()))
         for s in self.buttonSetups():
             s.setButtonsSize(size)
+
+    def _exportSetup(self, setup):
+        """
+        Some of setup's properties are not serializable. This method allows all
+        settings to be exported by adjusting such methods. Map is modified
+        in-place.
+        :param setup: (dict) map read from an imported JSON.
+        """
+        for idx, props in enumerate(setup["buttons"]):
+            kws = props["keywords"]
+            setup["buttons"][idx]["keywords"] = tuple(kws)
+        return setup
 
     def toolState(self):
         """
@@ -903,45 +948,17 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             "setups": [
                 self._exportSetup(s.state()) for s in  self.buttonSetups()
             ],
+            "buttonsOrder": self._order,
             "currentSetup": self.currentButtonSetupName(),
             "activeButton": "" if b is None else b.name(),
             "toolMode": self.toolMode(),
             "layerMode": self.layerMode(),
             "activeTab": self.tabWidget.currentIndex(),
-            "size": self.readZoomLevel(),
+            "zoom": self.zoomLevel(),
             "keywords": list(self.readButtonKeywords()),
+            "enabled": self._enabled,
             "version": self.__VERSION
         }
-
-    def setToolState(self, state):
-        """
-        Sets tool to a given state.
-        :param state: (dict) a map to all parameters for current tool state.
-        """
-        for s in state["setups"]:
-            self._importSetup(s)
-
-    def _exportSetup(self, setup):
-        """
-        Some of setup's properties are not serializable. This method allows all
-        settings to be exported by adjusting such methods. Map is modified
-        in-place.
-        :param setup: (dict) map read from an imported JSON.
-        """
-        for idx, props in enumerate(setup["buttons"]):
-            kws = props["keywords"]
-            setup["buttons"][idx]["keywords"] = tuple(kws)
-        return setup
-
-    def saveStateToProject(self):
-        """
-        Saves current tool state to the QGIS project.
-        """
-        QgsExpressionContextUtils.setProjectVariable(
-            QgsProject.instance(),
-            "dsgtools_cfttoolbox_state",
-            json.dumps(self.toolState())
-        )
 
     def _importSetup(self, setup):
         """
@@ -957,7 +974,54 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             # tuples and list are misinterpreted when exported
             col = props["color"]
             setup["buttons"][idx]["color"] = tuple(col)
-        print(setup)
+
+    def setToolState(self, state):
+        """
+        Sets tool to a given state.
+        :param state: (dict) a map to all parameters for current tool state.
+        """
+        self.clear()
+        if not state or not state["setups"]:
+            self.setToolEnabled(False)
+            return
+        self.setToolEnabled(state["enabled"])
+        getattr(self, "show" if self._enabled else "hide")()
+        self._order = state["buttonsOrder"]
+        for s in state["setups"]:
+            self._importSetup(s)
+            setup = CustomButtonSetup()
+            setup.setState(s)
+            self.addButtonSetup(setup)
+        if state["currentSetup"]:
+            self.setCurrentButtonSetup(state["currentSetup"])
+        setup = self.currentButtonSetup()
+        # signals are not triggered when values are manually changed
+        self.setToolMode(state["toolMode"])
+        v = self.toolBehaviourSwitch.state() # updt layer mode exhibition
+        self.toolBehaviourSwitch.stateChanged.emit(v)
+        self.setLayerMode(state["layerMode"])
+        self.setZoomLevel(state["zoom"])
+        self.resizeButtons()
+        if state["keywords"]:
+            # does not matter if it is a list (it'll just iterate over it)
+            self.setKeywordSet(state["keywords"])
+            self.bFilterLineEdit.returnPressed.emit()
+        self.setCurrentTab(state["activeTab"])
+        b = setup.button(state["activeButton"]) if setup is not None else None
+        if b is not None and state["toolMode"] == self.Extract:
+            setup.toggleButton(b, True)
+            b.toggled.emit(True)
+
+    @pyqtSlot()
+    def saveStateToProject(self):
+        """
+        Saves current tool state to the QGIS project.
+        """
+        QgsExpressionContextUtils.setProjectVariable(
+            QgsProject.instance(),
+            "dsgtools_cfttoolbox_state",
+            json.dumps(self.toolState())
+        )
 
     def restoreStateFromProject(self):
         """
@@ -967,13 +1031,46 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             QgsExpressionContextUtils.projectScope(QgsProject.instance())\
                     .variable("dsgtools_cfttoolbox_state") or "{}"
         )
-        if state:
-            self.setToolState(state)
+        self.setToolState(state)
+
+    @pyqtSlot()
+    def on_importPushButton_clicked(self):
+        """
+        Loads setups from a file.
+        """
+        fd = QFileDialog()
+        filename = fd.getOpenFileName(
+            caption=self.tr("Import a DSGTools button profile set"),
+            filter=self.tr("DSGTools button profile set (*.setups)")
+        )
+        filename = filename[0] if isinstance(filename, tuple) else filename
+        if not filename:
+            return
+        with open(filename, "r", encoding="utf-8") as fp:
+            self.setToolState(json.load(fp))
+
+    @pyqtSlot()
+    def on_exportPushButton_clicked(self):
+        """
+        Saves current set of setups state to a file.
+        """
+        fd = QFileDialog()
+        filename = fd.getSaveFileName(
+            caption=self.tr("Export a DSGTools button profile set"),
+            filter=self.tr("DSGTools button profile set (*.setups)")
+        )
+        filename = filename[0] if isinstance(filename, tuple) else filename
+        if not filename:
+            return False
+        with open(filename, "w", encoding="utf-8") as fp:
+            fp.write(json.dumps(self.toolState(), indent=4))
+        return os.path.exists(filename)
 
     def unload(self):
         """
         Clears all components.
         """
         self.visibilityChanged.disconnect(self.setToolEnabled)
-        QgsProject.instance().projectSaved.disconnect(self.saveStateToProject)
-        iface.projectRead.disconnect(self.restoreStateFromProject)
+        project = QgsProject.instance()
+        project.writeProject.disconnect(self.saveStateToProject)
+        project.readProject.disconnect(self.restoreStateFromProject)

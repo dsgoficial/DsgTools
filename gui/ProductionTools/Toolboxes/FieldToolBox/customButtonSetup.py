@@ -950,6 +950,15 @@ class CustomButtonSetup(QObject):
         if buttonsProps:
             self.setButtons(buttonsProps)
 
+    def __del__(self):
+        """
+        Method reimplementation for correctly cleaning any created buttons or
+        shortcuts on QGIS main window.
+        """
+        while self._buttons:
+            _, b = self._buttons.popitem()
+            del b
+
     def setName(self, name):
         """
         Defines setup's display name.

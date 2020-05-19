@@ -44,6 +44,9 @@ class AttributeHandler(QObject):
         fields = newFeature.fields()
         for attribute in attributeDict:
             idx = fields.lookupField(attribute)
+            if idx < 0:
+                # field was passed a value, but doesn't exist on feature
+                continue
             reclass = attributeDict[attribute]
             if isinstance(reclass, dict):
                 value = reclass['value']
