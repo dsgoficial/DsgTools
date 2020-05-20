@@ -134,8 +134,13 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanAl
     TopologicalCleanAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanLinesAlgorithm import \
     TopologicalCleanLinesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglasSimplificationAlgorithm import \
-    TopologicalDouglasSimplificationAlgorithm
+#from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglasSimplificationAlgorithm import \
+    #TopologicalDouglasSimplificationAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglasSimplificationLinesAlgorithm import \
+    TopologicalDouglasSimplificationLinesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglasSimplificationAreasAlgorithm import \
+    TopologicalDouglasSimplificationAreasAlgorithm
+
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalLineConnectivityAdjustmentAlgorithm import \
     TopologicalLineConnectivityAdjustment
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import \
@@ -206,7 +211,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
     
     def getAlgList(self):
         algList = [
-                    DeaggregatorAlgorithm(), 
+                    DeaggregatorAlgorithm(),
                     IdentifySmallPolygonsAlgorithm(), 
                     IdentifySmallLinesAlgorithm(), 
                     IdentifyDuplicatedGeometriesAlgorithm(),
@@ -219,7 +224,9 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     DonutHoleExtractorAlgorithm(),
                     UpdateOriginalLayerAlgorithm(),
                     TopologicalCleanAlgorithm(),
-                    TopologicalDouglasSimplificationAlgorithm(),
+                    # TopologicalDouglasSimplificationAlgorithm(),
+                    TopologicalDouglasSimplificationLinesAlgorithm(),
+                    TopologicalDouglasSimplificationAreasAlgorithm(),
                     RemoveDuplicatedGeometriesAlgorithm(),
                     RemoveSmallLinesAlgorithm(),
                     RemoveSmallPolygonsAlgorithm(),
