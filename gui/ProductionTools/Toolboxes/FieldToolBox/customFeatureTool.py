@@ -76,6 +76,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self._order = dict()
         self._shortcuts = dict()
         self._enabled = False
+        self._addedFeats = set()
         if setups:
             self.setButtonSetups(setups)
         self.fillSetupComboBox()
@@ -132,7 +133,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                     if l is None:
                         continue
                     try:
-                        l.featureAdded.disconnect(self._handleAddedFeature)
+                        l.featureAdded.disconnect(self._queueFeature)
+                        l.editCommandEnded.disconnect(self._handleAddedFeature)
                     except TypeError:
                         pass
         if enabled:
@@ -435,7 +437,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                     if l is None:
                         continue
                     try:
-                        l.featureAdded.disconnect(self._handleAddedFeature)
+                        l.featureAdded.disconnect(self._queueFeature)
+                        l.editCommandEnded.disconnect(self._handleAddedFeature)
                     except TypeError:
                         pass
         for l in QgsProject.instance().mapLayers().values():
@@ -464,7 +467,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 b.toggled.connect(self._buttonToggled)
                 l = b.vectorLayer()
                 if l is not None:
-                    l.featureAdded.connect(self._handleAddedFeature)
+                    l.featureAdded.connect(self._queueFeature)
+                    l.editCommandEnded.connect(self._handleAddedFeature)
         self.createTabs()
         # this needs to be after tab creation
         self.setTabButtonsActive(0)
@@ -618,34 +622,44 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         s = self.currentButtonSetup()
         return s.checkedButton() if s is not None else None
 
-    def _handleAddedFeature(self, featId):
+    def _queueFeature(self, featId):
+        """
+        Addind feature got circular on a different approach. This method
+        separates the feature queueing from attribute resetting in two
+        different moments, avoiding these circular calls.
+        :param featId: (int) ID for the recently added feature.
+        """
+        layer = self.sender()
+        if isinstance(layer, QgsVectorLayer):
+            layer.beginEditCommand("Adding feature {0}".format(featId))
+            self._addedFeats.add(featId)
+            layer.endEditCommand()
+
+    def _handleAddedFeature(self):
         """
         Method designed to work exclusively from a feature added signal call.
         It has an important role on the feature extraction flow as "gate
         keeper" for attribute setting: identifies tool conditions and mode in
         order to define whether current feature extraction should be handled by
         this tool or if it's a "external" feature extraction process.
-        :param featId: (int) ID for the recently added feature.
         """
         b = self.featureExtractionButton()
         inLayer = self.sender()
         if b is None or not isinstance(inLayer, QgsVectorLayer) \
-           or inLayer.name() != b.layer():
+           or inLayer.name() != b.layer() or not self._addedFeats:
             # if there are no active buttons, tool is idle
             # if method was not sent from a vector layer, nothing to do either
             # only managed calls are from active button's layer
+            # if no feature was just added, no good as well
             return
+        featId = self._addedFeats.pop()
         editBuffer = inLayer.editBuffer()
         if not editBuffer is None and editBuffer.isFeatureAdded(featId):
             feature = editBuffer.addedFeatures()[featId]
-            inLayer.editBuffer().deleteFeature(featId)
+            editBuffer.deleteFeature(featId)
         else:
-            # means feature is already added
-            return
-        # for o in iface.mainWindow().children():
-        #     if o.objectName() == "mActionUndo":
-        #         o.trigger()
-        #         break
+            feature = inLayer.getFeature(featId)
+            inLayer.deleteFeature(featId)
         feature = AttributeHandler(iface).setFeatureAttributes(
                     feature, b.attributeMap())
         # inLayer.updateFeature(feature)
@@ -653,9 +667,15 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             form = QgsAttributeDialog(inLayer, feature, False)
             form.setMode(int(QgsAttributeForm.SingleEditMode))
             if form.exec_():
-
+                # update editable features
+                inLayer.featureAdded.disconnect(self._queueFeature)
                 inLayer.addFeature(feature)
-            iface.mapCanvas().refresh()
+                inLayer.featureAdded.connect(self._queueFeature)
+        else:
+            inLayer.featureAdded.disconnect(self._queueFeature)
+            inLayer.addFeature(feature)
+            inLayer.featureAdded.connect(self._queueFeature)
+        iface.mapCanvas().refresh()
 
     def setSuppressFormOption(self, layer, openForm=None):
         """
@@ -888,11 +908,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             grand, minor, _ = Qgis.QGIS_VERSION.split(".", 2)
             if grand == "3" and int(minor) <= 10:
                 # QGIS 3.10.x and less does not have "actionCircle2Points"
-                for obj in iface.mainWindow().children():
-                    if  obj.objectName() == "mActionCircle2Points":
-                        obj.trigger()
-                        return
-                iface.actionAddFeature().trigger()
+                iface.mainWindow().findChild(QAction, "mActionCircle2Points")\
+                                  .trigger()
             else:
                 # QGIS circle extraction from 2 points
                 iface.actionCircle2Points().trigger()

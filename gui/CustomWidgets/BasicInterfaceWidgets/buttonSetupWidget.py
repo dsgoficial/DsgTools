@@ -900,7 +900,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
             self.setCurrentButton(self.setup.button(order[0]))
         else:
             self.buttonComboBox.setCurrentIndex(0)
-            self.setCurrentButton()
+            self.setCurrentButton(None)
         self.setSetupName(self.setup.name())
         self.setDescription(self.setup.description())
         self.setDynamicShortcut(self.setup.dynamicShortcut())
