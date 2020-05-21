@@ -129,14 +129,11 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         for s in self.buttonSetups():
             if s is not None and s.isEnabled():
                 s.setEnabled(False)
-                for b in s.buttons():
-                    l = b.vectorLayer()
-                    if l is None:
-                        continue
-                    try:
-                        l.featureAdded.disconnect(self._handleAddedFeature)
-                    except TypeError:
-                        pass
+        for l in QgsProject.instance().mapLayers().values():
+            try:
+                l.featureAdded.disconnect(self._handleAddedFeature)
+            except TypeError:
+                pass
         if enabled:
             b = self.featureExtractionButton()
             self.setCurrentButtonSetup(self.currentButtonSetup())
@@ -259,6 +256,13 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         self.tabWidget.clear()
 
+    def currentTab(self):
+        """
+        Retrieves current displayed tab index.
+        :return: (int) current tab index.
+        """
+        return self.tabWidget.currentIndex()
+
     def newTab(self, tabTitle, buttonList=None):
         """
         Adds a new tab to tab widget.
@@ -349,21 +353,20 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         Dynamic shortcutting overrides defined shortcuts. This method restore
         original shortcuts to all buttons from current setup.
         """
-        for setup, shortcuts in self._shortcuts.items():
-            for b, s in shortcuts.items():
-                self.buttonSetup(setup).button(b).setShortcut(s)
-        # after that registered buttons may be cleared
-        self._shortcuts = dict()
+        while self._shortcuts:
+            setup, shortcuts = self._shortcuts.popitem()
+            for btn, sh in shortcuts.items():
+                self.buttonSetup(setup).button(btn).setShortcut(sh)
 
     def allocateDynamicShortcuts(self):
         """
         Allocates dynamic shortcuts (restricted to 1-9 keys) to current tab's
         buttons.
         """
-        # first registrate current button's shortcuts
-        self._shortcuts[self.currentButtonSetupName()] = dict()
-        d = self._shortcuts[self.currentButtonSetupName()]
-        for i, b in enumerate(self.getButtonsFromTab(self.tabWidget.currentIndex())):
+        currentSetup = self.currentButtonSetupName()
+        self._shortcuts[currentSetup] = dict()
+        d = self._shortcuts[currentSetup]
+        for i, b in enumerate(self.getButtonsFromTab(self.currentTab())):
             if i == 9:
                 break
             d[b.name()] = b.shortcut()
@@ -400,13 +403,13 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         Defines current tab buttons as active (all others are disabled).
         :param idx: (int) tab index set as active.
         """
+        self.restoreShortcuts()
         s = self.currentButtonSetup()
         if s is None:
             return
         s.setEnabled(False)
         for b in self.getButtonsFromTab(idx):
             b.setEnabled(True)
-        self.restoreShortcuts()
         if s.dynamicShortcut():
             self.allocateDynamicShortcuts()
 
@@ -477,10 +480,10 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         Opens button setup configuration GUI to edit current button setup.
         """
+        self.restoreShortcuts()
         setup = self.currentButtonSetup()
         setup.setEnabled(False)
         # before editing current, check restore any potential modified shortcut
-        self.restoreShortcuts()
         dlg = ButtonSetupWidget()
         dlg.setSetup(setup)
         ret = dlg.exec_()
@@ -507,8 +510,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             setup.setState(newSetup.state())
             self.setCurrentButtonSetup(setup)
             self.resizeButtons()
-        if setup is not None and setup.dynamicShortcut():
-            self.allocateDynamicShortcuts()
+        else:
+            self.setCurrentTab(self.currentTab())
 
     def addButtonSetup(self, setup):
         """
@@ -561,6 +564,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             msg = self.tr("Would like to delete setup {0}?").format(setup)
             if not MessageRaiser().confirmAction(self, msg, title):
                 return
+            self.restoreShortcuts()
             self._order.pop(setup, None)
             setup = self._setups.pop(setup, None)
             if setup is None:
@@ -984,7 +988,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             "activeButton": "" if b is None else b.name(),
             "toolMode": self.toolMode(),
             "layerMode": self.layerMode(),
-            "activeTab": self.tabWidget.currentIndex(),
+            "activeTab": self.currentTab(),
             "zoom": self.zoomLevel(),
             "keywords": list(self.readButtonKeywords()),
             "enabled": self._enabled,
@@ -1017,7 +1021,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         s = self.currentButtonSetup()
         if s is not None and s.dynamicShortcut():
-            self.allocateDynamicShortcuts
+            self.allocateDynamicShortcuts()
         self.clear()
         if not state or not state["setups"]:
             self.setToolEnabled(False)

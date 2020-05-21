@@ -78,6 +78,8 @@ class CustomFeatureButton(QObject):
         self.setAction()
         self.setProperties(props)
         self.setShortcut(self.shortcut())
+        # temp var to handle disabled status
+        self.__shortcut = self.shortcut()
 
     def __eq__(self, obj):
         """
@@ -489,8 +491,8 @@ class CustomFeatureButton(QObject):
         """
         if type(s) == str: 
             self._props["shortcut"] = s
+            self.__shortcut = s
             sKeySeq = QKeySequence.fromString(s)
-            self.action().setShortcut(sKeySeq)
             self._shortcut.setKey(sKeySeq)
             for w in self.widgets():
                 w.setText(self.displayName())
@@ -904,8 +906,12 @@ class CustomFeatureButton(QObject):
         """
         if type(enabled) == bool:
             if self.isEnabled() and not enabled:
+                s = self.shortcut()
+                self.setShortcut("")
+                self.__shortcut = s
                 iface.unregisterMainWindowAction(self.action())
             elif not self.isEnabled() and enabled:
+                self.setShortcut(self.__shortcut)
                 iface.registerMainWindowAction(self.action(), self.shortcut())
             if updateWidgets:
                 self.setWidgetsEnabled(enabled)
