@@ -143,8 +143,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                     self.setSuppressFormOption(b.vectorLayer(), False)
         else:
             self.setMapTool("pan")
-            for l in QgsProject.instance().mapLayers().values():
-                self.setSuppressFormOption(l)
+            self.resetSuppressFormOption()
         self._enabled = enabled
 
     def fillSetupComboBox(self):
@@ -155,12 +154,13 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self.setupComboBox.addItem(self.tr("Select a buttons profile..."))
         self.setupComboBox.addItems(self.buttonSetupNames("asc"))
 
-    def warnReclassified(self, recMap):
+    def warnReclassified(self, recMap, outLayer):
         """
         Raises warning message to the user that features have been reclassified
         (and logs it).
         :param recMap: (dict) map from layer name to feature count of
                        reclassified feature successfully saved to output layer.
+        :param outLayer: (str) layer to have features reclassified to.
         """
         msgItems = list()
         for l, featCount in recMap.items():
@@ -175,7 +175,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         else:
             title = self.tr("Reclassified feature")
         mr = MessageRaiser()
-        msg = ", ".join(msgItems)
+        msg = "{0} to layer {1}".format(", ".join(msgItems), outLayer)
         mr.raiseIfaceMessage(title, msg, Qgis.Success, 5)
         mr.logMessage("{0}: {1}.".format(title, msg), level=Qgis.Success)
 
@@ -441,8 +441,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 l.featureAdded.disconnect(self._handleAddedFeature)
             except TypeError:
                 pass
-        for l in QgsProject.instance().mapLayers().values():
-            self.setSuppressFormOption(l)
+        self.resetSuppressFormOption()
         b = self.featureExtractionButton()
         if b is not None:
             self.setMapToolFromButton(b)
@@ -616,6 +615,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         for s in self.buttonSetups():
             s.setButtonsCheckable(bool(newMode ^ 1))
         self.setMapTool("pan")
+        if self.toolMode() == self.Reclassify:
+            self.resetSuppressFormOption()
 
     def featureExtractionButton(self):
         """
@@ -690,6 +691,13 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         }[openForm]
         setup.setSuppress(option)
         layer.setEditFormConfig(setup)
+
+    def resetSuppressFormOption(self):
+        """
+        Sets suppress form option to QGIS default for all layers on canvas.
+        """
+        for layer in QgsProject.instance().mapLayers().values():
+            self.setSuppressFormOption(layer)
 
     def featuresToBeReclassified(self, b):
         """
@@ -799,8 +807,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             button.action().trigger()
         else:
             # button is being disabled
-            for layer in QgsProject.instance().mapLayers().values():
-                self.setSuppressFormOption(layer)
+            self.resetSuppressFormOption()
             self.setMapTool("pan")
 
     def _shortcutActivated(self):
@@ -856,11 +863,13 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         vl = button.vectorLayer()
         if not vl.isEditable():
             vl.startEditing()
+        # reset any of previous modifications
+        self.resetSuppressFormOption()
+        # forms for button's layer are manually called and handled
+        self.setSuppressFormOption(vl, False)
         if self.toolMode() == self.Extract:
             if not button.isChecked():
                 s.toggleButton(button, True)
-            # forms are manually called and handled
-            self.setSuppressFormOption(vl, False)
         else:
             reclassify = self.featuresToBeReclassified(button)
             if not reclassify:
@@ -883,7 +892,10 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 reclassify = form.readSelectedLayers()
                 attrMap = form.attributeMap
             reclassified = self.reclassify(reclassify, vl, attrMap)
-            self.warnReclassified(reclassified)
+            self.warnReclassified(reclassified, vl.name())
+            # reclassification applies its effect immediately and should not
+            # interfere on QGIS usual behaviour
+            self.setSuppressFormOption(vl)
         iface.setActiveLayer(vl)
         iface.mapCanvas().refresh()
         self.setMapToolFromButton(button)
