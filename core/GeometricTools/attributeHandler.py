@@ -66,9 +66,9 @@ class AttributeHandler(QObject):
             else:
                 #this way are working with selected features and inserting a new one in the layer
                 newFeature.setAttribute(idx, value)
-        if not editBuffer:
-            # we should return when under the normal behavior
-            return newFeature
+        # if not editBuffer:
+        #     # we should return when under the normal behavior
+        return newFeature
 
     def getTuppleAttribute(self, feature, unifiedLyr, bList=None):
         bList = [] if bList is None else bList

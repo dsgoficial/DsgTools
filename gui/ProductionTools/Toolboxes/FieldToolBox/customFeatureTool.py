@@ -635,17 +635,27 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             # if method was not sent from a vector layer, nothing to do either
             # only managed calls are from active button's layer
             return
-        feature = inLayer.getFeature(featId)
-        AttributeHandler(iface).setFeatureAttributes(feature, b.attributeMap())
-        inLayer.updateFeature(feature)
+        editBuffer = inLayer.editBuffer()
+        if not editBuffer is None and editBuffer.isFeatureAdded(featId):
+            feature = editBuffer.addedFeatures()[featId]
+            inLayer.editBuffer().deleteFeature(featId)
+        else:
+            # means feature is already added
+            return
+        # for o in iface.mainWindow().children():
+        #     if o.objectName() == "mActionUndo":
+        #         o.trigger()
+        #         break
+        feature = AttributeHandler(iface).setFeatureAttributes(
+                    feature, b.attributeMap())
+        # inLayer.updateFeature(feature)
         if b.openForm():
             form = QgsAttributeDialog(inLayer, feature, False)
             form.setMode(int(QgsAttributeForm.SingleEditMode))
             if form.exec_():
-                inLayer.updateFeature(feature)
-            else:
-                inLayer.deleteFeature(featId)
-                iface.mapCanvas().refresh()
+
+                inLayer.addFeature(feature)
+            iface.mapCanvas().refresh()
 
     def setSuppressFormOption(self, layer, openForm=None):
         """
@@ -682,7 +692,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 layers = iface.mapCanvas().layers()
             else:
                 l = iface.activeLayer()
-                layers = [] if l is None else [l]
+                layers = [l] if isinstance(l, QgsVectorLayer) else []
             for l in layers:
                 # im not sure whether it's a recent modification, but map layers
                 # are hashable
@@ -721,7 +731,6 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         :param newAttributeMap: (dict) a map to new features' attribute values.
         :return: (list-of-QgsFeature) all reclassified features.
         """
-        fh = FeatureHandler()
         lh = LayerHandler()
         defs = lh.getDestinationParameters(newLayer)
         transformer = lh.getCoordinateTransformer(prevLayer, newLayer)
@@ -818,9 +827,15 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 return
         else:
             # somehow, event called from action leads to sender being the
-            # button in here through button toggling handling method 
+            # button in here through button toggling handling method
             button = a
         if not button.checkLayer():
+            msg = self.tr("layer '{0}' not loaded. Can't use button '{1}'.")\
+                      .format(button.layer(), button.name())
+            MessageRaiser().raiseIfaceMessage(
+                self.tr("DSGTools feature reclassification"),
+                msg, Qgis.Warning, 5
+            )
             return
         vl = button.vectorLayer()
         if not vl.isEditable():
@@ -871,13 +886,12 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             iface.actionAddFeature().trigger()
         elif tool == "circle2points":
             grand, minor, _ = Qgis.QGIS_VERSION.split(".", 2)
-            if grand == "3" and int(minor) <= 4:
-                # QGIS 3.4.x and less does not have "actionCircle2Points"
-                msg = self.tr("circle tool supported on QGIS 3.6+!")
-                MessageRaiser().raiseIfaceMessage(
-                    self.tr("DSGTools feature reclassification"),
-                    msg, Qgis.Info, 5
-                )
+            if grand == "3" and int(minor) <= 10:
+                # QGIS 3.10.x and less does not have "actionCircle2Points"
+                for obj in iface.mainWindow().children():
+                    if  obj.objectName() == "mActionCircle2Points":
+                        obj.trigger()
+                        return
                 iface.actionAddFeature().trigger()
             else:
                 # QGIS circle extraction from 2 points
@@ -951,7 +965,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         :return: (bool) whether setup was exported.
         """
         b = self.featureExtractionButton()
-        return {
+        self.restoreShortcuts() # to not "forget" buttons originals shortcuts
+        state = {
             "setups": [
                 self._exportSetup(s.state()) for s in  self.buttonSetups()
             ],
@@ -966,6 +981,10 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             "enabled": self._enabled,
             "version": self.__VERSION
         }
+        s = self.currentButtonSetup()
+        if s is not None and s.dynamicShortcut():
+            self.allocateDynamicShortcuts()
+        return state
 
     def _importSetup(self, setup):
         """
@@ -987,6 +1006,9 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         Sets tool to a given state.
         :param state: (dict) a map to all parameters for current tool state.
         """
+        s = self.currentButtonSetup()
+        if s is not None and s.dynamicShortcut():
+            self.allocateDynamicShortcuts
         self.clear()
         if not state or not state["setups"]:
             self.setToolEnabled(False)
@@ -1016,17 +1038,22 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if b is not None and state["toolMode"] == self.Extract:
             setup.toggleButton(b, True)
             b.toggled.emit(True)
+        if setup.dynamicShortcut():
+            self.allocateDynamicShortcuts()
 
     @pyqtSlot()
     def saveStateToProject(self):
         """
         Saves current tool state to the QGIS project.
         """
+        self.restoreShortcuts()
         QgsExpressionContextUtils.setProjectVariable(
             QgsProject.instance(),
             "dsgtools_cfttoolbox_state",
             json.dumps(self.toolState())
         )
+        if self.currentButtonSetupName():
+            self.allocateDynamicShortcuts()
 
     def restoreStateFromProject(self):
         """
@@ -1053,6 +1080,9 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             return
         with open(filename, "r", encoding="utf-8") as fp:
             self.setToolState(json.load(fp))
+        msg = self.tr("current state imported from '{0}'.").format(filename)
+        MessageRaiser().raiseIfaceMessage(
+            self.tr("DSGTools Custom Feature"), msg, Qgis.Success)
 
     @pyqtSlot()
     def on_exportPushButton_clicked(self):
@@ -1069,7 +1099,17 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             return False
         with open(filename, "w", encoding="utf-8") as fp:
             fp.write(json.dumps(self.toolState(), indent=4))
-        return os.path.exists(filename)
+        ret = os.path.exists(filename)
+        if ret:
+            msg = self.tr("current state exported to '{0}'.").format(filename)
+            lvl = Qgis.Success
+        else:
+            msg = self.tr("unable to export current state to '{0}'.")\
+                      .format(filename)
+            lvl = Qgis.Critical
+        MessageRaiser().raiseIfaceMessage(
+            self.tr("DSGTools Custom Feature"), msg, lvl)
+        return ret
 
     def unload(self):
         """
