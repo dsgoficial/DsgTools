@@ -49,6 +49,8 @@ from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.attributeHandler import AttributeHandler
+from DsgTools.gui.ProductionTools.MapTools.Acquisition.polygon import Polygon
+from DsgTools.gui.ProductionTools.MapTools.FreeHandTool.models.acquisitionFree import AcquisitionFree
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.buttonSetupWidget import ButtonSetupWidget
 from DsgTools.gui.ProductionTools.Toolboxes.FieldToolBox.customButtonSetup import CustomButtonSetup
 from DsgTools.gui.CustomWidgets.AdvancedInterfaceWidgets.customFeatureForm import CustomFeatureForm
@@ -78,6 +80,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self._shortcuts = dict()
         self._enabled = False
         self._addedFeats = set()
+        # disable tool when a non-digitizing map tool is set
+        iface.mapCanvas().mapToolSet.connect(self._mapToolSet)
         if setups:
             self.setButtonSetups(setups)
         self.fillSetupComboBox()
@@ -654,6 +658,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         geom = feature.geometry()
         feature = QgsFeature(inLayer.fields())
         feature.setGeometry(geom)
+        # probably just the reference on editing is removed: feature needs to
+        # be removed from both buffer and layer
         inLayer.editBuffer().deleteFeature(featId)
         inLayer.deleteFeature(featId)
         feature = AttributeHandler(iface).setFeatureAttributes(
@@ -668,6 +674,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 pass
         if added == 1:
             inLayer.featureAdded.disconnect(self._handleAddedFeature)
+            # allow added features to be "undoable"
             inLayer.beginEditCommand("Add feature from DSGTools button {0}".format(b.name()))
             inLayer.addFeature(feature)
             inLayer.endEditCommand()
@@ -817,18 +824,17 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         button is unchecked. This method is connected to shortcut activation
         event in order to make sure the requested button is properly set.
         """
-        if self.toolMode() == self.Extract:
-            sh = self.sender()
-            if sh is None:
-                # method should be exclusively a slot to some signal
+        sh = self.sender()
+        if self.toolMode() == self.Reclassify or sh is None:
+            # method should be exclusively a slot to some signal
+            return
+        sid = sh.id()
+        s = self.currentButtonSetup()
+        for b in s.buttons():
+            if b.shortcutId() == sid and not b.isChecked():
+                s.toggleButton(b, True)
+                b.action().trigger()
                 return
-            sid = sh.id()
-            s = self.currentButtonSetup()
-            for b in s.buttons():
-                if b.shortcutId() == sid and not b.isChecked():
-                    s.toggleButton(b, True)
-                    b.action().trigger()
-                    return
 
     def toolCallback(self):
         """
@@ -900,11 +906,40 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         iface.mapCanvas().refresh()
         self.setMapToolFromButton(button)
 
+    def _mapToolSet(self, new, old):
+        """
+        Method that handles map tool changes whenever Custom Feature Tool is on
+        feature extraction mode.
+        :param new: (QgsMapTool) newly set map tool.
+        :param old: (QgsMapTool) previously set map tool (the one that got
+                    changed).
+        """
+        s = self.currentButtonSetup()
+        b = self.featureExtractionButton()
+        canvas = self.sender()
+        isRec = self.toolMode() == self.Reclassify
+        if s is None or isRec or b is None or canvas is None:
+            return
+        def isToolAllowed(tool):
+            if isinstance(tool, Polygon) or isinstance(tool, AcquisitionFree):
+                return True
+            tool = canvas.mapTool()
+            a = tool.action() if hasattr(tool, "action") else None
+            allowedQgisTools = ["mActionAddFeature", "mActionCircle2Points"]
+            if a is not None and a.objectName() in allowedQgisTools:
+                return True
+            return False
+        if not isToolAllowed(new):
+            # widgets are not updated
+            b.setChecked(False)
+            self.resetSuppressFormOption()
+
     def setMapTool(self, tool):
         """
         Sets current map tool based on its name.
         :param tool: (str) non-i18n tool name to be set as active.
         """
+        iface.mapCanvas().mapToolSet.disconnect(self._mapToolSet)
         # this is necessary to access the "singleton" DsgTools object
         # did not come up with a better solution yet
         from DsgTools.core.Utils import tools
@@ -926,12 +961,15 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             iface.actionPan().trigger()
         elif tool in tools.mapToolsNames():
             tools.mapTool(tool).toolAction.trigger()
+        iface.mapCanvas().mapToolSet.connect(self._mapToolSet)
 
     def setMapToolFromButton(self, button):
         """
         Whenever a button is called it sets current map tool for feature
         extraction as defined in its properties, or sets the DSGTools: Generic
         Selector tool, if reclassification mode is set.
+        :param button: (CustomFeatureButton) button to have its map tool set to
+                       canvas.
         """
         if self.toolMode() == self.Extract:
             tool = button.digitizingTool() if button else "default"
@@ -953,7 +991,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         :param lvl: (int) zoom level chosen by user. It is allowed 3 levels:
                     normal (0 - 8px), large (1 - 12px) and largest (2 - 16px).
         """
-        if lvl == self.slider.value():
+        if lvl == self.zoomLevel():
             return
         self.slider.setValue(lvl)
         self.resizeButtons()
@@ -1144,3 +1182,4 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         project = QgsProject.instance()
         project.writeProject.disconnect(self.saveStateToProject)
         project.readProject.disconnect(self.restoreStateFromProject)
+        iface.mapCanvas().mapToolSet.disconnect(self._mapToolSet)

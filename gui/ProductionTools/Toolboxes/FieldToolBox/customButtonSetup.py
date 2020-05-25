@@ -868,10 +868,6 @@ class CustomFeatureButton(QObject):
                 w.setChecked(checked)
                 w.update()
                 w.blockSignals(False)
-            # if self.sender() is None and before != checked:
-            #     # jsut the once. If no sender is identified, method was
-            #     # manually called, hence it needs "manual" adviosry
-            #     self.toggled.emit(checked)
             self.handleActionCallback()
         else:
             raise TypeError(
