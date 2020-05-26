@@ -28,8 +28,7 @@ import sys
 from qgis.PyQt.QtCore import QObject, Qt
 
 from .AttributeTools.code_list import CodeList
-from .FieldToolBox.field_toolbox import FieldToolbox
-from .FieldToolBox.customFeatureTool import CustomFeatureTool
+from .CustomFeatureToolBox.customFeatureTool import CustomFeatureTool
 from .ContourTool.calc_contour import CalcContour
 from .ComplexTools.complexWindow import ComplexWindow
 from .QualityAssuranceToolBox.qualityAssuranceDockWidget import QualityAssuranceDockWidget
@@ -50,8 +49,8 @@ class ToolBoxesGuiManager(QObject):
     def initGui(self):
         self.qaToolBox = None
         self.addTool(self.showQaToolBox, 'validationtools.png', self.tr("Geospatial Data Quality Assurance Tool"), setDefaultAction=True)
-        self.fieldToolbox = None
-        self.addTool(self.showFieldToolbox, 'fieldToolbox.png', self.tr('Feature Classification Tool'))
+        self.cfToolbox = None
+        self.addTool(self.showCustomFeatureToolbox, 'customFeatureToolBox.png', self.tr('Custom Feature Tool'))
         self.calcContour = None
         self.addTool(self.showCalcContourToolbox, 'calccontour.png', self.tr('Assign Contour Values'))
         self.codeList = None
@@ -86,16 +85,15 @@ class ToolBoxesGuiManager(QObject):
             self.codeList = CodeList(self.iface)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.codeList)
 
-    def showFieldToolbox(self):
+    def showCustomFeatureToolbox(self):
         """
         Shows the reclassification tool box dock
         """
-        if self.fieldToolbox:
-            self.iface.removeDockWidget(self.fieldToolbox)
+        if self.cfToolbox:
+            self.iface.removeDockWidget(self.cfToolbox)
         else:
-            # self.fieldToolbox = FieldToolbox(self.iface)
-            self.fieldToolbox = CustomFeatureTool()
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.fieldToolbox) 
+            self.cfToolbox = CustomFeatureTool()
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.cfToolbox) 
 
     def showQaToolBox(self):
         """

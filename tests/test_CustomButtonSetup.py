@@ -24,8 +24,8 @@
 import sys
 from qgis.testing import unittest
 
-from DsgTools.gui.ProductionTools.Toolboxes.FieldToolBox.customButtonSetup import (CustomButtonSetup,
-                                                                                   CustomFeatureButton)
+from DsgTools.gui.ProductionTools.Toolboxes.CustomFeatureToolBox.customButtonSetup import (CustomButtonSetup,
+                                                                                           CustomFeatureButton)
 
 class ButtonTester(unittest.TestCase):
 

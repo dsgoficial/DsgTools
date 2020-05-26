@@ -98,7 +98,7 @@ def toolBoxesNames():
     """
     return [
         "qaToolBox",
-        "fieldToolbox",
+        "cfToolbox",
         "calcContour",
         "codeList",
         "complexWindow"
