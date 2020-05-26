@@ -61,7 +61,7 @@ class CustomFeatureButton(QObject):
             "openForm": False,
             "useColor": True,
             "color": (255, 255, 255, 255),
-            "tooltip": "",
+            "toolTip": "",
             "size": QPushButton().font().pointSize(),
             "category": "",
             "shortcut": "",
@@ -151,7 +151,7 @@ class CustomFeatureButton(QObject):
                 "useColor": lambda x: self.setUseColor(x),
                 "color": lambda x: self.setColor(x),
                 "size": lambda x: self.setSize(x),
-                "tooltip": lambda x: self.setToolTip(x),
+                "toolTip": lambda x: self.setToolTip(x),
                 "category": lambda x: self.setCategory(x),
                 "shortcut": lambda x: self.setShortcut(x),
                 "layer": lambda x: self.setLayer(x),
@@ -182,7 +182,7 @@ class CustomFeatureButton(QObject):
             "useColor": lambda x: self.setUseColor(x),
             "color": lambda x: self.setColor(x),
             "size": lambda x: self.setSize(x),
-            "tooltip": lambda x: self.setToolTip(x),
+            "toolTip": lambda x: self.setToolTip(x),
             "category": lambda x: self.setCategory(x),
             "shortcut": lambda x: self.setShortcut(x),
             "layer": lambda x: self.setLayer(x),
@@ -220,7 +220,7 @@ class CustomFeatureButton(QObject):
             "useColor": self.useColor(),
             "color": self.color(),
             "size": self.size(),
-            "tooltip": self.toolTip(),
+            "toolTip": self.toolTip(),
             "category": self.category(),
             "layer": self.layer(),
             "shortcut": self.shortcut(),
@@ -450,7 +450,7 @@ class CustomFeatureButton(QObject):
         :param tooltip: (str) button's tool tip text.
         """
         if type(tooltip) == str: 
-            self._props["tooltip"] = tooltip
+            self._props["toolTip"] = tooltip
             for w in self.widgets():
                 w.setToolTip(tooltip)
         else:
@@ -463,7 +463,7 @@ class CustomFeatureButton(QObject):
         Button's tool tip text.
         :return: (str) button's tool tip text.
         """
-        return str(self._props["tooltip"])
+        return str(self._props["toolTip"])
 
     def setCategory(self, cat):
         """
@@ -948,7 +948,7 @@ class CustomButtonSetup(QObject):
         super(CustomButtonSetup, self).__init__()
         self._buttons = dict()
         self._name = displayName or self.tr("Custom Button Setup")
-        self._description = description
+        self._description = description or ""
         self._dynamicShortcut = False
         if buttonsProps:
             self.setButtons(buttonsProps)
@@ -1262,7 +1262,7 @@ class CustomButtonSetup(QObject):
         """
         Handles all button widgets in order to allow only one of them button to
         be toggled at any time.
-        :param bw: (QPushButton) push button to be managed.
+        :param button: (CustomFeatureButton) button to toggled.
         """
         if not toggled:
             return
