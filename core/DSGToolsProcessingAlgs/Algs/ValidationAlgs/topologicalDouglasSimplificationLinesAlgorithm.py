@@ -48,7 +48,6 @@ class TopologicalDouglasSimplificationLinesAlgorithm(ValidationAlgorithm):
     """
     INPUTLAYERS = 'INPUTLAYERS'
     SELECTED = 'SELECTED'
-    METHOD = 'METHOD'
     TOLERANCE = 'TOLERANCE'
     FLAGS = 'FLAGS'
     OUTPUT = 'OUTPUT'
@@ -70,18 +69,7 @@ class TopologicalDouglasSimplificationLinesAlgorithm(ValidationAlgorithm):
                 self.tr('Process only selected features')
             )
         )
-        """
-        self.addParameter(
-            QgsProcessingParameterEnum(
-                self.METHOD,
-                self.tr('Simplification method'),
-                {'Distance (Douglas Peucker)': 0, 'Snap to grid': 1,
-                    'Area (Visvalingam)': 2},
-                allowMultiple=False,
-                defaultValue=0
-            )
-        )
-        """
+
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.TOLERANCE,
@@ -119,15 +107,13 @@ class TopologicalDouglasSimplificationLinesAlgorithm(ValidationAlgorithm):
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUTLAYERS))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        method = 0  # self.parameterAsEnum(parameters, self.METHOD, context)
+        method = 0  # a standard method, it cannot change
         tolerance = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         self.prepareFlagSink(
             parameters, inputLyrList[0], QgsWkbTypes.MultiLineString, context)
 
-
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Running clean on layer...'))
         multiStepFeedback.pushInfo(self.tr('Building unified layer...'))
         unifiedLines = layerHandler.createAndPopulateUnifiedVectorLayer(
             inputLyrList, geomType=QgsWkbTypes.MultiLineString,
@@ -136,52 +122,21 @@ class TopologicalDouglasSimplificationLinesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.pushInfo(
             self.tr('Running clean on unified layer...'))
 
-        simplifiedLines = algRunner.runDouglasLinesSimplification(
+        simplifiedLines = algRunner.runDouglasSimplification(
             unifiedLines,
             method,
             tolerance,
             context,
             feedback=multiStepFeedback,
-            #onlySelected=onlySelected
+            onlySelected=onlySelected
         )
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
             inputLyrList, simplifiedLines, feedback=multiStepFeedback)
-        #self.flagCoverageIssues(simplifiedCoverage, error, feedback)
 
         return {self.INPUTLAYERS : inputLyrList}
-    """
-    def flagCoverageIssues(self, cleanedCoverage, error, feedback):
-        overlapDict = dict()
-        for feat in cleanedCoverage.getFeatures():
-            if feedback.isCanceled():
-                break
-            geom = feat.geometry()
-            geomKey = geom.asWkb()
-            if geomKey not in overlapDict:
-                overlapDict[geomKey] = []
-            overlapDict[geomKey].append(feat)
-        for geomKey, featList in overlapDict.items():
-            if feedback.isCanceled():
-                break
-            if len(featList) > 1:
-                txtList = []
-                for i in featList:
-                    txtList += ['{0} (id={1})'.format(i['layer'], i['featid'])]
-                txt = ', '.join(txtList)
-                self.flagFeature(featList[0].geometry(), self.tr('Features from {0} overlap').format(txt))
-            elif len(featList) == 1:
-                attrList = featList[0].attributes()
-                if attrList == len(attrList)*[None]:
-                    self.flagFeature(featList[0].geometry(), self.tr('Gap in coverage.'))
 
-        if error:
-            for feat in error.getFeatures():
-                if feedback.isCanceled():
-                    break
-                self.flagFeature(feat.geometry(), self.tr('Clean error on coverage.'))
-    """
     def name(self):
         """
         Returns the algorithm name, used for identifying the algorithm. This
@@ -217,8 +172,14 @@ class TopologicalDouglasSimplificationLinesAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Quality Assurance Tools (Topological Processes)'
 
     def tr(self, string):
+        """
+        Returns a translatable string with the self.tr() function.
+        """
         return QCoreApplication.translate(
             'TopologicalDouglasSimplificationLinesAlgorithm', string)
 
     def createInstance(self):
+        """
+        Must return a new copy of your algorithm.
+        """
         return TopologicalDouglasSimplificationLinesAlgorithm()
