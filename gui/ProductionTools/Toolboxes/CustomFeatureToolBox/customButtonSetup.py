@@ -22,6 +22,8 @@
 """
 
 import os
+import platform
+from string import Template
 from datetime import datetime
 from functools import partial
 from collections import defaultdict
@@ -373,9 +375,12 @@ class CustomFeatureButton(QObject):
                 else:
                     col = QColor(*col)
                 pal.setColor(pal.Button, col)
-                for w in self.widgets():
-                    w.setPalette(pal)
-                    w.update()
+                if platform.system() == "Windows":
+                    self._paintWidgetsOnWindows()
+                else:
+                    for w in self.widgets():
+                        w.setPalette(pal)
+                        w.update()
         else:
             raise TypeError(
                 self.tr("Color must be a str or tuple of int ({0}).")\
@@ -393,6 +398,53 @@ class CustomFeatureButton(QObject):
         else:
             c = tuple([n for n in c])
         return c
+
+    def _paintWidgetsOnWindows(self):
+        """
+        On Windows systems, widgets are not affected by palette updates. To
+        paint widgets on such OS, this method uses a custom style sheet, and
+        apply it to widgets. 
+        """
+        col = self.color()
+        if isinstance(col, str):
+            # we will always use RGBA format colorizing
+            col = QColor(col).getRgb()
+        def getStyleColors(c, var=10):
+            alpha = c[3]
+            # pressed
+            pc = [0, 0, 0, alpha]
+            # checked / toggled
+            cc = [0, 0, 0, alpha]
+            # hovered
+            hc = [0, 0, 0, alpha]
+            # hovered and checked
+            hcc = [0, 0, 0, alpha]
+            for i in range(3):
+                v = c[i]
+                if v > var:
+                    pc[i] = v - var
+                    cc[i] = v - int(1.1 * var)
+                    hc[i] = v - int(0.5 * var) if i != 3 else min(v + var, 255)
+                    hcc[i] = v - var if i != 3 else min(v + int(0.5*var), 255)
+                else:
+                    pc[i] = v + var
+                    cc[i] = v + int(1.1 * var)
+                    hc[i] = v + int(0.5 * var) if i != 3 else max(v - var, 0)
+                    hcc[i] = v + var if i != 3 else max(v - int(0.5 * var), 0)
+            return tuple(pc), tuple(cc), tuple(hc), tuple(hcc)
+        pc, cc, hc, hcc = getStyleColors(col)
+        ssPath = os.path.join(
+            os.path.dirname(__file__), "windowsButtonStyleSheet.css")
+        with open(ssPath, "r") as f:
+            ss = Template(f.read()).safe_substitute(
+                color=str(col),
+                pressed=str(pc),
+                hovered=str(hc),
+                hovered_pressed=str(hcc)
+            )
+        for w in self.widgets():
+            w.setStyleSheet(ss)
+            w.update()
 
     def setUseColor(self, useColor):
         """
