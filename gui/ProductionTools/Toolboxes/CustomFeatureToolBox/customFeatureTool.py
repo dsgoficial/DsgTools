@@ -916,14 +916,13 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         s = self.currentButtonSetup()
         b = self.featureExtractionButton()
-        canvas = self.sender()
         isRec = self.toolMode() == self.Reclassify
-        if s is None or isRec or b is None or canvas is None:
+        if s is None or isRec or b is None or self.sender() is None:
             return
         def isToolAllowed(tool):
             if isinstance(tool, Polygon) or isinstance(tool, AcquisitionFree):
                 return True
-            tool = canvas.mapTool()
+            tool = iface.mapCanvas().mapTool()
             a = tool.action() if hasattr(tool, "action") else None
             allowedQgisTools = ["mActionAddFeature", "mActionCircle2Points"]
             if a is not None and a.objectName() in allowedQgisTools:
