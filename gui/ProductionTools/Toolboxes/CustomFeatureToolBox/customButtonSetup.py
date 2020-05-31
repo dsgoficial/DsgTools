@@ -288,15 +288,22 @@ class CustomFeatureButton(QObject):
             pb.clicked.connect(self.action().trigger)
         pb.setText(self.displayName())
         pb.setToolTip(self.toolTip())
-        pal = QPalette()
         if self.useColor():
-            col = self.color()
-            if isinstance(col, str):
-                col = QColor(col)
+            if platform.system() == "Windows":
+                ss = self._getStyleSheetForWindowsWidget(self.color())
+                pb.setStyleSheet(ss)
+                pb.update()
             else:
-                col = QColor(*col)
-            pal.setColor(pal.Button, col)
-        pb.setPalette(pal)
+                pal = QPalette()
+                col = self.color()
+                if isinstance(col, str):
+                    col = QColor(col)
+                else:
+                    col = QColor(*col)
+                pal.setColor(pal.Button, col)
+                for w in self.widgets():
+                    w.setPalette(pal)
+                    w.update()
         font = pb.font()
         font.setPointSize(self.size())
         pb.setFont(font)
@@ -360,52 +367,14 @@ class CustomFeatureButton(QObject):
         """
         return bool(self._props["openForm"])
 
-    def setColor(self, color):
-        """
-        Defines button color.
-        :param color: (str) button's color.
-        """
-        if type(color) in (str, tuple): 
-            self._props["color"] = color
-            if self.useColor():
-                pal = QPalette()
-                col = self.color()
-                if isinstance(col, str):
-                    col = QColor(col)
-                else:
-                    col = QColor(*col)
-                pal.setColor(pal.Button, col)
-                if platform.system() == "Windows":
-                    self._paintWidgetsOnWindows()
-                else:
-                    for w in self.widgets():
-                        w.setPalette(pal)
-                        w.update()
-        else:
-            raise TypeError(
-                self.tr("Color must be a str or tuple of int ({0}).")\
-                    .format(type(color))
-            )
-
-    def color(self):
-        """
-        Button's color.
-        :return: (str/tuple-of-int) button's color.
-        """
-        c = self._props["color"]
-        if isinstance(c, str):
-            c = str(c)
-        else:
-            c = tuple([n for n in c])
-        return c
-
-    def _paintWidgetsOnWindows(self):
+    def _getStyleSheetForWindowsWidget(self, col):
         """
         On Windows systems, widgets are not affected by palette updates. To
         paint widgets on such OS, this method uses a custom style sheet, and
-        apply it to widgets. 
+        apply it to widgets.
+        :param col: (tuple-of-int/str) color to be applied to the widget.
+        :return: (str) style sheet to be applied to the widget.
         """
-        col = self.color()
         if isinstance(col, str):
             # we will always use RGBA format colorizing
             col = QColor(col).getRgb()
@@ -434,17 +403,65 @@ class CustomFeatureButton(QObject):
             return tuple(pc), tuple(cc), tuple(hc), tuple(hcc)
         pc, cc, hc, hcc = getStyleColors(col)
         ssPath = os.path.join(
-            os.path.dirname(__file__), "windowsButtonStyleSheet.css")
+            os.path.dirname(__file__), "windowsButtonStyleSheet.qss")
         with open(ssPath, "r") as f:
-            ss = Template(f.read()).safe_substitute(
+            return Template(f.read()).safe_substitute(
                 color=str(col),
+                checked=str(cc),
                 pressed=str(pc),
                 hovered=str(hc),
                 hovered_pressed=str(hcc)
             )
+
+    def _paintWidgetsOnWindows(self):
+        """
+        On Windows systems, widgets are not affected by palette updates. To
+        paint widgets on such OS, this method uses a custom style sheet, and
+        apply it to widgets. 
+        """
+        ss = self._getStyleSheetForWindowsWidget(self.color())
         for w in self.widgets():
             w.setStyleSheet(ss)
             w.update()
+
+    def setColor(self, color):
+        """
+        Defines button color.
+        :param color: (str) button's color.
+        """
+        if type(color) in (str, tuple): 
+            self._props["color"] = color
+            if self.useColor():
+                if platform.system() == "Windows":
+                    self._paintWidgetsOnWindows()
+                else:
+                    pal = QPalette()
+                    col = self.color()
+                    if isinstance(col, str):
+                        col = QColor(col)
+                    else:
+                        col = QColor(*col)
+                    pal.setColor(pal.Button, col)
+                    for w in self.widgets():
+                        w.setPalette(pal)
+                        w.update()
+        else:
+            raise TypeError(
+                self.tr("Color must be a str or tuple of int ({0}).")\
+                    .format(type(color))
+            )
+
+    def color(self):
+        """
+        Button's color.
+        :return: (str/tuple-of-int) button's color.
+        """
+        c = self._props["color"]
+        if isinstance(c, str):
+            c = str(c)
+        else:
+            c = tuple([n for n in c])
+        return c
 
     def setUseColor(self, useColor):
         """
