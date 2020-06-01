@@ -3,40 +3,43 @@ QPushButton {
     border-style: outset;
     border-width: 0.5px;
     border-color: black;
-    font: bold 12px;
+    font: ${size}px;
+    min-width: 10em;
+    padding: 4px;
+}
+QPushButton:hover {
+    background-color: rgb${hovered};
+    border-style: inset;
+    border-width: 0.5px;
+    border-color: black;
+    font: italic ${hovered_size}px;
+    min-width: 10em;
+    padding: 4px;
+}
+QPushButton:hover:checked {
+    background-color: rgb${hovered};
+    border-style: inset;
+    border-width: 0.5px;
+    border-color: black;
+    font: bold italic ${hovered_size}px;
     min-width: 10em;
     padding: 4px;
 }
 QPushButton:pressed {
     background-color: rgb${pressed};
+    font: bold ${pressed_size}px;
     border-style: inset;
     border-width: 0.5px;
     border-color: black;
-    font: bold 14px;
     min-width: 10em;
     padding: 4px;
 }
 QPushButton:checked {
     background-color: rgb${checked};
-    border-width: 1px;
-    border-color: black;
-    border-style: inset;
-}
-QPushButton:hover:!checked {
-    background-color: rgb${hovered};
+    font: bold italic ${size}px;
     border-style: inset;
     border-width: 0.5px;
     border-color: black;
-    font: bold 14px;
-    min-width: 10em;
-    padding: 4px;
-}
-QPushButton:hover:checked {
-    background-color: rgb${hovered_checked};
-    border-style: inset;
-    border-width: 0.5px;
-    border-color: black;
-    font: bold 14px;
     min-width: 10em;
     padding: 4px;
 }

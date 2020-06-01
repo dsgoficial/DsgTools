@@ -304,10 +304,12 @@ class CustomFeatureButton(QObject):
                 for w in self.widgets():
                     w.setPalette(pal)
                     w.update()
-        font = pb.font()
-        font.setPointSize(self.size())
-        pb.setFont(font)
-        pb.update()
+        if not platform.system() == "Windows":
+            # fonts are managed from style sheet definition on Windows
+            font = pb.font()
+            font.setPointSize(self.size())
+            pb.setFont(font)
+            pb.update()
         # keeping track of all created widgets is necessary in order to update
         # accordingly to CustomFeatureButton's properties
         self._widgets.append(pb)
@@ -367,7 +369,7 @@ class CustomFeatureButton(QObject):
         """
         return bool(self._props["openForm"])
 
-    def _getStyleSheetForWindowsWidget(self, col):
+    def _getStyleSheetForWindowsWidget(self, col=None, size=None):
         """
         On Windows systems, widgets are not affected by palette updates. To
         paint widgets on such OS, this method uses a custom style sheet, and
@@ -375,6 +377,8 @@ class CustomFeatureButton(QObject):
         :param col: (tuple-of-int/str) color to be applied to the widget.
         :return: (str) style sheet to be applied to the widget.
         """
+        col = col or self.color()
+        size = size or self.size()
         if isinstance(col, str):
             # we will always use RGBA format colorizing
             col = QColor(col).getRgb()
@@ -391,15 +395,19 @@ class CustomFeatureButton(QObject):
             for i in range(3):
                 v = c[i]
                 if v > var:
-                    pc[i] = v - var
-                    cc[i] = v - int(1.1 * var)
-                    hc[i] = v - int(0.5 * var) if i != 3 else min(v + var, 255)
-                    hcc[i] = v - var if i != 3 else min(v + int(0.5*var), 255)
+                    pc[i] = max(v - var, 0)
+                    cc[i] = max(v - int(1.1 * var), 0)
+                    hc[i] = max(v - int(0.5 * var), 0) if i != 3 \
+                            else min(v + var, 255)
+                    hcc[i] = max(v - var, 0) if i != 3 \
+                            else min(v + int(0.5*var), 255)
                 else:
-                    pc[i] = v + var
-                    cc[i] = v + int(1.1 * var)
-                    hc[i] = v + int(0.5 * var) if i != 3 else max(v - var, 0)
-                    hcc[i] = v + var if i != 3 else max(v - int(0.5 * var), 0)
+                    pc[i] = min(v + var, 255)
+                    cc[i] = min(v + int(1.1 * var), 255)
+                    hc[i] = min(v + int(0.5 * var), 255) if i != 3 \
+                            else max(v - var, 0)
+                    hcc[i] = min(v + var, 255) if i != 3 \
+                            else max(v - int(0.5 * var), 0)
             return tuple(pc), tuple(cc), tuple(hc), tuple(hcc)
         pc, cc, hc, hcc = getStyleColors(col)
         ssPath = os.path.join(
@@ -410,7 +418,10 @@ class CustomFeatureButton(QObject):
                 checked=str(cc),
                 pressed=str(pc),
                 hovered=str(hc),
-                hovered_pressed=str(hcc)
+                hovered_pressed=str(hcc),
+                size=size,
+                pressed_size=size + 1,
+                hovered_size=size + 2,
             )
 
     def _paintWidgetsOnWindows(self):
@@ -419,7 +430,7 @@ class CustomFeatureButton(QObject):
         paint widgets on such OS, this method uses a custom style sheet, and
         apply it to widgets. 
         """
-        ss = self._getStyleSheetForWindowsWidget(self.color())
+        ss = self._getStyleSheetForWindowsWidget(self.color(), self.size())
         for w in self.widgets():
             w.setStyleSheet(ss)
             w.update()
@@ -493,14 +504,18 @@ class CustomFeatureButton(QObject):
         Defines displaying text's font size on the widget.
         :param size: (int) text's font size in pixels.
         """
-        if type(size) == int: 
+        if type(size) == int:
             self._props["size"] = size
-            for w in self.widgets():
-                # setSize in here
-                font = w.font()
-                font.setPointSize(size)
-                w.setFont(font)
-                w.update()
+            if platform.system() == "Windows":
+                # setting style sheet disables Qt-based styling: QFont
+                self._paintWidgetsOnWindows()
+            else:
+                for w in self.widgets():
+                    # setSize in here
+                    font = w.font()
+                    font.setPointSize(size)
+                    w.setFont(font)
+                    w.update()
         else:
             raise TypeError(
                 self.tr("Category must be an int ({0}).").format(type(size))
