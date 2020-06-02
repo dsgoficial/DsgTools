@@ -376,6 +376,19 @@ class Utils(object):
         """
         return field.isNumeric()
 
+    def fieldIsNullable(self, field):
+        """
+        Checks if a field may be left empty (does not have the "not null"
+        constraint).
+        :param field: (QgsField) field to be checked.
+        :return: (bool) if field is nullable.
+        """
+        # constraints are 2^n, where n is its "index" on the list of existing
+        # ones. Currently there are 3 constraints: not null, unique and
+        # expression constraint, hence values are 1, 2, 4. 0 is the null
+        # constraint and "constraints" are identified by the sum of them.
+        return (int(field.constraints().constraints()) % 2) == 0
+
 
 class MessageRaiser(QObject):
     """

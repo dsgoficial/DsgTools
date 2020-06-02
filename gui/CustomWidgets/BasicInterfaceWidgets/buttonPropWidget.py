@@ -457,20 +457,25 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         pb.setText("")
         return pb
 
-    def attributeNameWidget(self, fieldName):
+    def attributeNameWidget(self, fieldName, isNotNull):
         """
         Retrieves a widget to be used into field table to expose field's name.
         :param fieldName: (str) fieldName to be exhibited.
+        :param isNotNull: (bool) whether field is a mandatory attribute.
         :return: (QPushButton) a button ready to be setup to GUI.
         """
         pb = QPushButton()
         pb.setText(fieldName)
         pb.setFlat(True)
         pb.setEnabled(False)
-        # note that styling should be handled in here for identifying mandatory
-        # fields, for instance 
-        pb.setStyleSheet("color: black;")
-        pb.setShortcut("") # to disable Qt's automatic mnemonic shortcut
+        if isNotNull:
+            pb.setStyleSheet(
+                "*{ color:rgb(150, 10, 25); "\
+                "background-color:rgba(255, 88, 116, 1.00); }"
+            )
+            pb.setToolTip(self.tr("Field cannot be empty"))
+        else:
+            pb.setStyleSheet("color: black;")
         return pb
 
     def valueWidget(self, field, data):
@@ -522,8 +527,9 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             w.setEnabled(not status)
         for row, field in enumerate(fields):
             fName = field.name()
+            notNull = not utils.fieldIsNullable(field)
             self.attributeTableWidget.setCellWidget(
-                row, self.ATTR_COL, self.attributeNameWidget(fName))
+                row, self.ATTR_COL, self.attributeNameWidget(fName, notNull))
             value = attrMap[fName]["value"] if fName in attrMap else None
             if fName in valueMaps:
                 vWidget = QComboBox()
