@@ -231,7 +231,7 @@ class QualityAssuranceWorkflow(QObject):
         :return: (bool) operation success.
         """
         with open(filepath, "w", encoding="utf-8") as fp:
-            fp.write(json.dumps(self._param, sort_keys=True, indent=4))
+            fp.write(json.dumps(self._param, indent=4))
         return os.path.exists(filepath)
 
     def asDict(self):
