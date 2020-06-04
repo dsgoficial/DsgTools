@@ -301,9 +301,8 @@ class CustomFeatureButton(QObject):
                 else:
                     col = QColor(*col)
                 pal.setColor(pal.Button, col)
-                for w in self.widgets():
-                    w.setPalette(pal)
-                    w.update()
+                pb.setPalette(pal)
+                pb.update()
         if not platform.system() == "Windows":
             # fonts are managed from style sheet definition on Windows
             font = pb.font()
