@@ -135,10 +135,10 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanAl
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanLinesAlgorithm import \
     TopologicalCleanLinesAlgorithm
 
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglasSimplificationLinesAlgorithm import \
-    TopologicalDouglasSimplificationLinesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglasSimplificationAreasAlgorithm import \
-    TopologicalDouglasSimplificationAreasAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalAreaDouglasSimplificationAlgorithm import \
+    TopologicalAreaDouglasSimplificationAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalLineDouglasSimplificationAlgorithm import \
+    TopologicalLineDouglasSimplificationAlgorithm
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalLineConnectivityAdjustmentAlgorithm import \
     TopologicalLineConnectivityAdjustment
@@ -225,8 +225,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             DonutHoleExtractorAlgorithm(),
             UpdateOriginalLayerAlgorithm(),
             TopologicalCleanAlgorithm(),
-            TopologicalDouglasSimplificationLinesAlgorithm(),
-            TopologicalDouglasSimplificationAreasAlgorithm(),
+            TopologicalAreaDouglasSimplificationAlgorithm(),
+            TopologicalLineDouglasSimplificationAlgorithm(),
             RemoveDuplicatedGeometriesAlgorithm(),
             RemoveSmallLinesAlgorithm(),
             RemoveSmallPolygonsAlgorithm(),
