@@ -41,7 +41,11 @@ from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
-class TopologicalDouglasSimplificationAlgorithm(ValidationAlgorithm):
+class TopologicalAreaDouglasSimplificationAlgorithm(ValidationAlgorithm):
+    """
+    Implements a Douglas Peucker algorithm to simplify areas taking into
+    consideration the topological behavior for boundaries between layers.
+    """
     INPUTLAYERS = 'INPUTLAYERS'
     SELECTED = 'SELECTED'
     SNAP = 'SNAP'
@@ -93,7 +97,6 @@ class TopologicalDouglasSimplificationAlgorithm(ValidationAlgorithm):
                 type=QgsProcessingParameterNumber.Double
             )
         )
-        
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS,
@@ -108,40 +111,51 @@ class TopologicalDouglasSimplificationAlgorithm(ValidationAlgorithm):
         layerHandler = LayerHandler()
         algRunner = AlgRunner()
 
-        inputLyrList = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
+        inputLyrList = self.parameterAsLayerList(
+            parameters, self.INPUTLAYERS, context)
         if inputLyrList is None or inputLyrList == []:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUTLAYERS))
+            raise QgsProcessingException(self.invalidSourceError(
+                parameters, self.INPUTLAYERS))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         snap = self.parameterAsDouble(parameters, self.SNAP, context)
-        threshold = self.parameterAsDouble(parameters, self.DOUGLASPARAMETER, context)
+        threshold = self.parameterAsDouble(
+            parameters, self.DOUGLASPARAMETER, context)
         minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
-        self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.MultiPolygon, context)
+        self.prepareFlagSink(
+            parameters, inputLyrList[0], QgsWkbTypes.MultiPolygon, context)
 
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Building unified layer...'))
-        coverage = layerHandler.createAndPopulateUnifiedVectorLayer(inputLyrList, geomType=QgsWkbTypes.MultiPolygon, onlySelected = onlySelected, feedback=multiStepFeedback)
+        coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
+            inputLyrList, geomType=QgsWkbTypes.MultiPolygon, 
+            onlySelected=onlySelected, feedback=multiStepFeedback)
 
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr('Running clean on unified layer...'))
-        simplifiedCoverage, error = algRunner.runDouglasSimplification(coverage, \
-                                                    threshold,\
-                                                    context, \
-                                                    returnError=True, \
-                                                    snap=snap, \
-                                                    minArea=minArea,
-                                                    feedback=multiStepFeedback)
+        simplifiedCoverage, error = algRunner.runDouglasSimplification(
+            coverage,
+            threshold,
+            context,
+            returnError=True,
+            snap=snap,
+            minArea=minArea,
+            feedback=multiStepFeedback)
 
 
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
-        layerHandler.updateOriginalLayersFromUnifiedLayer(inputLyrList, simplifiedCoverage, feedback=multiStepFeedback)
+        layerHandler.updateOriginalLayersFromUnifiedLayer(
+            inputLyrList, simplifiedCoverage, feedback=multiStepFeedback)
         self.flagCoverageIssues(simplifiedCoverage, error, feedback)
 
         return {self.INPUTLAYERS : inputLyrList, self.FLAGS : self.flag_id}
 
     def flagCoverageIssues(self, cleanedCoverage, error, feedback):
+        """
+        From polygons, this method grabs its gaps and overlaps.
+        """
         overlapDict = dict()
         for feat in cleanedCoverage.getFeatures():
             if feedback.isCanceled():
@@ -179,14 +193,14 @@ class TopologicalDouglasSimplificationAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'topologicaldouglaspeuckersimplification'
+        return 'topologicalareadouglaspeuckersimplification'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Topological Douglas Peucker Simplification')
+        return self.tr('Topological Area Douglas Peucker Simplification')
 
     def group(self):
         """
@@ -206,7 +220,7 @@ class TopologicalDouglasSimplificationAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Quality Assurance Tools (Topological Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('TopologicalDouglasSimplificationAlgorithm', string)
+        return QCoreApplication.translate('TopologicalAreaDouglasSimplificationAlgorithm', string)
 
     def createInstance(self):
-        return TopologicalDouglasSimplificationAlgorithm()
+        return TopologicalAreaDouglasSimplificationAlgorithm()
