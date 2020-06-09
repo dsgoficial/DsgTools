@@ -164,16 +164,16 @@ class AlgRunner:
         output = processing.run('dsgtools:cleangeometries', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
 
-    def runDouglasSimplification(
-            self, inputLyr, method, tolerance, context, feedback=None,
-            onlySelected=False, outputLyr=None
-        ):
+    def runDouglasSimplification(self, inputLyr, threshold, context,
+                                 feedback=None, snap=None, minArea=None,
+                                 iterations=None, type=None, returnError=False,
+                                 flags=None):
         """
-        Runs simplfy from QGIS algorithm provider
+        Runs simplify GRASS algorithm
         :param inputLyr: (QgsVectorLayer) layer to be dissolved.
         :param method: (QgsProcessingParameterEnum) which algorithm would be
             used to simplify.
-        :param tolerance: (QgsProcessingParameterNumber) scale tolerance(m).
+        :param threshold: (QgsProcessingParameterNumber) scale tolerance(m).
         :param context: (QgsProcessingContext) processing context.
         :param feedback: (QgsProcessingFeedback) QGIS object to keep track of
             progress/cancelling option.
@@ -182,17 +182,42 @@ class AlgRunner:
         :param outputLyr: (str) URI to output layer.
         :return: (QgsVectorLayer) simplified (output) layer.
         """
-        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        snap = -1 if snap is None else snap
+        minArea = 0.0001 if minArea is None else minArea
+        iterations = 1 if iterations is None else iterations
+        flags = 'memory:' if flags is None else flags
+        algType = [0, 1, 2] if type is None else type
+        output, error = self.generateGrassOutputAndError()
         parameters = {
-            'INPUT': inputLyr,
-            'SELECTED' : onlySelected,
-            'METHOD': method,
-            'TOLERANCE': tolerance,
-            'OUTPUT': outputLyr
-        }
-        output = processing.run("native:simplifygeometries", parameters,
-                                context=context, feedback=feedback)
-        return output['OUTPUT']
+            'input': inputLyr,
+            'type':algType,
+            'cats':'',
+            'where':'',
+            'method':0,
+            'threshold':threshold,
+            'look_ahead':7,
+            'reduction':50,
+            'slide':0.5,
+            'angle_thresh':3,
+            'degree_thresh':0,
+            'closeness_thresh':0,
+            'betweeness_thresh':0,
+            'alpha':1,
+            'beta':1,
+            'iterations':iterations,
+            '-t':False,
+            '-l':True,
+            'output':output,
+            'error':error,
+            'GRASS_REGION_PARAMETER':None,
+            'GRASS_SNAP_TOLERANCE_PARAMETER':snap,
+            'GRASS_MIN_AREA_PARAMETER':minArea,
+            'GRASS_OUTPUT_TYPE_PARAMETER':0,
+            'GRASS_VECTOR_DSCO':'',
+            'GRASS_VECTOR_LCO':''}
+        outputDict = processing.run("grass7:v.generalize", parameters,
+                                    context=context, feedback=feedback)
+        return self.getGrassReturn(outputDict, context, returnError=returnError)
 
     def runIdentifyDuplicatedGeometries(self, inputLyr, context, feedback=None, flagLyr=None, onlySelected=False):
         flagLyr = 'memory:' if flagLyr is None else flagLyr
