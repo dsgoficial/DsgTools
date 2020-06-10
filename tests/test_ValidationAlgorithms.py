@@ -44,7 +44,7 @@ from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerL
 from qgis.testing import unittest
 
 class Tester(unittest.TestCase):
-    
+
     CURRENT_PATH = os.path.dirname(__file__)
     DEFAULT_ALG_PATH = os.path.join(
                             CURRENT_PATH, '..', 'core', 'DSGToolsProcessingAlgs',
@@ -123,7 +123,7 @@ class Tester(unittest.TestCase):
         for layer in ogr.Open(path):
             layername = layer.GetName()
             layers[layername] = QgsVectorLayer(
-                "{0}|layername={1}".format(path, layername), 
+                "{0}|layername={1}".format(path, layername),
                 layername,
                 "ogr"
             )
@@ -167,6 +167,7 @@ class Tester(unittest.TestCase):
                 "testes_wgs84" : os.path.join(gpkgPaths, 'testes_wgs84.gpkg'),
                 "testes_sirgas2000_23s" : os.path.join(gpkgPaths, 'testes_sirgas2000_23s.gpkg'),
                 "testes_sirgas2000_24s" : os.path.join(gpkgPaths, 'testes_sirgas2000_24s.gpkg'),
+                "testes_sirgas2000_24s" : os.path.join(gpkgPaths, 'testes_sirgas2000_24s.gpkg'),
                 "test_dataset_unbuild_polygons" : os.path.join(gpkgPaths, 'test_dataset_unbuild_polygons.gpkg')
             },
             "geojson" : {
@@ -206,7 +207,7 @@ class Tester(unittest.TestCase):
                 self.addControlKey(vls[l])
             out.append(lyr)
         return out
-    
+
     def addControlKey(self, lyr):
         return processing.run(
                     'native:addautoincrementalfield',
@@ -274,6 +275,19 @@ class Tester(unittest.TestCase):
                     'TOLERANCE' : 10
                 }
             ],
+
+            "dsgtools:snaptogridandupdate" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS' : 'memory:',
+                    'INPUT' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao', ['cb_adm_edif_pub_civil_p']
+                        )[0],
+                    'SELECTED' : False,
+                    'TOLERANCE' : 0.001
+                }
+            ],
+
 
             "dsgtools:identifyoutofboundsanglesincoverage" : [
                 {
@@ -354,7 +368,7 @@ class Tester(unittest.TestCase):
                             ['cb_veg_campo_a', 'cb_veg_floresta_a']
                         ),
                     'SELECTED' : False
-                    
+
                 }
             ],
 
@@ -403,11 +417,23 @@ class Tester(unittest.TestCase):
                     '__comment' : "'Normal' test: checks if it works.",
                     'FLAGS': "memory:",
                     'INPUT': self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_hid_ilha_a']
+                            'gpkg', 'testes_wgs84', ['test_identifyoverlaps']
                         )[0],
                     'SELECTED': False
                 }
             ],
+
+            "dsgtools:identifywrongbuildinganglesalgorithm" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS': "memory:",
+                    'INPUT': self.getInputLayers(
+                            'sqlite', 'banco_capacitacao', ['cb_hid_ilha_a']
+                        )[0],
+                    'SELECTED': 0.1
+                }
+            ],
+
             "dsgtools:identifyvertexnearedges" : [
                 {
                     '__comment' : "'Normal' test: checks if it works with polygon.",
@@ -473,7 +499,7 @@ class Tester(unittest.TestCase):
                     'TOLERANCE' : 625
                 }
             ],
-            
+
             "dsgtools:overlayelementswithareas" : [
                 {
                     '__comment' : "'Normal' test: checks if it works.",
@@ -498,7 +524,7 @@ class Tester(unittest.TestCase):
                     'SELECTED' : False
                 }
             ],
-            
+
             "dsgtools:dissolvepolygonswithsameattributes" : [
                 {
                     '__comment' : "'Normal' test: checks if it works.",
@@ -574,14 +600,27 @@ class Tester(unittest.TestCase):
                 }
             ],
 
+            "dsgtools:cleangeometries" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS' : "memory:",
+                    'INPUT' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao', ['cb_hid_terreno_suj_inundacao_a']
+                        )[0],
+                    'MIN_AREA' : 0.0001,
+                    'SELECTED' : False,
+                    'TOLERANCE' : 1
+                }
+            ],
+
             "dsgtools:identifyunsharedvertexonintersectionsalgorithm" : [
                 {
                     '__comment' : "'Normal' test: checks if it works.",
                     'INPUT_LINES' : self.getInputLayers(
-                        'gpkg', 'testes_wgs84', ['line_input']
+                        'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
                     )[0],
                     'INPUT_POLYGONS' : self.getInputLayers(
-                        'gpkg', 'testes_wgs84', ['polygon_input']
+                        'sqlite', 'banco_capacitacao', ['cb_hid_ilha_a']
                     )[0],
                     'SELECTED' : False,
                     'FLAGS' : "memory:"
@@ -969,10 +1008,10 @@ class Tester(unittest.TestCase):
         if outputstr:
             out = out[outputstr]
         return out if not addControlKey else self.addControlKey(out)
-    
+
     def runAlgWithMultipleOutputs(self, algName, parameters, feedback=None, context=None):
         """
-        Executes a given algorithm that has multiple outputs. Returns a dict 
+        Executes a given algorithm that has multiple outputs. Returns a dict
         with the returned layers in the format {'OUTPUT_LAYER_KEY':(QgsVectorLayer) OutputLayer}
         :param algName: (str) target algorithm's name.
         :param parameters: (dict) set of arguments for target algorithm.
@@ -1015,7 +1054,7 @@ class Tester(unittest.TestCase):
                     'test_{test_number}.geojson'.format(test_number=test)
                 )
                 return QgsVectorLayer(
-                            path, 
+                            path,
                             "{alg}_test_{test}_output".format(alg=algName.split(':')[-1], test=test),
                             "ogr"
                         )
@@ -1037,9 +1076,11 @@ class Tester(unittest.TestCase):
         # feature check
         targetFeatDict = {f.id():f for f in target.getFeatures()}
         refFeatDict = {f.id():f for f in reference.getFeatures()}
+        print(targetFeatDict)
+        print(refFeatDict)
         targetFeaureIds = set(targetFeatDict.keys())
         refFeaureIds = set(refFeatDict.keys())
-        if target.featureCount() != reference.featureCount():    
+        if target.featureCount() != reference.featureCount():
             msg = ""
             if targetFeaureIds - refFeaureIds:
                 msg += "Output layer has more features than the control layer (Exceeding ID: {idlist}).\n".format(
@@ -1065,7 +1106,17 @@ class Tester(unittest.TestCase):
             testFeat = targetFeatDict[featId]
             if not (testFeat.geometry().isGeosEqual(refFeat.geometry()) or\
                 testFeat.geometry().equals(refFeat.geometry())):
-                return "Feature {fid} has incorrect geometry.".format(fid=featId)
+                #Look for feature with the same geometry before returning error
+                for targetFeatId in targetFeaureIds - {featId}:
+                    testFeat = targetFeatDict[targetFeatId]
+                    if (testFeat.geometry().isGeosEqual(refFeat.geometry()) or\
+                        testFeat.geometry().equals(refFeat.geometry())):
+                        break
+                        #if we find a feature with the same geometry as refFeat, it becomes new testFeat
+                else:
+                    #if no feature with the same geom, then geom is really incorrect
+                    return "Feature {fid} has incorrect geometry.".format(fid=featId)
+
             for attr in targetFieldNames:
                 if attr not in attributeBlackList and testFeat[attr] != refFeat[attr]:
                     return "Incorrect set of attributes for feature {fid}:\nAttribute {attr} in the test feature is: {test_attr}\nAttribute {attr} in the reference feature is: {ref_attr}".format(
@@ -1169,7 +1220,7 @@ class Tester(unittest.TestCase):
                 )
         # missing the output testing
         return ""
-    
+
     def compareInputLayerWithOutputLayer(self, i, algName, output, expected, loadLayers=False, attributeBlackList=None, addControlKey=False):
         if not output.isValid():
             raise Exception("Output is an INVALID vector layer.".\
@@ -1209,6 +1260,7 @@ class Tester(unittest.TestCase):
                 "dsgtools:identifyduplicatedpolygonsoncoverage", "dsgtools:identifysmallpolygons",
                 "dsgtools:identifydangles", "dsgtools:identifyduplicatedpointsoncoverage",
                 "dsgtools:identifyoverlaps", "dsgtools:identifyvertexnearedges",
+                "dsgtools:identifywrongbuildinganglesalgorithm",
                 "dsgtools:identifyunsharedvertexonintersectionsalgorithm"
                 # correction algs
                 "dsgtools:removeduplicatedfeatures", "dsgtools:removeduplicatedgeometries",
@@ -1216,7 +1268,7 @@ class Tester(unittest.TestCase):
                 # manipulation algs
                 "dsgtools:lineonlineoverlayer", "dsgtools:mergelineswithsameattributeset",
                 "dsgtools:overlayelementswithareas", "dsgtools:deaggregategeometries",
-                "dsgtools:dissolvepolygonswithsameattributes", "dsgtools:removeemptyandupdate",
+                "dsgtools:dissolvepolygonswithsameattributes", "dsgtools:cleangeometries", "dsgtools:removeemptyandupdate",
                 "dsgtools:snaplayeronlayer",
                 # network algs
                 "dsgtools:adjustnetworkconnectivity"
@@ -1241,7 +1293,7 @@ class Tester(unittest.TestCase):
             except KeyError:
                 results[alg] = "No tests registered."
         return results
-    
+
     def test_identifyoutofboundsangles(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifyoutofboundsangles"), ""
@@ -1254,18 +1306,18 @@ class Tester(unittest.TestCase):
     #             self.testAlg("dsgtools:identifyoutofboundsanglesincoverage"), ""
     #         )
 
-    # def test_identifygaps(self):
-    #     with warnings.catch_warnings():
-    #         warnings.simplefilter("ignore")
-    #         self.assertEqual(
-    #             self.testAlg("dsgtools:identifygaps"), ""
-    #         )
-    
+    def test_identifygaps(self):
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            self.assertEqual(
+                self.testAlg("dsgtools:identifygaps"), ""
+            )
+
     def test_identifyandfixinvalidgeometries(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifyandfixinvalidgeometries"), ""
         )
-    
+
     def test_identifyduplicatedfeatures(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifyduplicatedfeatures"), ""
@@ -1280,7 +1332,7 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg("dsgtools:identifyduplicatedlinesoncoverage"), ""
         )
-    
+
     def test_identifyduplicatedpointsoncoverage(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifyduplicatedpointsoncoverage"), ""
@@ -1305,47 +1357,97 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg("dsgtools:identifydangles"), ""
         )
-    
+
+    def test_snaptogridandupdate(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:snaptogridandupdate"), ""
+        )
+
+    def test_removeduplicatedfeatures(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:removeduplicatedfeatures"), ""
+        )
+
+    def test_removeduplicatedgeometries(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:removeduplicatedgeometries"), ""
+        )
+
+    def test_removesmalllines(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:removesmalllines"), ""
+        )
+
+    def test_removesmallpolygons(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:removesmallpolygons"), ""
+        )
+
+    def test_identifyoverlaps(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyoverlaps"), ""
+        )
+
     def test_identifyunsharedvertexonintersectionsalgorithm(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifyunsharedvertexonintersectionsalgorithm"), ""
         )
-    
-    def test_identifyvertexnearedges(self):
-        self.assertEqual(
-            self.testAlg("dsgtools:identifyvertexnearedges"), ""
-        )
-    
-    # def test_overlayelementswithareas(self):
-    #     self.assertEqual(
-    #         self.testAlg("dsgtools:overlayelementswithareas"), ""
-    #     )
-    
+
     def test_deaggregategeometries(self):
         self.assertEqual(
             self.testAlg("dsgtools:deaggregategeometries", addControlKey=True), ""
         )
-    
+
     def test_dissolvepolygonswithsameattributes(self):
         self.assertEqual(
             self.testAlg("dsgtools:dissolvepolygonswithsameattributes", addControlKey=True), ""
         )
-    
+
+    def test_identifyvertexnearedges(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyvertexnearedges"), ""
+        )
+
+    def test_mergelineswithsameattributeset(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:mergelineswithsameattributeset"), ""
+        )
+
     def test_removeemptyandupdate(self):
         self.assertEqual(
             self.testAlg("dsgtools:removeemptyandupdate"), ""
-        )
-    
-    def test_snaplayeronlayer(self):
-        self.assertEqual(
-            self.testAlg("dsgtools:snaplayeronlayer"), ""
         )
 
     def test_adjustnetworkconnectivity(self):
         self.assertEqual(
             self.testAlg("dsgtools:adjustnetworkconnectivity"), ""
         )
-    
+
+    def test_cleangeometries(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:cleangeometries"), ""
+        )
+
+    def test_identifywrongbuildinganglesalgorithm(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifywrongbuildinganglesalgorithm"), ""
+        )
+
+    def test_buildpolygonsfromcenterpointsandboundariesalgorithm(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
+                multipleOutputs=True,
+                addControlKey=True
+            ),
+            ""
+        )
+
+    def test_lineonlineoverlayer(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:lineonlineoverlayer"), ""
+        )
+
     def test_unbuildpolygonsalgorithm(self):
         self.assertEqual(
             self.testAlg(
@@ -1356,17 +1458,7 @@ class Tester(unittest.TestCase):
             ),
             ""
         )
-    
-    def test_buildpolygonsfromcenterpointsandboundariesalgorithm(self):
-        self.assertEqual(
-            self.testAlg(
-                "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
-                multipleOutputs=True,
-                addControlKey=True
-            ),
-            ""
-        )
-    
+
     def test_enforcespatialrules(self):
         """Tests for Enforce Spatial Rules algorithm"""
         testsParams = self.algorithmParameters("dsgtools:enforcespatialrules")
@@ -1385,11 +1477,39 @@ class Tester(unittest.TestCase):
             multipleOutputs=True,
             addControlKey=True
         )
-        # since layers were manually removed, cache is going to refer to 
+        # since layers were manually removed, cache is going to refer to
         # non-existing layers
         del self.datasets["geojson:spatial_rules_alg"]
         self.clearProject()
         self.assertEqual(msg, "")
+
+
+def run_all():
+    """Default function that is called by the runner if nothing else is specified"""
+    suite = unittest.TestSuite()
+    suite.addTests(unittest.makeSuite(Tester, 'test_'))
+    unittest.TextTestRunner(verbosity=3, stream=sys.stdout).run(suite)
+
+    def test_identifyunsharedvertexonintersectionsalgorithm(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifyunsharedvertexonintersectionsalgorithm"), ""
+        )
+
+
+    # def test_overlayelementswithareas(self):
+    #     self.assertEqual(
+    #         self.testAlg("dsgtools:overlayelementswithareas"), ""
+    #     )
+
+    def test_dissolvepolygonswithsameattributes(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:dissolvepolygonswithsameattributes", addControlKey=True), ""
+        )
+
+    def test_snaplayeronlayer(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:snaplayeronlayer"), ""
+        )
 
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
