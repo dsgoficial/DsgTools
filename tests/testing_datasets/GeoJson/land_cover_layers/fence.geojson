@@ -3,6 +3,6 @@
 "name": "fence",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
-{ "type": "Feature", "properties": { "fid": 1 }, "geometry": { "type": "LineString", "coordinates": [ [ 0.201, -0.09 ], [ 1.577, -0.755 ] ] } }
+{ "type": "Feature", "properties": { "fid": 1 }, "geometry": { "type": "LineString", "coordinates": [ [ 0.201, -0.09 ], [ 1.390112, -0.66468 ], [ 1.577, -0.755 ] ] } }
 ]
 }

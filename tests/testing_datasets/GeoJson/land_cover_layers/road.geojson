@@ -3,7 +3,7 @@
 "name": "road",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
-{ "type": "Feature", "properties": { "fid": 1 }, "geometry": { "type": "LineString", "coordinates": [ [ -2.224, 0.515 ], [ 1.697, 0.635 ] ] } },
-{ "type": "Feature", "properties": { "fid": 2 }, "geometry": { "type": "LineString", "coordinates": [ [ -1.559, 1.06 ], [ -1.319, -1.231 ] ] } }
+{ "type": "Feature", "properties": { "fid": 1 }, "geometry": { "type": "LineString", "coordinates": [ [ -2.224, 0.515 ], [ -1.982851, 0.52238 ], [ -1.964793, 0.522933 ], [ -1.504215, 0.537029 ], [ -0.356992, 0.572139 ], [ 0.127431, 0.586964 ], [ 0.408255, 0.595559 ], [ 0.779831, 0.606931 ], [ 1.084666, 0.61626 ], [ 1.372521, 0.62507 ], [ 1.697, 0.635 ] ] } },
+{ "type": "Feature", "properties": { "fid": 2 }, "geometry": { "type": "LineString", "coordinates": [ [ -1.559, 1.06 ], [ -1.538662, 0.865862 ], [ -1.528768, 0.771414 ], [ -1.504215, 0.537029 ], [ -1.416055, -0.304531 ], [ -1.376023, -0.686668 ], [ -1.357589, -0.86264 ], [ -1.357152, -0.866807 ], [ -1.319, -1.231 ] ] } }
 ]
 }
