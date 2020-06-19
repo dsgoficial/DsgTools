@@ -1076,8 +1076,8 @@ class Tester(unittest.TestCase):
         # feature check
         targetFeatDict = {f.id():f for f in target.getFeatures()}
         refFeatDict = {f.id():f for f in reference.getFeatures()}
-        print(targetFeatDict)
-        print(refFeatDict)
+        #print(targetFeatDict)
+        #print(refFeatDict)
         targetFeaureIds = set(targetFeatDict.keys())
         refFeaureIds = set(refFeatDict.keys())
         if target.featureCount() != reference.featureCount():
@@ -1115,7 +1115,9 @@ class Tester(unittest.TestCase):
                         #if we find a feature with the same geometry as refFeat, it becomes new testFeat
                 else:
                     #if no feature with the same geom, then geom is really incorrect
-                    return "Feature {fid} has incorrect geometry.".format(fid=featId)
+                    return "Feature {fid} has incorrect geometry. Centroid of Feature {fid} = {centroid}".format(
+                    fid=featId,
+                    centroid=refFeat.geometry().centroid())
 
             for attr in targetFieldNames:
                 if attr not in attributeBlackList and testFeat[attr] != refFeat[attr]:
