@@ -1535,7 +1535,7 @@ class Tester(unittest.TestCase):
     # def test_enforcespatialrules(self):
     #     """Tests for Enforce Spatial Rules algorithm"""
     #     testsParams = self.algorithmParameters("dsgtools:enforcespatialrules")
-    #     # this algorithm, specifically, has to set layers Context-reading ready
+    #     # this algorithm, specifically has to set layers Context-reading ready
     #     layers = self.testingDataset("geojson", "spatial_rules_alg")
     #     layers = {l.split("-")[-1]: vl for l, vl in layers.items()}
     #     for parameters in testsParams:
