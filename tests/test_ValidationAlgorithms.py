@@ -161,7 +161,9 @@ class Tester(unittest.TestCase):
         geojsonPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'GeoJSON')
         datasets = {
             "sqlite" : {
-                "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite')
+
+                "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite'),
+                "douglas_peucker" : os.path.join(spatiaLitePaths, 'douglas_peucker.sqlite')
             },
             "gpkg" : {
                 "testes_wgs84" : os.path.join(gpkgPaths, 'testes_wgs84.gpkg'),
@@ -250,6 +252,38 @@ class Tester(unittest.TestCase):
                  tests.
         """
         parameters = {
+            "dsgtools:topologicalareadouglaspeuckersimplification" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'INPUTLAYERS' : self.getInputLayers(
+                        'sqlite', 'douglas_peucker',
+                        ['cb_veg_campo_a'],
+                        addControlKey=True
+                    )[0],
+                    'SELECTED' : False,
+                    'SNAP': 2,
+                    'DOUGLASPARAMETER': 1.5,
+                    'FLAGS' : "memory:",
+                    'OUTPUT' : "memory:"
+                }
+            ],
+
+            "dsgtools:topologicallinedouglaspeuckersimplification" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'INPUTLAYERS' : self.getInputLayers(
+                        'sqlite', 'douglas_peucker',
+                        ['cb_tra_trecho_rodoviario_l'],
+                        addControlKey=True
+                    )[0],
+                    'SELECTED' : False,
+                    'SNAP': 2,
+                    'DOUGLASPARAMETER': 1.5,
+                    'FLAGS' : "memory:",
+                    'OUTPUT' : "memory:"
+                }
+            ],
+
             "dsgtools:identifyduplicatedfeatures" : [
                 {
                     '__comment' : "'Normal' test: checks if it works.",
@@ -1211,19 +1245,35 @@ class Tester(unittest.TestCase):
                         expected.rollBack()
                 elif isinstance(output, dict):
                     for key, outputLyr in output.items():
-                        if key not in expected:
+                        if isinstance(outputLyr, list):
+                            for idx, outLayer in enumerate(outputLyr):
+                                if "{0}_{1}".format(key, idx) not in expected:
+                                    raise Exception("Output dictionary key was not found in expected output dictionary.".\
+                                        format(alg=algName, nr=i + 1)
+                                    )
+                                self.compareInputLayerWithOutputLayer(
+                                    i,
+                                    algName,
+                                    outLayer,
+                                    expected["{0}_{1}".format(key, idx)],
+                                    loadLayers=loadLayers,
+                                    addControlKey=addControlKey,
+                                    attributeBlackList=attributeBlackList
+                                )
+                        elif key not in expected:
                             raise Exception("Output dictionary key was not found in expected output dictionary.".\
                                 format(alg=algName, nr=i + 1)
                             )
-                        self.compareInputLayerWithOutputLayer(
-                            i,
-                            algName,
-                            outputLyr,
-                            expected[key],
-                            loadLayers=loadLayers,
-                            addControlKey=addControlKey,
-                            attributeBlackList=attributeBlackList
-                        )
+                        else:
+                            self.compareInputLayerWithOutputLayer(
+                                i,
+                                algName,
+                                outputLyr,
+                                expected[key],
+                                loadLayers=loadLayers,
+                                addControlKey=addControlKey,
+                                attributeBlackList=attributeBlackList
+                            )
                         if isinstance(outputLyr, QgsVectorLayer):
                             outputLyr.rollBack()
                         if isinstance(expected[key], QgsVectorLayer):
@@ -1302,7 +1352,10 @@ class Tester(unittest.TestCase):
             ]
         multipleOutputAlgs = [
             "dsgtools:unbuildpolygonsalgorithm",
-            "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm"
+            "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
+             # manipulation algs
+            "dsgtools:topologicallinedouglaspeuckersimplification",
+            "dsgtools:topologicalareadouglaspeuckersimplification"
         ]
         # for alg in self.readAvailableAlgs(self.DEFAULT_ALG_PATH):
         for alg in algs:
@@ -1454,6 +1507,26 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg(
                 "dsgtools:identifyterrainmodelerrorsalgorithm",
+                multipleOutputs=True,
+                addControlKey=True
+            ),
+            ""
+        )
+
+    def test_topologicallinedouglaspeuckersimplification(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:topologicallinedouglaspeuckersimplification",
+                multipleOutputs=True,
+                addControlKey=True
+            ),
+            ""
+        )
+
+    def test_topologicalareadouglaspeuckersimplification(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:topologicalareadouglaspeuckersimplification",
                 multipleOutputs=True,
                 addControlKey=True
             ),
