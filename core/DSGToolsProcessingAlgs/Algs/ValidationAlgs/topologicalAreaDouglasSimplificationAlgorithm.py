@@ -143,7 +143,6 @@ class TopologicalAreaDouglasSimplificationAlgorithm(ValidationAlgorithm):
             minArea=minArea,
             feedback=multiStepFeedback)
 
-
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
