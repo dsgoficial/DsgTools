@@ -161,7 +161,6 @@ class Tester(unittest.TestCase):
         geojsonPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'GeoJSON')
         datasets = {
             "sqlite" : {
-
                 "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite'),
                 "douglas_peucker" : os.path.join(spatiaLitePaths, 'douglas_peucker.sqlite')
             },

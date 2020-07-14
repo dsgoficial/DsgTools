@@ -170,17 +170,18 @@ class AlgRunner:
                                  flags=None):
         """
         Runs simplify GRASS algorithm
-        :param inputLyr: (QgsVectorLayer) layer to be dissolved.
+        :param inputLyr: (QgsVectorLayer) layer, or layers, to be dissolved.
         :param method: (QgsProcessingParameterEnum) which algorithm would be
-            used to simplify.
-        :param threshold: (QgsProcessingParameterNumber) scale tolerance(m).
+            used to simplify lines, in this case, Douglas-Peucker Algorithm.
+        :param threshold: (QgsProcessingParameterNumber) give in map units.
+            For latitude-longitude locations give in decimal degree.
         :param context: (QgsProcessingContext) processing context.
         :param feedback: (QgsProcessingFeedback) QGIS object to keep track of
             progress/cancelling option.
         :param onlySelected: (QgsProcessingParameterBoolean) process only
             selected features.
         :param outputLyr: (str) URI to output layer.
-        :return: (QgsVectorLayer) simplified (output) layer.
+        :return: (QgsVectorLayer) simplified output layer or layers.
         """
         snap = -1 if snap is None else snap
         minArea = 0.0001 if minArea is None else minArea
