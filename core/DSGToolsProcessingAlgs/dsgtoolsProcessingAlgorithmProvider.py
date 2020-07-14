@@ -134,17 +134,14 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanAl
     TopologicalCleanAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanLinesAlgorithm import \
     TopologicalCleanLinesAlgorithm
-
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalAreaDouglasSimplificationAlgorithm import \
-    TopologicalAreaDouglasSimplificationAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalLineDouglasSimplificationAlgorithm import \
-    TopologicalLineDouglasSimplificationAlgorithm
-
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglasAreaSimplificationAlgorithm import \
+    TopologicalDouglasPeuckerAreaSimplificationAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglasLineSimplificationAlgorithm import \
+    TopologicalDouglasPeuckerLineSimplificationAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalLineConnectivityAdjustmentAlgorithm import \
     TopologicalLineConnectivityAdjustment
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import \
     VerifyNetworkDirectioningAlgorithm
-
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithm import \
     BatchRunAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.stringCsvToLayerListAlgorithm import \
@@ -225,8 +222,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             DonutHoleExtractorAlgorithm(),
             UpdateOriginalLayerAlgorithm(),
             TopologicalCleanAlgorithm(),
-            TopologicalAreaDouglasSimplificationAlgorithm(),
-            TopologicalLineDouglasSimplificationAlgorithm(),
+            TopologicalDouglasPeuckerAreaSimplificationAlgorithm(),
+            TopologicalDouglasPeuckerLineSimplificationAlgorithm(),
             RemoveDuplicatedGeometriesAlgorithm(),
             RemoveSmallLinesAlgorithm(),
             RemoveSmallPolygonsAlgorithm(),

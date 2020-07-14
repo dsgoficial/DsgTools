@@ -41,15 +41,16 @@ from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
-class TopologicalLineDouglasSimplificationAlgorithm(ValidationAlgorithm):
+class TopologicalDouglasPeuckerAreaSimplificationAlgorithm(ValidationAlgorithm):
     """
-    Implements a Douglas Peucker algorithm to simplify lines taking into
-    consideration the topological behavior for lines between layers.
+    Implements a Douglas Peucker algorithm to simplify areas taking into
+    consideration the topological behavior for boundaries between layers.
     """
     INPUTLAYERS = 'INPUTLAYERS'
     SELECTED = 'SELECTED'
     SNAP = 'SNAP'
     DOUGLASPARAMETER = 'DOUGLASPARAMETER'
+    MINAREA = 'MINAREA'
     FLAGS = 'FLAGS'
 
     def initAlgorithm(self, config):
@@ -59,8 +60,8 @@ class TopologicalLineDouglasSimplificationAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUTLAYERS,
-                self.tr('Linestring Layers'),
-                QgsProcessing.TypeVectorLine
+                self.tr('Polygon Layers'),
+                QgsProcessing.TypeVectorPolygon
             )
         )
         self.addParameter(
@@ -88,6 +89,15 @@ class TopologicalLineDouglasSimplificationAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
+            QgsProcessingParameterNumber(
+                self.MINAREA,
+                self.tr('Minimum area'),
+                minValue=0,
+                defaultValue=0.0001,
+                type=QgsProcessingParameterNumber.Double
+            )
+        )
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS,
                 self.tr('{0} Flags').format(self.displayName())
@@ -101,24 +111,29 @@ class TopologicalLineDouglasSimplificationAlgorithm(ValidationAlgorithm):
         layerHandler = LayerHandler()
         algRunner = AlgRunner()
 
-        inputLyrList = self.parameterAsLayerList(parameters,
-                                                 self.INPUTLAYERS, context)
+        inputLyrList = self.parameterAsLayerList(
+            parameters, self.INPUTLAYERS, context)
         if inputLyrList is None or inputLyrList == []:
             raise QgsProcessingException(self.invalidSourceError(
                 parameters, self.INPUTLAYERS))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         snap = self.parameterAsDouble(parameters, self.SNAP, context)
-        threshold = self.parameterAsDouble(parameters,
-                                           self.DOUGLASPARAMETER, context)
-        self.prepareFlagSink(parameters, inputLyrList[0],
-                             QgsWkbTypes.MultiLineString, context)
+        threshold = self.parameterAsDouble(
+            parameters, self.DOUGLASPARAMETER, context)
+        minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
+        self.prepareFlagSink(
+            parameters, inputLyrList[0], QgsWkbTypes.MultiPolygon, context)
+
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Building unified layer...'))
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
-            inputLyrList, geomType=QgsWkbTypes.MultiLineString,
-            onlySelected=onlySelected, feedback=multiStepFeedback)
+            inputLyrList, 
+            geomType=QgsWkbTypes.MultiPolygon, 
+            onlySelected=onlySelected, 
+            feedback=multiStepFeedback
+        )
 
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr('Running clean on unified layer...'))
@@ -128,11 +143,12 @@ class TopologicalLineDouglasSimplificationAlgorithm(ValidationAlgorithm):
             context,
             returnError=True,
             snap=snap,
-            feedback=multiStepFeedback)
+            minArea=minArea,
+            feedback=multiStepFeedback
+        )
 
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
-        
         layerHandler.updateOriginalLayersFromUnifiedLayer(
             inputLyrList, simplifiedCoverage, feedback=multiStepFeedback)
         self.flagCoverageIssues(simplifiedCoverage, error, feedback)
@@ -141,7 +157,7 @@ class TopologicalLineDouglasSimplificationAlgorithm(ValidationAlgorithm):
 
     def flagCoverageIssues(self, cleanedCoverage, error, feedback):
         """
-        From lines, this method grabs its overlaps.
+        From polygons, this method grabs its gaps and overlaps.
         """
         overlapDict = dict()
         for feat in cleanedCoverage.getFeatures():
@@ -160,20 +176,17 @@ class TopologicalLineDouglasSimplificationAlgorithm(ValidationAlgorithm):
                 for i in featList:
                     txtList += ['{0} (id={1})'.format(i['layer'], i['featid'])]
                 txt = ', '.join(txtList)
-                self.flagFeature(featList[0].geometry(), self.tr(
-                    'Features from {0} overlap').format(txt))
+                self.flagFeature(featList[0].geometry(), self.tr('Features from {0} overlap').format(txt))
             elif len(featList) == 1:
                 attrList = featList[0].attributes()
                 if attrList == len(attrList)*[None]:
-                    self.flagFeature(featList[0].geometry(), self.tr(
-                        'Gap in coverage.'))
+                    self.flagFeature(featList[0].geometry(), self.tr('Gap in coverage.'))
 
         if error:
             for feat in error.getFeatures():
                 if feedback.isCanceled():
                     break
-                self.flagFeature(feat.geometry(), self.tr(
-                    'Clean error on coverage.'))
+                self.flagFeature(feat.geometry(), self.tr('Clean error on coverage.'))
 
     def name(self):
         """
@@ -183,14 +196,14 @@ class TopologicalLineDouglasSimplificationAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'topologicallinedouglaspeuckersimplification'
+        return 'topologicaldouglaspeuckerareasimplification'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Topological Line Douglas Peucker Simplification')
+        return self.tr('Topological Douglas Peucker Area Simplification')
 
     def group(self):
         """
@@ -210,14 +223,7 @@ class TopologicalLineDouglasSimplificationAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Quality Assurance Tools (Topological Processes)'
 
     def tr(self, string):
-        """
-        Returns a translatable string with the self.tr() function.
-        """
-        return QCoreApplication.translate(
-            'TopologicalLineDouglasSimplificationAlgorithm', string)
+        return QCoreApplication.translate('TopologicalDouglasPeuckerAreaSimplificationAlgorithm', string)
 
     def createInstance(self):
-        """
-        Must return a new copy of your algorithm.
-        """
-        return TopologicalLineDouglasSimplificationAlgorithm()
+        return TopologicalDouglasPeuckerAreaSimplificationAlgorithm()

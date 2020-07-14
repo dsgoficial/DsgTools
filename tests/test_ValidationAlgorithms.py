@@ -161,7 +161,6 @@ class Tester(unittest.TestCase):
         geojsonPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'GeoJSON')
         datasets = {
             "sqlite" : {
-
                 "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite'),
                 "douglas_peucker" : os.path.join(spatiaLitePaths, 'douglas_peucker.sqlite')
             },
@@ -252,7 +251,7 @@ class Tester(unittest.TestCase):
                  tests.
         """
         parameters = {
-            "dsgtools:topologicalareadouglaspeuckersimplification" : [
+            "dsgtools:topologicaldouglaspeuckerareasimplification" : [
                 {
                     '__comment' : "'Normal' test: checks if it works.",
                     'INPUTLAYERS' : self.getInputLayers(
@@ -268,7 +267,7 @@ class Tester(unittest.TestCase):
                 }
             ],
 
-            "dsgtools:topologicallinedouglaspeuckersimplification" : [
+            "dsgtools:topologicaldouglaspeuckerlinesimplification" : [
                 {
                     '__comment' : "'Normal' test: checks if it works.",
                     'INPUTLAYERS' : self.getInputLayers(
@@ -1354,8 +1353,8 @@ class Tester(unittest.TestCase):
             "dsgtools:unbuildpolygonsalgorithm",
             "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
              # manipulation algs
-            "dsgtools:topologicallinedouglaspeuckersimplification",
-            "dsgtools:topologicalareadouglaspeuckersimplification"
+            "dsgtools:topologicaldouglaspeuckerlinesimplification",
+            "dsgtools:topologicaldouglaspeuckerareasimplification"
         ]
         # for alg in self.readAvailableAlgs(self.DEFAULT_ALG_PATH):
         for alg in algs:
@@ -1513,20 +1512,20 @@ class Tester(unittest.TestCase):
             ""
         )
 
-    def test_topologicallinedouglaspeuckersimplification(self):
+    def test_topologicaldouglaspeuckerlinesimplification(self):
         self.assertEqual(
             self.testAlg(
-                "dsgtools:topologicallinedouglaspeuckersimplification",
+                "dsgtools:topologicaldouglaspeuckerlinesimplification",
                 multipleOutputs=True,
                 addControlKey=True
             ),
             ""
         )
 
-    def test_topologicalareadouglaspeuckersimplification(self):
+    def test_topologicaldouglaspeuckerareasimplification(self):
         self.assertEqual(
             self.testAlg(
-                "dsgtools:topologicalareadouglaspeuckersimplification",
+                "dsgtools:topologicaldouglaspeuckerareasimplification",
                 multipleOutputs=True,
                 addControlKey=True
             ),
