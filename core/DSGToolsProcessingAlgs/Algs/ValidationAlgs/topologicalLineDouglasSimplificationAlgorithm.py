@@ -59,7 +59,7 @@ class TopologicalLineDouglasSimplificationAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUTLAYERS,
-                self.tr('Polygon Layers'),
+                self.tr('Linestring Layers'),
                 QgsProcessing.TypeVectorLine
             )
         )
@@ -113,7 +113,6 @@ class TopologicalLineDouglasSimplificationAlgorithm(ValidationAlgorithm):
         self.prepareFlagSink(parameters, inputLyrList[0],
                              QgsWkbTypes.MultiLineString, context)
 
-
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Building unified layer...'))
@@ -131,9 +130,9 @@ class TopologicalLineDouglasSimplificationAlgorithm(ValidationAlgorithm):
             snap=snap,
             feedback=multiStepFeedback)
 
-
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
+        
         layerHandler.updateOriginalLayersFromUnifiedLayer(
             inputLyrList, simplifiedCoverage, feedback=multiStepFeedback)
         self.flagCoverageIssues(simplifiedCoverage, error, feedback)
