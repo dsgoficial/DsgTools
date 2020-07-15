@@ -134,13 +134,14 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanAl
     TopologicalCleanAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanLinesAlgorithm import \
     TopologicalCleanLinesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglasSimplificationAlgorithm import \
-    TopologicalDouglasSimplificationAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglasAreaSimplificationAlgorithm import \
+    TopologicalDouglasPeuckerAreaSimplificationAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglasLineSimplificationAlgorithm import \
+    TopologicalDouglasPeuckerLineSimplificationAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalLineConnectivityAdjustmentAlgorithm import \
     TopologicalLineConnectivityAdjustment
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import \
     VerifyNetworkDirectioningAlgorithm
-
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithm import \
     BatchRunAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.stringCsvToLayerListAlgorithm import \
@@ -199,86 +200,89 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
     """
     Constructor
     """
-    snapHierarchyParameterName = QCoreApplication.translate('Processing', 'Snap Hierarchy')
-    fmeManagerParameterName = QCoreApplication.translate('Processing', 'FME Manager Parameters')
+    snapHierarchyParameterName = QCoreApplication.translate(
+        'Processing', 'Snap Hierarchy')
+    fmeManagerParameterName = QCoreApplication.translate(
+        'Processing', 'FME Manager Parameters')
     def __init__(self):
         super(DSGToolsProcessingAlgorithmProvider, self).__init__()
-    
+
     def getAlgList(self):
         algList = [
-                    DeaggregatorAlgorithm(), 
-                    IdentifySmallPolygonsAlgorithm(), 
-                    IdentifySmallLinesAlgorithm(), 
-                    IdentifyDuplicatedGeometriesAlgorithm(),
-                    IdentifyOutOfBoundsAnglesAlgorithm(),
-                    IdentifyOutOfBoundsAnglesInCoverageAlgorithm(),
-                    IdentifyOverlapsAlgorithm(),
-                    IdentifyGapsAndOverlapsInCoverageAlgorithm(),
-                    IdentifyDanglesAlgorithm(),
-                    IdentifyGapsAlgorithm(),
-                    DonutHoleExtractorAlgorithm(),
-                    UpdateOriginalLayerAlgorithm(),
-                    TopologicalCleanAlgorithm(),
-                    TopologicalDouglasSimplificationAlgorithm(),
-                    RemoveDuplicatedGeometriesAlgorithm(),
-                    RemoveSmallLinesAlgorithm(),
-                    RemoveSmallPolygonsAlgorithm(),
-                    CleanGeometriesAlgorithm(),
-                    MergeLinesAlgorithm(),
-                    TopologicalCleanLinesAlgorithm(),
-                    SnapLayerOnLayerAndUpdateAlgorithm(),
-                    LineOnLineOverlayerAlgorithm(),
-                    DissolvePolygonsWithSameAttributesAlgorithm(),
-                    SnapToGridAndUpdateAlgorithm(),
-                    RemoveEmptyAndUpdateAlgorithm(),
-                    ConvertLayer2LayerAlgorithm(),
-                    OverlayElementsWithAreasAlgorithm(),
-                    CreateNetworkNodesAlgorithm(),
-                    VerifyNetworkDirectioningAlgorithm(),
-                    IdentifyDuplicatedFeaturesAlgorithm(),
-                    AdjustNetworkConnectivityAlgorithm(),
-                    RemoveDuplicatedFeaturesAlgorithm(),
-                    HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(),
-                    IdentifyDuplicatedPolygonsBetweenLayersAlgorithm(),
-                    IdentifyDuplicatedLinesBetweenLayersAlgorithm(),
-                    IdentifyDuplicatedPointsBetweenLayersAlgorithm(),
-                    RunRemoteFMEAlgorithm(),
-                    CreateFrameAlgorithm(),
-                    FileInventoryAlgorithm(),
-                    RaiseFlagsAlgorithm(),
-                    IdentifyAndFixInvalidGeometriesAlgorithm(),
-                    CreateEditingGridAlgorithm(),
-                    AssignFilterToLayersAlgorithm(),
-                    AssignBoundingBoxFilterToLayersAlgorithm(),
-                    AssignMeasureColumnToLayersAlgorithm(),
-                    GroupLayersAlgorithm(),
-                    TopologicalLineConnectivityAdjustment(),
-                    PecCalculatorAlgorithm(),
-                    RuleStatisticsAlgorithm(),
-                    MatchAndApplyQmlStylesToLayersAlgorithm(),
-                    ApplyStylesFromDatabaseToLayersAlgorithm(),
-                    SingleOutputUnitTestAlgorithm(),
-                    ExportToMemoryLayer(),
-                    AssignCustomFormAndFormatRulesToLayersAlgorithm(),
-                    AssignValueMapToLayersAlgorithm(),
-                    LoadLayersFromPostgisAlgorithm(),
-                    LoadNonSpatialLayersFromPostgreSQLAlgorithm(),
-                    AssignAliasesToLayersAlgorithm(),
-                    BuildJoinsOnLayersAlgorithm(),
-                    BatchRunAlgorithm(),
-                    StringCsvToLayerListAlgorithm(),
-                    IdentifyWrongBuildingAnglesAlgorithm(),
-                    IdentifyVertexNearEdgesAlgorithm(),
-                    IdentifyUnsharedVertexOnSharedEdgesAlgorithm(),
-                    EnforceSpatialRulesAlgorithm(),
-                    UnbuildPolygonsAlgorithm(),
-                    IdentifyUnsharedVertexOnIntersectionsAlgorithm(),
-                    SetFreeHandToolParametersAlgorithm(),
-                    BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(),
-                    MultipleOutputUnitTestAlgorithm(),
-                    IdentifyTerrainModelErrorsAlgorithm(),
-                    CreateFramesWithConstraintAlgorithm()
-                ]
+            DeaggregatorAlgorithm(),
+            IdentifySmallPolygonsAlgorithm(), 
+            IdentifySmallLinesAlgorithm(), 
+            IdentifyDuplicatedGeometriesAlgorithm(),
+            IdentifyOutOfBoundsAnglesAlgorithm(),
+            IdentifyOutOfBoundsAnglesInCoverageAlgorithm(),
+            IdentifyOverlapsAlgorithm(),
+            IdentifyGapsAndOverlapsInCoverageAlgorithm(),
+            IdentifyDanglesAlgorithm(),
+            IdentifyGapsAlgorithm(),
+            DonutHoleExtractorAlgorithm(),
+            UpdateOriginalLayerAlgorithm(),
+            TopologicalCleanAlgorithm(),
+            TopologicalDouglasPeuckerAreaSimplificationAlgorithm(),
+            TopologicalDouglasPeuckerLineSimplificationAlgorithm(),
+            RemoveDuplicatedGeometriesAlgorithm(),
+            RemoveSmallLinesAlgorithm(),
+            RemoveSmallPolygonsAlgorithm(),
+            CleanGeometriesAlgorithm(),
+            MergeLinesAlgorithm(),
+            TopologicalCleanLinesAlgorithm(),
+            SnapLayerOnLayerAndUpdateAlgorithm(),
+            LineOnLineOverlayerAlgorithm(),
+            DissolvePolygonsWithSameAttributesAlgorithm(),
+            SnapToGridAndUpdateAlgorithm(),
+            RemoveEmptyAndUpdateAlgorithm(),
+            ConvertLayer2LayerAlgorithm(),
+            OverlayElementsWithAreasAlgorithm(),
+            CreateNetworkNodesAlgorithm(),
+            VerifyNetworkDirectioningAlgorithm(),
+            IdentifyDuplicatedFeaturesAlgorithm(),
+            AdjustNetworkConnectivityAlgorithm(),
+            RemoveDuplicatedFeaturesAlgorithm(),
+            HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(),
+            IdentifyDuplicatedPolygonsBetweenLayersAlgorithm(),
+            IdentifyDuplicatedLinesBetweenLayersAlgorithm(),
+            IdentifyDuplicatedPointsBetweenLayersAlgorithm(),
+            RunRemoteFMEAlgorithm(),
+            CreateFrameAlgorithm(),
+            FileInventoryAlgorithm(),
+            RaiseFlagsAlgorithm(),
+            IdentifyAndFixInvalidGeometriesAlgorithm(),
+            CreateEditingGridAlgorithm(),
+            AssignFilterToLayersAlgorithm(),
+            AssignBoundingBoxFilterToLayersAlgorithm(),
+            AssignMeasureColumnToLayersAlgorithm(),
+            GroupLayersAlgorithm(),
+            TopologicalLineConnectivityAdjustment(),
+            PecCalculatorAlgorithm(),
+            RuleStatisticsAlgorithm(),
+            MatchAndApplyQmlStylesToLayersAlgorithm(),
+            ApplyStylesFromDatabaseToLayersAlgorithm(),
+            SingleOutputUnitTestAlgorithm(),
+            ExportToMemoryLayer(),
+            AssignCustomFormAndFormatRulesToLayersAlgorithm(),
+            AssignValueMapToLayersAlgorithm(),
+            LoadLayersFromPostgisAlgorithm(),
+            LoadNonSpatialLayersFromPostgreSQLAlgorithm(),
+            AssignAliasesToLayersAlgorithm(),
+            BuildJoinsOnLayersAlgorithm(),
+            BatchRunAlgorithm(),
+            StringCsvToLayerListAlgorithm(),
+            IdentifyWrongBuildingAnglesAlgorithm(),
+            IdentifyVertexNearEdgesAlgorithm(),
+            IdentifyUnsharedVertexOnSharedEdgesAlgorithm(),
+            EnforceSpatialRulesAlgorithm(),
+            UnbuildPolygonsAlgorithm(),
+            IdentifyUnsharedVertexOnIntersectionsAlgorithm(),
+            SetFreeHandToolParametersAlgorithm(),
+            BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(),
+            MultipleOutputUnitTestAlgorithm(),
+            IdentifyTerrainModelErrorsAlgorithm(),
+            CreateFramesWithConstraintAlgorithm()
+        ]
         return algList
 
 
@@ -289,11 +293,14 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                                             'Activate', True))
         ProcessingConfig.readSettings()
         self.parameterTypeSnapHierarchy = ParameterSnapHierarchyType()
-        QgsApplication.instance().processingRegistry().addParameterType(self.parameterTypeSnapHierarchy)
+        QgsApplication.instance().processingRegistry().addParameterType(
+            self.parameterTypeSnapHierarchy)
         self.parameterTypeFMEManager = ParameterFMEManagerType()
-        QgsApplication.instance().processingRegistry().addParameterType(self.parameterTypeFMEManager)
+        QgsApplication.instance().processingRegistry().addParameterType(
+            self.parameterTypeFMEManager)
         self.parameterSpatialRulesSetType = ParameterSpatialRulesSetType()
-        QgsApplication.instance().processingRegistry().addParameterType(self.parameterSpatialRulesSetType)
+        QgsApplication.instance().processingRegistry().addParameterType(
+            self.parameterSpatialRulesSetType)
         self.refreshAlgorithms()
         return True
 
@@ -302,9 +309,12 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         Removes setting when the plugin is unloaded.
         """
         ProcessingConfig.removeSetting('ACTIVATE_DSGTools')
-        QgsApplication.instance().processingRegistry().removeParameterType(self.parameterTypeSnapHierarchy)
-        QgsApplication.instance().processingRegistry().removeParameterType(self.parameterTypeFMEManager)
-        QgsApplication.instance().processingRegistry().removeParameterType(self.parameterSpatialRulesSetType)
+        QgsApplication.instance().processingRegistry().removeParameterType(
+            self.parameterTypeSnapHierarchy)
+        QgsApplication.instance().processingRegistry().removeParameterType(
+            self.parameterTypeFMEManager)
+        QgsApplication.instance().processingRegistry().removeParameterType(
+            self.parameterSpatialRulesSetType)
 
     def isActive(self):
         """
