@@ -190,6 +190,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyTerrainMod
     IdentifyTerrainModelErrorsAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFramesWithConstraintAlgorithm import \
     CreateFramesWithConstraintAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAnglesInInvalidRangeAlgorithm import \
+    IdentifyAnglesInInvalidRangeAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -281,7 +283,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(),
             MultipleOutputUnitTestAlgorithm(),
             IdentifyTerrainModelErrorsAlgorithm(),
-            CreateFramesWithConstraintAlgorithm()
+            CreateFramesWithConstraintAlgorithm(),
+            IdentifyAnglesInInvalidRangeAlgorithm()
         ]
         return algList
 
