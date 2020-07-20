@@ -348,7 +348,7 @@ class UtmGrid(QObject):
         if len(inom.split('-')) > 4:
             return self.getMIfromInom(inom)
         else:
-            return self.getINomenFromMIR(inom)
+            return self.getMIR(self.getMIRdict(), inom)
 
     def get_INOM_from_lat_lon(self, lon, lat):
         """
