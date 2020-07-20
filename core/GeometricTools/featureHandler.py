@@ -23,6 +23,8 @@
 from __future__ import absolute_import
 from builtins import range
 import itertools
+import sys
+import os
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
                       QgsCoordinateTransform, QgsWkbTypes, QgsProcessingMultiStepFeedback,\
@@ -32,6 +34,7 @@ from qgis.PyQt.Qt import QObject, QVariant
 from .geometryHandler import GeometryHandler
 from .attributeHandler import AttributeHandler
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
+import concurrent.futures
 
 class FeatureHandler(QObject):
     def __init__(self, iface=None, parent=None):
@@ -225,14 +228,14 @@ class FeatureHandler(QObject):
                     self.utmGrid.scaleText[scaleId+1]
                 ) #flatten list into one single list
             )
-            localMultiStepFeedback = QgsProcessingMultiStepFeedback(
-                len(sufixIterator),
-                feedback
-            )
+            # localMultiStepFeedback = QgsProcessingMultiStepFeedback(
+            #     len(sufixIterator),
+            #     feedback
+            # )
             for i, line in enumerate(sufixIterator):
                 if feedback is not None and feedback.isCanceled():
                     break
-                localMultiStepFeedback.setCurrentStep(i)
+                # localMultiStepFeedback.setCurrentStep(i)
                 inomen2 = '{oldInomem}-{newPart}'.format(
                     oldInomem=index,
                     newPart=line)
@@ -250,7 +253,7 @@ class FeatureHandler(QObject):
                     coordinateTransformer,
                     fields,
                     constraintDict=constraintDict,
-                    feedback=localMultiStepFeedback
+                    feedback=feedback
                 )
 
     def createGridItem(self, index, coordinateTransformer, constraintDict):
@@ -301,19 +304,34 @@ class FeatureHandler(QObject):
             'idDict' : idDict,
             'predicate' : predicate
         }
-        for i, inomen in enumerate(inomenList):
-            gridMultistepFeedback.setCurrentStep(i)
-            if gridMultistepFeedback.isCanceled():
-                break
+        sys.setrecursionlimit(10**7)
+        def compute(x):
             self.getSystematicGridFeatures(
                 featureList,
-                inomen,
+                x,
                 stopScale,
                 coordinateTransformer,
                 fields,
                 constraintDict=constraintDict,
                 feedback=gridMultistepFeedback
             )
+        pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count())
+        futures = []
+        current_idx = 0
+        for inomen in inomenList:
+            # gridMultistepFeedback.setCurrentStep(i)
+            if gridMultistepFeedback.isCanceled():
+                break
+            futures.append(
+                pool.submit(compute, inomen)
+            )
+        
+        for x in concurrent.futures.as_completed(futures):
+            if gridMultistepFeedback.isCanceled():
+                break
+            gridMultistepFeedback.setCurrentStep(current_idx)
+            current_idx += 1
+
 
 
     def buildSpatialIndexAndIdDict(self, inputLyr, feedback=None,\
