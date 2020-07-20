@@ -67,7 +67,7 @@ class IdentifyAnglesInInvalidRangeAlgorithm(ValidationAlgorithm):
                 self.MIN_ANGLE,
                 self.tr('Minimum angle'),
                 minValue=0,
-                defaultValue=10
+                defaultValue=80
             )
         )
 
@@ -76,7 +76,7 @@ class IdentifyAnglesInInvalidRangeAlgorithm(ValidationAlgorithm):
                 self.MAX_ANGLE,
                 self.tr('Maximum angle'),
                 minValue=0,
-                defaultValue=20
+                defaultValue=100
             )
         )
 

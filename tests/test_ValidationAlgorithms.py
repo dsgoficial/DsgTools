@@ -174,7 +174,8 @@ class Tester(unittest.TestCase):
                 "terrain_model_layers" : os.path.join(geojsonPaths, 'terrain_model_layers'),
                 "testes_sirgas2000_24s" : os.path.join(geojsonPaths, 'testes_sirgas2000_24s'),
                 "spatial_rules_alg" : os.path.join(geojsonPaths, 'spatial_rules_alg'),
-                "create_frames_layers" : os.path.join(geojsonPaths, 'create_frames_layers')
+                "create_frames_layers" : os.path.join(geojsonPaths, 'create_frames_layers'),
+                "identify_angles_in_invalid_range_layers" : os.path.join(geojsonPaths, 'identify_angles_in_invalid_range_layers')
             }
         }
         # switch-case for dataset reading
@@ -319,6 +320,19 @@ class Tester(unittest.TestCase):
                         ),
                     'SELECTED' : False,
                     'TOLERANCE' : 10
+                }
+            ],
+
+            "dsgtools:identifyanglesininvalidrangealgorithm" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS' : 'memory:',
+                    'INPUT' : self.getInputLayers(
+                        'geojson', 'identify_angles_in_invalid_range_layers', ['lines1']
+                    )[0],
+                    'SELECTED' : False,
+                    'MIN_ANGLE' : 80,
+                    'MAX_ANGLE' : 100
                 }
             ],
 
@@ -1376,6 +1390,15 @@ class Tester(unittest.TestCase):
     def test_identifyoutofboundsangles(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifyoutofboundsangles"), ""
+        )
+    
+    def test_identifyanglesininvalidrangealgorithm(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:identifyanglesininvalidrangealgorithm",
+                multipleOutputs=True,
+                addControlKey=True
+            ), ""
         )
 
     # def test_identifyoutofboundsanglesincoverage(self):
