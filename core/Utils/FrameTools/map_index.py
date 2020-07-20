@@ -373,7 +373,7 @@ class UtmGrid(QObject):
     def get_INOM_range_from_min_max_inom(self, minInom, maxInom):
         minFuse = int(minInom.split('-')[-1])
         maxFuse = int(maxInom.split('-')[-1])
-        fuseRange = map(str, range(minFuse,maxFuse+1,1))
+        fuseRange = map(str, range(minFuse,maxFuse+2,1))
         letterRange = self.get_letter_range(minInom, maxInom)
         return list(
             '-'.join(i) for i in itertools.product(letterRange, fuseRange)
@@ -389,7 +389,7 @@ class UtmGrid(QObject):
             return list(
                 map(
                     lambda x: minInom[0]+x,
-                    string.ascii_uppercase[min(startIndex, endIndex):max(startIndex, endIndex)+1:1]
+                    string.ascii_uppercase[min(startIndex, endIndex):max(startIndex, endIndex)+3:1]
                 )
             )[::multiplier]
 
