@@ -1,323 +1,445 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis version="2.14.0-Essen" minimumScale="1" maximumScale="1" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" simplifyMaxScale="1" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-  <edittypes>
-    <edittype widgetv2type="TextEdit" name="id">
-      <widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="mi">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="inom">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="escala">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="nomecarta">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="anoaquisicao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="engrespaquisicao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="opaquisicao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="datainicioaquisicao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="datafimaquisicao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="engresprevisaoaquisicao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="oprevisaoaquisicao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="datainiciorevaquisicao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="datafimrevaquisicao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="engrespreambulacao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="opreambulacao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="datainicioreambulacao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="datafimreambulacao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="oprevisaoreambulacao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="engrespvalidacaoedicao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="opvalidacao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="datainiciovalidacao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="datafimvalidacao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="opedicao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="datainicioedicao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-    <edittype widgetv2type="TextEdit" name="datafimedicao">
-      <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-    </edittype>
-  </edittypes>
-  <renderer-v2 forceraster="0" symbollevels="0" type="singleSymbol" enableorderby="0">
+<qgis maxScale="0" simplifyDrawingHints="0" readOnly="0" simplifyDrawingTol="1" version="3.7.0-Master" labelsEnabled="0" hasScaleBasedVisibilityFlag="0" styleCategories="AllStyleCategories" simplifyMaxScale="1" minScale="1e+8" simplifyLocal="1" simplifyAlgorithm="0">
+  <flags>
+    <Identifiable>1</Identifiable>
+    <Removable>1</Removable>
+    <Searchable>1</Searchable>
+  </flags>
+  <renderer-v2 enableorderby="0" forceraster="0" type="singleSymbol" symbollevels="0">
     <symbols>
-      <symbol alpha="1" clip_to_extent="1" type="fill" name="0">
-        <layer pass="0" class="SimpleFill" locked="0">
-          <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-          <prop k="color" v="0,0,0,0"/>
-          <prop k="joinstyle" v="bevel"/>
-          <prop k="offset" v="0,0"/>
-          <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
-          <prop k="offset_unit" v="MM"/>
-          <prop k="outline_color" v="227,26,28,255"/>
-          <prop k="outline_style" v="solid"/>
-          <prop k="outline_width" v="0.26"/>
-          <prop k="outline_width_unit" v="MM"/>
-          <prop k="style" v="no"/>
+      <symbol alpha="1" type="fill" name="0" clip_to_extent="1" force_rhr="0">
+        <layer pass="0" locked="0" enabled="1" class="SimpleFill">
+          <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
+          <prop v="152,125,183,255" k="color"/>
+          <prop v="bevel" k="joinstyle"/>
+          <prop v="0,0" k="offset"/>
+          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
+          <prop v="MM" k="offset_unit"/>
+          <prop v="35,35,35,255" k="outline_color"/>
+          <prop v="solid" k="outline_style"/>
+          <prop v="0.26" k="outline_width"/>
+          <prop v="MM" k="outline_width_unit"/>
+          <prop v="solid" k="style"/>
+          <data_defined_properties>
+            <Option type="Map">
+              <Option value="" type="QString" name="name"/>
+              <Option name="properties"/>
+              <Option value="collection" type="QString" name="type"/>
+            </Option>
+          </data_defined_properties>
         </layer>
       </symbol>
     </symbols>
     <rotation/>
-    <sizescale scalemethod="diameter"/>
+    <sizescale/>
   </renderer-v2>
-  <labeling type="simple"/>
-  <customproperties>
-    <property key="labeling" value="pal"/>
-    <property key="labeling/addDirectionSymbol" value="false"/>
-    <property key="labeling/angleOffset" value="0"/>
-    <property key="labeling/blendMode" value="0"/>
-    <property key="labeling/bufferBlendMode" value="0"/>
-    <property key="labeling/bufferColorA" value="255"/>
-    <property key="labeling/bufferColorB" value="255"/>
-    <property key="labeling/bufferColorG" value="255"/>
-    <property key="labeling/bufferColorR" value="255"/>
-    <property key="labeling/bufferDraw" value="false"/>
-    <property key="labeling/bufferJoinStyle" value="64"/>
-    <property key="labeling/bufferNoFill" value="false"/>
-    <property key="labeling/bufferSize" value="1"/>
-    <property key="labeling/bufferSizeInMapUnits" value="false"/>
-    <property key="labeling/bufferSizeMapUnitMaxScale" value="0"/>
-    <property key="labeling/bufferSizeMapUnitMinScale" value="0"/>
-    <property key="labeling/bufferTransp" value="0"/>
-    <property key="labeling/centroidInside" value="false"/>
-    <property key="labeling/centroidWhole" value="false"/>
-    <property key="labeling/decimals" value="3"/>
-    <property key="labeling/displayAll" value="false"/>
-    <property key="labeling/dist" value="0"/>
-    <property key="labeling/distInMapUnits" value="false"/>
-    <property key="labeling/distMapUnitMaxScale" value="0"/>
-    <property key="labeling/distMapUnitMinScale" value="0"/>
-    <property key="labeling/drawLabels" value="false"/>
-    <property key="labeling/enabled" value="false"/>
-    <property key="labeling/fieldName" value=""/>
-    <property key="labeling/fitInPolygonOnly" value="false"/>
-    <property key="labeling/fontCapitals" value="0"/>
-    <property key="labeling/fontFamily" value="Ubuntu"/>
-    <property key="labeling/fontItalic" value="false"/>
-    <property key="labeling/fontLetterSpacing" value="0"/>
-    <property key="labeling/fontLimitPixelSize" value="false"/>
-    <property key="labeling/fontMaxPixelSize" value="10000"/>
-    <property key="labeling/fontMinPixelSize" value="3"/>
-    <property key="labeling/fontSize" value="9"/>
-    <property key="labeling/fontSizeInMapUnits" value="false"/>
-    <property key="labeling/fontSizeMapUnitMaxScale" value="0"/>
-    <property key="labeling/fontSizeMapUnitMinScale" value="0"/>
-    <property key="labeling/fontStrikeout" value="false"/>
-    <property key="labeling/fontUnderline" value="false"/>
-    <property key="labeling/fontWeight" value="50"/>
-    <property key="labeling/fontWordSpacing" value="0"/>
-    <property key="labeling/formatNumbers" value="false"/>
-    <property key="labeling/isExpression" value="true"/>
-    <property key="labeling/labelOffsetInMapUnits" value="true"/>
-    <property key="labeling/labelOffsetMapUnitMaxScale" value="0"/>
-    <property key="labeling/labelOffsetMapUnitMinScale" value="0"/>
-    <property key="labeling/labelPerPart" value="false"/>
-    <property key="labeling/leftDirectionSymbol" value="&lt;"/>
-    <property key="labeling/limitNumLabels" value="false"/>
-    <property key="labeling/maxCurvedCharAngleIn" value="20"/>
-    <property key="labeling/maxCurvedCharAngleOut" value="-20"/>
-    <property key="labeling/maxNumLabels" value="2000"/>
-    <property key="labeling/mergeLines" value="false"/>
-    <property key="labeling/minFeatureSize" value="0"/>
-    <property key="labeling/multilineAlign" value="0"/>
-    <property key="labeling/multilineHeight" value="1"/>
-    <property key="labeling/namedStyle" value="Medium"/>
-    <property key="labeling/obstacle" value="true"/>
-    <property key="labeling/obstacleFactor" value="1"/>
-    <property key="labeling/obstacleType" value="0"/>
-    <property key="labeling/offsetType" value="0"/>
-    <property key="labeling/placeDirectionSymbol" value="0"/>
-    <property key="labeling/placement" value="1"/>
-    <property key="labeling/placementFlags" value="10"/>
-    <property key="labeling/plussign" value="false"/>
-    <property key="labeling/predefinedPositionOrder" value="TR,TL,BR,BL,R,L,TSR,BSR"/>
-    <property key="labeling/preserveRotation" value="true"/>
-    <property key="labeling/previewBkgrdColor" value="#ffffff"/>
-    <property key="labeling/priority" value="5"/>
-    <property key="labeling/quadOffset" value="4"/>
-    <property key="labeling/repeatDistance" value="0"/>
-    <property key="labeling/repeatDistanceMapUnitMaxScale" value="0"/>
-    <property key="labeling/repeatDistanceMapUnitMinScale" value="0"/>
-    <property key="labeling/repeatDistanceUnit" value="1"/>
-    <property key="labeling/reverseDirectionSymbol" value="false"/>
-    <property key="labeling/rightDirectionSymbol" value=">"/>
-    <property key="labeling/scaleMax" value="10000000"/>
-    <property key="labeling/scaleMin" value="1"/>
-    <property key="labeling/scaleVisibility" value="false"/>
-    <property key="labeling/shadowBlendMode" value="6"/>
-    <property key="labeling/shadowColorB" value="0"/>
-    <property key="labeling/shadowColorG" value="0"/>
-    <property key="labeling/shadowColorR" value="0"/>
-    <property key="labeling/shadowDraw" value="false"/>
-    <property key="labeling/shadowOffsetAngle" value="135"/>
-    <property key="labeling/shadowOffsetDist" value="1"/>
-    <property key="labeling/shadowOffsetGlobal" value="true"/>
-    <property key="labeling/shadowOffsetMapUnitMaxScale" value="0"/>
-    <property key="labeling/shadowOffsetMapUnitMinScale" value="0"/>
-    <property key="labeling/shadowOffsetUnits" value="1"/>
-    <property key="labeling/shadowRadius" value="1.5"/>
-    <property key="labeling/shadowRadiusAlphaOnly" value="false"/>
-    <property key="labeling/shadowRadiusMapUnitMaxScale" value="0"/>
-    <property key="labeling/shadowRadiusMapUnitMinScale" value="0"/>
-    <property key="labeling/shadowRadiusUnits" value="1"/>
-    <property key="labeling/shadowScale" value="100"/>
-    <property key="labeling/shadowTransparency" value="30"/>
-    <property key="labeling/shadowUnder" value="0"/>
-    <property key="labeling/shapeBlendMode" value="0"/>
-    <property key="labeling/shapeBorderColorA" value="255"/>
-    <property key="labeling/shapeBorderColorB" value="128"/>
-    <property key="labeling/shapeBorderColorG" value="128"/>
-    <property key="labeling/shapeBorderColorR" value="128"/>
-    <property key="labeling/shapeBorderWidth" value="0"/>
-    <property key="labeling/shapeBorderWidthMapUnitMaxScale" value="0"/>
-    <property key="labeling/shapeBorderWidthMapUnitMinScale" value="0"/>
-    <property key="labeling/shapeBorderWidthUnits" value="1"/>
-    <property key="labeling/shapeDraw" value="false"/>
-    <property key="labeling/shapeFillColorA" value="255"/>
-    <property key="labeling/shapeFillColorB" value="255"/>
-    <property key="labeling/shapeFillColorG" value="255"/>
-    <property key="labeling/shapeFillColorR" value="255"/>
-    <property key="labeling/shapeJoinStyle" value="64"/>
-    <property key="labeling/shapeOffsetMapUnitMaxScale" value="0"/>
-    <property key="labeling/shapeOffsetMapUnitMinScale" value="0"/>
-    <property key="labeling/shapeOffsetUnits" value="1"/>
-    <property key="labeling/shapeOffsetX" value="0"/>
-    <property key="labeling/shapeOffsetY" value="0"/>
-    <property key="labeling/shapeRadiiMapUnitMaxScale" value="0"/>
-    <property key="labeling/shapeRadiiMapUnitMinScale" value="0"/>
-    <property key="labeling/shapeRadiiUnits" value="1"/>
-    <property key="labeling/shapeRadiiX" value="0"/>
-    <property key="labeling/shapeRadiiY" value="0"/>
-    <property key="labeling/shapeRotation" value="0"/>
-    <property key="labeling/shapeRotationType" value="0"/>
-    <property key="labeling/shapeSVGFile" value=""/>
-    <property key="labeling/shapeSizeMapUnitMaxScale" value="0"/>
-    <property key="labeling/shapeSizeMapUnitMinScale" value="0"/>
-    <property key="labeling/shapeSizeType" value="0"/>
-    <property key="labeling/shapeSizeUnits" value="1"/>
-    <property key="labeling/shapeSizeX" value="0"/>
-    <property key="labeling/shapeSizeY" value="0"/>
-    <property key="labeling/shapeTransparency" value="0"/>
-    <property key="labeling/shapeType" value="0"/>
-    <property key="labeling/textColorA" value="255"/>
-    <property key="labeling/textColorB" value="0"/>
-    <property key="labeling/textColorG" value="0"/>
-    <property key="labeling/textColorR" value="0"/>
-    <property key="labeling/textTransp" value="0"/>
-    <property key="labeling/upsidedownLabels" value="0"/>
-    <property key="labeling/wrapChar" value=""/>
-    <property key="labeling/xOffset" value="0"/>
-    <property key="labeling/yOffset" value="0"/>
-    <property key="labeling/zIndex" value="0"/>
-    <property key="variableNames" value="_fields_"/>
-    <property key="variableValues" value=""/>
-  </customproperties>
+  <customproperties/>
   <blendMode>0</blendMode>
   <featureBlendMode>0</featureBlendMode>
-  <layerTransparency>0</layerTransparency>
-  <displayfield>id</displayfield>
-  <label>0</label>
-  <labelattributes>
-    <label fieldname="" text="Rótulo"/>
-    <family fieldname="" name="Ubuntu"/>
-    <size fieldname="" units="pt" value="12"/>
-    <bold fieldname="" on="0"/>
-    <italic fieldname="" on="0"/>
-    <underline fieldname="" on="0"/>
-    <strikeout fieldname="" on="0"/>
-    <color fieldname="" red="0" blue="0" green="0"/>
-    <x fieldname=""/>
-    <y fieldname=""/>
-    <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
-    <angle fieldname="" value="0" auto="0"/>
-    <alignment fieldname="" value="center"/>
-    <buffercolor fieldname="" red="255" blue="255" green="255"/>
-    <buffersize fieldname="" units="pt" value="1"/>
-    <bufferenabled fieldname="" on=""/>
-    <multilineenabled fieldname="" on=""/>
-    <selectedonly on=""/>
-  </labelattributes>
-  <SingleCategoryDiagramRenderer diagramType="Pie">
-    <DiagramCategory penColor="#000000" labelPlacementMethod="XHeight" penWidth="0" diagramOrientation="Up" minimumSize="0" barWidth="5" penAlpha="255" maxScaleDenominator="1" backgroundColor="#ffffff" transparency="0" width="15" scaleDependency="Area" backgroundAlpha="255" angleOffset="1440" scaleBasedVisibility="0" enabled="0" height="15" sizeType="MM" minScaleDenominator="1">
-      <fontProperties description="Ubuntu,9,-1,5,50,0,0,0,0,0" style=""/>
-    </DiagramCategory>
-  </SingleCategoryDiagramRenderer>
-  <DiagramLayerSettings yPosColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-  <annotationform></annotationform>
+  <layerOpacity>1</layerOpacity>
+  <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
+    <activeChecks type="StringList">
+      <Option value="" type="QString"/>
+    </activeChecks>
+    <checkConfiguration/>
+  </geometryOptions>
+  <fieldConfiguration>
+    <field name="id">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="mi">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="inom">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="escala">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="nomecarta">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="anoaquisicao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="engrespaquisicao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="opaquisicao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="datainicioaquisicao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="datafimaquisicao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="engresprevisaoaquisicao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="oprevisaoaquisicao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="datainiciorevaquisicao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="datafimrevaquisicao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="engrespreambulacao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="opreambulacao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="datainicioreambulacao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="datafimreambulacao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="oprevisaoreambulacao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="engrespvalidacaoedicao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="opvalidacao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="datainiciovalidacao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="datafimvalidacao">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="opedicao1">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="datainicioedicao1">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="datafimedicao1">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="oprevedicao1">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="datainiciorevedicao1">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="datafimrevedicao1">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="opedicao2">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="datainicioedicao2">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="datafimedicao2">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="area_otf">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+  </fieldConfiguration>
+  <aliases>
+    <alias field="id" index="0" name=""/>
+    <alias field="mi" index="1" name=""/>
+    <alias field="inom" index="2" name=""/>
+    <alias field="escala" index="3" name=""/>
+    <alias field="nomecarta" index="4" name=""/>
+    <alias field="anoaquisicao" index="5" name=""/>
+    <alias field="engrespaquisicao" index="6" name=""/>
+    <alias field="opaquisicao" index="7" name=""/>
+    <alias field="datainicioaquisicao" index="8" name=""/>
+    <alias field="datafimaquisicao" index="9" name=""/>
+    <alias field="engresprevisaoaquisicao" index="10" name=""/>
+    <alias field="oprevisaoaquisicao" index="11" name=""/>
+    <alias field="datainiciorevaquisicao" index="12" name=""/>
+    <alias field="datafimrevaquisicao" index="13" name=""/>
+    <alias field="engrespreambulacao" index="14" name=""/>
+    <alias field="opreambulacao" index="15" name=""/>
+    <alias field="datainicioreambulacao" index="16" name=""/>
+    <alias field="datafimreambulacao" index="17" name=""/>
+    <alias field="oprevisaoreambulacao" index="18" name=""/>
+    <alias field="engrespvalidacaoedicao" index="19" name=""/>
+    <alias field="opvalidacao" index="20" name=""/>
+    <alias field="datainiciovalidacao" index="21" name=""/>
+    <alias field="datafimvalidacao" index="22" name=""/>
+    <alias field="opedicao1" index="23" name=""/>
+    <alias field="datainicioedicao1" index="24" name=""/>
+    <alias field="datafimedicao1" index="25" name=""/>
+    <alias field="oprevedicao1" index="26" name=""/>
+    <alias field="datainiciorevedicao1" index="27" name=""/>
+    <alias field="datafimrevedicao1" index="28" name=""/>
+    <alias field="opedicao2" index="29" name=""/>
+    <alias field="datainicioedicao2" index="30" name=""/>
+    <alias field="datafimedicao2" index="31" name=""/>
+    <alias field="area_otf" index="32" name=""/>
+  </aliases>
   <excludeAttributesWMS/>
   <excludeAttributesWFS/>
+  <defaults>
+    <default applyOnUpdate="0" field="id" expression=""/>
+    <default applyOnUpdate="0" field="mi" expression=""/>
+    <default applyOnUpdate="0" field="inom" expression=""/>
+    <default applyOnUpdate="0" field="escala" expression=""/>
+    <default applyOnUpdate="0" field="nomecarta" expression=""/>
+    <default applyOnUpdate="0" field="anoaquisicao" expression=""/>
+    <default applyOnUpdate="0" field="engrespaquisicao" expression=""/>
+    <default applyOnUpdate="0" field="opaquisicao" expression=""/>
+    <default applyOnUpdate="0" field="datainicioaquisicao" expression=""/>
+    <default applyOnUpdate="0" field="datafimaquisicao" expression=""/>
+    <default applyOnUpdate="0" field="engresprevisaoaquisicao" expression=""/>
+    <default applyOnUpdate="0" field="oprevisaoaquisicao" expression=""/>
+    <default applyOnUpdate="0" field="datainiciorevaquisicao" expression=""/>
+    <default applyOnUpdate="0" field="datafimrevaquisicao" expression=""/>
+    <default applyOnUpdate="0" field="engrespreambulacao" expression=""/>
+    <default applyOnUpdate="0" field="opreambulacao" expression=""/>
+    <default applyOnUpdate="0" field="datainicioreambulacao" expression=""/>
+    <default applyOnUpdate="0" field="datafimreambulacao" expression=""/>
+    <default applyOnUpdate="0" field="oprevisaoreambulacao" expression=""/>
+    <default applyOnUpdate="0" field="engrespvalidacaoedicao" expression=""/>
+    <default applyOnUpdate="0" field="opvalidacao" expression=""/>
+    <default applyOnUpdate="0" field="datainiciovalidacao" expression=""/>
+    <default applyOnUpdate="0" field="datafimvalidacao" expression=""/>
+    <default applyOnUpdate="0" field="opedicao1" expression=""/>
+    <default applyOnUpdate="0" field="datainicioedicao1" expression=""/>
+    <default applyOnUpdate="0" field="datafimedicao1" expression=""/>
+    <default applyOnUpdate="0" field="oprevedicao1" expression=""/>
+    <default applyOnUpdate="0" field="datainiciorevedicao1" expression=""/>
+    <default applyOnUpdate="0" field="datafimrevedicao1" expression=""/>
+    <default applyOnUpdate="0" field="opedicao2" expression=""/>
+    <default applyOnUpdate="0" field="datainicioedicao2" expression=""/>
+    <default applyOnUpdate="0" field="datafimedicao2" expression=""/>
+    <default applyOnUpdate="0" field="area_otf" expression=""/>
+  </defaults>
+  <constraints>
+    <constraint unique_strength="1" field="id" constraints="3" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="mi" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="inom" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="escala" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="nomecarta" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="anoaquisicao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="engrespaquisicao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="opaquisicao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="datainicioaquisicao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="datafimaquisicao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="engresprevisaoaquisicao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="oprevisaoaquisicao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="datainiciorevaquisicao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="datafimrevaquisicao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="engrespreambulacao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="opreambulacao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="datainicioreambulacao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="datafimreambulacao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="oprevisaoreambulacao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="engrespvalidacaoedicao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="opvalidacao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="datainiciovalidacao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="datafimvalidacao" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="opedicao1" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="datainicioedicao1" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="datafimedicao1" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="oprevedicao1" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="datainiciorevedicao1" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="datafimrevedicao1" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="opedicao2" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="datainicioedicao2" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="datafimedicao2" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="area_otf" constraints="0" exp_strength="0" notnull_strength="0"/>
+  </constraints>
+  <constraintExpressions>
+    <constraint exp="" desc="" field="id"/>
+    <constraint exp="" desc="" field="mi"/>
+    <constraint exp="" desc="" field="inom"/>
+    <constraint exp="" desc="" field="escala"/>
+    <constraint exp="" desc="" field="nomecarta"/>
+    <constraint exp="" desc="" field="anoaquisicao"/>
+    <constraint exp="" desc="" field="engrespaquisicao"/>
+    <constraint exp="" desc="" field="opaquisicao"/>
+    <constraint exp="" desc="" field="datainicioaquisicao"/>
+    <constraint exp="" desc="" field="datafimaquisicao"/>
+    <constraint exp="" desc="" field="engresprevisaoaquisicao"/>
+    <constraint exp="" desc="" field="oprevisaoaquisicao"/>
+    <constraint exp="" desc="" field="datainiciorevaquisicao"/>
+    <constraint exp="" desc="" field="datafimrevaquisicao"/>
+    <constraint exp="" desc="" field="engrespreambulacao"/>
+    <constraint exp="" desc="" field="opreambulacao"/>
+    <constraint exp="" desc="" field="datainicioreambulacao"/>
+    <constraint exp="" desc="" field="datafimreambulacao"/>
+    <constraint exp="" desc="" field="oprevisaoreambulacao"/>
+    <constraint exp="" desc="" field="engrespvalidacaoedicao"/>
+    <constraint exp="" desc="" field="opvalidacao"/>
+    <constraint exp="" desc="" field="datainiciovalidacao"/>
+    <constraint exp="" desc="" field="datafimvalidacao"/>
+    <constraint exp="" desc="" field="opedicao1"/>
+    <constraint exp="" desc="" field="datainicioedicao1"/>
+    <constraint exp="" desc="" field="datafimedicao1"/>
+    <constraint exp="" desc="" field="oprevedicao1"/>
+    <constraint exp="" desc="" field="datainiciorevedicao1"/>
+    <constraint exp="" desc="" field="datafimrevedicao1"/>
+    <constraint exp="" desc="" field="opedicao2"/>
+    <constraint exp="" desc="" field="datainicioedicao2"/>
+    <constraint exp="" desc="" field="datafimedicao2"/>
+    <constraint exp="" desc="" field="area_otf"/>
+  </constraintExpressions>
+  <expressionfields>
+    <field precision="0" comment="" length="0" typeName="" expression="$area" type="6" name="area_otf" subType="0"/>
+  </expressionfields>
   <attributeactions/>
-  <editform></editform>
-  <editforminit/>
-  <editforminitcodesource>0</editforminitcodesource>
-  <editforminitfilepath></editforminitfilepath>
-  <editforminitcode><![CDATA[# -*- codificação: utf-8 -*-
-"""
-Os formulários do QGIS podem ter uma função Python que é chamada quando
-o formulário
- é aberto.
-
-QGIS forms can have a Python function that is called when the form is
-opened.
-
-Use esta função para adicionar lógica extra aos seus formulários.
-
-Entre com o nome da função no campo "Python Init function".
-Un exemplo a seguir:
-"""
-a partir de qgis.PyQt.QtWidgets importe QWidget
-
-def my_form_open(diálogo, camada, feição):
-	geom = feature.geometry()
-	control = dialog.findChild(QWidget, "MyLineEdit")
-]]></editforminitcode>
-  <featformsuppress>0</featformsuppress>
-  <editorlayout>generatedlayout</editorlayout>
-  <widgets/>
+  <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
+    <columns/>
+  </attributetableconfig>
   <conditionalstyles>
     <rowstyles/>
     <fieldstyles/>
   </conditionalstyles>
+  <editform tolerant="1"></editform>
+  <editforminit/>
+  <editforminitcodesource>0</editforminitcodesource>
+  <editforminitfilepath></editforminitfilepath>
+  <editforminitcode><![CDATA[]]></editforminitcode>
+  <featformsuppress>0</featformsuppress>
+  <editorlayout>generatedlayout</editorlayout>
+  <editable/>
+  <labelOnTop/>
+  <widgets/>
+  <previewExpression></previewExpression>
+  <mapTip></mapTip>
   <layerGeometryType>2</layerGeometryType>
 </qgis>

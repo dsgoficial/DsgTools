@@ -21,7 +21,7 @@
 """
 
 import os, json
-from time import sleep
+from time import sleep, time
 from functools import partial
 
 from qgis.core import (QgsApplication,
@@ -231,7 +231,7 @@ class QualityAssuranceWorkflow(QObject):
         :return: (bool) operation success.
         """
         with open(filepath, "w", encoding="utf-8") as fp:
-            fp.write(json.dumps(self._param, sort_keys=True, indent=4))
+            fp.write(json.dumps(self._param, indent=4))
         return os.path.exists(filepath)
 
     def asDict(self):
@@ -255,14 +255,23 @@ class QualityAssuranceWorkflow(QObject):
         this method provides a 'static' execution alternative.
         :return: (dict) a map to each model's output.
         """
-        output = dict()
+        self.output = dict()
         for model in self.validModels().values():
+            start = time()
+            mName = model.name()
+            self.output[mName] = dict()
             try:
-                output[model.name()] = model.runModel()
+                self.output[mName]["result"] = {
+                    k.split(":", 2)[-1] : v \
+                        for k, v in model.runModel(model.feedback).items()
+                }
+                self.output[mName]["status"] = True
             except:
-                output[model.name()] = None
+                self.output[mName]["result"] = None
+                self.output[mName]["status"] = False
+            self.output[mName]["executionTime"] = time() - start
         self.finished()
-        return output
+        return self.output
 
     def setupModelTask(self, model):
         """
@@ -342,7 +351,7 @@ class QualityAssuranceWorkflow(QObject):
         :param cooldown: (float) time to wait till next model is started.
         """
         self._executionOrder = {
-            idx : model for idx, model in enumerate(self.validModels().values())
+            idx: model for idx, model in enumerate(self.validModels().values())
         }
         modelCount = len(self._executionOrder)
         if self.hasInvalidModel() or modelCount == 0:
@@ -371,6 +380,9 @@ class QualityAssuranceWorkflow(QObject):
             )
             currentModel.begun.connect(
                 partial(self.modelStarted.emit, currentModel)
+            )
+            currentModel.taskTerminated.connect(
+                partial(self.modelFailed.emit, currentModel)
             )
             if idx != modelCount - 1:
                 self._executionOrder[idx + 1].addSubTask(

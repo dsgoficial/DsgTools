@@ -11,6 +11,7 @@
         email                : luiz.claudio@dsg.eb.mil.br
         mod history          : 2014-12-17 by Leonardo Lourenço - Computing Engineer @ Brazilian Army
         mod history          : 2014-12-17 by Maurício de Paulo - Cartographic Engineer @ Brazilian Army
+        mod history          : 2020-04-01 by Philipe Borba - Cartographic Engineer @ Brazilian Army
  ***************************************************************************/
 /***************************************************************************
  *                                                                         *
@@ -24,7 +25,7 @@
 from __future__ import print_function
 from builtins import range
 from qgis.core import QgsPointXY, QgsGeometry, QgsFeature
-import string, os
+import string, os, math, itertools
 from qgis.PyQt.QtCore import QObject
 
 class UtmGrid(QObject):
@@ -348,3 +349,53 @@ class UtmGrid(QObject):
             return self.getMIfromInom(inom)
         else:
             return self.getINomenFromMIR(inom)
+
+    def get_INOM_from_lat_lon(self, lon, lat):
+        """
+        Returns Inom with the nearest lower left lon lat.
+        """
+        INOM = 'N' if lat >= 0 else 'S'
+        INOM += string.ascii_uppercase[math.floor(abs(lat/4.)) % 26] + '-'
+        utm_zone = math.floor(31 + lon/6)
+        return INOM+str(utm_zone)
+    
+    def get_INOM_range_from_BB(self, xmin, ymin, xmax, ymax):
+        """
+        Returns a set of INOM that intersect bbRect formed by 
+        xmin, xmax, ymin, ymax
+        """
+        minInom = self.get_INOM_from_lat_lon(xmin, ymin)
+        maxInom = self.get_INOM_from_lat_lon(xmax, ymax)
+        if minInom == maxInom:
+            return list([minInom])
+        return self.get_INOM_range_from_min_max_inom(minInom, maxInom)
+    
+    def get_INOM_range_from_min_max_inom(self, minInom, maxInom):
+        minFuse = int(minInom.split('-')[-1])
+        maxFuse = int(maxInom.split('-')[-1])
+        fuseRange = map(str, range(minFuse,maxFuse+1,1))
+        letterRange = self.get_letter_range(minInom, maxInom)
+        return list(
+            '-'.join(i) for i in itertools.product(letterRange, fuseRange)
+        )
+
+    def get_letter_range(self, minInom, maxInom):
+        if minInom[0] == 'S' and maxInom[0] == 'N':
+            return self.get_letter_range('SA-XX', minInom) + self.get_letter_range('NA-XX', maxInom)
+        else:
+            startIndex = string.ascii_uppercase.index(minInom[1])
+            endIndex = string.ascii_uppercase.index(maxInom[1])
+            multiplier = 1 if minInom[0] == 'N' else -1
+            return list(
+                map(
+                    lambda x: minInom[0]+x,
+                    string.ascii_uppercase[min(startIndex, endIndex):max(startIndex, endIndex)+1:1]
+                )
+            )[::multiplier]
+
+if __name__ == "__main__":
+    x = UtmGrid()
+    print(x.get_INOM_range_from_min_max_inom('SE-17','NC-22'))
+    print(x.get_INOM_range_from_min_max_inom('SC-17','SA-22'))
+    print(x.get_INOM_range_from_BB(-83, -19, -49, 9))
+    print(x.get_INOM_range_from_min_max_inom('SE-17','NC-22') == x.get_INOM_range_from_BB(-83, -19, -49, 9) )

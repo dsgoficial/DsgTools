@@ -422,10 +422,10 @@ class DbConverter(QgsTask):
         if spatialFilters:
             # spatial filtering behaviour is set based on the modes defined in convertLayer2LayerAlgorithm
             behaviour = self.getSpatialFilterBehaviour(spatialFilters["predicate"] if "predicate" in spatialFilters else None)
-            spatialFilterlLayer = self.prepareSpatialFilterLayer(spatialFilters, context)
+            spatialFilterLayer = self.prepareSpatialFilterLayer(spatialFilters, context)
         else:
             behaviour = None
-            spatialFilters = None
+            spatialFilterLayer = None
         preparedLayers = dict()
         currentStep = 0
         for layer, vl in inputLayers.items():
@@ -438,7 +438,7 @@ class DbConverter(QgsTask):
                                 inputLyr=vl,
                                 context=context,
                                 inputExpression=layerFilters[layer]["expression"] if layer in layerFilters else None,
-                                filterLyr=spatialFilterlLayer,
+                                filterLyr=spatialFilterLayer,
                                 behavior=behaviour,
                                 conversionMap=stepConversionMap,
                                 feedback=multiStepFeedback if feedback is not None else None

@@ -23,8 +23,11 @@
 import uuid
 
 import processing
-from qgis.core import QgsProcessingUtils, QgsVectorLayer
-
+from qgis.core import (Qgis,
+                       QgsVectorLayer,
+                       QgsProcessingUtils,
+                       QgsProcessingContext,
+                       QgsProcessingFeatureSourceDefinition)
 
 class AlgRunner:
     Break, Snap, RmDangle, ChDangle, RmBridge, ChBridge, RmDupl, RmDac, BPol, Prune, RmArea, RmLine, RMSA = range(13)
@@ -89,7 +92,7 @@ class AlgRunner:
             'OUTERSHELL': outershell,
             'DONUTHOLE' : donuthole
         }
-        output = processing.run('dsgtools:donutholeextractor', parameters, context = context, feedback = feedback)
+        output = processing.run('dsgtools:donutholeextractor', parameters, context=context, feedback=feedback)
         return output['OUTERSHELL'], output['DONUTHOLE']
     
     def runDeleteHoles(self, inputLyr, context, feedback=None, outputLyr=None, min_area=0):
@@ -99,10 +102,10 @@ class AlgRunner:
             'MIN_AREA': min_area,
             'OUTPUT': outputLyr
         }
-        output = processing.run('native:deleteholes', parameters, context = context, feedback = feedback)
+        output = processing.run('native:deleteholes', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
-    def runOverlay(self, lyrA, lyrB, context, feedback = None, snap=0, operator=0, minArea=0.0001):
+    def runOverlay(self, lyrA, lyrB, context, feedback=None, snap=0, operator=0, minArea=0.0001):
         output = QgsProcessingUtils.generateTempFilename('output.shp')
         parameters = {
             'ainput':lyrA,
@@ -120,7 +123,7 @@ class AlgRunner:
             'GRASS_VECTOR_DSCO':'',
             'GRASS_VECTOR_LCO':''
             }
-        outputDict = processing.run('grass7:v.overlay', parameters, context = context, feedback = feedback)
+        outputDict = processing.run('grass7:v.overlay', parameters, context=context, feedback=feedback)
         return self.getGrassReturn(outputDict, context)
     
     def runClean(self, inputLyr, toolList, context, feedback=None, typeList=None, returnError=False, useFollowup=False, snap=None, minArea=None): 
@@ -144,10 +147,10 @@ class AlgRunner:
             'GRASS_VECTOR_LCO':'',
             'GRASS_VECTOR_EXPORT_NOCAT':False
             }
-        outputDict = processing.run('grass7:v.clean', parameters, context = context, feedback = feedback)
+        outputDict = processing.run('grass7:v.clean', parameters, context=context, feedback=feedback)
         return self.getGrassReturn(outputDict, context, returnError=returnError)
     
-    def runDsgToolsClean(self, inputLyr, context, feedback = None, onlySelected = False, snap=None, minArea=None, flags=None):
+    def runDsgToolsClean(self, inputLyr, context, feedback=None, onlySelected = False, snap=None, minArea=None, flags=None):
         snap = -1 if snap is None else snap
         minArea = 0.0001 if minArea is None else minArea
         flags = 'memory:' if flags is None else flags
@@ -158,15 +161,33 @@ class AlgRunner:
             'MINAREA': minArea,
             'FLAGS' : flags
         }
-        output = processing.run('dsgtools:cleangeometries', parameters, context = context, feedback = feedback)
+        output = processing.run('dsgtools:cleangeometries', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
-    
-    def runDouglasSimplification(self, inputLyr, threshold, context, feedback = None, snap=None, minArea=None, iterations=None, type=None, returnError=False):
+
+    def runDouglasSimplification(self, inputLyr, threshold, context,
+                                 feedback=None, snap=None, minArea=None,
+                                 iterations=None, type=None, returnError=False,
+                                 flags=None):
+        """
+        Runs simplify GRASS algorithm
+        :param inputLyr: (QgsVectorLayer) layer, or layers, to be dissolved.
+        :param method: (QgsProcessingParameterEnum) which algorithm would be
+            used to simplify lines, in this case, Douglas-Peucker Algorithm.
+        :param threshold: (QgsProcessingParameterNumber) give in map units.
+            For latitude-longitude locations give in decimal degree.
+        :param context: (QgsProcessingContext) processing context.
+        :param feedback: (QgsProcessingFeedback) QGIS object to keep track of
+            progress/cancelling option.
+        :param onlySelected: (QgsProcessingParameterBoolean) process only
+            selected features.
+        :param outputLyr: (str) URI to output layer.
+        :return: (QgsVectorLayer) simplified output layer or layers.
+        """
         snap = -1 if snap is None else snap
         minArea = 0.0001 if minArea is None else minArea
         iterations = 1 if iterations is None else iterations
         flags = 'memory:' if flags is None else flags
-        algType = [0,1,2] if type is None else type
+        algType = [0, 1, 2] if type is None else type
         output, error = self.generateGrassOutputAndError()
         parameters = {
             'input': inputLyr,
@@ -195,9 +216,10 @@ class AlgRunner:
             'GRASS_OUTPUT_TYPE_PARAMETER':0,
             'GRASS_VECTOR_DSCO':'',
             'GRASS_VECTOR_LCO':''}
-        outputDict = processing.run("grass7:v.generalize", parameters, context=context, feedback=feedback)
+        outputDict = processing.run("grass7:v.generalize", parameters,
+                                    context=context, feedback=feedback)
         return self.getGrassReturn(outputDict, context, returnError=returnError)
-    
+
     def runIdentifyDuplicatedGeometries(self, inputLyr, context, feedback=None, flagLyr=None, onlySelected=False):
         flagLyr = 'memory:' if flagLyr is None else flagLyr
         parameters = {
@@ -205,9 +227,9 @@ class AlgRunner:
             'SELECTED' : onlySelected,
             'FLAGS': flagLyr
         }
-        output = processing.run('dsgtools:identifyduplicatedgeometries', parameters, context = context, feedback = feedback)
+        output = processing.run('dsgtools:identifyduplicatedgeometries', parameters, context=context, feedback=feedback)
         return output['FLAGS']
-    
+
     def runIdentifyDuplicatedFeatures(self, inputLyr, context, onlySelected=False, attributeBlackList=None, excludePrimaryKeys=True, ignoreVirtualFields=True, feedback=None, flagLyr=None):
         flagLyr = 'memory:' if flagLyr is None else flagLyr
         attributeBlackList = [] if attributeBlackList is None else attributeBlackList
@@ -219,9 +241,9 @@ class AlgRunner:
             'IGNORE_VIRTUAL_FIELDS' : ignoreVirtualFields,
             'IGNORE_PK_FIELDS' : excludePrimaryKeys
         }
-        output = processing.run('dsgtools:identifyduplicatedfeatures', parameters, context = context, feedback = feedback)
+        output = processing.run('dsgtools:identifyduplicatedfeatures', parameters, context=context, feedback=feedback)
         return output['FLAGS']
-    
+
     def runIdentifySmallLines(self, inputLyr, tol, context, feedback=None, flagLyr=None, onlySelected=False):
         flagLyr = 'memory:' if flagLyr is None else flagLyr
         parameters = {
@@ -230,7 +252,7 @@ class AlgRunner:
             'SELECTED' : onlySelected,
             'FLAGS': flagLyr
         }
-        output = processing.run('dsgtools:identifysmalllines', parameters, context = context, feedback = feedback)
+        output = processing.run('dsgtools:identifysmalllines', parameters, context=context, feedback=feedback)
         return output['FLAGS']
 
     def runIdentifySmallPolygons(self, inputLyr, tol, context, feedback=None, flagLyr=None, onlySelected=False):
@@ -241,9 +263,9 @@ class AlgRunner:
             'SELECTED' : onlySelected,
             'FLAGS': flagLyr
         }
-        output = processing.run('dsgtools:identifysmallpolygons', parameters, context = context, feedback = feedback)
+        output = processing.run('dsgtools:identifysmallpolygons', parameters, context=context, feedback=feedback)
         return output['FLAGS']
-    
+
     def runSnapGeometriesToLayer(self, inputLayer, referenceLayer, tol, context, feedback=None, behavior=None, outputLyr=None):
         behavior = 0 if behavior is None else behavior
         outputLyr = 'memory:' if outputLyr is None else outputLyr
@@ -254,9 +276,9 @@ class AlgRunner:
             'BEHAVIOR' : behavior,
             'OUTPUT' : outputLyr
         }
-        output = processing.run('qgis:snapgeometries', parameters, context = context, feedback = feedback)
+        output = processing.run('qgis:snapgeometries', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
-    
+
     def runSnapLayerOnLayer(self, inputLayer, referenceLayer, tol, context, onlySelected=False, feedback=None, behavior=None):
         behavior = 0 if behavior is None else behavior
         parameters = {
@@ -266,10 +288,10 @@ class AlgRunner:
             'TOLERANCE' : tol,
             'BEHAVIOR' : behavior
         }
-        output = processing.run('dsgtools:snaplayeronlayer', parameters, context = context, feedback = feedback)
+        output = processing.run('dsgtools:snaplayeronlayer', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
-    
-    def runIdentifyDangles(self, inputLayer, searchRadius, context, feedback = None, onlySelected=False, lineFilter = None, polygonFilter = None, ignoreUnsegmented = False, ignoreInner = False, flagLyr=None):
+
+    def runIdentifyDangles(self, inputLayer, searchRadius, context, feedback=None, onlySelected=False, lineFilter = None, polygonFilter = None, ignoreUnsegmented = False, ignoreInner = False, flagLyr=None):
         flagLyr = 'memory:' if flagLyr is None else flagLyr
         lineFilter = [] if lineFilter is None else lineFilter
         polygonFilter = [] if polygonFilter is None else polygonFilter
@@ -283,10 +305,10 @@ class AlgRunner:
             'IGNOREINNER' : ignoreInner,
             'FLAGS' : flagLyr
         }
-        output = processing.run('dsgtools:identifydangles', parameters, context = context, feedback = feedback)
+        output = processing.run('dsgtools:identifydangles', parameters, context=context, feedback=feedback)
         return output['FLAGS']
     
-    def runSnapToGrid(self, inputLayer, tol, context, feedback = None, outputLyr=None):
+    def runSnapToGrid(self, inputLayer, tol, context, feedback=None, outputLyr=None):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
             'INPUT':inputLayer,
@@ -299,33 +321,33 @@ class AlgRunner:
         output = processing.run("native:snappointstogrid", parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
-    def runRemoveNull(self, inputLayer, context, feedback = None, outputLyr=None):
+    def runRemoveNull(self, inputLayer, context, feedback=None, outputLyr=None):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
             'INPUT':inputLayer,
             'OUTPUT':outputLyr
         }
-        output = processing.run("native:removenullgeometries", parameters, context = context, feedback = feedback)
+        output = processing.run("native:removenullgeometries", parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
-    def runClip(self, inputLayer, overlayLayer, context, feedback = None, outputLyr=None):
+    def runClip(self, inputLayer, overlayLayer, context, feedback=None, outputLyr=None):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
             'INPUT' : inputLayer,
             'OVERLAY' : overlayLayer,
             'OUTPUT' : outputLyr
         }
-        output = processing.run("native:clip", parameters, context = context, feedback = feedback)
+        output = processing.run("native:clip", parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
-    def runSymDiff(self, inputLayer, overlayLayer, context, feedback = None, outputLyr=None):
+    def runSymDiff(self, inputLayer, overlayLayer, context, feedback=None, outputLyr=None):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
             'INPUT' : inputLayer,
             'OVERLAY' : overlayLayer,
             'OUTPUT' : outputLyr
         }
-        output = processing.run("native:symmetricaldifference", parameters, context = context, feedback = feedback)
+        output = processing.run("native:symmetricaldifference", parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
     def runBoundary(self, inputLayer, context, feedback=None, outputLyr='memory:'):
@@ -353,7 +375,7 @@ class AlgRunner:
             'MITER_LIMIT' : mitterLimit,
             'OUTPUT' : outputLyr
         }
-        output = processing.run("native:buffer", parameters, context = context, feedback = feedback)
+        output = processing.run("native:buffer", parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
     def runIntersection(self, inputLyr, context, inputFields=None, outputLyr=None, overlayLyr=None, overlayFields=None, feedback=None):
@@ -380,7 +402,7 @@ class AlgRunner:
         output = processing.run("native:extractbyexpression", parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
-    def runRemoveDuplicatedFeatures(self, inputLyr, context, onlySelected=False, attributeBlackList=None, excludePrimaryKeys=True, ignoreVirtualFields=True, feedback = None, outputLyr=None):
+    def runRemoveDuplicatedFeatures(self, inputLyr, context, onlySelected=False, attributeBlackList=None, excludePrimaryKeys=True, ignoreVirtualFields=True, feedback=None, outputLyr=None):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         attributeBlackList = [] if attributeBlackList is None else attributeBlackList
         parameters = {
@@ -392,7 +414,7 @@ class AlgRunner:
             'IGNORE_PK_FIELDS' : excludePrimaryKeys,
             'OUTPUT' : outputLyr
         }
-        output = processing.run('dsgtools:removeduplicatedfeatures', parameters, context = context, feedback = feedback)
+        output = processing.run('dsgtools:removeduplicatedfeatures', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
     def runApplStylesFromDatabaseToLayers(self, inputList, context, styleName, feedback=None, outputLyr=None):
@@ -402,7 +424,7 @@ class AlgRunner:
             'STYLE_NAME' : styleName,
             'OUTPUT' : outputLyr
         }
-        output = processing.run('dsgtools:applystylesfromdatabasetolayersalgorithm', parameters, context = context, feedback = feedback)
+        output = processing.run('dsgtools:applystylesfromdatabasetolayersalgorithm', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
     def runMatchAndApplyQmlStylesToLayer(self, inputList, context, qmlFolder, feedback=None, outputLyr=None):
@@ -412,5 +434,245 @@ class AlgRunner:
             'QML_FOLDER' : qmlFolder,
             'OUTPUT' : outputLyr
         }
-        output = processing.run('dsgtools:matchandapplyqmlstylestolayersalgorithm', parameters, context = context, feedback = feedback)
+        output = processing.run('dsgtools:matchandapplyqmlstylestolayersalgorithm', parameters, context=context, feedback=feedback)
+        return output['OUTPUT']
+    
+    def runAddAutoIncrementalField(self, inputLyr, context, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'FIELD_NAME' : 'featid',
+            'START':1,
+            'GROUP_FIELDS':[],
+            'SORT_EXPRESSION':'',
+            'SORT_ASCENDING':True,
+            'SORT_NULLS_FIRST':False,
+            'OUTPUT':outputLyr
+        }
+        output = processing.run(
+            'native:addautoincrementalfield',
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runPolygonsToLines(self, inputLyr, context, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT':inputLyr,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            'native:polygonstolines' if Qgis.QGIS_VERSION_INT >= 30600 \
+                else 'qgis:polygonstolines',
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+
+    def runExtractVertices(self, inputLyr, context, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            'native:extractvertices',
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runExplodeLines(self, inputLyr, context, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            'native:explodelines',
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runMergeVectorLayers(self, inputList, context, feedback=None, outputLyr=None, crs=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'LAYERS' : inputList,
+            'CRS' : crs,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            'native:mergevectorlayers',
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runSaveSelectedFeatures(self, inputLyr, context, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'LAYERS' : inputLyr,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "native:saveselectedfeatures",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+
+    def runReprojectLayer(self, layer, targetCrs, output=None, ctx=None, feedback=None):
+        """
+        Reprojects layer's CRS.
+        :param : (QgsVectorLayer) layer to be reprojected.
+        :param targetCrs: (QgsCoordinateReferenceSystem) CRS object for the
+                          output layer.
+        :param output: (QgsVectorLayer) layer accomodate reprojected layer.
+        :param ctx: (QgsProcessingContext) processing context in which algorithm
+                    should be executed.
+        :param feedback: (QgsFeedback) QGIS progress tracking component.
+        :return: (QgsVectorLayer) reprojected layer.
+        """
+        return processing.run(
+            "native:reprojectlayer",
+            {
+                'INPUT' : layer,
+                'OUTPUT' : output or 'memory:',
+                'TARGET_CRS' : targetCrs
+            },
+            context=ctx or QgsProcessingContext(),
+            feedback=feedback
+        )['OUTPUT']
+
+    def runPointOnSurface(self, inputLyr, context, allParts=True, feedback=None, outputLyr=None, onlySelected=False):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'ALL_PARTS' : allParts,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "native:pointonsurface",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runRemoveDuplicatedGeometries(self, inputLyr, context, feedback=None, outputLyr=None, onlySelected=False):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'SELECTED' : onlySelected,
+            'FLAGS' : 'memory:',
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "dsgtools:removeduplicatedgeometries",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runPolygonize(self, inputLyr, context, keepFields=False, feedback=None, outputLyr=None, onlySelected=False):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'KEEP_FIELDS' : keepFields,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "qgis:polygonize",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runJoinAttributesByLocation(self, inputLyr, joinLyr, context, predicateList=None, joinFields=None,\
+        method=None, discardNonMatching=True, feedback=None, outputLyr=None, unjoinnedLyr=None):
+        predicateList = [0] if predicateList is None else predicateList
+        joinFields = [] if joinFields is None else joinFields
+        method = 0 if method is None else method
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'JOIN' : joinLyr,
+            'PREDICATE' : predicateList,
+            'JOIN_FIELDS' : joinFields,
+            'METHOD' : method,
+            'DISCARD_NONMATCHING' : discardNonMatching,
+            'PREFIX' : '',
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "qgis:joinattributesbylocation",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+ 
+    def runLineIntersections(self, inputLyr, intersectLyr, context, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'INTERSECT' : intersectLyr,
+            'INPUT_FIELDS' : [],
+            'INTERSECT_FIELDS' : [],
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "native:lineintersections",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+
+    def runSplitLinesWithLines(self, inputLyr, linesLyr, context, feedback=None, onlySelected=False, outputLyr=None):
+        usedInput = inputLyr if not onlySelected else \
+                QgsProcessingFeatureSourceDefinition(inputLyr.id(), True)
+        usedLines = linesLyr if not onlySelected else \
+                QgsProcessingFeatureSourceDefinition(linesLyr.id(), True)
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : usedInput,
+            'LINES' : usedLines,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "native:splitwithlines",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runAggregate(self, inputLyr, context, groupBy=None, aggregates=None, \
+        feedback=None, outputLyr=None, onlySelected=False):
+        groupBy = 'NULL' if groupBy is None else groupBy
+        aggregates = [] if aggregates is None else aggregates
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLyr,
+            'GROUP_BY' : groupBy,
+            'AGGREGATES' : aggregates,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run(
+            "qgis:aggregate",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
         return output['OUTPUT']

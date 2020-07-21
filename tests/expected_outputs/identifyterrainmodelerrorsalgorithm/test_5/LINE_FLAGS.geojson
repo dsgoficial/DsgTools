@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "LINE_FLAGS",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "reason": "Missing contour between contour lines of values 70 and 90" }, "geometry": { "type": "LineString", "coordinates": [ [ 2.339402764200108, 0.4588517454378 ], [ 2.339402764200108, 1.019569585337126 ] ] } },
+{ "type": "Feature", "properties": { "reason": "Missing contour between contour lines of values 70 and 90" }, "geometry": { "type": "LineString", "coordinates": [ [ 0.624288387462006, -1.549530219092904 ], [ 1.205811571156433, -1.549530219092904 ] ] } },
+{ "type": "Feature", "properties": { "reason": "Missing contour between contour lines of values 80 and 100" }, "geometry": { "type": "LineString", "coordinates": [ [ -0.830343024589568, 0.084429544826061 ], [ -0.73122360687968, -0.009928053598912 ] ] } },
+{ "type": "Feature", "properties": { "reason": "Missing contour between contour lines of values 100 and 120" }, "geometry": { "type": "LineString", "coordinates": [ [ -0.242764352498852, -0.854767306458402 ], [ -0.242764352498852, -0.689897485947534 ] ] } }
+]
+}
