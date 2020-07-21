@@ -79,7 +79,7 @@ def populateIndex(idx, layer):
     Populates the layer index
     """
     for feat in layer.getFeatures():
-        idx.insertFeature(feat)
+        idx.addFeature(feat)
         
 def getCandidates(idx, layer, bbox):
     """

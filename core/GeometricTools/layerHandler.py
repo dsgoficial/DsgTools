@@ -27,15 +27,16 @@ from collections import defaultdict
 from functools import partial
 from itertools import combinations
 
+from processing.tools import dataobjects
+
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
-from qgis.core import (Qgis, QgsCoordinateReferenceSystem,
-                       QgsCoordinateTransform, QgsExpression, QgsFeature,
-                       QgsFeatureRequest, QgsField, QgsGeometry, QgsMessageLog,
-                       QgsProcessingContext, QgsProcessingMultiStepFeedback,
-                       QgsProject, QgsSpatialIndex, QgsVectorDataProvider,
-                       QgsVectorLayer, QgsVectorLayerUtils, QgsWkbTypes, edit)
+from qgis.core import (edit, Qgis, QgsCoordinateReferenceSystem, QgsCoordinateTransform,
+    QgsExpression, QgsFeature, QgsFeatureRequest, QgsField, QgsGeometry, QgsMessageLog,
+    QgsProcessingContext, QgsProcessingMultiStepFeedback, QgsProcessingUtils, QgsProject,
+    QgsSpatialIndex, QgsVectorDataProvider, QgsVectorLayer, QgsVectorLayerUtils, QgsWkbTypes,
+    QgsProcessingFeatureSourceDefinition, QgsFeatureSink)
 from qgis.PyQt.Qt import QObject, QVariant
 
 from .featureHandler import FeatureHandler
@@ -51,6 +52,7 @@ class LayerHandler(QObject):
             self.canvas = iface.mapCanvas()
         self.featureHandler = FeatureHandler(iface)
         self.geometryHandler = GeometryHandler(iface)
+        self.algRunner = AlgRunner()
     
     def getFeatureList(self, lyr, onlySelected=False, returnIterator=True, returnSize=True):
         """
@@ -561,7 +563,7 @@ class LayerHandler(QObject):
             if feat.geometry().area() < float(tol):
                 smallFeatureList.append(feat)
             else:
-                bigFeatIndex.insertFeature(feat)
+                bigFeatIndex.addFeature(feat)
                 bigFeatureList.append(feat)
             if feedback:
                 feedback.setProgress(size * current)
@@ -668,7 +670,7 @@ class LayerHandler(QObject):
         if feedback is not None and feedback.isCanceled():
             return
         idDict[feat.id()] = feat
-        spatialIdx.insertFeature(feat)
+        spatialIdx.addFeature(feat)
         if feedback is not None:
             feedback.setProgress(size * current)
     
@@ -841,7 +843,7 @@ class LayerHandler(QObject):
             localLyr = algRunner.runIntersection(localLyr, context, overlayLyr=filterLyr)
         return localLyr
     
-    def identifyAndFixInvalidGeometries(self, inputLyr, fixInput=False, onlySelected=False, feedback=None):
+    def identifyAndFixInvalidGeometries(self, inputLyr, ignoreClosed=False, fixInput=False, onlySelected=False, feedback=None):
         iterator, featCount = self.getFeatureList(inputLyr, onlySelected=onlySelected)
         stepSize = 100/featCount if featCount else 0
         flagDict = dict()
@@ -867,7 +869,8 @@ class LayerHandler(QObject):
                     if error.hasWhere():
                         errorPointXY = error.where()
                         flagGeom = QgsGeometry.fromPointXY(errorPointXY)
-                        if geom.type() == QgsWkbTypes.LineGeometry and self.isClosedAndFlagIsAtStartOrEnd(geom, flagGeom):
+                        if geom.type() == QgsWkbTypes.LineGeometry and ignoreClosed and\
+                            self.isClosedAndFlagIsAtStartOrEnd(geom, flagGeom):
                             continue
                         if errorPointXY not in flagDict:
                             flagDict[errorPointXY] = {
@@ -898,7 +901,11 @@ class LayerHandler(QObject):
     def isClosedAndFlagIsAtStartOrEnd(self, geom, flagGeom):
         for part in geom.asGeometryCollection():
             startPoint, endPoint = self.geometryHandler.getFirstAndLastNodeFromGeom(part)
-            if flagGeom.equals(QgsGeometry.fromPointXY(startPoint)) or flagGeom.equals(QgsGeometry.fromPointXY(endPoint)):
+            startPointGeom = QgsGeometry.fromPointXY(startPoint)
+            endPointGeom = QgsGeometry.fromPointXY(endPoint)
+            if not startPointGeom.equals(endPointGeom):
+                continue
+            if flagGeom.equals(startPointGeom) or flagGeom.equals(endPointGeom):
                 return True
         return False
 
@@ -914,3 +921,636 @@ class LayerHandler(QObject):
         :return: (QgsVectorLayer) dissolved (output) layer.
         """
         return AlgRunner().runGrassDissolve(inputLyr, context, feedback=None, column=None, outputLyr=None, onFinish=None)
+    
+    def getVertexNearEdgeDict(self, inputLyr, tol, onlySelected=False, feedback=None,\
+        context=None, algRunner=None, ignoreErrorsOnSameFeat=False):
+        """
+        Identifies vertexes that are too close to a vertex.
+        :param inputLyr: (QgsVectorLayer) layer to run the identification.
+        :param onlySelected: (Boolean) If true, gets only selected layer
+        :param tol: (float) search radius
+        :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
+        """
+        if inputLyr.geometryType() == QgsWkbTypes.PointGeometry:
+            raise Exception('Vertex near edge not defined for point geometry') 
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Creating index'))
+        usedInput = inputLyr if not onlySelected else QgsProcessingFeatureSourceDefinition(inputLyr.id(), True)
+        incrementedLayer = algRunner.runAddAutoIncrementalField(
+            usedInput,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Building auxiliar search structures'))
+        edgeSpatialIdx, edgeIdDict = self.buildEdgesAuxStructure(
+            incrementedLayer,
+            feedback=multiStepFeedback,
+            algRunner=algRunner,
+            context=context
+        )
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo(self.tr('Getting flags'))
+        vertexNearEdgeFlagDict = self.getVertexNearEdgeFlagDict(
+            incrementedLayer,
+            edgeSpatialIdx,
+            edgeIdDict,
+            tol,
+            feedback=multiStepFeedback,
+            algRunner=algRunner,
+            context=context,
+            ignoreErrorsOnSameFeat=ignoreErrorsOnSameFeat
+        )
+        return vertexNearEdgeFlagDict
+
+    def buildEdgesAuxStructure(self, inputLyr, algRunner=None, feedback=None, context=None):
+        """
+        returns a spatialIndex of lines and a dict of the features
+        :param inputLyr: (QgsVectorLayer) layer to run build the aux structure.
+        :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
+        """
+        nSteps = 3 if inputLyr.geometryType() == QgsWkbTypes.PolygonGeometry else 2
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        edgeLyr = inputLyr if inputLyr.geometryType() == QgsWkbTypes.LineGeometry \
+            else algRunner.runPolygonsToLines(
+                    inputLyr,
+                    context,
+                    feedback=multiStepFeedback
+                )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        explodedEdges = algRunner.runExplodeLines(
+            edgeLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        spatialIdx, idDict = self.buildSpatialIndexAndIdDict(
+            explodedEdges,
+            feedback=multiStepFeedback
+        )
+        return spatialIdx, idDict
+
+    def getVertexNearEdgeFlagDict(self, inputLyr, edgeSpatialIdx, edgeIdDict,\
+        searchRadius, feedback=None, algRunner=None, context=None, ignoreErrorsOnSameFeat=False):
+        """
+        returns a dict in the following format:
+            {'featid':{
+                'vertexWkt': {
+                    'flagGeom' : --geometry of the flag--,
+                    'edges' : set of edges (QgsGeometry)
+                }
+
+            }
+            } 
+        :param inputLyr: (QgsVectorLayer) layer to run build the aux structure.
+        :param edgeSpatialIdx: (QgsSpatialIndex) spatial index to perform the search
+        :param edgeIdDict: (dict) dictionary in the format {featid:QgsFeature}
+        :param searchRadius: (float) search radius
+        :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
+        """
+        flagDict = defaultdict(lambda :defaultdict(lambda : {'edges': set()}) )
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        # step 1: extract vertexes
+        multiStepFeedback.setCurrentStep(0)
+        vertexLyr = algRunner.runExtractVertices(
+            inputLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        # step 2: for each vertex, get the buffer, the buffer BoundingBox and 
+        # assess wich edge intersects the buffer. If there is any, this is a flag
+        multiStepFeedback.setCurrentStep(1)
+        iterator, size = self.getFeatureList(vertexLyr, returnIterator=True, onlySelected=False)
+        if size == 0:
+            return {}
+        stepSize = 100/size
+        for current, pointFeat in enumerate(iterator):
+            if multiStepFeedback.isCanceled():
+                break
+            pointGeom = pointFeat.geometry()
+            buffer = pointGeom.buffer(searchRadius, -1)
+            bufferBB = buffer.boundingBox()
+            featId = pointFeat['featid']
+            #pointWkt is used as a key because it is unique and hashable
+            pointWkt = pointGeom.asWkt()
+            for candidateId in edgeSpatialIdx.intersects(bufferBB):
+                if multiStepFeedback.isCanceled():
+                    break
+                edgeGeom = edgeIdDict[candidateId].geometry()
+                # must ignore search within the same feature and 
+                # must be with not adjacent edges
+                if pointGeom.touches(edgeGeom) or \
+                    (ignoreErrorsOnSameFeat and featId == edgeIdDict[candidateId]['featid'] and \
+                        pointFeat['layer'] == edgeIdDict[candidateId]['layer']):
+                    continue
+                if buffer.intersects(edgeGeom):
+                    flagDict[featId][pointWkt]['flagGeom'] = pointGeom
+                    flagDict[featId][pointWkt]['edges'].add(edgeGeom)
+            #make progress
+            multiStepFeedback.setProgress(current * stepSize)
+        return flagDict
+
+    def getUnsharedVertexOnSharedEdgesDict(self, inputLineLyrList, inputPolygonLyrList, searchRadius, onlySelected=False, feedback=None, context=None, algRunner=None):
+        """
+        returns a dict in the following format:
+            {'featid':{
+                'vertexWkt': {
+                    'flagGeom' : --geometry of the flag--,
+                    'edges' : set of edges (QgsGeometry)
+                }
+
+            }
+            } 
+        :param inputLineLyrList: (list of QgsVectorLayers) line layers to run build the aux structure.
+        :param inputPolygonLyrList: (list of QgsVectorLayers) line polygon layers to run build the aux structure.
+        :param searchRadius: (float) search radius
+        :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
+        """
+        inputList = inputLineLyrList
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Getting lines'))
+        linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
+            inputLineLyrList,
+            inputPolygonLyrList,
+            onlySelected=onlySelected,
+            feedback=multiStepFeedback,
+            context=context
+        )
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Building vertex near edge dict'))
+        #only selected should not be filled because it was already used to build the line lyr
+        return self.getVertexNearEdgeDict(
+            linesLyr,
+            searchRadius,
+            algRunner=algRunner,
+            feedback=multiStepFeedback,
+            context=context,
+            ignoreErrorsOnSameFeat=True
+        )
+    
+    def getUnsharedVertexOnIntersections(self, inputLineLyrList, inputPolygonLyrList,\
+        onlySelected=False, feedback=None, context=None, algRunner=None):
+        """
+        returns a dict in the following format:
+            {
+                '--flag Wkt--' : {
+                    'layer1' : --layer 1 name--',
+                    'layer2' : --layer 2 name--'
+                }
+            } 
+        :param inputLineLyrList: (list of QgsVectorLayers) line layers to run build the aux structure.
+        :param inputPolygonLyrList: (list of QgsVectorLayers) line polygon layers to run build the aux structure.
+        :param searchRadius: (float) search radius
+        :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
+        """
+        inputList = inputLineLyrList
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Getting lines'))
+        linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
+            inputLineLyrList,
+            inputPolygonLyrList,
+            onlySelected=onlySelected,
+            feedback=multiStepFeedback,
+            context=context
+        )
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Building intersections'))
+        intersectionLyr = algRunner.runLineIntersections(
+            linesLyr,
+            linesLyr,
+            feedback=multiStepFeedback,
+            context=context
+        )
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo(self.tr('Finding vertexes'))
+        vertexLyr = algRunner.runExtractVertices(
+            linesLyr,
+            feedback=multiStepFeedback,
+            context=context
+        )
+        multiStepFeedback.setCurrentStep(3)
+        multiStepFeedback.pushInfo(self.tr('Finding unshared vertexes'))
+        intersectionDict = {
+            feat.geometry().asWkb() : feat for feat in intersectionLyr.getFeatures()
+        }
+        vertexSet = set(
+            feat.geometry().asWkb() for feat in vertexLyr.getFeatures()
+        )
+        return set(intersectionDict.keys()).difference(vertexSet)
+
+    def getLinesLayerFromPolygonsAndLinesLayers(self, inputLineLyrList, inputPolygonLyrList, algRunner=None, onlySelected=False, feedback=None, context=None):
+        """
+        returns a merged line lyr
+        :param inputLineLyrList: (list of QgsVectorLayers) line layers to run build the aux structure.
+        :param inputPolygonLyrList: (list of QgsVectorLayers) line polygon layers to run build the aux structure.
+        :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
+        """
+        lineList = []
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        nSteps = len(inputLineLyrList) + len(inputPolygonLyrList) + 1
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback) #set number of steps
+        currentStep = 0
+        for lineLyr in inputLineLyrList:
+            multiStepFeedback.setCurrentStep(currentStep)
+            lineList.append(
+                lineLyr if not onlySelected else \
+                algRunner.runSaveSelectedFeatures(
+                    lineLyr,
+                    context,
+                    feedback=multiStepFeedback
+                )
+            )
+            currentStep += 1
+        for polygonLyr in inputPolygonLyrList:
+            multiStepFeedback.setCurrentStep(currentStep)
+            usedInput = polygonLyr if not onlySelected else \
+                QgsProcessingFeatureSourceDefinition(polygonLyr.id(), True)
+            lineList.append(
+                algRunner.runPolygonsToLines(
+                    usedInput,
+                    context,
+                    feedback=multiStepFeedback
+                )
+            )
+            currentStep += 1
+        #merge layers
+        multiStepFeedback.setCurrentStep(currentStep)
+        mergedLayer = algRunner.runMergeVectorLayers(
+            lineList,
+            context,
+            feedback=multiStepFeedback
+        )
+        return mergedLayer
+
+    def reprojectLayer(self, layer, targetEpsg, output=None):
+        """
+        Reprojects layer's CRS.
+        :param : (QgsVectorLayer) layer to be reprojected.
+        :param targetCrs: (QgsCoordinateReferenceSystem) CRS object for the
+                          output layer.
+        :param output: (QgsVectorLayer) layer accomodate reprojected layer.
+        :return: (QgsVectorLayer) reprojected layer
+        """
+        return AlgRunner().runReprojectLayer(layer, targetEpsg, output)
+
+    def getMergedLayer(self, inputLayerList, onlySelected=False, feedback=None, context=None, algRunner=None):
+        """
+        This does almost the same of createAndPopulateUnifiedVectorLayer, but it
+        is much faster. Maybe the implementation of createAndPopulateUnifiedVectorLayer
+        should change.
+        """
+        lyrList = []
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        nSteps = len(inputLayerList) + 1
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback) #set number of steps
+        currentStep = 0
+        for lyr in inputLayerList:
+            multiStepFeedback.setCurrentStep(currentStep)
+            lyrList.append(
+                lyr if not onlySelected else algRunner.runSaveSelectedFeatures(
+                    lineLyr,
+                    context,
+                    feedback=multiStepFeedback
+                )
+            )
+            currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        return algRunner.runMergeVectorLayers(
+            lyrList,
+            context,
+            feedback=multiStepFeedback
+        )
+
+    def getCentroidsAndBoundariesFromPolygons(self, inputLyr, outputCenterPointSink, outputBoundarySink,\
+        constraintLineLyrList=None, constraintPolygonLyrList=None, context=None, feedback=None, algRunner=None):
+        """
+        FILL out
+        """
+        constraintLineLyrList = [] if constraintLineLyrList is None else constraintLineLyrList
+        constraintPolygonLyrList = [] if constraintPolygonLyrList is None else constraintPolygonLyrList
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        multiStepFeedback = QgsProcessingMultiStepFeedback(7, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Getting constraint lines'))
+        linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
+            constraintLineLyrList,
+            constraintPolygonLyrList,
+            onlySelected=False,
+            feedback=multiStepFeedback,
+            context=context,
+            algRunner=algRunner
+        )
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Building auxiliar search structures'))
+        constraintSpatialIdx, constraintIdDict = self.buildSpatialIndexAndIdDict(
+            linesLyr,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(2)
+        edgeLyr = algRunner.runPolygonsToLines(
+            inputLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(3)
+        explodedEdges = algRunner.runExplodeLines(
+            edgeLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(4)
+        explodedWithoutDuplicates = algRunner.runRemoveDuplicatedGeometries(
+            explodedEdges,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(5)
+        self.buildCenterPoints(
+            inputLyr,
+            outputCenterPointSink,
+            explodedWithoutDuplicates,
+            linesLyr,
+            feedback=multiStepFeedback,
+            context=context,
+            algRunner=algRunner
+        )
+        multiStepFeedback.setCurrentStep(6)
+        self.filterEdges(
+            explodedWithoutDuplicates,
+            constraintSpatialIdx,
+            constraintIdDict,
+            outputBoundarySink,
+            feedback=multiStepFeedback,
+            context=context
+        )
+
+    def buildCenterPoints(self, inputLyr, outputCenterPointSink, polygonBoundaryLyr,\
+        constraintLineLyr=None, context=None, feedback=None, algRunner=None):
+        """
+
+        """
+        # 1- Merge line layers
+        # 2- Build polygons
+        # 3- Get center points from built polygons
+        # 4- Make spatial join of center points with original polygons to get attributes
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        context = dataobjects.createContext(feedback=feedback) if context is None else context
+        multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        mergedLineLyr = polygonBoundaryLyr if constraintLineLyr is None\
+            else algRunner.runMergeVectorLayers(
+                [polygonBoundaryLyr, constraintLineLyr],
+                context,
+                feedback=multiStepFeedback
+            )
+        multiStepFeedback.setCurrentStep(1)
+        splitSegmentsLyr = algRunner.runExplodeLines(
+            mergedLineLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(2)
+        segmentsWithoutDuplicates = algRunner.runRemoveDuplicatedGeometries(
+            splitSegmentsLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(3)
+        outputPolygonLyr = algRunner.runPolygonize(
+            segmentsWithoutDuplicates,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(4)
+        centroidLyr = algRunner.runPointOnSurface(
+            outputPolygonLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(5)
+        centroidsWithAttributes = algRunner.runJoinAttributesByLocation(
+            centroidLyr,
+            inputLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        for feat in centroidsWithAttributes.getFeatures():
+            outputCenterPointSink.addFeature(feat, QgsFeatureSink.FastInsert)
+
+    
+    def filterEdges(self, inputLyr, constraintSpatialIdx, constraintIdDict,\
+        outputBoundarySink, context=None, feedback=None, algRunner=None):
+        """
+        """
+        notBoundarySet = set()
+        stepSize = 100/inputLyr.featureCount()
+        featList = [i for i in inputLyr.getFeatures()]
+        for current, feat in enumerate(featList):
+            if feedback is not None and feedback.isCanceled():
+                break
+            featGeom = feat.geometry()
+            featBB = featGeom.boundingBox()
+            for candidateId in constraintSpatialIdx.intersects(featBB):
+                if featGeom.within(constraintIdDict[candidateId].geometry()):
+                    notBoundarySet.add(feat)
+                    break
+            if feedback is not None:
+                feedback.setProgress(current*stepSize)
+        for feat in featList:
+            if feat not in notBoundarySet:
+                outputBoundarySink.addFeature(feat, QgsFeatureSink.FastInsert)
+
+    def getPolygonsFromCenterPointsAndBoundaries(self, inputCenterPointLyr, constraintLineLyrList=None, \
+            constraintPolygonLyrList=None, attributeBlackList=None, geographicBoundaryLyr=None,\
+            onlySelected=False, context=None, feedback=None, algRunner=None):
+        """
+        
+        1. Merge Polygon lyrs into one and coerce polygons to lines
+        2. Merge all lines
+        3. Split lines
+        4. Run Polygonize
+        5. Get Flags, filtering them with constraint polygons
+        """
+        constraintLineLyrList = [] if constraintLineLyrList is None else constraintLineLyrList
+        constraintPolygonList = [] if constraintPolygonLyrList is None else constraintPolygonLyrList
+        constraintPolygonListWithGeoBounds = constraintPolygonList + [geographicBoundaryLyr] \
+            if geographicBoundaryLyr is not None else constraintPolygonList
+        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
+        
+        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
+        #1. Merge Polygon lyrs into one
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Getting constraint lines'))
+        linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
+            constraintLineLyrList,
+            constraintPolygonListWithGeoBounds,
+            onlySelected=False,
+            feedback=multiStepFeedback,
+            context=context,
+            algRunner=algRunner
+        )
+        multiStepFeedback.setCurrentStep(1)
+        splitSegmentsLyr = algRunner.runExplodeLines(
+            linesLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(2)
+        segmentsWithoutDuplicates = algRunner.runRemoveDuplicatedGeometries(
+            splitSegmentsLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(3)
+        builtPolygonLyr = algRunner.runPolygonize(
+            segmentsWithoutDuplicates,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(4)
+        return self.relateCenterPointsWithPolygons(
+            inputCenterPointLyr,
+            builtPolygonLyr,
+            constraintPolygonList=constraintPolygonList,
+            attributeBlackList = attributeBlackList,
+            context=context,
+            feedback=multiStepFeedback
+        )
+
+    def relateCenterPointsWithPolygons(self, inputCenterPointLyr, builtPolygonLyr,\
+        constraintPolygonList=None, attributeBlackList=None, context=None, feedback=None):
+        """
+        1. Merge constraint polygon list;
+        2. Build search structure into constraint polygon list
+        3. Build structure relating center points to built polygons
+        4. Get built polygons with attributes and flags
+        returns polygonList, flagList
+        """
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        constraintPolygonLyr = self.algRunner.runMergeVectorLayers(
+            constraintPolygonList,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(1)
+        constraintPolygonLyrSpatialIdx, constraintPolygonLyrIdDict = self.buildSpatialIndexAndIdDict(
+            constraintPolygonLyr,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(2)
+        builtPolygonToCenterPointDict = self.buildCenterPolygonToCenterPointDict(
+            inputCenterPointLyr,
+            builtPolygonLyr,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(3)
+        polygonList, flagList = self.getPolygonListAndFlagDictFromBuiltPolygonToCenterPointDict(
+            builtPolygonToCenterPointDict,
+            constraintPolygonLyrSpatialIdx,
+            constraintPolygonLyrIdDict,
+            feedback=multiStepFeedback
+        )
+        return polygonList, flagList
+
+    def buildCenterPolygonToCenterPointDict(self, inputCenterPointLyr, builtPolygonLyr,\
+        attributeBlackList=None, feedback=None):
+        """
+        Returns a dict in the following format:
+        {
+            'geomWkb' : {
+                'attrKey' : [--list of features--]
+            }
+        }
+        """
+        builtPolygonToCenterPointDict = dict()
+        iterator, featCount = self.getFeatureList(builtPolygonLyr, onlySelected=False)
+        size = 100/featCount if featCount else 0
+        columns = self.getAttributesFromBlackList(
+            inputCenterPointLyr,
+            attributeBlackList=attributeBlackList
+        )
+        for current, feat in enumerate(builtPolygonLyr.getFeatures()):
+            if feedback is not None and feedback.isCanceled():
+                break
+            featGeom = feat.geometry()
+            geomKey = featGeom.asWkb()
+            #creating dict entry
+            if geomKey not in builtPolygonToCenterPointDict:
+                builtPolygonToCenterPointDict[geomKey] = defaultdict(list)
+            featBB = featGeom.boundingBox()
+            request = QgsFeatureRequest().setFilterRect(featBB)
+            engine = QgsGeometry.createGeometryEngine(featGeom.constGet())
+            engine.prepareGeometry()
+            for pointFeat in inputCenterPointLyr.getFeatures(request):
+                if feedback is not None and feedback.isCanceled():
+                    break
+                if engine.intersects(pointFeat.geometry().constGet()):
+                    attrKey = ','.join(['{}'.format(pointFeat[column]) for column in columns])
+                    builtPolygonToCenterPointDict[geomKey][attrKey].append(pointFeat)
+            if feedback is not None:
+                feedback.setCurrentStep(current * size)
+        return builtPolygonToCenterPointDict
+
+    def getPolygonListAndFlagDictFromBuiltPolygonToCenterPointDict(self, builtPolygonToCenterPointDict,\
+            constraintPolygonLyrSpatialIdx, constraintPolygonLyrIdDict, feedback=None):
+        """
+        returns polygonList, flagList
+        """
+        keyCount = len(builtPolygonToCenterPointDict)
+        size = 100/keyCount if keyCount else 0
+        polygonList = []
+        flagDict = dict()
+        for current, geomKey in enumerate(builtPolygonToCenterPointDict):
+            if feedback is not None and feedback.isCanceled():
+                break
+            structureLen = builtPolygonToCenterPointDict[geomKey]
+            geom = QgsGeometry()
+            geom.fromWkb(geomKey)
+            insideConstraint = False
+            pointOnSurfaceGeom = geom.pointOnSurface()
+            for candidateId in constraintPolygonLyrSpatialIdx.intersects(geom.boundingBox()):
+                if feedback is not None and feedback.isCanceled():
+                    break
+                if geomKey not in flagDict and pointOnSurfaceGeom.intersects(
+                        constraintPolygonLyrIdDict[candidateId].geometry()
+                    ):
+                    insideConstraint = True
+                    break
+            if not insideConstraint:
+                # polygon with more than one center point with different attribute
+                # set. Must be verityed afterwards
+                if len(structureLen) == 1:
+                    # actual polygon, must get center point attributes and build final feat
+                    pointFeatList = list(builtPolygonToCenterPointDict[geomKey].values())
+                    newFeat = QgsFeature(pointFeatList[0][0].fields())
+                    newFeat.setAttributes(pointFeatList[0][0].attributes())
+                    newFeat.setGeometry(geom)
+                    polygonList.append(newFeat)
+                else:
+                    flagText = self.tr("Polygon without center point.") if len(structureLen) == 0\
+                        else self.tr("Polygon with more than one center point with conflicting attributes.")
+                    flagDict[geomKey] = flagText
+            if feedback is not None:
+                feedback.setCurrentStep(current * size)
+        return polygonList, flagDict

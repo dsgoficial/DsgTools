@@ -1,1 +1,356 @@
-<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'><qgis version="2.6.0-Brighton" minimumScale="1" maximumScale="1" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" simplifyMaxScale="1" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0"><edittypes><edittype widgetv2type="TextEdit" name="id"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="TextEdit" name="OGC_FID"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="TextEdit" name="id_complexo_gerad_energ_eletr"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="TextEdit" name="id_duto"><widgetv2config IsMultiline="0" fieldEditable="0" UseHtml="0" labelOnTop="0"/></edittype><edittype widgetv2type="ValueMap" name="tipocondutor"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Calha" value="2"/><value key="Tubulação" value="4"/><value key="Desconhecido" value="0"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="situacaoespacial"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Outros" value="99"/><value key="Adjacentes" value="12"/><value key="Superpostos" value="13"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="mattransp"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Outros" value="99"/><value key="Óleo" value="2"/><value key="Desconhecido" value="0"/><value key="Nafta" value="4"/><value key="Gasolina" value="29"/><value key="Efluentes" value="8"/><value key="Esgoto" value="9"/><value key="Gás" value="5"/><value key="Água" value="1"/><value key="Grãos" value="6"/><value key="Minério" value="7"/><value key="Querosene" value="31"/><value key="Álcool" value="30"/><value key="Petróleo" value="3"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="operacional"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Desconhecido" value="0"/><value key="Sim" value="1"/><value key="Não" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="matconstr"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Outros" value="99"/><value key="Desconhecido" value="0"/><value key="Alvenaria" value="1"/><value key="Metal" value="3"/><value key="Rocha" value="4"/><value key="Concreto" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="posicaorelativa"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Desconhecida" value="0"/><value key="Elevado" value="3"/><value key="Emerso" value="4"/><value key="Submerso" value="5"/><value key="Superfície" value="2"/><value key="Subterrâneo" value="6"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="geometriaaproximada"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Sim" value="1"/><value key="Não" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="situacaofisica"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Construída" value="5"/><value key="Em Construção" value="3"/><value key="Planejada" value="4"/><value key="Desconhecida" value="0"/><value key="Abandonada" value="1"/><value key="Destruída" value="2"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="setor"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Econômico" value="2"/><value key="Saneamento básico" value="4"/><value key="Abastecimento de água" value="3"/><value key="Energético" value="1"/><value key="Desconhecido" value="0"/></widgetv2config></edittype><edittype widgetv2type="ValueMap" name="tipotrechoduto"><widgetv2config fieldEditable="1" labelOnTop="0"><value key="Calha" value="2"/><value key="Duto" value="1"/><value key="Desconhecido" value="0"/><value key="Correia transportadora" value="3"/></widgetv2config></edittype></edittypes></qgis>
+<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
+<qgis maxScale="0" simplifyDrawingHints="0" readOnly="0" simplifyDrawingTol="1" version="3.7.0-Master" labelsEnabled="0" hasScaleBasedVisibilityFlag="0" styleCategories="AllStyleCategories" simplifyMaxScale="1" minScale="1e+8" simplifyLocal="1" simplifyAlgorithm="0">
+  <flags>
+    <Identifiable>1</Identifiable>
+    <Removable>1</Removable>
+    <Searchable>1</Searchable>
+  </flags>
+  <renderer-v2 enableorderby="0" forceraster="0" type="singleSymbol" symbollevels="0">
+    <symbols>
+      <symbol alpha="1" type="line" name="0" clip_to_extent="1" force_rhr="0">
+        <layer pass="0" locked="0" enabled="1" class="SimpleLine">
+          <prop v="square" k="capstyle"/>
+          <prop v="5;2" k="customdash"/>
+          <prop v="3x:0,0,0,0,0,0" k="customdash_map_unit_scale"/>
+          <prop v="MM" k="customdash_unit"/>
+          <prop v="0" k="draw_inside_polygon"/>
+          <prop v="bevel" k="joinstyle"/>
+          <prop v="114,155,111,255" k="line_color"/>
+          <prop v="solid" k="line_style"/>
+          <prop v="0.26" k="line_width"/>
+          <prop v="MM" k="line_width_unit"/>
+          <prop v="0" k="offset"/>
+          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
+          <prop v="MM" k="offset_unit"/>
+          <prop v="0" k="ring_filter"/>
+          <prop v="0" k="use_custom_dash"/>
+          <prop v="3x:0,0,0,0,0,0" k="width_map_unit_scale"/>
+          <data_defined_properties>
+            <Option type="Map">
+              <Option value="" type="QString" name="name"/>
+              <Option name="properties"/>
+              <Option value="collection" type="QString" name="type"/>
+            </Option>
+          </data_defined_properties>
+        </layer>
+      </symbol>
+    </symbols>
+    <rotation/>
+    <sizescale/>
+  </renderer-v2>
+  <customproperties/>
+  <blendMode>0</blendMode>
+  <featureBlendMode>0</featureBlendMode>
+  <layerOpacity>1</layerOpacity>
+  <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
+    <activeChecks type="StringList">
+      <Option value="" type="QString"/>
+    </activeChecks>
+    <checkConfiguration/>
+  </geometryOptions>
+  <fieldConfiguration>
+    <field name="id">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="nome">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="nomeabrev">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="geometriaaproximada">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="2" type="QString" name="Não"/>
+              <Option value="1" type="QString" name="Sim"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="tipotrechoduto">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="2" type="QString" name="Calha"/>
+              <Option value="3" type="QString" name="Correia transportadora"/>
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="1" type="QString" name="Duto"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="mattransp">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="8" type="QString" name="Efluentes"/>
+              <Option value="9" type="QString" name="Esgoto"/>
+              <Option value="29" type="QString" name="Gasolina"/>
+              <Option value="6" type="QString" name="Grãos"/>
+              <Option value="5" type="QString" name="Gás"/>
+              <Option value="7" type="QString" name="Minério"/>
+              <Option value="4" type="QString" name="Nafta"/>
+              <Option value="99" type="QString" name="Outros"/>
+              <Option value="3" type="QString" name="Petróleo"/>
+              <Option value="31" type="QString" name="Querosene"/>
+              <Option value="1" type="QString" name="Água"/>
+              <Option value="30" type="QString" name="Álcool"/>
+              <Option value="2" type="QString" name="Óleo"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="setor">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="3" type="QString" name="Abastecimento de água"/>
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="2" type="QString" name="Econômico"/>
+              <Option value="1" type="QString" name="Energético"/>
+              <Option value="4" type="QString" name="Saneamento básico"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="posicaorelativa">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="0" type="QString" name="Desconhecida"/>
+              <Option value="3" type="QString" name="Elevado"/>
+              <Option value="4" type="QString" name="Emerso"/>
+              <Option value="5" type="QString" name="Submerso"/>
+              <Option value="6" type="QString" name="Subterrâneo"/>
+              <Option value="2" type="QString" name="Superfície"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="matconstr">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="1" type="QString" name="Alvenaria"/>
+              <Option value="2" type="QString" name="Concreto"/>
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="3" type="QString" name="Metal"/>
+              <Option value="99" type="QString" name="Outros"/>
+              <Option value="4" type="QString" name="Rocha"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="ndutos">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="situacaoespacial">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="12" type="QString" name="Adjacentes"/>
+              <Option value="99" type="QString" name="Outros"/>
+              <Option value="13" type="QString" name="Superpostos"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="operacional">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="2" type="QString" name="Não"/>
+              <Option value="1" type="QString" name="Sim"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="situacaofisica">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="1" type="QString" name="Abandonada"/>
+              <Option value="5" type="QString" name="Construída"/>
+              <Option value="0" type="QString" name="Desconhecida"/>
+              <Option value="2" type="QString" name="Destruída"/>
+              <Option value="3" type="QString" name="Em Construção"/>
+              <Option value="4" type="QString" name="Planejada"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="id_duto">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="tipocondutor">
+      <editWidget type="ValueMap">
+        <config>
+          <Option type="Map">
+            <Option type="Map" name="map">
+              <Option value="2" type="QString" name="Calha"/>
+              <Option value="0" type="QString" name="Desconhecido"/>
+              <Option value="4" type="QString" name="Tubulação"/>
+            </Option>
+          </Option>
+        </config>
+      </editWidget>
+    </field>
+    <field name="id_complexo_gerad_energ_eletr">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+    <field name="lenght_otf">
+      <editWidget type="">
+        <config>
+          <Option/>
+        </config>
+      </editWidget>
+    </field>
+  </fieldConfiguration>
+  <aliases>
+    <alias field="id" index="0" name=""/>
+    <alias field="nome" index="1" name=""/>
+    <alias field="nomeabrev" index="2" name=""/>
+    <alias field="geometriaaproximada" index="3" name=""/>
+    <alias field="tipotrechoduto" index="4" name=""/>
+    <alias field="mattransp" index="5" name=""/>
+    <alias field="setor" index="6" name=""/>
+    <alias field="posicaorelativa" index="7" name=""/>
+    <alias field="matconstr" index="8" name=""/>
+    <alias field="ndutos" index="9" name=""/>
+    <alias field="situacaoespacial" index="10" name=""/>
+    <alias field="operacional" index="11" name=""/>
+    <alias field="situacaofisica" index="12" name=""/>
+    <alias field="id_duto" index="13" name=""/>
+    <alias field="tipocondutor" index="14" name=""/>
+    <alias field="id_complexo_gerad_energ_eletr" index="15" name=""/>
+    <alias field="lenght_otf" index="16" name=""/>
+  </aliases>
+  <excludeAttributesWMS/>
+  <excludeAttributesWFS/>
+  <defaults>
+    <default applyOnUpdate="0" field="id" expression=""/>
+    <default applyOnUpdate="0" field="nome" expression=""/>
+    <default applyOnUpdate="0" field="nomeabrev" expression=""/>
+    <default applyOnUpdate="0" field="geometriaaproximada" expression=""/>
+    <default applyOnUpdate="0" field="tipotrechoduto" expression=""/>
+    <default applyOnUpdate="0" field="mattransp" expression=""/>
+    <default applyOnUpdate="0" field="setor" expression=""/>
+    <default applyOnUpdate="0" field="posicaorelativa" expression=""/>
+    <default applyOnUpdate="0" field="matconstr" expression=""/>
+    <default applyOnUpdate="0" field="ndutos" expression=""/>
+    <default applyOnUpdate="0" field="situacaoespacial" expression=""/>
+    <default applyOnUpdate="0" field="operacional" expression=""/>
+    <default applyOnUpdate="0" field="situacaofisica" expression=""/>
+    <default applyOnUpdate="0" field="id_duto" expression=""/>
+    <default applyOnUpdate="0" field="tipocondutor" expression=""/>
+    <default applyOnUpdate="0" field="id_complexo_gerad_energ_eletr" expression=""/>
+    <default applyOnUpdate="0" field="lenght_otf" expression=""/>
+  </defaults>
+  <constraints>
+    <constraint unique_strength="1" field="id" constraints="3" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="nome" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="nomeabrev" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="geometriaaproximada" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="tipotrechoduto" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="mattransp" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="setor" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="posicaorelativa" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="matconstr" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="ndutos" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="situacaoespacial" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="operacional" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="situacaofisica" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="id_duto" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="tipocondutor" constraints="1" exp_strength="0" notnull_strength="1"/>
+    <constraint unique_strength="0" field="id_complexo_gerad_energ_eletr" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="lenght_otf" constraints="0" exp_strength="0" notnull_strength="0"/>
+  </constraints>
+  <constraintExpressions>
+    <constraint exp="" desc="" field="id"/>
+    <constraint exp="" desc="" field="nome"/>
+    <constraint exp="" desc="" field="nomeabrev"/>
+    <constraint exp="" desc="" field="geometriaaproximada"/>
+    <constraint exp="" desc="" field="tipotrechoduto"/>
+    <constraint exp="" desc="" field="mattransp"/>
+    <constraint exp="" desc="" field="setor"/>
+    <constraint exp="" desc="" field="posicaorelativa"/>
+    <constraint exp="" desc="" field="matconstr"/>
+    <constraint exp="" desc="" field="ndutos"/>
+    <constraint exp="" desc="" field="situacaoespacial"/>
+    <constraint exp="" desc="" field="operacional"/>
+    <constraint exp="" desc="" field="situacaofisica"/>
+    <constraint exp="" desc="" field="id_duto"/>
+    <constraint exp="" desc="" field="tipocondutor"/>
+    <constraint exp="" desc="" field="id_complexo_gerad_energ_eletr"/>
+    <constraint exp="" desc="" field="lenght_otf"/>
+  </constraintExpressions>
+  <expressionfields>
+    <field precision="0" comment="" length="0" typeName="" expression="$length" type="6" name="lenght_otf" subType="0"/>
+  </expressionfields>
+  <attributeactions/>
+  <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
+    <columns/>
+  </attributetableconfig>
+  <conditionalstyles>
+    <rowstyles/>
+    <fieldstyles/>
+  </conditionalstyles>
+  <editform tolerant="1"></editform>
+  <editforminit/>
+  <editforminitcodesource>0</editforminitcodesource>
+  <editforminitfilepath></editforminitfilepath>
+  <editforminitcode><![CDATA[]]></editforminitcode>
+  <featformsuppress>0</featformsuppress>
+  <editorlayout>generatedlayout</editorlayout>
+  <editable/>
+  <labelOnTop/>
+  <widgets/>
+  <previewExpression></previewExpression>
+  <mapTip></mapTip>
+  <layerGeometryType>1</layerGeometryType>
+</qgis>
