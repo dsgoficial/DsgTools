@@ -158,20 +158,24 @@ class Tester(unittest.TestCase):
         """
         spatiaLitePaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'SpatiaLite')
         gpkgPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'Geopackage')
-        geojsonPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'GeoJson')
+        geojsonPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'GeoJSON')
         datasets = {
             "sqlite" : {
-                "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite')
+                "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite'),
+                "douglas_peucker" : os.path.join(spatiaLitePaths, 'douglas_peucker.sqlite')
             },
             "gpkg" : {
                 "testes_wgs84" : os.path.join(gpkgPaths, 'testes_wgs84.gpkg'),
                 "testes_sirgas2000_23s" : os.path.join(gpkgPaths, 'testes_sirgas2000_23s.gpkg'),
-                "testes_sirgas2000_24s" : os.path.join(gpkgPaths, 'testes_sirgas2000_24s.gpkg'),
                 "test_dataset_unbuild_polygons" : os.path.join(gpkgPaths, 'test_dataset_unbuild_polygons.gpkg')
             },
             "geojson" : {
                 "land_cover_layers" : os.path.join(geojsonPaths, 'land_cover_layers'),
-                "spatial_rules_alg" : os.path.join(geojsonPaths, 'spatial_rules_alg')
+                "terrain_model_layers" : os.path.join(geojsonPaths, 'terrain_model_layers'),
+                "testes_sirgas2000_24s" : os.path.join(geojsonPaths, 'testes_sirgas2000_24s'),
+                "spatial_rules_alg" : os.path.join(geojsonPaths, 'spatial_rules_alg'),
+                "create_frames_layers" : os.path.join(geojsonPaths, 'create_frames_layers'),
+                "identify_angles_in_invalid_range_layers" : os.path.join(geojsonPaths, 'identify_angles_in_invalid_range_layers')
             }
         }
         # switch-case for dataset reading
@@ -248,6 +252,38 @@ class Tester(unittest.TestCase):
                  tests.
         """
         parameters = {
+            "dsgtools:topologicaldouglaspeuckerareasimplification" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'INPUTLAYERS' : self.getInputLayers(
+                        'sqlite', 'douglas_peucker',
+                        ['cb_veg_campo_a'],
+                        addControlKey=True
+                    )[0],
+                    'SELECTED' : False,
+                    'SNAP': 2,
+                    'DOUGLASPARAMETER': 1.5,
+                    'FLAGS' : "memory:",
+                    'OUTPUT' : "memory:"
+                }
+            ],
+
+            "dsgtools:topologicaldouglaspeuckerlinesimplification" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'INPUTLAYERS' : self.getInputLayers(
+                        'sqlite', 'douglas_peucker',
+                        ['cb_tra_trecho_rodoviario_l'],
+                        addControlKey=True
+                    )[0],
+                    'SELECTED' : False,
+                    'SNAP': 2,
+                    'DOUGLASPARAMETER': 1.5,
+                    'FLAGS' : "memory:",
+                    'OUTPUT' : "memory:"
+                }
+            ],
+
             "dsgtools:identifyduplicatedfeatures" : [
                 {
                     '__comment' : "'Normal' test: checks if it works.",
@@ -287,6 +323,19 @@ class Tester(unittest.TestCase):
                 }
             ],
 
+            "dsgtools:identifyanglesininvalidrangealgorithm" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS' : 'memory:',
+                    'INPUT' : self.getInputLayers(
+                        'geojson', 'identify_angles_in_invalid_range_layers', ['lines1']
+                    )[0],
+                    'SELECTED' : False,
+                    'MIN_ANGLE' : 80,
+                    'MAX_ANGLE' : 100
+                }
+            ],
+
             "dsgtools:identifygaps" : [
                 {
                     '__comment' : "'Normal' test: checks if it works.",
@@ -305,6 +354,7 @@ class Tester(unittest.TestCase):
                     'INPUT' : self.getInputLayers(
                             'sqlite', 'banco_capacitacao', ['cb_veg_campo_a']
                         )[0],
+                    'IGNORE_CLOSED' : False,
                     'SELECTED' : False,
                     'TYPE' : False
                 }
@@ -413,7 +463,7 @@ class Tester(unittest.TestCase):
                     '__comment' : "'Normal' test: checks if it works with polygon.",
                     'FLAGS': "memory:",
                     'INPUT': self.getInputLayers(
-                            'gpkg', 'testes_sirgas2000_24s', ['test1_vertexnearedge_a']
+                            'geojson', 'testes_sirgas2000_24s', ['test1_vertexnearedge_a']
                         )[0],
                     'SEARCH_RADIUS':1,
                     'SELECTED': False
@@ -422,7 +472,7 @@ class Tester(unittest.TestCase):
                     '__comment' : "'Normal' test: checks if it works with polygon.",
                     'FLAGS': "memory:",
                     'INPUT': self.getInputLayers(
-                            'gpkg', 'testes_sirgas2000_24s', ['test2_vertexnearedge_l']
+                            'geojson', 'testes_sirgas2000_24s', ['test2_vertexnearedge_l']
                         )[0],
                     'SEARCH_RADIUS':1,
                     'SELECTED': False
@@ -786,6 +836,83 @@ class Tester(unittest.TestCase):
                     )[0],
                     'OUTPUT_POLYGONS' : "memory:",
                     'FLAGS' : "memory:"
+                }  
+            ],
+            "dsgtools:identifyterrainmodelerrorsalgorithm" : [
+                {
+                    '__comment' : "test 1",
+                    "INPUT" : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['contours_test1']
+                    )[0],
+                    'SELECTED' : False,
+                    'CONTOUR_ATTR':'contour',
+                    'CONTOUR_INTERVAL':10,
+                    'TOPOLOGY_RADIUS':2,
+                    'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['geographic_bounds_test1']
+                    )[0],
+                    'POINT_FLAGS' : "memory:",
+                    'LINE_FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 2",
+                    "INPUT" : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['contours_test2']
+                    )[0],
+                    'SELECTED' : False,
+                    'CONTOUR_ATTR':'contour',
+                    'CONTOUR_INTERVAL':10,
+                    'TOPOLOGY_RADIUS':2,
+                    'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['geographic_bounds_test2']
+                    )[0],
+                    'POINT_FLAGS' : "memory:",
+                    'LINE_FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 3",
+                    "INPUT" : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['contours_test3']
+                    )[0],
+                    'SELECTED' : False,
+                    'CONTOUR_ATTR':'contour',
+                    'CONTOUR_INTERVAL':10,
+                    'TOPOLOGY_RADIUS':2,
+                    'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['geographic_bounds_test3']
+                    )[0],
+                    'POINT_FLAGS' : "memory:",
+                    'LINE_FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 4",
+                    "INPUT" : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['contours_test4']
+                    )[0],
+                    'SELECTED' : False,
+                    'CONTOUR_ATTR':'contour',
+                    'CONTOUR_INTERVAL':10,
+                    'TOPOLOGY_RADIUS':2,
+                    'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['geographic_bounds_test4']
+                    )[0],
+                    'POINT_FLAGS' : "memory:",
+                    'LINE_FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 5",
+                    "INPUT" : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['contours_test5']
+                    )[0],
+                    'SELECTED' : False,
+                    'CONTOUR_ATTR':'contour',
+                    'CONTOUR_INTERVAL':10,
+                    'TOPOLOGY_RADIUS':2,
+                    'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
+                        'geojson', 'terrain_model_layers', ['geographic_bounds_test5']
+                    )[0],
+                    'POINT_FLAGS' : "memory:",
+                    'LINE_FLAGS' : "memory:"
                 }
             ],
                     # '__comment' : "'Normal' test: checks if it works."
@@ -979,10 +1106,9 @@ class Tester(unittest.TestCase):
         :param feedback: (QgsProcessingFeedback) QGIS progress tracking object.
         :param context: (QgsProcessingContext) execution's environmental parameters.
         """
-        return processing.run(algName, parameters, None,\
-                    feedback or QgsProcessingFeedback(),
-                    context or QgsProcessingContext()
-                )
+        feedback = QgsProcessingFeedback() if feedback is None else feedback
+        context = QgsProcessingContext() if context is None else context
+        return processing.run(algName, parameters, context=context, feedback=feedback)
 
     def expectedOutput(self, algName, test, multipleOutputs=False):
         """
@@ -1132,19 +1258,35 @@ class Tester(unittest.TestCase):
                         expected.rollBack()
                 elif isinstance(output, dict):
                     for key, outputLyr in output.items():
-                        if key not in expected:
+                        if isinstance(outputLyr, list):
+                            for idx, outLayer in enumerate(outputLyr):
+                                if "{0}_{1}".format(key, idx) not in expected:
+                                    raise Exception("Output dictionary key was not found in expected output dictionary.".\
+                                        format(alg=algName, nr=i + 1)
+                                    )
+                                self.compareInputLayerWithOutputLayer(
+                                    i,
+                                    algName,
+                                    outLayer,
+                                    expected["{0}_{1}".format(key, idx)],
+                                    loadLayers=loadLayers,
+                                    addControlKey=addControlKey,
+                                    attributeBlackList=attributeBlackList
+                                )
+                        elif key not in expected:
                             raise Exception("Output dictionary key was not found in expected output dictionary.".\
                                 format(alg=algName, nr=i + 1)
                             )
-                        self.compareInputLayerWithOutputLayer(
-                            i,
-                            algName,
-                            outputLyr,
-                            expected[key],
-                            loadLayers=loadLayers,
-                            addControlKey=addControlKey,
-                            attributeBlackList=attributeBlackList
-                        )
+                        else:
+                            self.compareInputLayerWithOutputLayer(
+                                i,
+                                algName,
+                                outputLyr,
+                                expected[key],
+                                loadLayers=loadLayers,
+                                addControlKey=addControlKey,
+                                attributeBlackList=attributeBlackList
+                            )
                         if isinstance(outputLyr, QgsVectorLayer):
                             outputLyr.rollBack()
                         if isinstance(expected[key], QgsVectorLayer):
@@ -1223,7 +1365,10 @@ class Tester(unittest.TestCase):
             ]
         multipleOutputAlgs = [
             "dsgtools:unbuildpolygonsalgorithm",
-            "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm"
+            "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
+             # manipulation algs
+            "dsgtools:topologicaldouglaspeuckerlinesimplification",
+            "dsgtools:topologicaldouglaspeuckerareasimplification"
         ]
         # for alg in self.readAvailableAlgs(self.DEFAULT_ALG_PATH):
         for alg in algs:
@@ -1245,6 +1390,15 @@ class Tester(unittest.TestCase):
     def test_identifyoutofboundsangles(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifyoutofboundsangles"), ""
+        )
+    
+    def test_identifyanglesininvalidrangealgorithm(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:identifyanglesininvalidrangealgorithm",
+                multipleOutputs=True,
+                addControlKey=True
+            ), ""
         )
 
     # def test_identifyoutofboundsanglesincoverage(self):
@@ -1305,7 +1459,7 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg("dsgtools:identifydangles"), ""
         )
-    
+
     def test_identifyunsharedvertexonintersectionsalgorithm(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifyunsharedvertexonintersectionsalgorithm"), ""
@@ -1313,7 +1467,11 @@ class Tester(unittest.TestCase):
     
     def test_identifyvertexnearedges(self):
         self.assertEqual(
-            self.testAlg("dsgtools:identifyvertexnearedges"), ""
+            self.testAlg(
+                "dsgtools:identifyvertexnearedges",
+                addControlKey=True,
+                multipleOutputs=True
+            ), ""
         )
     
     # def test_overlayelementswithareas(self):
@@ -1366,30 +1524,60 @@ class Tester(unittest.TestCase):
             ),
             ""
         )
-    
-    def test_enforcespatialrules(self):
-        """Tests for Enforce Spatial Rules algorithm"""
-        testsParams = self.algorithmParameters("dsgtools:enforcespatialrules")
-        # this algorithm, specifically, has to set layers Context-reading ready
-        layers = self.testingDataset("geojson", "spatial_rules_alg")
-        layers = {l.split("-")[-1]: vl for l, vl in layers.items()}
-        for parameters in testsParams:
-            for rule in parameters["RULES_SET"]:
-                for key in ["layer_a", "layer_b"]:
-                    vl = layers[rule[key]]
-                    # these layers are saved as "edgv3-*"
-                    vl.setName(rule[key])
-                    self.loadLayerToCanvas(vl)
-        msg = self.testAlg(
-            "dsgtools:enforcespatialrules",
-            multipleOutputs=True,
-            addControlKey=True
+
+    def test_identifyterrainmodelerrorsalgorithm(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:identifyterrainmodelerrorsalgorithm",
+                multipleOutputs=True,
+                addControlKey=True
+            ),
+            ""
         )
-        # since layers were manually removed, cache is going to refer to 
-        # non-existing layers
-        del self.datasets["geojson:spatial_rules_alg"]
-        self.clearProject()
-        self.assertEqual(msg, "")
+
+    def test_topologicaldouglaspeuckerlinesimplification(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:topologicaldouglaspeuckerlinesimplification",
+                multipleOutputs=True,
+                addControlKey=True
+            ),
+            ""
+        )
+
+    def test_topologicaldouglaspeuckerareasimplification(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:topologicaldouglaspeuckerareasimplification",
+                multipleOutputs=True,
+                addControlKey=True
+            ),
+            ""
+        )
+
+    # def test_enforcespatialrules(self):
+    #     """Tests for Enforce Spatial Rules algorithm"""
+    #     testsParams = self.algorithmParameters("dsgtools:enforcespatialrules")
+    #     # this algorithm, specifically has to set layers Context-reading ready
+    #     layers = self.testingDataset("geojson", "spatial_rules_alg")
+    #     layers = {l.split("-")[-1]: vl for l, vl in layers.items()}
+    #     for parameters in testsParams:
+    #         for rule in parameters["RULES_SET"]:
+    #             for key in ["layer_a", "layer_b"]:
+    #                 vl = layers[rule[key]]
+    #                 # these layers are saved as "edgv3-*"
+    #                 vl.setName(rule[key])
+    #                 self.loadLayerToCanvas(vl)
+    #     msg = self.testAlg(
+    #         "dsgtools:enforcespatialrules",
+    #         multipleOutputs=True,
+    #         addControlKey=True
+    #     )
+    #     # since layers were manually removed, cache is going to refer to 
+    #     # non-existing layers
+    #     del self.datasets["geojson:spatial_rules_alg"]
+    #     self.clearProject()
+    #     self.assertEqual(msg, "")
 
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""

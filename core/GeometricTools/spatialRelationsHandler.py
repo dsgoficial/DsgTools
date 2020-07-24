@@ -22,8 +22,8 @@
 """
 from __future__ import absolute_import
 
-from itertools import tee
-from collections import defaultdict
+from itertools import tee, combinations
+from collections import defaultdict, OrderedDict
 
 from qgis.core import (Qgis,
                        QgsFeature,
@@ -41,7 +41,7 @@ from qgis.PyQt.QtCore import QCoreApplication
 from .featureHandler import FeatureHandler
 from .geometryHandler import GeometryHandler
 from .layerHandler import LayerHandler
-
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
 class SpatialRelationsHandler(QObject):
     __predicates = (
@@ -74,7 +74,215 @@ class SpatialRelationsHandler(QObject):
         self.layerHandler = LayerHandler(iface)
         self.featureHandler = FeatureHandler(iface)
         self.geometryHandler = GeometryHandler(iface)
+        self.algRunner = AlgRunner()
+
+    def validateTerrainModel(self, contourLyr, heightFieldName, threshold,\
+        onlySelected=False, geoBoundsLyr=None, context=None, feedback=None):
+        """
+        Does several validation procedures with terrain elements.
+        """
+        invalidDict = OrderedDict()
+        multiStepFeedback = QgsProcessingMultiStepFeedback(7, feedback) #ajustar depois
+        multiStepFeedback.setCurrentStep(0)
+        splitLinesLyr = self.algRunner.runSplitLinesWithLines(
+            contourLyr,
+            contourLyr,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(1)
+        (
+            contourSpatialIdx, contourIdDict, contourNodeDict, heightsDict
+        ) = self.buildSpatialIndexAndIdDictRelateNodesAndAttributeGroupDict(
+            inputLyr=splitLinesLyr,
+            attributeName=heightFieldName,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(2)
+        geoBoundsGeomEngine = None if geoBoundsLyr is None\
+            else self.getGeoBoundsGeomEngine(
+                geoBoundsLyr,
+                context=context,
+                feedback=multiStepFeedback
+            )
+        multiStepFeedback.setCurrentStep(3)
+        contourFlags = self.validateContourRelations(
+            contourNodeDict,
+            heightFieldName,
+            geoBoundsGeomEngine=geoBoundsGeomEngine
+        )
+        invalidDict.update(contourFlags)
+        multiStepFeedback.setCurrentStep(4)
+        contourOutOfThresholdDict = self.findContourOutOfThreshold(
+            heightsDict,
+            threshold,
+            feedback=multiStepFeedback
+        )
+        invalidDict.update(contourOutOfThresholdDict)
+        if len(invalidDict) > 0:
+            return invalidDict
+        multiStepFeedback.setCurrentStep(5)
+        contourAreaDict = self.buildContourAreaDict(
+            inputLyr=splitLinesLyr,
+            geoBoundsLyr=geoBoundsLyr,
+            attributeName=heightFieldName,
+            contourSpatialIdx=contourSpatialIdx,
+            contourIdDict=contourIdDict,
+            depressionExpression=None,#TODO
+            context=context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(6)
+        misingContourDict = self.findMissingContours(
+            contourAreaDict,
+            threshold,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        invalidDict.update(misingContourDict)
+        return invalidDict
+
+    def getGeoBoundsGeomEngine(self, geoBoundsLyr, context=None, feedback=None):
+        """
+        returns an initiated QgsGeometryEngine from the merged polygon of geoBoundsLyr
+        """
+        if geoBoundsLyr is None:
+            return None
+        mergedPolygonLyr = self.algRunner.runAggregate(
+            geoBoundsLyr,
+            context=context,
+            feedback=feedback
+        )
+        mergedGeom = [i for i in mergedPolygonLyr.getFeatures()][0].geometry()\
+            if mergedPolygonLyr.featureCount() != 0 else None
+        if mergedGeom is None:
+            return None
+        engine = QgsGeometry.createGeometryEngine(mergedGeom.constGet())
+        engine.prepareGeometry()
+        return engine
+
+    def buildContourAreaDict(self, inputLyr, geoBoundsLyr, attributeName,\
+            contourSpatialIdx, contourIdDict, depressionExpression=None,\
+            context=None, feedback=None):
+        """
+        Builds a dict in the following format:
+        {
+            'areaSpatialIdx' : QgsSpatialIndex of the built areas,
+            'areaIdDict' : {id:feat}
+            'areaContourRelations' : {id : {height:[list of feats]}}
+        }
+        """
+        contourAreaDict = {
+            'areaSpatialIdx' : QgsSpatialIndex(),
+            'areaIdDict' : {},
+            'areaContourRelations' : {}
+        }
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        boundsLineLyr = self.algRunner.runPolygonsToLines(
+            geoBoundsLyr, context, feedback=multiStepFeedback
+        ) if geoBoundsLyr is not None else None
+        lineLyrList = [inputLyr] if boundsLineLyr is None else [inputLyr, boundsLineLyr]
+        multiStepFeedback.setCurrentStep(1)
+        linesLyr = self.algRunner.runMergeVectorLayers(
+            lineLyrList,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(2)
+        polygonLyr = self.algRunner.runPolygonize(
+            linesLyr,
+            context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(3)
+        self.populateContourAreaDict(
+            polygonLyr,
+            boundsLineLyr,
+            attributeName,
+            contourAreaDict,
+            contourSpatialIdx,
+            contourIdDict,
+            feedback=multiStepFeedback
+        )
+        return contourAreaDict
     
+    def populateContourAreaDict(self, polygonLyr, boundsLineLyr, attributeName,
+        contourAreaDict, contourSpatialIdx, contourIdDict, feedback=None):
+        boundsGeom = [i for i in boundsLineLyr.getFeatures()][0].geometry() if boundsLineLyr is not None else None
+        nPolygons = polygonLyr.featureCount()
+        size = 100/nPolygons if nPolygons else 0
+        for current, feat in enumerate(polygonLyr.getFeatures()):
+            if feedback is not None and feedback.isCanceled():
+                break
+            featId = feat.id()
+            geom = feat.geometry()
+            featBB = geom.boundingBox()
+            contourAreaDict['areaSpatialIdx'].addFeature(feat)
+            contourAreaDict['areaIdDict'][featId] = feat
+            if featId not in contourAreaDict['areaContourRelations']:
+                contourAreaDict['areaContourRelations'][featId] = defaultdict(list)
+            for contourId in contourSpatialIdx.intersects(featBB):
+                if feedback is not None and feedback.isCanceled():
+                    break
+                candidateContourFeat = contourIdDict[contourId]
+                if candidateContourFeat.geometry().intersects(geom):
+                    contourValue = candidateContourFeat[attributeName]
+                    candidateContourGeom = candidateContourFeat.geometry()\
+                        if boundsGeom is not None and\
+                            not candidateContourFeat.geometry().intersects(boundsGeom)\
+                        else candidateContourFeat.geometry().intersection(boundsGeom)
+                    contourAreaDict['areaContourRelations'][featId][contourValue].append(candidateContourGeom)
+            if feedback is not None:
+                feedback.setProgress(current * size)
+
+    def findContourOutOfThreshold(self, heightsDict, threshold, feedback=None):
+        contourOutOfThresholdDict = OrderedDict()
+        size = 100/len(heightsDict) if len(heightsDict) else 0
+        for current, (k,valueSet) in enumerate(heightsDict.items()):
+            if feedback is not None and feedback.isCanceled():
+                break
+            for i in valueSet:
+                if feedback is not None and feedback.isCanceled():
+                    break
+                if k % threshold != 0:
+                    contourOutOfThresholdDict[i.asWkb()] = self.tr('Contour out of threshold.')
+            if feedback is not None:
+                feedback.setProgress(current * size)
+        return contourOutOfThresholdDict
+
+    def findMissingContours(self, contourAreaDict, threshold, context=None, feedback=None):
+        """
+        Can be more efficient, the first draft will be of several for inside for.
+        """
+        relationCount = len(contourAreaDict['areaContourRelations'])
+        size = 100 / relationCount if relationCount else 0
+        missingContourFlagDict = dict()
+        for current, (areaId, heightDict) in enumerate(contourAreaDict['areaContourRelations'].items()):
+            if feedback is not None and feedback.isCanceled():
+                break
+            if len(heightDict) < 2:
+                continue
+            for h1, h2 in combinations(heightDict.keys(), 2):
+                if abs(h1-h2) <= threshold:
+                    continue
+                min_h12 = min(h1, h2) #done to fix the way flags are built.
+                max_h12 = max(h1, h2)
+                for geom in heightDict[h1]:
+                    if feedback is not None and feedback.isCanceled():
+                        break
+                    shortestLineGeomList = [geom.shortestLine(i) for i in heightDict[h2]]
+                    missingContourFlagDict.update(
+                        {
+                            i.asWkb() : self.tr(
+                                    'Missing contour between contour lines of values {v1} and {v2}'
+                                ).format(v1=min_h12, v2=max_h12) for i in shortestLineGeomList
+                        }
+                    )
+            if feedback is not None:
+                feedback.setProgress(current * size)
+        return missingContourFlagDict
+
     def relateDrainagesWithContours(self, drainageLyr, contourLyr, frameLinesLyr, heightFieldName, threshold, topologyRadius, feedback=None):
         """
         Checks the conformity between directed drainages and contours.
@@ -157,7 +365,8 @@ class SpatialRelationsHandler(QObject):
             contourIdDict
             )
 
-    def buildSpatialIndexAndIdDictAndRelateNodes(self, inputLyr, feedback=None, featureRequest=None):
+    def buildSpatialIndexAndIdDictAndRelateNodes(self, inputLyr, feedback=None,\
+            featureRequest=None):
         """
         creates a spatial index for the input layer
         :param inputLyr: (QgsVectorLayer) input layer;
@@ -166,11 +375,14 @@ class SpatialRelationsHandler(QObject):
         """
         spatialIdx = QgsSpatialIndex()
         idDict = {}
-        nodeDict = {}
+        nodeDict = defaultdict(list)
         featCount = inputLyr.featureCount()
         size = 100/featCount if featCount else 0
-        iterator = inputLyr.getFeatures() if featureRequest is None else inputLyr.getFeatures(featureRequest)
-        firstAndLastNode = lambda x:self.geometryHandler.getFirstAndLastNode(inputLyr, x)
+        iterator = inputLyr.getFeatures() if featureRequest is None \
+            else inputLyr.getFeatures(featureRequest)
+        firstAndLastNode = lambda x:self.geometryHandler.getFirstAndLastNode(
+            inputLyr, x
+        )
         addFeatureAlias = lambda x : self.addFeatureToSpatialIndexAndNodeDict(
             current=x[0],
             feat=x[1],
@@ -183,40 +395,51 @@ class SpatialRelationsHandler(QObject):
         )
         list(map(addFeatureAlias, enumerate(iterator)))
         return spatialIdx, idDict, nodeDict
-    
-    def addFeatureToSpatialIndexAndNodeDict(self, current, feat, spatialIdx, idDict, nodeDict, size, firstAndLastNode, feedback):
+
+    def addFeatureToSpatialIndexAndNodeDict(self, current, feat, spatialIdx,\
+            idDict, nodeDict, size, feedback):
         """
-        Adds feature to spatial index. Used along side with a python map operator
-        to improve performance.
+        Adds feature to spatial index. Used along side with a python map
+        operator to improve performance.
         :param current : (int) current index
-        :param feat : (QgsFeature) feature to be added on spatial index and on idDict
+        :param feat : (QgsFeature) feature to be added on spatial index and
+        on idDict
         :param spatialIdx: (QgsSpatialIndex) spatial index
         :param idDict: (dict) dictionary with format {feat.id(): feat}
+        :param nodeDict: (defaultdict(list)) dictionary with format
+        {node:[list of features]}
         :param size: (int) size to be used to update feedback
-        :param firstAndLastNode: (dict) dictionary used to relate nodes of features
-        :param feedback: (QgsProcessingFeedback) feedback to be used on processing
+        :param feedback: (QgsProcessingFeedback) feedback to be used on
+        processing
         """
-        firstNode, lastNode = firstAndLastNode(feat)
-        if firstNode not in nodeDict:
-            nodeDict[firstNode] = []
-        nodeDict[firstNode] += [firstNode]
-        if lastNode not in nodeDict:
-            nodeDict[lastNode] = []
-        nodeDict[lastNode] += [lastNode]
-        self.layerHandler.addFeatureToSpatialIndex(current, feat, spatialIdx, idDict, size, feedback)
+        if feedback is not None and feedback.isCanceled():
+            return
+        firstNode, lastNode = self.geometryHandler.getFirstAndLastNodeFromGeom(
+            feat.geometry()
+        )
+        nodeDict[firstNode] += [feat]
+        nodeDict[lastNode] += [feat]
+        self.layerHandler.addFeatureToSpatialIndex(
+            current,
+            feat,
+            spatialIdx,
+            idDict,
+            size,
+            feedback
+        )
 
-    def buildSpatialIndexAndIdDictRelateNodesAndAttributeGroupDict(self, inputLyr, attributeName, feedback=None, featureRequest=None):
+    def buildSpatialIndexAndIdDictRelateNodesAndAttributeGroupDict(self, inputLyr,\
+            attributeName, feedback=None, featureRequest=None):
         """
 
         """
         spatialIdx = QgsSpatialIndex()
         idDict = {}
-        nodeDict = {}
+        nodeDict = defaultdict(list)
         attributeGroupDict = {}
         featCount = inputLyr.featureCount()
         size = 100/featCount if featCount else 0
         iterator = inputLyr.getFeatures() if featureRequest is None else inputLyr.getFeatures(featureRequest)
-        firstAndLastNode = lambda x:self.geometryHandler.getFirstAndLastNode(inputLyr, x)
         addFeatureAlias = lambda x : self.addFeatureToSpatialIndexNodeDictAndAttributeGroupDict(
             current=x[0],
             feat=x[1],
@@ -224,7 +447,6 @@ class SpatialRelationsHandler(QObject):
             idDict=idDict,
             nodeDict=nodeDict,
             size=size,
-            firstAndLastNode=firstAndLastNode,
             attributeGroupDict=attributeGroupDict,
             attributeName=attributeName,
             feedback=feedback
@@ -232,7 +454,9 @@ class SpatialRelationsHandler(QObject):
         list(map(addFeatureAlias, enumerate(iterator)))
         return spatialIdx, idDict, nodeDict, attributeGroupDict
     
-    def addFeatureToSpatialIndexNodeDictAndAttributeGroupDict(self, current, feat, spatialIdx, idDict, nodeDict, size, firstAndLastNode, attributeGroupDict, attributeName, feedback):
+    def addFeatureToSpatialIndexNodeDictAndAttributeGroupDict(self, current, feat,\
+            spatialIdx, idDict, nodeDict, size, attributeGroupDict,\
+            attributeName, feedback):
         """
         Adds feature to spatial index. Used along side with a python map operator
         to improve performance.
@@ -248,35 +472,46 @@ class SpatialRelationsHandler(QObject):
         if attrValue not in attributeGroupDict:
             attributeGroupDict[attrValue] = set()
         attributeGroupDict[attrValue].add(feat.geometry())
-        self.addFeatureToSpatialIndexAndNodeDict(current, feat, spatialIdx, idDict, nodeDict, size, firstAndLastNode, feedback)
+        self.addFeatureToSpatialIndexAndNodeDict(
+            current,
+            feat,
+            spatialIdx,
+            idDict,
+            nodeDict,
+            size,
+            feedback
+        )
     
-    def validateContourRelations(self, contourNodeDict, frameLinesDict, frameLinesSpatialIdx, heightFieldName, feedback=None):
+    def validateContourRelations(self, contourNodeDict, heightFieldName,\
+        geoBoundsGeomEngine=None, feedback=None):
         """
         param: contourNodeDict: (dict) dictionary with contour nodes
         Invalid contours:
         - Contours that relates to more than 2 other contours;
-        - Contours that do not relate to any other contour and does not touch frame lines;
+        - Contours that do not relate to any other contour and is inside the geographic
+        bounds;
         """
         invalidDict = dict()
-        contourId = lambda x : x.id()
         contoursNumber = len(contourNodeDict)
         step = 100/contoursNumber if contoursNumber else 0
         for current, (node, contourList) in enumerate(contourNodeDict.items()):
+            nodeGeom = QgsGeometry.fromPointXY(node)
+            nodeWkb = nodeGeom.asWkb()
             if feedback is not None and feedback.isCanceled():
                 break
-            if len(contourList) == 1:
-                if self.isDangle(node, frameLinesDict, frameLinesSpatialIdx):
-                    invalidDict[node] = self.tr(
-                        'Contour lines id=({ids}) touch each other and have different height values!'
-                        ).format(ids=', '.join(map(contourId, contourList)))
+            if len(contourList) == 1 and \
+                (geoBoundsGeomEngine is not None and geoBoundsGeomEngine.intersects(nodeGeom.constGet())):
+                invalidDict[nodeWkb] = self.tr(
+                    'Contour lines must be closed or intersect the geographic boundary.'
+                    )
             if len(contourList) == 2 and contourList[0][heightFieldName] != contourList[1][heightFieldName]:
-                invalidDict[node] = self.tr(
-                    'Contour lines id=({ids}) touch each other and have different height values!'
-                    ).format(ids=', '.join(map(contourId, contourList)))
+                invalidDict[nodeWkb] = self.tr(
+                    'Contour lines touch each other and have different height values.'
+                    )
             if len(contourList) > 2:
-                invalidDict[node] = self.tr(
-                    'Contour lines id=({ids}) touch each other. Contour lines must touch itself or only one other.'
-                    ).format(ids=', '.join(map(contourId, contourList)))
+                invalidDict[nodeWkb] = self.tr(
+                    'Contour lines intersect each other. Contour lines must touch itself or only one other with same height value.'
+                    )
             if feedback is not None:
                 feedback.setProgress(step * current)
         return invalidDict

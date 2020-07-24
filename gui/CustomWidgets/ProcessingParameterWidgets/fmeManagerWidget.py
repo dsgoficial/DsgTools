@@ -49,7 +49,7 @@ class FMEManagerWidget(QtWidgets.QWidget, FORM_CLASS):
     def on_workspaceComboBox_currentIndexChanged(self):
         self.clearLayout()
         workspace = self.getCurrentWorkspace()
-        for parameter in workspace['parameters']:
+        for parameter in [x for x in workspace['parametros'] if x != 'LOG_FILE']:
             newLabel = QtWidgets.QLabel(parameter)
             self.verticalLayout_2.addWidget(newLabel)
             newLineEdit = QtWidgets.QLineEdit()
@@ -64,21 +64,21 @@ class FMEManagerWidget(QtWidgets.QWidget, FORM_CLASS):
     def on_loadPushButton_clicked(self):
         self.server = self.serverLineEdit.text()
         self.workspaceComboBox.clear()
-        url = '{server}/versions?last=true'.format(server=self.server)
+        url = '{server}/api/rotinas'.format(server=self.server)
         try:
             self.workspaceList = requests.get(
                 url,
                 proxies=self.proxy_dict,
                 auth=self.auth,
                 timeout=8
-                ).json()['data']
+                ).json()['dados']
         except:
             pass
         for workspace in self.workspaceList:
             self.workspaceComboBox.addItem(
                 "{name} ({description})".format(
-                    name=workspace['workspace_name'],
-                    description=workspace['workspace_description']
+                    name=workspace['rotina'],
+                    description=workspace['descricao']
                     )
                 )
 
@@ -93,7 +93,7 @@ class FMEManagerWidget(QtWidgets.QWidget, FORM_CLASS):
     def getParameters(self):
         workspace = self.getCurrentWorkspace()
         workspace_id = workspace['id']
-        parameters = {'parameters':{key:value.text() for key, value in self.interfaceDict.items()}}
+        parameters = {'parametros':{key:value.text() for key, value in self.interfaceDict.items()}}
         returnDict = {
             'server':self.server,
             'workspace_id':workspace_id,

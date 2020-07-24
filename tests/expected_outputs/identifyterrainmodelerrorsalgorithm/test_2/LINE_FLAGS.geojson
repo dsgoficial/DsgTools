@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "LINE_FLAGS",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "reason": "Contour out of threshold." }, "geometry": { "type": "LineString", "coordinates": [ [ -0.53592424127216, -0.644402183697405 ], [ -0.002792634872186, -0.323188349610246 ], [ 0.207162571653532, -0.069289030090774 ], [ 0.456179211951476, 0.526397834935681 ], [ 0.568480834046627, 0.946308247987117 ], [ 0.583128871711212, 1.117202020740608 ] ] } }
+]
+}
