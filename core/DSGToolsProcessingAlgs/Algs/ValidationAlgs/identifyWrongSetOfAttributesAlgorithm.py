@@ -44,6 +44,7 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterFile)
 
 from .validationAlgorithm import ValidationAlgorithm
+from ....GeometricTools.layerHandler import LayerHandler
 
 class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
     INPUT = 'INPUT'
@@ -53,6 +54,9 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
     FLAGS = 'FLAGS'
 
     
+    def __init__(self, iface = None, parent = None):
+        super(IdentifyWrongSetOfAttributesAlgorithm, self).__init__()
+        self.layerHandler = LayerHandler()
 
     def initAlgorithm(self, config):
         """
@@ -96,36 +100,75 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        inputLyrList = self.parameterAsLayerList(parameters, self.INPUT, context)
+        
+        #inputLyrList = self.parameterAsLayerList(parameters, self.INPUT, context)
+        inputLyrList = layerHandler.getFeatureList(self.INPUT)
         if inputLyrList is None or inputLyrList == []:
             raise QgsProcessingException(self.invalidSourceError(
                 parameters, self.INPUT))
         rulePath = self.parameterAsFile(parameters, self.RULEFILE, context)
         inputData = self.loadRulesData(rulePath)
-
-        for ruleName in inputData:
-            for lyr in inputLyrList:
-                loadedLyrName = lyr.name()
-                if loadedLyrName in inputData[ruleName]:
-                    #print(loadedLyrName+",", list(ruleData.keys())[0])
-                    rules = inputData[ruleName][loadedLyrName]['allRules']
-                    #print(rules)
-                    for rule in rules:
-                        sel = lyr.selectByExpression(rule)
-                        self.flagFeature(sel.geometry(), inputData[ruleName])
-                        count = lyr.selectedFeatureCount()
-                        #print(count)
-                        lyr.removeSelection()
-                        if count != 0:
-                            failed = inputData[ruleName][loadedLyrName]['failed']
-                            failed+=1
-        return {self.FLAGS: self.flag_id}
-        
+        failedFeatures = self.checkedFeatures(inputData, inputLyrList)
 
     def loadRulesData(self, path):
         with open(path, 'r') as jsonFile:
             ruleDict = json.load(jsonFile)
         return ruleDict
+
+    def checkedFeatures(self, rules, layerList):
+        failedList = []
+        for ruleName in rules:
+            for lyr in layerList:
+                loadedLyrName = lyr.name()
+                if loadedLyrName in rules[ruleName]:
+                    allRules = rules[ruleName][loadedLyrName]['allRules']
+                    for rule in allRules:
+                        lyr.selectByExpression(rule)
+                        """
+                        this loop gives a simple feature list
+                        for feat in lyr.selectedFeatures():
+                            failed.append(feat)
+                        the list comprehension below gives a generator objetct list
+                        <generator object IdentifyWrongSetOfAttributesAlgorithm.checkedFeatures.<locals>.<genexpr> at 0x000002A71470E9A8>
+                        """
+                        failedList.append(
+                            feat for feat in lyr.selectedFeatures()
+                        )
+   
+                        #self.flagFeature(sel.geometry(), inputData[ruleName])
+                    
+                    count = lyr.selectedFeatureCount()
+                    lyr.removeSelection()
+             
+                        
+        return failedList
+
+    def flagsFromFailedFeatures(self, featureList):
+        point, line, polygon = [], [], []
+        for item in lyr:
+            features = item.getFeatures()
+            for feat in features:
+                geom = feat.geometry()
+                geomSingleType = QgsWkbTypes.isSingleType(geom.wkbType())
+                if geom.type() == QgsWkbTypes.PointGeometry:
+                    if geomSingleType:
+                        point.append(feat)
+                    else:
+                        point.append(feat)
+                elif geom.type() == QgsWkbTypes.LineGeometry:
+                    if geomSingleType:
+                        line.append(feat)
+                    else:
+                        line.append(feat)
+                elif geom.type() == QgsWkbTypes.PolygonGeometry:
+                    if geomSingleType:
+                        polygon.append(feat)
+                    else:
+                        polygon.append(feat)
+            else:
+                pass
+        return point, line, polygon
+
      
     def name(self):
         """
