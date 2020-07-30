@@ -192,6 +192,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFramesWithConstra
     CreateFramesWithConstraintAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAnglesInInvalidRangeAlgorithm import \
     IdentifyAnglesInInvalidRangeAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWrongSetOfAttributesAlgorithm import \
+    IdentifyWrongSetOfAttributesAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -284,7 +286,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             MultipleOutputUnitTestAlgorithm(),
             IdentifyTerrainModelErrorsAlgorithm(),
             CreateFramesWithConstraintAlgorithm(),
-            IdentifyAnglesInInvalidRangeAlgorithm()
+            IdentifyAnglesInInvalidRangeAlgorithm(),
+            IdentifyWrongSetOfAttributesAlgorithm()
         ]
         return algList
 
