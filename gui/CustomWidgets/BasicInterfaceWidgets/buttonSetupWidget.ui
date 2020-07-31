@@ -6,324 +6,330 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>847</width>
-    <height>531</height>
+    <width>634</width>
+    <height>484</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>DSGTools: Custom Feature - Button setup</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QPushButton" name="importPushButton">
-       <property name="toolTip">
-        <string>Import a set of buttons (setup) from a file</string>
-       </property>
-       <property name="text">
-        <string>Import</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="exportPushButton">
-       <property name="toolTip">
-        <string>Exports current setup to a file</string>
-       </property>
-       <property name="text">
-        <string>Export</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
+  <layout class="QGridLayout" name="gridLayout_3">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <widget class="QSplitter" name="splitter_3">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="okPushButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Ok</string>
-       </property>
+       <widget class="QSplitter" name="splitter_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <widget class="QWidget" name="">
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Setup settings</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="setupNameLineEdit">
+            <property name="placeholderText">
+             <string>Type in a name for current buttons setup...</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextEdit" name="textEdit">
+            <property name="placeholderText">
+             <string>Insert a short description for current button setup...</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="dsCheckBox">
+            <property name="toolTip">
+             <string>If this option is set, buttons will have their shortcuts dynamically assigned to values from 1-9, in order of exhibition on every tab</string>
+            </property>
+            <property name="text">
+             <string>Use dynamic shortcuts</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="">
+         <layout class="QGridLayout" name="gridLayout">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item row="0" column="0" rowspan="2">
+           <widget class="QTableWidget" name="tableWidget">
+            <property name="toolTip">
+             <string>Buttons are displayed on Class. Tool following this order</string>
+            </property>
+            <property name="columnCount">
+             <number>1</number>
+            </property>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string>Buttons' order</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSplitter" name="splitter">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <widget class="QPushButton" name="moveUpPushButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>30</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Move up</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../../resources.qrc">
+               <normaloff>:/plugins/DsgTools/icons/up.png</normaloff>:/plugins/DsgTools/icons/up.png</iconset>
+             </property>
+            </widget>
+            <widget class="QPushButton" name="moveDownPushButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>30</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Move down</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../../resources.qrc">
+               <normaloff>:/plugins/DsgTools/icons/down.png</normaloff>:/plugins/DsgTools/icons/down.png</iconset>
+             </property>
+            </widget>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="layoutWidget">
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="font">
+            <font>
+             <family>Noto Sans</family>
+             <pointsize>14</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Selected button settings</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QComboBox" name="buttonComboBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="duplicatesEnabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="savePushButton">
+             <property name="toolTip">
+              <string>Saves current button's input data to selected button</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../../resources.qrc">
+               <normaloff>:/plugins/DsgTools/icons/save.png</normaloff>:/plugins/DsgTools/icons/save.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="undoPushButton">
+             <property name="toolTip">
+              <string>Restores last saved state for the selected button</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../../resources.qrc">
+               <normaloff>:/plugins/DsgTools/icons/re-run.png</normaloff>:/plugins/DsgTools/icons/re-run.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="addPushButton">
+             <property name="toolTip">
+              <string>Adds a new button to the setup</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../../resources.qrc">
+               <normaloff>:/plugins/DsgTools/icons/plus.png</normaloff>:/plugins/DsgTools/icons/plus.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="removePushButton">
+             <property name="toolTip">
+              <string>Removes selected button from the setup</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../../resources.qrc">
+               <normaloff>:/plugins/DsgTools/icons/remove.png</normaloff>:/plugins/DsgTools/icons/remove.png</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="ButtonPropWidget" name="buttonPropWidget" native="true"/>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
-     <item>
-      <widget class="QPushButton" name="cancelPushButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+     <item row="1" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>0</number>
        </property>
-       <property name="text">
-        <string>Cancel</string>
-       </property>
-      </widget>
+       <item>
+        <widget class="QPushButton" name="importPushButton">
+         <property name="toolTip">
+          <string>Import a set of buttons (setup) from a file</string>
+         </property>
+         <property name="text">
+          <string>Import</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="exportPushButton">
+         <property name="toolTip">
+          <string>Exports current setup to a file</string>
+         </property>
+         <property name="text">
+          <string>Export</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="okPushButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Ok</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="cancelPushButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
-   </item>
-   <item row="0" column="0">
-    <widget class="QSplitter" name="splitter_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <widget class="QWidget" name="layoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Setup settings</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="setupNameLineEdit">
-         <property name="placeholderText">
-          <string>Type in a name for current buttons setup...</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QTextEdit" name="textEdit">
-         <property name="placeholderText">
-          <string>Insert a short description for current button setup...</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="dsCheckBox">
-         <property name="toolTip">
-          <string>If this option is set, buttons will have their shortcuts dynamically assigned to values from 1-9, in order of exhibition on every tab</string>
-         </property>
-         <property name="text">
-          <string>Use dynamic shortcuts</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QGridLayout" name="gridLayout">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <item row="0" column="0" rowspan="2">
-          <widget class="QTableWidget" name="tableWidget">
-           <property name="toolTip">
-            <string>Buttons are displayed on Class. Tool following this order</string>
-           </property>
-           <property name="columnCount">
-            <number>1</number>
-           </property>
-           <attribute name="horizontalHeaderStretchLastSection">
-            <bool>true</bool>
-           </attribute>
-           <column>
-            <property name="text">
-             <string>Buttons' order</string>
-            </property>
-           </column>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QSplitter" name="splitter">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <widget class="QPushButton" name="moveUpPushButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>30</width>
-              <height>25</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>Move up</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../../../resources.qrc">
-              <normaloff>:/plugins/DsgTools/icons/up.png</normaloff>:/plugins/DsgTools/icons/up.png</iconset>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="moveDownPushButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>30</width>
-              <height>25</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>Move down</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../../../resources.qrc">
-              <normaloff>:/plugins/DsgTools/icons/down.png</normaloff>:/plugins/DsgTools/icons/down.png</iconset>
-            </property>
-           </widget>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="layoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="label_2">
-         <property name="font">
-          <font>
-           <family>Noto Sans</family>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Selected button settings</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QComboBox" name="buttonComboBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="duplicatesEnabled">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="savePushButton">
-           <property name="toolTip">
-            <string>Saves current button's input data to selected button</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../../../resources.qrc">
-             <normaloff>:/plugins/DsgTools/icons/save.png</normaloff>:/plugins/DsgTools/icons/save.png</iconset>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="undoPushButton">
-           <property name="toolTip">
-            <string>Restores last saved state for the selected button</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../../../resources.qrc">
-             <normaloff>:/plugins/DsgTools/icons/re-run.png</normaloff>:/plugins/DsgTools/icons/re-run.png</iconset>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="addPushButton">
-           <property name="toolTip">
-            <string>Adds a new button to the setup</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../../../resources.qrc">
-             <normaloff>:/plugins/DsgTools/icons/plus.png</normaloff>:/plugins/DsgTools/icons/plus.png</iconset>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="removePushButton">
-           <property name="toolTip">
-            <string>Removes selected button from the setup</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../../../resources.qrc">
-             <normaloff>:/plugins/DsgTools/icons/remove.png</normaloff>:/plugins/DsgTools/icons/remove.png</iconset>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="ButtonPropWidget" name="buttonPropWidget" native="true"/>
-       </item>
-      </layout>
-     </widget>
-    </widget>
    </item>
   </layout>
  </widget>
