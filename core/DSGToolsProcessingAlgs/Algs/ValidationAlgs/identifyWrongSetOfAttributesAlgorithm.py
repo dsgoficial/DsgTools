@@ -45,23 +45,24 @@ from qgis.core import (QgsProcessing,
 
 from .validationAlgorithm import ValidationAlgorithm
 from ....GeometricTools.layerHandler import LayerHandler
+from ....GeometricTools.geometryHandler import GeometryHandler
 
 class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
     INPUT = 'INPUT'
     RULEFILE = 'RULEFILE'
     RULEDATA = 'RULEDATA'
     SELECTED = 'SELECTED'
-    FLAGS = 'FLAGS'
+    POINT_FLAGS = 'POINT_FLAGS'
+    LINE_FLAGS = 'LINE_FLAGS'
+    POLYGON_FLAGS = 'POLYGON_FLAGS'
 
-    
-    def __init__(self, iface = None, parent = None):
-        super(IdentifyWrongSetOfAttributesAlgorithm, self).__init__()
-        self.layerHandler = LayerHandler()
 
     def initAlgorithm(self, config):
         """
         Parameter setting.
         """
+        self.layerHandler = LayerHandler()
+        self.geometryHandler = GeometryHandler()
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT,
@@ -91,8 +92,20 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.POINT_FLAGS,
+                self.tr('Point Flags')
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.LINE_FLAGS,
+                self.tr('Linestring Flags')
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.POLYGON_FLAGS,
+                self.tr('Polygon Flags')
             )
         )
 
@@ -101,8 +114,8 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         
-        #inputLyrList = self.parameterAsLayerList(parameters, self.INPUT, context)
-        inputLyrList = layerHandler.getFeatureList(self.INPUT)
+        inputLyrList = self.parameterAsLayerList(parameters, self.INPUT, context)
+        #inputLyrList = layerHandler.getFeatureList(self.INPUT)
         if inputLyrList is None or inputLyrList == []:
             raise QgsProcessingException(self.invalidSourceError(
                 parameters, self.INPUT))
@@ -117,6 +130,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
 
     def checkedFeatures(self, rules, layerList):
         failedList = []
+        failedDict = {}
         for ruleName in rules:
             for lyr in layerList:
                 loadedLyrName = lyr.name()
@@ -124,27 +138,23 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
                     allRules = rules[ruleName][loadedLyrName]['allRules']
                     for rule in allRules:
                         lyr.selectByExpression(rule)
-                        """
-                        this loop gives a simple feature list
-                        for feat in lyr.selectedFeatures():
-                            failed.append(feat)
-                        the list comprehension below gives a generator objetct list
-                        <generator object IdentifyWrongSetOfAttributesAlgorithm.checkedFeatures.<locals>.<genexpr> at 0x000002A71470E9A8>
-                        """
-                        failedList.append(
-                            feat for feat in lyr.selectedFeatures()
-                        )
-   
-                        #self.flagFeature(sel.geometry(), inputData[ruleName])
-                    
+                        failedList+=[feat for feat in lyr.selectedFeatures()]
+                    failedDict[ruleName][failedList]
                     count = lyr.selectedFeatureCount()
-                    lyr.removeSelection()
-             
-                        
-        return failedList
+                    lyr.removeSelection()              
+        return failedDict
 
-    def flagsFromFailedFeatures(self, featureList):
-        point, line, polygon = [], [], []
+    """
+    def flagsFromFailedList(self, featureList):
+        layerMap = {
+            QgsWkbTypes.PointGeometry: ptLyr,
+            QgsWkbTypes.LineGeometry: lLyr,
+            QgsWkbTypes.PolygonGeometry: polLyr
+        }
+        
+        for feat in featureList:
+            geom = feat
+
         for item in lyr:
             features = item.getFeatures()
             for feat in features:
@@ -168,7 +178,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             else:
                 pass
         return point, line, polygon
-
+    """
      
     def name(self):
         """
