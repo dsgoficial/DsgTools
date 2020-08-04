@@ -58,13 +58,17 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
     LINE_FLAGS = 'LINE_FLAGS'
     POLYGON_FLAGS = 'POLYGON_FLAGS'
 
+    def __init__(self):
+        super().__init__()
+        self.valAlg = ValidationAlgorithm()
+        self.lyrHandler = LayerHandler()
+        self.geomHandler = GeometryHandler()
+        self.flagFields = self.valAlg.getFlagFields()
 
     def initAlgorithm(self, config):
         """
         Parameter setting.
         """
-        self.valAlg = ValidationAlgorithm()
-
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT,
@@ -115,18 +119,15 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        
         inputLyrList = self.parameterAsLayerList(parameters, self.INPUT, context)
-        #inputLyrList = layerHandler.getFeatureList(self.INPUT)
         if inputLyrList is None or inputLyrList == []:
             raise QgsProcessingException(self.invalidSourceError(
                 parameters, self.INPUT))
         
-        flagFields = self.valAlg.getFlagFields()
         crs = QgsProject.instance().crs()
         pointFlags, ptId = self.parameterAsSink(
                 parameters, self.POINT_FLAGS, context,
-                flagFields, QgsWkbTypes.Point, crs
+                self.flagFields, QgsWkbTypes.Point, crs
         )
         if not pointFlags:
             raise QgsProcessingException(
@@ -134,7 +135,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             )
         lineFlags, lId = self.parameterAsSink(
                 parameters, self.LINE_FLAGS, context,
-                flagFields, QgsWkbTypes.LineString, crs
+                self.flagFields, QgsWkbTypes.LineString, crs
         )
         if not lineFlags:
             raise QgsProcessingException(
@@ -142,13 +143,12 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             )
         polygonFlags, polId = self.parameterAsSink(
                 parameters, self.POLYGON_FLAGS, context,
-                flagFields, QgsWkbTypes.Polygon, crs
+                self.flagFields, QgsWkbTypes.Polygon, crs
         )
         if not polygonFlags:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.POLYGON_FLAGS)
             )
-        
         rulePath = self.parameterAsFile(parameters, self.RULEFILE, context)
         inputData = self.loadRulesData(rulePath)
         failedFeatures = self.checkedFeatures(inputData, inputLyrList)
@@ -162,12 +162,27 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         }
 
     def loadRulesData(self, path):
+        """
+        Loads a dict with the below data structure
+            {
+                rule description: {
+                    layer name: {
+                        all rules: [rule 1, ..., rule n]
+                    }
+                }
+            }
+        :param (OS Path) path: path to the rules JSON file.
+        """
         with open(path, 'r') as jsonFile:
             ruleDict = json.load(jsonFile)
         return ruleDict
 
     def checkedFeatures(self, rules, layerList):
-        
+        """
+        Select features by conditional rules stored in the rules JSON file.
+        :param (dict) rules: dictionary from conditional rules;
+        :param (QgsVectorLayer) layerList: list from all loaded layers.
+        """
         failedDict = {}
         for ruleName in rules:
             failedList = []
@@ -180,35 +195,33 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
                         failedList+=[feat for feat in lyr.selectedFeatures()]
                         lyr.removeSelection()
             failedDict[ruleName] = failedList
-            
-                      
         return failedDict
 
     def flagsFromFailedList(self, featureDict, ptLayer, lLayer, polLayer, ctx, feedback):
-        fields = QgsFields()
-        fields.append(QgsField('reason',QVariant.String))
+        """
+        Creates new features from a failed conditional rules dictionary.
+        :param (Dict) featureDict: a dictionary with rule name and a list of selected QgsFeature;
+        :param (QgsVectorLayer) ptLayer: output point vector layer;
+        :param (QgsVectorLayer) lLayer: output line vector layer;
+        :param (QgsVectorLayer) polLayer: output polygon vector layer;
+        :param (QgsProcessingContext) ctx: processing context;
+        :param (QgsProcessingFeedback) feedback: processing feedback.
+        """
         layerMap = {
             QgsWkbTypes.PointGeometry: ptLayer,
             QgsWkbTypes.LineGeometry: lLayer,
             QgsWkbTypes.PolygonGeometry: polLayer
         }
-        
         for ruleName, flagList in featureDict.items():
-            flagText = self.tr('Rule "{name}" broken: {{text}}').format(
-                name = ruleName
-            )  
+            flagText = self.tr('{name}').format(name = ruleName)  # increase the flag description
             for flag in flagList:
                 geom = flag.geometry()
-                flag.setFields(fields)
-                #for g in GeometryHandler.multiToSinglePart(geom):
-                newFeature = QgsFeature(fields)
+                newFeature = QgsFeature(self.flagFields)
                 newFeature["reason"] = flagText
                 newFeature.setGeometry(geom)
                 layerMap[geom.type()].addFeature(
                     newFeature, QgsFeatureSink.FastInsert
                 )
-                print("texto")
-            
         return (ptLayer, lLayer, polLayer)
      
     def name(self):
