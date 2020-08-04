@@ -20,11 +20,13 @@
  ***************************************************************************/
 """
 
-from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication, QVariant
 import json
 from qgis.core import (QgsProcessing,
                        QgsProcessingException,
                        QgsFeatureSink,
+                       QgsField,
+                       QgsFields,
                        QgsProcessingAlgorithm,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterFeatureSink,
@@ -61,8 +63,8 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         """
         Parameter setting.
         """
-        self.layerHandler = LayerHandler()
-        self.geometryHandler = GeometryHandler()
+        self.valAlg = ValidationAlgorithm()
+
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT,
@@ -119,9 +121,45 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         if inputLyrList is None or inputLyrList == []:
             raise QgsProcessingException(self.invalidSourceError(
                 parameters, self.INPUT))
+        
+        flagFields = self.valAlg.getFlagFields()
+        crs = QgsProject.instance().crs()
+        pointFlags, ptId = self.parameterAsSink(
+                parameters, self.POINT_FLAGS, context,
+                flagFields, QgsWkbTypes.Point, crs
+        )
+        if not pointFlags:
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.POINT_FLAGS)
+            )
+        lineFlags, lId = self.parameterAsSink(
+                parameters, self.LINE_FLAGS, context,
+                flagFields, QgsWkbTypes.LineString, crs
+        )
+        if not lineFlags:
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.LINE_FLAGS)
+            )
+        polygonFlags, polId = self.parameterAsSink(
+                parameters, self.POLYGON_FLAGS, context,
+                flagFields, QgsWkbTypes.Polygon, crs
+        )
+        if not polygonFlags:
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.POLYGON_FLAGS)
+            )
+        
         rulePath = self.parameterAsFile(parameters, self.RULEFILE, context)
         inputData = self.loadRulesData(rulePath)
         failedFeatures = self.checkedFeatures(inputData, inputLyrList)
+        flags = self.flagsFromFailedList(failedFeatures, pointFlags, lineFlags,
+            polygonFlags, context, feedback
+        )
+        return {
+            self.POINT_FLAGS: ptId,
+            self.LINE_FLAGS: lId,
+            self.POLYGON_FLAGS: polId
+        }
 
     def loadRulesData(self, path):
         with open(path, 'r') as jsonFile:
@@ -129,9 +167,10 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         return ruleDict
 
     def checkedFeatures(self, rules, layerList):
-        failedList = []
+        
         failedDict = {}
         for ruleName in rules:
+            failedList = []
             for lyr in layerList:
                 loadedLyrName = lyr.name()
                 if loadedLyrName in rules[ruleName]:
@@ -139,46 +178,38 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
                     for rule in allRules:
                         lyr.selectByExpression(rule)
                         failedList+=[feat for feat in lyr.selectedFeatures()]
-                    failedDict[ruleName][failedList]
-                    count = lyr.selectedFeatureCount()
-                    lyr.removeSelection()              
+                        lyr.removeSelection()
+            failedDict[ruleName] = failedList
+            
+                      
         return failedDict
 
-    """
-    def flagsFromFailedList(self, featureList):
+    def flagsFromFailedList(self, featureDict, ptLayer, lLayer, polLayer, ctx, feedback):
+        fields = QgsFields()
+        fields.append(QgsField('reason',QVariant.String))
         layerMap = {
-            QgsWkbTypes.PointGeometry: ptLyr,
-            QgsWkbTypes.LineGeometry: lLyr,
-            QgsWkbTypes.PolygonGeometry: polLyr
+            QgsWkbTypes.PointGeometry: ptLayer,
+            QgsWkbTypes.LineGeometry: lLayer,
+            QgsWkbTypes.PolygonGeometry: polLayer
         }
         
-        for feat in featureList:
-            geom = feat
-
-        for item in lyr:
-            features = item.getFeatures()
-            for feat in features:
-                geom = feat.geometry()
-                geomSingleType = QgsWkbTypes.isSingleType(geom.wkbType())
-                if geom.type() == QgsWkbTypes.PointGeometry:
-                    if geomSingleType:
-                        point.append(feat)
-                    else:
-                        point.append(feat)
-                elif geom.type() == QgsWkbTypes.LineGeometry:
-                    if geomSingleType:
-                        line.append(feat)
-                    else:
-                        line.append(feat)
-                elif geom.type() == QgsWkbTypes.PolygonGeometry:
-                    if geomSingleType:
-                        polygon.append(feat)
-                    else:
-                        polygon.append(feat)
-            else:
-                pass
-        return point, line, polygon
-    """
+        for ruleName, flagList in featureDict.items():
+            flagText = self.tr('Rule "{name}" broken: {{text}}').format(
+                name = ruleName
+            )  
+            for flag in flagList:
+                geom = flag.geometry()
+                flag.setFields(fields)
+                #for g in GeometryHandler.multiToSinglePart(geom):
+                newFeature = QgsFeature(fields)
+                newFeature["reason"] = flagText
+                newFeature.setGeometry(geom)
+                layerMap[geom.type()].addFeature(
+                    newFeature, QgsFeatureSink.FastInsert
+                )
+                print("texto")
+            
+        return (ptLayer, lLayer, polLayer)
      
     def name(self):
         """
