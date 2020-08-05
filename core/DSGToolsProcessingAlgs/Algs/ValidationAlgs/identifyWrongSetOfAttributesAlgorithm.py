@@ -21,8 +21,11 @@
 """
 
 from qgis.PyQt.QtCore import QCoreApplication, QVariant
+from qgis.utils import iface
+from qgis.gui import QgsMapCanvas
 import json
-from qgis.core import (QgsProcessing,
+from qgis.core import (Qgis,
+                       QgsProcessing,
                        QgsProcessingException,
                        QgsFeatureSink,
                        QgsField,
@@ -119,10 +122,12 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
+        
         inputLyrList = self.parameterAsLayerList(parameters, self.INPUT, context)
         if inputLyrList is None or inputLyrList == []:
             raise QgsProcessingException(self.invalidSourceError(
                 parameters, self.INPUT))
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         
         crs = QgsProject.instance().crs()
         pointFlags, ptId = self.parameterAsSink(
@@ -151,7 +156,8 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             )
         rulePath = self.parameterAsFile(parameters, self.RULEFILE, context)
         inputData = self.loadRulesData(rulePath)
-        failedFeatures = self.checkedFeatures(inputData, inputLyrList)
+        #teste = self.getSelected(inputLyrList)
+        failedFeatures = self.checkedFeatures(inputData, inputLyrList, onlySelected)
         flags = self.flagsFromFailedList(failedFeatures, pointFlags, lineFlags,
             polygonFlags, context, feedback
         )
@@ -177,12 +183,34 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             ruleDict = json.load(jsonFile)
         return ruleDict
 
-    def checkedFeatures(self, rules, layerList):
+    def getSelected(self, layerList):
+        selectedDict = dict()
+        for lyr in layerList:
+            featureList = self.lyrHandler.getFeatureList(lyr, onlySelected=True, returnIterator=False)
+            if featureList:
+                selectedDict[lyr] = featureList
+        return selectedDict
+
+
+    def checkedFeatures(self, rules, layerList, onlySelected, returnIterator=True):
         """
         Select features by conditional rules stored in the rules JSON file.
         :param (dict) rules: dictionary from conditional rules;
         :param (QgsVectorLayer) layerList: list from all loaded layers.
         """
+
+        if onlySelected:
+            selectedDict = dict()
+            for lyr in self.canvas.layers():
+                if not isinstance(lyr, QgsVectorLayer):
+                    continue
+                featureList = self.getFeatureList(lyr, onlySelected=True, returnIterator=False)
+                if featureList:
+                    selectedDict[lyr] = featureList
+            return selectedDict
+        else:
+            layerList
+
         failedDict = {}
         for ruleName in rules:
             failedList = []
