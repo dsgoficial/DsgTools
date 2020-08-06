@@ -32,7 +32,7 @@ from qgis.core import (Qgis,
                        QgsVectorLayer,
                        QgsExpressionContextUtils)
 from qgis.gui import QgsAttributeForm, QgsAttributeDialog
-from qgis.PyQt.QtCore import Qt, pyqtSlot
+from qgis.PyQt.QtCore import Qt, QTimer, pyqtSlot
 from qgis.PyQt.QtGui import QColor, QPalette
 from qgis.PyQt.QtWidgets import (QAction,
                                  QWidget,
@@ -75,6 +75,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         super(CustomFeatureTool, self).__init__(parent)
         self.setupUi(self)
+        self._timer = QTimer(self)
         self._setups = dict()
         self._order = dict()
         self._shortcuts = dict()
@@ -653,32 +654,28 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         editBuffer = inLayer.editBuffer()
         if editBuffer is None or not editBuffer.isFeatureAdded(featId):
             return
-        inLayer.endEditCommand()
-        feature = inLayer.editBuffer().addedFeatures()[featId]
-        geom = feature.geometry()
-        feature = QgsFeature(inLayer.fields())
-        feature.setGeometry(geom)
-        # probably just the reference on editing is removed: feature needs to
-        # be removed from both buffer and layer
-        inLayer.editBuffer().deleteFeature(featId)
-        inLayer.deleteFeature(featId)
+        feature = editBuffer.addedFeatures()[featId]
         feature = AttributeHandler(iface).setFeatureAttributes(
                     feature, b.attributeMap())
-        # inLayer.updateFeature(feature)
         if b.openForm():
             form = QgsAttributeDialog(inLayer, feature, False)
             form.setMode(int(QgsAttributeForm.SingleEditMode))
-            added = form.exec_()
-            if added == 1:
-                # update editable attributes
-                pass
-        if added == 1:
-            inLayer.featureAdded.disconnect(self._handleAddedFeature)
-            # allow added features to be "undoable"
-            inLayer.beginEditCommand("Add feature from DSGTools button {0}".format(b.name()))
-            inLayer.addFeature(feature)
+            if not form.exec_():
+                inLayer.destroyEditCommand()
+                return
+        def updateFeatureWrapper():
             inLayer.endEditCommand()
+            inLayer.undoStack().undo()
+            inLayer.beginEditCommand("dsgtools custom feature")
+            inLayer.featureAdded.disconnect(self._handleAddedFeature)
+            inLayer.addFeature(feature)
             inLayer.featureAdded.connect(self._handleAddedFeature)
+            inLayer.endEditCommand()
+            self._timer.blockSignals(True)
+            del self._timer
+            self._timer = QTimer(self)
+        self._timer.start(1)
+        self._timer.timeout.connect(updateFeatureWrapper)
         iface.mapCanvas().refresh()
 
     def setSuppressFormOption(self, layer, openForm=None):
