@@ -24,29 +24,32 @@ from qgis.PyQt.QtCore import QCoreApplication, QVariant
 from qgis.utils import iface
 from qgis.gui import QgsMapCanvas
 import json
-from qgis.core import (Qgis,
-                       QgsProcessing,
-                       QgsProcessingException,
+from qgis.core import (edit,
+                       Qgis,
+                       QgsDataSourceUri,
+					   QgsExpression,
+					   QgsExpressionContext,
+					   QgsExpressionContextUtils,
+                       QgsFeature,
+					   QgsFeatureRequest,
                        QgsFeatureSink,
                        QgsField,
                        QgsFields,
+                       QgsProcessing,
                        QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+                       QgsProcessingException,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsProcessingParameterString,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsWkbTypes,
-                       QgsProcessingUtils,
-                       QgsJsonUtils,
-                       QgsProject,
                        QgsProcessingParameterEnum,
-                       QgsProcessingParameterFile)
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterFile,
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingParameterString,
+                       QgsProcessingParameterVectorLayer,
+                       QgsProcessingUtils,
+                       QgsProject,
+                       QgsWkbTypes)
 
 from .validationAlgorithm import ValidationAlgorithm
 from ....GeometricTools.layerHandler import LayerHandler
@@ -199,18 +202,6 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         :param (QgsVectorLayer) layerList: list from all loaded layers.
         """
 
-        if onlySelected:
-            selectedDict = dict()
-            for lyr in self.canvas.layers():
-                if not isinstance(lyr, QgsVectorLayer):
-                    continue
-                featureList = self.getFeatureList(lyr, onlySelected=True, returnIterator=False)
-                if featureList:
-                    selectedDict[lyr] = featureList
-            return selectedDict
-        else:
-            layerList
-
         failedDict = {}
         for ruleName in rules:
             failedList = []
@@ -219,10 +210,19 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
                 if loadedLyrName in rules[ruleName]:
                     allRules = rules[ruleName][loadedLyrName]['allRules']
                     for rule in allRules:
-                        lyr.selectByExpression(rule)
-                        failedList+=[feat for feat in lyr.selectedFeatures()]
-                        lyr.removeSelection()
+                        if onlySelected:
+                            request = QgsFeatureRequest().setFilterExpression("is_selected() and {}".format(rule))
+                            for feat in lyr.getFeatures(request):
+                                failedList.append(feat)
+                            """
+                            why dont works???!?!?!ovvdvjsndvihdvhçvbivbvvkjbvjvbvbjphiowewvho
+                            """
+                        else:
+                            request = QgsFeatureRequest().setFilterExpression(rule)
+                            for feat in lyr.getFeatures(request):
+                                failedList.append(feat)
             failedDict[ruleName] = failedList
+
         return failedDict
 
     def flagsFromFailedList(self, featureDict, ptLayer, lLayer, polLayer, ctx, feedback):
@@ -241,7 +241,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             QgsWkbTypes.PolygonGeometry: polLayer
         }
         for ruleName, flagList in featureDict.items():
-            flagText = self.tr('{name}').format(name = ruleName)  # increase the flag description
+            flagText = self.tr('{name}').format(name = ruleName)  # improve the flag description
             for flag in flagList:
                 geom = flag.geometry()
                 newFeature = QgsFeature(self.flagFields)
@@ -251,7 +251,14 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
                     newFeature, QgsFeatureSink.FastInsert
                 )
         return (ptLayer, lLayer, polLayer)
-     
+
+    def evaluateExpressions(self):
+        """
+        exp = QgsExpression(rule)  validate expressions
+        handle rule error
+        """
+        return
+
     def name(self):
         """
         Returns the algorithm name, used for identifying the algorithm. This
