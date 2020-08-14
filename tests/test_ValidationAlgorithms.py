@@ -38,6 +38,7 @@ from qgis.core import QgsDataSourceUri, QgsVectorLayer, QgsProcessingFeedback,\
                       QgsProcessingContext, QgsLayerTreeLayer, QgsProject
 from qgis.PyQt.QtSql import QSqlDatabase
 
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
@@ -1059,75 +1060,83 @@ class Tester(unittest.TestCase):
                             "ogr"
                         )
 
-    def compareLayers(self, target, reference, attributeBlackList=None, addControlKey=False):
-        """
-        Compares two vector layers. The algorithm stops on the first difference found.
-        :param target: (QgsVectorLayer) layer to be checked.
-        :param reference: (QgsVectorLayer) layer to be used as reference for comparison.
-        :return: (str) message containing identified differences.
-        """
-        # geometry type check
-        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
-        attributeBlackList += ['AUTO'] if addControlKey else []
-        if target.featureCount() == 0 and reference.featureCount() == 0:
-            return ""
-        if target.geometryType() != reference.geometryType():
-            return "Incorrect geometry type for the output layer."
-        # feature check
-        targetFeatDict = {f.id():f for f in target.getFeatures()}
-        refFeatDict = {f.id():f for f in reference.getFeatures()}
-        #print(targetFeatDict)
-        #print(refFeatDict)
-        targetFeaureIds = set(targetFeatDict.keys())
-        refFeaureIds = set(refFeatDict.keys())
-        if target.featureCount() != reference.featureCount():
-            msg = ""
-            if targetFeaureIds - refFeaureIds:
-                msg += "Output layer has more features than the control layer (Exceeding ID: {idlist}).\n".format(
-                        idlist=", ".join(map(str, targetFeaureIds - refFeaureIds))
-                    )
-            if refFeaureIds - targetFeaureIds:
-                msg += "Output layer has fewer features than the control layer (Missing ID: {idlist}).".format(
-                        idlist=", ".join(map(str, refFeaureIds - targetFeaureIds))
-                    )
-            return msg
-        # attribute names check
-        targetFieldNames = [f.name() for f in target.fields()]
-        for f in reference.fields():
-            fieldname = f.name()
-            if fieldname in ['fid', 'AUTO'] or '_otf' in fieldname:
-                # not sure if this should happen...
-                continue
-            if fieldname not in targetFieldNames:
-                return "Incorrect set of attributes for output layer (missing '{attr}').".format(attr=fieldname)
-        for featId, refFeat in refFeatDict.items():
-            if featId not in targetFeatDict:
-                return "Feature id={0} was not found on output layer.".format(featId)
-            testFeat = targetFeatDict[featId]
-            if not (testFeat.geometry().isGeosEqual(refFeat.geometry()) or\
-                testFeat.geometry().equals(refFeat.geometry())):
-                #Look for feature with the same geometry before returning error
-                for targetFeatId in targetFeaureIds - {featId}:
-                    testFeat = targetFeatDict[targetFeatId]
-                    if (testFeat.geometry().isGeosEqual(refFeat.geometry()) or\
-                        testFeat.geometry().equals(refFeat.geometry())):
-                        break
-                        #if we find a feature with the same geometry as refFeat, it becomes new testFeat
-                else:
-                    #if no feature with the same geom, then geom is really incorrect
-                    return "Feature {fid} has incorrect geometry. Centroid of Feature {fid} = {centroid}".format(
-                    fid=featId,
-                    centroid=refFeat.geometry().centroid())
+    def compareLayers(self, output, reference, attributeBlackList=None, addControlKey=False):
+      """
+      Compares two vector layers. The algorithm stops on the first difference found.
+      :param output: (QgsVectorLayer) layer to be checked.
+      :param reference: (QgsVectorLayer) layer to be used as reference for comparison.
+      :return: (str) message containing identified differences.
+      """
+      # geometry type check
+      attributeBlackList = ['fid'] if attributeBlackList is None else attributeBlackList
+      attributeBlackList += ['AUTO'] if addControlKey else []
+      if output.featureCount() == 0 and reference.featureCount() == 0:
+          return ""
+      if output.geometryType() != reference.geometryType():
+          return "Incorrect geometry type for the output layer."
 
-            for attr in targetFieldNames:
-                if attr not in attributeBlackList and testFeat[attr] != refFeat[attr]:
-                    return "Incorrect set of attributes for feature {fid}:\nAttribute {attr} in the test feature is: {test_attr}\nAttribute {attr} in the reference feature is: {ref_attr}".format(
-                        fid=featId,
-                        attr=attr,
-                        test_attr=testFeat[attr],
-                        ref_attr=refFeat[attr]
-                    )
-        return ""
+      outputFieldNames = [f.name() for f in output.fields()]
+      for f in reference.fields():
+          fieldname = f.name()
+          if fieldname in attributeBlackList or '_otf' in fieldname:
+              # not sure if this should happen...
+              continue
+          if fieldname not in outputFieldNames:
+              return "Incorrect set of attributes for output layer (missing '{attr}').".format(attr=fieldname)
+      # we have to correct floating point precision in order to compare geometries
+      precision = 10e-6
+      #making a dict with geometry as key for both output layer and reference layer
+      outputGeomDict = dict()
+      for feat in output.getFeatures():
+          geom = feat.geometry().snappedToGrid(precision,precision)
+          geomKey = geom.asWkb()
+          outputGeomDict[geomKey] = feat
+
+      referenceGeomDict = dict()
+      for feat in reference.getFeatures():
+           geom = feat.geometry().snappedToGrid(precision,precision)
+           geomKey = geom.asWkb()
+           referenceGeomDict[geomKey] = feat
+
+      excess = len(outputGeomDict) - len(referenceGeomDict)
+      if excess > 0:
+           return "Output layer has '{X}' features more than the reference layer".format(X=excess)
+      if excess < 0:
+           return "Output layer has '{X}' features less than the reference layer".format(X=-excess)
+
+      if not (set(outputGeomDict.keys()) == set(referenceGeomDict.keys())):
+            msg = ""
+            id_list = []
+            for geom in set(outputGeomDict.keys()) - set(referenceGeomDict.keys()):
+                id_list.append(outputGeomDict[geom].id())
+            msg += "Features id = '{FeatId}' from output layer has no corresponding geometry on reference layer.".format(FeatId = id_list)
+            id_list = []
+            for geom in set(referenceGeomDict.keys()) - set(outputGeomDict.keys()):
+                id_list.append(referenceGeomDict[geom].id())
+            msg += "Features id = '{FeatId}' from reference layer has no corresponding geometry on output layer.".format(FeatId = id_list)
+            return msg
+
+      msg = ""
+      for geom in outputGeomDict.keys():
+            attr_flag_list = []
+            for attr in outputFieldNames:
+                #aqui eu tenho que comparar, pra cada feição na lista indexada pela geometria geom,
+                #existe uma feição correspondente na lista indexada do outro dict. Lembrando que a
+                #ordenação das feições dentro da lista não necessáriamente casam.
+                if attr in attributeBlackList or '_otf' in attr:
+                    continue
+                if outputGeomDict[geom][attr] != referenceGeomDict[geom][attr]:
+                    attr_flag_list.append(attr)
+            if attr_flag_list != []:
+                return "Output Feature id = '{FeatId}' has incorrect attributes '{attr_flag}'".format(
+                FeatId = outputGeomDict[geom].id(),
+                attr_flag = attr_flag_list)
+      # feature check
+      #print(outputFeatDict)
+      #print(refFeatDict)
+
+
+      return ""
 
     def loadLayerToCanvas(self, layer):
         """
@@ -1484,13 +1493,6 @@ class Tester(unittest.TestCase):
         del self.datasets["geojson:spatial_rules_alg"]
         self.clearProject()
         self.assertEqual(msg, "")
-
-
-def run_all():
-    """Default function that is called by the runner if nothing else is specified"""
-    suite = unittest.TestSuite()
-    suite.addTests(unittest.makeSuite(Tester, 'test_'))
-    unittest.TextTestRunner(verbosity=3, stream=sys.stdout).run(suite)
 
     def test_identifyunsharedvertexonintersectionsalgorithm(self):
         self.assertEqual(
