@@ -32,16 +32,24 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.applyStylesFr
     ApplyStylesFromDatabaseToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignAliasesToLayersAlgorithm import \
     AssignAliasesToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignActionsToLayersAlgorithm import \
+    AssignActionsToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignBoundingBoxFilterToLayersAlgorithm import \
     AssignBoundingBoxFilterToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFilterToLayersAlgorithm import \
     AssignFilterToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignDefaultFieldValueToLayersAlgorithm import \
+    AssignDefaultFieldValueToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignCustomFormAndFormatRulesToLayersAlgorithm import \
     AssignCustomFormAndFormatRulesToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignMeasureColumnToLayersAlgorithm import \
     AssignMeasureColumnToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignValueMapToLayersAlgorithm import \
     AssignValueMapToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignExpressionFieldToLayersAlgorithm import \
+    AssignExpressionFieldToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignConditionalStyleToLayersAlgorithm import \
+    AssignConditionalStyleToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.groupLayersAlgorithm import \
     GroupLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadLayersFromPostgisAlgorithm import \
@@ -167,6 +175,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.applyStylesFr
     ApplyStylesFromDatabaseToLayersAlgorithm
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runFMESAPAlgorithm import RunFMESAPAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWrongBuildingAnglesAlgorithm import \
     IdentifyWrongBuildingAnglesAlgorithm
 
@@ -192,7 +201,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFramesWithConstra
     CreateFramesWithConstraintAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAnglesInInvalidRangeAlgorithm import \
     IdentifyAnglesInInvalidRangeAlgorithm
-
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
 from qgis.PyQt.QtGui import QIcon
@@ -231,6 +239,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             RemoveSmallPolygonsAlgorithm(),
             CleanGeometriesAlgorithm(),
             MergeLinesAlgorithm(),
+            AssignExpressionFieldToLayersAlgorithm(),
             TopologicalCleanLinesAlgorithm(),
             SnapLayerOnLayerAndUpdateAlgorithm(),
             LineOnLineOverlayerAlgorithm(),
@@ -240,6 +249,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ConvertLayer2LayerAlgorithm(),
             OverlayElementsWithAreasAlgorithm(),
             CreateNetworkNodesAlgorithm(),
+            AssignDefaultFieldValueToLayersAlgorithm(),
             VerifyNetworkDirectioningAlgorithm(),
             IdentifyDuplicatedFeaturesAlgorithm(),
             AdjustNetworkConnectivityAlgorithm(),
@@ -255,6 +265,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyAndFixInvalidGeometriesAlgorithm(),
             CreateEditingGridAlgorithm(),
             AssignFilterToLayersAlgorithm(),
+            AssignConditionalStyleToLayersAlgorithm(),
             AssignBoundingBoxFilterToLayersAlgorithm(),
             AssignMeasureColumnToLayersAlgorithm(),
             GroupLayersAlgorithm(),
@@ -270,6 +281,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             LoadLayersFromPostgisAlgorithm(),
             LoadNonSpatialLayersFromPostgreSQLAlgorithm(),
             AssignAliasesToLayersAlgorithm(),
+            AssignActionsToLayersAlgorithm(),
             BuildJoinsOnLayersAlgorithm(),
             BatchRunAlgorithm(),
             StringCsvToLayerListAlgorithm(),
@@ -284,7 +296,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             MultipleOutputUnitTestAlgorithm(),
             IdentifyTerrainModelErrorsAlgorithm(),
             CreateFramesWithConstraintAlgorithm(),
-            IdentifyAnglesInInvalidRangeAlgorithm()
+            IdentifyAnglesInInvalidRangeAlgorithm(),
+            RunFMESAPAlgorithm()
         ]
         return algList
 

@@ -96,7 +96,7 @@ class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
             self.createMeasureColumn(lyr)
             feedback.setProgress(current * stepSize)
 
-        return {self.OUTPUT: inputLyrList}
+        return {self.OUTPUT: [lyr.id() for lyr in inputLyrList]}
 
     def createMeasureColumn(self, layer):
         if layer.geometryType() == QgsWkbTypes.PolygonGeometry:

@@ -5,10 +5,10 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2019-04-26
+        begin                : 2020-08-11
         git sha              : $Format:%H$
-        copyright            : (C) 2019 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba.philipe@eb.mil.br
+        copyright            : (C) 2020 by Jossan
+        email                : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -21,6 +21,8 @@
  ***************************************************************************/
 """
 from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtGui import QColor
+from qgis.PyQt.Qt import QVariant
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
                        QgsProcessingAlgorithm,
@@ -31,6 +33,7 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingOutputVectorLayer,
                        QgsProcessingParameterVectorLayer,
                        QgsWkbTypes,
+                       QgsAction,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterEnum,
                        QgsProcessingParameterNumber,
@@ -53,14 +56,19 @@ from qgis.core import (QgsProcessing,
                        QgsField,
                        QgsFields,
                        QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterString)
+                       QgsProcessingParameterString,
+                       QgsConditionalStyle)
+from operator import itemgetter
+from collections import defaultdict
+import json, os
 
-class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
+class AssignDefaultFieldValueToLayersAlgorithm(QgsProcessingAlgorithm):
+
     INPUT_LAYERS = 'INPUT_LAYERS'
-    FILTER = 'FILTER'
-    BEHAVIOR = 'BEHAVIOR'
+    FILE = 'FILE'
+    TEXT = 'TEXT'
     OUTPUT = 'OUTPUT'
-    AndMode, OrMode, ReplaceMode = list(range(3))
+
     def initAlgorithm(self, config):
         """
         Parameter setting.
@@ -74,73 +82,86 @@ class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterString(
-                self.FILTER,
-                self.tr('Filter')
+            QgsProcessingParameterFile(
+                self.FILE,
+                self.tr('Input json file'),
+                defaultValue = ".json"
             )
         )
 
-        self.modes = [self.tr('Append to existing filter with AND clause'),
-                      self.tr('Append to existing filter with OR clause'),
-                      self.tr('Replace filter')
-                      ]
-
         self.addParameter(
-            QgsProcessingParameterEnum(
-                self.BEHAVIOR,
-                self.tr('Behavior'),
-                options=self.modes,
-                defaultValue=0
+            QgsProcessingParameterString(
+                self.TEXT,
+                description =  self.tr('Input json text'),
+                multiLine = True,
+                defaultValue = '[]'
             )
         )
 
         self.addOutput(
             QgsProcessingOutputMultipleLayers(
                 self.OUTPUT,
-                self.tr('Original layers with assigned styles')
+                self.tr('Original layers id with default field value')
             )
         )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
+
         """
         inputLyrList = self.parameterAsLayerList(
             parameters,
             self.INPUT_LAYERS,
             context
         )
-        inputFilterExpression = self.parameterAsString(
+        inputJSONFile = self.parameterAsFile(
             parameters,
-            self.FILTER,
+            self.FILE,
             context
         )
-        behavior = self.parameterAsEnum(
-            parameters,
-            self.BEHAVIOR,
-            context
+        inputJSONData = json.loads(
+            self.parameterAsString(
+                parameters,
+                self.TEXT,
+                context
             )
-        listSize = len(inputLyrList)
-        stepSize = 100/listSize if listSize else 0
-        for current, lyr in enumerate(inputLyrList):
-            if feedback.isCanceled():
-                break
-            filterExpression = self.adaptFilter(lyr, inputFilterExpression, behavior)
-            lyr.setSubsetString(filterExpression)
-            feedback.setProgress(current * stepSize)
-
+        )
+        if os.path.exists(inputJSONFile):
+            self.loadDefaultFieldValueFromJSONFile(inputJSONFile, inputLyrList, feedback)
+        elif len(inputJSONData) > 0:
+            self.loadDefaultFieldValueFromJSONData(inputJSONData, inputLyrList, feedback)
+        else:
+            return {self.OUTPUT: []}
         return {self.OUTPUT: [i.id() for i in inputLyrList]}
 
-    def adaptFilter(self, lyr, inputFilter, behavior):
-        """
-        Adapts filter according to the selected mode
-        """
-        originalFilter = lyr.subsetString()
-        if behavior == AssignFilterToLayersAlgorithm.ReplaceMode or originalFilter == '':
-            return inputFilter
-        clause = ' AND ' if behavior == AssignFilterToLayersAlgorithm.AndMode else ' OR '
-        return clause.join([originalFilter, inputFilter])
+    def loadDefaultFieldValueFromJSONFile(self, inputJSONFile, inputLyrList, feedback):
+        inputJSONData = json.load(inputJSONFile)
+        self.loadDefaultFieldValueFromJSONData(inputJSONData, inputLyrList, feedback)
+            
+    def loadDefaultFieldValueFromJSONData(self, inputJSONData, inputLyrList, feedback):
+        listSize = len(inputLyrList)
+        progressStep = 100/listSize if listSize else 0
+        layerNames = [ item['camadaNome'] for item in inputJSONData]
+        for current, lyr in enumerate(inputLyrList):
+            
+            if feedback.isCanceled():
+                break
 
+            feedback.setProgress(current*progressStep)
+            
+            if not(lyr.dataProvider().uri().table() in layerNames):
+                continue
+            
+            layerIdx = layerNames.index(lyr.dataProvider().uri().table())
+
+            for field in inputJSONData[layerIdx]['atributos']:
+                fieldIdx = lyr.fields().indexOf(field['nome'])
+                if fieldIdx < 0 or not field['valor']:
+                    continue
+                configField = lyr.defaultValueDefinition(fieldIdx)
+                configField.setExpression("'{0}'".format(field['valor']))
+                lyr.setDefaultValueDefinition(fieldIdx, configField)
 
     def name(self):
         """
@@ -150,14 +171,14 @@ class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'assignfiltertolayers'
+        return 'assigndefaultfieldvaluetolayersalgorithm'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Assign Filter to Layers')
+        return self.tr('Assign Default Field Value To Layers')
 
     def group(self):
         """
@@ -177,7 +198,7 @@ class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
         return 'DSGTools: Layer Management Algorithms'
 
     def tr(self, string):
-        return QCoreApplication.translate('AssignFilterToLayersAlgorithm', string)
+        return QCoreApplication.translate('AssignDefaultFieldValueToLayersAlgorithm', string)
 
     def createInstance(self):
-        return AssignFilterToLayersAlgorithm()
+        return AssignDefaultFieldValueToLayersAlgorithm()

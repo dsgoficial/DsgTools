@@ -59,6 +59,7 @@ class LoadLayersFromPostgisAlgorithm(QgsProcessingAlgorithm):
     LOAD_TO_CANVAS = 'LOAD_TO_CANVAS'
     UNIQUE_LOAD = 'UNIQUE_LOAD'
     OUTPUT = 'OUTPUT'
+
     def initAlgorithm(self, config):
         """
         Parameter setting.
