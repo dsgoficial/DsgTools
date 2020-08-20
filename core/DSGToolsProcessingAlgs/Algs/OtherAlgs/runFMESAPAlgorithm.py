@@ -5,10 +5,10 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2019-04-26
+        begin                : 2020-08-11
         git sha              : $Format:%H$
-        copyright            : (C) 2019 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba.philipe@eb.mil.br
+        copyright            : (C) 2020 by Jossan
+        email                : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -21,6 +21,8 @@
  ***************************************************************************/
 """
 from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtGui import QColor
+from qgis.PyQt.Qt import QVariant
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
                        QgsProcessingAlgorithm,
@@ -53,94 +55,112 @@ from qgis.core import (QgsProcessing,
                        QgsField,
                        QgsFields,
                        QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterString)
+                       QgsProcessingParameterString,
+                       QgsConditionalStyle)
+from operator import itemgetter
+from collections import defaultdict
+import processing, os, requests, json
+from time import sleep
 
-class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
-    INPUT_LAYERS = 'INPUT_LAYERS'
-    FILTER = 'FILTER'
-    BEHAVIOR = 'BEHAVIOR'
+class RunFMESAPAlgorithm(QgsProcessingAlgorithm):
+    FILE = 'FILE'
+    TEXT = 'TEXT'
     OUTPUT = 'OUTPUT'
-    AndMode, OrMode, ReplaceMode = list(range(3))
+
     def initAlgorithm(self, config):
         """
         Parameter setting.
         """
         self.addParameter(
-            QgsProcessingParameterMultipleLayers(
-                self.INPUT_LAYERS,
-                self.tr('Input Layers'),
-                QgsProcessing.TypeVectorAnyGeometry
+            QgsProcessingParameterFile(
+                self.FILE,
+                self.tr('Input json file'),
+                defaultValue = ".json"
             )
         )
 
         self.addParameter(
             QgsProcessingParameterString(
-                self.FILTER,
-                self.tr('Filter')
-            )
-        )
-
-        self.modes = [self.tr('Append to existing filter with AND clause'),
-                      self.tr('Append to existing filter with OR clause'),
-                      self.tr('Replace filter')
-                      ]
-
-        self.addParameter(
-            QgsProcessingParameterEnum(
-                self.BEHAVIOR,
-                self.tr('Behavior'),
-                options=self.modes,
-                defaultValue=0
+                self.TEXT,
+                description =  self.tr('Input json text'),
+                multiLine = True,
+                defaultValue = '[]'
             )
         )
 
         self.addOutput(
             QgsProcessingOutputMultipleLayers(
                 self.OUTPUT,
-                self.tr('Original layers with assigned styles')
+                self.tr('HTML text')
             )
         )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
+
         """
-        inputLyrList = self.parameterAsLayerList(
+        inputJSONFile = self.parameterAsFile(
             parameters,
-            self.INPUT_LAYERS,
+            self.FILE,
             context
         )
-        inputFilterExpression = self.parameterAsString(
-            parameters,
-            self.FILTER,
-            context
-        )
-        behavior = self.parameterAsEnum(
-            parameters,
-            self.BEHAVIOR,
-            context
+        inputJSONData = json.loads(
+            self.parameterAsString(
+                parameters,
+                self.TEXT,
+                context
             )
-        listSize = len(inputLyrList)
-        stepSize = 100/listSize if listSize else 0
-        for current, lyr in enumerate(inputLyrList):
+        )
+        if os.path.exists(inputJSONFile):
+            return self.runFMEFromJSONFile(inputJSONFile, feedback)
+        elif len(inputJSONData) > 0:
+            return self.runFMEFromJSONData(inputJSONData, feedback)
+        return {self.OUTPUT: ''}
+
+    def runFMEFromJSONFile(self, inputJSONFile, feedback):
+        inputJSONData = json.load(inputJSONFile)
+        return self.runFMEFromJSONData(inputJSONData, feedback)
+            
+    def runFMEFromJSONData(self, inputJSONData, feedback):
+        
+        header = {'content-type': 'application/json'}
+        session = requests.Session()
+        session.trust_env = False
+        url = '{server}/versions/{workspace_id}/jobs'.format(
+            server=inputJSONData['server'],
+            workspace_id=inputJSONData['workspace_id']
+        )
+        response = session.post(url, data=json.dumps({ 'parameters' : inputJSONData}), headers=header)
+        
+        if not response:
+            return {self.OUTPUT: '<p>Erro ao iniciar rotina.</p>'}
+
+        url_to_status = '{server}/jobs/{uuid}'.format(
+            server=fmeDict['server'], 
+            uuid=response.json()['data']['job_uuid']
+        )
+
+        for _ in range(150):
             if feedback.isCanceled():
+                feedback.pushInfo(self.tr('Canceled by user.\n'))
                 break
-            filterExpression = self.adaptFilter(lyr, inputFilterExpression, behavior)
-            lyr.setSubsetString(filterExpression)
-            feedback.setProgress(current * stepSize)
+            sleep(3)
+            try:
+                session = requests.Session()
+                session.trust_env = False
+                response = session.get(url_to_status)
+                session.close()
+                responseData = response.json()['data']
+            except:
+                responseData = {'status': 'erro', 'log':'Erro no plugin!'}
+            if responseData['status'] in [2, 3, "erro"]:
+                break
 
-        return {self.OUTPUT: [i.id() for i in inputLyrList]}
-
-    def adaptFilter(self, lyr, inputFilter, behavior):
-        """
-        Adapts filter according to the selected mode
-        """
-        originalFilter = lyr.subsetString()
-        if behavior == AssignFilterToLayersAlgorithm.ReplaceMode or originalFilter == '':
-            return inputFilter
-        clause = ' AND ' if behavior == AssignFilterToLayersAlgorithm.AndMode else ' OR '
-        return clause.join([originalFilter, inputFilter])
-
+        output = u"<p>[rotina nome] : {0}</p>".format(inputJSONData['workspace_name'])
+        for flags in responseData['log'].split('|'):
+            output += """<p>[rotina flags] : {0}</p>""".format(flags)
+        return {self.OUTPUT: output}
 
     def name(self):
         """
@@ -150,21 +170,21 @@ class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'assignfiltertolayers'
+        return 'runfmesap'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Assign Filter to Layers')
+        return self.tr('Run FME SAP Workspace')
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Layer Management Algorithms')
+        return self.tr('Other Algorithms')
 
     def groupId(self):
         """
@@ -174,10 +194,10 @@ class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Layer Management Algorithms'
+        return 'DSGTools: Other Algorithms'
 
     def tr(self, string):
-        return QCoreApplication.translate('AssignFilterToLayersAlgorithm', string)
+        return QCoreApplication.translate('RunFMESAPAlgorithm', string)
 
     def createInstance(self):
-        return AssignFilterToLayersAlgorithm()
+        return RunFMESAPAlgorithm()
