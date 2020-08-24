@@ -80,8 +80,6 @@ class CustomFeatureButton(QObject):
         self.setAction()
         self.setProperties(props)
         self.setShortcut(self.shortcut())
-        # temp var to handle disabled status
-        self.__shortcut = self.shortcut()
 
     def __eq__(self, obj):
         """
@@ -116,19 +114,24 @@ class CustomFeatureButton(QObject):
         """
         Reimplementation of object removal method.
         """
-        self.setEnabled(False)
-        self._shortcut.activated.disconnect(self.action().trigger)
-        self._shortcut.setKey(QKeySequence.fromString(""))
-        self._shortcut.setParent(None)
-        del self._shortcut
-        self.action().blockSignals(True)
-        for w in self.widgets():
-            w.blockSignals(True)
-            w.setParent(None)
-            del w
-        self.clearWidgets()
-        del self._widgets
-        del self._action
+        if hasattr(self, "_shortcut"):
+            # button's deletion may have been called from setup removal and GC
+            # may want to clean the same button twice
+            self._shortcut.activated.disconnect(self.action().trigger)
+            self._shortcut.setKey(QKeySequence.fromString(""))
+            self._shortcut.setParent(None)
+            del self._shortcut
+        if hasattr(self, "_widgets"):
+            for w in self.widgets():
+                w.blockSignals(True)
+                w.setParent(None)
+                del w
+            self.clearWidgets()
+            del self._widgets
+        if hasattr(self, "_action"):
+            iface.unregisterMainWindowAction(self._action)
+            self._action.blockSignals(True)
+            del self._action
         self.setParent(None)
 
     def copy(self):
@@ -267,8 +270,6 @@ class CustomFeatureButton(QObject):
         Clears all registered widgets for a given button. This method should be
         carefully used as it might simply remove the reference to a set of
         managed widgets and not propagating button properties updates to them.
-        :param name: (str) name for the button to have its wigdets references
-                     cleaned.
         """
         while self._widgets:
             self._widgets.pop()
@@ -574,8 +575,7 @@ class CustomFeatureButton(QObject):
         """
         if type(s) == str: 
             self._props["shortcut"] = s
-            self.__shortcut = s
-            sKeySeq = QKeySequence.fromString(s)
+            sKeySeq = QKeySequence.fromString(s if self.isEnabled() else "")
             self._shortcut.setKey(sKeySeq)
             for w in self.widgets():
                 w.setText(self.displayName())
@@ -984,17 +984,15 @@ class CustomFeatureButton(QObject):
                               or disabled.
         """
         if type(enabled) == bool:
-            if self.isEnabled() and not enabled:
-                s = self.shortcut()
-                self.setShortcut("")
-                self.__shortcut = s
+            isEnabled = self.isEnabled()
+            self._props["isEnabled"] = enabled
+            self.setShortcut(self.shortcut())
+            if isEnabled and not enabled:
                 iface.unregisterMainWindowAction(self.action())
-            elif not self.isEnabled() and enabled:
-                self.setShortcut(self.__shortcut)
+            elif not isEnabled and enabled:
                 iface.registerMainWindowAction(self.action(), self.shortcut())
             if updateWidgets:
                 self.setWidgetsEnabled(enabled)
-            self._props["isEnabled"] = enabled
         else:
             raise TypeError(
                 self.tr("Enabled status must be a bool ({0}).")\

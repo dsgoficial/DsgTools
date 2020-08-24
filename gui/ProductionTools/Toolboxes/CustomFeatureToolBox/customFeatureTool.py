@@ -645,13 +645,23 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if self.toolMode() == self.Extract:
             # current layer is likely to be current active layer
             try:
-                iface.activeLayer.featureAdded.disconnect(self._handleAddedFeature)
+                iface.activeLayer.featureAdded.disconnect(
+                    self._handleAddedFeature)
             except:
                 pass
             b = self.featureExtractionButton()
             if b is not None:
                 b.setChecked(False)
                 self.resetSuppressFormOption()
+            # REDO-ING WILL NOT WORK PROPERLY BECAUSE IT TRIGGERS THE
+            # "featureAdded" signal!
+            # alert user
+            msg = self.tr("Your redo stack may have been corrupted. Please,"
+                          "avoid 'redo' with a button active.")
+            MessageRaiser().raiseIfaceMessage(
+                self.tr("DSGTools Custom Feature Tool Box"),
+                msg, Qgis.Warning, 5
+            )
 
     def _handleAddedFeature(self, featId):
         """
@@ -685,9 +695,17 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 inLayer.destroyEditCommand()
                 return
         def updateFeatureWrapper():
+            """
+            A wrapper to make sure undo stack is set properly, avoiding crashes
+            upon undo-ing. It, however, breaks the "redo" - do not redo with
+            button on extraction mode active as it is a "add feature" process.
+            """
             inLayer.endEditCommand()
+            # remove original feature add command from undo stack
             inLayer.undoStack().undo()
+            # insert the modified feature command into the stack
             inLayer.beginEditCommand("dsgtools custom feature")
+            # avoid circular calls
             inLayer.featureAdded.disconnect(self._handleAddedFeature)
             inLayer.addFeature(feature)
             inLayer.featureAdded.connect(self._handleAddedFeature)
