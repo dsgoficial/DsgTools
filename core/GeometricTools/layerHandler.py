@@ -1554,3 +1554,37 @@ class LayerHandler(QObject):
             if feedback is not None:
                 feedback.setCurrentStep(current * size)
         return polygonList, flagDict
+
+    def valueMaps(self, layer):
+        """
+        Gets the value maps for each field of a given layer, if available.
+        :param layer: (QgsVectorLayer) layer to have its fields read.
+        :return: (dict) value maps for each layer field that has it.
+        """
+        classFieldMap = dict()
+        layername = layer.name()
+        for field in layer.fields():
+            fieldName = field.name()
+            fieldConfig = field.editorWidgetSetup().config()
+            if 'map' not in fieldConfig or fieldName in ('UseHtml', 'IsMultiline'):
+                continue
+            if isinstance(fieldConfig['map'], list):
+                for map_ in fieldConfig['map']:
+                    if fieldName not in classFieldMap:
+                        classFieldMap[fieldName] = map_
+                    else:
+                        classFieldMap[fieldName].update(map_)
+            else:
+                def intify(i):
+                    try:
+                        return int(i)
+                    except:
+                        return i
+                def sortingMethod(item):
+                    return intify(item[1])
+                classFieldMap[fieldName] = {
+                    k: intify(v) for k, v in sorted(
+                        fieldConfig['map'].items(), key=sortingMethod
+                    )
+                }
+        return classFieldMap

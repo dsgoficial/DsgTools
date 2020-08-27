@@ -153,5 +153,5 @@ class FlipLine(QgsMapTool):
             self.iface.messageBar().pushMessage(self.tr('Warning'), self.tr('Start editing in current layer!'), level=Qgis.Info, duration=3)
 
     def deactivate(self):
-        gui.QgsMapTool.deactivate(self)
+        QgsMapTool.deactivate(self)
         self.canvas.unsetMapTool(self)

@@ -111,7 +111,23 @@ class FeatureHandler(QObject):
         for idx in lyr.primaryKeyAttributes() or [0]:
             newFeat.setAttribute(idx, None)
         return newFeat
-    
+
+    def newFeature(self, geom=None, fields=None, attributeMap=None):
+        """
+        Creates a new feature. Fields may be set and filled.
+        :param geom: (QgsGeometry) new feature's geometry.
+        :param fields: (QgsFields) all fields that new feature will have.
+        :param attributeMap: (dict) attributes values to be set to new feature.
+        :return: (QgsFeature) new feature.
+        """
+        feat = QgsFeature() if fields is None else QgsFeature(fields)
+        if geom:
+            feat.setGeometry(geom)
+        if attributeMap:
+            feat = self.attributeHandler.setFeatureAttributes(
+                            feat, attributeMap)
+        return feat
+
     def handleFeature(self, featList, featureWithoutGeom, lyr, parameterDict = None, coordinateTransformer = None):
         parameterDict = {} if parameterDict is None else parameterDict
         geomList = []
