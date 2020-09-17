@@ -60,6 +60,7 @@
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyAndFixInvalidGeometriesAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyAnglesInInvalidRangeAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedFeaturesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py \
@@ -115,6 +116,18 @@
 					core/Factories/DbCreatorFactory/postgisDbCreator.py \
 					core/Factories/DbCreatorFactory/spatialiteDbCreator.py \
 					core/Factories/DbCreatorFactory/__init__.py \
+					core/Factories/DbCustomizationFactory/attributeCustomization.py \
+					core/Factories/DbCustomizationFactory/classCustomization.py \
+					core/Factories/DbCustomizationFactory/codeNameCustomization.py \
+					core/Factories/DbCustomizationFactory/dbCustomization.py \
+					core/Factories/DbCustomizationFactory/dbCustomizationFactory.py \
+					core/Factories/DbCustomizationFactory/defaultCustomization.py \
+					core/Factories/DbCustomizationFactory/domainValueCustomization.py \
+					core/Factories/DbCustomizationFactory/filterCustomization.py \
+					core/Factories/DbCustomizationFactory/newDomainTableCustomization.py \
+					core/Factories/DbCustomizationFactory/newDomainValueCustomization.py \
+					core/Factories/DbCustomizationFactory/nullityCustomization.py \
+					core/Factories/DbCustomizationFactory/__init__.py \
 					core/Factories/DbFactory/abstractDb.py \
 					core/Factories/DbFactory/dbFactory.py \
 					core/Factories/DbFactory/geopackageDb.py \
@@ -129,6 +142,18 @@
 					core/Factories/LayerLoaderFactory/shapefileLayerLoader.py \
 					core/Factories/LayerLoaderFactory/spatialiteLayerLoader.py \
 					core/Factories/LayerLoaderFactory/__init__.py \
+					core/Factories/SqlFactory/geopackageSqlGenerator.py \
+					core/Factories/SqlFactory/postgisSqlGenerator.py \
+					core/Factories/SqlFactory/spatialiteSqlGenerator.py \
+					core/Factories/SqlFactory/sqlGenerator.py \
+					core/Factories/SqlFactory/sqlGeneratorFactory.py \
+					core/Factories/SqlFactory/__init__.py \
+					core/Factories/ThreadFactory/dpiThread.py \
+					core/Factories/ThreadFactory/genericThread.py \
+					core/Factories/ThreadFactory/inventoryThread.py \
+					core/Factories/ThreadFactory/postgisDbThread.py \
+					core/Factories/ThreadFactory/threadFactory.py \
+					core/Factories/ThreadFactory/__init__.py \
 					core/GeometricTools/attributeHandler.py \
 					core/GeometricTools/featureHandler.py \
 					core/GeometricTools/geometryHandler.py \
@@ -160,7 +185,6 @@
 					core/ServerManagementTools/attributeRulesManager.py \
 					core/ServerManagementTools/customizationManager.py \
 					core/ServerManagementTools/earthCoverageManager.py \
-					core/ServerManagementTools/fieldToolBoxConfigManager.py \
 					core/ServerManagementTools/genericDbManager.py \
 					core/ServerManagementTools/permissionManager.py \
 					core/ServerManagementTools/validationWorkflowManager.py \
@@ -170,6 +194,7 @@
 					core/Styles/edgv_3/__init__.py \
 					core/Styles/edgv_FTer_2a_Ed/__init__.py \
 					core/Styles/Non_EDGV/__init__.py \
+					core/Utils/tools.py \
 					core/Utils/utils.py \
 					core/Utils/__init__.py \
 					core/Utils/FrameTools/map_index.py \
@@ -186,6 +211,7 @@
 					gui/CustomWidgets/customRasterToolTip.py \
 					gui/CustomWidgets/__init__.py \
 					gui/CustomWidgets/AdvancedInterfaceWidgets/auxLayerSelector.py \
+					gui/CustomWidgets/AdvancedInterfaceWidgets/customFeatureForm.py \
 					gui/CustomWidgets/AdvancedInterfaceWidgets/__init__.py \
 					gui/CustomWidgets/AttributeValidityWidgets/attributeConditionWidget.py \
 					gui/CustomWidgets/AttributeValidityWidgets/attributeRuleTypeWidget.py \
@@ -194,12 +220,14 @@
 					gui/CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.py \
 					gui/CustomWidgets/AttributeValidityWidgets/__init__.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py \
+					gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/dsgCustomComboBox.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/genericDialogLayout.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/progressWidget.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/snapChooserWidget.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/snapWithLayerChooserWidget.py \
+					gui/CustomWidgets/BasicInterfaceWidgets/switchButton.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/textBrowserDialog.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/__init__.py \
 					gui/CustomWidgets/ConnectionWidgets/connectionWidget.py \
@@ -253,7 +281,6 @@
 					gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py \
 					gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py \
 					gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageWidget.py \
-					gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py \
 					gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py \
 					gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.py \
 					gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py \
@@ -401,11 +428,9 @@
 					gui/ProductionTools/Toolboxes/ContourTool/contour_value.py \
 					gui/ProductionTools/Toolboxes/ContourTool/dsg_line_tool.py \
 					gui/ProductionTools/Toolboxes/ContourTool/__init__.py \
-					gui/ProductionTools/Toolboxes/FieldToolBox/acquisition_tools.py \
-					gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py \
-					gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py \
-					gui/ProductionTools/Toolboxes/FieldToolBox/__init__.py \
-					gui/ProductionTools/Toolboxes/FieldToolBox/FieldSetupConfigs/__init__.py \
+					gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py \
+					gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py \
+					gui/ProductionTools/Toolboxes/CustomFeatureToolBox/__init__.py \
 					gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py \
 					gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py \
 					gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/__init__.py \
@@ -424,6 +449,7 @@
 					gui/ServerTools/ViewServersGui/viewServersGui.py \
 					gui/ServerTools/ViewServersGui/__init__.py \
 					tests/algorithmsTestBase.py \
+					tests/test_CustomButtonSetup.py \
 					tests/test_DsgToolsProcessingModel.py \
 					tests/test_EnvironmentSetterAlgorithms.py \
 					tests/test_OtherAlgorithms.py \
@@ -434,16 +460,19 @@
  FORMS         =	gui/AboutAndFurtherInfo/ui_about.ui \
 					gui/AboutAndFurtherInfo/ui_about_.ui \
 					gui/AboutAndFurtherInfo/Options/options.ui \
+					gui/CustomWidgets/AdvancedInterfaceWidgets/customFeatureForm.ui \
 					gui/CustomWidgets/AttributeValidityWidgets/attributeConditionWidget.ui \
 					gui/CustomWidgets/AttributeValidityWidgets/attributeRuleTypeWidget.ui \
 					gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.ui \
 					gui/CustomWidgets/AttributeValidityWidgets/listManagerWidget.ui \
 					gui/CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.ui \
 					gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui \
+					gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.ui \
 					gui/CustomWidgets/BasicInterfaceWidgets/genericDialogLayout.ui \
 					gui/CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.ui \
 					gui/CustomWidgets/BasicInterfaceWidgets/snapChooserWidget.ui \
 					gui/CustomWidgets/BasicInterfaceWidgets/snapWithLayerChooserWidget.ui \
+					gui/CustomWidgets/BasicInterfaceWidgets/switchButton.ui \
 					gui/CustomWidgets/BasicInterfaceWidgets/textBrowserDialog.ui \
 					gui/CustomWidgets/ConnectionWidgets/connectionWidget.ui \
 					gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.ui \
@@ -530,8 +559,7 @@
 					gui/ProductionTools/Toolboxes/ComplexTools/ui_manageComplex.ui \
 					gui/ProductionTools/Toolboxes/ContourTool/calc_contour.ui \
 					gui/ProductionTools/Toolboxes/ContourTool/contour_value.ui \
-					gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui \
-					gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.ui \
+					gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui \
 					gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.ui \
 					gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.ui \
 					gui/ServerTools/batchDbManager.ui \
@@ -541,7 +569,7 @@
 					gui/ServerTools/selectStyles.ui \
 					gui/ServerTools/ui_serverConfigurator.ui \
 					gui/ServerTools/ui_serverDBExplorer.ui \
-					gui/ServerTools/ui_viewServers.ui
+					gui/ServerTools/ui_viewServers.ui \
 
  TRANSLATIONS    = i18n/DsgTools_pt.ts
 
