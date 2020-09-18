@@ -263,7 +263,9 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         Clears all tabs created for the buttons.
         """
+        self.tabWidget.blockSignals(True)
         self.tabWidget.clear()
+        self.setTabButtonsActive(0)
 
     def currentTab(self):
         """
