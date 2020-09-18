@@ -697,8 +697,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         def updateFeatureWrapper():
             """
             A wrapper to make sure undo stack is set properly, avoiding crashes
-            upon undo-ing. It, however, breaks the "redo" - do not redo with
-            button on extraction mode active as it is a "add feature" process.
+            upon undoing and updates the stack to the modified feature command.
             """
             inLayer.endEditCommand()
             # remove original feature add command from undo stack
@@ -711,6 +710,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             inLayer.featureAdded.connect(self._handleAddedFeature)
             inLayer.endEditCommand()
             self._timer.blockSignals(True)
+            self._timer.setParent(None)
             del self._timer
             self._timer = QTimer(self)
         self._timer.start(1)
