@@ -522,11 +522,18 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         # be reversed (e.g. set to actual value to display name)
         for fName, vMap in b.valueMaps().items():
             valueMaps[fName] = {v: k for k, v in vMap.items()}
-        self.attributeTableWidget.setRowCount(len(fields))
+        virtualFields = list()
+        for idx, f in enumerate(fields):
+            if fields.fieldOrigin(idx) == fields.OriginExpression:
+                virtualFields.append(f.name())
+        self.attributeTableWidget.setRowCount(len(fields) - len(virtualFields))
         def setDisabled(w, status):
             w.setEnabled(not status)
         for row, field in enumerate(fields):
             fName = field.name()
+            if fName in virtualFields:
+                # virtual fields are ignored
+                continue
             notNull = not utils.fieldIsNullable(field)
             self.attributeTableWidget.setCellWidget(
                 row, self.ATTR_COL, self.attributeNameWidget(fName, notNull))
