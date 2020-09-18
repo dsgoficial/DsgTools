@@ -265,6 +265,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         self.tabWidget.blockSignals(True)
         self.tabWidget.clear()
+        self.tabWidget.blockSignals(False)
         self.setTabButtonsActive(0)
 
     def currentTab(self):
