@@ -71,7 +71,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         # making the button selection to stand out a little bit
         if "Night Mapping" in app.activeThemePath():
             ss = """QHeaderView::section:checked
-                { color:gray; background-color:white; }"""
+                { color:black; background-color:white; }"""
         else:
             ss = """QHeaderView::section:checked
                 { color:gray; background-color:black; }"""
