@@ -547,11 +547,29 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             else:
                 vWidget = self.valueWidget(field, value)
             self.attributeTableWidget.setCellWidget(row, self.VAL_COL, vWidget)
+            ccbEdit = self.centeredCheckBox()
             self.attributeTableWidget.setCellWidget(
-                row, self.EDIT_COL, self.centeredCheckBox())
-            ccb = self.centeredCheckBox()
-            ccb.cb.toggled.connect(partial(setDisabled, vWidget))
-            self.attributeTableWidget.setCellWidget(row, self.IGNORED_COL, ccb)
+                row, self.EDIT_COL, ccbEdit)
+            ccbIgore = self.centeredCheckBox()
+            ccbIgore.cb.toggled.connect(partial(setDisabled, vWidget))
+            self.attributeTableWidget.setCellWidget(
+                row, self.IGNORED_COL, ccbIgore)
+            def checkExclusiveCB(ccb1, ccb2):
+                """
+                Method to make two CB to be mutually exclusive (like radio buttons.
+                """
+                cb = self.sender()
+                if cb == ccb2.cb:
+                    # just to make sure var 'cb1' is always the cb that was
+                    # checked by the user
+                    cb = ccb2
+                    ccb2 = ccb1
+                    ccb1 = cb
+                if ccb1.cb.isChecked() and ccb2.cb.isChecked():
+                    ccb2.cb.setChecked(False)
+            exclusiveCb = partial(checkExclusiveCB, ccbEdit, ccbIgore)
+            ccbIgore.cb.toggled.connect(exclusiveCb)
+            ccbEdit.cb.toggled.connect(exclusiveCb)
             # since row is from an enum of fields, field idx = row
             self.attributeTableWidget.setCellWidget(row, self.PK_COL,
                 self.pkWidget() if row in pkIdxList else QWidget())
