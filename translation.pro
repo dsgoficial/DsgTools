@@ -116,18 +116,6 @@
 					core/Factories/DbCreatorFactory/postgisDbCreator.py \
 					core/Factories/DbCreatorFactory/spatialiteDbCreator.py \
 					core/Factories/DbCreatorFactory/__init__.py \
-					core/Factories/DbCustomizationFactory/attributeCustomization.py \
-					core/Factories/DbCustomizationFactory/classCustomization.py \
-					core/Factories/DbCustomizationFactory/codeNameCustomization.py \
-					core/Factories/DbCustomizationFactory/dbCustomization.py \
-					core/Factories/DbCustomizationFactory/dbCustomizationFactory.py \
-					core/Factories/DbCustomizationFactory/defaultCustomization.py \
-					core/Factories/DbCustomizationFactory/domainValueCustomization.py \
-					core/Factories/DbCustomizationFactory/filterCustomization.py \
-					core/Factories/DbCustomizationFactory/newDomainTableCustomization.py \
-					core/Factories/DbCustomizationFactory/newDomainValueCustomization.py \
-					core/Factories/DbCustomizationFactory/nullityCustomization.py \
-					core/Factories/DbCustomizationFactory/__init__.py \
 					core/Factories/DbFactory/abstractDb.py \
 					core/Factories/DbFactory/dbFactory.py \
 					core/Factories/DbFactory/geopackageDb.py \
@@ -142,12 +130,6 @@
 					core/Factories/LayerLoaderFactory/shapefileLayerLoader.py \
 					core/Factories/LayerLoaderFactory/spatialiteLayerLoader.py \
 					core/Factories/LayerLoaderFactory/__init__.py \
-					core/Factories/SqlFactory/geopackageSqlGenerator.py \
-					core/Factories/SqlFactory/postgisSqlGenerator.py \
-					core/Factories/SqlFactory/spatialiteSqlGenerator.py \
-					core/Factories/SqlFactory/sqlGenerator.py \
-					core/Factories/SqlFactory/sqlGeneratorFactory.py \
-					core/Factories/SqlFactory/__init__.py \
 					core/Factories/ThreadFactory/dpiThread.py \
 					core/Factories/ThreadFactory/genericThread.py \
 					core/Factories/ThreadFactory/inventoryThread.py \

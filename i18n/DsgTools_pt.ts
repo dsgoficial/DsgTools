@@ -2263,7 +2263,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="926"/>
         <source>Export setup &quot;{0}&quot;</source>
-        <translation>Exportar configuração &quot;{0}&quot;</translation>
+        <translation type="obsolete">Exportar configuração - {0}</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="937"/>
@@ -2274,6 +2274,16 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="939"/>
         <source>Exported workflow</source>
         <translation>Fluxo de trabalho exportado</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="926"/>
+        <source>Export setup teste {0}</source>
+        <translation type="obsolete">Exportar configuração {0}</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="926"/>
+        <source>Export setup - {0}</source>
+        <translation>Exportar configuração - {0}</translation>
     </message>
 </context>
 <context>
@@ -5790,7 +5800,7 @@ Passo de conversão {0} iniciado...
     <message>
         <location filename="../core/Factories/DbCustomizationFactory/dbCustomizationFactory.py" line="54"/>
         <source>Customization type not defined.</source>
-        <translation>Tipo de Customização não definido.</translation>
+        <translation type="obsolete">Tipo de Customização não definido.</translation>
     </message>
 </context>
 <context>
