@@ -137,6 +137,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             if s is not None and s.isEnabled():
                 s.setEnabled(False)
         for l in QgsProject.instance().mapLayers().values():
+            if not isinstance(l, QgsVectorLayer):
+                continue
             try:
                 l.featureAdded.disconnect(self._handleAddedFeature)
             except TypeError:
@@ -444,6 +446,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 s.setEnabled(False)
         for l in QgsProject.instance().mapLayers().values():
             # make sure all layers are disconnected from handling method
+            if not isinstance(l, QgsVectorLayer):
+                continue
             try:
                 l.featureAdded.disconnect(self._handleAddedFeature)
             except TypeError:
@@ -740,6 +744,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         Sets suppress form option to QGIS default for all layers on canvas.
         """
         for layer in QgsProject.instance().mapLayers().values():
+            if not isinstance(layer, QgsVectorLayer):
+                continue
             self.setSuppressFormOption(layer)
 
     def featuresToBeReclassified(self, b):
