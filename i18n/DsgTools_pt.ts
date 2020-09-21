@@ -18436,7 +18436,7 @@ Camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/selectFileWidget.ui" line="58"/>
         <source>Select File</source>
-        <translation>Selecionar arquivo</translation>
+        <translation>Arquivo</translation>
     </message>
 </context>
 <context>
@@ -19184,7 +19184,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.py" line="64"/>
         <source>Assign Shortcut</source>
-        <translation>Atribuir Atalho</translation>
+        <translation>Atribuir atalho</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.py" line="56"/>
