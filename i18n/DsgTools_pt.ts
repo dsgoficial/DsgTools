@@ -19202,7 +19202,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../gui/ProductionTools/MapTools/ShortcutTool/shortcutTool.py" line="42"/>
         <source>DSGTools: Active Layer visibility</source>
-        <translation>DSGTools: Ativa a visibilidade da camada</translation>
+        <translation>DSGTools: Alterna a visibilidade da camada</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/MapTools/ShortcutTool/shortcutTool.py" line="56"/>
