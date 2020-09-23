@@ -923,7 +923,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         s = self.readSetup()
         fd = QFileDialog()
         filename = fd.getSaveFileName(
-            caption=self.tr('Export setup "{0}"'.format(s.name())),
+            caption=self.tr("Export setup - {0}").format(s.name()),
             filter=self.tr("DSGTools Buttons Setup (*.setup)")
         )
         filename = filename[0] if isinstance(filename, tuple) else filename
