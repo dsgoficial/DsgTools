@@ -27,6 +27,7 @@ import json
 from qgis.PyQt import uic
 from qgis.utils import iface
 from qgis.core import (Qgis,
+                       NULL,
                        QgsFeature,
                        QgsProject,
                        QgsVectorLayer,
@@ -687,6 +688,30 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             return
         self._featId = featId
 
+    def blockFields(self, layer, attrMap):
+        """
+        Checks attribute map for editable fields and blocks the others.
+        :param layer: (QgsVectorLayer) layer to have its fields allowed to be
+                      edited.
+        :param attrMap: (dict) attribute map as from CustomFeatureButton.
+        """
+        editFormConfig = layer.editFormConfig()
+        for idx, f in enumerate(layer.fields()):
+            if f.name() not in attrMap or not attrMap[f.name()]["editable"]:
+                editFormConfig.setReadOnly(idx, True)
+        layer.setEditFormConfig(editFormConfig)
+
+    def setFieldsEditable(self, layer):
+        """
+        Allows all fields to be editable.
+        :param layer: (QgsVectorLayer) layer to have its fields allowed to be
+                      edited.
+        """
+        editFormConfig = layer.editFormConfig()
+        for idx in range(len(layer.fields())):
+            editFormConfig.setReadOnly(idx, False)
+        layer.setEditFormConfig(editFormConfig)
+
     def _handleAddedFeature(self):
         """
         Method designed to work exclusively from a feature added signal call.
@@ -709,15 +734,33 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         if editBuffer is None or not editBuffer.isFeatureAdded(self._featId):
             return
         feature = editBuffer.addedFeatures()[self._featId]
+        # make sure feat is editted only when it was JUST added to the layer
         self._featId = None
+        # update ignored values from map
+        attrMap = b.attributeMap()
+        defVals = LayerHandler().getDefaultValues(inLayer)
         feature = AttributeHandler(iface).setFeatureAttributes(
-                    feature, b.attributeMap())
+            feature, attrMap)
+        for attr, props in attrMap.items():
+            # the setFeatureAttributes method sets ignored values to None. If
+            # the attribute has a provider's default or it was provided through
+            # the map, it should be applied anyway ('ignored' does not make
+            # sense to the feature extraction mode process)
+            if not props["ignored"]:
+                continue
+            if attr in defVals:
+                # default value > value from the map (priority order)
+                feature[attr] = defVals[attr]
+            else:
+                feature[attr] = props["value"]
         if b.openForm():
+            self.blockFields(inLayer, attrMap)
             form = QgsAttributeDialog(inLayer, feature, False)
             form.blockSignals(True)
             form.attributeForm().blockSignals(True)
             form.setMode(int(QgsAttributeEditorContext.SingleEditMode))
             added = form.exec_() == 1 # should the feature be added after all?
+            self.setFieldsEditable(inLayer)
             if added:
                 feature = form.attributeForm().currentFormFeature()
         def updateFeatureWrapper():
@@ -737,8 +780,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 if b.openForm():
                     # if form was opened and confirmed, layer will have an
                     # 'Attributes changed' edit command stacked as well
-                    # insert the modified feature command into the stack
                     stack.undo()
+                # insert the modified feature command into the stack
                 inLayer.beginEditCommand("dsgtools custom feature")
                 # avoid circular calls
                 inLayer.featureAdded.disconnect(self._registerAddedFeature)
@@ -838,6 +881,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         lh = LayerHandler()
         defs = lh.getDestinationParameters(newLayer)
+        defVals = lh.getDefaultValues(newLayer)
         transformer = lh.getCoordinateTransformer(prevLayer, newLayer)
         removeFeats = list()
         addFeats = set()
@@ -846,18 +890,33 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         for f in featList:
             for field, propsMap in newAttributeMap.items():
                 if propsMap["ignored"]:
-                    propsMap["value"] = f[field] if field in pFields else None
+                    if not propsMap["isPk"] and field in pFields \
+                       and f[field] != NULL:
+                        # preference is for previous filled value
+                        propsMap["value"] = f[field]
+                    elif field in defVals:
+                        # then default value from layer provider
+                        propsMap["value"] = defVals[field]
+                    # as last priority, the value filled up at the map setup
+                    # may be used
             addFeats.add(
                 self.createFeature(
                     fields, f.geometry(), newAttributeMap, defs, transformer)
             )
             removeFeats.append(f.id())
+        prevLayer.beginEditCommand("dsgtools reclassification (removed)")
         prevLayer.startEditing()
         prevLayer.deleteFeatures(removeFeats)
         prevLayer.updateExtents()
+        prevLayer.endEditCommand()
+        newLayer.beginEditCommand(
+            "dsgtools reclassification (added from '{0}')".format(
+                prevLayer.name())
+        )
         newLayer.startEditing()
         newLayer.addFeatures(addFeats)
         newLayer.updateExtents()
+        newLayer.endEditCommand()
         return addFeats
 
     def reclassify(self, recMap, layer, attrMap):
