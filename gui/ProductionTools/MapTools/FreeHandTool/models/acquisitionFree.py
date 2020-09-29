@@ -255,17 +255,16 @@ class AcquisitionFree(gui.QgsMapTool):
     def startEdition(self, event):
         #Método para iniciar a aquisição
         #Parâmetro de entrada: event (Evento)
-        
         snapRubberBand = self.getSnapRubberBand()
         if snapRubberBand:
             snapRubberBand.reset(geometryType=core.QgsWkbTypes.PointGeometry)
             snapRubberBand.hide()
             self.setSnapRubberBand(None)
-        pointMap = event.snapPoint()
         layer = self.getCanvas().currentLayer()
         if layer:
-            self.startRubberBand(pointMap, layer)
-    
+            mapPoint = event.snapPoint()            
+            self.startRubberBand(mapPoint, layer)
+
     def startRubberBand(self, pointMap, layer):
         #Método para iniciar o rubberBand da aquisição
         #Parâmetro de entrada: pointMap (Primeiro ponto da feição em aquisição), layer (Camada ativa)

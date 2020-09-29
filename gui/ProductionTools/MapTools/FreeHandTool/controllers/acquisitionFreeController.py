@@ -147,6 +147,8 @@ class AcquisitionFreeController(object):
         #Parâmetro de entrada: geom (Geometria adquirida), tolerance (Tolerância para simplificação)
         #Parâmetro de retorno: sGeom (Geometria simplificada)
         parameters = self.getParametersFromConfig()
+        firstVertex = geom.vertexAt(0) 
+        lastVertex = geom.vertexAt(geom.constGet().nCoordinates() - 1 )
         sGeom = geom
         source_crs = self.iface.activeLayer().crs()
         dest_crs = core.QgsCoordinateReferenceSystem(3857)
@@ -171,6 +173,10 @@ class AcquisitionFreeController(object):
         finalGeom = sGeom.simplify(self.getFinalTolerance())
         tr = core.QgsCoordinateTransform(dest_crs, source_crs, core.QgsCoordinateTransformContext())
         finalGeom.transform(tr)
+        if self.iface.activeLayer().geometryType() == core.QgsWkbTypes.PolygonGeometry:
+            return finalGeom
+        finalGeom.moveVertex(firstVertex.x(), firstVertex.y(), 0)
+        finalGeom.moveVertex(lastVertex.x(), lastVertex.y(), finalGeom.constGet().nCoordinates() - 1)
         return finalGeom
 
     def reprojectGeometry(self, geom):
@@ -237,7 +243,8 @@ class AcquisitionFreeController(object):
             )
         ]
         createdGeometry = feature.geometry()
-        [ layer.addTopologicalPoints(createdGeometry) for layer in otherLayers ]
+        for layer in otherLayers:
+            layer.addTopologicalPoints(createdGeometry)
         currentLayer.addTopologicalPoints(createdGeometry)
         iface.mapCanvas().refresh()
 
