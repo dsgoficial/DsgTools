@@ -227,7 +227,7 @@ class AcquisitionFreeController(object):
                     feature.setAttribute(i, defaultClauseCandidate)
             formSuppressOnLayer = layer.editFormConfig().suppress()
             formSuppressOnSettings = self.getFormSuppressStateSettings()
-            if formSuppressOnLayer == core.QgsEditFormConfig.SuppressOff or \
+            if formSuppressOnLayer == core.QgsEditFormConfig.SuppressOn or \
                 (formSuppressOnLayer == core.QgsEditFormConfig.SuppressDefault \
                     and formSuppressOnSettings):
                 self.addFeatureWithoutForm(layer, feature)
@@ -254,7 +254,7 @@ class AcquisitionFreeController(object):
         #Parâmetro de retorno: suppressForm ( boleano )
         s = QtCore.QSettings()
         suppressForm = s.value(u"qgis/digitizing/disable_enter_attribute_values_dialog")
-        return suppressForm
+        return suppressForm == "true"
 
     def addFeatureWithForm(self, layer, feature):
         #Método para adicionar a feição com formulário
