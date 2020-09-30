@@ -194,7 +194,7 @@ class Tester(unittest.TestCase):
             layers = self.datasets[key]
         return layers
 
-    def getInputLayers(self, driver, dataset, layers, addControlKey=False):
+    def getInputLayers(self, driver, dataset, layers, addControlKey=False, selectedFeatures=False):
         """
         Gets the vector layers from an input dataset.
         :param driver: (str) driver's to be read.
@@ -203,12 +203,28 @@ class Tester(unittest.TestCase):
         :return: (list-of-QgsVectorLayer) vector layers read from the dataset.
         """
         out = []
+        # (vls) a map from layer name to vector layer read from database.
         vls = self.testingDataset(driver, dataset)
         for l in layers:
-            vls[l].rollBack()
-            lyr = vls[l] if not addControlKey else \
-                self.addControlKey(vls[l])
-            out.append(lyr)
+            if selectedFeatures:
+                vls[l].rollBack()
+                vls[l].select(20)
+                newLyr = processing.run('native:saveselectedfeatures',
+                        {
+                            'INPUT' : vls[l],
+                            'OUTPUT' : 'memory:'
+                        },
+                        context = QgsProcessingContext(),
+                        feedback = QgsProcessingFeedback()
+                )['OUTPUT']
+                lyr = newLyr if not addControlKey else \
+                    self.addControlKey(newLyr)
+                out.append(lyr)
+            else:
+                vls[l].rollBack()
+                lyr = vls[l] if not addControlKey else \
+                    self.addControlKey(vls[l])
+                out.append(lyr)
         return out
     
     def addControlKey(self, lyr):
@@ -274,9 +290,9 @@ class Tester(unittest.TestCase):
                     'INPUTLAYERS' : self.getInputLayers(
                         'sqlite', 'douglas_peucker',
                         ['cb_tra_trecho_rodoviario_l'],
-                        addControlKey=True
+                        addControlKey=True, selectedFeatures=True
                     )[0],
-                    'SELECTED' : False,
+                    'SELECTED' : True,
                     'SNAP': 2,
                     'DOUGLASPARAMETER': 1.5,
                     'FLAGS' : "memory:",
