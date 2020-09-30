@@ -18,12 +18,10 @@ Some parts were inspired by QGIS plugin FreeHandEditting
  ***************************************************************************/
 """
 
-from builtins import range
 from qgis.PyQt import QtCore, QtGui, QtWidgets
 from qgis import core, gui
 from qgis.utils import iface
 from qgis.core import QgsGeometry
-import math, json
 
 class AcquisitionFree(gui.QgsMapTool):
  

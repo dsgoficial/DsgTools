@@ -181,18 +181,13 @@ class AcquisitionFreeController(object):
 
     def reprojectGeometry(self, geom):
         # Defining the crs from src and destiny
-        iface = self.getIface()
         canvas = iface.mapCanvas()
-        epsg = canvas.mapSettings().destinationCrs().authid()
-        crsSrc = core.QgsCoordinateReferenceSystem(epsg)
-        #getting srid from something like 'EPSG:31983'
-        layer = canvas.currentLayer()
-        srid = layer.crs().authid()
-        crsDest = core.QgsCoordinateReferenceSystem(srid) #here we have to put authid, not srid
-        if srid != epsg:
-            # Creating a transformer
-            coordinateTransformer = core.QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
-            geom = coordinateTransformer.transform(geom)
+        layer = iface.activeLayer()
+        epsgSrc = canvas.mapSettings().destinationCrs().authid()
+        epsgDest = layer.crs().authid()
+        if epsgSrc != epsgDest:
+            ct = canvas.mapSettings().layerTransform( layer )
+            geom.transform(ct, core.QgsCoordinateTransform.ReverseTransform)
         return geom        
 
     def createFeature(self, geom):
@@ -220,9 +215,10 @@ class AcquisitionFreeController(object):
         featureAdded = True
         if (
                 formSuppressOnLayer == core.QgsEditFormConfig.SuppressOn
-                or
-                formSuppressOnSettings == 'true'
-                #formSuppressOnLayer == core.QgsEditFormConfig.SuppressDefault
+                or (
+                    formSuppressOnLayer == core.QgsEditFormConfig.SuppressDefault
+                    and formSuppressOnSettings == 'true'
+                )
             ):
             self.addFeatureWithoutForm(layer, feature)
         else:
