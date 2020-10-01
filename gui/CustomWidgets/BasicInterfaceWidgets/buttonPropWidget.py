@@ -36,11 +36,8 @@ from qgis.PyQt.QtWidgets import (QWidget,
                                  QComboBox,
                                  QPushButton,
                                  QHBoxLayout,
-                                 QFileDialog,
                                  QMessageBox,
-                                 QRadioButton,
-                                 QDoubleSpinBox,
-                                 QTableWidgetItem)
+                                 QDoubleSpinBox)
 
 from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
@@ -355,12 +352,13 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         for row in range(table.rowCount()):
             attr = table.cellWidget(row, self.ATTR_COL).text().replace("&", "")
             valueWidget = table.cellWidget(row, self.VAL_COL)
+            isPk = row in pkIdxList
             if not attrMap or attr not in attrMap:
                 attrMap[attr] = {
                     "value": None,
                     "editable": False,
-                    "ignored": False,
-                    "isPk": False
+                    "ignored": isPk, # default is False unless it's a PK attr
+                    "isPk": isPk
                 }
             {
                 QLineEdit: lambda v: valueWidget.setText(v or ""),
@@ -368,12 +366,13 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                 QDoubleSpinBox: lambda v: valueWidget.setValue(v or 0.0),
                 QComboBox: lambda v: setMappedValue(valueWidget, attr, v)
             }[type(valueWidget)](attrMap[attr]["value"])
+            valueWidget.setEnabled(not attrMap[attr]["ignored"])
             table.cellWidget(row, self.EDIT_COL).cb.setChecked(
                 attrMap[attr]["editable"])
             table.cellWidget(row, self.IGNORED_COL).cb.setChecked(
                 attrMap[attr]["ignored"])
             table.setCellWidget(row, self.PK_COL,
-                self.pkWidget() if row in pkIdxList else QWidget())
+                self.pkWidget() if isPk else QWidget())
 
     def attributeMap(self):
         """
@@ -390,15 +389,13 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             valueWidget = table.cellWidget(row, self.VAL_COL)
             attrMap[attr]["ignored"] = table.cellWidget(row, self.IGNORED_COL)\
                                             .cb.isChecked()
-            if attrMap[attr]["ignored"]:
-                attrMap[attr]["value"] = None
-            else:
-                attrMap[attr]["value"] = {
-                    QLineEdit: lambda: valueWidget.text(),
-                    QSpinBox: lambda: valueWidget.value(),
-                    QDoubleSpinBox: lambda: valueWidget.value(),
-                    QComboBox: lambda: vMaps[attr][valueWidget.currentText()]
-                }[type(valueWidget)]()
+            # "ignored" still allows the value to be set as last priority
+            attrMap[attr]["value"] = {
+                QLineEdit: lambda: valueWidget.text(),
+                QSpinBox: lambda: valueWidget.value(),
+                QDoubleSpinBox: lambda: valueWidget.value(),
+                QComboBox: lambda: vMaps[attr][valueWidget.currentText()]
+            }[type(valueWidget)]()
             attrMap[attr]["isPk"] = isinstance(
                 table.cellWidget(row, self.PK_COL), QPushButton)
             attrMap[attr]["editable"] = table.cellWidget(row, self.EDIT_COL)\
@@ -515,22 +512,41 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         self.attributeTableWidget.setRowCount(0)
         fields = layer.fields() if layer else []
         pkIdxList = layer.primaryKeyAttributes() if layer else []
-        attrMap = self.button.attributeMap()
-        b = self.readButton()
+        if layer.name() == self.button.layer():
+            attrMap = self.button.attributeMap()
+        else:
+            # it does not make sense to use the saved map valued for a
+            # different layer selection
+            attrMap = dict()
         valueMaps = dict()
         # displayed values are always "aliased" when possible, so map needs to
         # be reversed (e.g. set to actual value to display name)
-        for fName, vMap in b.valueMaps().items():
+        for fName, vMap in self.readButton().valueMaps().items():
             valueMaps[fName] = {v: k for k, v in vMap.items()}
-        self.attributeTableWidget.setRowCount(len(fields))
+        virtualFields = list()
+        for idx, f in enumerate(fields):
+            if fields.fieldOrigin(idx) == fields.OriginExpression:
+                virtualFields.append(f.name())
+        self.attributeTableWidget.setRowCount(len(fields) - len(virtualFields))
         def setDisabled(w, status):
             w.setEnabled(not status)
         for row, field in enumerate(fields):
             fName = field.name()
+            if fName in virtualFields:
+                # virtual fields are ignored
+                continue
+            isPk = row in pkIdxList
             notNull = not utils.fieldIsNullable(field)
             self.attributeTableWidget.setCellWidget(
                 row, self.ATTR_COL, self.attributeNameWidget(fName, notNull))
-            value = attrMap[fName]["value"] if fName in attrMap else None
+            if fName not in attrMap:
+                attrMap[fName] = {
+                    "value": None,
+                    "editable": False,
+                    "ignored": isPk, # default is False unless it's a PK attr
+                    "isPk": isPk
+                }
+            value = attrMap[fName]["value"]
             if fName in valueMaps:
                 vWidget = QComboBox()
                 vWidget.addItems(set(valueMaps[fName].values()))
@@ -539,15 +555,36 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                     vWidget.setCurrentText(value)
             else:
                 vWidget = self.valueWidget(field, value)
+            vWidget.setEnabled(not attrMap[fName]["ignored"])
             self.attributeTableWidget.setCellWidget(row, self.VAL_COL, vWidget)
+            ccbEdit = self.centeredCheckBox()
+            ccbEdit.cb.setChecked(attrMap[fName]["editable"])
             self.attributeTableWidget.setCellWidget(
-                row, self.EDIT_COL, self.centeredCheckBox())
-            ccb = self.centeredCheckBox()
-            ccb.cb.toggled.connect(partial(setDisabled, vWidget))
-            self.attributeTableWidget.setCellWidget(row, self.IGNORED_COL, ccb)
+                row, self.EDIT_COL, ccbEdit)
+            ccbIgnore = self.centeredCheckBox()
+            ccbIgnore.cb.setChecked(attrMap[fName]["ignored"])
+            ccbIgnore.cb.toggled.connect(partial(setDisabled, vWidget))
+            self.attributeTableWidget.setCellWidget(
+                row, self.IGNORED_COL, ccbIgnore)
+            def checkExclusiveCB(ccb1, ccb2):
+                """
+                Method to make two CB to be mutually exclusive (like radio buttons.
+                """
+                cb = self.sender()
+                if cb == ccb2.cb:
+                    # just to make sure var 'cb1' is always the cb that was
+                    # checked by the user
+                    cb = ccb2
+                    ccb2 = ccb1
+                    ccb1 = cb
+                if ccb1.cb.isChecked() and ccb2.cb.isChecked():
+                    ccb2.cb.setChecked(False)
+            exclusiveCb = partial(checkExclusiveCB, ccbEdit, ccbIgnore)
+            ccbIgnore.cb.toggled.connect(exclusiveCb)
+            ccbEdit.cb.toggled.connect(exclusiveCb)
             # since row is from an enum of fields, field idx = row
             self.attributeTableWidget.setCellWidget(row, self.PK_COL,
-                self.pkWidget() if row in pkIdxList else QWidget())
+                self.pkWidget() if isPk else QWidget())
 
     def setButton(self, button):
         """
@@ -627,7 +664,6 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         self.keywordCheckBox.setEnabled(enabled)
         self.keywordLineEdit.setEnabled(enabled)
         self.shortcutCheckBox.setEnabled(enabled)
-        # self.shortcutWidget.setEnabled(enabled)
         self.openFormCheckBox.setEnabled(enabled)
         self.mMapLayerComboBox.setEnabled(enabled)
         self.attributeTableWidget.setEnabled(enabled)
