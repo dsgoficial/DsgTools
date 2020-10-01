@@ -27,11 +27,12 @@ import json
 from qgis.PyQt import uic
 from qgis.utils import iface
 from qgis.core import (Qgis,
+                       NULL,
                        QgsFeature,
                        QgsProject,
                        QgsVectorLayer,
                        QgsExpressionContextUtils)
-from qgis.gui import QgsAttributeForm, QgsAttributeDialog
+from qgis.gui import QgsAttributeEditorContext, QgsAttributeDialog
 from qgis.PyQt.QtCore import Qt, QTimer, pyqtSlot
 from qgis.PyQt.QtGui import QColor, QPalette
 from qgis.PyQt.QtWidgets import (QAction,
@@ -80,7 +81,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         self._order = dict()
         self._shortcuts = dict()
         self._enabled = False
-        self._addedFeats = set()
+        self._featId = None
         # disable tool when a non-digitizing map tool is set
         iface.mapCanvas().mapToolSet.connect(self._mapToolSet)
         if setups:
@@ -137,8 +138,11 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             if s is not None and s.isEnabled():
                 s.setEnabled(False)
         for l in QgsProject.instance().mapLayers().values():
+            if not isinstance(l, QgsVectorLayer):
+                continue
             try:
-                l.featureAdded.disconnect(self._handleAddedFeature)
+                l.featureAdded.disconnect(self._registerAddedFeature)
+                l.editCommandEnded.disconnect(self._handleAddedFeature)
             except TypeError:
                 pass
         if enabled:
@@ -261,7 +265,10 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         Clears all tabs created for the buttons.
         """
+        self.tabWidget.blockSignals(True)
         self.tabWidget.clear()
+        self.tabWidget.blockSignals(False)
+        self.setTabButtonsActive(0)
 
     def currentTab(self):
         """
@@ -444,8 +451,11 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 s.setEnabled(False)
         for l in QgsProject.instance().mapLayers().values():
             # make sure all layers are disconnected from handling method
+            if not isinstance(l, QgsVectorLayer):
+                continue
             try:
-                l.featureAdded.disconnect(self._handleAddedFeature)
+                l.featureAdded.disconnect(self._registerAddedFeature)
+                l.editCommandEnded.disconnect(self._handleAddedFeature)
             except TypeError:
                 pass
         self.resetSuppressFormOption()
@@ -475,7 +485,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 l = b.vectorLayer()
                 if l is not None and l.name() not in layers:
                     # avoid connecting more than once the same layer
-                    l.featureAdded.connect(self._handleAddedFeature)
+                    l.featureAdded.connect(self._registerAddedFeature)
+                    l.editCommandEnded.connect(self._handleAddedFeature)
                     layers.append(l.name())
         self.createTabs()
         # this needs to be after tab creation
@@ -642,10 +653,12 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         "forgotten" by the undo stack (if more than one redo is on the stack,
         the first redo will work and the others will be wiped from it).
         """
-        if self.toolMode() == self.Extract:
+        if self.toolMode() == self.Extract and self._enabled:
             # current layer is likely to be current active layer
             try:
-                iface.activeLayer.featureAdded.disconnect(
+                iface.activeLayer().featureAdded.disconnect(
+                    self._registerAddedFeature)
+                iface.activeLayer().editCommandEnded.disconnect(
                     self._handleAddedFeature)
             except:
                 pass
@@ -663,54 +676,122 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 msg, Qgis.Warning, 5
             )
 
-    def _handleAddedFeature(self, featId):
+    def _registerAddedFeature(self, featId):
+        """
+        In order to avoid corrupting the undo stack for the layer, feature
+        added signal will be used to identify potential feature modifications.
+        :param featId: (int) ID for the recently added feature.
+        """
+        if self.sender() is None:
+            # manual calls are not allowed to modify tool's target feature
+            # since it's a feature extraction operation
+            return
+        self._featId = featId
+
+    def blockFields(self, layer, attrMap):
+        """
+        Checks attribute map for editable fields and blocks the others.
+        :param layer: (QgsVectorLayer) layer to have its fields allowed to be
+                      edited.
+        :param attrMap: (dict) attribute map as from CustomFeatureButton.
+        """
+        editFormConfig = layer.editFormConfig()
+        for idx, f in enumerate(layer.fields()):
+            if f.name() not in attrMap or not attrMap[f.name()]["editable"]:
+                editFormConfig.setReadOnly(idx, True)
+        layer.setEditFormConfig(editFormConfig)
+
+    def setFieldsEditable(self, layer):
+        """
+        Allows all fields to be editable.
+        :param layer: (QgsVectorLayer) layer to have its fields allowed to be
+                      edited.
+        """
+        editFormConfig = layer.editFormConfig()
+        for idx in range(len(layer.fields())):
+            editFormConfig.setReadOnly(idx, False)
+        layer.setEditFormConfig(editFormConfig)
+
+    def _handleAddedFeature(self):
         """
         Method designed to work exclusively from a feature added signal call.
         It has an important role on the feature extraction flow as "gate
         keeper" for attribute setting: identifies tool conditions and mode in
         order to define whether current feature extraction should be handled by
         this tool or if it's a "external" feature extraction process.
-        :param featId: (int) ID for the recently added feature.
         """
         b = self.featureExtractionButton()
         inLayer = self.sender()
         added = True
         if b is None or not isinstance(inLayer, QgsVectorLayer)\
-           or inLayer.name() != b.layer():
+           or inLayer.name() != b.layer() or self._featId is None:
             # if there are no active buttons, tool is idle
             # if method was not sent from a vector layer, nothing to do either
             # only managed calls are from active button's layer
             # if no feature was just added, no good as well
             return
         editBuffer = inLayer.editBuffer()
-        if editBuffer is None or not editBuffer.isFeatureAdded(featId):
+        if editBuffer is None or not editBuffer.isFeatureAdded(self._featId):
             return
-        feature = editBuffer.addedFeatures()[featId]
+        feature = editBuffer.addedFeatures()[self._featId]
+        # make sure feat is editted only when it was JUST added to the layer
+        self._featId = None
+        # update ignored values from map
+        attrMap = b.attributeMap()
+        defVals = LayerHandler().getDefaultValues(inLayer)
         feature = AttributeHandler(iface).setFeatureAttributes(
-                    feature, b.attributeMap())
+            feature, attrMap)
+        for attr, props in attrMap.items():
+            # the setFeatureAttributes method sets ignored values to None. If
+            # the attribute has a provider's default or it was provided through
+            # the map, it should be applied anyway ('ignored' does not make
+            # sense to the feature extraction mode process)
+            if not props["ignored"]:
+                continue
+            if attr in defVals:
+                # default value > value from the map (priority order)
+                feature[attr] = defVals[attr]
+            else:
+                feature[attr] = props["value"]
         if b.openForm():
+            self.blockFields(inLayer, attrMap)
             form = QgsAttributeDialog(inLayer, feature, False)
-            form.setMode(int(QgsAttributeForm.SingleEditMode))
-            if not form.exec_():
-                inLayer.destroyEditCommand()
-                return
+            form.blockSignals(True)
+            form.attributeForm().blockSignals(True)
+            form.setMode(int(QgsAttributeEditorContext.SingleEditMode))
+            added = form.exec_() == 1 # should the feature be added after all?
+            self.setFieldsEditable(inLayer)
+            if added:
+                feature = form.attributeForm().currentFormFeature()
         def updateFeatureWrapper():
             """
             A wrapper to make sure undo stack is set properly, avoiding crashes
-            upon undo-ing. It, however, breaks the "redo" - do not redo with
-            button on extraction mode active as it is a "add feature" process.
+            upon undoing and updates the stack to the modified feature command.
             """
-            inLayer.endEditCommand()
-            # remove original feature add command from undo stack
-            inLayer.undoStack().undo()
-            # insert the modified feature command into the stack
-            inLayer.beginEditCommand("dsgtools custom feature")
-            # avoid circular calls
-            inLayer.featureAdded.disconnect(self._handleAddedFeature)
-            inLayer.addFeature(feature)
-            inLayer.featureAdded.connect(self._handleAddedFeature)
-            inLayer.endEditCommand()
+            # added feature ("original") command is still registered and
+            # feature extraction may only be registered onto the stack if it is
+            # the tool's modification
+            stack = inLayer.undoStack()
+            cmd = stack.command(stack.count() - 1)
+            cmd.undo()
+            cmd.setObsolete(True)
+            stack.undo()
+            if added:
+                if b.openForm():
+                    # if form was opened and confirmed, layer will have an
+                    # 'Attributes changed' edit command stacked as well
+                    stack.undo()
+                # insert the modified feature command into the stack
+                inLayer.beginEditCommand("dsgtools custom feature")
+                # avoid circular calls
+                inLayer.featureAdded.disconnect(self._registerAddedFeature)
+                inLayer.editCommandEnded.disconnect(self._handleAddedFeature)
+                inLayer.addFeature(feature)
+                inLayer.featureAdded.connect(self._registerAddedFeature)
+                inLayer.endEditCommand()
+                inLayer.editCommandEnded.connect(self._handleAddedFeature)
             self._timer.blockSignals(True)
+            self._timer.setParent(None)
             del self._timer
             self._timer = QTimer(self)
         self._timer.start(1)
@@ -740,6 +821,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         Sets suppress form option to QGIS default for all layers on canvas.
         """
         for layer in QgsProject.instance().mapLayers().values():
+            if not isinstance(layer, QgsVectorLayer):
+                continue
             self.setSuppressFormOption(layer)
 
     def featuresToBeReclassified(self, b):
@@ -761,8 +844,6 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 l = iface.activeLayer()
                 layers = [l] if isinstance(l, QgsVectorLayer) else []
             for l in layers:
-                # im not sure whether it's a recent modification, but map layers
-                # are hashable
                 if l.geometryType() == geomType:
                     feats = l.selectedFeatures()
                     if feats:
@@ -800,6 +881,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         lh = LayerHandler()
         defs = lh.getDestinationParameters(newLayer)
+        defVals = lh.getDefaultValues(newLayer)
         transformer = lh.getCoordinateTransformer(prevLayer, newLayer)
         removeFeats = list()
         addFeats = set()
@@ -808,18 +890,33 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         for f in featList:
             for field, propsMap in newAttributeMap.items():
                 if propsMap["ignored"]:
-                    propsMap["value"] = f[field] if field in pFields else None
+                    if not propsMap["isPk"] and field in pFields \
+                       and f[field] != NULL:
+                        # preference is for previous filled value
+                        propsMap["value"] = f[field]
+                    elif field in defVals:
+                        # then default value from layer provider
+                        propsMap["value"] = defVals[field]
+                    # as last priority, the value filled up at the map setup
+                    # may be used
             addFeats.add(
                 self.createFeature(
                     fields, f.geometry(), newAttributeMap, defs, transformer)
             )
             removeFeats.append(f.id())
+        prevLayer.beginEditCommand("dsgtools reclassification (removed)")
         prevLayer.startEditing()
         prevLayer.deleteFeatures(removeFeats)
         prevLayer.updateExtents()
+        prevLayer.endEditCommand()
+        newLayer.beginEditCommand(
+            "dsgtools reclassification (added from '{0}')".format(
+                prevLayer.name())
+        )
         newLayer.startEditing()
         newLayer.addFeatures(addFeats)
         newLayer.updateExtents()
+        newLayer.endEditCommand()
         return addFeats
 
     def reclassify(self, recMap, layer, attrMap):
@@ -846,7 +943,6 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             # method is supposed to be used exclusively as a slot
             return
         if checked:
-            # i think sender should change to action here, but it doesnt
             button.action().trigger()
         else:
             # button is being disabled
@@ -1213,6 +1309,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         Clears all components.
         """
+        self.setToolEnabled(False)
         self.setParent(None)
         self.visibilityChanged.disconnect(self.setToolEnabled)
         project = QgsProject.instance()
@@ -1220,4 +1317,4 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         project.readProject.disconnect(self.restoreStateFromProject)
         iface.mapCanvas().mapToolSet.disconnect(self._mapToolSet)
         redoAction = iface.mainWindow().findChildren(QAction, "mActionRedo")[0]
-        redoAction.triggered.connect(self._redoPressed)
+        redoAction.triggered.disconnect(self._redoPressed)

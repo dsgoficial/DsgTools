@@ -826,8 +826,11 @@ class CustomFeatureButton(QObject):
                 vl = self.vectorLayer()
                 fields = vl.fields()
                 pkIdxList = vl.primaryKeyAttributes()
-                for field in fields:
+                for idx, field in enumerate(fields):
                     fieldName = field.name()
+                    if fields.fieldOrigin(idx) == fields.OriginExpression:
+                        # virtual fields are ignored
+                        continue
                     if fieldName not in attrMap:
                         self._props["attributeMap"][fieldName] = {
                             "value": None,
