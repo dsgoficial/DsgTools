@@ -194,7 +194,7 @@ class Tester(unittest.TestCase):
             layers = self.datasets[key]
         return layers
 
-    def getInputLayers(self, driver, dataset, layers, addControlKey=False, selectedFeatures=False):
+    def getInputLayers(self, driver, dataset, layers, addControlKey=False, selectedFeatures=False, idsToSelect=[]):
         """
         Gets the vector layers from an input dataset.
         :param driver: (str) driver's to be read.
@@ -207,18 +207,10 @@ class Tester(unittest.TestCase):
         vls = self.testingDataset(driver, dataset)
         for l in layers:
             if selectedFeatures:
-                vls[l].rollBack()
-                vls[l].select(20)
-                newLyr = processing.run('native:saveselectedfeatures',
-                        {
-                            'INPUT' : vls[l],
-                            'OUTPUT' : 'memory:'
-                        },
-                        context = QgsProcessingContext(),
-                        feedback = QgsProcessingFeedback()
-                )['OUTPUT']
-                lyr = newLyr if not addControlKey else \
-                    self.addControlKey(newLyr)
+                # vls[l].rollBack()
+                lyr = vls[l] if not addControlKey else \
+                    self.addControlKey(vls[l])
+                lyr.select(idsToSelect)
                 out.append(lyr)
             else:
                 vls[l].rollBack()
@@ -274,11 +266,26 @@ class Tester(unittest.TestCase):
                     'INPUTLAYERS' : self.getInputLayers(
                         'sqlite', 'douglas_peucker',
                         ['cb_veg_campo_a'],
-                        addControlKey=True
+                        addControlKey=True, selectedFeatures=False,
+                        idsToSelect=None
                     )[0],
                     'SELECTED' : False,
-                    'SNAP': 2,
-                    'DOUGLASPARAMETER': 1.5,
+                    'SNAP': 1,
+                    'DOUGLASPARAMETER': 150,
+                    'FLAGS' : "memory:",
+                    'OUTPUT' : "memory:"
+                },
+                {
+                    '__comment' : "Second test: checks if it works with onlySelected=True.",
+                    'INPUTLAYERS' : self.getInputLayers(
+                        'sqlite', 'douglas_peucker',
+                        ['cb_veg_campo_a'],
+                        addControlKey=True, selectedFeatures=True,
+                        idsToSelect=[1,2]
+                    )[0],
+                    'SELECTED' : True,
+                    'SNAP': 1,
+                    'DOUGLASPARAMETER': 150,
                     'FLAGS' : "memory:",
                     'OUTPUT' : "memory:"
                 }
@@ -286,15 +293,30 @@ class Tester(unittest.TestCase):
 
             "dsgtools:topologicaldouglaspeuckerlinesimplification" : [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
+                    '__comment' : "First test: checks if it works.",
                     'INPUTLAYERS' : self.getInputLayers(
                         'sqlite', 'douglas_peucker',
                         ['cb_tra_trecho_rodoviario_l'],
-                        addControlKey=True, selectedFeatures=True
+                        addControlKey=True, selectedFeatures=False,
+                        idsToSelect=None
+                    )[0],
+                    'SELECTED' : False,
+                    'SNAP': 1,
+                    'DOUGLASPARAMETER': 2.5,
+                    'FLAGS' : "memory:",
+                    'OUTPUT' : "memory:"
+                },
+                {
+                    '__comment' : "Second test: checks if it works with onlySelected=True.",
+                    'INPUTLAYERS' : self.getInputLayers(
+                        'sqlite', 'douglas_peucker',
+                        ['cb_tra_trecho_rodoviario_l'],
+                        addControlKey=True, selectedFeatures=True,
+                        idsToSelect=[19,20,21]
                     )[0],
                     'SELECTED' : True,
-                    'SNAP': 2,
-                    'DOUGLASPARAMETER': 1.5,
+                    'SNAP': 1,
+                    'DOUGLASPARAMETER': 2.5,
                     'FLAGS' : "memory:",
                     'OUTPUT' : "memory:"
                 }
