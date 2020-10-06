@@ -312,7 +312,7 @@ class Tester(unittest.TestCase):
                         'sqlite', 'douglas_peucker',
                         ['cb_tra_trecho_rodoviario_l'],
                         addControlKey=True, selectedFeatures=True,
-                        idsToSelect=[19,20,21]
+                        idsToSelect=[19, 20, 21]
                     )[0],
                     'SELECTED' : True,
                     'SNAP': 1,
