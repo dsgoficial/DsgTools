@@ -1299,18 +1299,27 @@ class Tester(unittest.TestCase):
                         if isinstance(outputLyr, list):
                             for idx, outLayer in enumerate(outputLyr):
                                 if "{0}_{1}".format(key, idx) not in expected:
-                                    raise Exception("Output dictionary key was not found in expected output dictionary.".\
-                                        format(alg=algName, nr=i + 1)
+                                    raise Exception(
+                                        "Output dictionary key {k} was not "
+                                        "found in expected output dictionary.".\
+                                            format(k="{0}_{1}".format(key, idx))
                                     )
+                                expectedLyr = expected["{0}_{1}".format(key, idx)]
                                 self.compareInputLayerWithOutputLayer(
                                     i,
                                     algName,
                                     outLayer,
-                                    expected["{0}_{1}".format(key, idx)],
+                                    expectedLyr,
                                     loadLayers=loadLayers,
                                     addControlKey=addControlKey,
                                     attributeBlackList=attributeBlackList
                                 )
+                                if isinstance(expectedLyr, QgsVectorLayer):
+                                    expectedLyr.rollBack()
+                            if isinstance(outLayer, QgsVectorLayer):
+                                outLayer.rollBack()
+                            # from now on commands are for single output only
+                            continue
                         elif key not in expected:
                             raise Exception("Output dictionary key was not found in expected output dictionary.".\
                                 format(alg=algName, nr=i + 1)
@@ -1329,12 +1338,6 @@ class Tester(unittest.TestCase):
                             outputLyr.rollBack()
                         if isinstance(expected[key], QgsVectorLayer):
                             expected[key].rollBack()
-                    for key, expectedLyr in expected.items():
-                        if key not in expected:
-                            raise Exception("Output dictionary key was not found in expected output dictionary.".\
-                                format(alg=algName, nr=i + 1)
-                            )
-
         except Exception as e:
             if isinstance(output, QgsVectorLayer):
                 output.rollBack()
