@@ -195,19 +195,22 @@ class Tester(unittest.TestCase):
             layers = self.datasets[key]
         return layers
 
-    def getInputLayers(self, driver, dataset, layers, addControlKey=False, selectedFeatures=False, idsToSelect=[]):
+    def getInputLayers(self, driver, dataset, layers,
+                        addControlKey=False, idsToSelect=None):
         """
         Gets the vector layers from an input dataset.
         :param driver: (str) driver's to be read.
         :param dataset: (str) dataset's name.
         :param layers: (list-of-str) layers to be read.
+        :param idsToSelect: (list-of-int) list of feature IDs to be selected on
+                            input.
         :return: (list-of-QgsVectorLayer) vector layers read from the dataset.
         """
         out = []
         # (vls) a map from layer name to vector layer read from database.
         vls = self.testingDataset(driver, dataset)
         for l in layers:
-            if selectedFeatures:
+            if idsToSelect is not None:
                 # vls[l].rollBack()
                 lyr = vls[l] if not addControlKey else \
                     self.addControlKey(vls[l])
@@ -267,7 +270,7 @@ class Tester(unittest.TestCase):
                     'INPUTLAYERS' : self.getInputLayers(
                         'geojson', 'douglas_peucker',
                         ['cb_veg_campo_a'],
-                        addControlKey=True, selectedFeatures=False,
+                        addControlKey=True,
                         idsToSelect=None
                     )[0],
                     'SELECTED' : False,
@@ -281,8 +284,8 @@ class Tester(unittest.TestCase):
                     'INPUTLAYERS' : self.getInputLayers(
                         'geojson', 'douglas_peucker',
                         ['cb_veg_campo_a'],
-                        addControlKey=True, selectedFeatures=True,
-                        idsToSelect=[1,2]
+                        addControlKey=True,
+                        idsToSelect=[1, 2]
                     )[0],
                     'SELECTED' : True,
                     'SNAP': 1,
@@ -298,7 +301,7 @@ class Tester(unittest.TestCase):
                     'INPUTLAYERS' : self.getInputLayers(
                         'geojson', 'douglas_peucker',
                         ['cb_tra_trecho_rodoviario_l'],
-                        addControlKey=True, selectedFeatures=False,
+                        addControlKey=True,
                         idsToSelect=None
                     )[0],
                     'SELECTED' : False,
@@ -312,7 +315,7 @@ class Tester(unittest.TestCase):
                     'INPUTLAYERS' : self.getInputLayers(
                         'geojson', 'douglas_peucker',
                         ['cb_tra_trecho_rodoviario_l'],
-                        addControlKey=True, selectedFeatures=True,
+                        addControlKey=True,
                         idsToSelect=[19, 20, 21]
                     )[0],
                     'SELECTED' : True,
