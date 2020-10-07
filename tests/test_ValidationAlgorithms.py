@@ -170,12 +170,13 @@ class Tester(unittest.TestCase):
                 "test_dataset_unbuild_polygons" : os.path.join(gpkgPaths, 'test_dataset_unbuild_polygons.gpkg')
             },
             "geojson" : {
-                "land_cover_layers" : os.path.join(geojsonPaths, 'land_cover_layers'),
-                "terrain_model_layers" : os.path.join(geojsonPaths, 'terrain_model_layers'),
-                "testes_sirgas2000_24s" : os.path.join(geojsonPaths, 'testes_sirgas2000_24s'),
-                "spatial_rules_alg" : os.path.join(geojsonPaths, 'spatial_rules_alg'),
-                "create_frames_layers" : os.path.join(geojsonPaths, 'create_frames_layers'),
-                "identify_angles_in_invalid_range_layers" : os.path.join(geojsonPaths, 'identify_angles_in_invalid_range_layers')
+                "land_cover_layers": os.path.join(geojsonPaths, 'land_cover_layers'),
+                "terrain_model_layers": os.path.join(geojsonPaths, 'terrain_model_layers'),
+                "testes_sirgas2000_24s": os.path.join(geojsonPaths, 'testes_sirgas2000_24s'),
+                "spatial_rules_alg": os.path.join(geojsonPaths, 'spatial_rules_alg'),
+                "create_frames_layers": os.path.join(geojsonPaths, 'create_frames_layers'),
+                "identify_angles_in_invalid_range_layers": os.path.join(geojsonPaths, 'identify_angles_in_invalid_range_layers'),
+                "douglas_peucker": os.path.join(geojsonPaths, 'douglas_peucker')
             }
         }
         # switch-case for dataset reading
@@ -264,7 +265,7 @@ class Tester(unittest.TestCase):
                 {
                     '__comment' : "'Normal' test: checks if it works.",
                     'INPUTLAYERS' : self.getInputLayers(
-                        'sqlite', 'douglas_peucker',
+                        'geojson', 'douglas_peucker',
                         ['cb_veg_campo_a'],
                         addControlKey=True, selectedFeatures=False,
                         idsToSelect=None
@@ -278,7 +279,7 @@ class Tester(unittest.TestCase):
                 {
                     '__comment' : "Second test: checks if it works with onlySelected=True.",
                     'INPUTLAYERS' : self.getInputLayers(
-                        'sqlite', 'douglas_peucker',
+                        'geojson', 'douglas_peucker',
                         ['cb_veg_campo_a'],
                         addControlKey=True, selectedFeatures=True,
                         idsToSelect=[1,2]
@@ -295,7 +296,7 @@ class Tester(unittest.TestCase):
                 {
                     '__comment' : "First test: checks if it works.",
                     'INPUTLAYERS' : self.getInputLayers(
-                        'sqlite', 'douglas_peucker',
+                        'geojson', 'douglas_peucker',
                         ['cb_tra_trecho_rodoviario_l'],
                         addControlKey=True, selectedFeatures=False,
                         idsToSelect=None
@@ -309,7 +310,7 @@ class Tester(unittest.TestCase):
                 {
                     '__comment' : "Second test: checks if it works with onlySelected=True.",
                     'INPUTLAYERS' : self.getInputLayers(
-                        'sqlite', 'douglas_peucker',
+                        'geojson', 'douglas_peucker',
                         ['cb_tra_trecho_rodoviario_l'],
                         addControlKey=True, selectedFeatures=True,
                         idsToSelect=[19, 20, 21]
