@@ -1685,3 +1685,20 @@ class LayerHandler(QObject):
                     )
                 }
         return classFieldMap
+
+    def getDefaultValues(self, layer):
+        """
+        Gets the default values for all fields as from the provider.
+        :param layer: (QgsVectorLayer) layer to have its default values read.
+        :return: (dict) a map from attribute name to its default value.
+        """
+        provider = layer.dataProvider()
+        fields = layer.fields()
+        defaultValues = dict()
+        for idx, f in enumerate(fields):
+            if fields.fieldOrigin(idx) == fields.OriginExpression:
+                # ignore virtual fields
+                continue
+            providerIdx = fields.fieldOriginIndex(idx)
+            defaultValues[f.name()] = provider.defaultValueClause(providerIdx)
+        return defaultValues
