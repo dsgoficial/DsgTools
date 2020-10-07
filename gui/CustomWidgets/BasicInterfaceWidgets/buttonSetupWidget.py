@@ -23,7 +23,7 @@
 
 import os, json
 
-from qgis.core import Qgis, QgsMessageLog
+from qgis.core import Qgis, QgsMessageLog, QgsApplication
 from qgis.gui import QgsMessageBar
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import (Qt,
@@ -44,6 +44,7 @@ from DsgTools.gui.ProductionTools.Toolboxes.CustomFeatureToolBox.customButtonSet
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'buttonSetupWidget.ui'))
+app = QgsApplication.instance()
 
 class ButtonSetupWidget(QDialog, FORM_CLASS):
     def __init__(self, parent=None, buttonSetup=None):
@@ -66,6 +67,15 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         for w in ("savePushButton", "undoPushButton", "removePushButton",
                   "buttonPropWidget"):
             getattr(self, w).setEnabled(bEnabled)
+        
+        # making the button selection to stand out a little bit
+        if "Night Mapping" in app.activeThemePath():
+            ss = """QHeaderView::section:checked
+                { color:black; background-color:white; }"""
+        else:
+            ss = """QHeaderView::section:checked
+                { color:gray; background-color:black; }"""
+        self.tableWidget.setStyleSheet(ss)
 
     def raiseWarning(self, msg, title=None, lvl=None, duration=None):
         """
@@ -923,7 +933,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         s = self.readSetup()
         fd = QFileDialog()
         filename = fd.getSaveFileName(
-            caption=self.tr('Export setup "{0}"'.format(s.name())),
+            caption=self.tr("Export setup - {0}").format(s.name()),
             filter=self.tr("DSGTools Buttons Setup (*.setup)")
         )
         filename = filename[0] if isinstance(filename, tuple) else filename
