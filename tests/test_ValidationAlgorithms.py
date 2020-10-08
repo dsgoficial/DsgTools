@@ -511,7 +511,7 @@ class Tester(unittest.TestCase):
                     'SELECTED': False
                 },
                 {
-                    '__comment' : "'Normal' test: checks if it works with polygon.",
+                    '__comment' : "'Normal' test: checks if it works with line.",
                     'FLAGS': "memory:",
                     'INPUT': self.getInputLayers(
                             'geojson', 'testes_sirgas2000_24s', ['test2_vertexnearedge_l']
