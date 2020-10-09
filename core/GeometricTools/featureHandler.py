@@ -26,15 +26,16 @@ import itertools
 import sys
 import os
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
-                      QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
-                      QgsCoordinateTransform, QgsWkbTypes, QgsProcessingMultiStepFeedback,\
-                      QgsVectorLayerUtils, QgsCoordinateReferenceSystem, QgsProject
+    QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
+    QgsCoordinateTransform, QgsWkbTypes, QgsProcessingMultiStepFeedback,\
+    QgsVectorLayerUtils, QgsCoordinateReferenceSystem, QgsProject
 from qgis.PyQt.Qt import QObject, QVariant
 
 from .geometryHandler import GeometryHandler
 from .attributeHandler import AttributeHandler
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 import concurrent.futures
+
 
 class FeatureHandler(QObject):
     def __init__(self, iface=None, parent=None):
@@ -47,17 +48,19 @@ class FeatureHandler(QObject):
         self.attributeHandler = AttributeHandler(iface)
         self.utmGrid = UtmGrid()
         self.stepsTotal = 0
-    
+
     def reclassifyFeatures(self, featureList, destinationLayer, reclassificationDict, coordinateTransformer, parameterDict):
         newFeatList = []
         deleteList = []
         for feat in featureList:
-            geom = self.geometryHandler.reprojectWithCoordinateTransformer(feat.geometry(), coordinateTransformer)
+            geom = self.geometryHandler.reprojectWithCoordinateTransformer(
+                feat.geometry(), coordinateTransformer)
             geomList = self.geometryHandler.adjustGeometry(geom, parameterDict)
-            newFeatList += self.createFeaturesWithAttributeDict(geomList, feat, reclassificationDict, destinationLayer)
+            newFeatList += self.createFeaturesWithAttributeDict(
+                geomList, feat, reclassificationDict, destinationLayer)
             deleteList.append(feat.id())
         return newFeatList, deleteList
-    
+
     def createFeaturesWithAttributeDict(self, geomList, originalFeat, attributeDict, destinationLayer):
         """
         Creates a newFeatureList using each geom from geomList. attributeDict is used to set attributes
@@ -67,7 +70,8 @@ class FeatureHandler(QObject):
         for geom in geomList:
             newFeature = QgsFeature(fields)
             newFeature.setGeometry(geom)
-            newFeature = self.attributeHandler.setFeatureAttributes(newFeature, attributeDict, oldFeat = originalFeat)
+            newFeature = self.attributeHandler.setFeatureAttributes(
+                newFeature, attributeDict, oldFeat=originalFeat)
             newFeatureList.append(newFeature)
         return newFeatureList
 
@@ -87,10 +91,11 @@ class FeatureHandler(QObject):
         if geom:
             newFeature.setGeometry(geom)
         if attributes:
-            newFeature = self.attributeHandler.setFeatureAttributes(newFeature, attributes)
+            newFeature = self.attributeHandler.setFeatureAttributes(
+                newFeature, attributes)
         return newFeature
 
-    def createUnifiedFeature(self, unifiedLyr, feature, classname, bList = None, attributeTupple = False, coordinateTransformer = None, parameterDict = None):
+    def createUnifiedFeature(self, unifiedLyr, feature, classname, bList=None, attributeTupple=False, coordinateTransformer=None, parameterDict=None):
         parameterDict = {} if parameterDict is None else parameterDict
         bList = [] if bList is None else bList
         newFeats = []
@@ -100,10 +105,11 @@ class FeatureHandler(QObject):
             newfeat['featid'] = feature.id()
             newfeat['layer'] = classname
             if attributeTupple:
-                newfeat['tupple'] = self.attributeHandler.getTuppleAttribute(feature, unifiedLyr, bList=bList)
+                newfeat['tupple'] = self.attributeHandler.getTuppleAttribute(
+                    feature, unifiedLyr, bList=bList)
             newFeats.append(newfeat)
         return newFeats
-    
+
     def getNewFeatureWithoutGeom(self, referenceFeature, lyr):
         newFeat = QgsFeature(referenceFeature)
         # provider = lyr.dataProvider()
@@ -125,14 +131,29 @@ class FeatureHandler(QObject):
             feat.setGeometry(geom)
         if attributeMap:
             feat = self.attributeHandler.setFeatureAttributes(
-                            feat, attributeMap)
+                feat, attributeMap)
         return feat
 
-    def handleFeature(self, featList, featureWithoutGeom, lyr, parameterDict = None, coordinateTransformer = None):
+    def handleFeature(self, featList, featureWithoutGeom, lyr, 
+                      parameterDict=None,
+                      coordinateTransformer=None):
+        """
+        Handles a feature list to return geometries to update
+        and a new feature list.
+        :param featList: (list) a list from QgsFeatures.
+        :param featureWithoutGeom: (QgsFeature) a feature without geometry.
+        :param lyr: (QgsVectorLayer) layer container of features from featList.
+        :param parameterDict: (dict) a dictionary with features parameters.
+        :param coordinateTransformer: (QgsCoordinateTransform) a coordinate
+            transformer.
+        :return: (dict) a dictionary with geometries to update, a new feature
+            list, and a boolean.
+        """
         parameterDict = {} if parameterDict is None else parameterDict
         geomList = []
         for feat in featList:
-            geomList += self.geometryHandler.handleGeometry(feat.geometry(), parameterDict, coordinateTransformer)
+            geomList += self.geometryHandler.handleGeometry(
+                feat.geometry(), parameterDict, coordinateTransformer)
         geomToUpdate = None
         newFeatList = []
         if not geomList:
@@ -142,14 +163,16 @@ class FeatureHandler(QObject):
                 geomToUpdate = geom
                 continue
             else:
-                newFeat = self.getNewFeatureWithoutGeom(featureWithoutGeom, lyr)
+                newFeat = self.getNewFeatureWithoutGeom(
+                    featureWithoutGeom, lyr)
                 newFeat.setGeometry(geom)
                 newFeatList.append(newFeat)
         return geomToUpdate, newFeatList, False
 
-    def handleConvertedFeature(self, feat, lyr, parameterDict = None, coordinateTransformer = None):
+    def handleConvertedFeature(self, feat, lyr, parameterDict=None, coordinateTransformer=None):
         parameterDict = {} if parameterDict is None else parameterDict
-        geomList = self.geometryHandler.handleGeometry(feat.geometry(), parameterDict, coordinateTransformer)
+        geomList = self.geometryHandler.handleGeometry(
+            feat.geometry(), parameterDict, coordinateTransformer)
         newFeatSet = set()
         for geom in geomList:
             newFeat = QgsVectorLayerUtils.createFeature(lyr, geom)
@@ -165,8 +188,9 @@ class FeatureHandler(QObject):
 
     def getFeatureOuterShellAndHoles(self, feat, isMulti):
         geom = feat.geometry()
-        
-        outershells, donutholes = self.geometryHandler.getOuterShellAndHoles(geom, isMulti)
+
+        outershells, donutholes = self.geometryHandler.getOuterShellAndHoles(
+            geom, isMulti)
         outershellList = []
         for shell in outershells:
             outerShellFeat = QgsFeature(feat)
@@ -179,7 +203,7 @@ class FeatureHandler(QObject):
             newFeat.setGeometry(hole)
             donutHoleList.append(newFeat)
         return outershellList, donutHoleList
-    
+
     def mergeLineFeatures(self, featList, lyr, idsToRemove, networkDict, parameterDict=None, feedback=None):
         parameterDict = {} if parameterDict is None else parameterDict
         changeDict = dict()
@@ -205,7 +229,8 @@ class FeatureHandler(QObject):
                     for pointPart in intersectionPoint.asGeometryCollection():
                         point = pointPart.asPoint()
                         if (point in networkDict and len(networkDict[point]) == 2):
-                            newGeom = self.geometryHandler.handleGeometry(geom_a.combine(geom_b).mergeLines(), parameterDict)[0] #only one candidate is possible because features are touching
+                            newGeom = self.geometryHandler.handleGeometry(geom_a.combine(geom_b).mergeLines(
+                            ), parameterDict)[0]  # only one candidate is possible because features are touching
                             feat_a.setGeometry(newGeom)
                             lyr.updateFeature(feat_a)
                             idsToRemove.append(id_b)
@@ -214,16 +239,16 @@ class FeatureHandler(QObject):
                 feedback.setProgress(size*current)
         # for id, geom in changeDict.items():
         #     lyr.changeGeometry(id, geom)
-    
+
     def getNewGridFeat(self, index, geom, fields):
         feat = QgsFeature(fields)
         feat['inom'] = index
         feat['mi'] = self.utmGrid.get_MI_MIR_from_inom(index)
         feat.setGeometry(geom)
         return feat
-    
-    def getSystematicGridFeatures(self, featureList, index, stopScale, coordinateTransformer,\
-        fields, constraintDict=None, feedback=None):
+
+    def getSystematicGridFeatures(self, featureList, index, stopScale, coordinateTransformer,
+                                  fields, constraintDict=None, feedback=None):
         if feedback is not None and feedback.isCanceled():
             return
         scale = self.utmGrid.getScale(index)
@@ -242,7 +267,7 @@ class FeatureHandler(QObject):
             sufixIterator = list(
                 itertools.chain.from_iterable(
                     self.utmGrid.scaleText[scaleId+1]
-                ) #flatten list into one single list
+                )  # flatten list into one single list
             )
             # localMultiStepFeedback = QgsProcessingMultiStepFeedback(
             #     len(sufixIterator),
@@ -256,7 +281,7 @@ class FeatureHandler(QObject):
                     oldInomem=index,
                     newPart=line)
                 if constraintDict is not None \
-                    and self.createGridItem(
+                        and self.createGridItem(
                             inomen2,
                             coordinateTransformer,
                             constraintDict
@@ -282,13 +307,13 @@ class FeatureHandler(QObject):
         engine.prepareGeometry()
         for fid in constraintDict['spatialIdx'].intersects(frameBB):
             if getattr(engine, constraintDict['predicate'])(
-                    constraintDict['idDict'][fid].geometry().constGet()
-                ):
+                constraintDict['idDict'][fid].geometry().constGet()
+            ):
                 return frameGeom
         return None
 
-    def getSystematicGridFeaturesWithConstraint(self, featureList, inputLyr, stopScale,\
-                            coordinateTransformer, fields, feedback=None, predicate=None):
+    def getSystematicGridFeaturesWithConstraint(self, featureList, inputLyr, stopScale,
+                                                coordinateTransformer, fields, feedback=None, predicate=None):
         """
         TODO: Progress
         """
@@ -316,11 +341,12 @@ class FeatureHandler(QObject):
             multiStepFeedback
         )
         constraintDict = {
-            'spatialIdx' : spatialIdx,
-            'idDict' : idDict,
-            'predicate' : predicate
+            'spatialIdx': spatialIdx,
+            'idDict': idDict,
+            'predicate': predicate
         }
         sys.setrecursionlimit(10**7)
+
         def compute(x):
             self.getSystematicGridFeatures(
                 featureList,
@@ -341,17 +367,15 @@ class FeatureHandler(QObject):
             futures.append(
                 pool.submit(compute, inomen)
             )
-        
+
         for x in concurrent.futures.as_completed(futures):
             if gridMultistepFeedback.isCanceled():
                 break
             gridMultistepFeedback.setCurrentStep(current_idx)
             current_idx += 1
 
-
-
-    def buildSpatialIndexAndIdDict(self, inputLyr, feedback=None,\
-                                                    featureRequest=None):
+    def buildSpatialIndexAndIdDict(self, inputLyr, feedback=None,
+                                   featureRequest=None):
         """
         creates a spatial index for the input layer
         :param inputLyr: (QgsVectorLayer) input layer;
@@ -364,7 +388,8 @@ class FeatureHandler(QObject):
         size = 100/featCount if featCount else 0
         iterator = inputLyr.getFeatures() if featureRequest is None\
             else inputLyr.getFeatures(featureRequest)
-        addFeatureAlias = lambda x: self.addFeatureToSpatialIndex(
+
+        def addFeatureAlias(x): return self.addFeatureToSpatialIndex(
             current=x[0],
             feat=x[1],
             spatialIdx=spatialIdx,
@@ -375,8 +400,8 @@ class FeatureHandler(QObject):
         list(map(addFeatureAlias, enumerate(iterator)))
         return spatialIdx, idDict
 
-    def addFeatureToSpatialIndex(self, current, feat, spatialIdx,\
-                                                idDict, size, feedback):
+    def addFeatureToSpatialIndex(self, current, feat, spatialIdx,
+                                 idDict, size, feedback):
         """
         Adds feature to spatial index. Used along side with a
         python map operator to improve performance.

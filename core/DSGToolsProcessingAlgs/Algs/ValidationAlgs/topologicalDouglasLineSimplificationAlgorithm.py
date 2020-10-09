@@ -121,7 +121,8 @@ class TopologicalDouglasPeuckerLineSimplificationAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected, feedback=multiStepFeedback)
 
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(self.tr('Running clean on unified layer...'))
+        multiStepFeedback.pushInfo(
+            self.tr('Running clean on unified layer...'))
         simplifiedCoverage, error = algRunner.runDouglasSimplification(
             coverage,
             threshold,
@@ -132,12 +133,16 @@ class TopologicalDouglasPeuckerLineSimplificationAlgorithm(ValidationAlgorithm):
 
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
-        
+
         layerHandler.updateOriginalLayersFromUnifiedLayer(
-            inputLyrList, simplifiedCoverage, feedback=multiStepFeedback)
+            inputLyrList,
+            simplifiedCoverage,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected)
+
         self.flagCoverageIssues(simplifiedCoverage, error, feedback)
 
-        return {self.INPUTLAYERS : inputLyrList, self.FLAGS : self.flag_id}
+        return {self.INPUTLAYERS: inputLyrList, self.FLAGS: self.flag_id}
 
     def flagCoverageIssues(self, cleanedCoverage, error, feedback):
         """
