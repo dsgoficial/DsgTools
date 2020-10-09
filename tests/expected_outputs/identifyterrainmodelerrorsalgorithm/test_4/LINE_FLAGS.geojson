@@ -3,9 +3,9 @@
 "name": "LINE_FLAGS",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
-{ "type": "Feature", "properties": { "reason": "Missing contour between contour lines of values 10 and 30" }, "geometry": { "type": "LineString", "coordinates": [ [ -50.400856282312986, -28.003267680744557 ], [ -50.424873411963745, -28.003267680744557 ] ] } },
 { "type": "Feature", "properties": { "reason": "Missing contour between contour lines of values 30 and 50" }, "geometry": { "type": "LineString", "coordinates": [ [ -50.341337492135594, -28.003267680744557 ], [ -50.312979251636612, -28.003267680744557 ] ] } },
 { "type": "Feature", "properties": { "reason": "Missing contour between contour lines of values 30 and 50" }, "geometry": { "type": "LineString", "coordinates": [ [ -50.341337492135594, -28.003267680744557 ], [ -50.307115417887722, -27.935192678988805 ] ] } },
+{ "type": "Feature", "properties": { "reason": "Missing contour between contour lines of values 10 and 30" }, "geometry": { "type": "LineString", "coordinates": [ [ -50.400856282312986, -28.003267680744557 ], [ -50.424873411963745, -28.003267680744557 ] ] } },
 { "type": "Feature", "properties": { "reason": "Missing contour between contour lines of values 40 and 60" }, "geometry": { "type": "LineString", "coordinates": [ [ -50.385143845302558, -27.914183886580911 ], [ -50.415512356371615, -27.914183886580911 ] ] } }
 ]
 }
