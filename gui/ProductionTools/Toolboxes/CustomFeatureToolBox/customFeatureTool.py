@@ -762,7 +762,15 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             added = form.exec_() == 1 # should the feature be added after all?
             self.setFieldsEditable(inLayer)
             if added:
-                feature = form.attributeForm().currentFormFeature()
+                grand, minor, _ = Qgis.QGIS_VERSION.split(".", 2)
+                if grand == "3" and int(minor) < 15:
+                    updtFeat = form.attributeForm().feature()
+                    # QGIS 3.15.x and less does not have "currentFormFeature"
+                    for f in feature.fields():
+                        field = f.name()
+                        feature[field] = updtFeat[field]
+                else:
+                    feature = form.attributeForm().currentFormFeature()
         def updateFeatureWrapper():
             """
             A wrapper to make sure undo stack is set properly, avoiding crashes
