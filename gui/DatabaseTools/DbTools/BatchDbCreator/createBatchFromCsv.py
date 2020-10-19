@@ -23,7 +23,7 @@
 import os
 import json
 
-from qgis.core import QgsMessageLog
+from qgis.core import Qgis, QgsMessageLog
 
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, Qt
@@ -70,9 +70,16 @@ class CreateBatchFromCsv(QtWidgets.QWizardPage, FORM_CLASS):
         return parameterDict
     
     def getMiListFromCSV(self):
-        f = open(self.customFileSelector.fileNameList,'r')
-        miList = [i.replace('\n','').strip() for i in f.readlines()]
-        miList = [i for i in miList if i != '']
+        """
+        Old method for CSV reading. It identifies the databases names from the
+        CSV input file.
+        """
+        miList = list()
+        with open(self.customFileSelector.fileNameList, "r") as f:
+            for line in f.readlines():
+                line = line.strip()
+                if line != "":
+                    miList.append(line)
         return miList
 
     def validatePage(self):
@@ -113,7 +120,17 @@ class CreateBatchFromCsv(QtWidgets.QWizardPage, FORM_CLASS):
     def createDatabases(self, parameterDict):
         dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parentWidget = self)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        dbDict, errorDict =dbCreator.createDbFromMIList(parameterDict['miList'], parameterDict['srid'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'], createFrame = True, paramDict = parameterDict['templateInfo'])
+        dbDict, errorDict = dbCreator.createDbFromMIList(
+            parameterDict['miList'],
+            parameterDict['srid'],
+            prefix=parameterDict['prefix'],
+            sufix=parameterDict['sufix'],
+            # DEEPER FIX SUGGESTION: validate whether name matches INOM or MI
+            # formatting and, if it does, set this to True 
+            # createFrame=True, # i don't know why this is ALWAYS true
+            createFrame=False,
+            paramDict=parameterDict['templateInfo']
+        )
         QApplication.restoreOverrideCursor()
         return dbDict, errorDict
     
