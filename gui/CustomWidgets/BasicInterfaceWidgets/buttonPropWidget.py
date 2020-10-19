@@ -24,11 +24,12 @@
 import os
 from functools import partial
 
-from qgis.PyQt import uic
+from qgis.core import Qgis
+from qgis.gui import QgsMessageBar
 from qgis.utils import iface
-from qgis.core import QgsMessageLog
+from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QIcon, QColor, QKeySequence
-from qgis.PyQt.QtCore import Qt, pyqtSlot, pyqtSignal, QSettings
+from qgis.PyQt.QtCore import Qt, QSize, pyqtSlot, pyqtSignal, QSettings
 from qgis.PyQt.QtWidgets import (QWidget,
                                  QSpinBox,
                                  QLineEdit,
@@ -39,7 +40,7 @@ from qgis.PyQt.QtWidgets import (QWidget,
                                  QMessageBox,
                                  QDoubleSpinBox)
 
-from DsgTools.core.Utils.utils import Utils
+from DsgTools.core.Utils.utils import Utils, MessageRaiser
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.gui.ProductionTools.Toolboxes.CustomFeatureToolBox.customButtonSetup import CustomButtonSetup, CustomFeatureButton
 
@@ -73,6 +74,20 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             self.tr("Editable"), self.tr("Ignored")
         ])
         self.updateFieldTable()
+        self.messageBar = QgsMessageBar(self)
+
+    def resizeEvent(self, e):
+        """
+        Just make sure if any alert box is being displayed, it matches the
+        dialog size. Method reimplementation.
+        :param e: (QResizeEvent) resize event related to this widget resizing.
+        """
+        self.messageBar.resize(
+            QSize(
+                self.geometry().size().width(),
+                40 # this felt nicer than the original height (30)
+            )
+        )
 
     def confirmAction(self, msg, title=None, showNo=True):
         """
@@ -345,6 +360,15 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             for fName, vMap in LayerHandler().valueMaps(vl).items():
                 valueMaps[fName] = {v: k for k, v in vMap.items()}
         def setMappedValue(cb, field, value):
+            vlFound = value in valueMaps[field]
+            if not vlFound:
+                msg = self.tr("'{0}' is an invalid value for field {1}. (Is "
+                              "the layer style generated from the current data"
+                              " model?")\
+                          .format(value, field)
+                title = self.tr("DSGTools Custom Feature Tool Box")
+                MessageRaiser().raiseIfaceMessage(title, msg, Qgis.Warning, 5)
+                value = None
             if value is None:
                 return
             cb.setCurrentText(valueMaps[field][value])
@@ -510,7 +534,9 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         layer = layer or self.vectorLayer()
         self.attributeTableWidget.setRowCount(0)
-        fields = layer.fields() if layer else []
+        if layer is None:
+            return
+        fields = layer.fields()
         pkIdxList = layer.primaryKeyAttributes() if layer else []
         if layer.name() == self.button.layer():
             attrMap = self.button.attributeMap()
@@ -550,7 +576,8 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             if fName in valueMaps:
                 vWidget = QComboBox()
                 vWidget.addItems(set(valueMaps[fName].values()))
-                if value is not None:
+                if value is not None and value in valueMaps[fName]:
+                    # an "old" version of the map may have been loaded
                     value = valueMaps[fName][value]
                     vWidget.setCurrentText(value)
             else:
