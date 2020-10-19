@@ -773,11 +773,12 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             # the tool's modification
             stack = inLayer.undoStack()
             cmd = stack.command(stack.count() - 1)
+            attrChanged = cmd.text() == 'Attributes changed'
             cmd.undo()
             cmd.setObsolete(True)
             stack.undo()
             if added:
-                if b.openForm():
+                if b.openForm() and attrChanged:
                     # if form was opened and confirmed, layer will have an
                     # 'Attributes changed' edit command stacked as well
                     stack.undo()
