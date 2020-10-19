@@ -203,8 +203,8 @@ class AcquisitionFreeController(object):
         simplifyGeometry = self.simplifyGeometry(geom, tolerance)
         fields = layer.fields()
         feature = core.QgsFeature()
+        feature.setFields(fields)
         feature.setGeometry(simplifyGeometry)
-        feature.initAttributes(fields.count())            
         provider = layer.dataProvider()              
         for i in range(fields.count()):
             defaultClauseCandidate = provider.defaultValueClause(i)
@@ -269,15 +269,23 @@ class AcquisitionFreeController(object):
     def addFeatureWithForm(self, layer, feature):
         #Método para adicionar a feição com formulário
         #Parâmetro de entrada: layer (Camada ativa), feature (Feição adquirida)
+        layer.beginEditCommand("dsgtools freehand feature added")
         attrDialog = gui.QgsAttributeDialog(layer, feature, False)
         attrDialog.setMode(int(gui.QgsAttributeForm.AddFeatureMode))
-        return attrDialog.exec_()
+        res = attrDialog.exec_()
+        if res == 0:
+            layer.destroyEditCommand()
+        else:
+            layer.endEditCommand()
+        return res
 
     def addFeatureWithoutForm(self, layer, feature):
         #Método para adicionar a feição sem formulário
         #Parâmetro de entrada: layer (Camada ativa), feature (Feição adquirida)
+        layer.beginEditCommand("dsgtools freehand feature added")
         layer.addFeatures([feature])
         layer.removeSelection()
+        layer.endEditCommand()
 
     def activateTool(self):
         #Método para iniciar a ferramenta
