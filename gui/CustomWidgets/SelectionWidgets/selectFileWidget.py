@@ -58,8 +58,8 @@ class SelectFileWidget(QtWidgets.QWidget, FORM_CLASS):
             selectedFiles = ', '.join(self.fileNameList[0])
         elif self.type == 'single':
             selectedFiles = fd.getOpenFileName(caption=self.caption, filter=self.filter)
-            if selectedFiles != '':
-                self.fileNameList = selectedFiles
+            if isinstance(selectedFiles, tuple):
+                self.fileNameList = selectedFiles[0]
         elif self.type == 'dir':
              selectedFiles = fd.getExistingDirectory(directory=os.path.expanduser('~'), caption=self.caption, options=QFileDialog.ShowDirsOnly)
              if selectedFiles != '':
