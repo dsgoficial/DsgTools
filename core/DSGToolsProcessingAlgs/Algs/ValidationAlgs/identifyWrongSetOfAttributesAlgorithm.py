@@ -24,14 +24,15 @@ from qgis.PyQt.QtCore import QCoreApplication, QVariant
 from qgis.utils import iface
 from qgis.gui import QgsMapCanvas
 import json
+import processing
 from qgis.core import (edit,
                        Qgis,
                        QgsDataSourceUri,
-					   QgsExpression,
-					   QgsExpressionContext,
-					   QgsExpressionContextUtils,
+                       QgsExpression,
+                       QgsExpressionContext,
+                       QgsExpressionContextUtils,
                        QgsFeature,
-					   QgsFeatureRequest,
+                       QgsFeatureRequest,
                        QgsFeatureSink,
                        QgsField,
                        QgsFields,
@@ -54,6 +55,7 @@ from qgis.core import (edit,
 from .validationAlgorithm import ValidationAlgorithm
 from ....GeometricTools.layerHandler import LayerHandler
 from ....GeometricTools.geometryHandler import GeometryHandler
+
 
 class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
     INPUT = 'INPUT'
@@ -85,15 +87,15 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterFile(
                 self.RULEFILE,
                 self.tr('JSON rules file:'),
-                defaultValue = '.json'
+                defaultValue='.json'
             )
         )
         self.addParameter(
             QgsProcessingParameterString(
                 self.RULEDATA,
-                description =  self.tr('JSON formatted rules:'),
-                multiLine = True,
-                defaultValue = '{}'
+                description=self.tr('JSON formatted rules:'),
+                multiLine=True,
+                defaultValue='{}'
             )
         )
         self.addParameter(
@@ -125,33 +127,34 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        
-        inputLyrList = self.parameterAsLayerList(parameters, self.INPUT, context)
+
+        inputLyrList = self.parameterAsLayerList(
+            parameters, self.INPUT, context)
         if inputLyrList is None or inputLyrList == []:
             raise QgsProcessingException(self.invalidSourceError(
                 parameters, self.INPUT))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        
+
         crs = QgsProject.instance().crs()
         pointFlags, ptId = self.parameterAsSink(
-                parameters, self.POINT_FLAGS, context,
-                self.flagFields, QgsWkbTypes.Point, crs
+            parameters, self.POINT_FLAGS, context,
+            self.flagFields, QgsWkbTypes.Point, crs
         )
         if not pointFlags:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.POINT_FLAGS)
             )
         lineFlags, lId = self.parameterAsSink(
-                parameters, self.LINE_FLAGS, context,
-                self.flagFields, QgsWkbTypes.LineString, crs
+            parameters, self.LINE_FLAGS, context,
+            self.flagFields, QgsWkbTypes.LineString, crs
         )
         if not lineFlags:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.LINE_FLAGS)
             )
         polygonFlags, polId = self.parameterAsSink(
-                parameters, self.POLYGON_FLAGS, context,
-                self.flagFields, QgsWkbTypes.Polygon, crs
+            parameters, self.POLYGON_FLAGS, context,
+            self.flagFields, QgsWkbTypes.Polygon, crs
         )
         if not polygonFlags:
             raise QgsProcessingException(
@@ -159,47 +162,42 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             )
         rulePath = self.parameterAsFile(parameters, self.RULEFILE, context)
         inputData = self.loadRulesData(rulePath)
-        #teste = self.getSelected(inputLyrList)
-        failedFeatures = self.checkedFeatures(inputData, inputLyrList, onlySelected)
+
+        failedFeatures = self.checkedFeatures(
+            inputData, inputLyrList, onlySelected)
+
         flags = self.flagsFromFailedList(failedFeatures, pointFlags, lineFlags,
-            polygonFlags, context, feedback
-        )
+                                         polygonFlags, context, feedback
+                                         )
         return {
             self.POINT_FLAGS: ptId,
             self.LINE_FLAGS: lId,
-            self.POLYGON_FLAGS: polId
-        }
+            self.POLYGON_FLAGS: polId}
 
     def loadRulesData(self, path):
         """
         Loads a dict with the below data structure
-            {
-                rule description: {
-                    layer name: {
-                        all rules: [rule 1, ..., rule n]
-                    }
-                }
-            }
+        {rule description: {
+                layer name: {
+                    all rules: [rule 1, ..., rule n]
+        }}}
         :param (OS Path) path: path to the rules JSON file.
         """
+        # to write a method to evaluate the rules and the
+        # file format above
         with open(path, 'r') as jsonFile:
             ruleDict = json.load(jsonFile)
         return ruleDict
 
-    def getSelected(self, layerList):
-        selectedDict = dict()
-        for lyr in layerList:
-            featureList = self.lyrHandler.getFeatureList(lyr, onlySelected=True, returnIterator=False)
-            if featureList:
-                selectedDict[lyr] = featureList
-        return selectedDict
-
-
     def checkedFeatures(self, rules, layerList, onlySelected, returnIterator=True):
         """
-        Select features by conditional rules stored in the rules JSON file.
+        This method filters a layer or a set of selected features from some
+        conditional rules, and a result is a dictionary with rules and features.
+        That means these features were filled with a wrong set of attributes.
         :param (dict) rules: dictionary from conditional rules;
         :param (QgsVectorLayer) layerList: list from all loaded layers.
+        :param (boolean) onlySelected: list from all loaded layers.
+        :param (dict) failedDict: dictionary with rules and features.
         """
 
         failedDict = {}
@@ -210,18 +208,33 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
                 if loadedLyrName in rules[ruleName]:
                     allRules = rules[ruleName][loadedLyrName]['allRules']
                     for rule in allRules:
+                        # in order to improve efficiency in large databases or
+                        # in the most detailed scales, it's interesting to take
+                        # a look at NoGeometry and SubsetOfAttributes flags.
+                        request = QgsFeatureRequest().setFilterExpression(rule)
                         if onlySelected:
-                            request = QgsFeatureRequest().setFilterExpression("is_selected() and {}".format(rule))
-                            for feat in lyr.getFeatures(request):
-                                failedList.append(feat)
-                            """
-                            why dont works???!?!?!ovvdvjsndvihdvhçvbivbvvkjbvjvbvbjphiowewvho
-                            """
+                            # for some reason the request using as expression
+                            # ('is_selected() and {}'.format(rule)) in the
+                            # getFeatures() method as a param doesn't works, but
+                            # works on TOC from canvas, so, to resolve I created
+                            # a new layer with saveselectedfeatures alg and move on
+
+                            parameters = {'INPUT': lyr,
+                                          'OUTPUT': 'TEMPORARY_OUTPUT'}
+                            selected = processing.run(
+                                'native:saveselectedfeatures', parameters)
+
+                            for res, features in selected.items():
+                                for feature in features.getFeatures(rule):
+                                    failedList.append(feature)
+
                         else:
-                            request = QgsFeatureRequest().setFilterExpression(rule)
-                            for feat in lyr.getFeatures(request):
-                                failedList.append(feat)
+                            for feature in lyr.getFeatures(request):
+                                failedList.append(feature)
+
             failedDict[ruleName] = failedList
+            # failedDict = {'ruleName_1': [QgsFeature_1,...,QgsFeature_n],
+            #               'ruleName_n': [QgsFeature_1,...,QgsFeature_n]}
 
         return failedDict
 
@@ -241,7 +254,8 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             QgsWkbTypes.PolygonGeometry: polLayer
         }
         for ruleName, flagList in featureDict.items():
-            flagText = self.tr('{name}').format(name = ruleName)  # improve the flag description
+            # improve description in flagText
+            flagText = self.tr('{name}').format(name=ruleName)
             for flag in flagList:
                 geom = flag.geometry()
                 newFeature = QgsFeature(self.flagFields)
