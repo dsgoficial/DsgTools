@@ -23,15 +23,17 @@
  *                                                                         *
  ***************************************************************************/
 """
-# Import the PyQt and QGIS libraries
+
 from future import standard_library
 standard_library.install_aliases()
 import urllib.request, urllib.error, urllib.parse
 from xml.dom.minidom import parseString
 
+from qgis.core import Qgis
 from qgis.PyQt.QtCore import QSettings, QObject
 from qgis.PyQt.QtWidgets import QMessageBox
 
+from DsgTools.core.Utils.utils import MessageRaiser
 
 class BDGExRequestHandler(QObject):
     def __init__(self,parent=None):
@@ -98,8 +100,11 @@ class BDGExRequestHandler(QObject):
         user = settings.value('proxyUser')
         password = settings.value('proxyPassword')
         type = settings.value('proxyType')
-        excludedUrls = settings.value('proxyExcludedUrls') \
-                        + settings.value('noProxyUrls')
+        excludedUrls = list()
+        # if not settings.value('proxyExcludedUrls') is None:
+        #     excludedUrls = settings.value('proxyExcludedUrls')
+        # if not settings.value('proxyExcludedUrls') is None:
+        #     excludedUrls += settings.value('noProxyUrls')
         # try:
         #     urlsList = excludedUrls.split('|')
         # except:
@@ -149,7 +154,14 @@ class BDGExRequestHandler(QObject):
         """
         self.setUrllibProxy(url)
         getCapa = urllib.request.Request(url, headers={'User-Agent' : "Magic Browser"})
-        resp = urllib.request.urlopen(getCapa)
+        try:
+            resp = urllib.request.urlopen(getCapa)
+        except Exception as e:
+            title = self.tr("DSGTools BDGEx layers")
+            msg = self.tr("Unable to provide requested layer. Please check "
+                          "your network settings (proxy and exceptions too, if"
+                          " necessary).")
+            MessageRaiser().raiseIfaceMessage(title, msg, Qgis.Warning, 5)
         response = resp.read()
         try:
             myDom=parseString(response)
