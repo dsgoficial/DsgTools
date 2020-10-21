@@ -101,10 +101,10 @@ class BDGExRequestHandler(QObject):
         password = settings.value('proxyPassword')
         type = settings.value('proxyType')
         excludedUrls = list()
-        # if not settings.value('proxyExcludedUrls') is None:
-        #     excludedUrls = settings.value('proxyExcludedUrls')
-        # if not settings.value('proxyExcludedUrls') is None:
-        #     excludedUrls += settings.value('noProxyUrls')
+        if not settings.value('proxyExcludedUrls') is None:
+            excludedUrls = settings.value('proxyExcludedUrls')
+        if not settings.value('proxyExcludedUrls') is None:
+            excludedUrls += settings.value('noProxyUrls')
         # try:
         #     urlsList = excludedUrls.split('|')
         # except:
