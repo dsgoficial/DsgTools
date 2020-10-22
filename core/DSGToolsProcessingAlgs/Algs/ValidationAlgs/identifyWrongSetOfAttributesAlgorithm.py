@@ -160,8 +160,9 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.POLYGON_FLAGS)
             )
-        rulePath = self.parameterAsFile(parameters, self.RULEFILE, context)
-        inputData = self.loadRulesData(rulePath)
+        # rulePath = self.parameterAsFile(parameters, self.RULEFILE, context)
+        # ruleData = self.parameterAsString(parameters, self.RULEDATA, context)
+        inputData = self.loadRulesData(parameters)
 
         failedFeatures = self.checkedFeatures(
             inputData, inputLyrList, onlySelected)
@@ -174,7 +175,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             self.LINE_FLAGS: lId,
             self.POLYGON_FLAGS: polId}
 
-    def loadRulesData(self, path):
+    def loadRulesData(self, parameters):
         """
         Loads a dict with the below data structure
         {rule description: {
@@ -183,13 +184,29 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         }}}
         :param (OS Path) path: path to the rules JSON file.
         """
+        ruleDict = {}
+        rulePath = parameters[self.RULEFILE]
+        ruleData = parameters[self.RULEDATA]
         # to write a method to evaluate the rules and the
         # file format above
-        with open(path, 'r') as jsonFile:
-            ruleDict = json.load(jsonFile)
-        return ruleDict
+        if ruleData and ruleData != '{}':
+            ruleDict = ruleData
+            return ruleDict
+        elif rulePath and rulePath != '.json':
+            with open(rulePath, 'r') as jsonFile:
+                ruleDict = json.load(jsonFile)
+            return ruleDict
+        # else:
+        #     # return "error message"
+        
 
-    def checkedFeatures(self, rules, layerList, onlySelected, returnIterator=True):
+        # else:
+        #     with open(rulePath, 'r') as jsonFile:
+        #         ruleDict = json.load(jsonFile)
+        #     return ruleDict
+            
+
+    def checkedFeatures(self, rules, layerList, onlySelected):
         """
         This method filters a layer or a set of selected features from some
         conditional rules, and a result is a dictionary with rules and features.
@@ -216,8 +233,8 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
                             # for some reason the request using as expression
                             # ('is_selected() and {}'.format(rule)) in the
                             # getFeatures() method as a param doesn't works, but
-                            # works on TOC from canvas, so, to resolve I created
-                            # a new layer with saveselectedfeatures alg and move on
+                            # works on canvas TOC. So, to resolve I've created a
+                            # new lyr with saveselectedfeatures alg and move on
 
                             parameters = {'INPUT': lyr,
                                           'OUTPUT': 'TEMPORARY_OUTPUT'}
@@ -266,11 +283,12 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
                 )
         return (ptLayer, lLayer, polLayer)
 
-    def evaluateExpressions(self):
+    def evaluateRuleFormat(self, ):
         """
-        exp = QgsExpression(rule)  validate expressions
-        handle rule error
+        This function evaluates the rule format from both rules input
+        and inform to user if it's ok or not.
         """
+
         return
 
     def name(self):
