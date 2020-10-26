@@ -162,7 +162,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             )
         # rulePath = self.parameterAsFile(parameters, self.RULEFILE, context)
         # ruleData = self.parameterAsString(parameters, self.RULEDATA, context)
-        inputData = self.loadRulesData(parameters)
+        inputData = self.loadRulesData(parameters, feedback)
 
         failedFeatures = self.checkedFeatures(
             inputData, inputLyrList, onlySelected)
@@ -175,7 +175,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             self.LINE_FLAGS: lId,
             self.POLYGON_FLAGS: polId}
 
-    def loadRulesData(self, parameters):
+    def loadRulesData(self, parameters, feedback):
         """
         Loads a dict with the below data structure
         {rule description: {
@@ -184,27 +184,17 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         }}}
         :param (OS Path) path: path to the rules JSON file.
         """
-        ruleDict = {}
         rulePath = parameters[self.RULEFILE]
         ruleData = parameters[self.RULEDATA]
         # to write a method to evaluate the rules and the
         # file format above
         if ruleData and ruleData != '{}':
-            ruleDict = ruleData
-            return ruleDict
+            return self.validateRuleFormat(json.loads(ruleData), feedback)
         elif rulePath and rulePath != '.json':
             with open(rulePath, 'r') as jsonFile:
-                ruleDict = json.load(jsonFile)
-            return ruleDict
+                return self.validateRuleFormat(json.load(jsonFile), feedback)
         # else:
         #     # return "error message"
-        
-
-        # else:
-        #     with open(rulePath, 'r') as jsonFile:
-        #         ruleDict = json.load(jsonFile)
-        #     return ruleDict
-            
 
     def checkedFeatures(self, rules, layerList, onlySelected):
         """
@@ -283,13 +273,27 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
                 )
         return (ptLayer, lLayer, polLayer)
 
-    def evaluateRuleFormat(self, ):
+    def validateRuleFormat(self, rule, feedback):
         """
         This function evaluates the rule format from both rules input
         and inform to user if it's ok or not.
         """
-
-        return
+        if isinstance(rule, dict):
+            for description in rule.values():
+                if isinstance(description, dict):
+                    for layer in description.values():
+                        if isinstance(layer, dict):
+                            for rules in layer.values():
+                                if isinstance(rules, list):
+                                    return rule
+                                else:
+                                    feedback.pushInfo('Regra não segue o formato padrão!')
+                        else:
+                            feedback.pushInfo('Regra não segue o formato padrão!')
+                else:
+                    feedback.pushInfo('Regra não segue o formato padrão!')
+        else:
+            feedback.pushInfo('Regra não segue o formato padrão!')
 
     def name(self):
         """
