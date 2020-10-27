@@ -278,8 +278,6 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         This function evaluates the rule format from both rules input
         and inform to user if it's ok or not.
         """
-
-        #feedback doesn't work. Work on it.
         if isinstance(rule, dict):
             for description in rule.values():
                 if isinstance(description, dict):
@@ -289,13 +287,13 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
                                 if isinstance(rules, list):
                                     return rule
                                 else:
-                                    feedback.pushInfo('Rule does not fit the pattern!')
+                                    feedback.pushInfo('Regra não segue o formato padrão!')
                         else:
-                            feedback.pushInfo('Rule does not fit the pattern!')
+                            feedback.pushInfo('Regra não segue o formato padrão!')
                 else:
-                    feedback.pushInfo('Rule does not fit the pattern!')
+                    feedback.pushInfo('Regra não segue o formato padrão!')
         else:
-            feedback.pushInfo('Rule does not fit the pattern!')
+            feedback.pushInfo('Regra não segue o formato padrão!')
 
     def name(self):
         """
