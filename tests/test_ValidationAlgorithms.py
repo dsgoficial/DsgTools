@@ -170,11 +170,13 @@ class Tester(unittest.TestCase):
                 "test_dataset_unbuild_polygons" : os.path.join(gpkgPaths, 'test_dataset_unbuild_polygons.gpkg')
             },
             "geojson" : {
-                "land_cover_layers" : os.path.join(geojsonPaths, 'land_cover_layers'),
-                "terrain_model_layers" : os.path.join(geojsonPaths, 'terrain_model_layers'),
-                "testes_sirgas2000_24s" : os.path.join(geojsonPaths, 'testes_sirgas2000_24s'),
-                "spatial_rules_alg" : os.path.join(geojsonPaths, 'spatial_rules_alg'),
-                "create_frames_layers" : os.path.join(geojsonPaths, 'create_frames_layers')
+                "land_cover_layers": os.path.join(geojsonPaths, 'land_cover_layers'),
+                "terrain_model_layers": os.path.join(geojsonPaths, 'terrain_model_layers'),
+                "testes_sirgas2000_24s": os.path.join(geojsonPaths, 'testes_sirgas2000_24s'),
+                "spatial_rules_alg": os.path.join(geojsonPaths, 'spatial_rules_alg'),
+                "create_frames_layers": os.path.join(geojsonPaths, 'create_frames_layers'),
+                "identify_angles_in_invalid_range_layers": os.path.join(geojsonPaths, 'identify_angles_in_invalid_range_layers'),
+                "douglas_peucker": os.path.join(geojsonPaths, 'douglas_peucker')
             }
         }
         # switch-case for dataset reading
@@ -193,21 +195,32 @@ class Tester(unittest.TestCase):
             layers = self.datasets[key]
         return layers
 
-    def getInputLayers(self, driver, dataset, layers, addControlKey=False):
+    def getInputLayers(self, driver, dataset, layers,
+                        addControlKey=False, idsToSelect=None):
         """
         Gets the vector layers from an input dataset.
         :param driver: (str) driver's to be read.
         :param dataset: (str) dataset's name.
         :param layers: (list-of-str) layers to be read.
+        :param idsToSelect: (list-of-int) list of feature IDs to be selected on
+                            input.
         :return: (list-of-QgsVectorLayer) vector layers read from the dataset.
         """
         out = []
+        # (vls) a map from layer name to vector layer read from database.
         vls = self.testingDataset(driver, dataset)
         for l in layers:
-            vls[l].rollBack()
-            lyr = vls[l] if not addControlKey else \
-                self.addControlKey(vls[l])
-            out.append(lyr)
+            if idsToSelect is not None:
+                # vls[l].rollBack()
+                lyr = vls[l] if not addControlKey else \
+                    self.addControlKey(vls[l])
+                lyr.select(idsToSelect)
+                out.append(lyr)
+            else:
+                vls[l].rollBack()
+                lyr = vls[l] if not addControlKey else \
+                    self.addControlKey(vls[l])
+                out.append(lyr)
         return out
     
     def addControlKey(self, lyr):
@@ -255,13 +268,28 @@ class Tester(unittest.TestCase):
                 {
                     '__comment' : "'Normal' test: checks if it works.",
                     'INPUTLAYERS' : self.getInputLayers(
-                        'sqlite', 'douglas_peucker',
+                        'geojson', 'douglas_peucker',
                         ['cb_veg_campo_a'],
-                        addControlKey=True
+                        addControlKey=True,
+                        idsToSelect=None
                     )[0],
                     'SELECTED' : False,
-                    'SNAP': 2,
-                    'DOUGLASPARAMETER': 1.5,
+                    'SNAP': 1,
+                    'DOUGLASPARAMETER': 150,
+                    'FLAGS' : "memory:",
+                    'OUTPUT' : "memory:"
+                },
+                {
+                    '__comment' : "Second test: checks if it works with onlySelected=True.",
+                    'INPUTLAYERS' : self.getInputLayers(
+                        'geojson', 'douglas_peucker',
+                        ['cb_veg_campo_a'],
+                        addControlKey=True,
+                        idsToSelect=[1, 2]
+                    )[0],
+                    'SELECTED' : True,
+                    'SNAP': 1,
+                    'DOUGLASPARAMETER': 150,
                     'FLAGS' : "memory:",
                     'OUTPUT' : "memory:"
                 }
@@ -269,15 +297,30 @@ class Tester(unittest.TestCase):
 
             "dsgtools:topologicaldouglaspeuckerlinesimplification" : [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
+                    '__comment' : "First test: checks if it works.",
                     'INPUTLAYERS' : self.getInputLayers(
-                        'sqlite', 'douglas_peucker',
+                        'geojson', 'douglas_peucker',
                         ['cb_tra_trecho_rodoviario_l'],
-                        addControlKey=True
+                        addControlKey=True,
+                        idsToSelect=None
                     )[0],
                     'SELECTED' : False,
-                    'SNAP': 2,
-                    'DOUGLASPARAMETER': 1.5,
+                    'SNAP': 1,
+                    'DOUGLASPARAMETER': 2.5,
+                    'FLAGS' : "memory:",
+                    'OUTPUT' : "memory:"
+                },
+                {
+                    '__comment' : "Second test: checks if it works with onlySelected=True.",
+                    'INPUTLAYERS' : self.getInputLayers(
+                        'geojson', 'douglas_peucker',
+                        ['cb_tra_trecho_rodoviario_l'],
+                        addControlKey=True,
+                        idsToSelect=[19, 20, 21]
+                    )[0],
+                    'SELECTED' : True,
+                    'SNAP': 1,
+                    'DOUGLASPARAMETER': 2.5,
                     'FLAGS' : "memory:",
                     'OUTPUT' : "memory:"
                 }
@@ -319,6 +362,19 @@ class Tester(unittest.TestCase):
                         ),
                     'SELECTED' : False,
                     'TOLERANCE' : 10
+                }
+            ],
+
+            "dsgtools:identifyanglesininvalidrangealgorithm" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS' : 'memory:',
+                    'INPUT' : self.getInputLayers(
+                        'geojson', 'identify_angles_in_invalid_range_layers', ['lines1']
+                    )[0],
+                    'SELECTED' : False,
+                    'MIN_ANGLE' : 80,
+                    'MAX_ANGLE' : 100
                 }
             ],
 
@@ -455,7 +511,7 @@ class Tester(unittest.TestCase):
                     'SELECTED': False
                 },
                 {
-                    '__comment' : "'Normal' test: checks if it works with polygon.",
+                    '__comment' : "'Normal' test: checks if it works with line.",
                     'FLAGS': "memory:",
                     'INPUT': self.getInputLayers(
                             'geojson', 'testes_sirgas2000_24s', ['test2_vertexnearedge_l']
@@ -1247,18 +1303,27 @@ class Tester(unittest.TestCase):
                         if isinstance(outputLyr, list):
                             for idx, outLayer in enumerate(outputLyr):
                                 if "{0}_{1}".format(key, idx) not in expected:
-                                    raise Exception("Output dictionary key was not found in expected output dictionary.".\
-                                        format(alg=algName, nr=i + 1)
+                                    raise Exception(
+                                        "Output dictionary key {k} was not "
+                                        "found in expected output dictionary.".\
+                                            format(k="{0}_{1}".format(key, idx))
                                     )
+                                expectedLyr = expected["{0}_{1}".format(key, idx)]
                                 self.compareInputLayerWithOutputLayer(
                                     i,
                                     algName,
                                     outLayer,
-                                    expected["{0}_{1}".format(key, idx)],
+                                    expectedLyr,
                                     loadLayers=loadLayers,
                                     addControlKey=addControlKey,
                                     attributeBlackList=attributeBlackList
                                 )
+                                if isinstance(expectedLyr, QgsVectorLayer):
+                                    expectedLyr.rollBack()
+                            if isinstance(outLayer, QgsVectorLayer):
+                                outLayer.rollBack()
+                            # from now on commands are for single output only
+                            continue
                         elif key not in expected:
                             raise Exception("Output dictionary key was not found in expected output dictionary.".\
                                 format(alg=algName, nr=i + 1)
@@ -1277,12 +1342,6 @@ class Tester(unittest.TestCase):
                             outputLyr.rollBack()
                         if isinstance(expected[key], QgsVectorLayer):
                             expected[key].rollBack()
-                    for key, expectedLyr in expected.items():
-                        if key not in expected:
-                            raise Exception("Output dictionary key was not found in expected output dictionary.".\
-                                format(alg=algName, nr=i + 1)
-                            )
-
         except Exception as e:
             if isinstance(output, QgsVectorLayer):
                 output.rollBack()
@@ -1376,6 +1435,15 @@ class Tester(unittest.TestCase):
     def test_identifyoutofboundsangles(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifyoutofboundsangles"), ""
+        )
+    
+    def test_identifyanglesininvalidrangealgorithm(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:identifyanglesininvalidrangealgorithm",
+                multipleOutputs=True,
+                addControlKey=True
+            ), ""
         )
 
     # def test_identifyoutofboundsanglesincoverage(self):
