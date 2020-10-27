@@ -4,12 +4,12 @@
 <context>
     <name>@default</name>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/FreeHandTool/controllers/acquisitionFreeController.py" line="162"/>
+        <location filename="../gui/ProductionTools/MapTools/FreeHandTool/controllers/acquisitionFreeController.py" line="165"/>
         <source>Probably too many smoothing iteration, try reducing it (3 usually is enough). Geometry was not smoothened.</source>
         <translation>Provável execução de excessivos ciclos de suavização, tente reduzir o número de ciclos (em geral, 3 é suficiente). Geometria não foi suavizada.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/FreeHandTool/controllers/acquisitionFreeController.py" line="163"/>
+        <location filename="../gui/ProductionTools/MapTools/FreeHandTool/controllers/acquisitionFreeController.py" line="166"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
@@ -1261,144 +1261,167 @@ Usuários com erro:</translation>
 <context>
     <name>BDGExGuiManager</name>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="46"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="48"/>
         <source>BDGEx</source>
         <translation>BDGEx</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="52"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="54"/>
         <source>Multi scale mosaic</source>
         <translation>Mosaico multi-escala</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="296"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="298"/>
         <source>1:250,000</source>
         <translation>1:250.000</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="305"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="307"/>
         <source>1:100,000</source>
         <translation>1:100.000</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="314"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="316"/>
         <source>1:50,000</source>
         <translation>1:50.000</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="323"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="325"/>
         <source>1:25,000</source>
         <translation>1:25.000</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="103"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="105"/>
         <source>Rapideye Imagery (2013 mosaic)</source>
         <translation>Imagens RapidEye (mosaico de 2013)</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="112"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="114"/>
         <source>Landsat 7 Imagery (2000 mosaic)</source>
         <translation>Imagens Landsat 7 (mosaico de 2000)</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="121"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="123"/>
         <source>Orthorectified True Color Imagery compatible with 1:25,000 scale</source>
         <translation>Imagens ortorretificadas True Color compatíveis com a escala 1:25.000</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="130"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="132"/>
         <source>Artificial SAR Imagery compatible with 1:50,000 scale</source>
         <translation>Imagens SAR artificiais compatíveis com a escala 1:50.000</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="139"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="141"/>
         <source>Artificial SAR Imagery compatible with 1:25,000 scale</source>
         <translation>Imagens SAR artificiais compatíveis com a escala 1:25.000</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="150"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="152"/>
         <source>Surface Digital Model compatible with scale 1:25,000</source>
         <translation>MDS compatíveis com a escala 1:25.000</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="159"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="161"/>
         <source>Contour lines compatible with scale 1:25,000</source>
         <translation>Curvas de nível compatíveis com a escala 1:25.000</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="169"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="171"/>
         <source>Surface Digital Model compatible with scale 1:50,000</source>
         <translation>MDS compatíveis com a escala 1:50.000</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="178"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="180"/>
         <source>Contour lines compatible with scale 1:50,000</source>
         <translation>Curvas de nível compatíveis com a escala 1:50.000</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="188"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="190"/>
         <source>Contour lines compatible with scale 1:100,000</source>
         <translation>Curvas de nível compatíveis com a escala 1:100.000</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="197"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="199"/>
         <source>Surface Digital Model compatible with scale 1:250,000 (SRTM)</source>
         <translation>MDS compatíveis com a escala 1:250.000 (SRTM)</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="206"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="208"/>
         <source>Contour lines compatible with scale 1:250,000</source>
         <translation>Curvas de nível compatíveis com a escala 1:250.000</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="217"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="219"/>
         <source>Brazilian Political Information</source>
         <translation>Informações politicas brasileiras</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="229"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="231"/>
         <source>Brazilian Cities</source>
         <translation>Cidades brasileiras</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="238"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="240"/>
         <source>Brazilian States</source>
         <translation>Estados brasileiros</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="247"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="249"/>
         <source>Brazilian State Capitals</source>
         <translation>Capitais de estados brasileiros</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="344"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="346"/>
         <source>Topographic Charts</source>
         <translation>Cartas topográficas</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="337"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="339"/>
         <source>Coverage Layers</source>
         <translation>Camadas de cobertura terrestre</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="339"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="341"/>
         <source>Terrain Information</source>
         <translation>Informações de terreno</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="341"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="343"/>
         <source>Auxiliar Information</source>
         <translation>Informações auxiliares</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="343"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="345"/>
         <source>Product Indexes</source>
         <translation>Índices de produtos</translation>
     </message>
     <message>
-        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="346"/>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="348"/>
         <source>Vectorial Charts</source>
         <translation>Cartas vetoriais</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="360"/>
+        <source>BDGEx layers (DSGTools)</source>
+        <translation>Camadas do BDGEx (DSGTools)</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="361"/>
+        <source>Unable to provide requested layer. Please check your network settings (proxy and exceptions too, if necessary).</source>
+        <translation>Não foi possível carregar a camada solicitada. Por favor, verifique suas configurações de rede (proxy e suas exceções também, se for o seu caso).</translation>
+    </message>
+</context>
+<context>
+    <name>BDGExRequestHandler</name>
+    <message>
+        <location filename="../core/NetworkTools/BDGExRequestHandler.py" line="161"/>
+        <source>BDGEx layers (DSGTools)</source>
+        <translation>Camadas do BDGEx (DSGTools)</translation>
+    </message>
+    <message>
+        <location filename="../core/NetworkTools/BDGExRequestHandler.py" line="162"/>
+        <source>Unable to provide requested layer. Please check your network settings (proxy and exceptions too, if necessary).</source>
+        <translation>Não foi possível carregar a camada solicitada. Por favor, verifique suas configurações de rede (proxy e suas exceções também, se for o seu caso).</translation>
     </message>
 </context>
 <context>
@@ -2118,145 +2141,155 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <translation>Grupo ao qual o botão será atribuído...</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="74"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="71"/>
         <source>Attribute</source>
         <translation>Atributo</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="74"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="71"/>
         <source>Value</source>
         <translation>Valor</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="74"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="71"/>
         <source>PK</source>
         <translation>PK</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="74"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="71"/>
         <source>Editable</source>
         <translation>Editável</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="74"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="71"/>
         <source>Ignored</source>
         <translation>Ignorado</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="88"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="85"/>
         <source>Confirm action</source>
         <translation>Confirmar a ação</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="105"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="102"/>
         <source>QGIS default feature extraction tool</source>
         <translation>Ferramenta de aquisição padrão do QGIS</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="106"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="103"/>
         <source>DSGTools: Free Hand Acquisition</source>
         <translation>DSGTools: Ferramenta de Aquisição à Mão Livre</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="108"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="105"/>
         <source>QGIS Circle extraction tool</source>
         <translation>Ferramenta de aquisição de círculos do QGIS</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="110"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="107"/>
         <source>DSGTools: Right Degree Angle Digitizing</source>
         <translation>DSGTools: Ferramenta de aquisição com ângulos retos</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="308"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="305"/>
         <source>Shortcut {s} is already assigned to {a}, would you like to replace it?</source>
         <translation>Atalho {s} já está atribuído a {a}, gostaria de substituí-lo?</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="310"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="307"/>
         <source>Replace shortcut</source>
         <translation>Substituir atalho</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="479"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="485"/>
         <source>Field cannot be empty</source>
         <translation>Campo não pode estar vazio</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="506"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="512"/>
         <source>Type the value for {0}</source>
         <translation>Digite um valor para {0}</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="353"/>
+        <source>&apos;{0}&apos; is an invalid value for field {1}. (Is the layer style generated from the current data model?</source>
+        <translation>&apos;{0}&apos; é um valor inválido para o atributo {1}. (Verifique se o estilo da camada foi gerada para o atual modelo de dados)</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="357"/>
+        <source>DSGTools Custom Feature Tool Box</source>
+        <translation>DSGTools Caixa de Ferramenta de Classificação de Feições</translation>
     </message>
 </context>
 <context>
     <name>ButtonSetupWidget</name>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="895"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="905"/>
         <source>No button selected</source>
         <translation>Nenhum botão selecionado</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="79"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="89"/>
         <source>Invalid workflow</source>
         <translation>Fluxo de trabalho inválido</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="500"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="510"/>
         <source>No name provided for current setup.</source>
         <translation>Nenhum nome fornecido para a atual configuração.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="503"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="513"/>
         <source>Please register at least one button.</source>
         <translation>Por favor registre ao menos um botão.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="585"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="595"/>
         <source>Button {b} already exists. Would you like to replace it?</source>
         <translation>Botão {b} já existe. Deseja substituí-lo?</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="587"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="597"/>
         <source>Replace existing button</source>
         <translation>Substituir botão existente</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="612"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="622"/>
         <source>Confirm button &apos;{b}&apos; removal?</source>
         <translation>Confirmar a remoção do botão {b}?</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="920"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="930"/>
         <source>Invalid input data: {r}</source>
         <translation>Dado de entrada inválido: {r}</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="827"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="837"/>
         <source>Current button has been modified and not saved. Would you like to save it?</source>
         <translation>O botão atual foi modificade e não foi salvo. Gostaria de salvá-lo?</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="829"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="839"/>
         <source>Unsaved modifications</source>
         <translation>Modificações não salvas</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="873"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="883"/>
         <source>Import a DSGTools Button Setup (set of buttons)</source>
         <translation>Importar uma configuração de botões do DSGTools (conjunto de botões)</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="926"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="936"/>
         <source>DSGTools Buttons Setup (*.setup)</source>
         <translation>Configuração de botões do DSGTools (*.setup)</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="908"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="918"/>
         <source>Setup &quot;{0}&quot; imported from &quot;{1}&quot;</source>
         <translation>Configuração &quot;{0}&quot; importada de &quot;{1}&quot;</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="910"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="920"/>
         <source>Imported workflow</source>
         <translation>Fluxo de trabalho importado</translation>
     </message>
@@ -2266,12 +2299,12 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <translation type="obsolete">Exportar configuração - {0}</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="937"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="947"/>
         <source>Setup &quot;{0}&quot; exported to &quot;{1}&quot;</source>
         <translation>Configuração &quot;{0}&quot; exportada para &quot;{1}&quot;</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="939"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="949"/>
         <source>Exported workflow</source>
         <translation>Fluxo de trabalho exportado</translation>
     </message>
@@ -2281,7 +2314,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <translation type="obsolete">Exportar configuração {0}</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="926"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="936"/>
         <source>Export setup - {0}</source>
         <translation>Exportar configuração - {0}</translation>
     </message>
@@ -3349,42 +3382,42 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Arquivo CSV</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="91"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="98"/>
         <source>Database(s) {0} created successfully.</source>
         <translation>Banco(s) de dados {0} criado(s) com sucesso.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="100"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="107"/>
         <source>Invalid inomen parameter!</source>
         <translation>Parâmetro de índice de nomenclatura inválido!</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="104"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="111"/>
         <source>Error on {0}: </source>
         <translation>Erro no(s) banco(s) de dados {0}: </translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="106"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="113"/>
         <source>Frame was not created on the following databases: {0}</source>
         <translation>Moldura não criada no(s) seguinte(s) banco(s) de dados: {0}</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="108"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="115"/>
         <source>Some errors occurred while trying to create database(s) {0}</source>
         <translation>Ocorreu erro ao tentar criar o(s) banco(s) de dados: {0}</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="112"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="119"/>
         <source>Check log for more details.</source>
         <translation>Verifique o log para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="114"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="121"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="114"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="121"/>
         <source>Process finished.</source>
         <translation>Processo finalizado.</translation>
     </message>
@@ -4271,7 +4304,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
 <context>
     <name>CustomButtonSetup</name>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="1031"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="1035"/>
         <source>Custom Button Setup</source>
         <translation>Configuração de botões customizada</translation>
     </message>
@@ -4279,132 +4312,132 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
 <context>
     <name>CustomFeatureButton</name>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="62"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="63"/>
         <source>New button</source>
         <translation>Novo botão</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="211"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="212"/>
         <source>Error while updating &apos;{0}&apos; ({1})</source>
         <translation>Erro ao atualizar &apos;{0}&apos; ({1})</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="699"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="700"/>
         <source>DSGTools: Custom Feature Toolbox - button {0}</source>
-        <translation>DSGTools: Caixa de Ferramenta de Classificação de Feições - botão</translation>
+        <translation>DSGTools: Caixa de Ferramenta de Classificação de Feições - botão {0}</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="334"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="335"/>
         <source>Policy must be a str ({0}).</source>
         <translation>Política deverá ser uma string ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="361"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="362"/>
         <source>Policy must be a boolean ({0}).</source>
         <translation>Política deverá ser um boleano ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="460"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="461"/>
         <source>Color must be a str or tuple of int ({0}).</source>
         <translation>Cores deverão ser string ou uma tupla de inteiros ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="490"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="491"/>
         <source>Color usage must be a bool ({0}).</source>
         <translation>Cores deverão ser string ou uma tupla de inteiros ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="520"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="521"/>
         <source>Category must be an int ({0}).</source>
         <translation>Categoria deverá ser um inteiro ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="541"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="542"/>
         <source>Tool tip must be a str ({0}).</source>
         <translation>Dica de ferramenta deverá ser uma string ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="560"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="561"/>
         <source>Category must be a str ({0}).</source>
         <translation>Categoria deverá ser uma string ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="584"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="585"/>
         <source>Action shortcut must be a str ({0}).</source>
         <translation>Atalho para ação deverá ser uma string ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="612"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="613"/>
         <source>Keyword must be a str ({0}).</source>
         <translation>Palavra chave deverá ser uma string ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="643"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="644"/>
         <source>Keyword must be a set ({0}).</source>
         <translation>Palavra chave deverá ser um conjunto ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="760"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="761"/>
         <source>Callback must be a callable object.</source>
         <translation>Callback deverá ser um objeto exigível.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="779"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="780"/>
         <source>Layer name must be a str ({0}).</source>
         <translation>Nome de camada deverá ser uma string ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="843"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="847"/>
         <source>{0} is not a valid value for field {1}.</source>
         <translation>{0} não é um valor válido para o campo {1}.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="857"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="861"/>
         <source>Attribute map must be a dict ({0}).</source>
         <translation>Mapa de atributos deverá ser um dicionário ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="876"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="880"/>
         <source>QGIS default feature extraction tool</source>
         <translation>Ferramenta de aquisição padrão do QGIS</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="877"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="881"/>
         <source>DSGTools: Free Hand Acquisition</source>
         <translation>DSGTools: Ferramenta de Aquisição à Mão Livre</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="878"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="882"/>
         <source>QGIS Circle extraction tool</source>
         <translation>Ferramenta de aquisição de círculos do QGIS</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="879"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="883"/>
         <source>DSGTools: Right Degree Angle Digitizing</source>
         <translation>DSGTools: Ferramenta de aquisição com ângulos retos</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="889"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="893"/>
         <source>&apos;{0}&apos; not supported.</source>
         <translation>&apos;{0}&apos; not supported.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="892"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="896"/>
         <source>Digitizing tool prop must be a str ({0}).</source>
         <translation>Propriedade da ferramenta de aquisição deverá ser uma string ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="926"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="930"/>
         <source>Toggling usage must be a bool ({0}).</source>
         <translation>A alternância de uso deve ser um booleano ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="956"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="960"/>
         <source>Toggling status must be a bool ({0}).</source>
         <translation>A alternância de estado deve ser um booleano ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="997"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="1001"/>
         <source>Enabled status must be a bool ({0}).</source>
         <translation>O estado ativado deverá ser um boleano({0}).</translation>
     </message>
@@ -4445,137 +4478,137 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
 <context>
     <name>CustomFeatureTool</name>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="89"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="90"/>
         <source>Active layer</source>
         <translation>Camada ativa</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="90"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="91"/>
         <source>All layers</source>
         <translation>Todas as camadas</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="92"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="93"/>
         <source>Feature extraction</source>
         <translation>Extração de feições</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="93"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="94"/>
         <source>Reclassify</source>
         <translation>Reclassificação</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="161"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="163"/>
         <source>Select a buttons profile...</source>
         <translation>Selecione um perfil de botões...</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="175"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="177"/>
         <source>{0} (1 feature)</source>
         <translation>{0} (1 feição)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="177"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="179"/>
         <source>{0} ({1} features)</source>
         <translation>{0} ({1} feições)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="181"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="183"/>
         <source>Reclassified features</source>
         <translation>Feições reclassificadas</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="183"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="185"/>
         <source>Reclassified feature</source>
         <translation>Feição reclassificada</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="310"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="315"/>
         <source>No category</source>
         <translation>Sem categoria</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="343"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="348"/>
         <source>Searched buttons</source>
         <translation>Botões encontrados</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="347"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="352"/>
         <source>Searched buttons ({0})</source>
         <translation>Botões encontrados ({0})</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="570"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="579"/>
         <source>DSGTools Custom Feature Tool: confirm removal</source>
         <translation>DSGTools Ferramenta de feição customizada: confirmação de remoção</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="571"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="580"/>
         <source>Would like to delete setup {0}?</source>
         <translation>Gostaria de deletar a configuração{0}?</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="660"/>
         <source>Your redo stack may have been corrupted. Please,avoid &apos;redo&apos; with a button active.</source>
-        <translation>Sua lista de &quot;Refazer&quot; poderá estar corrompida. Por favor, evite &quot;Refazer&quot; com algum botão ativo.</translation>
+        <translation type="obsolete">Sua lista de &quot;Refazer&quot; poderá estar corrompida. Por favor, evite &quot;Refazer&quot; com algum botão ativo.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="662"/>
         <source>DSGTools Custom Feature Tool Box</source>
-        <translation>DSGTools Caixa de Ferramenta de Classificação de Feições</translation>
+        <translation type="obsolete">DSGTools Caixa de Ferramenta de Classificação de Feições</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="899"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="971"/>
         <source>layer &apos;{0}&apos; not loaded. Can&apos;t use button &apos;{1}&apos;.</source>
         <translation>camada &apos;{0}&apos; não foi carregada. Não poderá usar o botão &apos;{1}&apos;.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="922"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="994"/>
         <source>DSGTools feature reclassification</source>
         <translation>DSGTools reclassificação de feições</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="919"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="991"/>
         <source>could not reclassify using button {0} (no compatible features selected)</source>
         <translation>não foi possível reclassificar usando o botão {0} (nenhuma feição compatível selecionada)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="930"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1002"/>
         <source>{0} (receiving layer: {1})</source>
         <translation>{0} (camada receptora: {1})</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1173"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1245"/>
         <source>Import a DSGTools button profile set</source>
         <translation>Importar um conjunto de perfis de botão do DSGTools</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1192"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1264"/>
         <source>DSGTools button profile set (*.setups)</source>
         <translation>Conjunto de perfis de botão do DSGTools (*.setups)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1182"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1254"/>
         <source>current state imported from &apos;{0}&apos;.</source>
         <translation>estado atual importado de &apos;{0}&apos;.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1209"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1281"/>
         <source>DSGTools Custom Feature</source>
         <translation>DSGTools Feição Customizada</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1192"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1264"/>
         <source>Export a DSGTools button profile set</source>
         <translation>Exportar um conjunto de perfis de botão do DSGTools</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1203"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1275"/>
         <source>current state exported to &apos;{0}&apos;.</source>
         <translation>estado atual exportado para &apos;{0}&apos;.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1206"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1278"/>
         <source>unable to export current state to &apos;{0}&apos;.</source>
         <translation>incapaz de exportar o estado atual para &apos;{0}&apos;.</translation>
     </message>
@@ -8433,17 +8466,17 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
 <context>
     <name>FeatureHandler</name>
     <message>
-        <location filename="../core/GeometricTools/featureHandler.py" line="300"/>
+        <location filename="../core/GeometricTools/featureHandler.py" line="325"/>
         <source>Creating spatial index</source>
         <translation>Criando índice espacial</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/featureHandler.py" line="305"/>
+        <location filename="../core/GeometricTools/featureHandler.py" line="330"/>
         <source>Getting candidate start indexes</source>
         <translation>Obtendo índice espacial inicial do candidato</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/featureHandler.py" line="313"/>
+        <location filename="../core/GeometricTools/featureHandler.py" line="338"/>
         <source>Building grid</source>
         <translation>Construindo um grid</translation>
     </message>
@@ -13044,67 +13077,67 @@ Camada</translation>
 <context>
     <name>LayerHandler</name>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="100"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="103"/>
         <source>DsgTools reclassification</source>
         <translation>Reclassificação do DSGTools</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="365"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="412"/>
         <source>Merging Lines</source>
         <translation>Unindo linhas</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="942"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1020"/>
         <source>Creating index</source>
         <translation>Criando índice espacial</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1266"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1357"/>
         <source>Building auxiliar search structures</source>
         <translation>Construindo estruturas auxiliares de busca</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="958"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1038"/>
         <source>Getting flags</source>
         <translation>Obtendo lags</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1127"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1212"/>
         <source>Getting lines</source>
         <translation>Obtendo linhas</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1096"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1180"/>
         <source>Building vertex near edge dict</source>
         <translation>Construindo dicionário de vértices próximos à borda</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1136"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1221"/>
         <source>Building intersections</source>
         <translation>Executando interseções</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1144"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1229"/>
         <source>Finding vertexes</source>
         <translation>Encontrando vértices</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1151"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1236"/>
         <source>Finding unshared vertexes</source>
         <translation>Encontrando vértices não compartilhados</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1405"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1497"/>
         <source>Getting constraint lines</source>
         <translation>Obtendo linhas restritas</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1553"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1649"/>
         <source>Polygon without center point.</source>
         <translation>Polígono sem ponto central.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1554"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1650"/>
         <source>Polygon with more than one center point with conflicting attributes.</source>
         <translation>Polígono com mais de um ponto central com atributos contraditórios.</translation>
     </message>
@@ -20847,42 +20880,42 @@ Camada</translation>
         <translation>{0} Flags</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasAreaSimplificationAlgorithm.py" line="130"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasAreaSimplificationAlgorithm.py" line="129"/>
         <source>Building unified layer...</source>
         <translation>Construindo uma camada única...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasAreaSimplificationAlgorithm.py" line="139"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasAreaSimplificationAlgorithm.py" line="138"/>
         <source>Running clean on unified layer...</source>
         <translation>Executando a limpeza na camada unificada...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasAreaSimplificationAlgorithm.py" line="151"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasAreaSimplificationAlgorithm.py" line="150"/>
         <source>Updating original layer...</source>
         <translation>Atualizando a camada originais...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasAreaSimplificationAlgorithm.py" line="179"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasAreaSimplificationAlgorithm.py" line="182"/>
         <source>Features from {0} overlap</source>
         <translation>Feiçoes da camada {0} se sobrepõem</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasAreaSimplificationAlgorithm.py" line="183"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasAreaSimplificationAlgorithm.py" line="187"/>
         <source>Gap in coverage.</source>
         <translation>Buraco na cobertura terrestre.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasAreaSimplificationAlgorithm.py" line="189"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasAreaSimplificationAlgorithm.py" line="194"/>
         <source>Clean error on coverage.</source>
         <translation>Erro de limpeza na cobertura terrestre.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasAreaSimplificationAlgorithm.py" line="206"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasAreaSimplificationAlgorithm.py" line="212"/>
         <source>Topological Douglas Peucker Area Simplification</source>
         <translation>Simplificação de Douglas Peucker para áreas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasAreaSimplificationAlgorithm.py" line="213"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasAreaSimplificationAlgorithm.py" line="219"/>
         <source>Quality Assurance Tools (Topological Processes)</source>
         <translation>Ferramentas de Validação (Processos Topológicos)</translation>
     </message>
@@ -20925,32 +20958,32 @@ Camada</translation>
         <translation>Executando a limpeza na camada unificada...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="134"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="135"/>
         <source>Updating original layer...</source>
         <translation>Atualizando a camada originais...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="163"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="168"/>
         <source>Features from {0} overlap</source>
         <translation>Feições da camada {0} se sobrepõem</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="168"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="173"/>
         <source>Gap in coverage.</source>
         <translation>Buraco na cobertura terrestre.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="175"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="180"/>
         <source>Clean error on coverage.</source>
         <translation>Erro de limpeza na cobertura terrestre.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="193"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="198"/>
         <source>Topological Douglas Peucker Line Simplification</source>
         <translation>Simplificação de Douglas Peucker para linhas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="200"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasLineSimplificationAlgorithm.py" line="205"/>
         <source>Quality Assurance Tools (Topological Processes)</source>
         <translation>Ferramentas de Validação (Processos Topológicos)</translation>
     </message>
