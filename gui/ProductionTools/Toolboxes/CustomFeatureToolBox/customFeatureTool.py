@@ -104,8 +104,6 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         project.readProject.connect(self.restoreStateFromProject)
         # at first, dock is not initiated (optimize loading time), so calls
         # will not be perceived by toold => manual restoration on init
-        redoAction = iface.mainWindow().findChildren(QAction, "mActionRedo")[0]
-        redoAction.triggered.connect(self._redoPressed)
         self.restoreStateFromProject()
 
     def clear(self):
@@ -644,37 +642,6 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         """
         s = self.currentButtonSetup()
         return s.checkedButton() if s is not None else None
-
-    def _redoPressed(self):
-        """
-        When redo button is pressed, a feature added signal will be emitted,
-        causing the undo stack to be wrognfully modified by the this tool's
-        handling method. The tool behaviour causes past events, if any, being
-        "forgotten" by the undo stack (if more than one redo is on the stack,
-        the first redo will work and the others will be wiped from it).
-        """
-        if self.toolMode() == self.Extract and self._enabled:
-            # current layer is likely to be current active layer
-            try:
-                iface.activeLayer().featureAdded.disconnect(
-                    self._registerAddedFeature)
-                iface.activeLayer().editCommandEnded.disconnect(
-                    self._handleAddedFeature)
-            except:
-                pass
-            b = self.featureExtractionButton()
-            if b is not None:
-                b.setChecked(False)
-                self.resetSuppressFormOption()
-            # REDO-ING WILL NOT WORK PROPERLY BECAUSE IT TRIGGERS THE
-            # "featureAdded" signal!
-            # alert user
-            msg = self.tr("Your redo stack may have been corrupted. Please,"
-                          "avoid 'redo' with a button active.")
-            MessageRaiser().raiseIfaceMessage(
-                self.tr("DSGTools Custom Feature Tool Box"),
-                msg, Qgis.Warning, 5
-            )
 
     def _registerAddedFeature(self, featId):
         """
@@ -1325,5 +1292,3 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         project.writeProject.disconnect(self.saveStateToProject)
         project.readProject.disconnect(self.restoreStateFromProject)
         iface.mapCanvas().mapToolSet.disconnect(self._mapToolSet)
-        redoAction = iface.mainWindow().findChildren(QAction, "mActionRedo")[0]
-        redoAction.triggered.disconnect(self._redoPressed)
