@@ -25,7 +25,6 @@ import os
 from functools import partial
 
 from qgis.core import Qgis
-from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QIcon, QColor, QKeySequence
@@ -74,20 +73,6 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             self.tr("Editable"), self.tr("Ignored")
         ])
         self.updateFieldTable()
-        self.messageBar = QgsMessageBar(self)
-
-    def resizeEvent(self, e):
-        """
-        Just make sure if any alert box is being displayed, it matches the
-        dialog size. Method reimplementation.
-        :param e: (QResizeEvent) resize event related to this widget resizing.
-        """
-        self.messageBar.resize(
-            QSize(
-                self.geometry().size().width(),
-                40 # this felt nicer than the original height (30)
-            )
-        )
 
     def confirmAction(self, msg, title=None, showNo=True):
         """
