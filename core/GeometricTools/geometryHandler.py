@@ -215,8 +215,10 @@ class GeometryHandler(QObject):
         abs_tol = 0.0 if abs_tol is None else abs_tol
         return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
     
-    def getOutOfBoundsAngleInPolygon(self, feat, part, angle, outOfBoundsList, exactAngleMatch=False, angTol=None):
+    def getOutOfBoundsAngleInPolygon(self, feat, part, angle, outOfBoundsList, exactAngleMatch=False, angTol=None, invalidRange=None):
         angTol = 0.1 if angTol is None else angTol
+        if invalidRange is not None:
+            minAngle, maxAngle = invalidRange
         for linearRing in part.asPolygon():
             linearRing = self.getClockWiseList(linearRing)
             nVertex = len(linearRing)-1
@@ -233,11 +235,17 @@ class GeometryHandler(QObject):
                 if vertexAngle > 180:
                     # if angle calculated is the outter one
                     vertexAngle = 360 - vertexAngle
+                if invalidRange is not None and (vertexAngle >= minAngle and vertexAngle <= maxAngle):
+                    geomDict = {'angle':vertexAngle, 'feat_id':feat.id(), 'geom':QgsGeometry.fromPointXY(linearRing[i])}
+                    outOfBoundsList.append(geomDict)
+                    continue
                 if clauseLambda(vertexAngle):
-                    geomDict = {'angle':vertexAngle,'feat_id':feat.id(), 'geom':QgsGeometry.fromPointXY(linearRing[i])}
+                    geomDict = {'angle':vertexAngle, 'feat_id':feat.id(), 'geom':QgsGeometry.fromPointXY(linearRing[i])}
                     outOfBoundsList.append(geomDict)
     
-    def getOutOfBoundsAngleInLine(self, feat, part, angle, outOfBoundsList):
+    def getOutOfBoundsAngleInLine(self, feat, part, angle, outOfBoundsList, invalidRange=None):
+        if invalidRange is not None:
+            minAngle, maxAngle = invalidRange
         line = part.asPolyline()
         nVertex = len(line)-1
         for i in range(1,nVertex):
@@ -245,21 +253,38 @@ class GeometryHandler(QObject):
             vertexAngle = math.fmod(vertexAngle, 360)
             if vertexAngle > 180:
                 vertexAngle = 360 - vertexAngle
+            if invalidRange is not None and (vertexAngle >= minAngle and vertexAngle <= maxAngle):
+                geomDict = {'angle':vertexAngle, 'feat_id':feat.id(), 'geom':QgsGeometry.fromPointXY(line[i])}
+                outOfBoundsList.append(geomDict)
+                continue
             if vertexAngle < angle:
-                geomDict = {'angle':vertexAngle,'feat_id':feat.id(), 'geom':QgsGeometry.fromPointXY(line[i])}
+                geomDict = {'angle':vertexAngle, 'feat_id':feat.id(), 'geom':QgsGeometry.fromPointXY(line[i])}
                 outOfBoundsList.append(geomDict)
     
     def getInvalidBuildingAngle(self, feat, angTol):
         return self.getOutOfBoundsAngle(feat, 90, exactAngleMatch=True, angTol=angTol)
     
-    def getOutOfBoundsAngle(self, feat, angle, exactAngleMatch=False, angTol=0.1):
+    def getOutOfBoundsAngle(self, feat, angle, exactAngleMatch=False, angTol=0.1, invalidRange=None):
         outOfBoundsList = []
         geom = feat.geometry()
         for part in geom.asGeometryCollection():
             if part.type() == QgsWkbTypes.PolygonGeometry:
-                self.getOutOfBoundsAngleInPolygon(feat, part, angle, outOfBoundsList, exactAngleMatch=exactAngleMatch, angTol=angTol)
+                self.getOutOfBoundsAngleInPolygon(
+                    feat,
+                    part,
+                    angle,
+                    outOfBoundsList,
+                    exactAngleMatch=exactAngleMatch,
+                    angTol=angTol,
+                    invalidRange=invalidRange
+                )
             if part.type() == QgsWkbTypes.LineGeometry:
-                self.getOutOfBoundsAngleInLine(feat, part, angle, outOfBoundsList)            
+                self.getOutOfBoundsAngleInLine(feat,
+                    part,
+                    angle,
+                    outOfBoundsList,
+                    invalidRange=invalidRange
+                )            
         return outOfBoundsList
 
     def getAngleBetweenSegments(self, part):

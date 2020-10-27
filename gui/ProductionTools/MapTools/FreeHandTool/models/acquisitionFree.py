@@ -18,11 +18,10 @@ Some parts were inspired by QGIS plugin FreeHandEditting
  ***************************************************************************/
 """
 
-from builtins import range
 from qgis.PyQt import QtCore, QtGui, QtWidgets
 from qgis import core, gui
+from qgis.utils import iface
 from qgis.core import QgsGeometry
-import math, json
 
 class AcquisitionFree(gui.QgsMapTool):
  
@@ -218,7 +217,7 @@ class AcquisitionFree(gui.QgsMapTool):
             self.setRubberBandToStopState(new_rubberBand)
         elif rubberBand:
             self.setStopedState(False)
-            self.getRubberBandToStopState().reset()
+            self.getRubberBandToStopState().reset() if self.getRubberBandToStopState() else ''
             self.cancelEdition()
 
     def createSnapCursor(self, point):
@@ -254,17 +253,16 @@ class AcquisitionFree(gui.QgsMapTool):
     def startEdition(self, event):
         #Método para iniciar a aquisição
         #Parâmetro de entrada: event (Evento)
-        event.snapPoint()
         snapRubberBand = self.getSnapRubberBand()
         if snapRubberBand:
             snapRubberBand.reset(geometryType=core.QgsWkbTypes.PointGeometry)
             snapRubberBand.hide()
             self.setSnapRubberBand(None)
-        pointMap = core.QgsPointXY(event.mapPoint())
         layer = self.getCanvas().currentLayer()
         if layer:
-            self.startRubberBand(pointMap, layer)
-    
+            mapPoint = event.snapPoint()            
+            self.startRubberBand(mapPoint, layer)
+
     def startRubberBand(self, pointMap, layer):
         #Método para iniciar o rubberBand da aquisição
         #Parâmetro de entrada: pointMap (Primeiro ponto da feição em aquisição), layer (Camada ativa)
@@ -284,25 +282,20 @@ class AcquisitionFree(gui.QgsMapTool):
     def canvasMoveEvent(self, event):
         #Método para receber os eventos canvas move do Qgis
         #Parâmetro de entrada: event (Evento que chamou o método)
-        if self.getRubberBand():
-            endPoint = self.toMapCoordinates( event.pos() )
-        snapRubberBand = self.getSnapRubberBand()
         if not(self.getStopedState()):
+            snapRubberBand = self.getSnapRubberBand()
             if snapRubberBand:
                 snapRubberBand.hide()
                 snapRubberBand.reset(geometryType=core.QgsWkbTypes.PointGeometry)
                 self.setSnapRubberBand(None)
-            oldPoint = core.QgsPointXY(event.mapPoint())
+            oldPoint = event.mapPoint()
             event.snapPoint()
-            point = core.QgsPointXY(event.mapPoint())
-            if oldPoint != point:
-                self.createSnapCursor(point)
-            if self.getRubberBand():
-                if self.contadorVert == 0:        
-                    self.getRubberBand().addPoint(point)
-                    self.contadorVert+=1
-                else:
-                    self.getRubberBand().addPoint(oldPoint)
+            point = event.mapPoint()
+            self.createSnapCursor(point) if oldPoint != point else ''
+            if self.getRubberBand() and self.getRubberBand().numberOfVertices() == 0:
+                self.getRubberBand().addPoint(point)
+            elif self.getRubberBand():
+                self.getRubberBand().addPoint(oldPoint)
         if self.getRubberBandToStopState():
             self.updateRubberBandToStopState(
                 self.toMapCoordinates( event.pos() )
@@ -326,10 +319,9 @@ class AcquisitionFree(gui.QgsMapTool):
 
     def finishEdition(self, event):
         #Método para finalizar a aquisição
-        event.snapPoint()
-        point = core.QgsPointXY(event.mapPoint())
         if self.getRubberBand():
-            self.getRubberBand().addPoint(point)
+            event.snapPoint()
+            self.getRubberBand().addPoint(event.mapPoint())
         if not self.getRubberBand():
             return
         if self.getRubberBand().numberOfVertices() > 2:
