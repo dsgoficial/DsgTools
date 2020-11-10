@@ -162,7 +162,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             )
         # rulePath = self.parameterAsFile(parameters, self.RULEFILE, context)
         # ruleData = self.parameterAsString(parameters, self.RULEDATA, context)
-        inputData = self.loadRulesData(parameters, feedback)
+        inputData = self.loadRulesData(parameters)
 
         failedFeatures = self.checkedFeatures(
             inputData, inputLyrList, onlySelected)
@@ -175,7 +175,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             self.LINE_FLAGS: lId,
             self.POLYGON_FLAGS: polId}
 
-    def loadRulesData(self, parameters, feedback):
+    def loadRulesData(self, parameters):
         """
         Loads a dict with the below data structure
         {rule description: {
@@ -186,8 +186,9 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         """
         rulePath = parameters[self.RULEFILE]
         ruleData = parameters[self.RULEDATA]
-        # to write a method to evaluate the rules and the
+        # write a method to evaluate the rules and the
         # file format above
+        """
         if ruleData and ruleData != '{}':
             return self.validateRuleFormat(json.loads(ruleData), feedback)
         elif rulePath and rulePath != '.json':
@@ -195,6 +196,12 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
                 return self.validateRuleFormat(json.load(jsonFile), feedback)
         # else:
         #     # return "error message"
+        """
+        if ruleData and ruleData != '{}':
+            return json.loads(ruleData)
+        elif rulePath and rulePath != '.json':
+            with open(rulePath, 'r') as jsonFile:
+                return json.load(jsonFile)
 
     def checkedFeatures(self, rules, layerList, onlySelected):
         """
@@ -206,7 +213,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         :param (boolean) onlySelected: list from all loaded layers.
         :param (dict) failedDict: dictionary with rules and features.
         """
-
+        """
         failedDict = {}
         for ruleName in rules:
             failedList = []
@@ -241,9 +248,17 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
 
             failedDict[ruleName] = failedList
             # failedDict = {'ruleName_1': [QgsFeature_1,...,QgsFeature_n],
-            #               'ruleName_n': [QgsFeature_1,...,QgsFeature_n]}
+            #               'ruleName_n': [QgsFeature_1,...,QgsFeature_n]}"""
 
-        return failedDict
+
+        for rule, values in rules.items():
+            for lyr in layerList:
+                if lyr.name() in values["layer"]:
+                    rules[rule]["features"] = [feature for feature in lyr.getFeatures(rule)]
+
+
+
+        return rules
 
     def flagsFromFailedList(self, featureDict, ptLayer, lLayer, polLayer, ctx, feedback):
         """
@@ -260,7 +275,8 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             QgsWkbTypes.LineGeometry: lLayer,
             QgsWkbTypes.PolygonGeometry: polLayer
         }
-        for ruleName, flagList in featureDict.items():
+
+        """for ruleName, flagList in featureDict.items():
             # improve description in flagText
             flagText = self.tr('{name}').format(name=ruleName)
             for flag in flagList:
@@ -270,7 +286,20 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
                 newFeature.setGeometry(geom)
                 layerMap[geom.type()].addFeature(
                     newFeature, QgsFeatureSink.FastInsert
+                )"""
+
+        for rule, values in featureDict.items():
+            flagText = self.tr('{name}').format(name=values["message"])
+            for flag in values["features"]:
+                geom = flag.geometry()
+                newFeature = QgsFeature(self.flagFields)
+                newFeature["reason"] = flagText
+                newFeature.setGeometry(geom)
+                layerMap[geom.type()].addFeature(
+                    newFeature, QgsFeatureSink.FastInsert
                 )
+
+
         return (ptLayer, lLayer, polLayer)
 
     def validateRuleFormat(self, rule, feedback):
