@@ -170,7 +170,7 @@ class AssignConditionalStyleToLayersAlgorithm(QgsProcessingAlgorithm):
                                     item['regra'],
                                     item['corRgb']
                                 )
-                                for item in conditionalStyles[order][field]
+                                for item in conditionalStyles[order]['atributos'][field]
                             ]
                         )
                     else:

@@ -168,11 +168,11 @@ class AssignCustomFormAndFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
                 return
             fieldStyleList = [
                 self.createConditionalStyle(i) \
-                    for i in data if i['tipo_regra'] == 'Atributo'
+                    for i in data if i['tipo_regra'].lower() == 'atributo'
             ]
             rowStyleList = [
                 self.createConditionalStyle(i) \
-                    for i in data if i['tipo_regra'] != 'Atributo'
+                    for i in data if i['tipo_regra'].lower() != 'atributo'
             ]
             if fieldStyleList:
                 lyr.conditionalStyles().setFieldStyles(
