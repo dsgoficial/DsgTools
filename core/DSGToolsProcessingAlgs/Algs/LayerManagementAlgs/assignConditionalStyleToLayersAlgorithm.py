@@ -126,7 +126,7 @@ class AssignConditionalStyleToLayersAlgorithm(QgsProcessingAlgorithm):
                 self.TEXT,
                 context
             )
-        )
+        )        
         if os.path.exists(inputJSONFile):
             self.loadConditionalStyleFromJSONFile(inputJSONFile, inputLyrList, feedback)
         elif len(inputJSONData) > 0:
@@ -158,12 +158,11 @@ class AssignConditionalStyleToLayersAlgorithm(QgsProcessingAlgorithm):
             conditionalStyles = inputJSONData[layerIdx]['estilos']
             if not conditionalStyles:
                 continue
-
             for order in reversed(sorted(conditionalStyles)):
-                for field in conditionalStyles[order]:
-                    if conditionalStyles[order]['tipo']  == 'Atributo':
-                        lyr.conditionalStyles().setFieldStyles( 
-                            field, 
+                for field in conditionalStyles[order]['atributos']:
+                    if conditionalStyles[order]['tipo'].lower()  == 'atributo':
+                        lyr.conditionalStyles().setFieldStyles(
+                            field,
                             [
                                 self.createConditionalStyle(
                                     item['descricao'],
@@ -173,15 +172,6 @@ class AssignConditionalStyleToLayersAlgorithm(QgsProcessingAlgorithm):
                                 for item in conditionalStyles[order]['atributos'][field]
                             ]
                         )
-                    else:
-                        lyr.conditionalStyles().setRowStyles([
-                            self.createConditionalStyle(
-                                item['descricao'],
-                                item['regra'],
-                                item['corRgb']
-                            )
-                            for item in conditionalStyles[order][field]
-                        ])
 
     def createConditionalStyle(self, description, rule, rgbString):
         conditionalStyle = QgsConditionalStyle()
