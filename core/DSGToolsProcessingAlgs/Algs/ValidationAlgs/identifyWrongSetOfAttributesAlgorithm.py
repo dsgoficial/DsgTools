@@ -174,8 +174,9 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             "type": (str) short description about the error,
             "color": (list) RGB [255, 0, 0],
             "features": (list) [] QgsFeature list
-        }}}
+        }}
         :param (OS Path) path: path to the JSON file.
+        :param (str) str: string formatted rule.
         """
         rulePath = parameters[self.RULEFILE]
         ruleData = parameters[self.RULEDATA]
