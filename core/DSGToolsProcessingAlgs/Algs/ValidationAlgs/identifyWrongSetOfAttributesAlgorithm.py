@@ -313,7 +313,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         Verifies whether the given rule set is valid or not
         and notifies the user.
         """
-        # TODO: a better way to validate rules
+        # TODO: must find a better way to validate rules
 
         # list_keys = ['layer', 'rule', 'attribute',
         #     'description', 'type', 'color', 'features']
