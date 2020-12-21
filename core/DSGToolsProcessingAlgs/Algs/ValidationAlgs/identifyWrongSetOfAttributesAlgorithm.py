@@ -26,6 +26,9 @@ import processing
 from qgis.PyQt.QtCore import QCoreApplication, QVariant
 from qgis.PyQt.QtGui import QColor, QFont
 from qgis.core import (QgsFeature,
+                       QgsProject,
+                       QgsWkbTypes,
+                       QgsConditionalStyle,
                        QgsFeatureSink,
                        QgsProcessingAlgorithm,
                        QgsProcessingException,
@@ -34,9 +37,8 @@ from qgis.core import (QgsFeature,
                        QgsProcessingParameterFile,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterString,
-                       QgsProject,
-                       QgsWkbTypes,
-                       QgsConditionalStyle)
+                       QgsProcessingParameterType,
+                       QgsProcessingParameterDefinition)
 
 from .validationAlgorithm import ValidationAlgorithm
 
@@ -45,6 +47,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
     INPUT = 'INPUT'
     RULEFILE = 'RULEFILE'
     RULEDATA = 'RULEDATA'
+    RULES_SET = 'RULES_SET'
     SELECTED = 'SELECTED'
     POINT_FLAGS = 'POINT_FLAGS'
     LINE_FLAGS = 'LINE_FLAGS'
@@ -61,6 +64,15 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         """
         Parameter setting.
         """
+        attributeRulesSetter = ParameterAttributeRulesSet(
+            self.RULES_SET,
+            description=self.tr('Attribute Rules Set')
+        )
+        attributeRulesSetter.setMetadata({
+            'widget_wrapper' : 'DsgTools.gui.ProcessingUI.attributeRulesWrapper.AttributeRulesWrapper'
+        })
+        self.addParameter(attributeRulesSetter)
+
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT,
@@ -387,3 +399,52 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         Must return a new copy of your algorithm.
         """
         return IdentifyWrongSetOfAttributesAlgorithm()
+
+class ParameterAttributeRulesSetType(QgsProcessingParameterType):
+
+    def __init__(self):
+        super().__init__()
+
+    def create(self, name):
+        return ParameterAttributeRulesSet(name)
+
+    def metadata(self):
+        return {'widget_wrapper': 'DsgTools.gui.ProcessingUI.enforceSpatialRuleWrapper.EnforceSpatialRuleWrapper'}
+
+    def name(self):
+        return QCoreApplication.translate('Processing', 'Attribute Rules Set')
+
+    def id(self):
+        return 'attribute_rules_set_type'
+
+    def description(self):
+        return QCoreApplication.translate('Processing', 'Set of attribute rules. Used on Attribute Rules Checker.')
+
+class ParameterAttributeRulesSet(QgsProcessingParameterDefinition):
+
+    def __init__(self, name, description=''):
+        super().__init__(name, description)
+
+    def clone(self):
+        copy = ParameterAttributeRulesSet(self.name(), self.description())
+        return copy
+
+    def type(self):
+        return self.typeName()
+
+    @staticmethod
+    def typeName():
+        return 'attribute_rules_set'
+
+    def checkValueIsAcceptable(self, value, context=None):
+        return True
+
+    def valueAsPythonString(self, value, context):
+        return str(value)
+
+    def asScriptCode(self):
+        raise NotImplementedError()
+
+    @classmethod
+    def fromScriptCode(cls, name, description, isOptional, definition):
+        raise NotImplementedError()
