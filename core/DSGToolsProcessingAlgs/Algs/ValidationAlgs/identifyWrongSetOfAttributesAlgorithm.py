@@ -69,7 +69,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             description=self.tr('Attribute Rules Set')
         )
         attributeRulesSetter.setMetadata({
-            'widget_wrapper' : 'DsgTools.gui.ProcessingUI.attributeRulesWrapper.AttributeRulesWrapper'
+            'widget_wrapper' : 'DsgTools.gui.ProcessingUI.validationAttributeRulesWrapper.ValidationAttributeRulesWrapper'
         })
         self.addParameter(attributeRulesSetter)
 
@@ -409,7 +409,7 @@ class ParameterAttributeRulesSetType(QgsProcessingParameterType):
         return ParameterAttributeRulesSet(name)
 
     def metadata(self):
-        return {'widget_wrapper': 'DsgTools.gui.ProcessingUI.attributeRulesWrapper.AttributeRulesWrapper'}
+        return {'widget_wrapper' : 'DsgTools.gui.ProcessingUI.validationAttributeRulesWrapper.ValidationAttributeRulesWrapper'}
 
     def name(self):
         return QCoreApplication.translate('Processing', 'Attribute Rules Set')
