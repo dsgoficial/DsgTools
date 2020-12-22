@@ -409,7 +409,7 @@ class ParameterAttributeRulesSetType(QgsProcessingParameterType):
         return ParameterAttributeRulesSet(name)
 
     def metadata(self):
-        return {'widget_wrapper': 'DsgTools.gui.ProcessingUI.enforceSpatialRuleWrapper.EnforceSpatialRuleWrapper'}
+        return {'widget_wrapper': 'DsgTools.gui.ProcessingUI.attributeRulesWrapper.AttributeRulesWrapper'}
 
     def name(self):
         return QCoreApplication.translate('Processing', 'Attribute Rules Set')
