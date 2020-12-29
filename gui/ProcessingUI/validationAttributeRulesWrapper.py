@@ -125,7 +125,7 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         # layer changed signal should be connected to the filter expression
         # widget setup
         col = 2
-        
+        # use enum for column ordering
         mapLayerComboBox = self.panel.itemAt(row, 1)
         mapFieldComboBox = self.panel.itemAt(row, 2)
         filterWidget = self.panel.itemAt(row, 3)
