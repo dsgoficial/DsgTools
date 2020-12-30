@@ -575,14 +575,14 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         except Exception as e:
             QMessageBox.warning(
                 iface.mainWindow(),
-                self.tr("Unable to import {0}").format(filepath),
+                self.tr("Unable to export {0}").format(filepath),
                 "Check file {0}:\n{1}".format(filepath, "\n".join(e.args))
             )
 
     @pyqtSlot()
     def on_loadPushButton_clicked(self):
         """
-        Collects filepath and 
+        Collects filepath and
         """
         fd = QFileDialog()
         # fd.setDirectory(QDir.homePath())
