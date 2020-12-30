@@ -20,11 +20,11 @@
  *                                                                         *
  ***************************************************************************/
 """
-
+import json
 from functools import partial
 
 from qgis.core import QgsProject, QgsVectorLayer, QgsMapLayerProxyModel, QgsFieldProxyModel
-from qgis.gui import QgsMapLayerComboBox, QgsFieldComboBox, QgsFieldExpressionWidget
+from qgis.gui import QgsColorButton, QgsMapLayerComboBox, QgsFieldComboBox, QgsFieldExpressionWidget
 from qgis.PyQt.QtCore import QRegExp
 from qgis.PyQt.QtGui import QRegExpValidator
 from qgis.PyQt.QtWidgets import (QComboBox,
@@ -34,7 +34,6 @@ from processing.gui.wrappers import (WidgetWrapper,
                                      DIALOG_MODELER,
                                      DIALOG_BATCH)
 
-from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
 from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedTableWidget import OrderedTableWidget
 
 
@@ -74,7 +73,7 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
     def mapLayerComboBox(self):
         """
         Retrieves the configured map layer selection combo box.
-        :return: (QgsMapLayerComboBox) configured layer selection widget. 
+        :return: (QgsMapLayerComboBox) configured layer selection widget.
         """
         cb = QgsMapLayerComboBox()
         cb.setFilters(QgsMapLayerProxyModel.VectorLayer)
@@ -82,8 +81,8 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
 
     def mapFieldComboBox(self):
         """
-        Retrieves the configured map layer selection combo box.
-        :return: (QgsMapLayerComboBox) configured layer selection widget. 
+        Retrieves the configured map field selection combo box.
+        :return: (QgsFieldComboBox) configured field selection widget.
         """
         fb = QgsFieldComboBox()
         fb.setFilters(QgsFieldProxyModel.AllTypes)
@@ -91,22 +90,45 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
 
     def mapFieldModelDialog(self):
         """
-        Retrieves widget for map layer selection in a model dialog setup.
-        :return: (QLineEdit) map layer setter widget for processing dialog
-                 mode.
+        Retrieves widget for map field selection in a model dialog setup.
+        :return: (QLineEdit) map field setter widget for processing dialog
+        mode.
         """
         le = QLineEdit()
-        le.setPlaceholderText(self.tr("Type a vector layer's name..."))
+        le.setPlaceholderText(self.tr("Type a field layer's name..."))
         return le
 
     def mapLayerModelDialog(self):
         """
         Retrieves widget for map layer selection in a model dialog setup.
         :return: (QLineEdit) map layer setter widget for processing dialog
-                 mode.
+        mode.
         """
         le = QLineEdit()
         le.setPlaceholderText(self.tr("Type a vector layer's name..."))
+        return le
+
+    def colorSelectionWidget(self):
+        """
+        Retrieves a new widget for selecting colors.
+        :return: (QgsColorButton) color selection widget.
+        """
+        colorWidget = QgsColorButton()
+        return colorWidget
+
+    def colorRgbList(self):
+        """ Docstring """
+        le = QLineEdit()
+        colorList = list()
+        rgb = self.colorSelectionWidget().color().getRgb()
+        count = 0
+        for i in rgb:
+            if count < 3:
+                colorList.append(i)
+                count += 1
+            else:
+                break
+        le.setText(str(colorList))
         return le
 
     def filterExpressionWidget(self):
@@ -129,11 +151,19 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         mapLayerComboBox = self.panel.itemAt(row, 1)
         mapFieldComboBox = self.panel.itemAt(row, 2)
         filterWidget = self.panel.itemAt(row, 3)
+        colorButtonWidget = self.panel.itemAt(row, 4)
+        colorRgbList = self.panel.itemAt(row, 5)
         mapLayerComboBox.layerChanged.connect(mapFieldComboBox.setLayer)
         mapFieldComboBox.fieldChanged.connect(filterWidget.setField)
         mapLayerComboBox.layerChanged.connect(
             partial(filterWidget.setExpression, "")
         )
+
+        def getRgb():
+            if colorButtonWidget.colorChanged:
+                colorRgbList.setText('color changed')
+
+        colorButtonWidget.colorChanged.connect(getRgb())
         # first setup is manual though
         vl = mapLayerComboBox.currentLayer()
         if vl:
@@ -144,6 +174,7 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         Sets up widgets to work as expected right after they are added to GUI.
         """
         col = 2
+
         def checkLayerBeforeConnect(le, filterExp):
             lName = le.text().strip()
             for layer in QgsProject.instance().mapLayersByName(lName):
@@ -151,7 +182,7 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
                     filterExp.setLayer(layer)
                     return
             filterExp.setLayer(None)
-        
+
         le = self.panel.itemAt(row, 1)
         filterWidget = self.panel.itemAt(row, 3)
         le.editingFinished.connect(
@@ -164,34 +195,48 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         :return: (OrderedTableWidget) DSGTools customized table widget.
         """
         otw = OrderedTableWidget(headerMap={
-            0 : {
-                "header" : self.tr("Rule name"),
-                "type" : "widget",
-                "widget" : self.ruleNameWidget,
-                "setter" : "setText",
-                "getter" : "text"
+            0: {
+                "header": self.tr("Rule description"),
+                "type": "widget",
+                "widget": self.ruleNameWidget,
+                "setter": "setText",
+                "getter": "text"
             },
-            1 : {
-                "header" : self.tr("Layers"),
-                "type" : "widget",
-                "widget" : self.mapLayerComboBox,
-                "setter" : "setCurrentText",
-                "getter" : "currentText"
+            1: {
+                "header": self.tr("Layer"),
+                "type": "widget",
+                "widget": self.mapLayerComboBox,
+                "setter": "setCurrentText",
+                "getter": "currentText"
             },
-            2 : {
-                "header" : self.tr("Attribute"),
-                "type" : "widget",
-                "widget" : self.mapFieldComboBox,
-                "setter" : "setExpression",
-                "getter" : "currentText"
+            2: {
+                "header": self.tr("Field"),
+                "type": "widget",
+                "widget": self.mapFieldComboBox,
+                "setter": "setExpression",
+                "getter": "currentText"
             },
-            3 : {
-                "header" : self.tr("Expression"),
-                "type" : "widget",
-                "widget" : self.filterExpressionWidget,
-                "setter" : "setExpression",
-                "getter" : "currentText"
-            }
+            3: {
+                "header": self.tr("Expression"),
+                "type": "widget",
+                "widget": self.filterExpressionWidget,
+                "setter": "setExpression",
+                "getter": "currentText"
+            },
+            4: {
+                "header": self.tr("Color"),
+                "type": "widget",
+                "widget": self.colorSelectionWidget,
+                "setter": "setExpression",
+                "getter": "text"
+            },
+            5: {
+                "header": self.tr("RGB list"),
+                "type": "widget",
+                "widget": self.colorRgbList,
+                "setter": "setText",
+                "getter": "text"
+            },
         })
         otw.setHeaderDoubleClickBehaviour("replicate")
         otw.rowAdded.connect(self.postAddRowStandard)
@@ -210,33 +255,40 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         :return: (OrderedTableWidget) DSGTools customized table widget.
         """
         otw = OrderedTableWidget(headerMap={
-            0 : {
-                "header" : self.tr("Rule name"),
-                "type" : "widget",
-                "widget" : self.ruleNameWidget,
-                "setter" : "setText",
-                "getter" : "text"
+            0: {
+                "header": self.tr("Rule description"),
+                "type": "widget",
+                "widget": self.ruleNameWidget,
+                "setter": "setText",
+                "getter": "text"
             },
-            1 : {
-                "header" : self.tr("Layers"),
-                "type" : "widget",
-                "widget" : self.mapLayerModelDialog,
-                "setter" : "setText",
-                "getter" : "text"
+            1: {
+                "header": self.tr("Layer"),
+                "type": "widget",
+                "widget": self.mapLayerModelDialog,
+                "setter": "setText",
+                "getter": "text"
             },
-            2 : {
-                "header" : self.tr("Attribute"),
-                "type" : "widget",
-                "widget" : self.mapFieldComboBox,
-                "setter" : "setExpression",
-                "getter" : "currentText"
+            2: {
+                "header": self.tr("Field"),
+                "type": "widget",
+                "widget": self.mapFieldComboBox,
+                "setter": "setExpression",
+                "getter": "currentText"
             },
-            3 : {
-                "header" : self.tr("Expression"),
-                "type" : "widget",
-                "widget" : self.filterExpressionWidget,
-                "setter" : "setExpression",
-                "getter" : "currentText"
+            3: {
+                "header": self.tr("Expression"),
+                "type": "widget",
+                "widget": self.filterExpressionWidget,
+                "setter": "setExpression",
+                "getter": "currentText"
+            },
+            4: {
+                "header": self.tr("Color"),
+                "type": "widget",
+                "widget": self.colorSelectionWidget,
+                "setter": "setExpression",
+                "getter": json.dumps("color", separators=(','))
             }
         })
         otw.setHeaderDoubleClickBehaviour("replicate")
@@ -244,13 +296,15 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         return otw
 
     def createPanel(self):
+        """ Docstring """
         return {
-            DIALOG_MODELER : self.modelerPanel,
-            DIALOG_STANDARD : self.standardPanel,
-            DIALOG_BATCH : self.batchPanel
+            DIALOG_MODELER: self.modelerPanel,
+            DIALOG_STANDARD: self.standardPanel,
+            DIALOG_BATCH: self.batchPanel
         }[self.dialogType]()
-    
+
     def createWidget(self):
+        """ Docstring """
         self.panel = self.createPanel()
         self.panel.showSaveLoadButtons(True)
         self.panel.extension = ".attrules"
@@ -259,13 +313,15 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
             "version": self.__ATTRIBUTE_MAP_VERSION
         })
         return self.panel
-    
+
     def parentLayerChanged(self, layer=None):
+        """ Docstring """
         pass
-    
+
     def setLayer(self, layer):
+        """ Docstring """
         pass
-    
+
     def setValue(self, value):
         """
         Sets back parameters to the GUI. Method reimplementation.
@@ -275,25 +331,27 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
             return
         for valueMap in value:
             self.panel.addRow({
-                0 : valueMap["name"],
-                1 : valueMap["layer"],
-                2 : valueMap["attribute"],
-                3 : valueMap["expression"]
+                0: valueMap["name"],
+                1: valueMap["layer"],
+                2: valueMap["field"],
+                3: valueMap["expression"],
+                4: valueMap["rgbList"]
             })
 
     def readStandardPanel(self):
         """
-        Reads widget's contents when process' parameters are set from an 
+        Reads widget's contents when process' parameters are set from an
         algorithm call (e.g. Processing toolbox).
         """
         valueMaplist = list()
         for row in range(self.panel.rowCount()):
             values = dict()
             values["name"] = self.panel.getValue(row, 0).strip() or \
-                             self.tr("Attribute Rule #{n}".format(n=row + 1))
+                self.tr("Attribute Rule #{n}".format(n=row + 1))
             values["layer"] = self.panel.getValue(row, 1)
-            values["attribute"] = self.panel.getValue(row, 2)
+            values["field"] = self.panel.getValue(row, 2)
             values["expression"] = self.panel.getValue(row, 3)
+            values["rgbList"] = self.panel.getValue(row, 5)
             valueMaplist.append(values)
         return valueMaplist
 
@@ -317,10 +375,11 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         :return: (dict) value currently set to the GUI.
         """
         return {
-            DIALOG_STANDARD : self.readStandardPanel,
-            DIALOG_MODELER : self.readModelerPanel,
-            DIALOG_BATCH : self.readBatchPanel
+            DIALOG_STANDARD: self.readStandardPanel,
+            DIALOG_MODELER: self.readModelerPanel,
+            DIALOG_BATCH: self.readBatchPanel
         }[self.dialogType]()
-    
+
     def postInitialize(self, wrappers):
+        """ Docstring """
         pass
