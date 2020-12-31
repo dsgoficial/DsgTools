@@ -25,7 +25,8 @@ from functools import partial
 
 from qgis.core import QgsProject, QgsVectorLayer, QgsMapLayerProxyModel, QgsFieldProxyModel
 from qgis.gui import QgsColorButton, QgsMapLayerComboBox, QgsFieldComboBox, QgsFieldExpressionWidget
-from qgis.PyQt.QtCore import QRegExp
+from qgis.PyQt import QtCore
+from qgis.PyQt.QtCore import QRegExp, pyqtSlot
 from qgis.PyQt.QtGui import QRegExpValidator
 from qgis.PyQt.QtWidgets import (QComboBox,
                                  QLineEdit)
@@ -118,17 +119,9 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
 
     def colorRgbList(self):
         """ Docstring """
+        color = self.colorSelectionWidget().color()
         le = QLineEdit()
-        colorList = list()
-        rgb = self.colorSelectionWidget().color().getRgb()
-        count = 0
-        for i in rgb:
-            if count < 3:
-                colorList.append(i)
-                count += 1
-            else:
-                break
-        le.setText(str(colorList))
+        le.setText(color.name())
         return le
 
     def filterExpressionWidget(self):
@@ -138,6 +131,8 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         """
         filterWidget = QgsFieldExpressionWidget()
         return filterWidget
+
+    
 
     def postAddRowStandard(self, row):
         """
@@ -158,12 +153,14 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         mapLayerComboBox.layerChanged.connect(
             partial(filterWidget.setExpression, "")
         )
+        
+        @QtCore.pyqtSlot()
+        def UpdateColor():
+            color = colorButtonWidget.color()
+            colorRgbList.setText(color.name())
+            
+        colorButtonWidget.colorChanged.connect(UpdateColor)
 
-        def getRgb():
-            if colorButtonWidget.colorChanged:
-                colorRgbList.setText('color changed')
-
-        colorButtonWidget.colorChanged.connect(getRgb())
         # first setup is manual though
         vl = mapLayerComboBox.currentLayer()
         if vl:
