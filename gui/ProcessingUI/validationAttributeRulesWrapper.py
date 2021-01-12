@@ -26,9 +26,11 @@ from functools import partial
 from qgis.core import QgsProject, QgsVectorLayer, QgsMapLayerProxyModel, QgsFieldProxyModel
 from qgis.gui import QgsColorButton, QgsMapLayerComboBox, QgsFieldComboBox, QgsFieldExpressionWidget
 from qgis.PyQt import QtCore
-from qgis.PyQt.QtCore import QRegExp, pyqtSlot
-from qgis.PyQt.QtGui import QRegExpValidator
-from qgis.PyQt.QtWidgets import (QComboBox,
+from qgis.PyQt.QtCore import Qt, QRegExp, pyqtSlot
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtWidgets import (QHBoxLayout, QVBoxLayout,
+                                 QWidget,
+                                 QComboBox,
                                  QLineEdit)
 from processing.gui.wrappers import (WidgetWrapper,
                                      DIALOG_STANDARD,
@@ -36,6 +38,8 @@ from processing.gui.wrappers import (WidgetWrapper,
                                      DIALOG_BATCH)
 
 from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedTableWidget import OrderedTableWidget
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.colorSelectorWidget import ColorSelectorWidget
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.layerAndFieldSelectorWidget import LayerAndFieldSelectorWidget
 
 
 class ValidationAttributeRulesWrapper(WidgetWrapper):
@@ -44,8 +48,8 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
     """
     __ATTRIBUTE_MAP_VERSION = 0.1
     # enum for column ordering
-    COLUMN_COUNT = 4
-    InDs, Filter, InEdgv, OutDs = list(range(COLUMN_COUNT))
+    COLUMN_COUNT = 5
+    descFld, lyrFld, expFld, errFld, colorFld = list(range(COLUMN_COUNT))
 
     def __init__(self, *args, **kwargs):
         """
@@ -71,33 +75,27 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         rex.setPlaceholderText(self.tr("Entire rule expression"))
         return rex
 
-    def mapLayerComboBox(self):
+    def maplyrAndFieldComboBox(self):
         """
         Retrieves the configured map layer selection combo box.
         :return: (QgsMapLayerComboBox) configured layer selection widget.
         """
-        cb = QgsMapLayerComboBox()
-        cb.setFilters(QgsMapLayerProxyModel.VectorLayer)
+        cb = LayerAndFieldSelectorWidget()
         return cb
 
-    def mapFieldComboBox(self):
+    def errorTypeComboBox(self):
         """
-        Retrieves the configured map field selection combo box.
-        :return: (QgsFieldComboBox) configured field selection widget.
+        Retrieves the configured map layer selection combo box.
+        :return: (QgsMapLayerComboBox) configured layer selection widget.
         """
-        fb = QgsFieldComboBox()
-        fb.setFilters(QgsFieldProxyModel.AllTypes)
-        return fb
-
-    def mapFieldModelDialog(self):
-        """
-        Retrieves widget for map field selection in a model dialog setup.
-        :return: (QLineEdit) map field setter widget for processing dialog
-        mode.
-        """
-        le = QLineEdit()
-        le.setPlaceholderText(self.tr("Type a field layer's name..."))
-        return le
+        errorTypeList = ['Atributo com valor incomum',
+                         'Atributo com valor incorreto',
+                         'Preencher atributo',
+                         ]
+        cb = QComboBox()
+        cb.addItem(self.tr('Select an error type'))
+        cb.addItems(errorTypeList)
+        return cb
 
     def mapLayerModelDialog(self):
         """
@@ -109,20 +107,23 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         le.setPlaceholderText(self.tr("Type a vector layer's name..."))
         return le
 
+    def mapFieldModelDialog(self):
+        """
+        Retrieves widget for map field selection in a model dialog setup.
+        :return: (QLineEdit) map field setter widget for processing dialog
+        mode.
+        """
+        le = QLineEdit()
+        le.setPlaceholderText(self.tr("Type a field layer's name..."))
+        return le
+
     def colorSelectionWidget(self):
         """
         Retrieves a new widget for selecting colors.
         :return: (QgsColorButton) color selection widget.
         """
-        colorWidget = QgsColorButton()
-        return colorWidget
-
-    def colorRgbList(self):
-        """ Docstring """
-        color = self.colorSelectionWidget().color()
-        le = QLineEdit()
-        le.setText(color.name())
-        return le
+        cw = ColorSelectorWidget()
+        return cw
 
     def filterExpressionWidget(self):
         """
@@ -132,8 +133,6 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         filterWidget = QgsFieldExpressionWidget()
         return filterWidget
 
-    
-
     def postAddRowStandard(self, row):
         """
         Sets up widgets to work as expected right after they are added to GUI.
@@ -141,36 +140,26 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         # in standard GUI, the layer selectors are QgsMapLayerComboBox, and its
         # layer changed signal should be connected to the filter expression
         # widget setup
-        col = 2
-        # use enum for column ordering
-        mapLayerComboBox = self.panel.itemAt(row, 1)
-        mapFieldComboBox = self.panel.itemAt(row, 2)
-        filterWidget = self.panel.itemAt(row, 3)
-        colorButtonWidget = self.panel.itemAt(row, 4)
-        colorRgbList = self.panel.itemAt(row, 5)
-        mapLayerComboBox.layerChanged.connect(mapFieldComboBox.setLayer)
-        mapFieldComboBox.fieldChanged.connect(filterWidget.setField)
-        mapLayerComboBox.layerChanged.connect(
-            partial(filterWidget.setExpression, "")
-        )
         
-        @QtCore.pyqtSlot()
-        def UpdateColor():
-            color = colorButtonWidget.color()
-            colorRgbList.setText(color.name())
-            
-        colorButtonWidget.colorChanged.connect(UpdateColor)
+        lyrAndFieldComboBox = self.panel.itemAt(row, self.lyrFld)
+        cl = lyrAndFieldComboBox.getCurrentLayer()
+        filterWidget = self.panel.itemAt(row, self.expFld)
+
+        lyrAndFieldComboBox.layerChanged(filterWidget.setLayer)
+        lyrAndFieldComboBox.fieldChanged(filterWidget.setField)
+        lyrAndFieldComboBox.layerChanged(
+            partial(filterWidget.setExpression, str(cl.fields()[0].name()))
+        )
 
         # first setup is manual though
-        vl = mapLayerComboBox.currentLayer()
-        if vl:
-            filterWidget.setLayer(vl)
+        if cl:
+            # lyrAndFieldComboBox.setLayer()
+            filterWidget.setLayer(cl)
 
     def postAddRowModeler(self, row):
         """
         Sets up widgets to work as expected right after they are added to GUI.
         """
-        col = 2
 
         def checkLayerBeforeConnect(le, filterExp):
             lName = le.text().strip()
@@ -180,8 +169,8 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
                     return
             filterExp.setLayer(None)
 
-        le = self.panel.itemAt(row, 1)
-        filterWidget = self.panel.itemAt(row, 3)
+        le = self.panel.itemAt(row, self.lyrFld)
+        filterWidget = self.panel.itemAt(row, self.expFld)
         le.editingFinished.connect(
             partial(checkLayerBeforeConnect, le, filterWidget)
         )
@@ -193,47 +182,41 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         """
         otw = OrderedTableWidget(headerMap={
             0: {
-                "header": self.tr("Rule description"),
+                "header": self.tr("Description"),
                 "type": "widget",
                 "widget": self.ruleNameWidget,
                 "setter": "setText",
                 "getter": "text"
             },
             1: {
-                "header": self.tr("Layer"),
+                "header": self.tr("Layer and field"),
                 "type": "widget",
-                "widget": self.mapLayerComboBox,
-                "setter": "setCurrentText",
-                "getter": "currentText"
+                "widget": self.maplyrAndFieldComboBox,
+                "setter": "setCurrentLayerNField",
+                "getter": "getCurrentLayerNField"
             },
             2: {
-                "header": self.tr("Field"),
-                "type": "widget",
-                "widget": self.mapFieldComboBox,
-                "setter": "setExpression",
-                "getter": "currentText"
-            },
-            3: {
                 "header": self.tr("Expression"),
                 "type": "widget",
                 "widget": self.filterExpressionWidget,
                 "setter": "setExpression",
                 "getter": "currentText"
             },
+            3: {
+                "header": self.tr("Error type"),
+                "type": "widget",
+                "widget": self.errorTypeComboBox,
+                "setter": "setCurrentText",
+                "getter": "currentText"
+            },
             4: {
                 "header": self.tr("Color"),
                 "type": "widget",
                 "widget": self.colorSelectionWidget,
-                "setter": "setExpression",
-                "getter": "text"
+                "setter": "setCurrentColor",
+                "getter": "getCurrentColor"
             },
-            5: {
-                "header": self.tr("RGB list"),
-                "type": "widget",
-                "widget": self.colorRgbList,
-                "setter": "setText",
-                "getter": "text"
-            },
+
         })
         otw.setHeaderDoubleClickBehaviour("replicate")
         otw.rowAdded.connect(self.postAddRowStandard)
@@ -329,10 +312,9 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         for valueMap in value:
             self.panel.addRow({
                 0: valueMap["name"],
-                1: valueMap["layer"],
-                2: valueMap["field"],
-                3: valueMap["expression"],
-                4: valueMap["rgbList"]
+                1: valueMap["layerNField"],
+                2: valueMap["expression"],
+                3: valueMap["color"],
             })
 
     def readStandardPanel(self):
@@ -345,10 +327,9 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
             values = dict()
             values["name"] = self.panel.getValue(row, 0).strip() or \
                 self.tr("Attribute Rule #{n}".format(n=row + 1))
-            values["layer"] = self.panel.getValue(row, 1)
-            values["field"] = self.panel.getValue(row, 2)
-            values["expression"] = self.panel.getValue(row, 3)
-            values["rgbList"] = self.panel.getValue(row, 5)
+            values["layerNField"] = self.panel.getValue(row, 1)
+            values["expression"] = self.panel.getValue(row, 2)
+            values["color"] = self.panel.getValue(row, 3)
             valueMaplist.append(values)
         return valueMaplist
 
