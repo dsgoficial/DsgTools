@@ -746,7 +746,11 @@ class AbstractDb(QObject):
             qmlPath = self.getQmlDir()
             return self.utils.parseMultiQml(qmlPath, layerList)
         else:
-            qmlRecordDict = self.getQmlRecordDict(layerList)
+            try:
+                qmlRecordDict = self.getQmlRecordDict(layerList)
+            except:
+                qmlPath = self.getQmlDir()
+                return self.utils.parseMultiQml(qmlPath, layerList)
             return self.utils.parseMultiFromDb(qmlRecordDict, layerList)
     
     def getQmlRecordDict(self, inputLayer):
@@ -768,7 +772,10 @@ class AbstractDb(QObject):
     
     def getQml(self, layerName):
         if self.getDatabaseVersion() == '3.0':
-            return (self.getQmlRecordDict(layerName), 'db')
+            try:
+                return (self.getQmlRecordDict(layerName), 'db')
+            except:
+                return (self.getQmlDir(), 'dir')
         else:
             return (self.getQmlDir(), 'dir')
 

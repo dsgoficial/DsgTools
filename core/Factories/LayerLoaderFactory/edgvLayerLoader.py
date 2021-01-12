@@ -21,20 +21,19 @@
  ***************************************************************************/
 """
 import os
-from xml.dom.minidom import parse, parseString
 
-# Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QVariant
+from qgis.core import (Qgis,
+                       QgsField,
+                       QgsWkbTypes,
+                       QgsMessageLog,
+                       QgsVectorLayer,
+                       QgsDataSourceUri,
+                       QgsVectorLayerJoinInfo)
+from qgis.utils import iface
+from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.Qt import QObject
 
-# QGIS imports
-from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsField, \
-                      QgsWkbTypes, QgsVectorLayerJoinInfo
-from qgis.utils import iface
-
-#DsgTools imports
-from ...Utils.utils import Utils
+from DsgTools.core.Utils.utils import Utils
 
 class EDGVLayerLoader(QObject):
     

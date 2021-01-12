@@ -89,9 +89,14 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         edgvVersion = self.abstractDb.getDatabaseVersion()
         rootNode = QgsProject.instance().layerTreeRoot()
         dbNode = self.getDatabaseGroup(rootNode)
-        #3. Load Domains
-        #do this only if EDGV Version = FTer
-        domLayerDict = self.loadDomains(filteredLayerList, dbNode, edgvVersion)
+        # #3. Load Domains
+        # #do this only if EDGV Version = FTer
+        # domLayerDict = self.loadDomains(filteredLayerList, dbNode, edgvVersion)
+        # NOTE: iface.interfaceLegend() has changed and loadDomain must change its signature.
+        #       since this whole feature MUST be refactored and domain tables are not to be
+        #       loaded in any of our current use cases, this will be ignored and set to an
+        #       empty dict
+        domLayerDict = dict()
         #4. Get Aux dicts
         lyrDict = self.getLyrDict(filteredDictList, isEdgv = isEdgv)
         #5. Build Groups
