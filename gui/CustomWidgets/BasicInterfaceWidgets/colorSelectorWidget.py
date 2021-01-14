@@ -61,4 +61,5 @@ class ColorSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
 
     def setCurrentColor(self, color):
         """Docstring."""
-        return self.mColorButton.setColor(QColor(color))
+        self.mColorButton.setColor(QColor(color))
+        self.lineEdit.setText(color)
