@@ -56,6 +56,8 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         Constructor
         """
         super(ValidationAttributeRulesWrapper, self).__init__(*args, **kwargs)
+        self.layerList = [layer.name()
+                          for layer in QgsProject.instance().mapLayers().values()]
 
     def ruleNameWidget(self):
         """
@@ -140,7 +142,9 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         # in standard GUI, the layer selectors are QgsMapLayerComboBox, and its
         # layer changed signal should be connected to the filter expression
         # widget setup
-        
+
+        table = OrderedTableWidget().load
+
         lyrAndFieldComboBox = self.panel.itemAt(row, self.lyrFld)
         cl = lyrAndFieldComboBox.getCurrentLayer()
         filterWidget = self.panel.itemAt(row, self.expFld)
@@ -153,7 +157,6 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
 
         # first setup is manual though
         if cl:
-            # lyrAndFieldComboBox.setLayer()
             filterWidget.setLayer(cl)
 
     def postAddRowModeler(self, row):
@@ -218,7 +221,7 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
             },
 
         })
-        otw.setHeaderDoubleClickBehaviour("replicate")
+        otw.setHeaderDoubleClickBehaviour("order")
         otw.rowAdded.connect(self.postAddRowStandard)
         return otw
 
@@ -271,7 +274,7 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
                 "getter": json.dumps("color", separators=(','))
             }
         })
-        otw.setHeaderDoubleClickBehaviour("replicate")
+        otw.setHeaderDoubleClickBehaviour("order")
         otw.rowAdded.connect(self.postAddRowModeler)
         return otw
 
@@ -287,7 +290,7 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         """ Docstring """
         self.panel = self.createPanel()
         self.panel.showSaveLoadButtons(True)
-        self.panel.extension = ".attrules"
+        self.panel.extension = ".json"
         self.panel.fileType = self.tr("Set of DSGTools Attribute Rules")
         self.panel.setMetadata({
             "version": self.__ATTRIBUTE_MAP_VERSION
