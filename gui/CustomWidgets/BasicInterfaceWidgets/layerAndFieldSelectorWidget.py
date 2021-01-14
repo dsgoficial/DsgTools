@@ -87,21 +87,23 @@ class LayerAndFieldSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
 
     def setCurrentLayerNField(self, _list):
         """Docstring."""
-
+        self.mMapLayerComboBox.setCurrentText(_list[0])
+        lyr = self.mMapLayerComboBox.currentLayer()
         fld = self.mFieldComboBox
+        notLoaded = []
         if _list[0] in self.lyr_list:
-            self.mMapLayerComboBox.setCurrentText(_list[0])
-            lyr = self.mMapLayerComboBox.currentLayer()
+            
             lyrFldList = [field.name() for field in lyr.fields()]
             if _list[1] in lyrFldList:
                 fld.setLayer(lyr)
                 fld.setField(_list[1])
-            else:
-                raise Exception(
-                    self.tr("This field doesn't belong to the current layer.")
-                )
-        else:
-            raise Exception(
-                self.tr("This layer isn't loaded on the canvas.")
-            )
+        #     else:
+        #         raise Exception(
+        #             self.tr("This field doesn't belong to the current layer.")
+        #         )
+        # else:
+        #     notLoaded.append(_list[0])
+        #     raise Exception(
+        #         self.tr("This layer isn't loaded on the canvas.")
+        #     )
         return lyr, fld
