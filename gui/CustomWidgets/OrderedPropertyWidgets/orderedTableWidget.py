@@ -41,6 +41,7 @@ FORM_CLASS, _ = uic.loadUiType(
 class OrderedTableWidget(QWidget, FORM_CLASS):
     rowAdded = pyqtSignal(int)
     rowRemoved = pyqtSignal(int)
+    dataLoaded = pyqtSignal(dict)
     # rowModified = pyqtSignal(int)
     # ordering modes
     ORDER_MODE_COUNT = 2
@@ -540,6 +541,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :return: (bool) whether data was fully loaded to OTW.
         """
         self.clear()
+        self.dataLoaded.emit(stateDict)
         for row, colValues in stateDict.items():
             if row == "metadata":
                 continue
