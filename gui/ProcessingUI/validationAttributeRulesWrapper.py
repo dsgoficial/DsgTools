@@ -23,7 +23,7 @@
 import json
 from functools import partial
 
-from qgis.core import QgsProject, QgsVectorLayer, QgsMapLayerProxyModel, QgsFieldProxyModel
+from qgis.core import QgsProject, QgsVectorLayer, QgsMapLayerProxyModel, QgsFieldProxyModel, QgsMessageLog
 from qgis.gui import QgsColorButton, QgsMapLayerComboBox, QgsFieldComboBox, QgsFieldExpressionWidget
 from qgis.PyQt import QtCore
 from qgis.PyQt.QtCore import Qt, QRegExp, pyqtSlot
@@ -45,6 +45,7 @@ from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.layerAndFieldSelectorWidge
 class ValidationAttributeRulesWrapper(WidgetWrapper):
     """
     Docstring
+    fazer check de versao de __ATTRIBUTE_MAP_VERSION ao importar o json
     """
     __ATTRIBUTE_MAP_VERSION = 0.1
     # enum for column ordering
@@ -56,6 +57,7 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         Constructor
         """
         super(ValidationAttributeRulesWrapper, self).__init__(*args, **kwargs)
+        self.getLoadedLayers()
         self.layerList = [layer.name()
                           for layer in QgsProject.instance().mapLayers().values()]
 
@@ -135,6 +137,46 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         filterWidget = QgsFieldExpressionWidget()
         return filterWidget
 
+    def getLoadedLayers(self):
+        self.loaded = {}
+        layers = QgsProject.instance().mapLayers().values()
+        for layer in layers:
+            self.loaded.setdefault(
+                layer.name(), [field.name() for field in layer.fields()])
+
+        return self.loaded
+
+    def test(self, _dict):
+        """
+        {
+            0: {
+                '0': 'ghsshsghghshgs',
+                '1': ('hid_terreno_suj_inundacao_a', 'periodicidadeinunda'),
+                '2': 'periodicidadeinunda',
+                '3': 'Atributo com valor incomum',
+                '4': '#33a02c'
+            }
+        }
+        """
+        d = {}
+        l = []
+        for k, v in _dict.items():
+            if k == 'metadata':
+                continue
+            # print(k, ':', v)
+            elif v['1'][0] not in self.loaded or v['1'][1] not in self.loaded[v['1'][0]]:
+                l.append(v['1'][0])
+                QgsMessageLog.logMessage("Not loaded layers", l)
+                # print('elif: ', v['1'][0])
+            else:
+                d.setdefault(k, v)
+
+        _dict.clear()
+        for k, v in d.items():
+            _dict.setdefault(k, v)
+
+        # return d
+
     def postAddRowStandard(self, row):
         """
         Sets up widgets to work as expected right after they are added to GUI.
@@ -143,7 +185,7 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         # layer changed signal should be connected to the filter expression
         # widget setup
 
-        table = OrderedTableWidget().load
+        # a = OrderedTableWidget.dataLoaded.connect(test)
 
         lyrAndFieldComboBox = self.panel.itemAt(row, self.lyrFld)
         cl = lyrAndFieldComboBox.getCurrentLayer()
@@ -222,7 +264,9 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
 
         })
         otw.setHeaderDoubleClickBehaviour("order")
+        otw.dataLoaded.connect(self.test)
         otw.rowAdded.connect(self.postAddRowStandard)
+
         return otw
 
     def batchPanel(self):
