@@ -23,12 +23,12 @@
 import json
 from functools import partial
 
-from qgis.core import QgsProject, QgsVectorLayer, QgsMapLayerProxyModel, QgsFieldProxyModel, QgsMessageLog
+from qgis.core import QgsProject, QgsVectorLayer, QgsMapLayerProxyModel, QgsFieldProxyModel
 from qgis.gui import QgsColorButton, QgsMapLayerComboBox, QgsFieldComboBox, QgsFieldExpressionWidget
 from qgis.PyQt import QtCore
 from qgis.PyQt.QtCore import Qt, QRegExp, pyqtSlot
 from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import (QHBoxLayout, QVBoxLayout,
+from qgis.PyQt.QtWidgets import (QHBoxLayout, QVBoxLayout, QMessageBox,
                                  QWidget,
                                  QComboBox,
                                  QLineEdit)
@@ -159,23 +159,42 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         }
         """
         d = {}
-        l = []
+        l, a = [], []
         for k, v in _dict.items():
             if k == 'metadata':
                 continue
             # print(k, ':', v)
             elif v['1'][0] not in self.loaded or v['1'][1] not in self.loaded[v['1'][0]]:
                 l.append(v['1'][0])
-                QgsMessageLog.logMessage("Not loaded layers", l)
+                a.append(v['1'][1])
                 # print('elif: ', v['1'][0])
             else:
                 d.setdefault(k, v)
-
+        self.showLoadingState(l, a)
         _dict.clear()
         for k, v in d.items():
             _dict.setdefault(k, v)
 
         # return d
+
+    def showLoadingState(self, lyrList, attList):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Warning)
+
+        msg.setText("Loading rules information")
+        msg.setInformativeText("Some rules have not been loaded")
+        msg.setWindowTitle("Import Rules Info")
+        textLyrList = sorted(set(lyrList))
+        # textAttList = sorted(set(attList))
+        formatedLyrList = ['{:>3}' for item in textLyrList]
+        newString = ','.join(formatedLyrList)
+        formatedString = newString.replace(',', '\n')
+        # text = item + '\n' for item in textList
+
+        msg.setDetailedText(
+            'The following layers have not been loaded:\n', formatedString.format(*textLyrList), sep='\n')
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        msg.exec_()
 
     def postAddRowStandard(self, row):
         """
