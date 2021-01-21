@@ -44,9 +44,7 @@ from .validationAlgorithm import ValidationAlgorithm
 
 
 class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
-    INPUT = 'INPUT'
-    RULEFILE = 'RULEFILE'
-    RULEDATA = 'RULEDATA'
+
     RULES_SET = 'RULES_SET'
     SELECTED = 'SELECTED'
     POINT_FLAGS = 'POINT_FLAGS'
@@ -73,27 +71,27 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         })
         self.addParameter(attributeRulesSetter)
 
-        self.addParameter(
-            QgsProcessingParameterMultipleLayers(
-                self.INPUT,
-                self.tr('Input layers:'),
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterFile(
-                self.RULEFILE,
-                self.tr('JSON rules file:'),
-                defaultValue='.json'
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.RULEDATA,
-                description=self.tr('JSON formatted rules:'),
-                multiLine=True,
-                defaultValue='{}'
-            )
-        )
+        # self.addParameter(
+        #     QgsProcessingParameterMultipleLayers(
+        #         self.INPUT,
+        #         self.tr('Input layers:'),
+        #     )
+        # )
+        # self.addParameter(
+        #     QgsProcessingParameterFile(
+        #         self.RULEFILE,
+        #         self.tr('JSON rules file:'),
+        #         defaultValue='.json'
+        #     )
+        # )
+        # self.addParameter(
+        #     QgsProcessingParameterString(
+        #         self.RULEDATA,
+        #         description=self.tr('JSON formatted rules:'),
+        #         multiLine=True,
+        #         defaultValue='{}'
+        #     )
+        # )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.SELECTED,
@@ -119,23 +117,42 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             )
         )
 
+    def parameterAsAttributeRulesSet(self, parameters, name, context):
+        return parameters[name]
+
+    def validateRuleSet(self, ruleDict):
+        """
+        Verifies whether given rule set is valid/applicable.
+        :param ruleDict: (dict) rules to be checked.
+        :return: (bool) rules validity status
+        """
+        # TODO
+        return True
+
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
 
-        inputLyrList = self.parameterAsLayerList(parameters,
-                                                 self.INPUT,
-                                                 context)
+        rules = self.parameterAsAttributeRulesSet(
+            parameters, self.RULES_SET, context
+        )
+        if not rules or not self.validateRuleSet(rules):
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.RULES_SET)
+            )
 
-        if inputLyrList is None or inputLyrList == []:
-            raise QgsProcessingException(self.invalidSourceError(
-                parameters, self.INPUT))
+        # inputLyrList = self.parameterAsLayerList(parameters,
+        #                                          self.INPUT,
+        #                                          context)
+
+        # if inputLyrList is None or inputLyrList == []:
+        #     raise QgsProcessingException(self.invalidSourceError(
+        #         parameters, self.INPUT))
 
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
 
         crs = QgsProject.instance().crs()
-
         pointFlags, ptId = self.parameterAsSink(
             parameters, self.POINT_FLAGS, context,
             self.flagFields, QgsWkbTypes.Point, crs)
@@ -160,50 +177,49 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.POLYGON_FLAGS))
 
-        inputData = self.loadRulesData(parameters, feedback)
+        # inputData = self.loadRulesData(parameters, feedback)
 
-        failedFeatures = self.checkedFeatures(
-            inputData, inputLyrList, onlySelected)
+        failedFeatures = self.checkedFeatures(rules, onlySelected)
 
-        flags = self.flagsFromFailedList(failedFeatures,
-                                         pointFlags,
-                                         lineFlags,
-                                         polygonFlags,
-                                         feedback)
+        # flags = self.flagsFromFailedList(failedFeatures,
+        #                                  pointFlags,
+        #                                  lineFlags,
+        #                                  polygonFlags,
+        #                                  feedback)
         return {
             self.POINT_FLAGS: ptId,
             self.LINE_FLAGS: lId,
             self.POLYGON_FLAGS: polId}
 
-    def loadRulesData(self, parameters, feedback):
-        """
-        Loads a JSON file with a dictionary structured as described below
-        {"0": {
-            "layer": (str) layer name,
-            "rule": (str) conditional rule,
-            "attribute": (str) attribute name,
-            "description": (str) description about the error,
-            "type": (str) short description about the error,
-            "color": (list) RGB [255, 0, 0],
-            "features": (list) [] QgsFeature list
-        }}
-        :param (OS Path) path: path to the JSON file.
-        :param (str) str: string formatted rule.
-        """
-        rulePath = parameters[self.RULEFILE]
-        ruleData = parameters[self.RULEDATA]
-        # to write a method to evaluate the rules and the
-        # file format above
+    # def loadRulesData(self, parameters, feedback):
+    #     """
+    #     Loads a JSON file with a dictionary structured as described below
+    #     {"0": {
+    #         "layer": (str) layer name,
+    #         "rule": (str) conditional rule,
+    #         "attribute": (str) attribute name,
+    #         "description": (str) description about the error,
+    #         "type": (str) short description about the error,
+    #         "color": (list) RGB [255, 0, 0],
+    #         "features": (list) [] QgsFeature list
+    #     }}
+    #     :param (OS Path) path: path to the JSON file.
+    #     :param (str) str: string formatted rule.
+    #     """
+    #     rulePath = parameters[self.RULEFILE]
+    #     ruleData = parameters[self.RULEDATA]
+    #     # to write a method to evaluate the rules and the
+    #     # file format above
 
-        if ruleData and ruleData != '{}':
-            # self.validateRuleFormat(json.loads(ruleData), feedback)
-            return json.loads(ruleData)
-        elif rulePath and rulePath != '.json':
-            with open(rulePath, 'r') as jsonFile:
-                # return self.validateRuleFormat(json.load(jsonFile), feedback)
-                return json.load(jsonFile)
+    #     if ruleData and ruleData != '{}':
+    #         # self.validateRuleFormat(json.loads(ruleData), feedback)
+    #         return json.loads(ruleData)
+    #     elif rulePath and rulePath != '.json':
+    #         with open(rulePath, 'r') as jsonFile:
+    #             # return self.validateRuleFormat(json.load(jsonFile), feedback)
+    #             return json.load(jsonFile)
 
-    def checkedFeatures(self, rules, layerList, onlySelected):
+    def checkedFeatures(self, rules, onlySelected):
         """
         Filters a layer or a set of selected features as from conditional rules,
         and the result is added to a list in a dictionary.
@@ -221,25 +237,34 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         # getFeatures() method as a param doesn't works, but
         # works on canvas TOC. So, to resolve, I've created a
         # new lyr with saveselectedfeatures alg and move on
+        """
+        {
+            'color': 'Preencher atributo', 
+            'expression': '"tipocampo" not in  (0,1,2,3)', 
+            'layerNField': ('veg_campo_a', 'tipocampo'), 
+            'name': 'tipocampo - Preencher atributo'}
+        """
+        for item in rules:
+            print(item)
 
-        for keys, values in rules.items():
-            for lyr in layerList:
-                if lyr.name() == values['layer']:
-                    if onlySelected:
-                        parameters = {'INPUT': lyr,
-                                      'OUTPUT': 'TEMPORARY_OUTPUT'}
-                        selected = processing.run(
-                            'native:saveselectedfeatures', parameters)
-                        values['features'] = [
-                            feature for feature in selected['OUTPUT'].getFeatures(values['rule'])]
-                        self.addRuleToLayer(lyr, values)
+        # for keys, values in rules.items():
+        #     for lyr in layerList:
+        #         if lyr.name() == values['layer']:
+        #             if onlySelected:
+        #                 parameters = {'INPUT': lyr,
+        #                               'OUTPUT': 'TEMPORARY_OUTPUT'}
+        #                 selected = processing.run(
+        #                     'native:saveselectedfeatures', parameters)
+        #                 values['features'] = [
+        #                     feature for feature in selected['OUTPUT'].getFeatures(values['rule'])]
+        #                 self.addRuleToLayer(lyr, values)
 
-                    else:
-                        values['features'] = [
-                            feature for feature in lyr.getFeatures(values['rule'])]
-                        self.addRuleToLayer(lyr, values)
+        #             else:
+        #                 values['features'] = [
+        #                     feature for feature in lyr.getFeatures(values['rule'])]
+        #                 self.addRuleToLayer(lyr, values)
 
-        return rules
+        # return rules
 
     def flagsFromFailedList(self, featureDict, ptLayer, lLayer, polLayer, feedback):
         """
