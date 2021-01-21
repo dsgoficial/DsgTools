@@ -79,7 +79,7 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         rex.setPlaceholderText(self.tr("Entire rule expression"))
         return rex
 
-    def maplyrAndFieldComboBox(self):
+    def mapLyrAndFieldComboBox(self):
         """
         Retrieves the configured map layer selection combo box.
         :return: (QgsMapLayerComboBox) configured layer selection widget.
@@ -89,8 +89,8 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
 
     def errorTypeComboBox(self):
         """
-        Retrieves the configured map layer selection combo box.
-        :return: (QgsMapLayerComboBox) configured layer selection widget.
+        Retrieves the configured error type selection combo box.
+        :return: (QComboBox) configured error selection widget.
         """
         errorTypeList = ['Atributo com valor incomum',
                          'Atributo com valor incorreto',
@@ -124,7 +124,7 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
     def colorSelectionWidget(self):
         """
         Retrieves a new widget for selecting colors.
-        :return: (QgsColorButton) color selection widget.
+        :return: (ColorSelectorWidget) color selection widget.
         """
         cw = ColorSelectorWidget()
         return cw
@@ -138,6 +138,11 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         return filterWidget
 
     def getLoadedLayers(self):
+        """
+        Gets data from the canvas and returns a dictionary with layers as
+        keys and a list of layers fields as values.
+        :return: (dict) with data loaded in canvas.
+        """
         self.loaded = {}
         layers = QgsProject.instance().mapLayers().values()
         for layer in layers:
@@ -146,55 +151,68 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
 
         return self.loaded
 
-    def test(self, _dict):
+    def testLoadedLayers(self, stateDict):
         """
-        {
-            0: {
-                '0': 'ghsshsghghshgs',
-                '1': ('hid_terreno_suj_inundacao_a', 'periodicidadeinunda'),
-                '2': 'periodicidadeinunda',
-                '3': 'Atributo com valor incomum',
-                '4': '#33a02c'
-            }
-        }
+        Compares loaded layers in canvas with input data from JSON file and
+        returns only the data that contain the already loaded layers.
+        :param stateDict: (dict) of the state of the otw interface.
+        :return: (dict) with data loaded in canvas.
         """
-        d = {}
-        l, a = [], []
-        for k, v in _dict.items():
+        newDict = {}
+        notLoadedLyr = []
+        for k, v in stateDict.items():
             if k == 'metadata':
                 continue
-            # print(k, ':', v)
-            elif v['1'][0] not in self.loaded or v['1'][1] not in self.loaded[v['1'][0]]:
-                l.append(v['1'][0])
-                a.append(v['1'][1])
-                # print('elif: ', v['1'][0])
+            if v['1'][0] not in self.loaded or \
+                    v['1'][1] not in self.loaded[v['1'][0]]:
+                notLoadedLyr.append(v['1'][0])
             else:
-                d.setdefault(k, v)
-        self.showLoadingState(l, a)
-        _dict.clear()
-        for k, v in d.items():
-            _dict.setdefault(k, v)
+                newDict.setdefault(k, v)
 
-        # return d
+        if notLoadedLyr:
+            if self.showLoadingMsg(notLoadedLyr, 'warning') == QMessageBox.Ignore:
+                stateDict.clear()
+                for k, v in newDict.items():
+                    stateDict.setdefault(k, v)
+            else:
+                stateDict.clear()
+        else:
+            self.showLoadingMsg()
 
-    def showLoadingState(self, lyrList, attList):
+    def showLoadingMsg(self, lyrList=None, msgType=None):
+        """
+        Shows a message box to user if successfully loaded data or not.
+        If not, shows to user a list of not loaded layers and allows user
+        to choice between ignore and continue or cancel the importation.
+        :param lyrList: (list) a list of not loaded layers.
+        :param msgType: (str) type of message box - warning or information.
+        :return: (signal) value returned from the clicked button.
+        """
         msg = QMessageBox()
-        msg.setIcon(QMessageBox.Warning)
+        msg.setWindowTitle(self.tr("Import Rules Information"))
 
-        msg.setText("Loading rules information")
-        msg.setInformativeText("Some rules have not been loaded")
-        msg.setWindowTitle("Import Rules Info")
-        textLyrList = sorted(set(lyrList))
-        # textAttList = sorted(set(attList))
-        formatedLyrList = ['{:>3}' for item in textLyrList]
-        newString = ','.join(formatedLyrList)
-        formatedString = newString.replace(',', '\n')
-        # text = item + '\n' for item in textList
+        if lyrList and msgType == 'warning':
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText(self.tr("Some rules have not been loaded"))
+            msg.setInformativeText(
+                self.tr("Do you want to ignore and continue or cancel?"))
 
-        msg.setDetailedText(
-            'The following layers have not been loaded:\n', formatedString.format(*textLyrList), sep='\n')
-        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-        msg.exec_()
+            textLyrList = sorted(set(lyrList))
+            formatedLyrList = ['{}' for item in textLyrList]
+            msgString = ','.join(formatedLyrList).replace(',', '\n')
+            formatedMsgString = self.tr(
+                'The following layers have not been loaded:\n') + \
+                msgString.format(*textLyrList)
+
+            msg.setDetailedText(formatedMsgString)
+            msg.setStandardButtons(QMessageBox.Ignore | QMessageBox.Cancel)
+            msg.setDefaultButton(QMessageBox.Cancel)
+        else:
+            msg.setIcon(QMessageBox.Information)
+            msg.setText(self.tr("Successfully loaded rules!"))
+
+        choice = msg.exec_()
+        return choice
 
     def postAddRowStandard(self, row):
         """
@@ -203,8 +221,6 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         # in standard GUI, the layer selectors are QgsMapLayerComboBox, and its
         # layer changed signal should be connected to the filter expression
         # widget setup
-
-        # a = OrderedTableWidget.dataLoaded.connect(test)
 
         lyrAndFieldComboBox = self.panel.itemAt(row, self.lyrFld)
         cl = lyrAndFieldComboBox.getCurrentLayer()
@@ -255,7 +271,7 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
             1: {
                 "header": self.tr("Layer and field"),
                 "type": "widget",
-                "widget": self.maplyrAndFieldComboBox,
+                "widget": self.mapLyrAndFieldComboBox,
                 "setter": "setCurrentLayerNField",
                 "getter": "getCurrentLayerNField"
             },
@@ -283,7 +299,7 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
 
         })
         otw.setHeaderDoubleClickBehaviour("order")
-        otw.dataLoaded.connect(self.test)
+        otw.dataLoaded.connect(self.testLoadedLayers)
         otw.rowAdded.connect(self.postAddRowStandard)
 
         return otw
