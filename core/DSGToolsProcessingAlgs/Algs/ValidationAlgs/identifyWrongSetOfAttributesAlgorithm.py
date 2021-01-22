@@ -67,7 +67,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             description=self.tr('Attribute Rules Set')
         )
         attributeRulesSetter.setMetadata({
-            'widget_wrapper' : 'DsgTools.gui.ProcessingUI.validationAttributeRulesWrapper.ValidationAttributeRulesWrapper'
+            'widget_wrapper': 'DsgTools.gui.ProcessingUI.validationAttributeRulesWrapper.ValidationAttributeRulesWrapper'
         })
         self.addParameter(attributeRulesSetter)
 
@@ -239,30 +239,35 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         # new lyr with saveselectedfeatures alg and move on
         """
         {
-            'color': 'Preencher atributo', 
-            'expression': '"tipocampo" not in  (0,1,2,3)', 
-            'layerNField': ('veg_campo_a', 'tipocampo'), 
-            'name': 'tipocampo - Preencher atributo'}
+            'color': '#b6a500',
+            'description': 'tipocampo - Preencher atributo',
+            'errorType': 'Preencher atributo',
+            'expression': '"tipocampo" not in  (0,1,2,3)',
+            'layerField': ('veg_campo_a', 'tipocampo')
+        }
+
+        self.layerList = [layer.name()
+                          for layer in QgsProject.instance().mapLayers().values()]
         """
-        for item in rules:
-            print(item)
+        
+        # for item in rules:
+        #     print(item)
 
-        # for keys, values in rules.items():
-        #     for lyr in layerList:
-        #         if lyr.name() == values['layer']:
-        #             if onlySelected:
-        #                 parameters = {'INPUT': lyr,
-        #                               'OUTPUT': 'TEMPORARY_OUTPUT'}
-        #                 selected = processing.run(
-        #                     'native:saveselectedfeatures', parameters)
-        #                 values['features'] = [
-        #                     feature for feature in selected['OUTPUT'].getFeatures(values['rule'])]
-        #                 self.addRuleToLayer(lyr, values)
+        for keys, values in rules.items():
+            print(keys, ':', values)
+            # if onlySelected:
+            #     parameters = {'INPUT': values['layerField'][0],
+            #                   'OUTPUT': 'TEMPORARY_OUTPUT'}
+            #     selected = processing.run(
+            #         'native:saveselectedfeatures', parameters)
+            #     values['features'] = [
+            #         feature for feature in selected['OUTPUT'].getFeatures(values['expression'])]
+            #     # self.addRuleToLayer(lyr, values)
 
-        #             else:
-        #                 values['features'] = [
-        #                     feature for feature in lyr.getFeatures(values['rule'])]
-        #                 self.addRuleToLayer(lyr, values)
+            # else:
+            #     values['features'] = [
+            #         feature for feature in values['layerField'][0].getFeatures(values['expression'])]
+            #     # self.addRuleToLayer(lyr, values)
 
         # return rules
 
@@ -378,7 +383,6 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         #             feedback.pushInfo(self.tr(
         #                 'The structure of the rules does not correspond to the standard format.'))
 
-
     def name(self):
         """
         Returns the algorithm name, used for identifying the algorithm. This
@@ -425,6 +429,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         """
         return IdentifyWrongSetOfAttributesAlgorithm()
 
+
 class ParameterAttributeRulesSetType(QgsProcessingParameterType):
 
     def __init__(self):
@@ -434,7 +439,7 @@ class ParameterAttributeRulesSetType(QgsProcessingParameterType):
         return ParameterAttributeRulesSet(name)
 
     def metadata(self):
-        return {'widget_wrapper' : 'DsgTools.gui.ProcessingUI.validationAttributeRulesWrapper.ValidationAttributeRulesWrapper'}
+        return {'widget_wrapper': 'DsgTools.gui.ProcessingUI.validationAttributeRulesWrapper.ValidationAttributeRulesWrapper'}
 
     def name(self):
         return QCoreApplication.translate('Processing', 'Attribute Rules Set')
@@ -444,6 +449,7 @@ class ParameterAttributeRulesSetType(QgsProcessingParameterType):
 
     def description(self):
         return QCoreApplication.translate('Processing', 'Set of attribute rules. Used on Attribute Rules Checker.')
+
 
 class ParameterAttributeRulesSet(QgsProcessingParameterDefinition):
 
