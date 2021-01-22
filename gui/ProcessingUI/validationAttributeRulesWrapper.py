@@ -143,11 +143,10 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         keys and a list of layers fields as values.
         :return: (dict) with data loaded in canvas.
         """
-        self.loaded = {}
+        self.loaded = dict()
         layers = QgsProject.instance().mapLayers().values()
         for layer in layers:
-            self.loaded.setdefault(
-                layer.name(), [field.name() for field in layer.fields()])
+            self.loaded[layer.name()] = [field.name() for field in layer.fields()]
 
         return self.loaded
 
@@ -157,8 +156,14 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         returns only the data that contain the already loaded layers.
         :param stateDict: (dict) of the state of the otw interface.
         :return: (dict) with data loaded in canvas.
+        values = dict()
+            values["description"] = self.panel.getValue(row, 0).strip()
+            values["layerField"] = self.panel.getValue(row, 1)
+            values["expression"] = self.panel.getValue(row, 2)
+            values["errorType"] = self.panel.getValue(row, 3)
+            values["color"] = self.panel.getValue(row, 4)
         """
-        newDict = {}
+        newDict = dict()
         notLoadedLyr = []
         for k, v in stateDict.items():
             if k == 'metadata':
@@ -167,7 +172,7 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
                     v['1'][1] not in self.loaded[v['1'][0]]:
                 notLoadedLyr.append(v['1'][0])
             else:
-                newDict.setdefault(k, v)
+                newDict[k] = v
 
         if notLoadedLyr:
             if self.showLoadingMsg(notLoadedLyr, 'warning') == QMessageBox.Ignore:
@@ -393,10 +398,11 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
             return
         for valueMap in value:
             self.panel.addRow({
-                0: valueMap["name"],
-                1: valueMap["layerNField"],
+                0: valueMap["description"],
+                1: valueMap["layerField"],
                 2: valueMap["expression"],
-                3: valueMap["color"],
+                3: valueMap["errorType"],
+                4: valueMap["color"],
             })
 
     def readStandardPanel(self):
@@ -404,16 +410,14 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         Reads widget's contents when process' parameters are set from an
         algorithm call (e.g. Processing toolbox).
         """
-        valueMaplist = list()
+        values = dict()
         for row in range(self.panel.rowCount()):
-            values = dict()
-            values["name"] = self.panel.getValue(row, 0).strip() or \
-                self.tr("Attribute Rule #{n}".format(n=row + 1))
-            values["layerNField"] = self.panel.getValue(row, 1)
+            values["description"] = self.panel.getValue(row, 0).strip()
+            values["layerField"] = self.panel.getValue(row, 1)
             values["expression"] = self.panel.getValue(row, 2)
-            values["color"] = self.panel.getValue(row, 3)
-            valueMaplist.append(values)
-        return valueMaplist
+            values["errorType"] = self.panel.getValue(row, 3)
+            values["color"] = self.panel.getValue(row, 4)
+        return values
 
     def readModelerPanel(self):
         """
