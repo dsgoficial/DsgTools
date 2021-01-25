@@ -162,6 +162,10 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
             values["expression"] = self.panel.getValue(row, 2)
             values["errorType"] = self.panel.getValue(row, 3)
             values["color"] = self.panel.getValue(row, 4)
+
+            for k,v in loaded.items():
+                if 'hid_ilha_a' in k.name():
+                    print(True)
         """
         newDict = dict()
         notLoadedLyr = []
@@ -410,14 +414,18 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         Reads widget's contents when process' parameters are set from an
         algorithm call (e.g. Processing toolbox).
         """
-        values = dict()
+        valueMaplist = dict()
+        count = 0
         for row in range(self.panel.rowCount()):
+            values = dict()
             values["description"] = self.panel.getValue(row, 0).strip()
             values["layerField"] = self.panel.getValue(row, 1)
             values["expression"] = self.panel.getValue(row, 2)
             values["errorType"] = self.panel.getValue(row, 3)
             values["color"] = self.panel.getValue(row, 4)
-        return values
+            valueMaplist[count] = values
+            count += 1
+        return valueMaplist
 
     def readModelerPanel(self):
         """
