@@ -40,10 +40,11 @@ from qgis.core import (QgsFeature,
                        QgsProcessingParameterType,
                        QgsProcessingParameterDefinition)
 
-from .validationAlgorithm import ValidationAlgorithm
-
 
 class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
+    """
+    Docstring.
+    """
 
     RULES_SET = 'RULES_SET'
     SELECTED = 'SELECTED'
@@ -52,13 +53,14 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
     POLYGON_FLAGS = 'POLYGON_FLAGS'
 
     def __init__(self):
+        """
+        Constructor.
+        """
         super().__init__()
-        self.valAlg = ValidationAlgorithm()
-        self.flagFields = self.valAlg.getFlagFields()
         self.font = QFont()
         self.conditionalStyle = QgsConditionalStyle()
 
-    def initAlgorithm(self, config):
+    def initAlgorithm(self):
         """
         Parameter setting.
         """
@@ -71,27 +73,6 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         })
         self.addParameter(attributeRulesSetter)
 
-        # self.addParameter(
-        #     QgsProcessingParameterMultipleLayers(
-        #         self.INPUT,
-        #         self.tr('Input layers:'),
-        #     )
-        # )
-        # self.addParameter(
-        #     QgsProcessingParameterFile(
-        #         self.RULEFILE,
-        #         self.tr('JSON rules file:'),
-        #         defaultValue='.json'
-        #     )
-        # )
-        # self.addParameter(
-        #     QgsProcessingParameterString(
-        #         self.RULEDATA,
-        #         description=self.tr('JSON formatted rules:'),
-        #         multiLine=True,
-        #         defaultValue='{}'
-        #     )
-        # )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.SELECTED,
@@ -142,14 +123,6 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
                 self.invalidSourceError(parameters, self.RULES_SET)
             )
 
-        # inputLyrList = self.parameterAsLayerList(parameters,
-        #                                          self.INPUT,
-        #                                          context)
-
-        # if inputLyrList is None or inputLyrList == []:
-        #     raise QgsProcessingException(self.invalidSourceError(
-        #         parameters, self.INPUT))
-
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
 
         crs = QgsProject.instance().crs()
@@ -177,47 +150,17 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.POLYGON_FLAGS))
 
-        # inputData = self.loadRulesData(parameters, feedback)
-
         failedFeatures = self.checkedFeatures(rules, onlySelected)
 
-        # flags = self.flagsFromFailedList(failedFeatures,
-        #                                  pointFlags,
-        #                                  lineFlags,
-        #                                  polygonFlags,
-        #                                  feedback)
+        self.flagsFromFailedList(failedFeatures,
+                                 pointFlags,
+                                 lineFlags,
+                                 polygonFlags,
+                                 feedback)
         return {
             self.POINT_FLAGS: ptId,
             self.LINE_FLAGS: lId,
             self.POLYGON_FLAGS: polId}
-
-    # def loadRulesData(self, parameters, feedback):
-    #     """
-    #     Loads a JSON file with a dictionary structured as described below
-    #     {"0": {
-    #         "layer": (str) layer name,
-    #         "rule": (str) conditional rule,
-    #         "attribute": (str) attribute name,
-    #         "description": (str) description about the error,
-    #         "type": (str) short description about the error,
-    #         "color": (list) RGB [255, 0, 0],
-    #         "features": (list) [] QgsFeature list
-    #     }}
-    #     :param (OS Path) path: path to the JSON file.
-    #     :param (str) str: string formatted rule.
-    #     """
-    #     rulePath = parameters[self.RULEFILE]
-    #     ruleData = parameters[self.RULEDATA]
-    #     # to write a method to evaluate the rules and the
-    #     # file format above
-
-    #     if ruleData and ruleData != '{}':
-    #         # self.validateRuleFormat(json.loads(ruleData), feedback)
-    #         return json.loads(ruleData)
-    #     elif rulePath and rulePath != '.json':
-    #         with open(rulePath, 'r') as jsonFile:
-    #             # return self.validateRuleFormat(json.load(jsonFile), feedback)
-    #             return json.load(jsonFile)
 
     def checkedFeatures(self, rules, onlySelected):
         """
@@ -237,45 +180,34 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         # getFeatures() method as a param doesn't works, but
         # works on canvas TOC. So, to resolve, I've created a
         # new lyr with saveselectedfeatures alg and move on
-        """
-        {
-            'color': '#b6a500',
-            'description': 'tipocampo - Preencher atributo',
-            'errorType': 'Preencher atributo',
-            'expression': '"tipocampo" not in  (0,1,2,3)',
-            'layerField': ('veg_campo_a', 'tipocampo')
-        }
 
-        self.layerList = [layer.name()
-                          for layer in QgsProject.instance().mapLayers().values()]
-        """
-        
-        # for item in rules:
-        #     print(item)
+        lyr = QgsProject.instance()
 
-        for keys, values in rules.items():
-            print(keys, ':', values)
-            # if onlySelected:
-            #     parameters = {'INPUT': values['layerField'][0],
-            #                   'OUTPUT': 'TEMPORARY_OUTPUT'}
-            #     selected = processing.run(
-            #         'native:saveselectedfeatures', parameters)
-            #     values['features'] = [
-            #         feature for feature in selected['OUTPUT'].getFeatures(values['expression'])]
-            #     # self.addRuleToLayer(lyr, values)
+        for key, value in rules.items():
+            if onlySelected:
+                parameters = {'INPUT': lyr.mapLayersByName(value['layerField'][0])[0],
+                              'OUTPUT': 'TEMPORARY_OUTPUT'}
+                selected = processing.run(
+                    'native:saveselectedfeatures', parameters)
+                value['features'] = [
+                    feature for feature in selected['OUTPUT'].getFeatures(
+                        value['expression']
+                    )]
+                self.addRuleToLayer(lyr.mapLayersByName(
+                    value['layerField'][0])[0], value)
+            else:
+                value['features'] = [
+                    feature for feature in lyr.mapLayersByName(
+                        value['layerField'][0])[0].getFeatures(value['expression'])]
+                self.addRuleToLayer(lyr.mapLayersByName(
+                    value['layerField'][0])[0], value)
+        return rules
 
-            # else:
-            #     values['features'] = [
-            #         feature for feature in values['layerField'][0].getFeatures(values['expression'])]
-            #     # self.addRuleToLayer(lyr, values)
-
-        # return rules
-
-    def flagsFromFailedList(self, featureDict, ptLayer, lLayer, polLayer, feedback):
+    def flagsFromFailedList(self, rules, ptLayer, lLayer, polLayer, feedback):
         """
         Creates new features from a failed conditional rules dictionary.
-        :param (Dict) featureDict: a dictionary with a list QgsFeatures selected by
-            checkedFeatures() method;
+        :param (Dict) featureDict: a dictionary with a list QgsFeatures
+            selected by checkedFeatures() method;
         :param (QgsVectorLayer) ptLayer: output point vector layer;
         :param (QgsVectorLayer) lLayer: output line vector layer;
         :param (QgsVectorLayer) polLayer: output polygon vector layer;
@@ -287,7 +219,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             QgsWkbTypes.PolygonGeometry: polLayer
         }
 
-        for keys, values in featureDict.items():
+        for keys, values in rules.items():
             flagText = self.tr('{name}').format(name=values["description"])
             for flag in values["features"]:
                 geom = flag.geometry()
@@ -297,7 +229,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
                 layerMap[geom.type()].addFeature(
                     newFeature, QgsFeatureSink.FastInsert
                 )
-        self.logResult(featureDict, feedback)
+        self.logResult(rules, feedback)
         return (ptLayer, lLayer, polLayer)
 
     def addRuleToLayer(self, lyr, values):
@@ -306,17 +238,22 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         in the attribute table.
         """
         self.font.setBold(True)
-        self.conditionalStyle.setRule(values['rule'])
+        self.conditionalStyle.setRule(values['expression'])
         self.conditionalStyle.setFont(self.font)
         self.conditionalStyle.setTextColor(QColor(255, 255, 255))
 
         for field in lyr.fields():
-            if field.name() == values['attribute']:
-                self.conditionalStyle.setBackgroundColor(
-                    QColor(
-                        values['color'][0],
-                        values['color'][1],
-                        values['color'][2]))
+            if field.name() == values['layerField'][1]:
+                if isinstance(values['color'], (list, tuple)):
+                    self.conditionalStyle.setBackgroundColor(
+                        QColor(
+                            values['color'][0],
+                            values['color'][1],
+                            values['color'][2]))
+                else:
+                    self.conditionalStyle.setBackgroundColor(
+                        QColor(values['color']))
+
                 lyr.conditionalStyles().setFieldStyles(
                     field.name(), [self.conditionalStyle])
             # plus: to find a way to color an entire row with a different color
@@ -337,10 +274,10 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
 
         for k, values in rules.items():
             if len(values['features']) > 0:
-                row = "[RULE]: {0} - {1}\n{2}: {3} {4}\n".format(
-                    values['attribute'],
-                    values['type'],
-                    values['layer'],
+                row = self.tr('[RULE]') + ": {0} - {1}\n{2}: {3} {4}\n".format(
+                    values['layerField'][1],
+                    values['errorType'],
+                    values['layerField'][0],
                     len(values['features']),
                     self.tr('features') if len(values['features']) > 1 else self.tr('feature'))
                 feedback.pushInfo(row)
@@ -349,39 +286,6 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
 
         feedback.pushInfo('{0} {1} {0}\n'.format(
             '===' * 5, self.tr('LOG END')))
-
-    def validateRuleFormat(self, rules, feedback):
-        """
-        Verifies whether the given rule set is valid or not
-        and notifies the user.
-        """
-        # TODO: must find a better way to validate rules
-
-        # list_keys = ['layer', 'rule', 'attribute',
-        #     'description', 'type', 'color', 'features']
-
-        # if not isinstance(rules, dict):
-        #     feedback.pushInfo(self.tr(
-        #                 'The structure of the rules does not correspond to the standard format.'))
-        # else:
-        #     for k, v in rules.items():
-        #         if isinstance(v, dict):
-        #             for keys, values in v.items():
-        #                 if keys in list_keys:
-
-        #                     if isinstance(values, (str, list)):
-        #                         if len(v['color']) == 3 and len(v['features']) == 0:
-        #                             return rules
-        #                         else:
-        #                             feedback.pushInfo(self.tr('The key {} size is different than 3 and key {} size is different than 0.'.fomat(value))
-        #                     else:
-        #                         feedback.pushInfo(self.tr('The value {} is not a string or a list.'.fomat(value))
-
-        #                 else:
-        #                     feedback.pushInfo(self.tr('The key {} does not exist in the dictionary.'.fomat(keys))
-        #         else:
-        #             feedback.pushInfo(self.tr(
-        #                 'The structure of the rules does not correspond to the standard format.'))
 
     def name(self):
         """
