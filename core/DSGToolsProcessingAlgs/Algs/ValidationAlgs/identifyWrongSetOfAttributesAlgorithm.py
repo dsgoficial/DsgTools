@@ -60,7 +60,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         self.font = QFont()
         self.conditionalStyle = QgsConditionalStyle()
 
-    def initAlgorithm(self):
+    def initAlgorithm(self, config):
         """
         Parameter setting.
         """
