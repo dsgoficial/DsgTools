@@ -52,7 +52,8 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
     STD_COLUMN_COUNT = 5
     MODELER_COLUMN_COUNT = 6
     descStd, lyrStd, expStd, errStd, colorStd = list(range(STD_COLUMN_COUNT))
-    descMd, lyrMd, fldMd, expMd, errMd, colorMd = list(range(MODELER_COLUMN_COUNT))
+    descMd, lyrMd, fldMd, expMd, errMd, colorMd = list(
+        range(MODELER_COLUMN_COUNT))
 
     def __init__(self, *args, **kwargs):
         """
@@ -63,13 +64,13 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         self.layerList = [layer.name()
                           for layer in QgsProject.instance().mapLayers().values()]
 
-    def ruleNameWidget(self):
+    def stringDataWidget(self, text):
         """
-        Retrieves the widget for reading/setting rule name.
+        Retrieves the widget for reading/setting string data.
         :return: (QLineEdit)
         """
         le = QLineEdit()
-        le.setPlaceholderText(self.tr("Set a name for this spatial rule..."))
+        le.setPlaceholderText(self.tr(text))
         return le
 
     def ruleExpressionWidget(self):
@@ -103,26 +104,6 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         cb.addItems(errorTypeList)
         return cb
 
-    def mapLayerModelDialog(self):
-        """
-        Retrieves widget for map layer selection in a model dialog setup.
-        :return: (QLineEdit) map layer setter widget for processing dialog
-        mode.
-        """
-        le = QLineEdit()
-        le.setPlaceholderText(self.tr("Type a vector layer's name..."))
-        return le
-
-    def mapFieldModelDialog(self):
-        """
-        Retrieves widget for map field selection in a model dialog setup.
-        :return: (QLineEdit) map field setter widget for processing dialog
-        mode.
-        """
-        le = QLineEdit()
-        le.setPlaceholderText(self.tr("Type a field layer's name..."))
-        return le
-
     def colorSelectionWidget(self):
         """
         Retrieves a new widget for selecting colors.
@@ -144,21 +125,20 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         Gets data from the canvas and returns a dictionary with layers as
         keys and a list of layers fields as values.
         :return: (dict) with data loaded in canvas.
-            {
-                'hid_ilha_a': ['id', 'geometriaaproximada', 'nome', 'nomeabrev', 'tipoilha', 'area_otf']
-            }
         """
         self.loaded = dict()
         layers = QgsProject.instance().mapLayers().values()
         for layer in layers:
-            self.loaded[layer.name()] = [field.name() for field in layer.fields()]
+            self.loaded[layer.name()] = [field.name()
+                                         for field in layer.fields()]
 
         return self.loaded
 
-    def testLoadedLayers(self, stateDict):
+    def modifyStateDict(self, stateDict):
         """
         Compares loaded layers in canvas with input data from JSON file and
-        returns only the data that contain the already loaded layers.
+        returns only the data that contain the already loaded layers to fill
+        the standard panel GUI.
         :param stateDict: (dict) of the state of the otw interface.
         :return: (dict) with data loaded in canvas.
         """
@@ -172,12 +152,49 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
                 notLoadedLyr.append(v['1'][0])
             else:
                 newDict[k] = v
-
+        warning = self.showLoadingMsg(notLoadedLyr, 'warning')
         if notLoadedLyr:
-            if self.showLoadingMsg(notLoadedLyr, 'warning') == QMessageBox.Ignore:
+            if warning == QMessageBox.Ignore:
                 stateDict.clear()
                 for k, v in newDict.items():
-                    stateDict.setdefault(k, v)
+                    stateDict[k] = v
+            else:
+                stateDict.clear()
+        else:
+            self.showLoadingMsg()
+
+    def modifyStateDictModeler(self, stateDict):
+        """
+        Compares loaded layers in canvas with input data from JSON file and
+        returns only the data that contain the already loaded layers to fill
+        the modeler GUI.
+        :param stateDict: (dict) of the state of the otw interface.
+        :return: (dict) with data loaded in canvas.
+        """
+        newDict = dict()
+        notLoadedLyr = []
+        for k, v in stateDict.items():
+            if k == 'metadata':
+                continue
+            if v['1'][0] not in self.loaded or \
+                    v['1'][1] not in self.loaded[v['1'][0]]:
+                notLoadedLyr.append(v['1'][0])
+            else:
+                if isinstance(v['1'], (list, tuple)):
+                    value = dict()
+                    value['0'] = v['0']
+                    value['1'] = v['1'][0]
+                    value['2'] = v['1'][1]
+                    value['3'] = v['2']
+                    value['4'] = v['3']
+                    value['5'] = v['4']
+                newDict[k] = value
+        warning = self.showLoadingMsg(notLoadedLyr, 'warning')
+        if notLoadedLyr:
+            if warning == QMessageBox.Ignore:
+                stateDict.clear()
+                for k, v in newDict.items():
+                    stateDict[k] = v
             else:
                 stateDict.clear()
         else:
@@ -227,54 +244,39 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         # widget setup
 
         lyrAndFieldComboBox = self.panel.itemAt(row, self.lyrStd)
-        cl = lyrAndFieldComboBox.getCurrentLayer()
+        cLyr = lyrAndFieldComboBox.getCurrentLayer()
         filterWidget = self.panel.itemAt(row, self.expStd)
 
         lyrAndFieldComboBox.layerChanged(filterWidget.setLayer)
         lyrAndFieldComboBox.fieldChanged(filterWidget.setField)
         lyrAndFieldComboBox.layerChanged(
-            partial(filterWidget.setExpression, str(cl.fields()[0].name()))
+            partial(filterWidget.setExpression, str(cLyr.fields()[0].name()))
         )
 
         # first setup is manual though
-        if cl:
-            filterWidget.setLayer(cl)
+        if cLyr:
+            filterWidget.setLayer(cLyr)
 
     def postAddRowModeler(self, row):
         """
         Sets up widgets to work as expected right after they are added to GUI.
         """
-
+        # when it's directly typed it worked, but when we have
+        # to import the data it's NOT WORKING
         def checkLayerBeforeConnect(le, filterExp):
             lName = le.text().strip()
-            for layer in QgsProject.instance().mapLayersByName(lName):
+            layers = QgsProject.instance().mapLayersByName(lName)
+            for layer in layers:
                 if isinstance(layer, QgsVectorLayer) and layer.name() == lName:
-                    #verificar se o atributo pertence ao layer
-                        filterExp.setLayer(layer)
-                        # setar o atributo no filterExp
-                        return
+                    filterExp.setLayer(layer)
+                    return
             filterExp.setLayer(None)
 
-        # def checkFieldBeforeConnect(le, filterExp, option=None):
-        #     lName = le.text().strip()
-        #     if option == 'lyr':
-        #         for layer in layers.mapLayersByName(lName):
-        #             if isinstance(layer, QgsVectorLayer) and layer.name() == lName:
-        #                     filterExp.setLayer(layer)
-        #                     return
-        #     elif option == 'fld':
-
-        #         filterExp.setLayer(None)
-
         lyrLe = self.panel.itemAt(row, self.lyrMd)
-        # fldLe = self.panel.itemAt(row, self.fldMd)
         filterWidget = self.panel.itemAt(row, self.expMd)
         lyrLe.editingFinished.connect(
             partial(checkLayerBeforeConnect, lyrLe, filterWidget)
         )
-        # fldLe.editingFinished.connect(
-        #     partial(checkLayerBeforeConnect, fldLe, filterWidget)
-        # )
 
     def standardPanel(self):
         """
@@ -285,7 +287,8 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
             0: {
                 "header": self.tr("Description"),
                 "type": "widget",
-                "widget": self.ruleNameWidget,
+                "widget": lambda: self.stringDataWidget(
+                    'Set a name for this attribute rule...'),
                 "setter": "setText",
                 "getter": "text"
             },
@@ -320,9 +323,8 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
 
         })
         otw.setHeaderDoubleClickBehaviour("order")
-        otw.dataLoaded.connect(self.testLoadedLayers)
+        otw.dataLoaded.connect(self.modifyStateDict)
         otw.rowAdded.connect(self.postAddRowStandard)
-
         return otw
 
     def batchPanel(self):
@@ -341,21 +343,24 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
             0: {
                 "header": self.tr("Rule description"),
                 "type": "widget",
-                "widget": self.ruleNameWidget,
+                "widget": lambda: self.stringDataWidget(
+                    'Set a name for this attribute rule...'),
                 "setter": "setText",
                 "getter": "text"
             },
             1: {
                 "header": self.tr("Layer"),
                 "type": "widget",
-                "widget": self.mapLayerModelDialog,
+                "widget": lambda: self.stringDataWidget(
+                    'Type a vector layer name...'),
                 "setter": "setText",
                 "getter": "text"
             },
             2: {
                 "header": self.tr("Field"),
                 "type": "widget",
-                "widget": self.mapFieldModelDialog,
+                "widget": lambda: self.stringDataWidget(
+                    'Type a field layer name...'),
                 "setter": "setText",
                 "getter": "text"
             },
@@ -367,14 +372,23 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
                 "getter": "currentText"
             },
             4: {
+                "header": self.tr("Error type"),
+                "type": "widget",
+                "widget": lambda: self.stringDataWidget(
+                    'Type an error type...'),
+                "setter": "setText",
+                "getter": "text"
+            },
+            5: {
                 "header": self.tr("Color"),
                 "type": "widget",
                 "widget": self.colorSelectionWidget,
                 "setter": "setCurrentColor",
                 "getter": "getCurrentColor"
-            },
+            }
         })
         otw.setHeaderDoubleClickBehaviour("order")
+        otw.dataLoaded.connect(self.modifyStateDictModeler)
         otw.rowAdded.connect(self.postAddRowModeler)
         return otw
 
@@ -382,6 +396,7 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         """ Docstring """
         return {
             DIALOG_MODELER: self.modelerPanel,
+            # DIALOG_MODELER: self.standardPanel,
             DIALOG_STANDARD: self.standardPanel,
             DIALOG_BATCH: self.batchPanel
         }[self.dialogType]()
@@ -444,7 +459,19 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         Reads widget's contents when process' parameters are set from a modeler
         instance.
         """
-        return self.readStandardPanel()
+        valueMaplist = dict()
+        count = 0
+        for row in range(self.panel.rowCount()):
+            values = dict()
+            values["description"] = self.panel.getValue(row, 0).strip()
+            values["layerField"] = [self.panel.getValue(row, 1),
+                                    self.panel.getValue(row, 2)]
+            values["expression"] = self.panel.getValue(row, 3)
+            values["errorType"] = self.panel.getValue(row, 4)
+            values["color"] = self.panel.getValue(row, 5)
+            valueMaplist[count] = values
+            count += 1
+        return valueMaplist
 
     def readBatchPanel(self):
         """
