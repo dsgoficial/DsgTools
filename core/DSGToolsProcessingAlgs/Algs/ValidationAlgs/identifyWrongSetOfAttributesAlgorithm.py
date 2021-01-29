@@ -39,6 +39,7 @@ from qgis.core import (QgsFeature,
                        QgsProcessingParameterString,
                        QgsProcessingParameterType,
                        QgsProcessingParameterDefinition)
+from .validationAlgorithm import ValidationAlgorithm
 
 
 class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
@@ -57,6 +58,8 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         Constructor.
         """
         super().__init__()
+        self.valAlg = ValidationAlgorithm()
+        self.flagFields = self.valAlg.getFlagFields()
         self.font = QFont()
         self.conditionalStyle = QgsConditionalStyle()
 
@@ -162,7 +165,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             self.LINE_FLAGS: lId,
             self.POLYGON_FLAGS: polId}
 
-    def checkedFeatures(self, rules, onlySelected):
+    def checkedFeatures(self, stateDict, onlySelected):
         """
         Filters a layer or a set of selected features as from conditional rules,
         and the result is added to a list in a dictionary.
@@ -183,7 +186,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
 
         lyr = QgsProject.instance()
 
-        for key, value in rules.items():
+        for key, value in stateDict.items():
             if onlySelected:
                 parameters = {'INPUT': lyr.mapLayersByName(value['layerField'][0])[0],
                               'OUTPUT': 'TEMPORARY_OUTPUT'}
@@ -201,7 +204,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
                         value['layerField'][0])[0].getFeatures(value['expression'])]
                 self.addRuleToLayer(lyr.mapLayersByName(
                     value['layerField'][0])[0], value)
-        return rules
+        return stateDict
 
     def flagsFromFailedList(self, rules, ptLayer, lLayer, polLayer, feedback):
         """
