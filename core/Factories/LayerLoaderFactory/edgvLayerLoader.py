@@ -32,6 +32,7 @@ from qgis.core import (Qgis,
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtXml import QDomDocument
 
 from DsgTools.core.Utils.utils import Utils
 
@@ -214,7 +215,12 @@ class EDGVLayerLoader(QObject):
             QgsMessageLog.logMessage(':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
             return None
         if qmlType == 'db':
-            vlayer.importNamedStyle(qmldir)
+            tempPath = os.path.join(os.path.dirname(__file__), "temp.qml")
+            with open(tempPath, "w", encoding='utf-8') as f:
+                f.writelines(qmldir)
+                f.close()
+            vlayer.loadNamedStyle(tempPath, True)
+            os.remove(tempPath)
         else:
             vlayerQml = os.path.join(qmldir, vlayer.name()+'.qml')
             #treat case of qml with multi
