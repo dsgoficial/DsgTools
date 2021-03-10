@@ -22,6 +22,10 @@
  This script initializes the plugin, making it known to QGIS.
 """
 
+from .dsg_tools import DsgTools
+
+# allowing to import a singleton of DsgTools upper object
+dsgTools = None
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name
@@ -30,6 +34,6 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
-    #
-    from .dsg_tools import DsgTools
-    return DsgTools(iface)
+    global dsgTools
+    dsgTools = DsgTools(iface)
+    return dsgTools

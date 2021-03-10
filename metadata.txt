@@ -10,7 +10,7 @@
 name=DSG Tools
 qgisMinimumVersion=3.2
 description=Brazilian Army Cartographic Production Tools
-version=4.1-dev
+version=4.1
 author=Brazilian Army Geographic Service
 email=suporte.dsgtools@dsg.eb.mil.br
 about=
@@ -44,6 +44,11 @@ about=
 
 # Uncomment the following line and add your changelog:
 changelog=
+    4.1 - New algorithms and a Refactor to DSGTools feature extraction tool.
+            New features:
+                . DSGTools Feature Classification is now renamed to DSGTools Custom Feature Tool Box and was completely remodeled;
+            A few bug fixes and UX improvements
+            Added a few new algorithms, such as Enforce spatial rules, Identify Terrain, Identify Angles in Invalid Range and a couple more. Checkout the full changelog at https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.1
     4.0 - DSGTools Migrated to QGIS 3
             New Features:
                 . DSGTools now have a Processing Provider Called DSGToolsAlgorithm. Algorithms were grouped by types such as Data Quality, Quality Assurance, Editing Algorithms and Layer Management Algorithms. It has 61 algorithms, as follows:
