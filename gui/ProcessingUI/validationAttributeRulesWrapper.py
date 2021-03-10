@@ -102,6 +102,8 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         cb = QComboBox()
         cb.addItem(self.tr('Select an error type'))
         cb.addItems(errorTypeList)
+        cbSize = cb.minimumSizeHint()
+        cb.setMinimumSize(cbSize)
         return cb
 
     def colorSelectionWidget(self):
