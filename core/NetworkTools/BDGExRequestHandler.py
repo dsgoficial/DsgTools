@@ -23,15 +23,17 @@
  *                                                                         *
  ***************************************************************************/
 """
-# Import the PyQt and QGIS libraries
+
 from future import standard_library
 standard_library.install_aliases()
 import urllib.request, urllib.error, urllib.parse
-from xml.dom.minidom import parseString
+from xml.dom.minidom import parseString, Element
 
+from qgis.core import Qgis
 from qgis.PyQt.QtCore import QSettings, QObject
 from qgis.PyQt.QtWidgets import QMessageBox
 
+from DsgTools.core.Utils.utils import MessageRaiser
 
 class BDGExRequestHandler(QObject):
     def __init__(self,parent=None):
@@ -72,19 +74,16 @@ class BDGExRequestHandler(QObject):
         (enabled, host, port, user, password, type, urlsList) = self.getProxyConfiguration()
         if enabled == 'false' or type != 'HttpProxy':
             return
-        
         for address in urlsList:
             if address in url:
                 proxy = urllib.request.ProxyHandler({})
                 opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
                 urllib.request.install_opener(opener)
                 return
-
         proxyStr = 'http://'+user+':'+password+'@'+host+':'+port
         proxy = urllib.request.ProxyHandler({'http': proxyStr})
         opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
         urllib.request.install_opener(opener)
-        return          
 
     def getProxyConfiguration(self):
         """
@@ -98,7 +97,11 @@ class BDGExRequestHandler(QObject):
         user = settings.value('proxyUser')
         password = settings.value('proxyPassword')
         type = settings.value('proxyType')
-        excludedUrls = settings.value('proxyExcludedUrls')
+        excludedUrls = list()
+        if settings.value('proxyExcludedUrls'):
+            excludedUrls = settings.value('proxyExcludedUrls')
+        if settings.value('noProxyUrls'):
+            excludedUrls += settings.value('noProxyUrls')
         # try:
         #     urlsList = excludedUrls.split('|')
         # except:
@@ -122,11 +125,13 @@ class BDGExRequestHandler(QObject):
         url = self.availableServicesDict[service]['url']
         if not self.availableServicesDict[service]['services'][serviceType]:
             self.availableServicesDict[service]['services'][serviceType] = self.getCapabilitiesDict(service, url, service_type=serviceType)
-        return self.getRequestString(
-            layerList,
-            url,
-            self.availableServicesDict[service]['services'][serviceType][layerList[0]],
-            serviceType
+        layers = self.availableServicesDict[service]['services'][serviceType]
+        if layers is not None and layerList[0] in layers:
+            return self.getRequestString(
+                layerList,
+                url,
+                layers[layerList[0]],
+                serviceType
             )
 
     def getCapabilitiesDict(self, service, url, service_type='WMS'):
@@ -135,6 +140,8 @@ class BDGExRequestHandler(QObject):
             service_type=service_type
         )
         myDom = self.requestGetCapabilitiesXML(capabilities_url)
+        if not myDom:
+            return {}
         if service_type == 'WMS':
             return self.parseCapabilitiesXML(myDom)
         elif service_type == 'WFS':
@@ -148,10 +155,18 @@ class BDGExRequestHandler(QObject):
         """
         self.setUrllibProxy(url)
         getCapa = urllib.request.Request(url, headers={'User-Agent' : "Magic Browser"})
-        resp = urllib.request.urlopen(getCapa)
+        try:
+            resp = urllib.request.urlopen(getCapa)
+        except Exception as e:
+            title = self.tr("BDGEx layers (DSGTools)")
+            msg = self.tr("Unable to provide requested layer. Please check "
+                          "your network settings (proxy and exceptions too, if"
+                          " necessary).")
+            MessageRaiser().raiseIfaceMessage(title, msg, Qgis.Warning, 5)
+            return ""
         response = resp.read()
         try:
-            myDom=parseString(response)
+            myDom = parseString(response)
         except:
             raise Exception('Parse Error')
         return myDom
@@ -174,12 +189,10 @@ class BDGExRequestHandler(QObject):
         for node in capabilitiesDom.getElementsByTagName("Layer")[1::]:
             newItem = {}
             for tag in node.childNodes:
-                try:
+                if isinstance(tag, Element):
                     tagName = tag.tagName
                     if tag.childNodes:
                         newItem[tagName] = tag.childNodes[0].nodeValue
-                except:
-                    pass
             jsonDict[newItem['Name']] = newItem
         #parse to add format to jsonDict
         for tile in capabilitiesDom.getElementsByTagName("TileSet"):
