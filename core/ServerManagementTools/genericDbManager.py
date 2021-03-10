@@ -45,11 +45,10 @@ class GenericDbManager(QObject):
         self.serverAbstractDb = serverAbstractDb
         self.adminDb = self.instantiateAdminDb(serverAbstractDb)
         self.utils = Utils()
-        self.extensionDict = {'EarthCoverage':'.dsgearthcov', 
-                    'Customization':'.dsgcustom', 
-                    'Style':'.dsgstyle', 
-                    'ValidationConfig':'.dsgvalidcfg', 
-                    'FieldToolBoxConfig':'.reclas',
+        self.extensionDict = {'EarthCoverage':'.dsgearthcov',
+                    'Customization':'.dsgcustom',
+                    'Style':'.dsgstyle',
+                    'ValidationConfig':'.dsgvalidcfg',
                     'Permission':'.dsgperm',
                     'AttributeRules':'.dsgattrrul',
                     'SpatialRules':'.dsgspatrul',
