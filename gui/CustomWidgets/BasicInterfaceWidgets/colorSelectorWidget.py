@@ -46,14 +46,14 @@ class ColorSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
         self.lineEdit.textEdited.connect(self.setCurrentColor)
 
     @QtCore.pyqtSlot()
-    def UpdateColor(self):
+    def updateColor(self):
         """Docstring."""
         color = self.mColorButton.color().name()
         self.lineEdit.setText(color)
 
     def colorChanged(self):
         """Docstring."""
-        return self.mColorButton.colorChanged.connect(self.UpdateColor)
+        return self.mColorButton.colorChanged.connect(self.updateColor)
 
     def getCurrentColor(self):
         """Docstring."""
@@ -63,3 +63,12 @@ class ColorSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
         """Docstring."""
         self.mColorButton.setColor(QColor(color))
         self.lineEdit.setText(color)
+
+    def sizeHint(self):
+        """Docstring."""
+        mColorButtonSize = mColorButton.minimumSizeHint()
+        lineEditSize = lineEdit.minimumSizeHint()
+        minw = mColorButtonSize + lineEditSize
+        setMinimumSize(QSize(minw, minh))
+
+
