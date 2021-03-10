@@ -1071,6 +1071,57 @@ class Tester(unittest.TestCase):
                     "POLYGON_FLAGS":"memory:"
                 }
             ],
+            "dsgtools:identifywrongsetofattributesalgorithm" : [
+                {
+                    '__comment' : "Tests 1 - tests every single topological relation to its simplest state",
+                    "RULES_SET":{
+                                "0": {
+                                    "0": "tipocampo - Preencher atributo",
+                                    "1": [
+                                        "veg_campo_a",
+                                        "tipocampo"
+                                    ],
+                                    "2": "\"tipocampo\" not in  (0,1,2,3)",
+                                    "3": "Preencher atributo",
+                                    "4": "#b6a500"
+                                },
+                                "1": {
+                                    "0": "classificacaoporte - Preencher atributo",
+                                    "1": [
+                                        "veg_floresta_a",
+                                        "classificacaoporte"
+                                    ],
+                                    "2": "\"classificacaoporte\" not in  (5,4,0)",
+                                    "3": "Preencher atributo",
+                                    "4": "#b6a500"
+                                },
+                                "2": {
+                                    "0": "regime - Preencher atributo",
+                                    "1": [
+                                        "hid_trecho_drenagem_l",
+                                        "regime"
+                                    ],
+                                    "2": "\"regime\" not in  (0,1,2,3,4,5)",
+                                    "3": "Preencher atributo",
+                                    "4": "#b6a500"
+                                },
+                                "3": {
+                                    "0": "navegavel - Preencher atributo",
+                                    "1": [
+                                        "hid_trecho_drenagem_l",
+                                        "navegavel"
+                                    ],
+                                    "2": "\"navegavel\" not in  (0,2,1)",
+                                    "3": "Preencher atributo",
+                                    "4": "#b6a500"
+                                }
+                    },
+                    'SELECTED' : False,
+                    "POINT_FLAGS":"memory:",
+                    "LINE_FLAGS":"memory:",
+                    "POLYGON_FLAGS":"memory:"
+                }
+            ],
 
             "dsgtools:ALG" : [
                 {
@@ -1364,6 +1415,9 @@ class Tester(unittest.TestCase):
                 "dsgtools:adjustnetworkconnectivity"
             ]
         multipleOutputAlgs = [
+            # identification algs
+            "dsgtools:identifywrongsetofattributesalgorithm"
+            # manipulation algs
             "dsgtools:unbuildpolygonsalgorithm",
             "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
              # manipulation algs
@@ -1549,6 +1603,16 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg(
                 "dsgtools:topologicaldouglaspeuckerareasimplification",
+                multipleOutputs=True,
+                addControlKey=True
+            ),
+            ""
+        )
+
+    def test_identifywrongsetofattributesalgorithm(self):
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:identifywrongsetofattributesalgorithm",
                 multipleOutputs=True,
                 addControlKey=True
             ),
