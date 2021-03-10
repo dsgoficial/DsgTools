@@ -24,7 +24,7 @@ import os
 from qgis.core import QgsProject
 from qgis.gui import QgsMapLayerComboBox, QgsFieldComboBox
 from qgis.PyQt import QtCore, QtGui, QtWidgets, uic
-from qgis.PyQt.QtCore import Qt, pyqtSlot
+from qgis.PyQt.QtCore import Qt, QSize, pyqtSlot
 from qgis.PyQt.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -41,6 +41,7 @@ class LayerAndFieldSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
         """Constructor."""
         super(LayerAndFieldSelectorWidget, self).__init__(parent=parent)
         self.setupUi(self)
+        self.widgetSizeHint()
         self.getLoadedLayers()
         self.setLayer()
         self.mMapLayerComboBox.layerChanged.connect(lambda: self.setLayer())
@@ -96,3 +97,11 @@ class LayerAndFieldSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
                 fld.setLayer(lyr)
                 fld.setField(_list[1])
         return lyr, fld
+
+    def widgetSizeHint(self):
+        """Handles the minimum size for the composed widget."""
+        mMapLayerComboBoxSize = self.mMapLayerComboBox.minimumSizeHint()
+        mFieldComboBoxSize = self.mFieldComboBox.minimumSizeHint()
+        minW = mMapLayerComboBoxSize.width() + mFieldComboBoxSize.width()
+        minH = (mMapLayerComboBoxSize.height() + mFieldComboBoxSize.height()) // 2
+        self.setMinimumSize(QSize(minW,minH))

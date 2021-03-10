@@ -43,8 +43,7 @@ class ColorSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
         """Constructor."""
         super(ColorSelectorWidget, self).__init__(parent=parent)
         self.setupUi(self)
-        # self.sizeWidget = ()
-        self.setMinimumSize(200,22)
+        self.widgetSizeHint()
         self.colorChanged()
         self.lineEdit.textEdited.connect(self.setCurrentColor)
 
@@ -70,10 +69,10 @@ class ColorSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
         self.mColorButton.setColor(QColor(color))
         self.lineEdit.setText(color)
 
-    def sizeHint(self):
+    def widgetSizeHint(self):
         """Handles the minimum size for the composed widget."""
         mColorButtonSize = self.mColorButton.minimumSizeHint()
         lineEditSize = self.lineEdit.minimumSizeHint()
-        minW = mColorButtonSize + lineEditSize
-        minH = 22
-        return minW, minH
+        minW = mColorButtonSize.width() + lineEditSize.width()
+        minH = (mColorButtonSize.height() + lineEditSize.height()) // 2
+        self.setMinimumSize(QSize(minW,minH))
