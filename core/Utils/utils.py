@@ -279,7 +279,7 @@ class Utils(object):
 
         proxy_dict = {}
         if enabled and host:
-            port_str = ':{}'.format(port) if port else ''
+            port_str = str(port) if port else ''
             for protocol in ['http', 'https', 'ftp']:
                 proxy_dict[protocol] = '{}://{}:{}'.format(protocol, host, port_str)
 
