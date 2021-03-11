@@ -15,9 +15,9 @@ try:
             # add the last commit to version tag
             # if commit not in version:
             with open(os.path.join(rootPath, 'metadata.txt'), 'w') as meta:
-                metadata = metadata.replace("version={0}".format(version), "version={0}_{1}".format(version_raw, commit))
+                metadata = metadata.replace("version={0}".format(version), "version={0}_{1}".format(version, commit))
                 meta.write(metadata)
-            print("New dev version tag: {0}_{1}".format(version_raw, commit))
+            print("New dev version tag: {0}_{1}".format(version, commit))
             os.popen('cd {0} && git add metadata.txt'.format(rootPath))
 except Exception as e:
     print("Could not apply version check (for dev versions): '{0}'".format(str(e)))
