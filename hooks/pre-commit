@@ -1,5 +1,4 @@
 #!/usr/bin/python
-
 import os
 
 rootPath = os.path.join(os.path.dirname(__file__), "..")
