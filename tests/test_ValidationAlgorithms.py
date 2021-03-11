@@ -1510,14 +1510,14 @@ class Tester(unittest.TestCase):
             self.testAlg("dsgtools:identifyunsharedvertexonintersectionsalgorithm"), ""
         )
     
-    def test_identifyvertexnearedges(self):
-        self.assertEqual(
-            self.testAlg(
-                "dsgtools:identifyvertexnearedges",
-                addControlKey=True,
-                multipleOutputs=True
-            ), ""
-        )
+    # def test_identifyvertexnearedges(self):
+    #     self.assertEqual(
+    #         self.testAlg(
+    #             "dsgtools:identifyvertexnearedges",
+    #             addControlKey=True,
+    #             multipleOutputs=True
+    #         ), ""
+    #     )
     
     # def test_overlayelementswithareas(self):
     #     self.assertEqual(
