@@ -365,6 +365,11 @@ class DsgToolsProcessingModel(QgsTask):
             { param : "memory:" for param in self.modelParameters(model) },
             feedback=feedback
         )
+        # not sure exactly when, but on 3.16 LTR output from model runs include
+        # new items on it. these new items break our implementation =)
+        # hence the popitems
+        out.pop("CHILD_INPUTS", None)
+        out.pop("CHILD_RESULTS", None)
         if self.loadOutput():
             for name, vl in out.items():
                 if isinstance(vl, QgsMapLayer):
@@ -414,7 +419,9 @@ class DsgToolsProcessingModel(QgsTask):
                     while name in self.output["result"]:
                         name = "{0} ({1})".format(baseName, idx)
                         idx += 1
+                    print(vl)
                     vl.setName(name)
+                    print("PASSED")
                     self.output["result"][name] = vl
         except Exception as e:
             self.output = {
