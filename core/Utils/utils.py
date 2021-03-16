@@ -153,7 +153,7 @@ class Utils(object):
                 doc = parse(qml)
                 refDict[lyr] = dict()
                 for node in doc.getElementsByTagName('edittype'):
-                    if node.getAttribute('widgetv2type') == 'ValueRelation':
+                    if node.getAttribute('widgetv2type') in ('ValueMap', 'ValueRelation'):
                         attrName = node.getAttribute('name')
                         refDict[lyr][attrName] = node.getElementsByTagName(
                             'widgetv2config')[0].getAttribute('Layer')
