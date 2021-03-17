@@ -254,6 +254,8 @@ class ParameterFMEManager(QgsProcessingParameterDefinition):
         return 'fme_manager'
 
     def checkValueIsAcceptable(self, value, context=None):
+        if not (value['server'] and value['workspace_id']):
+            return False
         return True
 
     def valueAsPythonString(self, value, context):
