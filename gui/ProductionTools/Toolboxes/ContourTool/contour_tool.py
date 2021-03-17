@@ -23,7 +23,12 @@
 
 from builtins import range
 from builtins import object
-from qgis.core import QgsFeatureRequest, QgsGeometry, QgsWkbTypes, QgsSpatialIndex, QgsCoordinateTransform
+from qgis.core import (QgsProject,
+                       QgsGeometry,
+                       QgsWkbTypes,
+                       QgsSpatialIndex,
+                       QgsFeatureRequest,
+                       QgsCoordinateTransform)
 from DsgTools.gui.ProductionTools.Toolboxes.ContourTool.contour_value import ContourValue
 
 class ContourTool(object):
@@ -42,7 +47,7 @@ class ContourTool(object):
         #spatial index
         self.index = QgsSpatialIndex()
         for feat in self.reference.getFeatures():
-            self.index.insertFeature(feat)
+            self.index.addFeature(feat)
             
     def getCandidates(self, bbox):
         """
@@ -103,7 +108,11 @@ class ContourTool(object):
         """
         destCrs = self.reference.crs()
         if canvasCrs.authid() != destCrs.authid():
-            coordinateTransformer = QgsCoordinateTransform(canvasCrs, destCrs)
+            coordinateTransformer = QgsCoordinateTransform(
+                canvasCrs,
+                destCrs,
+                QgsProject.instance()
+            )
             geom.transform(coordinateTransformer)
     
     def setFirstValue(self, value):

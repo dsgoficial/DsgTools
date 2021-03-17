@@ -122,7 +122,7 @@ class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
             )
         listSize = len(inputLyrList)
         stepSize = 100/listSize if listSize else 0
-        for lyr in inputLyrList:
+        for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
             filterExpression = self.adaptFilter(lyr, inputFilterExpression, behavior)
