@@ -1,9 +1,0 @@
-{
-"type": "FeatureCollection",
-"name": "edgv3-hid_area_umida_a",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::32721" } },
-"features": [
-{ "type": "Feature", "properties": { "id": 1, "nome": null, "geometriaaproximada": false, "tipoareaumida": 9999, "area_otf": 1527360286.7782614 }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 7936353.204745144583285, 9903273.150843260809779 ], [ 7890860.638324659317732, 9834191.846278820186853 ], [ 7997009.959972457960248, 9785329.460123483091593 ], [ 7936353.204745144583285, 9903273.150843260809779 ] ] ] ] } },
-{ "type": "Feature", "properties": { "id": 2, "nome": null, "geometriaaproximada": false, "tipoareaumida": 9999, "area_otf": 858974788.86236119 }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 7932983.38501029741019, 9777747.365720070898533 ], [ 7960784.397822815924883, 9831664.481477683410048 ], [ 8033235.522122107446194, 9776904.910786358639598 ], [ 7932983.38501029741019, 9777747.365720070898533 ] ] ] ] } }
-]
-}

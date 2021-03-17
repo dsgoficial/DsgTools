@@ -21,20 +21,20 @@
  ***************************************************************************/
 """
 import os
-from xml.dom.minidom import parse, parseString
 
-# Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QVariant
-from qgis.PyQt.Qt import QObject
-
-# QGIS imports
-from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsField, \
-                      QgsWkbTypes, QgsVectorLayerJoinInfo
+from qgis.core import (Qgis,
+                       QgsField,
+                       QgsWkbTypes,
+                       QgsMessageLog,
+                       QgsVectorLayer,
+                       QgsDataSourceUri,
+                       QgsVectorLayerJoinInfo)
 from qgis.utils import iface
+from qgis.PyQt.QtCore import QVariant
+from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtXml import QDomDocument
 
-#DsgTools imports
-from ...Utils.utils import Utils
+from DsgTools.core.Utils.utils import Utils
 
 class EDGVLayerLoader(QObject):
     
@@ -215,7 +215,12 @@ class EDGVLayerLoader(QObject):
             QgsMessageLog.logMessage(':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
             return None
         if qmlType == 'db':
-            vlayer.importNamedStyle(qmldir)
+            tempPath = os.path.join(os.path.dirname(__file__), "temp.qml")
+            with open(tempPath, "w", encoding='utf-8') as f:
+                f.writelines(qmldir)
+                f.close()
+            vlayer.loadNamedStyle(tempPath, True)
+            os.remove(tempPath)
         else:
             vlayerQml = os.path.join(qmldir, vlayer.name()+'.qml')
             #treat case of qml with multi

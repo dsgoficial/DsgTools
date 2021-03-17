@@ -85,7 +85,7 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
         """
         fmeDict = self.parameterAsFMEManager(parameters, self.FME_MANAGER, context)
 
-        url = '{server}/versions/{workspace_id}/jobs'.format(
+        url = '{server}/api/rotinas/{workspace_id}/execucao'.format(
                 server=fmeDict['server'],
                 workspace_id=fmeDict['workspace_id']
             )
@@ -97,9 +97,9 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
             auth=fmeDict['auth']
             )
 
-        url_to_status = '{server}/jobs/{uuid}'.format(
+        url_to_status = '{server}/api/execucoes/{uuid}'.format(
             server=fmeDict['server'], 
-            uuid=response.json()['data']['job_uuid']
+            uuid=response.json()['dados']['job_uuid']
         )
         while True:
             if feedback.isCanceled():
@@ -111,12 +111,12 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
                 proxies=fmeDict['proxy_dict'],
                 auth=fmeDict['auth']
                 )
-            if response.json()['data']['status'] == 2:
-                feedback.pushInfo(self.tr('Workspace {0} completed with success.\n').format(response['workspace_name']))
-                for flags in response.json()['log'].split('|'):
-                    feedback.pushInfo(self.tr('Number of flags: {0}\n').format(flags))
+            if response.json()['dados']['status_id'] == 2:
+                feedback.pushInfo(self.tr('Workspace {0} completed with success.\n').format(response.json()['dados']['rotina']))
+                for flags in response.json()['dados']['sumario']:
+                    feedback.pushInfo(self.tr('Number of flags in {0}: {1}\n').format(flags['classes'], flags['feicoes']))
                 break
-            if response.json()['data']['status'] == 3:
+            if response.json()['dados']['status_id'] == 3:
                 feedback.pushInfo(self.tr('Task completed with error.\n'))
                 break
 

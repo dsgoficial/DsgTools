@@ -20,15 +20,17 @@
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import range
-from builtins import object
-import json
+
 import os
+import json
 import requests
 from xml.dom.minidom import parse, parseString
-from qgis.PyQt.QtWidgets import QTreeWidgetItem
-from qgis.PyQt.QtCore import QSettings
-from qgis.PyQt import QtGui, QtWidgets
+
+from qgis.utils import iface
+from qgis.core import Qgis, QgsMessageLog
+from qgis.gui import QgsGui
+from qgis.PyQt.QtCore import QObject, QSettings, QVariant
+from qgis.PyQt.QtWidgets import QAction, QToolBar, QMessageBox, QTreeWidgetItem
 
 class Utils(object):
 
@@ -151,7 +153,7 @@ class Utils(object):
                 doc = parse(qml)
                 refDict[lyr] = dict()
                 for node in doc.getElementsByTagName('edittype'):
-                    if node.getAttribute('widgetv2type') == 'ValueRelation':
+                    if node.getAttribute('widgetv2type') in ('ValueMap', 'ValueRelation'):
                         attrName = node.getAttribute('name')
                         refDict[lyr][attrName] = node.getElementsByTagName(
                             'widgetv2config')[0].getAttribute('Layer')
@@ -218,7 +220,7 @@ class Utils(object):
             self.getAllItemsInDict(inputDict[key], itemList)
 
     def createWidgetItem(self, parent, text, column = None):
-        item = QtWidgets.QTreeWidgetItem(parent)
+        item = QTreeWidgetItem(parent)
         if isinstance(text,list) and column == None:
             for i in range(len(text)):
                 item.setText(i, text[i])
@@ -277,9 +279,9 @@ class Utils(object):
 
         proxy_dict = {}
         if enabled and host:
-            port_str = ':{}'.format(port) if port else ''
+            port_str = str(port) if port else ''
             for protocol in ['http', 'https', 'ftp']:
-                proxy_dict[protocol] = '{}://{}{}'.format(protocol, host, port_str)
+                proxy_dict[protocol] = '{}://{}:{}'.format(protocol, host, port_str)
 
         auth = requests.auth.HTTPProxyAuth(user, password) if enabled and user and password else None
 
@@ -301,3 +303,132 @@ class Utils(object):
         password = settings.value('proxyPassword')
         settings.endGroup()
         return enabled, host, port, user, password
+
+    def qgisMapTools(self):
+        """
+        A list of QGIS map tools.
+        :return: (dict) a map from map tool name to its action.
+        """
+        tools = dict()
+        for m in dir(iface):
+            if m.lower().startswith("action"):
+                action = getattr(iface, m)()
+                name = action.text().replace("&", "")
+                tools[name] = action
+        return tools
+
+    def dsgToolsMapTools(self):
+        """
+        A list of DSGTools map tools.
+        :return: (dict) a map from map tool name to its action.
+        """
+        tools = dict()
+        for toolbar in iface.mainWindow().findChildren(QToolBar):
+            if toolbar.objectName().lower() == "dsgtools":
+                for o in toolbar.children():
+                    if hasattr(o, "actions"):
+                        for a in o.actions():
+                            tools[a.text().replace("&", "")] = a
+                break
+        return tools
+
+    def allQgisActions(self):
+        """
+        Reads all registered actions on QGIS GUI.
+        :return: (dict) a map from action name to its action object.
+        """
+        sm = QgsGui.shortcutsManager()
+        actions = dict()
+        for item in sm.listAll():
+            if isinstance(item, QAction):
+                # remove the mnemonic shortcuts added by Qt (which might remove
+                # actual characters)
+                actions[item.text().replace("&", "")] = item
+        return actions
+
+    def fieldIsFloat(self, field):
+        """
+        Checks if a field is filled with any float type data.
+        :param field: (QgsField) field to be checked.
+        :return: (bool) if data is float.
+        """
+        floatTypes = [QVariant.Double]
+        return field.type() in floatTypes
+
+    def fieldIsInt(self, field):
+        """
+        Checks if a field is filled with any int type data.
+        :param field: (QgsField) field to be checked.
+        :return: (bool) if data is a whole number.
+        """
+        intTypes = [
+            QVariant.Int,
+            QVariant.UInt,
+            QVariant.LongLong,
+            QVariant.ULongLong]
+        return field.type() in intTypes
+
+    def fieldIsNumeric(self, field):
+        """
+        Checks if a field is filled with any numeric type data.
+        :param field: (QgsField) field to be checked.
+        :return: (bool) if data is numeric.
+        """
+        return field.isNumeric()
+
+    def fieldIsNullable(self, field):
+        """
+        Checks if a field may be left empty (does not have the "not null"
+        constraint).
+        :param field: (QgsField) field to be checked.
+        :return: (bool) if field is nullable.
+        """
+        # constraints are 2^n, where n is its "index" on the list of existing
+        # ones. Currently there are 3 constraints: not null, unique and
+        # expression constraint, hence values are 1, 2, 4. 0 is the null
+        # constraint and "constraints" are identified by the sum of them.
+        return (int(field.constraints().constraints()) % 2) == 0
+
+
+class MessageRaiser(QObject):
+    """
+    Raises messages to QGIS interface, global log and message boxes.
+    """
+    def raiseIfaceMessage(self, title, msg, level=None, duration=None):
+        """
+        Raises messages to the user on a message box on the main QGIS window.
+        :param title: (str) text that will be displayed in bold, first on bar.
+        :param msg: (str) message to be displayed.
+        :param level: (int) level code (warning, critical, etc).
+        :param duration: (int) time in seconds message will be displayed.
+        """
+        level = Qgis.Info if level is None else level
+        duration = 3 if duration is None else duration
+        iface.messageBar().pushMessage(
+            title, msg, level=level, duration=duration)
+
+    def logMessage(self, msg, level=None):
+        """
+        Display a log message on QGIS log.
+        :param msg: (str) message to be displayed.
+        :param level: (int) level code (warning, critical, etc).
+        """
+        level = Qgis.Info if level is None else level
+        QgsMessageLog.logMessage(msg, 'DSGTools Plugin', level)
+
+    def confirmAction(self, parent, msg, title=None, showNo=True):
+        """
+        Raises a message box that asks for user confirmation.
+        :param parent: (QWidget) any QWidget that will hold "possession" of mb.
+        :param msg: (str) message requesting for confirmation to be shown.
+        :param showNo: (bool) whether No button should be exposed.
+        :return: (bool) whether action was confirmed.
+        """
+        title = title or self.tr("Confirm action")
+        if showNo:
+            return QMessageBox.question(
+                parent, title, msg, QMessageBox.Yes | QMessageBox.No
+            ) == QMessageBox.Yes
+        else:
+            return QMessageBox.question(
+                parent, title, msg, QMessageBox.Ok) == QMessageBox.Ok

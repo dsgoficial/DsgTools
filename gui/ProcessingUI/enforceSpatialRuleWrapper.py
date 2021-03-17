@@ -38,6 +38,7 @@ from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelation
 from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedTableWidget import OrderedTableWidget
 
 class EnforceSpatialRuleWrapper(WidgetWrapper):
+    __ATTRIBUTE_MAP_VERSION = 0.1
     def __init__(self, *args, **kwargs):
         super(EnforceSpatialRuleWrapper, self).__init__(*args, **kwargs)
 
@@ -304,6 +305,12 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
     
     def createWidget(self):
         self.panel = self.createPanel()
+        self.panel.showSaveLoadButtons(True)
+        self.panel.extension = ".rules"
+        self.panel.fileType = self.tr("Set of DSGTools Spatial Rules")
+        self.panel.setMetadata({
+            "version": self.__ATTRIBUTE_MAP_VERSION
+        })
         return self.panel
     
     def parentLayerChanged(self, layer=None):
