@@ -44,12 +44,16 @@ class FMEManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.interfaceDict = {}
         self.server = ''
         self.proxy_dict, self.auth = Utils().get_proxy_config()
+        self.version = 'v1'
         self.versionComboBox.addItems(['v1', 'v2'])
         self.messabe_bar = QgsMessageBar(self)
 
     def getCurrentWorkspace(self):
         idx = self.workspaceComboBox.currentIndex()
-        return self.workspaceList[idx]
+        try:
+            return self.workspaceList[idx]
+        except IndexError:
+            return None
 
     @pyqtSlot(int)
     def on_workspaceComboBox_currentIndexChanged(self):
@@ -60,10 +64,10 @@ class FMEManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.clearLayout()
         workspace = self.getCurrentWorkspace()
         try:
-            parameters = workspace['parameters'] if self.version == 'v1' else workspace['parametros']
+            _parameters =  workspace['parameters'] if self.version == 'v1' else workspace['parametros']
+            parameters = list(filter(lambda x: x != 'LOG_FILE', _parameters))
         except KeyError:
             parameters = []
-            self.clearLayout()
         for parameter in parameters:
             newLabel = QtWidgets.QLabel(parameter)
             self.verticalLayout_2.addWidget(newLabel)
@@ -95,7 +99,6 @@ class FMEManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.server = self.serverLineEdit.text()
         self.version = self.versionComboBox.currentText()
         self.workspaceComboBox.clear()
-        self.clearLayout()
         self.workspaceList = []
         if self.version == 'v1':
             url = '{server}/versions?last=true'.format(server=self.server)
@@ -148,7 +151,7 @@ class FMEManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         Returns necessary parameters for running the algorithm
         """
         workspace = self.getCurrentWorkspace()
-        workspace_id = workspace['id']
+        workspace_id = workspace['id'] if workspace is not None else None
         if self.version == 'v1':
             parameters = {'parameters': {
                 key: value.text() for key, value in self.interfaceDict.items()
