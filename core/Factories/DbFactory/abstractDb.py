@@ -606,7 +606,14 @@ class AbstractDb(QObject):
         Gets the QML directory
         """
         currentPath = os.path.dirname(__file__)
-        if qgis.core.Qgis.QGIS_VERSION_INT >= 20600:
+        if qgis.core.Qgis.QGIS_VERSION_INT >= 30000:
+            # treat old implementations (bug fixes on domain values)
+            implVersion = self.implementationVersion()
+            if implVersion == '' or float(implVersion) < 3:
+                qmlVersionPath = os.path.join(currentPath, '..', '..', 'Qmls', 'qgis_37_impl_2')
+            else:
+                qmlVersionPath = os.path.join(currentPath, '..', '..', 'Qmls', 'qgis_37')
+        elif qgis.core.Qgis.QGIS_VERSION_INT >= 20600:
             qmlVersionPath = os.path.join(currentPath, '..', '..', 'Qmls', 'qgis_26')
         else:
             qmlVersionPath = os.path.join(currentPath, '..', '..', 'Qmls', 'qgis_22')
@@ -764,3 +771,19 @@ class AbstractDb(QObject):
             return (self.getQmlRecordDict(layerName), 'db')
         else:
             return (self.getQmlDir(), 'dir')
+
+    def implementationVersion(self):
+        """
+        Database models may be updated. DSGTools has a couple of EDGV different
+        implementations. This method returns current implementation version and,
+        if not available, it will return an empty string.
+        :return: (str) database's implementation version (e.g. '5.2').
+        """
+        self.checkAndOpenDb()
+        query = QSqlQuery(self.gen.implementationVersion(), self.db)
+        if not query.isActive():
+            return ''
+        while query.next():
+            version = query.value(0)
+            break
+        return version if version is not None else -1

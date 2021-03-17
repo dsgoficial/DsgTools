@@ -1,0 +1,17 @@
+{
+"type": "FeatureCollection",
+"name": "LINE_FLAGS",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "reason": "Rule \"O modalUso de Ponte deve ser Ferroviario se esta intersectar um Trecho Ferroviario.\" broken: feature ID 2 from tra_ponte_l intersects 0 features of fer_trecho_ferroviario_l" }, "geometry": { "type": "LineString", "coordinates": [ [ 0.959904001922091, 0.581199674323477 ], [ 1.812987274264949, 0.652880176535296 ] ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Barragens do tipo área contêm até uma drenagem\" broken: feature ID 3 from hid_barragem_a contains 2 features of hid_trecho_drenagem_l (IDs 10, 11)" }, "geometry": { "type": "LineString", "coordinates": [ [ -3.217601226633772, 0.739448211665376 ], [ -3.123676656772211, 0.804061010845721 ] ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Barragens do tipo área contêm até uma drenagem\" broken: feature ID 3 from hid_barragem_a contains 2 features of hid_trecho_drenagem_l (IDs 10, 11)" }, "geometry": { "type": "LineString", "coordinates": [ [ -3.070512593609917, 0.670591165457749 ], [ -3.054057813745926, 0.788216261561005 ] ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Teste: 'linhas' não cruza 'poligonos'\" broken: feature ID 3 from linhas crosses 2 features of poligonos (IDs 1, 2)" }, "geometry": { "type": "LineString", "coordinates": [ [ 0.670794988701382, 1.556507475194521 ], [ 0.775035141856366, 1.549591956755196 ] ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Teste: 'linhas' não cruza 'poligonos'\" broken: feature ID 3 from linhas crosses 2 features of poligonos (IDs 1, 2)" }, "geometry": { "type": "LineString", "coordinates": [ [ 1.001126537840045, 1.534592561890789 ], [ 1.108813867637922, 1.527448350256798 ] ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Teste: 'linhas_2' não é igual a 'linhas'\" broken: feature ID 1 from linhas_2 equals 1 features of linhas (ID 1)" }, "geometry": { "type": "LineString", "coordinates": [ [ 0.401499855891564, 1.70779008625596 ], [ 0.922525087765756, 1.604324711313634 ] ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Teste: 'poligonos' não toca 'poligonos_2'\" broken: feature ID 1 from poligonos touches 2 features of poligonos_2 (IDs 2, 3)" }, "geometry": { "type": "LineString", "coordinates": [ [ 0.533282347505222, 1.775961648442088 ], [ 0.497110707971643, 1.524398556467876 ] ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Teste: 'linhas_2' não cruza 'poligonos_2'\" broken: feature ID 1 from linhas_2 crosses 1 features of poligonos_2 (ID 3)" }, "geometry": { "type": "LineString", "coordinates": [ [ 0.401499855891564, 1.70779008625596 ], [ 0.520093865874279, 1.684239645781825 ] ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Teste: 'linhas_2' não cruza 'poligonos_2'\" broken: feature ID 2 from linhas_2 crosses 2 features of poligonos_2 (IDs 1, 2)" }, "geometry": { "type": "LineString", "coordinates": [ [ 1.420568180743, 1.429102777110681 ], [ 1.401284650497138, 1.391578069605221 ] ] } },
+{ "type": "Feature", "properties": { "reason": "Rule \"Teste: 'linhas_2' não cruza 'poligonos_2'\" broken: feature ID 2 from linhas_2 crosses 2 features of poligonos_2 (IDs 1, 2)" }, "geometry": { "type": "LineString", "coordinates": [ [ 0.97354396661746, 1.348146397218276 ], [ 0.938827384502514, 1.400038551537459 ] ] } }
+]
+}

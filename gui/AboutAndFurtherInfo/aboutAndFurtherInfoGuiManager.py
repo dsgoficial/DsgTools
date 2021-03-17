@@ -97,6 +97,7 @@ class AboutAndFurtherInfoGuiManager(QObject):
         Shows the options
         """
         # dlg.show()
+        self.options.setInterfaceWithParametersFromConfig()
         result = self.options.exec_()
     
     def showHelp(self):

@@ -24,6 +24,7 @@ from builtins import object
 from qgis.PyQt import QtGui, QtCore
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis import core, gui
+from qgis.utils import iface
 from qgis.core import QgsPoint, QgsLineString, QgsVectorLayer, QgsWkbTypes, \
                       QgsProject, QgsMessageLog, Qgis
 
@@ -64,6 +65,10 @@ class AcquisitionFreeController(object):
         #Método para obter a classe ActionAcquisitionFree
         #Parâmetro de retorno: self.actionAcquisitionFree (classe ActionAcquisitionFree)
         return self.actionAcquisitionFree 
+
+    @property
+    def toolAction(self):
+        return self.actionAcquisitionFree
 
     def setAcquisitionFree(self, acquisitionFree):
         #Método para definir a classe AcquisitionFree
@@ -116,6 +121,7 @@ class AcquisitionFreeController(object):
         settings.beginGroup('PythonPlugins/DsgTools/Options')
         parameters = {
             u'freeHandTolerance' : settings.value('freeHandTolerance'),
+            u'freeHandFinalSimplifyTolerance' : settings.value('freeHandFinalSimplifyTolerance'),
             u'freeHandSmoothIterations' : settings.value('freeHandSmoothIterations'),
             u'freeHandSmoothOffset' : settings.value('freeHandSmoothOffset'),
             u'algIterations' : settings.value('algIterations'),
@@ -130,12 +136,19 @@ class AcquisitionFreeController(object):
         #Parâmetro de retorno: sGeom (Geometria simplificada)
         parameters = self.getParametersFromConfig()
         return parameters[u'freeHandTolerance']
+    
+    def getFinalTolerance(self):
+        parameters = self.getParametersFromConfig()
+        finalTolerance = parameters[u'freeHandFinalSimplifyTolerance']
+        return 0 if finalTolerance is None else float(finalTolerance)
 
     def simplifyGeometry(self, geom, tolerance):
         #Método para simplificar geometria
         #Parâmetro de entrada: geom (Geometria adquirida), tolerance (Tolerância para simplificação)
         #Parâmetro de retorno: sGeom (Geometria simplificada)
         parameters = self.getParametersFromConfig()
+        firstVertex = geom.vertexAt(0) 
+        lastVertex = geom.vertexAt(geom.constGet().nCoordinates() - 1 )
         sGeom = geom
         source_crs = self.iface.activeLayer().crs()
         dest_crs = core.QgsCoordinateReferenceSystem(3857)
@@ -157,71 +170,79 @@ class AcquisitionFreeController(object):
                 )
                 QgsMessageLog.logMessage(msg, 'DSGTools Plugin', Qgis.Critical)
                 return geom
+        finalGeom = sGeom.simplify(self.getFinalTolerance())
         tr = core.QgsCoordinateTransform(dest_crs, source_crs, core.QgsCoordinateTransformContext())
-        sGeom.transform(tr)
-        return sGeom
+        finalGeom.transform(tr)
+        if self.iface.activeLayer().geometryType() == core.QgsWkbTypes.PolygonGeometry:
+            return finalGeom
+        finalGeom.moveVertex(firstVertex.x(), firstVertex.y(), 0)
+        finalGeom.moveVertex(lastVertex.x(), lastVertex.y(), finalGeom.constGet().nCoordinates() - 1)
+        return finalGeom
 
     def reprojectGeometry(self, geom):
         # Defining the crs from src and destiny
-        iface = self.getIface()
         canvas = iface.mapCanvas()
-        epsg = canvas.mapSettings().destinationCrs().authid()
-        crsSrc = core.QgsCoordinateReferenceSystem(epsg)
-        #getting srid from something like 'EPSG:31983'
-        layer = canvas.currentLayer()
-        srid = layer.crs().authid()
-        crsDest = core.QgsCoordinateReferenceSystem(srid) #here we have to put authid, not srid
-        if srid != epsg:
-            # Creating a transformer
-            coordinateTransformer = core.QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
-            geomType =  geom.type()
-            # Transforming the points
-            if geomType == core.QgsWkbTypes.LineGeometry:
-                geomList = geom.asPolyline()
-            elif geomType == core.QgsWkbTypes.PolygonGeometry:
-                geomList = geom.asPolygon()
-            newGeom = []
-            for j in range(len(geomList)):
-                if geomType == core.QgsWkbTypes.LineGeometry:
-                    newGeom.append(coordinateTransformer.transform(geomList[j]))
-                elif geomType == core.QgsWkbTypes.PolygonGeometry:
-                    line = geomList[j]
-                    for i in range(len(line)):
-                        point = line[i]
-                        newGeom.append(coordinateTransformer.transform(point))
-            if geomType == core.QgsWkbTypes.LineGeometry:
-                return core.QgsGeometry.fromPolylineXY(newGeom)
-            elif geomType == core.QgsWkbTypes.PolygonGeometry:
-                return core.QgsGeometry.fromPolygonXY([newGeom])
+        layer = iface.activeLayer()
+        epsgSrc = canvas.mapSettings().destinationCrs().authid()
+        epsgDest = layer.crs().authid()
+        if epsgSrc != epsgDest:
+            ct = canvas.mapSettings().layerTransform( layer )
+            geom.transform(ct, core.QgsCoordinateTransform.ReverseTransform)
         return geom        
 
     def createFeature(self, geom):
         #Método para criar feição
         #Parâmetro de entrada: geom (geometria adquirida)
-        if geom :
-            settings = QtCore.QSettings()
-            canvas = self.getIface().mapCanvas()
-            layer = canvas.currentLayer() 
-            tolerance = self.getTolerance(layer)
-            geom = self.reprojectGeometry(geom)
-            simplifyGeometry = self.simplifyGeometry(geom, tolerance)
-            fields = layer.fields()
-            feature = core.QgsFeature()
-            feature.setGeometry(simplifyGeometry)
-            feature.initAttributes(fields.count())            
-            provider = layer.dataProvider()              
-            for i in range(fields.count()):
-                defaultClauseCandidate = provider.defaultValueClause(i)
-                if defaultClauseCandidate:
-                    feature.setAttribute(i, defaultClauseCandidate)
-            formSuppressOnLayer = layer.editFormConfig().suppress()
-            formSuppressOnSettings = self.getFormSuppressStateSettings()
-            if formSuppressOnLayer == core.QgsEditFormConfig.SuppressOff or \
-                (formSuppressOnLayer == core.QgsEditFormConfig.SuppressDefault \
-                    and formSuppressOnSettings):
-                self.addFeatureWithoutForm(layer, feature)
-            else:
-                self.addFeatureWithForm(layer, feature)
+        if not geom :
+            return
+        settings = QtCore.QSettings()
+        canvas = self.getIface().mapCanvas()
+        layer = canvas.currentLayer() 
+        tolerance = self.getTolerance(layer)
+        geom = self.reprojectGeometry(geom)
+        simplifyGeometry = self.simplifyGeometry(geom, tolerance)
+        fields = layer.fields()
+        feature = core.QgsFeature()
+        feature.setFields(fields)
+        feature.setGeometry(simplifyGeometry)
+        provider = layer.dataProvider()              
+        for i in range(fields.count()):
+            defaultClauseCandidate = provider.defaultValueClause(i)
+            if defaultClauseCandidate:
+                feature.setAttribute(i, defaultClauseCandidate)
+        formSuppressOnLayer = layer.editFormConfig().suppress()
+        formSuppressOnSettings = self.getFormSuppressStateSettings()
+        featureAdded = True
+        if (
+                formSuppressOnLayer == core.QgsEditFormConfig.SuppressOn
+                or (
+                    formSuppressOnLayer == core.QgsEditFormConfig.SuppressDefault
+                    and formSuppressOnSettings == 'true'
+                )
+            ):
+            self.addFeatureWithoutForm(layer, feature)
+        else:
+            featureAdded = self.addFeatureWithForm(layer, feature)
+        if featureAdded and core.QgsProject.instance().topologicalEditing():
+            self.createTopology(feature)
+
+    def createTopology(self, feature):
+        currentLayer  = iface.activeLayer()
+        otherLayers = [  
+            layer for layer in iface.mapCanvas().layers() 
+            if (
+                layer.id() != currentLayer.id()
+                and
+                layer.isEditable()
+                and
+                layer.type() == core.QgsMapLayer.VectorLayer
+            )
+        ]
+        createdGeometry = feature.geometry()
+        for layer in otherLayers:
+            layer.addTopologicalPoints(createdGeometry)
+        currentLayer.addTopologicalPoints(createdGeometry)
+        iface.mapCanvas().refresh()
 
     def reshapeSimplify(self, reshapeLine):        
         canvas = self.getIface().mapCanvas()
@@ -243,20 +264,28 @@ class AcquisitionFreeController(object):
         #Parâmetro de retorno: suppressForm ( boleano )
         s = QtCore.QSettings()
         suppressForm = s.value(u"qgis/digitizing/disable_enter_attribute_values_dialog")
-        return suppressForm
+        return suppressForm == "true"
 
     def addFeatureWithForm(self, layer, feature):
         #Método para adicionar a feição com formulário
         #Parâmetro de entrada: layer (Camada ativa), feature (Feição adquirida)
+        layer.beginEditCommand("dsgtools freehand feature added")
         attrDialog = gui.QgsAttributeDialog(layer, feature, False)
         attrDialog.setMode(int(gui.QgsAttributeForm.AddFeatureMode))
-        result = attrDialog.exec_()
+        res = attrDialog.exec_()
+        if res == 0:
+            layer.destroyEditCommand()
+        else:
+            layer.endEditCommand()
+        return res
 
     def addFeatureWithoutForm(self, layer, feature):
         #Método para adicionar a feição sem formulário
         #Parâmetro de entrada: layer (Camada ativa), feature (Feição adquirida)
+        layer.beginEditCommand("dsgtools freehand feature added")
         layer.addFeatures([feature])
         layer.removeSelection()
+        layer.endEditCommand()
 
     def activateTool(self):
         #Método para iniciar a ferramenta

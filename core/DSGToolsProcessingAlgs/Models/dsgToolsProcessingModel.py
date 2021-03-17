@@ -28,7 +28,9 @@ from qgis.core import (QgsTask,
                        QgsMapLayer,
                        QgsLayerTreeLayer,
                        QgsProcessingFeedback,
-                       QgsProcessingModelAlgorithm)
+                       QgsProcessingModelAlgorithm,
+                       QgsVectorLayer,
+                       QgsProcessingUtils)
 from qgis.PyQt.QtCore import pyqtSignal, QCoreApplication
 import processing
 
@@ -69,7 +71,7 @@ class DsgToolsProcessingModel(QgsTask):
             # "", QgsTask.CanCancel if flags is None else flags
             taskName or QCoreApplication.translate(
                 "DsgToolsProcessingModel",
-                "DSGTools Quality Assurance Model"
+                "DSGTools Quality Assurance Model: {0}".format(name)
             ),
             QgsTask.CanCancel if flags is None else flags
         )
@@ -341,22 +343,10 @@ class DsgToolsProcessingModel(QgsTask):
         :param subgroupname: (str) name for the subgroup to be added.
         """
         root = QgsProject.instance().layerTreeRoot()
-        for g in root.children():
-            if g.name() == groupname:
-                group = g
-                break
-        else:
-            group = root.addGroup(groupname)
-        if subgroupname is not None:
-            for sg in group.children():
-                if sg.name() == subgroupname:
-                    subgroup = sg
-                    break
-            else:
-                subgroup = group.addGroup(subgroupname)
-        subgroup = root.findGroup(subgroupname)
+        layer = layer if isinstance(layer, QgsMapLayer) \
+            else QgsProcessingUtils.mapLayerFromString(layer)
         QgsProject.instance().addMapLayer(layer, False)
-        subgroup.insertChildNode(1, QgsLayerTreeLayer(layer))
+        root.insertChildNode(-1, QgsLayerTreeLayer(layer))
 
     def runModel(self, feedback=None):
         """
@@ -413,13 +403,19 @@ class DsgToolsProcessingModel(QgsTask):
         try:
             if not self.feedback.isCanceled() or not self.isCanceled():
                 self.output = {
-                    "result" : {
-                        k.split(":", 2)[-1] : v \
-                            for k, v in self.runModel(self.feedback).items()
-                    },
+                    "result": dict(),
                     "status" : True,
                     "errorMessage" : ""
                 }
+                for paramName, vl in self.runModel(self.feedback).items():
+                    baseName = paramName.rsplit(":", 1)[-1]
+                    name = baseName
+                    idx = 1
+                    while name in self.output["result"]:
+                        name = "{0} ({1})".format(baseName, idx)
+                        idx += 1
+                    vl.setName(name)
+                    self.output["result"][name] = vl
         except Exception as e:
             self.output = {
                 "result" : {},
@@ -435,10 +431,10 @@ class DsgToolsProcessingModel(QgsTask):
         Iterates over the results and finds if there are flags.
         """
         for lyr in self.output['result'].values():
-            if isinstance(lyr, QgsMapLayer) and lyr.featureCount() > 0:
+            if isinstance(lyr, QgsMapLayer) and lyr.featureCount() > 0:    
                 return True
         return False
-    
+
     def finished(self, result):
         """
         Reimplemented from parent QgsTask. Method works a postprocessing one,

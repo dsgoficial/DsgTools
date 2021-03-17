@@ -1,0 +1,28 @@
+tests:
+
+  - algorithm: dsgtools:createframeswithconstraintalgorithm
+    name: Test (dsgtools:createframeswithconstraintalgorithm)
+    params:
+      INPUT:
+        location: 'testing_datasets/GeoJSON/create_frames_layers/polygon1.geojson'
+        name: 'polygon1'
+        type: vector
+      STOP_SCALE: 1
+    results:
+      OUTPUT:
+        location: 'expected_outputs/createframeswithconstraintalgorithm/test_1/OUTPUT.geojson'
+        name: TEMPORARY_OUTPUT
+        type: vector
+  - algorithm: dsgtools:gridzonegenerator
+    name: Test (dsgtools:gridzonegenerator)
+    params:
+      CRS: EPSG:3857
+      INDEX: '2215'
+      INDEX_TYPE: 0
+      START_SCALE: 3
+      STOP_SCALE: 5
+    results:
+      OUTPUT:
+        location: 'expected_outputs/gridzonegenerator/test_1/OUTPUT.geojson'
+        name: TEMPORARY_OUTPUT
+        type: vector

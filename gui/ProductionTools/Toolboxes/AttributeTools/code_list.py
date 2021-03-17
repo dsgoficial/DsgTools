@@ -77,7 +77,16 @@ class CodeList(QDockWidget, FORM_CLASS):
                         else:
                             classFieldMap[layername][fieldName].update(map_)
                 else:
-                    classFieldMap[layername][fieldName] = fieldConfig['map']
+                    def sortingMethod(item):
+                        try:
+                            return int(item[1])
+                        except:
+                            return item[1]
+                    classFieldMap[layername][fieldName] = {
+                        k: v for k, v in sorted(
+                            fieldConfig['map'].items(), key=sortingMethod
+                        )
+                    }
         return classFieldMap
 
     def updateClassFieldMap(self):
@@ -196,6 +205,21 @@ class CodeList(QDockWidget, FORM_CLASS):
         self.blockAllSignals(False)
         self.resetFields()
 
+    def edgvVersion(self, db):
+        """
+        Identifies EDGV version from the database being handled.
+        :param db: (QSqlDatabase) database to be checked.
+        :return: (str) current EDGV version.
+        """
+        # this method is not supposed to be here and must be crossed out on
+        # future database abstraction refactor.  
+        sql = {
+            "QSQLITE": "SELECT edgvversion FROM public_db_metadata;",
+            "QPSQL": "SELECT edgvversion FROM public.db_metadata;"
+        }.pop(db.driverName(), "")
+        query = QSqlQuery(sql, db)
+        return query.value(0) if query.next() else ""
+
     def getAllEdgvDomainsFromTableName(self, table):
         """
         EDGV databases deployed by DSGTools have a set of domain tables. Gets the value map from such DB.
@@ -224,7 +248,7 @@ class CodeList(QDockWidget, FORM_CLASS):
                     db.setDatabaseName(uri.database())
                     db.setUserName(uri.username())
                     db.setPassword(uri.password())
-                    sql = 'select code, code_name from dominios.{field} order by code'   
+                    sql = 'select code, code_name from dominios.{field} order by code'
                 if not db.open():
                     db.close()
                     return ret
@@ -233,8 +257,13 @@ class CodeList(QDockWidget, FORM_CLASS):
                     if fieldName in self.specialEdgvAttributes():
                         # EDGV "special" attributes that are have different domains depending on 
                         # which class it belongs to
-                        category = (table if isinstance(table, str) else table.name()).split("_")[0]
-                        fieldN = "{attribute}_{cat}".format(attribute=fieldName, cat=category)
+                        if self.edgvVersion(db) in ("2.1.3 Pro", "3.0 Pro"):
+                            cat = table if isinstance(table, str) else table.name()
+                            # Pro versions now follow the logic "{attribute}_{CLASS_NAME}"
+                            cat = cat.rsplit("_", 1)[0].split("_", 1)[-1]
+                        else:
+                            cat = (table if isinstance(table, str) else table.name()).split("_")[0]
+                        fieldN = "{attribute}_{cat}".format(attribute=fieldName, cat=cat)
                         query = QSqlQuery(sql.format(field=fieldN), db)
                     else:
                         query = QSqlQuery(sql.format(field=fieldName), db)
@@ -255,7 +284,7 @@ class CodeList(QDockWidget, FORM_CLASS):
         depending on which category the EDGV class belongs to.
         :return: (list-of-str) list of "special" EDGV classes. 
         """
-        return ["finalidade", "relacionado", "coincidecomdentrode"]
+        return ["finalidade", "relacionado", "coincidecomdentrode", "tipo"]
 
     def getEdgvDomainsFromTableName(self, table, field=None):
         """
@@ -296,11 +325,11 @@ class CodeList(QDockWidget, FORM_CLASS):
                     return ret
                 query = QSqlQuery(sql, db)
                 if not query.isActive():
-                    return ret       
+                    return ret
                 while query.next():
                     code = str(query.value(0))
                     code_name = query.value(1)
-                    ret[code_name] = code      
+                    ret[code_name] = code
                 db.close()
             except:
                 pass
@@ -323,4 +352,4 @@ class CodeList(QDockWidget, FORM_CLASS):
         for row, (code, value) in enumerate(fieldMap.items()):
             self.tableWidget.setItem(row, 0, QTableWidgetItem(value))
             self.tableWidget.setItem(row, 1, QTableWidgetItem(code))
-        self.tableWidget.sortItems(1)
+        # self.tableWidget.sortItems(1)

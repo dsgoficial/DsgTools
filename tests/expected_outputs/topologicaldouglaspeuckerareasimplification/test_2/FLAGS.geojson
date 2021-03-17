@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "FLAGS",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31984" } },
+"features": [
+
+]
+}
