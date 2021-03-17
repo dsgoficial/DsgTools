@@ -82,12 +82,13 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
         fields.append(QgsField('reason',QVariant.String))
         return fields
     
-    def flagFeature(self, flagGeom, flagText, fromWkb=False):
+    def flagFeature(self, flagGeom, flagText, fromWkb=False, sink=None):
         """
         Creates and adds to flagSink a new flag with the reason.
         :param flagGeom: (QgsGeometry) geometry of the flag;
         :param flagText: (string) Text of the flag
         """
+        flagSink = self.flagSink if sink is None else sink
         newFeat = QgsFeature(self.getFlagFields())
         newFeat['reason'] = flagText
         if fromWkb:
@@ -96,7 +97,7 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
             newFeat.setGeometry(geom)
         else:
             newFeat.setGeometry(flagGeom)
-        self.flagSink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+        flagSink.addFeature(newFeat, QgsFeatureSink.FastInsert)
     
     def getFlagsFromOutput(self, output):
         if 'FLAGS' not in output:

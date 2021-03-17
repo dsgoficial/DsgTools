@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "FLAGS",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31984" } },
+"features": [
+{ "type": "Feature", "properties": { "reason": "Vertex Point (592359.76208270236384124 8604968.17494524642825127) from feature 1 layer test2_vertexnearedge_l is near edge(s) LineString (592220.77419720566831529 8604973.84096207842230797, 592461.15207818220369518 8604964.37872224487364292)." }, "geometry": { "type": "Point", "coordinates": [ 592359.762082702363841, 8604968.174945246428251 ] } },
+{ "type": "Feature", "properties": { "reason": "Vertex Point (592197.84617117431480438 8604974.89415270276367664) from feature 1 layer test2_vertexnearedge_l is near edge(s) LineString (592152.44362064590677619 8604977.30364563316106796, 592359.76208270236384124 8604968.17494524642825127)." }, "geometry": { "type": "Point", "coordinates": [ 592197.846171174314804, 8604974.894152702763677 ] } },
+{ "type": "Feature", "properties": { "reason": "Vertex Point (592220.77419720566831529 8604973.84096207842230797) from feature 1 layer test2_vertexnearedge_l is near edge(s) LineString (592359.76208270236384124 8604968.17494524642825127, 592197.84617117431480438 8604974.89415270276367664), LineString (592152.44362064590677619 8604977.30364563316106796, 592359.76208270236384124 8604968.17494524642825127)." }, "geometry": { "type": "Point", "coordinates": [ 592220.774197205668315, 8604973.840962078422308 ] } }
+]
+}
