@@ -107,8 +107,7 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
             url,
             json=fmeDict['parameters'],
             proxies=fmeDict['proxy_dict'],
-            auth=fmeDict['auth'],
-            verify=False
+            auth=fmeDict['auth']
         )
         url_to_status = '{server}/jobs/{uuid}'.format(
             server=fmeDict['server'],
@@ -147,7 +146,7 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
             json=fmeDict['parameters'],
             proxies=fmeDict['proxy_dict'],
             auth=fmeDict['auth'],
-            verify=False
+            verify=fmeDict['use_ssl']
         )
         url_to_status = '{server}/api/execucoes/{uuid}'.format(
             server=fmeDict['server'],
@@ -162,7 +161,7 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
                 url_to_status,
                 proxies=fmeDict['proxy_dict'],
                 auth=fmeDict['auth'],
-                verify=False
+                verify=fmeDict['use_ssl']
             )
             if response.json()['dados']['status_id'] == 2:
                 feedback.pushInfo(self.tr('Workspace {0} completed with success.\n').format(

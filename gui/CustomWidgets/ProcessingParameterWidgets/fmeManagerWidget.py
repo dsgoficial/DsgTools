@@ -166,6 +166,8 @@ class FMEManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             'workspace_id': workspace_id,
             'parameters': parameters,
             'auth': self.auth,
-            'proxy_dict': self.proxy_dict
+            'proxy_dict': self.proxy_dict,
+            'use_ssl': bool(self.sslCheckBox.checkState())
         }
+        print(returnDict)
         return returnDict
