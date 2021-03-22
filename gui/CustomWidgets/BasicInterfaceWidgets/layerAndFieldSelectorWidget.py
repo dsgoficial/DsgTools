@@ -32,7 +32,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 
 class LayerAndFieldSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
-    """Docstring."""
+    """Widget to get a field from a loaded layer, needed to be used with the OTW behavior."""
 
     mMapLayerComboBox = QgsMapLayerComboBox()
     mFieldComboBox = QgsFieldComboBox()
@@ -47,21 +47,23 @@ class LayerAndFieldSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
         self.mMapLayerComboBox.layerChanged.connect(lambda: self.setLayer())
 
     def getLoadedLayers(self):
-        """Docstring."""
+        """Retrieves a loaded layers list."""
         self.lyr_list = [layer.name()
                          for layer in QgsProject.instance().mapLayers().values()]
         return self.lyr_list
 
     def getCurrentLayer(self):
-        """Docstring."""
+        """Gets the current layer from a QgsMapLayerComboBox."""
         return self.mMapLayerComboBox.currentLayer()
 
     def getCurrentField(self):
-        """Docstring."""
+        """Gets the current field related to the current layer
+        from a QgsFieldComboBox.
+        """
         return self.mFieldComboBox.currentField()
 
     def setLayer(self):
-        """Docstring."""
+        """Sets a layer to be used with OTW."""
         # first setup is manual though
         lyr = self.mMapLayerComboBox.currentLayer()
         if lyr:
@@ -69,25 +71,27 @@ class LayerAndFieldSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
             self.mFieldComboBox.setField(lyr.fields()[0].name())
 
     def setField(self, field):
-        """Docstring."""
+        """Sets a field to be used with OTW."""
         return self.mFieldComboBox.setField(field)
 
     def fieldChanged(self, request):
-        """Docstring."""
+        """Signal emmited when a field is changed."""
         return self.mFieldComboBox.fieldChanged.connect(request)
 
     def layerChanged(self, request):
-        """Docstring."""
+        """Signal emmited when a layer is changed."""
         return self.mMapLayerComboBox.layerChanged.connect(request)
 
     def getCurrentLayerNField(self):
-        """Docstring."""
+        """Retrieves a tuple of layer and field."""
         lyr = self.mMapLayerComboBox.currentLayer().name()
         fld = self.mFieldComboBox.currentField()
         return lyr, fld
 
     def setCurrentLayerNField(self, _list):
-        """Docstring."""
+        """Sets the current field related to the current
+        layer to be used with OTW.
+        """
         self.mMapLayerComboBox.setCurrentText(_list[0])
         lyr = self.mMapLayerComboBox.currentLayer()
         fld = self.mFieldComboBox
@@ -100,8 +104,10 @@ class LayerAndFieldSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
 
     def widgetSizeHint(self):
         """Handles the minimum size for the composed widget."""
+        # needs improvements
         mMapLayerComboBoxSize = self.mMapLayerComboBox.minimumSizeHint()
         mFieldComboBoxSize = self.mFieldComboBox.minimumSizeHint()
         minW = mMapLayerComboBoxSize.width() + mFieldComboBoxSize.width()
-        minH = (mMapLayerComboBoxSize.height() + mFieldComboBoxSize.height()) // 2
-        self.setMinimumSize(QSize(minW,minH))
+        minH = (mMapLayerComboBoxSize.height() +
+                mFieldComboBoxSize.height()) // 2
+        self.setMinimumSize(QSize(minW, minH))
