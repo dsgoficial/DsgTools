@@ -161,8 +161,7 @@ class Tester(unittest.TestCase):
         geojsonPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'GeoJSON')
         datasets = {
             "sqlite" : {
-                "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite'),
-                "douglas_peucker" : os.path.join(spatiaLitePaths, 'douglas_peucker.sqlite')
+                "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite')
             },
             "gpkg" : {
                 "testes_wgs84" : os.path.join(gpkgPaths, 'testes_wgs84.gpkg'),
@@ -176,7 +175,8 @@ class Tester(unittest.TestCase):
                 "spatial_rules_alg": os.path.join(geojsonPaths, 'spatial_rules_alg'),
                 "create_frames_layers": os.path.join(geojsonPaths, 'create_frames_layers'),
                 "identify_angles_in_invalid_range_layers": os.path.join(geojsonPaths, 'identify_angles_in_invalid_range_layers'),
-                "douglas_peucker": os.path.join(geojsonPaths, 'douglas_peucker')
+                "douglas_peucker": os.path.join(geojsonPaths, 'douglas_peucker'),
+                "identify_wrong_set_of_attributes": os.path.join(geojsonPaths, 'identify_wrong_set_of_attributes')
             }
         }
         # switch-case for dataset reading
@@ -1115,47 +1115,56 @@ class Tester(unittest.TestCase):
             ],
             "dsgtools:identifywrongsetofattributesalgorithm" : [
                 {
-                    '__comment' : "Tests 1 - tests every single topological relation to its simplest state",
+                    '__comment' : "Test 1",
                     "RULES_SET":{
                                 "0": {
-                                    "0": "tipocampo - Preencher atributo",
-                                    "1": [
-                                        "veg_campo_a",
-                                        "tipocampo"
-                                    ],
-                                    "2": "\"tipocampo\" not in  (0,1,2,3)",
-                                    "3": "Preencher atributo",
-                                    "4": "#b6a500"
-                                },
-                                "1": {
-                                    "0": "classificacaoporte - Preencher atributo",
-                                    "1": [
-                                        "veg_floresta_a",
-                                        "classificacaoporte"
-                                    ],
-                                    "2": "\"classificacaoporte\" not in  (5,4,0)",
-                                    "3": "Preencher atributo",
-                                    "4": "#b6a500"
-                                },
-                                "2": {
-                                    "0": "regime - Preencher atributo",
-                                    "1": [
+                                    "description": "regime - Preencher atributo",
+                                    "layerField": [
                                         "hid_trecho_drenagem_l",
                                         "regime"
                                     ],
-                                    "2": "\"regime\" not in  (0,1,2,3,4,5)",
-                                    "3": "Preencher atributo",
-                                    "4": "#b6a500"
+                                    "expression": "\"regime\" not in  (0,1,2,3,4,5)",
+                                    "errorType": "Preencher atributo",
+                                    "color": "#b6a500"
                                 },
-                                "3": {
-                                    "0": "navegavel - Preencher atributo",
-                                    "1": [
+                                "1": {
+                                    "description": "nome - Nome deve iniciar com letra maiuscula e nao deve ter espacos desnecessarios",
+                                    "layerField": [
                                         "hid_trecho_drenagem_l",
-                                        "navegavel"
+                                        "nome"
                                     ],
-                                    "2": "\"navegavel\" not in  (0,2,1)",
-                                    "3": "Preencher atributo",
-                                    "4": "#b6a500"
+                                    "expression": "regexp_match ( \"nome\" , '^ ' ) or regexp_match ( \"nome\" , '  ' ) or regexp_match ( \"nome\" , ' $' ) or regexp_match ( \"nome\" , '^[a-z]' )",
+                                    "errorType": "Atributo com valor incorreto",
+                                    "color": "#ff0000"
+                                }
+                    },
+                    'SELECTED' : False,
+                    "POINT_FLAGS":"memory:",
+                    "LINE_FLAGS":"memory:",
+                    "POLYGON_FLAGS":"memory:"
+                },
+                {
+                    '__comment' : "Tests 2",
+                    "RULES_SET":{
+                                "0": {
+                                    "description": "tipoilha - Preencher atributo",
+                                    "layerField": [
+                                        "hid_ilha_a",
+                                        "tipoilha"
+                                    ],
+                                    "expression": "\"tipoilha\" not in  (1,3,2)",
+                                    "errorType": "Preencher atributo",
+                                    "color": "#b6a500"
+                                },
+                                "1": {
+                                    "description": "nome - Nome deve iniciar com letra maiuscula e nao deve ter espacos desnecessarios",
+                                    "layerField": [
+                                        "hid_ilha_a",
+                                        "nome"
+                                    ],
+                                    "expression": "regexp_match ( \"nome\" , '^ ' ) or regexp_match ( \"nome\" , '  ' ) or regexp_match ( \"nome\" , ' $' ) or regexp_match ( \"nome\" , '^[a-z]' )",
+                                    "errorType": "Atributo com valor incorreto",
+                                    "color": "#ff0000"
                                 }
                     },
                     'SELECTED' : False,
@@ -1461,7 +1470,7 @@ class Tester(unittest.TestCase):
             ]
         multipleOutputAlgs = [
             # identification algs
-            "dsgtools:identifywrongsetofattributesalgorithm"
+            "dsgtools:identifywrongsetofattributesalgorithm",
             # manipulation algs
             "dsgtools:unbuildpolygonsalgorithm",
             "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
@@ -1655,14 +1664,36 @@ class Tester(unittest.TestCase):
         )
 
     def test_identifywrongsetofattributesalgorithm(self):
-        self.assertEqual(
-            self.testAlg(
-                "dsgtools:identifywrongsetofattributesalgorithm",
-                multipleOutputs=True,
-                addControlKey=True
-            ),
-            ""
+        """Tests for Identify Wrong Set of Attributes algorithm"""
+        testsParams = self.algorithmParameters("dsgtools:identifywrongsetofattributesalgorithm")
+        # this algorithm, specifically has to set layers Context-reading ready
+        layers = self.testingDataset("geojson", "identify_wrong_set_of_attributes")  # {'hid_trecho_drenagem_l': <QgsVectorLayer: 'hid_trecho_drenagem_l' (ogr)>}
+       
+        layers = {l.split("-")[-1]: vl for l, vl in layers.items()}  # {'hid_trecho_drenagem_l': <QgsVectorLayer: 'hid_trecho_drenagem_l' (ogr)>}
+
+        for parameters in testsParams:
+            for key, values in parameters["RULES_SET"].items():
+                if isinstance(layers, list):
+                    vl = layers[0]
+                    vl.setName(layers[0].name())  # 'hid_trecho_drenagem_l'
+                    self.loadLayerToCanvas(vl)
+                else:
+                    # for layer in values["1"]:
+                    vl = layers[values["layerField"][0]]  # <QgsVectorLayer: 'hid_trecho_drenagem_l' (ogr)>
+                    # these layers are saved as "edgv3-*"
+                    vl.setName(values["layerField"][0])  # 'hid_trecho_drenagem_l'
+                    self.loadLayerToCanvas(vl)
+
+        msg = self.testAlg(
+            "dsgtools:identifywrongsetofattributesalgorithm",
+            multipleOutputs=True,
+            addControlKey=True
         )
+        # since layers were manually removed, cache is going to refer to 
+        # non-existing layers
+        del self.datasets["geojson:identify_wrong_set_of_attributes"]
+        self.clearProject()
+        self.assertEqual(msg, "")
 
     # def test_enforcespatialrules(self):
     #     """Tests for Enforce Spatial Rules algorithm"""
