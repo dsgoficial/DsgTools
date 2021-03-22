@@ -42,7 +42,7 @@ from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.colorSelectorWidget import
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.layerAndFieldSelectorWidget import LayerAndFieldSelectorWidget
 
 
-class ValidationAttributeRulesWrapper(WidgetWrapper):
+class EnforceAttributeRulesWrapper(WidgetWrapper):
     """
     Docstring
     fazer check de versao de __ATTRIBUTE_MAP_VERSION ao importar o json
@@ -59,7 +59,7 @@ class ValidationAttributeRulesWrapper(WidgetWrapper):
         """
         Constructor
         """
-        super(ValidationAttributeRulesWrapper, self).__init__(*args, **kwargs)
+        super(EnforceAttributeRulesWrapper, self).__init__(*args, **kwargs)
         self.getLoadedLayers()
         self.layerList = [layer.name()
                           for layer in QgsProject.instance().mapLayers().values()]
