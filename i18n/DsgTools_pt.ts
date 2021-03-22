@@ -8213,7 +8213,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="308"/>
         <source>Enforce Attribute Rules</source>
-        <translation>Aplicar regras de atributo</translation>
+        <translation>Aplicar Regras de Atributo</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="315"/>
