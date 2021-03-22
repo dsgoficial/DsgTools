@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 import os
+import re
 from qgis.gui import QgsColorButton
 from qgis.PyQt import QtCore, QtWidgets, uic
 from qgis.PyQt.QtCore import Qt, QSize, pyqtSlot
@@ -66,11 +67,18 @@ class ColorSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
 
     def setCurrentColor(self, color):
         """Sets the color in the mColorButton and in the lineEdit."""
-        self.mColorButton.setColor(QColor(color))
-        self.lineEdit.setText(color)
+        listColor = re.search("\\d{1,3},\\d{1,3},\\d{1,3}", color)
+        if listColor:
+            color = listColor.string.split(',')
+            rgb = QColor(int(color[0]),int(color[1]),int(color[2]))
+            self.mColorButton.setColor(rgb)
+        else:
+            self.mColorButton.setColor(QColor(color))
+            self.lineEdit.setText(color)
 
     def widgetSizeHint(self):
         """Handles the minimum size for the composed widget."""
+        # needs improvements
         mColorButtonSize = self.mColorButton.minimumSizeHint()
         lineEditSize = self.lineEdit.minimumSizeHint()
         minW = mColorButtonSize.width() + lineEditSize.width()

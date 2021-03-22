@@ -42,7 +42,7 @@ from qgis.core import (QgsFeature,
 from .validationAlgorithm import ValidationAlgorithm
 
 
-class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
+class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
     """
     Docstring.
     """
@@ -72,7 +72,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
             description=self.tr('Attribute Rules Set')
         )
         attributeRulesSetter.setMetadata({
-            'widget_wrapper': 'DsgTools.gui.ProcessingUI.validationAttributeRulesWrapper.ValidationAttributeRulesWrapper'
+            'widget_wrapper': 'DsgTools.gui.ProcessingUI.enforceAttributeRulesWrapper.EnforceAttributeRulesWrapper'
         })
         self.addParameter(attributeRulesSetter)
 
@@ -223,7 +223,7 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         }
 
         for keys, values in rules.items():
-            flagText = self.tr('{name}').format(name=values["description"])
+            flagText = '{name}'.format(name=values["description"])
             for flag in values["features"]:
                 geom = flag.geometry()
                 newFeature = QgsFeature(self.flagFields)
@@ -298,14 +298,14 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifywrongsetofattributesalgorithm'
+        return 'enforceattributerulesalgorithm'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Wrong Sets of Attributes')
+        return self.tr('Enforce Attribute Rules')
 
     def group(self):
         """
@@ -328,13 +328,13 @@ class IdentifyWrongSetOfAttributesAlgorithm(QgsProcessingAlgorithm):
         """
         Returns a translatable string with the self.tr() function.
         """
-        return QCoreApplication.translate('IdentifyWrongSetOfAttributesAlgorithm', string)
+        return QCoreApplication.translate('EnforceAttributeRulesAlgorithm', string)
 
     def createInstance(self):
         """
         Must return a new copy of your algorithm.
         """
-        return IdentifyWrongSetOfAttributesAlgorithm()
+        return EnforceAttributeRulesAlgorithm()
 
 
 class ParameterAttributeRulesSetType(QgsProcessingParameterType):
@@ -349,13 +349,13 @@ class ParameterAttributeRulesSetType(QgsProcessingParameterType):
         return {'widget_wrapper': 'DsgTools.gui.ProcessingUI.validationAttributeRulesWrapper.ValidationAttributeRulesWrapper'}
 
     def name(self):
-        return QCoreApplication.translate('Processing', 'Attribute Rules Set')
+        return QCoreApplication.translate('Processing', self.tr('Attribute Rules Set'))
 
     def id(self):
         return 'attribute_rules_set_type'
 
     def description(self):
-        return QCoreApplication.translate('Processing', 'Set of attribute rules. Used on Attribute Rules Checker.')
+        return QCoreApplication.translate('Processing', self.tr('Set of attribute rules. Used on Attribute Rules Checker.'))
 
 
 class ParameterAttributeRulesSet(QgsProcessingParameterDefinition):
