@@ -176,7 +176,7 @@ class Tester(unittest.TestCase):
                 "create_frames_layers": os.path.join(geojsonPaths, 'create_frames_layers'),
                 "identify_angles_in_invalid_range_layers": os.path.join(geojsonPaths, 'identify_angles_in_invalid_range_layers'),
                 "douglas_peucker": os.path.join(geojsonPaths, 'douglas_peucker'),
-                "identify_wrong_set_of_attributes": os.path.join(geojsonPaths, 'identify_wrong_set_of_attributes')
+                "enforce_attribute_rules": os.path.join(geojsonPaths, 'enforce_attribute_rules')
             }
         }
         # switch-case for dataset reading
@@ -1113,7 +1113,7 @@ class Tester(unittest.TestCase):
                     "POLYGON_FLAGS":"memory:"
                 }
             ],
-            "dsgtools:identifywrongsetofattributesalgorithm" : [
+            "dsgtools:enforceattributerulesalgorithm" : [
                 {
                     '__comment' : "Test 1",
                     "RULES_SET":{
@@ -1470,7 +1470,7 @@ class Tester(unittest.TestCase):
             ]
         multipleOutputAlgs = [
             # identification algs
-            "dsgtools:identifywrongsetofattributesalgorithm",
+            "dsgtools:enforceattributerulesalgorithm",
             # manipulation algs
             "dsgtools:unbuildpolygonsalgorithm",
             "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
@@ -1663,11 +1663,11 @@ class Tester(unittest.TestCase):
             ""
         )
 
-    def test_identifywrongsetofattributesalgorithm(self):
-        """Tests for Identify Wrong Set of Attributes algorithm"""
-        testsParams = self.algorithmParameters("dsgtools:identifywrongsetofattributesalgorithm")
+    def test_enforceattributerulesalgorithm(self):
+        """Tests for Enforce Attribute Rules algorithm"""
+        testsParams = self.algorithmParameters("dsgtools:enforceattributerulesalgorithm")
         # this algorithm, specifically has to set layers Context-reading ready
-        layers = self.testingDataset("geojson", "identify_wrong_set_of_attributes")  # {'hid_trecho_drenagem_l': <QgsVectorLayer: 'hid_trecho_drenagem_l' (ogr)>}
+        layers = self.testingDataset("geojson", "enforce_attribute_rules")  # {'hid_trecho_drenagem_l': <QgsVectorLayer: 'hid_trecho_drenagem_l' (ogr)>}
        
         layers = {l.split("-")[-1]: vl for l, vl in layers.items()}  # {'hid_trecho_drenagem_l': <QgsVectorLayer: 'hid_trecho_drenagem_l' (ogr)>}
 
@@ -1685,13 +1685,13 @@ class Tester(unittest.TestCase):
                     self.loadLayerToCanvas(vl)
 
         msg = self.testAlg(
-            "dsgtools:identifywrongsetofattributesalgorithm",
+            "dsgtools:enforceattributerulesalgorithm",
             multipleOutputs=True,
             addControlKey=True
         )
         # since layers were manually removed, cache is going to refer to 
         # non-existing layers
-        del self.datasets["geojson:identify_wrong_set_of_attributes"]
+        del self.datasets["geojson:enforce_attribute_rules"]
         self.clearProject()
         self.assertEqual(msg, "")
 
