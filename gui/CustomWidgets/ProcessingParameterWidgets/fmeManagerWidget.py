@@ -87,6 +87,17 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
             )
         )
 
+    def getProxyInfo(self):
+        """
+        Reads Proxy settings as registered on QGIS settings.
+        :return: (tuple) the QGIS proxy mapping per schema and its
+                 authentication object.
+        """
+        if self.useProxy():
+            return Utils().get_proxy_config()
+        else:
+            return (None, None)
+
     def version(self):
         """
         Identifies the selected FME Manager from GUI.
@@ -136,7 +147,7 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
                     timeout=8
                 ).json()[jsonKey]
             else:
-                proxyInfo, proxyAuth = Utils().get_proxy_config()
+                proxyInfo, proxyAuth = self.getProxyInfo()
                 workspaceList = requests.get(
                     url,
                     proxies=proxyInfo,
@@ -210,12 +221,30 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
                 )
             )
 
-    def validate(self):
+    def validate(self, pushAlert=False):
         """
         Validates fields. Returns True if all information are filled correctly.
+        :param pushAlert: (bool) whether invalidation reason should be
+                          displayed on the widget.
         :return: (bool) whether set of filled parameters if valid.
         """
-        return self.server() != ""
+        proxyInfo, _ = self.getProxyInfo()
+        if self.useProxy() and not proxyInfo:
+            if pushAlert:
+                self.messageBar.pushMessage(
+                    self.tr("Proxy usage is set but no QGIS proxy settings "
+                            "was found."),
+                    level=Qgis.Warning
+                )
+            return False
+        if self.server() == "":
+            if pushAlert:
+                self.messageBar.pushMessage(
+                    self.tr("URL to FME Manager server was not provided."),
+                    level=Qgis.Warning
+                )
+            return False
+        return True
 
     def getParameters(self):
         """
@@ -229,8 +258,7 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
                 key: value.text() for key, value in self.paramWidgetMap.items()
             }
         }
-        proxyInfo, proxyAuth = Utils().get_proxy_config() if self.useProxy() \
-            else (None, None)
+        proxyInfo, proxyAuth = self.getProxyInfo()
         return {
             "version": version,
             "server": self.server(),
