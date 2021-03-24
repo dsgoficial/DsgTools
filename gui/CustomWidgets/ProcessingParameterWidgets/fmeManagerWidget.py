@@ -229,7 +229,8 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
                 key: value.text() for key, value in self.paramWidgetMap.items()
             }
         }
-        proxyInfo, proxyAuth = Utils().get_proxy_config()
+        proxyInfo, proxyAuth = Utils().get_proxy_config() if self.useProxy() \
+            else (None, None)
         return {
             "version": version,
             "server": self.server(),
