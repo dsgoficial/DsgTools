@@ -215,16 +215,14 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
         Validates fields. Returns True if all information are filled correctly.
         :return: (bool) whether set of filled parameters if valid.
         """
-        if self.server == "":
-            return False
-        return True
+        return self.server() != ""
 
     def getParameters(self):
         """
         Returns necessary parameters for running the algorithm
         """
         workspace = self.getCurrentWorkspace()
-        workspace_id = workspace["id"] if workspace is not None else None
+        workspaceId = workspace["id"] if workspace is not None else None
         version = self.version()
         parameters = {
             "parameters" if version == "v1" else "parametros": {
@@ -235,7 +233,7 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
         return {
             "version": version,
             "server": self.server(),
-            "workspace_id": workspace_id,
+            "workspace_id": workspaceId,
             "parameters": parameters,
             "auth": proxyAuth,
             "proxy_dict": proxyInfo,
