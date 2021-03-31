@@ -2752,7 +2752,7 @@ class PostgisDb(AbstractDb):
             return 'template_edgv_fter_2a_ed'
         elif version == '3.0':
             return 'template_edgv_3'
-        elif version == '3.0 Pro':
+        elif version in ('EDGV 3.0 Pro', '3.0 Pro'):
             return 'template_edgv_3_pro'
     
     def setDbAsTemplate(self, version = None, dbName = None, setTemplate = True, useTransaction = True):
