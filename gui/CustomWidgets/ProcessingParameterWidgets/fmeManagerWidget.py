@@ -25,12 +25,11 @@ import json
 import requests
 from requests.exceptions import ReadTimeout, InvalidSchema, ConnectTimeout
 
-# Qt imports
+from qgis.core import Qgis
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QWidget, QLabel, QLineEdit
-from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings, QSize
+from qgis.PyQt.QtCore import pyqtSlot, QSize
 from qgis.gui import QgsMessageBar
-from qgis.core import Qgis
 
 from DsgTools.core.Utils.utils import Utils
 
@@ -52,7 +51,7 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
         """
         Removes all inserted widgets from workspace's parameters from GUI.
         """
-        for i in reversed(range(self.verticalLayout_2.count())):
+        for i in range(self.verticalLayout_2.count()-1, -1, -1):
             self.verticalLayout_2.itemAt(i).widget().setParent(None)
 
     @pyqtSlot(int)
@@ -63,12 +62,9 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
         """
         self.clearLayout()
         workspace = self.getCurrentWorkspace()
-        try:
-            key = "parameters" if self.version() == "v1" else "parametros"
-            _parameters =  workspace[key]
-            parameters = list(filter(lambda x: x != "LOG_FILE", _parameters))
-        except KeyError:
-            parameters = []
+        key = "parameters" if self.version() == "v1" else "parametros"
+        _parameters =  workspace.get(key, list())
+        parameters = filter(lambda x: x != "LOG_FILE", _parameters)
         for parameter in parameters:
             newLabel = QLabel(parameter)
             self.verticalLayout_2.addWidget(newLabel)
@@ -173,7 +169,7 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
         except BaseException as e:
             self.messageBar.pushMessage(
                 self.tr("Unexpected error while trying to reach server. "
-                        "Check your parameters."),
+                        "Check your parameters. Error message: {}".format(e)),
                 level=Qgis.Warning
             )
             workspaceList = list()
@@ -251,7 +247,7 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
         Returns necessary parameters for running the algorithm
         """
         workspace = self.getCurrentWorkspace()
-        workspaceId = workspace["id"] if workspace is not None else None
+        workspaceId = workspace.get("id", None)
         version = self.version()
         parameters = {
             "parameters" if version == "v1" else "parametros": {

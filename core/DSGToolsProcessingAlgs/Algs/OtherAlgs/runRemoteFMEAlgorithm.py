@@ -20,51 +20,20 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from ...algRunner import AlgRunner
-import processing
+
 import os
 import requests
 from time import sleep
-from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterExpression,
+
+from qgis.core import (QgsProcessingAlgorithm,
                        QgsProcessingException,
-                       QgsProcessingParameterString,
                        QgsProcessingParameterDefinition,
                        QgsProcessingParameterType)
+from qgis.PyQt.QtCore import QCoreApplication
 
 
 class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
     FME_MANAGER = "FME_MANAGER"
-
-    def getStatus(self, server, url):
-        try:
-            os.environ["NO_PROXY"] = server
-            response = requests.get(url)
-            # ["status"] 1 -- rodando, 2 -- executado, 3 -- erro
-            return response.json()["data"]
-        except Exception as e:
-            return e
 
     def initAlgorithm(self, config):
         """
@@ -95,6 +64,8 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
         :param useSsl: (bool) whether connection to server is verified /
                        secured with SSL.
         :param useProxy: (bool) whether connection requires a proxy.
+        :param timeout: (int) maximum time in seconds for the connection
+                        request attempt.
         :return: (dict) requested data as JSON.
         """
         try:
@@ -130,6 +101,8 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
         :param useSsl: (bool) whether connection to server is verified /
                        secured with SSL.
         :param useProxy: (bool) whether connection requires a proxy.
+        :param timeout: (int) maximum time in seconds for the connection
+                        request attempt.
         :return: (dict) requested data as JSON.
         """
         try:
@@ -321,7 +294,7 @@ class ParameterFMEManager(QgsProcessingParameterDefinition):
     def type(self):
         return self.typeName()
 
-    @ staticmethod
+    @staticmethod
     def typeName():
         return "fme_manager"
 
@@ -336,6 +309,6 @@ class ParameterFMEManager(QgsProcessingParameterDefinition):
     def asScriptCode(self):
         raise NotImplementedError()
 
-    @ classmethod
+    @classmethod
     def fromScriptCode(cls, name, description, isOptional, definition):
         raise NotImplementedError()
