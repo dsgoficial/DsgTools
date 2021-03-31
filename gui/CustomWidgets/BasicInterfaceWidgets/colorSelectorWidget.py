@@ -26,13 +26,13 @@ from qgis.gui import QgsColorButton
 from qgis.PyQt import QtCore, QtWidgets, uic
 from qgis.PyQt.QtCore import Qt, QSize, pyqtSlot
 from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import QWidget, QLineEdit, QHBoxLayout, QVBoxLayout
+from qgis.PyQt.QtWidgets import QWidget, QLineEdit
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'colorSelectorWidget.ui'))
 
 
-class ColorSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
+class ColorSelectorWidget(QWidget, FORM_CLASS):
     """
     Widget to simultaneously get the color and shows the color name
     and vice-versa.
@@ -58,15 +58,24 @@ class ColorSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
         self.lineEdit.setText(color)
 
     def colorChanged(self):
-        """Connects the mColorButton with the pyqt signal."""
+        """
+        Connects the mColorButton with the pyqt signal.
+        :return: (signal): emitted whenever a new color is set for the button.
+        """
         return self.mColorButton.colorChanged.connect(self.updateColor)
 
     def getCurrentColor(self):
-        """Gets the current color name from mColorButton."""
+        """
+        Gets the current color name from mColorButton.
+        :return: (QColor): return the color's name in double hex format #RRGGBB.
+        """
         return self.mColorButton.color().name()
 
     def setCurrentColor(self, color):
-        """Sets the color in the mColorButton and in the lineEdit."""
+        """
+        Sets the color both in the mColorButton and lineEdit.
+        :param (str) color: hex RGB code, color name, or a list of RGB numbers.
+        """
         listColor = re.search("\\d{1,3},\\d{1,3},\\d{1,3}", color)
         if listColor:
             color = listColor.string.split(',')
@@ -77,10 +86,12 @@ class ColorSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
             self.lineEdit.setText(color)
 
     def widgetSizeHint(self):
-        """Handles the minimum size for the composed widget."""
-        # needs improvements
-        mColorButtonSize = self.mColorButton.minimumSizeHint()
-        lineEditSize = self.lineEdit.minimumSizeHint()
-        minW = mColorButtonSize.width() + lineEditSize.width()
+        """
+        Sets the minimum size for the composed widget to fit it with
+        the OTW's resize policies.
+        """
+        mColorButtonSize = self.mColorButton.size()
+        lineEditSize = self.lineEdit.size()
+        minW = mColorButtonSize.width() + lineEditSize.width() + 5
         minH = (mColorButtonSize.height() + lineEditSize.height()) // 2
         self.setMinimumSize(QSize(minW,minH))
