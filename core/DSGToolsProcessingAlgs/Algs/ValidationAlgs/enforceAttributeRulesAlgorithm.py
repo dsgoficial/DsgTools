@@ -21,9 +21,8 @@
  ***************************************************************************/
 """
 
-import json
 import processing
-from qgis.PyQt.QtCore import QCoreApplication, QVariant
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtGui import QColor, QFont
 from qgis.core import (QgsFeature,
                        QgsProject,
@@ -34,9 +33,6 @@ from qgis.core import (QgsFeature,
                        QgsProcessingException,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterString,
                        QgsProcessingParameterType,
                        QgsProcessingParameterDefinition)
 from .validationAlgorithm import ValidationAlgorithm
@@ -44,7 +40,8 @@ from .validationAlgorithm import ValidationAlgorithm
 
 class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
     """
-    Docstring.
+    Algorithm for applying user-defined attribute rules to
+    verify the filling of database attributes.
     """
 
     RULES_SET = 'RULES_SET'
@@ -102,13 +99,22 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
         )
 
     def parameterAsAttributeRulesSet(self, parameters, name, context):
+        """
+        Adds data from wrapper to algorithm parameters.
+        :param parameters: (QgsProcessingParameter) a set of algorithm
+            parameters;
+        :param name: (json) JSON formatted attribute rules;
+        :param context: (QgsProcessingContext) context in which
+            processing was run;
+        :return: (dict) parameters dictionary.
+        """
         return parameters[name]
 
     def validateRuleSet(self, ruleDict):
         """
         Verifies whether given rule set is valid/applicable.
-        :param ruleDict: (dict) rules to be checked.
-        :return: (bool) rules validity status
+        :param ruleDict: (dict) rules to be checked;
+        :return: (bool) rules validity status.
         """
         # TODO
         return True
@@ -116,6 +122,13 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
+        :param parameters: (QgsProcessingParameter) a set of algorithm
+            parameters.
+        :param context: (QgsProcessingContext) context in which
+            processing was run.
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
+                         component.
+        :return: (tuple-of-QgsVectorLayer) filled flag layers.
         """
 
         rules = self.parameterAsAttributeRulesSet(
@@ -169,9 +182,9 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
         """
         Filters a layer or a set of selected features as from conditional rules,
         and the result is added to a list in a dictionary.
-        :param (dict) rules: dictionary with conditional rules;
-        :param (QgsVectorLayer) layerList: list from all loaded layers.
-        :param (boolean) onlySelected: true or false.
+        :param stateDict: (dict) dictionary with conditional rules;
+        :param onlySelected: (boolean) true or false;
+        :return: (dict) modified stateDict with filtered features.
         """
 
         # in order to improve efficiency in large databases or
@@ -188,8 +201,9 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
 
         for key, value in stateDict.items():
             if onlySelected:
-                parameters = {'INPUT': lyr.mapLayersByName(value['layerField'][0])[0],
-                              'OUTPUT': 'TEMPORARY_OUTPUT'}
+                parameters = {
+                    'INPUT': lyr.mapLayersByName(value['layerField'][0])[0],
+                    'OUTPUT': 'TEMPORARY_OUTPUT'}
                 selected = processing.run(
                     'native:saveselectedfeatures', parameters)
                 value['features'] = [
@@ -209,12 +223,14 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
     def flagsFromFailedList(self, rules, ptLayer, lLayer, polLayer, feedback):
         """
         Creates new features from a failed conditional rules dictionary.
-        :param (Dict) featureDict: a dictionary with a list QgsFeatures
+        :param featureDict: (dict) a dictionary with a list QgsFeatures
             selected by checkedFeatures() method;
-        :param (QgsVectorLayer) ptLayer: output point vector layer;
-        :param (QgsVectorLayer) lLayer: output line vector layer;
-        :param (QgsVectorLayer) polLayer: output polygon vector layer;
-        :param (QgsProcessingFeedback) feedback: processing feedback.
+        :param ptLayer: (QgsVectorLayer) output point vector layer;
+        :param lLayer: (QgsVectorLayer) output line vector layer;
+        :param polLayer: (QgsVectorLayer) output polygon vector layer;
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
+                         component;
+        :return: (tuple-of-QgsVectorLayer) filled flag layers.
         """
         layerMap = {
             QgsWkbTypes.PointGeometry: ptLayer,
@@ -239,6 +255,8 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
         """
         Applies a conditional style for each wrong attribute
         in the attribute table.
+        :param lyr: (QgsVectorLayer) vector layer;
+        :param values: (dict) dictionary with conditional rules.
         """
         self.font.setBold(True)
         self.conditionalStyle.setRule(values['expression'])
@@ -271,6 +289,9 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
         """
         Creates a statistics text log from each layer and your
         respectively wrong attribute.
+        :param rules: (dict) dictionary with conditional rules;
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
+                         component.
         """
         feedback.pushInfo('{0} {1} {0}\n'.format(
             '===' * 5, self.tr('LOG START')))
