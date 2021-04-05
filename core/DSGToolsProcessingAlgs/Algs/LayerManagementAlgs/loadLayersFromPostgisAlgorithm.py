@@ -156,12 +156,12 @@ class LoadLayersFromPostgisAlgorithm(QgsProcessingAlgorithm):
             self.LAYER_LIST,
             context
         )
-        loadToCanvas = self.parameterAsBoolean(
+        loadToCanvas = self.parameterAsBool(
             parameters,
             self.LOAD_TO_CANVAS,
             context
         )
-        uniqueLoad = self.parameterAsBoolean(
+        uniqueLoad = self.parameterAsBool(
             parameters,
             self.UNIQUE_LOAD,
             context

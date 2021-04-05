@@ -21,10 +21,26 @@
      </property>
     </widget>
    </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Parameters</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QComboBox" name="versionComboBox"/>
+   </item>
+   <item row="5" column="0" colspan="5">
+    <layout class="QVBoxLayout" name="verticalLayout_2"/>
+   </item>
+   <item row="3" column="0" colspan="5">
+    <widget class="QComboBox" name="workspaceComboBox"/>
+   </item>
    <item row="1" column="0">
     <widget class="QLineEdit" name="serverLineEdit"/>
    </item>
-   <item row="1" column="1">
+   <item row="1" column="4">
     <widget class="QPushButton" name="loadPushButton">
      <property name="maximumSize">
       <size>
@@ -51,18 +67,29 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_3">
+   <item row="0" column="1">
+    <widget class="QLabel" name="label_4">
      <property name="text">
-      <string>Parameters</string>
+      <string>Version</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
-    <widget class="QComboBox" name="workspaceComboBox"/>
+   <item row="1" column="2">
+    <widget class="QCheckBox" name="sslCheckBox">
+     <property name="text">
+      <string>Use SSL</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
    </item>
-   <item row="5" column="0" colspan="2">
-    <layout class="QVBoxLayout" name="verticalLayout_2"/>
+   <item row="1" column="3">
+    <widget class="QCheckBox" name="proxyCheckBox">
+     <property name="text">
+      <string>Use proxy</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
