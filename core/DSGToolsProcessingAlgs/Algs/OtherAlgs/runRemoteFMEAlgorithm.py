@@ -89,11 +89,11 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
         fmeDict = self.parameterAsFMEManager(parameters, self.FME_MANAGER, context)
 
         if fmeDict.get('version') == 'v1':
-            self.runFMEAlgorithmV1(fmeDict, feedback)
+            jobOutput = self.runFMEAlgorithmV1(fmeDict, feedback)
         elif fmeDict.get('version') == 'v2':
-            self.runFMEAlgorithmV2(fmeDict, feedback)
+            jobOutput = self.runFMEAlgorithmV2(fmeDict, feedback)
 
-        return {}
+        return {'result': jobOutput}
 
     def runFMEAlgorithmV1(self, fmeDict, feedback):
         """
@@ -132,6 +132,7 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
             if response.json()['data']['status'] == 3:
                 feedback.pushInfo(self.tr('Task completed with error.\n'))
                 break
+        return response
 
     def runFMEAlgorithmV2(self, fmeDict, feedback):
         """
@@ -173,6 +174,7 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
             if response.json()['dados']['status_id'] == 3:
                 feedback.pushInfo(self.tr('Task completed with error.\n'))
                 break
+        return response
 
     def name(self):
         """
