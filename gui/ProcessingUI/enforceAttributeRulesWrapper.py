@@ -28,7 +28,7 @@ from qgis.gui import QgsColorButton, QgsMapLayerComboBox, QgsFieldComboBox, QgsF
 from qgis.PyQt import QtCore
 from qgis.PyQt.QtCore import Qt, QRegExp, pyqtSlot
 from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import (QHBoxLayout, QVBoxLayout, QMessageBox,
+from qgis.PyQt.QtWidgets import (QHBoxLayout, QVBoxLayout, QMessageBox, QHeaderView,
                                  QWidget,
                                  QComboBox,
                                  QLineEdit)
@@ -61,8 +61,6 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         """
         super(EnforceAttributeRulesWrapper, self).__init__(*args, **kwargs)
         self.getLoadedLayers()
-        self.layerList = [layer.name()
-                          for layer in QgsProject.instance().mapLayers().values()]
 
     def stringDataWidget(self, text):
         """
@@ -71,6 +69,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         """
         le = QLineEdit()
         le.setPlaceholderText(self.tr(text))
+        le.setAlignment(Qt.AlignLeft)
         return le
 
     def ruleExpressionWidget(self):
@@ -80,6 +79,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         """
         rex = QLineEdit()
         rex.setPlaceholderText(self.tr("Entire rule expression"))
+        rex.setAlignment(Qt.AlignLeft)
         return rex
 
     def mapLyrAndFieldComboBox(self):
@@ -324,6 +324,9 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
             },
 
         })
+        for row in [1, 3, 4]:
+            otw.horizontalHeader().setSectionResizeMode(
+                row, QHeaderView.ResizeToContents)
         otw.setHeaderDoubleClickBehaviour("order")
         otw.dataLoaded.connect(self.modifyStateDict)
         otw.rowAdded.connect(self.postAddRowStandard)
