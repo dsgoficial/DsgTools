@@ -111,7 +111,7 @@ class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
             layer.addExpressionField(
                     '$length',
                     QgsField(
-                        'lenght_otf',
+                        'length_otf',
                         QVariant.Double
                     )
                 )

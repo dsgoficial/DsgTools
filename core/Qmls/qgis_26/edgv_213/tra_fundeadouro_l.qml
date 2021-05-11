@@ -125,7 +125,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="lenght_otf">
+    <field name="length_otf">
       <editWidget type="">
         <config>
           <Option/>
@@ -141,7 +141,7 @@
     <alias field="destinacaofundeadouro" index="4" name=""/>
     <alias field="administracao" index="5" name=""/>
     <alias field="id_complexo_portuario" index="6" name=""/>
-    <alias field="lenght_otf" index="7" name=""/>
+    <alias field="length_otf" index="7" name=""/>
   </aliases>
   <excludeAttributesWMS/>
   <excludeAttributesWFS/>
@@ -153,7 +153,7 @@
     <default applyOnUpdate="0" field="destinacaofundeadouro" expression=""/>
     <default applyOnUpdate="0" field="administracao" expression=""/>
     <default applyOnUpdate="0" field="id_complexo_portuario" expression=""/>
-    <default applyOnUpdate="0" field="lenght_otf" expression=""/>
+    <default applyOnUpdate="0" field="length_otf" expression=""/>
   </defaults>
   <constraints>
     <constraint unique_strength="1" field="id" constraints="3" exp_strength="0" notnull_strength="1"/>
@@ -163,7 +163,7 @@
     <constraint unique_strength="0" field="destinacaofundeadouro" constraints="1" exp_strength="0" notnull_strength="1"/>
     <constraint unique_strength="0" field="administracao" constraints="1" exp_strength="0" notnull_strength="1"/>
     <constraint unique_strength="0" field="id_complexo_portuario" constraints="0" exp_strength="0" notnull_strength="0"/>
-    <constraint unique_strength="0" field="lenght_otf" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="length_otf" constraints="0" exp_strength="0" notnull_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint exp="" desc="" field="id"/>
@@ -173,10 +173,10 @@
     <constraint exp="" desc="" field="destinacaofundeadouro"/>
     <constraint exp="" desc="" field="administracao"/>
     <constraint exp="" desc="" field="id_complexo_portuario"/>
-    <constraint exp="" desc="" field="lenght_otf"/>
+    <constraint exp="" desc="" field="length_otf"/>
   </constraintExpressions>
   <expressionfields>
-    <field precision="0" comment="" length="0" typeName="" expression="$length" type="6" name="lenght_otf" subType="0"/>
+    <field precision="0" comment="" length="0" typeName="" expression="$length" type="6" name="length_otf" subType="0"/>
   </expressionfields>
   <attributeactions/>
   <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
