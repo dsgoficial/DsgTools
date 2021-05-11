@@ -154,7 +154,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="lenght_otf">
+    <field name="length_otf">
       <editWidget type="">
         <config>
           <Option/>
@@ -172,7 +172,7 @@
     <alias field="operacional" name="" index="6"/>
     <alias field="situacaofisica" name="" index="7"/>
     <alias field="trafego" name="" index="8"/>
-    <alias field="lenght_otf" name="" index="9"/>
+    <alias field="length_otf" name="" index="9"/>
   </aliases>
   <excludeAttributesWMS/>
   <excludeAttributesWFS/>
@@ -186,7 +186,7 @@
     <default field="operacional" expression="" applyOnUpdate="0"/>
     <default field="situacaofisica" expression="" applyOnUpdate="0"/>
     <default field="trafego" expression="" applyOnUpdate="0"/>
-    <default field="lenght_otf" expression="" applyOnUpdate="0"/>
+    <default field="length_otf" expression="" applyOnUpdate="0"/>
   </defaults>
   <constraints>
     <constraint field="id" unique_strength="1" exp_strength="0" constraints="3" notnull_strength="1"/>
@@ -198,7 +198,7 @@
     <constraint field="operacional" unique_strength="0" exp_strength="0" constraints="1" notnull_strength="1"/>
     <constraint field="situacaofisica" unique_strength="0" exp_strength="0" constraints="1" notnull_strength="1"/>
     <constraint field="trafego" unique_strength="0" exp_strength="0" constraints="1" notnull_strength="1"/>
-    <constraint field="lenght_otf" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="length_otf" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint field="id" desc="" exp=""/>
@@ -210,10 +210,10 @@
     <constraint field="operacional" desc="" exp=""/>
     <constraint field="situacaofisica" desc="" exp=""/>
     <constraint field="trafego" desc="" exp=""/>
-    <constraint field="lenght_otf" desc="" exp=""/>
+    <constraint field="length_otf" desc="" exp=""/>
   </constraintExpressions>
   <expressionfields>
-    <field expression="$length" type="6" typeName="" length="0" subType="0" precision="0" comment="" name="lenght_otf"/>
+    <field expression="$length" type="6" typeName="" length="0" subType="0" precision="0" comment="" name="length_otf"/>
   </expressionfields>
   <attributeactions/>
   <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">

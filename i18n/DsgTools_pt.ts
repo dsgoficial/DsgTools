@@ -7334,7 +7334,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     </message>
     <message>
         <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="101"/>
-        <source>lenght_otf</source>
+        <source>length_otf</source>
         <translation>comprimento_otf</translation>
     </message>
     <message>
