@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 import os
-from qgis.core import QgsProject
+from qgis.core import QgsProject, QgsMapLayerProxyModel
 from qgis.gui import QgsMapLayerComboBox, QgsFieldComboBox
 from qgis.PyQt import QtCore, QtWidgets, uic
 from qgis.PyQt.QtCore import QSize
@@ -38,18 +38,14 @@ class LayerAndFieldSelectorWidget(QWidget, FORM_CLASS):
     of the OTW's behavior.
     """
 
-    mMapLayerComboBox = QgsMapLayerComboBox()
-    mFieldComboBox = QgsFieldComboBox()
-
     def __init__(self, parent=None):
         """
         Constructor.
         """
         super(LayerAndFieldSelectorWidget, self).__init__(parent=parent)
         self.setupUi(self)
-        self.widgetSizeHint()
-        self.project = QgsProject.instance()
-        self.getLoadedLayers()
+        self.mMapLayerComboBox.setFilters(QgsMapLayerProxyModel.VectorLayer)
+        self.resizeWidget()
         self.setLayer()
         self.mMapLayerComboBox.layerChanged.connect(self.setLayer)
 
@@ -58,8 +54,11 @@ class LayerAndFieldSelectorWidget(QWidget, FORM_CLASS):
         Retrieves a loaded layers list.
         :return lyrList: (list) a string list for layers' names.
         """
-        lyrList = [layer.name()
-                   for layer in self.project.mapLayers().values()]
+        layers = QgsProject.instance().mapLayers().values()
+        lyrList = []
+        for layer in layers:
+            if layer.type() == 0:
+                lyrList.append(layer.name())
         return lyrList
 
     def getCurrentLayer(self):
@@ -73,17 +72,17 @@ class LayerAndFieldSelectorWidget(QWidget, FORM_CLASS):
     def getCurrentField(self):
         """
         Gets the current field related to the current layer
-            from a QgsFieldComboBox.
+        from a QgsFieldComboBox.
         :return: (QgsField): returns the currently selected field.
         """
         return self.mFieldComboBox.currentField()
 
     def setLayer(self):
         """
-        Sets a layer to be used with OTW.
+        Receives the current layer from getCurrentLayer() method and
+        sets it in the QgsFieldComboBox.
         :return: (QgsVectorLayer): returns the currently set layer.
         """
-        # first setup is manual though
         lyr = self.getCurrentLayer()
         if lyr:
             self.mFieldComboBox.setLayer(lyr)
@@ -91,7 +90,8 @@ class LayerAndFieldSelectorWidget(QWidget, FORM_CLASS):
 
     def setField(self, field):
         """
-        Sets the currently selected field to be used with OTW.
+        Receives a QgsField name by the field parameter and sets
+        it as the current field in the QgsFieldComboBox.
         :param field: (str) a string for the field' name;
         :return: (QgsField): returns the currently set field.
         """
@@ -113,19 +113,21 @@ class LayerAndFieldSelectorWidget(QWidget, FORM_CLASS):
         """
         return self.mMapLayerComboBox.layerChanged.connect(request)
 
-    def getCurrentLayerNField(self):
+    def getCurrentInfo(self):
         """
-        Retrieves a tuple of layer and field.
-        :return: (QgsField): returns the currently set field.
+        Retrieves from getCurrentLayer() and getCurrentField() methods
+        respectively and returns a tuple of currently layer and field.
+        :return: (Tuple): returns a tuple with a QgsVectorLayer and a QgsField.
         """
-        lyr = self.mMapLayerComboBox.currentLayer().name()
-        fld = self.mFieldComboBox.currentField()
+        lyr = self.getCurrentLayer().name()
+        fld = self.getCurrentField()
         return lyr, fld
 
-    def setCurrentLayerNField(self, layerFieldList):
+    def setCurrentInfo(self, layerFieldList):
         """
-        Sets the current field related to the current
-        layer to be used with OTW.
+        Defines the current layer from the parameters and tests whether the
+        field in the parameter belongs to the current layer. If so, define it
+        as current field.
         :param layerFieldList: (list) list of layers' and fields' names
             respectively.
         """
@@ -138,10 +140,11 @@ class LayerAndFieldSelectorWidget(QWidget, FORM_CLASS):
                 self.mFieldComboBox.setLayer(lyr)
                 self.setField(layerFieldList[1])
 
-    def widgetSizeHint(self):
+    def resizeWidget(self):
         """
-        Sets the minimum size for the composed widget to fit it with
-        the OTW's resize policies.
+        This method gets the width sum and the average height from all children
+        widgets applies padding to the sides and sets it as the minimum size of
+        this composed widget.
         """
         mMapLayerComboBoxSize = self.mMapLayerComboBox.size()
         mFieldComboBoxSize = self.mFieldComboBox.size()
