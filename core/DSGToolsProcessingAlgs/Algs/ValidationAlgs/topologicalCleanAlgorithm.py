@@ -130,12 +130,13 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Building unified layer...'))
+        # check for different geometry types being processed and alert user if necessary
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
             inputLyrList,
-            geomType=QgsWkbTypes.MultiPolygon,
+            # geomType=QgsWkbTypes.MultiPolygon,
             onlySelected=onlySelected,
             feedback=multiStepFeedback
-            )
+        )
 
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr('Running clean on unified layer...'))

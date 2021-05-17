@@ -151,7 +151,15 @@ class LayerHandler(QObject):
         if not epsg:
             epsg = layerList[0].crs().authid().split(':')[-1]
         if not geomType:
-            geomType = layerList[0].geometryType()
+            geomType = None
+            for layer in layerList:
+                if layer.featureCount() > 0:
+                    geomType = int(next(layer.getFeatures())\
+                        .geometry().wkbType())
+                    break
+            else:
+                raise Exception(
+                    self.tr("No layers were provided or they are all empty."))
         unified_layer = self.createUnifiedVectorLayer(geomType, epsg,
                                                       attributeTupple=attributeTupple)
         parameterDict = self.getDestinationParameters(unified_layer)
@@ -171,7 +179,7 @@ class LayerHandler(QObject):
         """
         fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
         lyrUri = "{0}?crs=epsg:{1}".format(
-            QgsWkbTypes.displayString(geomType), srid)
+            QgsWkbTypes.displayString(int(geomType)), srid)
         lyr = QgsVectorLayer(lyrUri, "unified_layer", "memory")
         lyr.startEditing()
         fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
