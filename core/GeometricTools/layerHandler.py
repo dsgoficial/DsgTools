@@ -158,7 +158,7 @@ class LayerHandler(QObject):
                         .geometry().wkbType())
                     break
             else:
-                raise Exception(
+                raise ValueError(
                     self.tr("No layers were provided or they are all empty."))
         unified_layer = self.createUnifiedVectorLayer(geomType, epsg,
                                                       attributeTupple=attributeTupple)

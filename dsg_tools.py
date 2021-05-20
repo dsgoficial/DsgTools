@@ -39,8 +39,8 @@ from qgis.utils import showPluginHelp
 from qgis.core import QgsApplication
 
 try:
-    import debugpy
-    debugpy.listen(("localhost", 5679))
+    import ptvsd
+    ptvsd.enable_attach(address=("localhost", 5679))
 except Exception as e:
     pass
 
