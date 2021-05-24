@@ -176,7 +176,8 @@ class Tester(unittest.TestCase):
                 "spatial_rules_alg": os.path.join(geojsonPaths, 'spatial_rules_alg'),
                 "create_frames_layers": os.path.join(geojsonPaths, 'create_frames_layers'),
                 "identify_angles_in_invalid_range_layers": os.path.join(geojsonPaths, 'identify_angles_in_invalid_range_layers'),
-                "douglas_peucker": os.path.join(geojsonPaths, 'douglas_peucker')
+                "douglas_peucker": os.path.join(geojsonPaths, 'douglas_peucker'),
+                "polygon_sliver": os.path.join(geojsonPaths, 'polygon_sliver')
             }
         }
         # switch-case for dataset reading
@@ -1114,6 +1115,18 @@ class Tester(unittest.TestCase):
                 }
             ],
 
+            "dsgtools:identifypolygonsliver" : [
+                {
+                    "__comment" : "Checks if simple cases are identified.",
+                    "INPUT_LAYERS": self.getInputLayers(
+                        'geojson', 'identifypolygonsliver', ['poligonos_1']
+                    )[0],
+                    "RATIO_TOL": 10,
+                    "SELECTED": False,
+                    "FLAGS": "memory:"
+                }
+            ],
+
             "dsgtools:ALG" : [
                 {
                     '__comment' : "'Normal' test: checks if it works."
@@ -1598,6 +1611,11 @@ class Tester(unittest.TestCase):
                 addControlKey=True
             ),
             ""
+        )
+
+    def test_identifypolygonsliver(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifypolygonsliver", addControlKey=True), ""
         )
 
     # def test_enforcespatialrules(self):
