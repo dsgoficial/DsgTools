@@ -1124,6 +1124,19 @@ class Tester(unittest.TestCase):
                     "RATIO_TOL": 10,
                     "SELECTED": False,
                     "FLAGS": "memory:"
+                },
+                {
+                    "__comment" : "Checks if the algorithm works with selected"
+                        " features option on.",
+                    "INPUT_LAYERS": self.getInputLayers(
+                        'geojson',
+                        'polygon_sliver',
+                        ['poligonos_1'],
+                        idsToSelect=[0, 1]
+                    ),
+                    "RATIO_TOL": 10,
+                    "SELECTED": True,
+                    "FLAGS": "memory:"
                 }
             ],
 
@@ -1276,14 +1289,23 @@ class Tester(unittest.TestCase):
         """
         QgsProject.instance().clear()
 
-    def testAlg(self, algName, feedback=None, context=None, loadLayers=False, multipleOutputs=False, attributeBlackList=None, addControlKey=False):
+    def testAlg(self, algName, feedback=None, context=None, loadLayers=False,
+            multipleOutputs=False, attributeBlackList=None,
+            addControlKey=False, selected=None):
         """
         Tests if the output of a given algorithm is the expected one.
         :param algName: (str) target algorithm's name.
         :param feedback: (QgsProcessingFeedback) QGIS progress tracking object.
-        :param context: (QgsProcessingContext) execution's environmental parameters.
+        :param context: (QgsProcessingContext) execution's environmental
+                        parameters.
         :param loadLayers: (bool) indicates whether expected and output layers
                             should be loaded to canvas.
+        :param multipleOutputs: (bool) whether the algorithm tested outputs
+                                more than 1 layer.
+        :param attributeBlackList: (list-of-str) attributes to be ignored when
+                                   comparing features.
+        :param addControlKey: (bool) creates a new column to be used as ID on
+                              the output layers.
         :return: (str) failing reason.
         """
         parameters = self.algorithmParameters(algName)
