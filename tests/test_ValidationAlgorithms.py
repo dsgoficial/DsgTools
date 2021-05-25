@@ -1119,8 +1119,8 @@ class Tester(unittest.TestCase):
                 {
                     "__comment" : "Checks if simple cases are identified.",
                     "INPUT_LAYERS": self.getInputLayers(
-                        'geojson', 'identifypolygonsliver', ['poligonos_1']
-                    )[0],
+                        'geojson', 'polygon_sliver', ['poligonos_1']
+                    ),
                     "RATIO_TOL": 10,
                     "SELECTED": False,
                     "FLAGS": "memory:"
@@ -1177,9 +1177,14 @@ class Tester(unittest.TestCase):
         )
         gpkgOutput = False
         for f in next(os.walk(rootPath))[2]:
-            if '.gpkg' in f:
+            # in case of test case outputs are placed in different folders, this
+            # will not update the gpkgOutput
+            if '.gpkg' in f.lower():
                 gpkgOutput = True
                 break
+        # in case tests are placed as files inside algorithm's expected output
+        # folder, this will retrieve only the output for current test, if not,
+        # this will be evaluated to the path to all outputs in a folder test_TestNr
         path = os.path.join(
                     rootPath,
                     'test_{test_number}{extension}'.format(

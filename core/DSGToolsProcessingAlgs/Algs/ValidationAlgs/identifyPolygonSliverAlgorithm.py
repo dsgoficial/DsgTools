@@ -150,7 +150,7 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
         self.tr("Populating flags layer...")
         self.flagPolygonSlivers(flags, flagCount, multiStepFeedback)
         multiStepFeedback.setCurrentStep(step + 2)
-        return {self.FLAGS: self.flagSink}
+        return {self.FLAGS: self.flag_id}
 
     def flagPolygonSlivers(self, flags, flagCount, feedback):
         """
