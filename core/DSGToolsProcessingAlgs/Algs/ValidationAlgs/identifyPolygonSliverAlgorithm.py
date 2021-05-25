@@ -140,7 +140,9 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
             slivers = lh.getPolygonSlivers(
                 layer, ratio, selected, False, multiStepFeedback)
             if slivers:
-                multiStepFeedback.pushWarning(
+                # pushWarnign is only avalailable on 3.16.2+
+                # multiStepFeedback.pushWarning(
+                multiStepFeedback.pushDebugInfo(
                     self.tr("{0} slivers were found on {1}!")\
                         .format(len(slivers), layer.name())
                 )
