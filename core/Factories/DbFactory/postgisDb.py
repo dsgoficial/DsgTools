@@ -20,13 +20,15 @@
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import map
-from builtins import str
-from builtins import range
 
+from qgis.core import Qgis
 from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
 from qgis.PyQt.QtCore import QSettings
-from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceUri, QgsFeature, QgsVectorLayer, QgsField
+from qgis.core import (Qgis,
+                       QgsMessageLog,
+                       QgsCredentials,
+                       QgsVectorLayer,
+                       QgsDataSourceUri)
 
 from .abstractDb import AbstractDb
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
@@ -807,7 +809,14 @@ class PostgisDb(AbstractDb):
                 db.setUserName(self.db.userName())
                 db.setPassword(self.db.password())
                 if not db.open():
-                    raise Exception(self.tr("Problem opening databases: ")+db.lastError().databaseText())
+                    # raise Exception(self.tr("Problem opening databases: ")+db.lastError().databaseText())
+                    QgsMessageLog.logMessage(
+                        self.tr("Unable to load {0}. Error message: '{1}'")\
+                            .format(database, db.lastError().databaseText()),
+                        "DSGTools Plugin",
+                        Qgis.Warning
+                    )
+                    continue
 
                 query2 = QSqlQuery(db)
                 if query2.exec_(self.gen.getGeometryTablesCount()):
@@ -819,9 +828,21 @@ class PostgisDb(AbstractDb):
                                 while query3.next():
                                     version = query3.value(0)
                                     if version:
-                                        edvgDbList.append((database,version))
+                                        edvgDbList.append((database, version))
                                     else:
-                                        edvgDbList.append((database,'Non_EDGV'))
+                                        edvgDbList.append(
+                                            (database, 'Non_EDGV'))
+                            elif "42501" in query3.lastError().databaseText():
+                                # user may have some privileges on database,
+                                # but may not be granted on all schemas of a
+                                # database
+                                QgsMessageLog.logMessage(
+                                    self.tr("Unable to load '{0}'. User '{1}'"
+                                            " has insufficient privileges.")\
+                                        .format(database, db.userName()),
+                                    "DSGTools Plugin",
+                                    Qgis.Warning
+                                )
                             else:
                                 edvgDbList.append((database,'Non_EDGV'))
                 if parentWidget:
