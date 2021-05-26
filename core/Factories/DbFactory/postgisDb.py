@@ -811,7 +811,8 @@ class PostgisDb(AbstractDb):
                 if not db.open():
                     # raise Exception(self.tr("Problem opening databases: ")+db.lastError().databaseText())
                     QgsMessageLog.logMessage(
-                        self.tr("Unable to load {0}").format(database),
+                        self.tr("Unable to load {0}. Error message: '{1}'")\
+                            .format(database, db.lastError().databaseText()),
                         "DSGTools Plugin",
                         Qgis.Warning
                     )
