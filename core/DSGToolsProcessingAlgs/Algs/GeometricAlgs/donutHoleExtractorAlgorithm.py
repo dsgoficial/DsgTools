@@ -19,6 +19,12 @@
  *                                                                         *
  ***************************************************************************/
 """
+import ptvsd
+
+ptvsd.break_into_debugger()
+
+# import pydevd
+# pydevd.settrace(host="127.0.0.1", port="5679")
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import ValidationAlgorithm
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
@@ -26,6 +32,7 @@ from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 
 from PyQt5.QtCore import QCoreApplication
 import processing
+
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
                        QgsProcessingAlgorithm,

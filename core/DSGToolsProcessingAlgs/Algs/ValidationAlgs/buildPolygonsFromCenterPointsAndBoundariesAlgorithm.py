@@ -152,6 +152,11 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             self.GEOGRAPHIC_BOUNDARY,
             context
         )
+        attributeBlackList = self.parameterAsFields(
+            parameters,
+            self.ATTRIBUTE_BLACK_LIST,
+            context
+        )
         (
             output_polygon_sink,
             output_polygon_sink_id
@@ -177,6 +182,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
             context=context,
             feedback=feedback,
+            attributeBlackList=attributeBlackList, 
             algRunner=algRunner
         )
         output_polygon_sink.addFeatures(
