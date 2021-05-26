@@ -1483,12 +1483,21 @@ class LayerHandler(QObject):
         4. Run Polygonize
         5. Get Flags, filtering them with constraint polygons
         """
+        algRunner = AlgRunner() if algRunner is None else algRunner
         constraintLineLyrList = [] if constraintLineLyrList is None else constraintLineLyrList
         constraintPolygonList = [] if constraintPolygonLyrList is None else constraintPolygonLyrList
+        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
+        #Clip Points, Lines and Polygons according to geographicBoundaryLyr
+        limit = algRunner.runBuffer(geographicBoundaryLyr,0.0001,context)
+        if geographicBoundaryLyr:
+            constraintLineLyrList = [algRunner.runClip(camada, limit, context)
+                                    for camada in constraintLineLyrList]
+            constraintPolygonList = [algRunner.runClip(camada, limit, context)
+                                    for camada in constraintPolygonLyrList]
+            inputCenterPointLyr = algRunner.runClip(inputCenterPointLyr, limit, context)
+        
         constraintPolygonListWithGeoBounds = constraintPolygonList + [geographicBoundaryLyr] \
             if geographicBoundaryLyr is not None else constraintPolygonList
-        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
-
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         # 1. Merge Polygon lyrs into one
         multiStepFeedback.setCurrentStep(0)
@@ -1554,6 +1563,7 @@ class LayerHandler(QObject):
         builtPolygonToCenterPointDict = self.buildCenterPolygonToCenterPointDict(
             inputCenterPointLyr,
             builtPolygonLyr,
+            attributeBlackList,
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(3)
