@@ -20,13 +20,15 @@
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import map
-from builtins import str
-from builtins import range
 
+from qgis.core import Qgis
 from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
 from qgis.PyQt.QtCore import QSettings
-from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceUri, QgsFeature, QgsVectorLayer, QgsField
+from qgis.core import (Qgis,
+                       QgsMessageLog,
+                       QgsCredentials,
+                       QgsVectorLayer,
+                       QgsDataSourceUri)
 
 from .abstractDb import AbstractDb
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
@@ -807,7 +809,13 @@ class PostgisDb(AbstractDb):
                 db.setUserName(self.db.userName())
                 db.setPassword(self.db.password())
                 if not db.open():
-                    raise Exception(self.tr("Problem opening databases: ")+db.lastError().databaseText())
+                    # raise Exception(self.tr("Problem opening databases: ")+db.lastError().databaseText())
+                    QgsMessageLog.logMessage(
+                        self.tr("Unable to load {0}").format(database),
+                        "DSGTools Plugin",
+                        Qgis.Warning
+                    )
+                    continue
 
                 query2 = QSqlQuery(db)
                 if query2.exec_(self.gen.getGeometryTablesCount()):
