@@ -828,9 +828,21 @@ class PostgisDb(AbstractDb):
                                 while query3.next():
                                     version = query3.value(0)
                                     if version:
-                                        edvgDbList.append((database,version))
+                                        edvgDbList.append((database, version))
                                     else:
-                                        edvgDbList.append((database,'Non_EDGV'))
+                                        edvgDbList.append(
+                                            (database, 'Non_EDGV'))
+                            elif "42501" in query3.lastError().databaseText():
+                                # user may have some privileges on database,
+                                # but may not be granted on all schemas of a
+                                # database
+                                QgsMessageLog.logMessage(
+                                    self.tr("Unable to load '{0}'. User '{1}'"
+                                            " has insufficient privileges.")\
+                                        .format(database, db.userName()),
+                                    "DSGTools Plugin",
+                                    Qgis.Warning
+                                )
                             else:
                                 edvgDbList.append((database,'Non_EDGV'))
                 if parentWidget:
