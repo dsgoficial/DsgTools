@@ -124,19 +124,19 @@ class TopologicalDouglasPeuckerAreaSimplificationAlgorithm(ValidationAlgorithm):
         self.prepareFlagSink(
             parameters, inputLyrList[0], QgsWkbTypes.MultiPolygon, context)
 
-
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Building unified layer...'))
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
-            inputLyrList, 
-            geomType=QgsWkbTypes.MultiPolygon, 
-            onlySelected=onlySelected, 
+            inputLyrList,
+            geomType=QgsWkbTypes.MultiPolygon,
+            onlySelected=onlySelected,
             feedback=multiStepFeedback
         )
 
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(self.tr('Running clean on unified layer...'))
+        multiStepFeedback.pushInfo(
+            self.tr('Running clean on unified layer...'))
         simplifiedCoverage, error = algRunner.runDouglasSimplification(
             coverage,
             threshold,
@@ -144,16 +144,19 @@ class TopologicalDouglasPeuckerAreaSimplificationAlgorithm(ValidationAlgorithm):
             returnError=True,
             snap=snap,
             minArea=minArea,
-            feedback=multiStepFeedback
-        )
+            feedback=multiStepFeedback)
 
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
-            inputLyrList, simplifiedCoverage, feedback=multiStepFeedback)
+            inputLyrList,
+            simplifiedCoverage,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected)
+
         self.flagCoverageIssues(simplifiedCoverage, error, feedback)
 
-        return {self.INPUTLAYERS : inputLyrList, self.FLAGS : self.flag_id}
+        return {self.INPUTLAYERS: inputLyrList, self.FLAGS: self.flag_id}
 
     def flagCoverageIssues(self, cleanedCoverage, error, feedback):
         """
@@ -176,17 +179,20 @@ class TopologicalDouglasPeuckerAreaSimplificationAlgorithm(ValidationAlgorithm):
                 for i in featList:
                     txtList += ['{0} (id={1})'.format(i['layer'], i['featid'])]
                 txt = ', '.join(txtList)
-                self.flagFeature(featList[0].geometry(), self.tr('Features from {0} overlap').format(txt))
+                self.flagFeature(featList[0].geometry(), self.tr(
+                    'Features from {0} overlap').format(txt))
             elif len(featList) == 1:
                 attrList = featList[0].attributes()
                 if attrList == len(attrList)*[None]:
-                    self.flagFeature(featList[0].geometry(), self.tr('Gap in coverage.'))
+                    self.flagFeature(
+                        featList[0].geometry(), self.tr('Gap in coverage.'))
 
         if error:
             for feat in error.getFeatures():
                 if feedback.isCanceled():
                     break
-                self.flagFeature(feat.geometry(), self.tr('Clean error on coverage.'))
+                self.flagFeature(feat.geometry(), self.tr(
+                    'Clean error on coverage.'))
 
     def name(self):
         """

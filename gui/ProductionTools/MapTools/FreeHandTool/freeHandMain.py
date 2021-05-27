@@ -60,6 +60,10 @@ class FreeHandMain(QObject):
     def getAcquisitionFreeController(self):
         return self.acquisitionFreeController
 
+    @property
+    def toolAction(self):
+        return self.getAction()
+
     def setIface(self, iface):
         self.iface = iface 
 
