@@ -16,6 +16,7 @@ class Acquisition(QObject):
         self.tool = None
         self.polygonAction = None
         self.circleAction = None
+        self.toolAction = None
     
     def addTool(self, manager, callback, parentMenu, iconBasePath):
         icon_path = iconBasePath + 'home.png'
@@ -31,6 +32,7 @@ class Acquisition(QObject):
             parentToolbar =parentMenu
             )
         self.setPolygonAction(action)
+        self.toolAction = action
 
     def setPolygonAction(self, action):
         self.polygonAction = action

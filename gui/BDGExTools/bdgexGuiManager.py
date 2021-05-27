@@ -23,8 +23,10 @@
 from __future__ import absolute_import
 from functools import partial
 
-from qgis.core import QgsVectorLayer, QgsProject
+from qgis.core import Qgis, QgsProject, QgsVectorLayer
 from qgis.PyQt.QtCore import QObject 
+
+from DsgTools.core.Utils.utils import MessageRaiser
 from DsgTools.core.NetworkTools.BDGExRequestHandler import BDGExRequestHandler
 
 class BDGExGuiManager(QObject):
@@ -354,7 +356,14 @@ class BDGExGuiManager(QObject):
             self.iface.addRasterLayer(urlWithParams, legendName, serviceType.lower())
         if serviceType == 'WFS':
             vlayer = QgsVectorLayer(urlWithParams, legendName, serviceType)
-            QgsProject.instance().addMapLayer(vlayer)
+            if not vlayer.isValid():
+                title = self.tr("BDGEx layers (DSGTools)")
+                msg = self.tr("Unable to provide requested layer. Please check"
+                              " your network settings (proxy and exceptions "
+                              "too, if necessary).")
+                MessageRaiser().raiseIfaceMessage(title, msg, Qgis.Warning, 5)
+            else:
+                QgsProject.instance().addMapLayer(vlayer)
     
     def load_menus(self, menu_type, parentMenu):
         for serviceDict in self.availableServices[menu_type]:

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>746</width>
-    <height>453</height>
+    <height>457</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -61,7 +61,7 @@
      <property name="toolTip">
       <string>Click to hide database selection</string>
      </property>
-     <property name="saveCollapsedState">
+     <property name="saveCollapsedState" stdset="0">
       <bool>false</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout_12">
@@ -372,16 +372,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
-      <attribute name="title">
-       <string>Field Toolbox Configuration</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_14">
-       <item row="0" column="0">
-        <widget class="FieldToolBoxConfigManagerWidget" name="fieldToolBoxConfigManagerWidget" native="true"/>
-       </item>
-      </layout>
-     </widget>
     </widget>
    </item>
   </layout>
@@ -415,12 +405,6 @@
    <class>EarthCoverageManagerWidget</class>
    <extends>QWidget</extends>
    <header>DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.BasicPropertyWidgets.earthCoverageManagerWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>FieldToolBoxConfigManagerWidget</class>
-   <extends>QWidget</extends>
-   <header>DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.BasicPropertyWidgets.fieldToolBoxConfigManagerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
