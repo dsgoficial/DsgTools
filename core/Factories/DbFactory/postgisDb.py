@@ -3271,39 +3271,39 @@ class PostgisDb(AbstractDb):
         r = {'root':inhTreeDict}
         return r
     
-    def getInheritanceConstraintDict(self):
-        """
-        Returns a dict in the form:
-            {'tableName':{'attributeName': {'tableName','constraintName', 'filter'} 
-                }
-            }
-        """
-        self.checkAndOpenDb()
-        schemaList = [i for i in self.getGeometricSchemaList() if i not in ['views', 'validation']]
-        sql = self.gen.getConstraintDict(schemaList)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr("Problem constraint dict from db: ")+query.lastError().text())
-        inhConstrDict = dict()
-        while query.next():
-            queryResult = json.loads(query.value(0))
-            tableName = queryResult['tablename']
-            if tableName not in list(inhConstrDict.keys()):
-                inhConstrDict[tableName] = dict()
-            defList = queryResult['array_agg']
-            for value in defList:
-                constraintName = value['f1'] 
-                constraintDef = value['f2']
-                attrName = constraintName.split('_')[-2]
-                currTableName = constraintName.split('_'+attrName)[0]
-                if attrName not in list(inhConstrDict[tableName].keys()):
-                    inhConstrDict[tableName][attrName] = []
-                filterDef = self.parseCheckConstraintQuery(constraintName,constraintDef)[-1]
-                schema = self.getTableSchemaFromDb(currTableName)
-                currTag = {'schema':schema, 'tableName':currTableName, 'constraintName':constraintName, 'filter':filterDef}
-                if currTag not in inhConstrDict[tableName][attrName]:
-                    inhConstrDict[tableName][attrName].append(currTag)
-        return inhConstrDict
+    # def getInheritanceConstraintDict(self):
+    #     """
+    #     Returns a dict in the form:
+    #         {'tableName':{'attributeName': {'tableName','constraintName', 'filter'} 
+    #             }
+    #         }
+    #     """
+    #     self.checkAndOpenDb()
+    #     schemaList = [i for i in self.getGeometricSchemaList() if i not in ['views', 'validation']]
+    #     sql = self.gen.getConstraintDict(schemaList)
+    #     query = QSqlQuery(sql, self.db)
+    #     if not query.isActive():
+    #         raise Exception(self.tr("Problem constraint dict from db: ")+query.lastError().text())
+    #     inhConstrDict = dict()
+    #     while query.next():
+    #         queryResult = json.loads(query.value(0))
+    #         tableName = queryResult['tablename']
+    #         if tableName not in list(inhConstrDict.keys()):
+    #             inhConstrDict[tableName] = dict()
+    #         defList = queryResult['array_agg']
+    #         for value in defList:
+    #             constraintName = value['f1'] 
+    #             constraintDef = value['f2']
+    #             attrName = constraintName.split('_')[-2]
+    #             currTableName = constraintName.split('_'+attrName)[0]
+    #             if attrName not in list(inhConstrDict[tableName].keys()):
+    #                 inhConstrDict[tableName][attrName] = []
+    #             filterDef = self.parseCheckConstraintQuery(constraintName,constraintDef)[-1]
+    #             schema = self.getTableSchemaFromDb(currTableName)
+    #             currTag = {'schema':schema, 'tableName':currTableName, 'constraintName':constraintName, 'filter':filterDef}
+    #             if currTag not in inhConstrDict[tableName][attrName]:
+    #                 inhConstrDict[tableName][attrName].append(currTag)
+    #     return inhConstrDict
     
     def getDefaultFromDb(self, schema, tableName, attrName):
         """
