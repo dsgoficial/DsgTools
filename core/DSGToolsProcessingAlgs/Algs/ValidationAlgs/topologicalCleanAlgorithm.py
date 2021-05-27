@@ -105,38 +105,48 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
                     self.INPUTLAYERS
                     )
                 )
+        for layer in inputLyrList:
+            if layer.featureCount() > 0:
+                geomType = next(layer.getFeatures()).geometry().wkbType()
+                break
+        else:
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.INPUTLAYERS),
+                self.tr("Provided layers have no features in it.")
+            )
         onlySelected = self.parameterAsBool(
             parameters,
             self.SELECTED,
             context
-            )
+        )
         snap = self.parameterAsDouble(
             parameters,
             self.TOLERANCE,
             context
-            )
+        )
         minArea = self.parameterAsDouble(
             parameters,
             self.MINAREA,
             context
-            )
+        )
         self.prepareFlagSink(
             parameters,
             inputLyrList[0],
-            QgsWkbTypes.MultiPolygon,
+            geomType,
             context
-            )
+        )
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Building unified layer...'))
+        # in order to check the topology of all layers as a whole, all features
+        # are handled as if they formed a single layer
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
             inputLyrList,
-            geomType=QgsWkbTypes.MultiPolygon,
+            geomType=geomType,
             onlySelected=onlySelected,
             feedback=multiStepFeedback
-            )
-
+        )
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr('Running clean on unified layer...'))
         cleanedCoverage, error = algRunner.runClean(
@@ -183,17 +193,20 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
                 for i in featList:
                     txtList += ['{0} (id={1})'.format(i['layer'], i['featid'])]
                 txt = ', '.join(txtList)
-                self.flagFeature(featList[0].geometry(), self.tr('Features from {0} overlap').format(txt))
+                self.flagFeature(
+                    featList[0].geometry(), self.tr('Features from {0} overlap').format(txt))
             elif len(featList) == 1:
                 attrList = featList[0].attributes()
                 if attrList == len(attrList)*[None]:
-                    self.flagFeature(featList[0].geometry(), self.tr('Gap in coverage.'))
+                    self.flagFeature(
+                        featList[0].geometry(), self.tr('Gap in coverage.'))
 
         if error:
             for feat in error.getFeatures():
                 if feedback.isCanceled():
                     break
-                self.flagFeature(feat.geometry(), self.tr('Clean error on coverage.'))
+                self.flagFeature(
+                    feat.geometry(), self.tr('Clean error on unified layer.'))
 
     def name(self):
         """

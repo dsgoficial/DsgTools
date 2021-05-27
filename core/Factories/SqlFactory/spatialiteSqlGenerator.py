@@ -232,3 +232,11 @@ class SpatialiteSqlGenerator(SqlGenerator):
         :return: (str) query to database's implementation version (e.g. '5.2').
         """
         return """SELECT dbimplversion FROM public_db_metadata;"""
+
+    def tableFields(self, table):
+        """
+        Gets all attribute names for a table.
+        :param table: (str) table name.
+        :return: (list-of-str) list of attribute names.
+        """
+        return """PRAGMA table_info('{0}');""".format(table)
