@@ -20,30 +20,21 @@
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import map
-from builtins import str
-from builtins import range
-import os, binascii
-from uuid import uuid4, UUID
 
+import os
+from uuid import uuid4, UUID
 from osgeo import ogr, osr
 
-# DsgTools imports
-from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from qgis.core import Qgis, QgsMessageLog, QgsCoordinateReferenceSystem
+from qgis.PyQt.QtSql import QSqlQuery
+from qgis.PyQt.QtCore import pyqtSignal, QObject
+
 from ...Utils.utils import Utils
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 
-#PyQt imports
-from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
-from qgis.PyQt.QtCore import QSettings, pyqtSignal, QObject
-
-#Qgis imports
-import qgis.core 
-from qgis.core import QgsCoordinateReferenceSystem 
-
 class DbSignals(QObject):
-        updateLog = pyqtSignal(str)
-        clearLog = pyqtSignal()
+    updateLog = pyqtSignal(str)
+    clearLog = pyqtSignal()
 
 class AbstractDb(QObject):
     def __init__(self):
@@ -136,7 +127,19 @@ class AbstractDb(QObject):
                     schema = self.getTableSchemaFromDb(lyr)
             sql = self.gen.getElementCountFromLayerV2(schema, lyr, useInheritance)
             query = QSqlQuery(sql,self.db)
-            query.next()
+            if not query.next():
+                # use may not have permission to read the table from schema
+                QgsMessageLog.logMessage(
+                    self.tr("Unable to read table {0}. Error message: '{1}'")\
+                        .format(
+                            self.db.databaseName(),
+                            self.db.lastError().databaseText()
+                        ),
+                    "DSGTools Plugin",
+                    Qgis.Warning
+                )
+                continue
+
             if query.value(0) > 0:
                 lyrWithElemList.append(lyr)
         return lyrWithElemList
@@ -606,14 +609,14 @@ class AbstractDb(QObject):
         Gets the QML directory
         """
         currentPath = os.path.dirname(__file__)
-        if qgis.core.Qgis.QGIS_VERSION_INT >= 30000:
+        if Qgis.QGIS_VERSION_INT >= 30000:
             # treat old implementations (bug fixes on domain values)
             implVersion = self.implementationVersion()
             if implVersion == '' or float(implVersion) < 3:
                 qmlVersionPath = os.path.join(currentPath, '..', '..', 'Qmls', 'qgis_37_impl_2')
             else:
                 qmlVersionPath = os.path.join(currentPath, '..', '..', 'Qmls', 'qgis_37')
-        elif qgis.core.Qgis.QGIS_VERSION_INT >= 20600:
+        elif Qgis.QGIS_VERSION_INT >= 20600:
             qmlVersionPath = os.path.join(currentPath, '..', '..', 'Qmls', 'qgis_26')
         else:
             qmlVersionPath = os.path.join(currentPath, '..', '..', 'Qmls', 'qgis_22')
@@ -746,7 +749,11 @@ class AbstractDb(QObject):
             qmlPath = self.getQmlDir()
             return self.utils.parseMultiQml(qmlPath, layerList)
         else:
-            qmlRecordDict = self.getQmlRecordDict(layerList)
+            try:
+                qmlRecordDict = self.getQmlRecordDict(layerList)
+            except:
+                qmlPath = self.getQmlDir()
+                return self.utils.parseMultiQml(qmlPath, layerList)
             return self.utils.parseMultiFromDb(qmlRecordDict, layerList)
     
     def getQmlRecordDict(self, inputLayer):
@@ -768,7 +775,10 @@ class AbstractDb(QObject):
     
     def getQml(self, layerName):
         if self.getDatabaseVersion() == '3.0':
-            return (self.getQmlRecordDict(layerName), 'db')
+            try:
+                return (self.getQmlRecordDict(layerName), 'db')
+            except:
+                return (self.getQmlDir(), 'dir')
         else:
             return (self.getQmlDir(), 'dir')
 
