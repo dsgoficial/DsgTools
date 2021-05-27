@@ -153,7 +153,7 @@ class Utils(object):
                 doc = parse(qml)
                 refDict[lyr] = dict()
                 for node in doc.getElementsByTagName('edittype'):
-                    if node.getAttribute('widgetv2type') == 'ValueRelation':
+                    if node.getAttribute('widgetv2type') in ('ValueMap', 'ValueRelation'):
                         attrName = node.getAttribute('name')
                         refDict[lyr][attrName] = node.getElementsByTagName(
                             'widgetv2config')[0].getAttribute('Layer')
@@ -279,7 +279,7 @@ class Utils(object):
 
         proxy_dict = {}
         if enabled and host:
-            port_str = ':{}'.format(port) if port else ''
+            port_str = str(port) if port else ''
             for protocol in ['http', 'https', 'ftp']:
                 proxy_dict[protocol] = '{}://{}:{}'.format(protocol, host, port_str)
 

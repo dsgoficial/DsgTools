@@ -607,3 +607,19 @@ class SpatialiteDb(AbstractDb):
             rowDict['srid'] = str(query.value(3))
             out.append(rowDict)
         return out
+
+    def tableFields(self, table):
+        """
+        Gets all attribute names for a table.
+        :param table: (str) table name.
+        :return: (list-of-str) list of attribute names.
+        """
+        attrs = list()
+        self.checkAndOpenDb()
+        sql = self.gen.tableFields(table)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom tuple list: ")+query.lastError().text())
+        while query.next():
+            attrs.append(query.value(1))
+        return attrs
