@@ -1,0 +1,4988 @@
+{
+    "cb_adm_area_pub_civil_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_adm_area_pub_militar_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_adm_descontinuidade_geometrica_a": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_adm_descontinuidade_geometrica_l": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_adm_descontinuidade_geometrica_p": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_adm_edif_pub_civil_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifcivil": [
+            "tipoedifcivil",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipousoedif",
+            "code"
+        ]
+    },
+    "cb_adm_edif_pub_civil_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifcivil": [
+            "tipoedifcivil",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipousoedif",
+            "code"
+        ]
+    },
+    "cb_adm_edif_pub_militar_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifmil": [
+            "tipoedifmil",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipousoedif",
+            "code"
+        ]
+    },
+    "cb_adm_edif_pub_militar_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifmil": [
+            "tipoedifmil",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipousoedif",
+            "code"
+        ]
+    },
+    "cb_adm_posto_fiscal_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipopostofisc": [
+            "tipopostofisc",
+            "code"
+        ]
+    },
+    "cb_adm_posto_fiscal_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipopostofisc": [
+            "tipopostofisc",
+            "code"
+        ]
+    },
+    "cb_adm_posto_pol_rod_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipopostopol": [
+            "tipopostopol",
+            "code"
+        ]
+    },
+    "cb_adm_posto_pol_rod_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipopostopol": [
+            "tipopostopol",
+            "code"
+        ]
+    },
+    "cb_asb_area_abast_agua_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_asb_area_saneamento_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_asb_cemiterio_a": {
+        "denominacaoassociada": [
+            "denominacaoassociada",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipocemiterio": [
+            "tipocemiterio",
+            "code"
+        ]
+    },
+    "cb_asb_cemiterio_p": {
+        "denominacaoassociada": [
+            "denominacaoassociada",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipocemiterio": [
+            "tipocemiterio",
+            "code"
+        ]
+    },
+    "cb_asb_dep_abast_agua_a": {
+        "construcao": [
+            "construcao",
+            "code"
+        ],
+        "finalidade": [
+            "finalidade_asb",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaoagua": [
+            "situacaoagua",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipodepabast": [
+            "tipodepabast",
+            "code"
+        ]
+    },
+    "cb_asb_dep_abast_agua_p": {
+        "construcao": [
+            "construcao",
+            "code"
+        ],
+        "finalidade": [
+            "finalidade_asb",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaoagua": [
+            "situacaoagua",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipodepabast": [
+            "tipodepabast",
+            "code"
+        ]
+    },
+    "cb_asb_dep_saneamento_a": {
+        "construcao": [
+            "construcao",
+            "code"
+        ],
+        "finalidade": [
+            "finalidade_asb",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "residuo": [
+            "residuo",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipodepsaneam": [
+            "tipodepsaneam",
+            "code"
+        ],
+        "tiporesiduo": [
+            "tiporesiduo",
+            "code"
+        ]
+    },
+    "cb_asb_dep_saneamento_p": {
+        "construcao": [
+            "construcao",
+            "code"
+        ],
+        "finalidade": [
+            "finalidade_asb",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "residuo": [
+            "residuo",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipodepsaneam": [
+            "tipodepsaneam",
+            "code"
+        ],
+        "tiporesiduo": [
+            "tiporesiduo",
+            "code"
+        ]
+    },
+    "cb_asb_descontinuidade_geometrica_a": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_asb_descontinuidade_geometrica_l": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_asb_descontinuidade_geometrica_p": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_asb_edif_abast_agua_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifabast": [
+            "tipoedifabast",
+            "code"
+        ]
+    },
+    "cb_asb_edif_abast_agua_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifabast": [
+            "tipoedifabast",
+            "code"
+        ]
+    },
+    "cb_asb_edif_saneamento_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifsaneam": [
+            "tipoedifsaneam",
+            "code"
+        ]
+    },
+    "cb_asb_edif_saneamento_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifsaneam": [
+            "tipoedifsaneam",
+            "code"
+        ]
+    },
+    "cb_eco_area_agrop_ext_veg_pesca_a": {
+        "destinadoa": [
+            "destinadoa",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_eco_area_comerc_serv_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_eco_area_ext_mineral_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_eco_area_industrial_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_eco_deposito_geral_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoconteudo": [
+            "tipoconteudo",
+            "code"
+        ],
+        "tipodepgeral": [
+            "tipodepgeral",
+            "code"
+        ],
+        "tipoexposicao": [
+            "tipoexposicao",
+            "code"
+        ],
+        "tipoprodutoresiduo": [
+            "tipoprodutoresiduo",
+            "code"
+        ],
+        "tratamento": [
+            "tratamento",
+            "code"
+        ],
+        "unidadevolume": [
+            "unidadevolume",
+            "code"
+        ]
+    },
+    "cb_eco_deposito_geral_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoconteudo": [
+            "tipoconteudo",
+            "code"
+        ],
+        "tipodepgeral": [
+            "tipodepgeral",
+            "code"
+        ],
+        "tipoexposicao": [
+            "tipoexposicao",
+            "code"
+        ],
+        "tipoprodutoresiduo": [
+            "tipoprodutoresiduo",
+            "code"
+        ],
+        "tratamento": [
+            "tratamento",
+            "code"
+        ],
+        "unidadevolume": [
+            "unidadevolume",
+            "code"
+        ]
+    },
+    "cb_eco_descontinuidade_geometrica_a": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_eco_descontinuidade_geometrica_l": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_eco_descontinuidade_geometrica_p": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_eco_edif_agrop_ext_veg_pesca_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifagropec": [
+            "tipoedifagropec",
+            "code"
+        ]
+    },
+    "cb_eco_edif_agrop_ext_veg_pesca_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifagropec": [
+            "tipoedifagropec",
+            "code"
+        ]
+    },
+    "cb_eco_edif_comerc_serv_a": {
+        "finalidade": [
+            "finalidade_eco",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifcomercserv": [
+            "tipoedifcomercserv",
+            "code"
+        ]
+    },
+    "cb_eco_edif_comerc_serv_p": {
+        "finalidade": [
+            "finalidade_eco",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifcomercserv": [
+            "tipoedifcomercserv",
+            "code"
+        ]
+    },
+    "cb_eco_edif_ext_mineral_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipodivisaocnae": [
+            "tipodivisaocnae",
+            "code"
+        ]
+    },
+    "cb_eco_edif_ext_mineral_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipodivisaocnae": [
+            "tipodivisaocnae",
+            "code"
+        ]
+    },
+    "cb_eco_edif_industrial_a": {
+        "chamine": [
+            "chamine",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipodivisaocnae": [
+            "tipodivisaocnae",
+            "code"
+        ]
+    },
+    "cb_eco_edif_industrial_p": {
+        "chamine": [
+            "chamine",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipodivisaocnae": [
+            "tipodivisaocnae",
+            "code"
+        ]
+    },
+    "cb_eco_equip_agropec_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoequipagropec": [
+            "tipoequipagropec",
+            "code"
+        ]
+    },
+    "cb_eco_equip_agropec_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoequipagropec": [
+            "tipoequipagropec",
+            "code"
+        ]
+    },
+    "cb_eco_equip_agropec_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoequipagropec": [
+            "tipoequipagropec",
+            "code"
+        ]
+    },
+    "cb_eco_ext_mineral_a": {
+        "atividade": [
+            "atividade",
+            "code"
+        ],
+        "formaextracao": [
+            "formaextracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "procextracao": [
+            "procextracao",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoextmin": [
+            "tipoextmin",
+            "code"
+        ],
+        "tipopocomina": [
+            "tipopocomina",
+            "code"
+        ],
+        "tipoprodutoresiduo": [
+            "tipoprodutoresiduo",
+            "code"
+        ],
+        "tiposecaocnae": [
+            "tiposecaocnae",
+            "code"
+        ]
+    },
+    "cb_eco_ext_mineral_p": {
+        "atividade": [
+            "atividade",
+            "code"
+        ],
+        "formaextracao": [
+            "formaextracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "procextracao": [
+            "procextracao",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoextmin": [
+            "tipoextmin",
+            "code"
+        ],
+        "tipopocomina": [
+            "tipopocomina",
+            "code"
+        ],
+        "tipoprodutoresiduo": [
+            "tipoprodutoresiduo",
+            "code"
+        ],
+        "tiposecaocnae": [
+            "tiposecaocnae",
+            "code"
+        ]
+    },
+    "cb_eco_plataforma_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoplataforma": [
+            "tipoplataforma",
+            "code"
+        ]
+    },
+    "cb_eco_plataforma_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoplataforma": [
+            "tipoplataforma",
+            "code"
+        ]
+    },
+    "cb_edu_area_ensino_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_edu_area_lazer_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_edu_area_religiosa_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_edu_area_ruinas_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_edu_arquibancada_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_edu_arquibancada_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_edu_campo_quadra_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipocampoquadra": [
+            "tipocampoquadra",
+            "code"
+        ]
+    },
+    "cb_edu_campo_quadra_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipocampoquadra": [
+            "tipocampoquadra",
+            "code"
+        ]
+    },
+    "cb_edu_coreto_tribuna_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_edu_coreto_tribuna_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_edu_descontinuidade_geometrica_a": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_edu_descontinuidade_geometrica_l": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_edu_descontinuidade_geometrica_p": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_edu_edif_const_lazer_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoediflazer": [
+            "tipoediflazer",
+            "code"
+        ]
+    },
+    "cb_edu_edif_const_lazer_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoediflazer": [
+            "tipoediflazer",
+            "code"
+        ]
+    },
+    "cb_edu_edif_const_turistica_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "ovgd": [
+            "ovgd",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifturist": [
+            "tipoedifturist",
+            "code"
+        ]
+    },
+    "cb_edu_edif_const_turistica_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "ovgd": [
+            "ovgd",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifturist": [
+            "tipoedifturist",
+            "code"
+        ]
+    },
+    "cb_edu_edif_ensino_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoclassecnae": [
+            "tipoclassecnae",
+            "code"
+        ]
+    },
+    "cb_edu_edif_ensino_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoclassecnae": [
+            "tipoclassecnae",
+            "code"
+        ]
+    },
+    "cb_edu_edif_religiosa_a": {
+        "ensino": [
+            "ensino",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifrelig": [
+            "tipoedifrelig",
+            "code"
+        ]
+    },
+    "cb_edu_edif_religiosa_p": {
+        "ensino": [
+            "ensino",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifrelig": [
+            "tipoedifrelig",
+            "code"
+        ]
+    },
+    "cb_edu_piscina_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_edu_pista_competicao_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipopista": [
+            "tipopista",
+            "code"
+        ]
+    },
+    "cb_edu_ruina_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_edu_ruina_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_enc_antena_comunic_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "posicaoreledific": [
+            "posicaoreledific",
+            "code"
+        ]
+    },
+    "cb_enc_area_comunicacao_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_enc_area_energia_eletrica_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_enc_descontinuidade_geometrica_a": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_enc_descontinuidade_geometrica_l": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_enc_descontinuidade_geometrica_p": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_enc_edif_comunic_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "modalidade": [
+            "modalidade",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifcomunic": [
+            "tipoedifcomunic",
+            "code"
+        ]
+    },
+    "cb_enc_edif_comunic_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "modalidade": [
+            "modalidade",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifcomunic": [
+            "tipoedifcomunic",
+            "code"
+        ]
+    },
+    "cb_enc_edif_energia_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifenergia": [
+            "tipoedifenergia",
+            "code"
+        ]
+    },
+    "cb_enc_edif_energia_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifenergia": [
+            "tipoedifenergia",
+            "code"
+        ]
+    },
+    "cb_enc_est_gerad_energia_eletr_a": {
+        "destenergelet": [
+            "destenergelet",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoestgerad": [
+            "tipoestgerad",
+            "code"
+        ]
+    },
+    "cb_enc_est_gerad_energia_eletr_l": {
+        "destenergelet": [
+            "destenergelet",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoestgerad": [
+            "tipoestgerad",
+            "code"
+        ]
+    },
+    "cb_enc_est_gerad_energia_eletr_p": {
+        "destenergelet": [
+            "destenergelet",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoestgerad": [
+            "tipoestgerad",
+            "code"
+        ]
+    },
+    "cb_enc_grupo_transformadores_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_enc_grupo_transformadores_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_enc_hidreletrica_a": {
+        "destenergelet": [
+            "destenergelet",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_enc_hidreletrica_l": {
+        "destenergelet": [
+            "destenergelet",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_enc_hidreletrica_p": {
+        "destenergelet": [
+            "destenergelet",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_enc_ponto_trecho_energia_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoptoenergia": [
+            "tipoptoenergia",
+            "code"
+        ]
+    },
+    "cb_enc_termeletrica_a": {
+        "combrenovavel": [
+            "combrenovavel",
+            "code"
+        ],
+        "destenergelet": [
+            "destenergelet",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "geracao": [
+            "geracao",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipocombustivel": [
+            "tipocombustivel",
+            "code"
+        ],
+        "tipomaqtermica": [
+            "tipomaqtermica",
+            "code"
+        ]
+    },
+    "cb_enc_termeletrica_p": {
+        "combrenovavel": [
+            "combrenovavel",
+            "code"
+        ],
+        "destenergelet": [
+            "destenergelet",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "geracao": [
+            "geracao",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipocombustivel": [
+            "tipocombustivel",
+            "code"
+        ],
+        "tipomaqtermica": [
+            "tipomaqtermica",
+            "code"
+        ]
+    },
+    "cb_enc_torre_comunic_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "ovgd": [
+            "ovgd",
+            "code"
+        ],
+        "posicaoreledific": [
+            "posicaoreledific",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_enc_torre_energia_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "ovgd": [
+            "ovgd",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipotorre": [
+            "tipotorre",
+            "code"
+        ]
+    },
+    "cb_enc_trecho_comunic_l": {
+        "emduto": [
+            "emduto",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "posicaorelativa": [
+            "posicaorelativa",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipotrechocomunic": [
+            "tipotrechocomunic",
+            "code"
+        ]
+    },
+    "cb_enc_trecho_energia_l": {
+        "emduto": [
+            "emduto",
+            "code"
+        ],
+        "especie": [
+            "especie",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "posicaorelativa": [
+            "posicaorelativa",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_enc_zona_linhas_energia_com_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_hid_area_umida_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoareaumida": [
+            "tipoareaumida",
+            "code"
+        ]
+    },
+    "cb_hid_bacia_hidrografica_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_hid_banco_areia_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "materialpredominante": [
+            "materialpredominante",
+            "code"
+        ],
+        "situacaoemagua": [
+            "situacaoemagua",
+            "code"
+        ],
+        "tipobanco": [
+            "tipobanco",
+            "code"
+        ]
+    },
+    "cb_hid_banco_areia_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "materialpredominante": [
+            "materialpredominante",
+            "code"
+        ],
+        "situacaoemagua": [
+            "situacaoemagua",
+            "code"
+        ],
+        "tipobanco": [
+            "tipobanco",
+            "code"
+        ]
+    },
+    "cb_hid_barragem_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "usoprincipal": [
+            "usoprincipal",
+            "code"
+        ]
+    },
+    "cb_hid_barragem_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "usoprincipal": [
+            "usoprincipal",
+            "code"
+        ]
+    },
+    "cb_hid_barragem_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "usoprincipal": [
+            "usoprincipal",
+            "code"
+        ]
+    },
+    "cb_hid_comporta_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_hid_comporta_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_hid_confluencia_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_hid_corredeira_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_hid_corredeira_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_hid_corredeira_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_hid_descontinuidade_geometrica_a": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_hid_descontinuidade_geometrica_l": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_hid_descontinuidade_geometrica_p": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_hid_fonte_dagua_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "qualidagua": [
+            "qualidagua",
+            "code"
+        ],
+        "regime": [
+            "regime",
+            "code"
+        ],
+        "tipofontedagua": [
+            "tipofontedagua",
+            "code"
+        ]
+    },
+    "cb_hid_foz_maritima_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_hid_foz_maritima_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_hid_foz_maritima_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_hid_ilha_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoilha": [
+            "tipoilha",
+            "code"
+        ]
+    },
+    "cb_hid_ilha_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoilha": [
+            "tipoilha",
+            "code"
+        ]
+    },
+    "cb_hid_ilha_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoilha": [
+            "tipoilha",
+            "code"
+        ]
+    },
+    "cb_hid_limite_massa_dagua_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "materialpredominante": [
+            "materialpredominante",
+            "code"
+        ],
+        "tipolimmassa": [
+            "tipolimmassa",
+            "code"
+        ]
+    },
+    "cb_hid_massa_dagua_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "regime": [
+            "regime",
+            "code"
+        ],
+        "salinidade": [
+            "salinidade",
+            "code"
+        ],
+        "tipomassadagua": [
+            "tipomassadagua",
+            "code"
+        ]
+    },
+    "cb_hid_natureza_fundo_a": {
+        "espessalgas": [
+            "espessalgas",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "materialpredominante": [
+            "materialpredominante",
+            "code"
+        ]
+    },
+    "cb_hid_natureza_fundo_l": {
+        "espessalgas": [
+            "espessalgas",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "materialpredominante": [
+            "materialpredominante",
+            "code"
+        ]
+    },
+    "cb_hid_natureza_fundo_p": {
+        "espessalgas": [
+            "espessalgas",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "materialpredominante": [
+            "materialpredominante",
+            "code"
+        ]
+    },
+    "cb_hid_ponto_drenagem_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "relacionado": [
+            "relacionado_hid",
+            "code"
+        ]
+    },
+    "cb_hid_ponto_inicio_drenagem_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "nascente": [
+            "nascente",
+            "code"
+        ]
+    },
+    "cb_hid_quebramar_molhe_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "situamare": [
+            "situamare",
+            "code"
+        ],
+        "tipoquebramolhe": [
+            "tipoquebramolhe",
+            "code"
+        ]
+    },
+    "cb_hid_quebramar_molhe_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "situamare": [
+            "situamare",
+            "code"
+        ],
+        "tipoquebramolhe": [
+            "tipoquebramolhe",
+            "code"
+        ]
+    },
+    "cb_hid_queda_dagua_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoqueda": [
+            "tipoqueda",
+            "code"
+        ]
+    },
+    "cb_hid_queda_dagua_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoqueda": [
+            "tipoqueda",
+            "code"
+        ]
+    },
+    "cb_hid_queda_dagua_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoqueda": [
+            "tipoqueda",
+            "code"
+        ]
+    },
+    "cb_hid_recife_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "situacaocosta": [
+            "situacaocosta",
+            "code"
+        ],
+        "situamare": [
+            "situamare",
+            "code"
+        ],
+        "tiporecife": [
+            "tiporecife",
+            "code"
+        ]
+    },
+    "cb_hid_recife_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "situacaocosta": [
+            "situacaocosta",
+            "code"
+        ],
+        "situamare": [
+            "situamare",
+            "code"
+        ],
+        "tiporecife": [
+            "tiporecife",
+            "code"
+        ]
+    },
+    "cb_hid_recife_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "situacaocosta": [
+            "situacaocosta",
+            "code"
+        ],
+        "situamare": [
+            "situamare",
+            "code"
+        ],
+        "tiporecife": [
+            "tiporecife",
+            "code"
+        ]
+    },
+    "cb_hid_reservatorio_hidrico_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "usoprincipal": [
+            "usoprincipal",
+            "code"
+        ]
+    },
+    "cb_hid_rocha_em_agua_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "situacaoemagua": [
+            "situacaoemagua",
+            "code"
+        ]
+    },
+    "cb_hid_rocha_em_agua_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "situacaoemagua": [
+            "situacaoemagua",
+            "code"
+        ]
+    },
+    "cb_hid_sumidouro_vertedouro_p": {
+        "causa": [
+            "causa",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tiposumvert": [
+            "tiposumvert",
+            "code"
+        ]
+    },
+    "cb_hid_terreno_suj_inundacao_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_hid_trecho_drenagem_l": {
+        "coincidecomdentrode": [
+            "coincidecomdentrode_hid",
+            "code"
+        ],
+        "compartilhado": [
+            "compartilhado",
+            "code"
+        ],
+        "dentrodepoligono": [
+            "dentrodepoligono",
+            "code"
+        ],
+        "eixoprincipal": [
+            "eixoprincipal",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "navegabilidade": [
+            "navegabilidade",
+            "code"
+        ],
+        "regime": [
+            "regime",
+            "code"
+        ]
+    },
+    "cb_hid_trecho_massa_dagua_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "regime": [
+            "regime",
+            "code"
+        ],
+        "salinidade": [
+            "salinidade",
+            "code"
+        ],
+        "tipotrechomassa": [
+            "tipotrechomassa",
+            "code"
+        ]
+    },
+    "cb_lim_area_de_litigio_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_lim_area_de_propriedade_particular_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_lim_area_desenv_controle_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_lim_area_desenv_controle_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_lim_area_uso_comunitario_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoareausocomun": [
+            "tipoareausocomun",
+            "code"
+        ]
+    },
+    "cb_lim_area_uso_comunitario_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoareausocomun": [
+            "tipoareausocomun",
+            "code"
+        ]
+    },
+    "cb_lim_bairro_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_lim_delimitacao_fisica_l": {
+        "eletrificada": [
+            "eletrificada",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "tipodelimfis": [
+            "tipodelimfis",
+            "code"
+        ]
+    },
+    "cb_lim_descontinuidade_geometrica_a": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_lim_descontinuidade_geometrica_l": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_lim_descontinuidade_geometrica_p": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_lim_distrito_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_lim_limite_area_especial_l": {
+        "coincidecomdentrode": [
+            "coincidecomdentrode_lim",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipolimareaesp": [
+            "tipolimareaesp",
+            "code"
+        ]
+    },
+    "cb_lim_limite_intra_munic_adm_l": {
+        "coincidecomdentrode": [
+            "coincidecomdentrode_lim",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipolimintramun": [
+            "tipolimintramun",
+            "code"
+        ]
+    },
+    "cb_lim_limite_operacional_l": {
+        "coincidecomdentrode": [
+            "coincidecomdentrode_lim",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipolimoper": [
+            "tipolimoper",
+            "code"
+        ]
+    },
+    "cb_lim_limite_particular_l": {
+        "coincidecomdentrode": [
+            "coincidecomdentrode_lim",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_lim_limite_politico_adm_l": {
+        "coincidecomdentrode": [
+            "coincidecomdentrode_lim",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipolimpol": [
+            "tipolimpol",
+            "code"
+        ]
+    },
+    "cb_lim_linha_de_limite_l": {
+        "coincidecomdentrode": [
+            "coincidecomdentrode_lim",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_lim_marco_de_limite_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "referencialaltim": [
+            "referencialaltim",
+            "code"
+        ],
+        "sistemageodesico": [
+            "sistemageodesico",
+            "code"
+        ],
+        "tipomarcolim": [
+            "tipomarcolim",
+            "code"
+        ]
+    },
+    "cb_lim_municipio_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_lim_outras_unid_protegidas_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipooutunidprot": [
+            "tipooutunidprot",
+            "code"
+        ]
+    },
+    "cb_lim_outras_unid_protegidas_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipooutunidprot": [
+            "tipooutunidprot",
+            "code"
+        ]
+    },
+    "cb_lim_outros_limites_oficiais_l": {
+        "coincidecomdentrode": [
+            "coincidecomdentrode_lim",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipooutlimofic": [
+            "tipooutlimofic",
+            "code"
+        ]
+    },
+    "cb_lim_pais_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_lim_regiao_administrativa_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_lim_sub_distrito_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_lim_terra_indigena_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "situacaojuridica": [
+            "situacaojuridica",
+            "code"
+        ]
+    },
+    "cb_lim_terra_indigena_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "situacaojuridica": [
+            "situacaojuridica",
+            "code"
+        ]
+    },
+    "cb_lim_terra_publica_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_lim_terra_publica_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_lim_unidade_conserv_nao_snuc_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_lim_unidade_conserv_nao_snuc_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_lim_unidade_federacao_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_lim_unidade_protecao_integral_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipounidprotinteg": [
+            "tipounidprotinteg",
+            "code"
+        ]
+    },
+    "cb_lim_unidade_protecao_integral_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipounidprotinteg": [
+            "tipounidprotinteg",
+            "code"
+        ]
+    },
+    "cb_lim_unidade_uso_sustentavel_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipounidusosust": [
+            "tipounidusosust",
+            "code"
+        ]
+    },
+    "cb_lim_unidade_uso_sustentavel_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipounidusosust": [
+            "tipounidusosust",
+            "code"
+        ]
+    },
+    "cb_loc_aglom_rural_de_ext_urbana_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_loc_aglomerado_rural_isolado_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoaglomrurisol": [
+            "tipoaglomrurisol",
+            "code"
+        ]
+    },
+    "cb_loc_area_edificada_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_loc_area_habitacional_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_loc_area_urbana_isolada_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoassociado": [
+            "tipoassociado",
+            "code"
+        ]
+    },
+    "cb_loc_capital_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipocapital": [
+            "tipocapital",
+            "code"
+        ]
+    },
+    "cb_loc_cidade_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_loc_descontinuidade_geometrica_a": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_loc_descontinuidade_geometrica_l": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_loc_descontinuidade_geometrica_p": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_loc_edif_habitacional_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_loc_edif_habitacional_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_loc_edificacao_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_loc_edificacao_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_loc_hab_indigena_a": {
+        "coletiva": [
+            "coletiva",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "isolada": [
+            "isolada",
+            "code"
+        ]
+    },
+    "cb_loc_hab_indigena_p": {
+        "coletiva": [
+            "coletiva",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "isolada": [
+            "isolada",
+            "code"
+        ]
+    },
+    "cb_loc_nome_local_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_loc_vila_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_pto_area_est_med_fenom_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_pto_descontinuidade_geometrica_a": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_pto_descontinuidade_geometrica_l": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_pto_descontinuidade_geometrica_p": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_pto_edif_constr_est_med_fen_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_pto_edif_constr_est_med_fen_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_pto_pto_controle_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "materializado": [
+            "materializado",
+            "code"
+        ],
+        "referencialaltim": [
+            "referencialaltim",
+            "code"
+        ],
+        "sistemageodesico": [
+            "sistemageodesico",
+            "code"
+        ],
+        "tipoptocontrole": [
+            "tipoptocontrole",
+            "code"
+        ],
+        "tiporef": [
+            "tiporef",
+            "code"
+        ]
+    },
+    "cb_pto_pto_est_med_fenomenos_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoptoestmed": [
+            "tipoptoestmed",
+            "code"
+        ]
+    },
+    "cb_pto_pto_ref_geod_topo_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "proximidade": [
+            "proximidade",
+            "code"
+        ],
+        "rede": [
+            "rede",
+            "code"
+        ],
+        "referencialaltim": [
+            "referencialaltim",
+            "code"
+        ],
+        "referencialgrav": [
+            "referencialgrav",
+            "code"
+        ],
+        "sistemageodesico": [
+            "sistemageodesico",
+            "code"
+        ],
+        "situacaomarco": [
+            "situacaomarco",
+            "code"
+        ],
+        "tipoptorefgeodtopo": [
+            "tipoptorefgeodtopo",
+            "code"
+        ],
+        "tiporef": [
+            "tiporef",
+            "code"
+        ]
+    },
+    "cb_rel_alter_fisiog_antropica_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoalterantrop": [
+            "tipoalterantrop",
+            "code"
+        ]
+    },
+    "cb_rel_alter_fisiog_antropica_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoalterantrop": [
+            "tipoalterantrop",
+            "code"
+        ]
+    },
+    "cb_rel_curva_nivel_l": {
+        "depressao": [
+            "depressao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "indice": [
+            "indice",
+            "code"
+        ]
+    },
+    "cb_rel_descontinuidade_geometrica_a": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_rel_descontinuidade_geometrica_l": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_rel_descontinuidade_geometrica_p": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_rel_dolina_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_rel_dolina_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_rel_duna_a": {
+        "fixa": [
+            "fixa",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_rel_duna_p": {
+        "fixa": [
+            "fixa",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_rel_elemento_fisiog_natural_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoelemnat": [
+            "tipoelemnat",
+            "code"
+        ]
+    },
+    "cb_rel_elemento_fisiog_natural_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoelemnat": [
+            "tipoelemnat",
+            "code"
+        ]
+    },
+    "cb_rel_elemento_fisiog_natural_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoelemnat": [
+            "tipoelemnat",
+            "code"
+        ]
+    },
+    "cb_rel_gruta_caverna_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipogrutacaverna": [
+            "tipogrutacaverna",
+            "code"
+        ]
+    },
+    "cb_rel_pico_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_rel_ponto_cotado_altimetrico_p": {
+        "cotacomprovada": [
+            "cotacomprovada",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_rel_rocha_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tiporocha": [
+            "tiporocha",
+            "code"
+        ]
+    },
+    "cb_rel_rocha_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tiporocha": [
+            "tiporocha",
+            "code"
+        ]
+    },
+    "cb_rel_terreno_exposto_a": {
+        "causaexposicao": [
+            "causaexposicao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoterrexp": [
+            "tipoterrexp",
+            "code"
+        ]
+    },
+    "cb_sau_area_saude_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_sau_area_servico_social_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_sau_descontinuidade_geometrica_a": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_sau_descontinuidade_geometrica_l": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_sau_descontinuidade_geometrica_p": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_sau_edif_saude_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "nivelatencao": [
+            "nivelatencao",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoclassecnae": [
+            "tipoclassecnae",
+            "code"
+        ]
+    },
+    "cb_sau_edif_saude_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "nivelatencao": [
+            "nivelatencao",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoclassecnae": [
+            "tipoclassecnae",
+            "code"
+        ]
+    },
+    "cb_sau_edif_servico_social_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoclassecnae": [
+            "tipoclassecnae",
+            "code"
+        ]
+    },
+    "cb_sau_edif_servico_social_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoclassecnae": [
+            "tipoclassecnae",
+            "code"
+        ]
+    },
+    "cb_tra_area_duto_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_tra_area_estrut_transporte_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_tra_arruamento_l": {
+        "canteirodivisorio": [
+            "canteirodivisorio",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "trafego": [
+            "trafego",
+            "code"
+        ]
+    },
+    "cb_tra_atracadouro_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoatracad": [
+            "tipoatracad",
+            "code"
+        ]
+    },
+    "cb_tra_atracadouro_l": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoatracad": [
+            "tipoatracad",
+            "code"
+        ]
+    },
+    "cb_tra_atracadouro_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoatracad": [
+            "tipoatracad",
+            "code"
+        ]
+    },
+    "cb_tra_caminho_aereo_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipocaminhoaereo": [
+            "tipocaminhoaereo",
+            "code"
+        ],
+        "tipousocaminhoaer": [
+            "tipousocaminhoaer",
+            "code"
+        ]
+    },
+    "cb_tra_ciclovia_l": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "trafego": [
+            "trafego",
+            "code"
+        ]
+    },
+    "cb_tra_condutor_hidrico_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "mattransp": [
+            "mattransp",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "posicaorelativa": [
+            "posicaorelativa",
+            "code"
+        ],
+        "setor": [
+            "setor",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacaoespacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipocondutor": [
+            "tipocondutor",
+            "code"
+        ]
+    },
+    "cb_tra_cremalheira_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_tra_cremalheira_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_tra_descontinuidade_geometrica_a": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_tra_descontinuidade_geometrica_l": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_tra_descontinuidade_geometrica_p": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_tra_eclusa_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_tra_eclusa_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_tra_eclusa_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_tra_edif_constr_aeroportuaria_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifaero": [
+            "tipoedifaero",
+            "code"
+        ]
+    },
+    "cb_tra_edif_constr_aeroportuaria_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifaero": [
+            "tipoedifaero",
+            "code"
+        ]
+    },
+    "cb_tra_edif_constr_portuaria_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifport": [
+            "tipoedifport",
+            "code"
+        ]
+    },
+    "cb_tra_edif_constr_portuaria_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifport": [
+            "tipoedifport",
+            "code"
+        ]
+    },
+    "cb_tra_edif_metro_ferroviaria_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "funcaoedifmetroferrov": [
+            "funcaoedifmetroferrov",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "multimodal": [
+            "multimodal",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_tra_edif_metro_ferroviaria_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "funcaoedifmetroferrov": [
+            "funcaoedifmetroferrov",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "multimodal": [
+            "multimodal",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_tra_edif_rodoviaria_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifrod": [
+            "tipoedifrod",
+            "code"
+        ]
+    },
+    "cb_tra_edif_rodoviaria_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoedifrod": [
+            "tipoedifrod",
+            "code"
+        ]
+    },
+    "cb_tra_entroncamento_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipoentroncamento": [
+            "tipoentroncamento",
+            "code"
+        ]
+    },
+    "cb_tra_faixa_seguranca_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_tra_fundeadouro_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "destinacaofundeadouro": [
+            "destinacaofundeadouro",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_tra_fundeadouro_l": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "destinacaofundeadouro": [
+            "destinacaofundeadouro",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_tra_fundeadouro_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "destinacaofundeadouro": [
+            "destinacaofundeadouro",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_tra_funicular_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_tra_funicular_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_tra_galeria_bueiro_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_tra_galeria_bueiro_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_tra_girador_ferroviario_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_tra_local_critico_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipolocalcrit": [
+            "tipolocalcrit",
+            "code"
+        ]
+    },
+    "cb_tra_local_critico_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipolocalcrit": [
+            "tipolocalcrit",
+            "code"
+        ]
+    },
+    "cb_tra_local_critico_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipolocalcrit": [
+            "tipolocalcrit",
+            "code"
+        ]
+    },
+    "cb_tra_obstaculo_navegacao_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "situacaoemagua": [
+            "situacaoemagua",
+            "code"
+        ],
+        "tipoobst": [
+            "tipoobst",
+            "code"
+        ]
+    },
+    "cb_tra_obstaculo_navegacao_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "situacaoemagua": [
+            "situacaoemagua",
+            "code"
+        ],
+        "tipoobst": [
+            "tipoobst",
+            "code"
+        ]
+    },
+    "cb_tra_obstaculo_navegacao_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "situacaoemagua": [
+            "situacaoemagua",
+            "code"
+        ],
+        "tipoobst": [
+            "tipoobst",
+            "code"
+        ]
+    },
+    "cb_tra_passag_elevada_viaduto_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "modaluso": [
+            "modaluso",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "posicaopista": [
+            "posicaopista",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipopassagviad": [
+            "tipopassagviad",
+            "code"
+        ]
+    },
+    "cb_tra_passag_elevada_viaduto_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "modaluso": [
+            "modaluso",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "posicaopista": [
+            "posicaopista",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipopassagviad": [
+            "tipopassagviad",
+            "code"
+        ]
+    },
+    "cb_tra_passagem_nivel_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_tra_patio_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "modaluso": [
+            "modaluso",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_tra_patio_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "modaluso": [
+            "modaluso",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_tra_pista_ponto_pouso_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "homologacao": [
+            "homologacao",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipopista": [
+            "tipopista",
+            "code"
+        ],
+        "usopista": [
+            "usopista",
+            "code"
+        ]
+    },
+    "cb_tra_pista_ponto_pouso_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "homologacao": [
+            "homologacao",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipopista": [
+            "tipopista",
+            "code"
+        ],
+        "usopista": [
+            "usopista",
+            "code"
+        ]
+    },
+    "cb_tra_pista_ponto_pouso_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "homologacao": [
+            "homologacao",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipopista": [
+            "tipopista",
+            "code"
+        ],
+        "usopista": [
+            "usopista",
+            "code"
+        ]
+    },
+    "cb_tra_ponte_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "modaluso": [
+            "modaluso",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "posicaopista": [
+            "posicaopista",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoponte": [
+            "tipoponte",
+            "code"
+        ]
+    },
+    "cb_tra_ponte_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "modaluso": [
+            "modaluso",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "posicaopista": [
+            "posicaopista",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipoponte": [
+            "tipoponte",
+            "code"
+        ]
+    },
+    "cb_tra_ponto_duto_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "relacionado": [
+            "relacionado_dut",
+            "code"
+        ]
+    },
+    "cb_tra_ponto_hidroviario_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "relacionado": [
+            "relacionado_hdr",
+            "code"
+        ]
+    },
+    "cb_tra_ponto_rodoviario_ferrov_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "relacionado": [
+            "relacionado_fer_rod",
+            "code"
+        ]
+    },
+    "cb_tra_posto_combustivel_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_tra_posto_combustivel_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_tra_sinalizacao_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tiposinal": [
+            "tiposinal",
+            "code"
+        ]
+    },
+    "cb_tra_travessia_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipotravessia": [
+            "tipotravessia",
+            "code"
+        ]
+    },
+    "cb_tra_travessia_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipotravessia": [
+            "tipotravessia",
+            "code"
+        ]
+    },
+    "cb_tra_travessia_pedestre_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipotravessiaped": [
+            "tipotravessiaped",
+            "code"
+        ]
+    },
+    "cb_tra_travessia_pedestre_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipotravessiaped": [
+            "tipotravessiaped",
+            "code"
+        ]
+    },
+    "cb_tra_trecho_duto_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "mattransp": [
+            "mattransp",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "posicaorelativa": [
+            "posicaorelativa",
+            "code"
+        ],
+        "setor": [
+            "setor",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacaoespacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipotrechoduto": [
+            "tipotrechoduto",
+            "code"
+        ]
+    },
+    "cb_tra_trecho_ferroviario_l": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "bitola": [
+            "bitola",
+            "code"
+        ],
+        "eletrificada": [
+            "eletrificada",
+            "code"
+        ],
+        "emarruamento": [
+            "emarruamento",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "nrlinhas": [
+            "nrlinhas",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "posicaorelativa": [
+            "posicaorelativa",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipotrechoferrov": [
+            "tipotrechoferrov",
+            "code"
+        ]
+    },
+    "cb_tra_trecho_hidroviario_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "regime": [
+            "regime",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ]
+    },
+    "cb_tra_trecho_rodoviario_l": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "canteirodivisorio": [
+            "canteirodivisorio",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipotrechorod": [
+            "tipotrechorod",
+            "code"
+        ],
+        "trafego": [
+            "trafego",
+            "code"
+        ]
+    },
+    "cb_tra_trilha_picada_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_tra_tunel_l": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "modaluso": [
+            "modaluso",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "posicaopista": [
+            "posicaopista",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipotunel": [
+            "tipotunel",
+            "code"
+        ]
+    },
+    "cb_tra_tunel_p": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "matconstr": [
+            "matconstr",
+            "code"
+        ],
+        "modaluso": [
+            "modaluso",
+            "code"
+        ],
+        "operacional": [
+            "operacional",
+            "code"
+        ],
+        "posicaopista": [
+            "posicaopista",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacaofisica",
+            "code"
+        ],
+        "tipotunel": [
+            "tipotunel",
+            "code"
+        ]
+    },
+    "cb_veg_brejo_pantano_a": {
+        "antropizada": [
+            "antropizada",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacaoporte",
+            "code"
+        ],
+        "denso": [
+            "denso",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipobrejopantano": [
+            "tipobrejopantano",
+            "code"
+        ]
+    },
+    "cb_veg_caatinga_a": {
+        "antropizada": [
+            "antropizada",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacaoporte",
+            "code"
+        ],
+        "denso": [
+            "denso",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_veg_campinarana_a": {
+        "antropizada": [
+            "antropizada",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacaoporte",
+            "code"
+        ],
+        "denso": [
+            "denso",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_veg_campo_a": {
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "ocorrenciaem": [
+            "ocorrenciaem",
+            "code"
+        ],
+        "tipocampo": [
+            "tipocampo",
+            "code"
+        ]
+    },
+    "cb_veg_cerrado_cerradao_a": {
+        "antropizada": [
+            "antropizada",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacaoporte",
+            "code"
+        ],
+        "denso": [
+            "denso",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipocerr": [
+            "tipocerr",
+            "code"
+        ]
+    },
+    "cb_veg_descontinuidade_geometrica_a": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_veg_descontinuidade_geometrica_l": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_veg_descontinuidade_geometrica_p": {
+        "motivodescontinuidade": [
+            "motivodescontinuidade",
+            "code"
+        ]
+    },
+    "cb_veg_estepe_a": {
+        "antropizada": [
+            "antropizada",
+            "code"
+        ],
+        "denso": [
+            "denso",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_veg_floresta_a": {
+        "antropizada": [
+            "antropizada",
+            "code"
+        ],
+        "caracteristicafloresta": [
+            "caracteristicafloresta",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacaoporte",
+            "code"
+        ],
+        "denso": [
+            "denso",
+            "code"
+        ],
+        "especiepredominante": [
+            "especiepredominante",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_veg_macega_chavascal_a": {
+        "antropizada": [
+            "antropizada",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacaoporte",
+            "code"
+        ],
+        "denso": [
+            "denso",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "tipomacchav": [
+            "tipomacchav",
+            "code"
+        ]
+    },
+    "cb_veg_mangue_a": {
+        "antropizada": [
+            "antropizada",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacaoporte",
+            "code"
+        ],
+        "denso": [
+            "denso",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_veg_veg_area_contato_a": {
+        "antropizada": [
+            "antropizada",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacaoporte",
+            "code"
+        ],
+        "denso": [
+            "denso",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    },
+    "cb_veg_veg_cultivada_a": {
+        "classificacaoporte": [
+            "classificacaoporte",
+            "code"
+        ],
+        "cultivopredominante": [
+            "cultivopredominante",
+            "code"
+        ],
+        "denso": [
+            "denso",
+            "code"
+        ],
+        "finalidade": [
+            "finalidade_veg",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ],
+        "terreno": [
+            "terreno",
+            "code"
+        ],
+        "tipolavoura": [
+            "tipolavoura",
+            "code"
+        ]
+    },
+    "cb_veg_veg_restinga_a": {
+        "antropizada": [
+            "antropizada",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacaoporte",
+            "code"
+        ],
+        "denso": [
+            "denso",
+            "code"
+        ],
+        "geometriaaproximada": [
+            "geometriaaproximada",
+            "code"
+        ]
+    }
+}

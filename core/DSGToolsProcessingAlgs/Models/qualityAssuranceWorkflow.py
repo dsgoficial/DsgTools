@@ -266,7 +266,7 @@ class QualityAssuranceWorkflow(QObject):
                         for k, v in model.runModel(model.feedback).items()
                 }
                 self.output[mName]["status"] = True
-            except:
+            except Exception as e:
                 self.output[mName]["result"] = None
                 self.output[mName]["status"] = False
             self.output[mName]["executionTime"] = time() - start

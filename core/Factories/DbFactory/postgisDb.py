@@ -20,13 +20,15 @@
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import map
-from builtins import str
-from builtins import range
 
+from qgis.core import Qgis
 from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
 from qgis.PyQt.QtCore import QSettings
-from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceUri, QgsFeature, QgsVectorLayer, QgsField
+from qgis.core import (Qgis,
+                       QgsMessageLog,
+                       QgsCredentials,
+                       QgsVectorLayer,
+                       QgsDataSourceUri)
 
 from .abstractDb import AbstractDb
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
@@ -807,7 +809,14 @@ class PostgisDb(AbstractDb):
                 db.setUserName(self.db.userName())
                 db.setPassword(self.db.password())
                 if not db.open():
-                    raise Exception(self.tr("Problem opening databases: ")+db.lastError().databaseText())
+                    # raise Exception(self.tr("Problem opening databases: ")+db.lastError().databaseText())
+                    QgsMessageLog.logMessage(
+                        self.tr("Unable to load {0}. Error message: '{1}'")\
+                            .format(database, db.lastError().databaseText()),
+                        "DSGTools Plugin",
+                        Qgis.Warning
+                    )
+                    continue
 
                 query2 = QSqlQuery(db)
                 if query2.exec_(self.gen.getGeometryTablesCount()):
@@ -819,9 +828,21 @@ class PostgisDb(AbstractDb):
                                 while query3.next():
                                     version = query3.value(0)
                                     if version:
-                                        edvgDbList.append((database,version))
+                                        edvgDbList.append((database, version))
                                     else:
-                                        edvgDbList.append((database,'Non_EDGV'))
+                                        edvgDbList.append(
+                                            (database, 'Non_EDGV'))
+                            elif "42501" in query3.lastError().databaseText():
+                                # user may have some privileges on database,
+                                # but may not be granted on all schemas of a
+                                # database
+                                QgsMessageLog.logMessage(
+                                    self.tr("Unable to load '{0}'. User '{1}'"
+                                            " has insufficient privileges.")\
+                                        .format(database, db.userName()),
+                                    "DSGTools Plugin",
+                                    Qgis.Warning
+                                )
                             else:
                                 edvgDbList.append((database,'Non_EDGV'))
                 if parentWidget:
@@ -2752,7 +2773,7 @@ class PostgisDb(AbstractDb):
             return 'template_edgv_fter_2a_ed'
         elif version == '3.0':
             return 'template_edgv_3'
-        elif version == '3.0 Pro':
+        elif version in ('EDGV 3.0 Pro', '3.0 Pro'):
             return 'template_edgv_3_pro'
     
     def setDbAsTemplate(self, version = None, dbName = None, setTemplate = True, useTransaction = True):
@@ -3250,39 +3271,39 @@ class PostgisDb(AbstractDb):
         r = {'root':inhTreeDict}
         return r
     
-    def getInheritanceConstraintDict(self):
-        """
-        Returns a dict in the form:
-            {'tableName':{'attributeName': {'tableName','constraintName', 'filter'} 
-                }
-            }
-        """
-        self.checkAndOpenDb()
-        schemaList = [i for i in self.getGeometricSchemaList() if i not in ['views', 'validation']]
-        sql = self.gen.getConstraintDict(schemaList)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr("Problem constraint dict from db: ")+query.lastError().text())
-        inhConstrDict = dict()
-        while query.next():
-            queryResult = json.loads(query.value(0))
-            tableName = queryResult['tablename']
-            if tableName not in list(inhConstrDict.keys()):
-                inhConstrDict[tableName] = dict()
-            defList = queryResult['array_agg']
-            for value in defList:
-                constraintName = value['f1'] 
-                constraintDef = value['f2']
-                attrName = constraintName.split('_')[-2]
-                currTableName = constraintName.split('_'+attrName)[0]
-                if attrName not in list(inhConstrDict[tableName].keys()):
-                    inhConstrDict[tableName][attrName] = []
-                filterDef = self.parseCheckConstraintQuery(constraintName,constraintDef)[-1]
-                schema = self.getTableSchemaFromDb(currTableName)
-                currTag = {'schema':schema, 'tableName':currTableName, 'constraintName':constraintName, 'filter':filterDef}
-                if currTag not in inhConstrDict[tableName][attrName]:
-                    inhConstrDict[tableName][attrName].append(currTag)
-        return inhConstrDict
+    # def getInheritanceConstraintDict(self):
+    #     """
+    #     Returns a dict in the form:
+    #         {'tableName':{'attributeName': {'tableName','constraintName', 'filter'} 
+    #             }
+    #         }
+    #     """
+    #     self.checkAndOpenDb()
+    #     schemaList = [i for i in self.getGeometricSchemaList() if i not in ['views', 'validation']]
+    #     sql = self.gen.getConstraintDict(schemaList)
+    #     query = QSqlQuery(sql, self.db)
+    #     if not query.isActive():
+    #         raise Exception(self.tr("Problem constraint dict from db: ")+query.lastError().text())
+    #     inhConstrDict = dict()
+    #     while query.next():
+    #         queryResult = json.loads(query.value(0))
+    #         tableName = queryResult['tablename']
+    #         if tableName not in list(inhConstrDict.keys()):
+    #             inhConstrDict[tableName] = dict()
+    #         defList = queryResult['array_agg']
+    #         for value in defList:
+    #             constraintName = value['f1'] 
+    #             constraintDef = value['f2']
+    #             attrName = constraintName.split('_')[-2]
+    #             currTableName = constraintName.split('_'+attrName)[0]
+    #             if attrName not in list(inhConstrDict[tableName].keys()):
+    #                 inhConstrDict[tableName][attrName] = []
+    #             filterDef = self.parseCheckConstraintQuery(constraintName,constraintDef)[-1]
+    #             schema = self.getTableSchemaFromDb(currTableName)
+    #             currTag = {'schema':schema, 'tableName':currTableName, 'constraintName':constraintName, 'filter':filterDef}
+    #             if currTag not in inhConstrDict[tableName][attrName]:
+    #                 inhConstrDict[tableName][attrName].append(currTag)
+    #     return inhConstrDict
     
     def getDefaultFromDb(self, schema, tableName, attrName):
         """
