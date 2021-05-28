@@ -526,7 +526,7 @@ class GenericSelectionTool(QgsMapTool):
                 self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
         return submenuDict
 
-    def setContextMenuStyle(self, e, dictMenuSelected, dictMenuNotSelected, rasters=[]):
+    def setContextMenuStyle(self, e, dictMenuSelected, dictMenuNotSelected):
         """
         Defines how many "submenus" the context menu should have.
         There are 3 context menu scenarios to be handled:
@@ -586,8 +586,6 @@ class GenericSelectionTool(QgsMapTool):
                 action = notSelectedMenu.addAction(notSelectedGenericAction)
                 triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=dictMenuNotSelected, selectAll=True)
                 self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
-        if rasters:
-            self.addRasterMenu(menu, rasters)
         menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
 
     def checkSelectedFeaturesOnDict(self, menuDict):
@@ -677,17 +675,16 @@ class GenericSelectionTool(QgsMapTool):
                                 else:
                                     lyrFeatDict[layer] = [feature]
             lyrFeatDict = self.filterStrongestGeometry(lyrFeatDict)
+            rasters = self.getSelectedRasters(e)
             if lyrFeatDict:
-                rasters = self.getSelectedRasters(e)
                 moreThanOneFeat = len(list(lyrFeatDict.values())) > 1 or len(list(lyrFeatDict.values())[0]) > 1
-                if moreThanOneFeat or rasters:
+                if moreThanOneFeat:
                     # if there are overlapping features (valid candidates only)
                     selectedFeaturesDict, notSelectedFeaturesDict = self.checkSelectedFeaturesOnDict(menuDict=lyrFeatDict)
                     self.setContextMenuStyle(
                         e=e, 
                         dictMenuSelected=selectedFeaturesDict, 
-                        dictMenuNotSelected=notSelectedFeaturesDict,
-                        rasters=rasters
+                        dictMenuNotSelected=notSelectedFeaturesDict
                     )
                 else:
                     layer = list(lyrFeatDict.keys())[0]
@@ -700,6 +697,13 @@ class GenericSelectionTool(QgsMapTool):
                         self.iface.setActiveLayer(layer)
                     else:
                         self.iface.openFeatureForm(layer, feature, showModal=False)
+            elif rasters and e.button() == Qt.LeftButton:
+                self.openRastersMenu(e, rasters)
+            
+    def openRastersMenu(self, e, rasters):
+        menu = QMenu()
+        self.addRasterMenu(menu, rasters)
+        menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
 
     def unload(self):
         self.deactivate()
