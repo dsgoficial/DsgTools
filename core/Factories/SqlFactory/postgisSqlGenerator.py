@@ -961,6 +961,7 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """delete from public.layer_styles where description = '{0}'""".format(styleName)
         return sql
     
+    # Atentar que a coluna consrc foi descontinuada no pg 12+ (issue #521)
     # def getConstraints(self, schemaList):
     #     sql = """select sch.nspname, cl.relname, c.conname, c.consrc from 
     #         (
@@ -1380,6 +1381,7 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """ select code from dominios.{0}""".format(domainTable)
         return sql
     
+    # Atentar que a coluna consrc foi descontinuada no pg 12+ (issue #521)
     # def getConstraintDict(self, domainList):
     #     sql = """select row_to_json(result) from (
     #     select a.tn as tablename, array_agg(row_to_json(row(a.conname::text, a.consrc::text))) from (select sch.nspname as sch, cl.relname as tn, c.conname as conname, c.consrc as consrc from 
