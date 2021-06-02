@@ -24,11 +24,11 @@
 import os
 from functools import partial
 
-from qgis.core import Qgis
+from qgis.core import Qgis, QgsVectorLayer, QgsMapLayerProxyModel
 from qgis.utils import iface
 from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QIcon, QColor, QKeySequence
-from qgis.PyQt.QtCore import Qt, QSize, pyqtSlot, pyqtSignal, QSettings
+from qgis.PyQt.QtCore import Qt, QSize, pyqtSlot, QSettings, pyqtSignal
 from qgis.PyQt.QtWidgets import (QWidget,
                                  QSpinBox,
                                  QLineEdit,
@@ -60,6 +60,10 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         super(ButtonPropWidget, self).__init__(parent)
         self.setupUi(self)
+        self.mMapLayerComboBox.setFilters(
+            QgsMapLayerProxyModel.HasGeometry|
+            QgsMapLayerProxyModel.WritableLayer
+        )
         self.button = button or CustomFeatureButton()
         self.fillToolComboBox()
         self.colorCheckBox.toggled.connect(self.mColorButton.setEnabled)
@@ -519,7 +523,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         layer = layer or self.vectorLayer()
         self.attributeTableWidget.setRowCount(0)
-        if layer is None:
+        if layer is None or not isinstance(layer, QgsVectorLayer):
             return
         fields = layer.fields()
         pkIdxList = layer.primaryKeyAttributes() if layer else []
