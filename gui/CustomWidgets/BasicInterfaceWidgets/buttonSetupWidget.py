@@ -61,8 +61,8 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         if buttonSetup:
             self.setSetup(buttonSetup)
         self.buttonComboBox.addItem(self.tr("No button selected"))
-        self.tableWidget.verticalHeader().sectionDoubleClicked.connect(
-            self.setButtonFromRow)
+        self.tableWidget.itemSelectionChanged.connect(
+            self._setButtonFromRow)
         bEnabled = self.buttonComboBox.currentIndex() > 0
         for w in ("savePushButton", "undoPushButton", "removePushButton",
                   "buttonPropWidget"):
@@ -634,6 +634,18 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         # combo box includes "no button", table does not -> row + 1
         return self.getButtonByName(self.buttonComboBox.itemText(row + 1))
+
+    @pyqtSlot()
+    def _setButtonFromRow(self):
+        """
+        Slot to be connected to button order selection updates. It sets the
+        selected button as the active one.
+        """
+        rows = self.selectedRows()
+        if not rows:
+            # if no button is found, then nothing should be done
+            return
+        self.setButtonFromRow(rows[0])
 
     def setButtonFromRow(self, row):
         """
