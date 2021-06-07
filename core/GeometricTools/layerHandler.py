@@ -1718,7 +1718,8 @@ class LayerHandler(QObject):
         :param ratio: (float) ratio area-perimeter to be used as tolerance.
         :param selected: (bool) whether exclusively selected features from
                          input layer should be checked for polygon slivers.
-        :param silent: (bool) whether an invalid geometry should be ignored.
+        :param silent: (bool) whether an invalid or empty geometry should be
+                       ignored.
         :param feedback: (QgsProcessingFeedback) QGIS object to keep track of
                          algorithm's progress/status.
         :return: (list-of-QgsFeature) list of all polygon slivers found in the
@@ -1732,8 +1733,12 @@ class LayerHandler(QObject):
         stepSize = 100 / len(feats) if feats else 0
         for step, f in enumerate(feats):
             geom = f.geometry()
-            if geom.length() == 0:
-                raise Exception(self.tr("Invalid geometry found."))
+            if geom.length() == 0 or not geom.isGeosValid():
+                if not silent:
+                    raise Exception(
+                        self.tr("Invalid or empty geometry found!"))
+                feedback.setProgress((step + 1) * stepSize)
+                continue
             if geom.area() / geom.length() < ratio:
                 slivers.append(f)
             if feedback is not None:
