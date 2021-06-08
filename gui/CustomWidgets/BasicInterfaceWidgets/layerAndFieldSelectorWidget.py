@@ -28,14 +28,14 @@ from qgis.PyQt.QtCore import QSize
 from qgis.PyQt.QtWidgets import QWidget
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'layerAndFieldSelectorWidget.ui'))
+    os.path.dirname(__file__), "layerAndFieldSelectorWidget.ui"))
 
 
 class LayerAndFieldSelectorWidget(QWidget, FORM_CLASS):
     """
     Widget to get a field from a loaded layer. It was necessary to develop
     a custom widget to use when the attribute rules are imported because
-    of the OTW's behavior.
+    of the OTW"s behavior.
     """
 
     def __init__(self, parent=None):
@@ -52,7 +52,7 @@ class LayerAndFieldSelectorWidget(QWidget, FORM_CLASS):
     def getLoadedLayers(self):
         """
         Retrieves a loaded layers list.
-        :return lyrList: (list) a string list for layers' names.
+        :return lyrList: (list) a string list for layers" names.
         """
         layers = QgsProject.instance().mapLayers().values()
         lyrList = []

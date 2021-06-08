@@ -23,13 +23,13 @@
 import os
 import re
 from qgis.gui import QgsColorButton
-from qgis.PyQt import QtCore, QtWidgets, uic
-from qgis.PyQt.QtCore import Qt, QSize, pyqtSlot
+from qgis.PyQt import QtCore, uic
+from qgis.PyQt.QtCore import QSize, pyqtSlot
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtWidgets import QWidget, QLineEdit
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'colorSelectorWidget.ui'))
+    os.path.dirname(__file__), "colorSelectorWidget.ui"))
 
 
 class ColorSelectorWidget(QWidget, FORM_CLASS):
@@ -37,14 +37,12 @@ class ColorSelectorWidget(QWidget, FORM_CLASS):
     Widget to simultaneously get the color and shows the color name
     and vice-versa.
     """
-    mColorButton = QgsColorButton()
-    lineEdit = QLineEdit()
 
     def __init__(self, parent=None):
         """Constructor."""
         super(ColorSelectorWidget, self).__init__(parent=parent)
         self.setupUi(self)
-        self.widgetSizeHint()
+        self.resizeWidget()
         self.colorChanged()
         self.lineEdit.textEdited.connect(self.setCurrentColor)
 
@@ -78,17 +76,18 @@ class ColorSelectorWidget(QWidget, FORM_CLASS):
         """
         listColor = re.search("\\d{1,3},\\d{1,3},\\d{1,3}", color)
         if listColor:
-            color = listColor.string.split(',')
+            color = listColor.string.split(",")
             rgb = QColor(int(color[0]),int(color[1]),int(color[2]))
             self.mColorButton.setColor(rgb)
         else:
             self.mColorButton.setColor(QColor(color))
             self.lineEdit.setText(color)
 
-    def widgetSizeHint(self):
+    def resizeWidget(self):
         """
-        Sets the minimum size for the composed widget to fit it with
-        the OTW's resize policies.
+        This method gets the width sum and the average height from all children
+        widgets applies padding to the sides and sets it as the minimum size of
+        this composed widget.
         """
         mColorButtonSize = self.mColorButton.size()
         lineEditSize = self.lineEdit.size()
