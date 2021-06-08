@@ -23,12 +23,21 @@
 import json
 from functools import partial
 
-from qgis.core import QgsProject, QgsVectorLayer, QgsMapLayerProxyModel, QgsFieldProxyModel
-from qgis.gui import QgsColorButton, QgsMapLayerComboBox, QgsFieldComboBox, QgsFieldExpressionWidget
+from qgis.core import (QgsProject,
+                       QgsVectorLayer,
+                       QgsMapLayerProxyModel,
+                       QgsFieldProxyModel)
+from qgis.gui import (QgsColorButton,
+                      QgsMapLayerComboBox,
+                      QgsFieldComboBox,
+                      QgsFieldExpressionWidget)
 from qgis.PyQt import QtCore
 from qgis.PyQt.QtCore import Qt, QRegExp, pyqtSlot
 from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import (QHBoxLayout, QVBoxLayout, QMessageBox, QHeaderView,
+from qgis.PyQt.QtWidgets import (QHBoxLayout,
+                                 QVBoxLayout,
+                                 QMessageBox,
+                                 QHeaderView,
                                  QWidget,
                                  QComboBox,
                                  QLineEdit)
@@ -44,8 +53,9 @@ from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.layerAndFieldSelectorWidge
 
 class EnforceAttributeRulesWrapper(WidgetWrapper):
     """
-    Docstring
-    fazer check de versao de __ATTRIBUTE_MAP_VERSION ao importar o json
+    This component is used to manage the creation of an interface, which has 
+    been customized, for a specific type of parameter used in QGIS processing
+    algorithms.
     """
     __ATTRIBUTE_MAP_VERSION = 0.1
     # enum for column ordering
@@ -60,7 +70,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         Constructor
         """
         super(EnforceAttributeRulesWrapper, self).__init__(*args, **kwargs)
-        self.getLoadedLayers()
+        # self.getLoadedLayers()
 
     def stringDataWidget(self, text):
         """
@@ -95,12 +105,12 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         Retrieves the configured error type selection combo box.
         :return: (QComboBox) configured error selection widget.
         """
-        errorTypeList = ['Atributo com valor incomum',
-                         'Atributo com valor incorreto',
-                         'Preencher atributo',
+        errorTypeList = ["Atributo com valor incomum",
+                         "Atributo com valor incorreto",
+                         "Preencher atributo",
                          ]
         cb = QComboBox()
-        cb.addItem(self.tr('Select an error type'))
+        cb.addItem(self.tr("Select an error type"))
         cb.addItems(errorTypeList)
         cbSize = cb.minimumSizeHint()
         cb.setMinimumSize(cbSize)
@@ -124,17 +134,21 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
 
     def getLoadedLayers(self):
         """
-        Gets data from the canvas and returns a dictionary with layers as
-        keys and a list of layers fields as values.
+        Gets the loaded layers from the canvas and returns a dictionary
+        with layers as keys and a list of layers fields as values to
+        populate both combos when importing rules.
         :return: (dict) with data loaded in canvas.
         """
-        self.loaded = dict()
+        loaded = dict()
         layers = QgsProject.instance().mapLayers().values()
         for layer in layers:
-            self.loaded[layer.name()] = [field.name()
-                                         for field in layer.fields()]
+            if layer.type() == 0:
+                loaded[layer.name()] = [field.name()
+                                             for field in layer.fields()]
+            else:
+                pass
 
-        return self.loaded
+        return loaded
 
     def modifyStateDict(self, stateDict):
         """
@@ -145,16 +159,17 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         :return: (dict) with data loaded in canvas.
         """
         newDict = dict()
+        loadedLyr = self.getLoadedLayers()
         notLoadedLyr = []
         for k, v in stateDict.items():
-            if k == 'metadata':
+            if k == "metadata":
                 continue
-            if v['1'][0] not in self.loaded or \
-                    v['1'][1] not in self.loaded[v['1'][0]]:
-                notLoadedLyr.append(v['1'][0])
+            if v["1"][0] not in loadedLyr or \
+                    v["1"][1] not in loadedLyr[v["1"][0]]:
+                notLoadedLyr.append(v["1"][0])
             else:
                 newDict[k] = v
-        warning = self.showLoadingMsg(notLoadedLyr, 'warning')
+        warning = self.showLoadingMsg(notLoadedLyr, "warning")
         if notLoadedLyr:
             if warning == QMessageBox.Ignore:
                 stateDict.clear()
@@ -174,24 +189,25 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         :return: (dict) with data loaded in canvas.
         """
         newDict = dict()
+        loadedLyr = self.getLoadedLayers()
         notLoadedLyr = []
         for k, v in stateDict.items():
-            if k == 'metadata':
+            if k == "metadata":
                 continue
-            if v['1'][0] not in self.loaded or \
-                    v['1'][1] not in self.loaded[v['1'][0]]:
-                notLoadedLyr.append(v['1'][0])
+            if v["1"][0] not in loadedLyr or \
+                    v["1"][1] not in loadedLyr[v["1"][0]]:
+                notLoadedLyr.append(v["1"][0])
             else:
-                if isinstance(v['1'], (list, tuple)):
+                if isinstance(v["1"], (list, tuple)):
                     value = dict()
-                    value['0'] = v['0']
-                    value['1'] = v['1'][0]
-                    value['2'] = v['1'][1]
-                    value['3'] = v['2']
-                    value['4'] = v['3']
-                    value['5'] = v['4']
+                    value["0"] = v["0"]
+                    value["1"] = v["1"][0]
+                    value["2"] = v["1"][1]
+                    value["3"] = v["2"]
+                    value["4"] = v["3"]
+                    value["5"] = v["4"]
                 newDict[k] = value
-        warning = self.showLoadingMsg(notLoadedLyr, 'warning')
+        warning = self.showLoadingMsg(notLoadedLyr, "warning")
         if notLoadedLyr:
             if warning == QMessageBox.Ignore:
                 stateDict.clear()
@@ -214,17 +230,17 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         msg = QMessageBox()
         msg.setWindowTitle(self.tr("Import Rules Information"))
 
-        if lyrList and msgType == 'warning':
+        if lyrList and msgType == "warning":
             msg.setIcon(QMessageBox.Warning)
             msg.setText(self.tr("Some rules have not been loaded"))
             msg.setInformativeText(
                 self.tr("Do you want to ignore and continue or cancel?"))
 
             textLyrList = sorted(set(lyrList))
-            formatedLyrList = ['{}' for item in textLyrList]
-            msgString = ','.join(formatedLyrList).replace(',', '\n')
+            formatedLyrList = ["{}" for item in textLyrList]
+            msgString = ",".join(formatedLyrList).replace(",", "\n")
             formatedMsgString = self.tr(
-                'The following layers have not been loaded:\n') + \
+                "The following layers have not been loaded:\n") + \
                 msgString.format(*textLyrList)
 
             msg.setDetailedText(formatedMsgString)
@@ -263,8 +279,8 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         """
         Sets up widgets to work as expected right after they are added to GUI.
         """
-        # when it's directly typed it worked, but when we have
-        # to import the data it's NOT WORKING
+        # when it"s directly typed it worked, but when we have
+        # to import the data it"s NOT WORKING
         def checkLayerBeforeConnect(le, filterExp):
             lName = le.text().strip()
             layers = QgsProject.instance().mapLayersByName(lName)
@@ -290,7 +306,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
                 "header": self.tr("Description"),
                 "type": "widget",
                 "widget": lambda: self.stringDataWidget(
-                    'Set a name for this attribute rule...'),
+                    "Set a name for this attribute rule..."),
                 "setter": "setText",
                 "getter": "text"
             },
@@ -298,8 +314,8 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
                 "header": self.tr("Layer and field"),
                 "type": "widget",
                 "widget": self.mapLyrAndFieldComboBox,
-                "setter": "setCurrentLayerNField",
-                "getter": "getCurrentLayerNField"
+                "setter": "setCurrentInfo",
+                "getter": "getCurrentInfo"
             },
             2: {
                 "header": self.tr("Expression"),
@@ -349,7 +365,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
                 "header": self.tr("Rule description"),
                 "type": "widget",
                 "widget": lambda: self.stringDataWidget(
-                    'Set a name for this attribute rule...'),
+                    "Set a name for this attribute rule..."),
                 "setter": "setText",
                 "getter": "text"
             },
@@ -357,7 +373,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
                 "header": self.tr("Layer"),
                 "type": "widget",
                 "widget": lambda: self.stringDataWidget(
-                    'Type a vector layer name...'),
+                    "Type a vector layer name..."),
                 "setter": "setText",
                 "getter": "text"
             },
@@ -365,7 +381,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
                 "header": self.tr("Field"),
                 "type": "widget",
                 "widget": lambda: self.stringDataWidget(
-                    'Type a field layer name...'),
+                    "Type a field layer name..."),
                 "setter": "setText",
                 "getter": "text"
             },
@@ -380,7 +396,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
                 "header": self.tr("Error type"),
                 "type": "widget",
                 "widget": lambda: self.stringDataWidget(
-                    'Type an error type...'),
+                    "Type an error type..."),
                 "setter": "setText",
                 "getter": "text"
             },

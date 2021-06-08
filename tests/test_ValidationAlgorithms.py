@@ -1167,7 +1167,7 @@ class Tester(unittest.TestCase):
                                     "color": "#ff0000"
                                 }
                     },
-                    'SELECTED' : False,
+                    'SELECTED' : True,
                     "POINT_FLAGS":"memory:",
                     "LINE_FLAGS":"memory:",
                     "POLYGON_FLAGS":"memory:"
