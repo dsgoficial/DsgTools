@@ -1123,6 +1123,7 @@ class Tester(unittest.TestCase):
                     ),
                     "RATIO_TOL": 10,
                     "SELECTED": False,
+                    "SILENT": True,
                     "FLAGS": "memory:"
                 },
                 {
@@ -1136,6 +1137,7 @@ class Tester(unittest.TestCase):
                     ),
                     "RATIO_TOL": 10,
                     "SELECTED": True,
+                    "SILENT": True,
                     "FLAGS": "memory:"
                 }
             ],
@@ -1311,6 +1313,8 @@ class Tester(unittest.TestCase):
         parameters = self.algorithmParameters(algName)
         context = context or QgsProcessingContext()
         context.setProject(QgsProject.instance())
+        output = None
+        expected = None
         if parameters == dict():
             return "Unable to read a set of parameters for {alg}'s tests.".format(
                     alg=algName

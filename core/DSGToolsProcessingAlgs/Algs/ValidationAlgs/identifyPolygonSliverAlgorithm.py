@@ -44,6 +44,7 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
     FLAGS = "FLAGS"
     INPUT_LAYERS = "INPUT_LAYERS"
     SELECTED = "SELECTED"
+    SILENT = "SILENT"
     RATIO_TOL = "RATIO_TOL"
 
     def initAlgorithm(self, config):
@@ -61,6 +62,12 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterBoolean(
                 self.SELECTED,
                 self.tr("Process only selected features")
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.SILENT,
+                self.tr("Ignore empty and invalid geometries")
             )
         )
         self.addParameter(
@@ -99,8 +106,13 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
             self.SELECTED,
             context
         )
+        silent = self.parameterAsBoolean(
+            parameters,
+            self.SILENT,
+            context
+        )
         ratio = self.parameterAsDouble(parameters, self.RATIO_TOL, context)
-        return (layers, selected, ratio)
+        return (layers, selected, silent, ratio)
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -112,7 +124,7 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
                          algorithm's progress/status.
         :return: (dict) output mapping for identified flags.
         """
-        layers, selected, ratio = self.getParameters(
+        layers, selected, silent, ratio = self.getParameters(
             parameters, context, feedback)
         if not layers:
             raise QgsProcessingException(self.tr("No layers were provided."))
@@ -138,7 +150,7 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
             multiStepFeedback.pushInfo(
                 self.tr("Checking {0}...").format(layer.name()))
             slivers = lh.getPolygonSlivers(
-                layer, ratio, selected, False, multiStepFeedback)
+                layer, ratio, selected, silent, multiStepFeedback)
             if slivers:
                 # pushWarnign is only avalailable on 3.16.2+
                 # multiStepFeedback.pushWarning(
@@ -172,8 +184,14 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
             for feat in slivers:
                 if feedback.isCanceled():
                     break
+                geom = feat.geometry()
                 self.flagFeature(
-                    feat.geometry(), self.tr("Clean error on unified layer."))
+                    geom,
+                    self.tr("Feature {0} from layer {1} has ratio {2:.2f}")\
+                        .format(
+                            feat.id(), layername, geom.area() / geom.length()
+                        )
+                )
                 current += 1
                 feedback.setProgress(current * stepSize)
 
