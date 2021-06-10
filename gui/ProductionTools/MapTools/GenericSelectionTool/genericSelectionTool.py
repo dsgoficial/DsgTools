@@ -675,7 +675,7 @@ class GenericSelectionTool(QgsMapTool):
                                 else:
                                     lyrFeatDict[layer] = [feature]
             lyrFeatDict = self.filterStrongestGeometry(lyrFeatDict)
-            rasters = self.getSelectedRasters(e)
+            #rasters = self.getSelectedRasters(e)
             if lyrFeatDict:
                 moreThanOneFeat = len(list(lyrFeatDict.values())) > 1 or len(list(lyrFeatDict.values())[0]) > 1
                 if moreThanOneFeat:
@@ -697,8 +697,8 @@ class GenericSelectionTool(QgsMapTool):
                         self.iface.setActiveLayer(layer)
                     else:
                         self.iface.openFeatureForm(layer, feature, showModal=False)
-            elif rasters and e.button() == Qt.LeftButton:
-                self.openRastersMenu(e, rasters)
+            #elif rasters and e.button() == Qt.LeftButton:
+            #    self.openRastersMenu(e, rasters)
             
     def openRastersMenu(self, e, rasters):
         menu = QMenu()
