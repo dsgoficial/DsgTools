@@ -176,7 +176,8 @@ class Tester(unittest.TestCase):
                 "create_frames_layers": os.path.join(geojsonPaths, 'create_frames_layers'),
                 "identify_angles_in_invalid_range_layers": os.path.join(geojsonPaths, 'identify_angles_in_invalid_range_layers'),
                 "douglas_peucker": os.path.join(geojsonPaths, 'douglas_peucker'),
-                "enforce_attribute_rules": os.path.join(geojsonPaths, 'enforce_attribute_rules')
+                "enforce_attribute_rules": os.path.join(geojsonPaths, 'enforce_attribute_rules'),
+                "polygon_sliver": os.path.join(geojsonPaths, 'polygon_sliver')
             }
         }
         # switch-case for dataset reading
@@ -1174,6 +1175,33 @@ class Tester(unittest.TestCase):
                 }
             ],
 
+            "dsgtools:identifypolygonsliver" : [
+                {
+                    "__comment" : "Checks if simple cases are identified.",
+                    "INPUT_LAYERS": self.getInputLayers(
+                        'geojson', 'polygon_sliver', ['poligonos_1']
+                    ),
+                    "RATIO_TOL": 10,
+                    "SELECTED": False,
+                    "SILENT": True,
+                    "FLAGS": "memory:"
+                },
+                {
+                    "__comment" : "Checks if the algorithm works with selected"
+                        " features option on.",
+                    "INPUT_LAYERS": self.getInputLayers(
+                        'geojson',
+                        'polygon_sliver',
+                        ['poligonos_1'],
+                        idsToSelect=[0, 1]
+                    ),
+                    "RATIO_TOL": 10,
+                    "SELECTED": True,
+                    "SILENT": True,
+                    "FLAGS": "memory:"
+                }
+            ],
+
             "dsgtools:ALG" : [
                 {
                     '__comment' : "'Normal' test: checks if it works."
@@ -1224,9 +1252,14 @@ class Tester(unittest.TestCase):
         )
         gpkgOutput = False
         for f in next(os.walk(rootPath))[2]:
-            if '.gpkg' in f:
+            # in case of test case outputs are placed in different folders, this
+            # will not update the gpkgOutput
+            if '.gpkg' in f.lower():
                 gpkgOutput = True
                 break
+        # in case tests are placed as files inside algorithm's expected output
+        # folder, this will retrieve only the output for current test, if not,
+        # this will be evaluated to the path to all outputs in a folder test_TestNr
         path = os.path.join(
                     rootPath,
                     'test_{test_number}{extension}'.format(
@@ -1318,19 +1351,30 @@ class Tester(unittest.TestCase):
         """
         QgsProject.instance().clear()
 
-    def testAlg(self, algName, feedback=None, context=None, loadLayers=False, multipleOutputs=False, attributeBlackList=None, addControlKey=False):
+    def testAlg(self, algName, feedback=None, context=None, loadLayers=False,
+            multipleOutputs=False, attributeBlackList=None,
+            addControlKey=False, selected=None):
         """
         Tests if the output of a given algorithm is the expected one.
         :param algName: (str) target algorithm's name.
         :param feedback: (QgsProcessingFeedback) QGIS progress tracking object.
-        :param context: (QgsProcessingContext) execution's environmental parameters.
+        :param context: (QgsProcessingContext) execution's environmental
+                        parameters.
         :param loadLayers: (bool) indicates whether expected and output layers
                             should be loaded to canvas.
+        :param multipleOutputs: (bool) whether the algorithm tested outputs
+                                more than 1 layer.
+        :param attributeBlackList: (list-of-str) attributes to be ignored when
+                                   comparing features.
+        :param addControlKey: (bool) creates a new column to be used as ID on
+                              the output layers.
         :return: (str) failing reason.
         """
         parameters = self.algorithmParameters(algName)
         context = context or QgsProcessingContext()
         context.setProject(QgsProject.instance())
+        output = None
+        expected = None
         if parameters == dict():
             return "Unable to read a set of parameters for {alg}'s tests.".format(
                     alg=algName
@@ -1694,6 +1738,11 @@ class Tester(unittest.TestCase):
         del self.datasets["geojson:enforce_attribute_rules"]
         self.clearProject()
         self.assertEqual(msg, "")
+
+    def test_identifypolygonsliver(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifypolygonsliver", addControlKey=True), ""
+        )
 
     # def test_enforcespatialrules(self):
     #     """Tests for Enforce Spatial Rules algorithm"""
