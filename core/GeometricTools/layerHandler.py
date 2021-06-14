@@ -1617,7 +1617,11 @@ class LayerHandler(QObject):
             if geomKey not in builtPolygonToCenterPointDict:
                 builtPolygonToCenterPointDict[geomKey] = defaultdict(list)
             featBB = featGeom.boundingBox()
-            request = QgsFeatureRequest().setFilterRect(featBB)
+            list_column_attr = []
+            for column in columns: 
+                list_column_attr.append(inputCenterPointLyr.fields().indexFromName(column))
+            iter_attr = iter(list_column_attr)
+            request = QgsFeatureRequest().setFilterRect(featBB).setSubsetOfAttributes(iter_attr)
             engine = QgsGeometry.createGeometryEngine(featGeom.constGet())
             engine.prepareGeometry()
             for pointFeat in inputCenterPointLyr.getFeatures(request):
@@ -1628,8 +1632,7 @@ class LayerHandler(QObject):
                         ['{}'.format(pointFeat[column]) for column in columns])
                     builtPolygonToCenterPointDict[geomKey][attrKey].append(
                         pointFeat)
-                    # self.appendFeatOnAttrsDict(builtPolygonToCenterPointDict, pointFeat, columns)
-            if feedback is not None:
+                if feedback is not None:
                 feedback.setCurrentStep(current * size)
         return builtPolygonToCenterPointDict
 
