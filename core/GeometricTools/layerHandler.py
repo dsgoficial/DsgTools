@@ -33,7 +33,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
 from qgis.core import (edit, Qgis, QgsCoordinateReferenceSystem, QgsCoordinateTransform,
-                       QgsExpression, QgsFeature, QgsFeatureRequest, QgsField, QgsGeometry, QgsMessageLog,
+                       QgsExpression, QgsFeature, QgsFeatureRequest, QgsField, QgsFields, QgsGeometry, QgsMessageLog,
                        QgsProcessingContext, QgsProcessingMultiStepFeedback, QgsProcessingUtils, QgsProject,
                        QgsSpatialIndex, QgsVectorDataProvider, QgsVectorLayer, QgsVectorLayerUtils, QgsWkbTypes,
                        QgsProcessingFeatureSourceDefinition, QgsFeatureSink)
@@ -1608,6 +1608,9 @@ class LayerHandler(QObject):
             inputCenterPointLyr,
             attributeBlackList=attributeBlackList
         )
+        list_column_attr = []
+        for column in columns: 
+            list_column_attr.append(inputCenterPointLyr.fields().indexFromName(column))
         for current, feat in enumerate(builtPolygonLyr.getFeatures()):
             if feedback is not None and feedback.isCanceled():
                 break
@@ -1617,23 +1620,24 @@ class LayerHandler(QObject):
             if geomKey not in builtPolygonToCenterPointDict:
                 builtPolygonToCenterPointDict[geomKey] = defaultdict(list)
             featBB = featGeom.boundingBox()
-            list_column_attr = []
-            for column in columns: 
-                list_column_attr.append(inputCenterPointLyr.fields().indexFromName(column))
             iter_attr = iter(list_column_attr)
             request = QgsFeatureRequest().setFilterRect(featBB).setSubsetOfAttributes(iter_attr)
             engine = QgsGeometry.createGeometryEngine(featGeom.constGet())
             engine.prepareGeometry()
+            fields = QgsFields()
+            attr = []
             for pointFeat in inputCenterPointLyr.getFeatures(request):
                 if feedback is not None and feedback.isCanceled():
                     break
                 if engine.intersects(pointFeat.geometry().constGet()):
                     attrKey = ','.join(
                         ['{}'.format(pointFeat[column]) for column in columns])
-                    builtPolygonToCenterPointDict[geomKey][attrKey].append(
-                        pointFeat)
+                    for index in list_column_attr:
+                        fields.append(pointFeat.fields()[index])
+                        attr.append(pointFeat.attributes()[index])
+                    builtPolygonToCenterPointDict[geomKey][attrKey] = [fields, attr]
                 if feedback is not None:
-                feedback.setCurrentStep(current * size)
+                    feedback.setCurrentStep(current * size)
         return builtPolygonToCenterPointDict
 
     def getPolygonListAndFlagDictFromBuiltPolygonToCenterPointDict(self, 
@@ -1671,8 +1675,8 @@ class LayerHandler(QObject):
                     # actual polygon, must get center point attributes and build final feat
                     pointFeatList = list(
                         builtPolygonToCenterPointDict[geomKey].values())
-                    newFeat = QgsFeature(pointFeatList[0][0].fields())
-                    newFeat.setAttributes(pointFeatList[0][0].attributes())
+                    newFeat = QgsFeature(pointFeatList[0][0])
+                    newFeat.setAttributes(pointFeatList[0][1])
                     newFeat.setGeometry(geom)
                     polygonList.append(newFeat)
                 else:
