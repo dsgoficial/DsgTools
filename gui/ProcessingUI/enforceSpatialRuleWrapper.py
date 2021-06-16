@@ -23,9 +23,9 @@
 
 from functools import partial
 
-from qgis.core import QgsProject, QgsVectorLayer, QgsMapLayerProxyModel
-from qgis.gui import QgsMapLayerComboBox, QgsFieldExpressionWidget
-from qgis.PyQt.QtCore import QRegExp
+from qgis.core import Qgis, QgsProject, QgsVectorLayer, QgsMapLayerProxyModel
+from qgis.gui import QgsMessageBar, QgsMapLayerComboBox, QgsFieldExpressionWidget
+from qgis.PyQt.QtCore import QSize, QRegExp
 from qgis.PyQt.QtGui import QRegExpValidator
 from qgis.PyQt.QtWidgets import (QWidget,
                                  QCheckBox,
@@ -37,13 +37,29 @@ from processing.gui.wrappers import (WidgetWrapper,
                                      DIALOG_MODELER,
                                      DIALOG_BATCH)
 
-from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
-from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedTableWidget import OrderedTableWidget
+from DsgTools.core.GeometricTools\
+             .spatialRelationsHandler import (SpatialRule,SpatialRelationsHandler)
+from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets\
+             .orderedTableWidget import OrderedTableWidget
 
 class EnforceSpatialRuleWrapper(WidgetWrapper):
     __ATTRIBUTE_MAP_VERSION = 0.2
     def __init__(self, *args, **kwargs):
         super(EnforceSpatialRuleWrapper, self).__init__(*args, **kwargs)
+        self.messageBar = QgsMessageBar(self.panel)
+        self.panel.resizeEvent = self.resizeEvent
+        self._lastError = ""
+
+    def resizeEvent(self, e):
+        """
+        Resize QgsMessageBar to widget's width
+        """
+        self.messageBar.resize(
+            QSize(
+                self.panel.parent().geometry().size().width(),
+                30
+            )
+        )
 
     def ruleNameWidget(self):
         """
@@ -151,6 +167,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
     def postAddRowStandard(self, row):
         """
         Sets up widgets to work as expected right after they are added to GUI.
+        :param row: (int) row to have its widgets setup.
         """
         # in standard GUI, the layer selectors are QgsMapLayerComboBox, and its
         # layer changed signal should be connected to the filter expression
@@ -177,6 +194,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
     def postAddRowModeler(self, row):
         """
         Sets up widgets to work as expected right after they are added to GUI.
+        :param row: (int) row to have its widgets setup.
         """
         otw = self.panel.otw
         def checkLayerBeforeConnect(le, filterExp):
@@ -249,8 +267,8 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 "header" : self.tr("Layer B"),
                 "type" : "widget",
                 "widget" : self.mapLayerComboBox,
-                "setter" : "setText",
-                "getter" : "text"
+                "setter" : "setCurrentText",
+                "getter" : "currentText"
             },
             6 : {
                 "header" : self.tr("Filter B"),
@@ -403,48 +421,55 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
     def setValue(self, value):
         """
         Sets back parameters to the GUI. Method reimplementation.
-        :param value: (list-of-dict) list of maps from column to its values for
-                      each row.
+        :param value: (list-of-SpatialRule) list of spatial rules to be set.
         """
-        if value is None:
+        if not value:
             return
         otw = self.panel.otw
-        useDe9im = value[0].get("useDe9im", False) \
-            if value else self.useDE9IM()
-        self.panel.cb.setChecked(useDe9im)
-        for valueMap in value:
+        self.panel.cb.setChecked(value[0].useDE9IM())
+        isNotModeler = self.dialogType != DIALOG_MODELER
+        for rule in value:
+            # we want to check whether the layer is loaded as this does not
+            # work properly with the map layer combobox. on the modeler it
+            # won't matter as it is a line edit
+            if not rule.isValid(checkLoaded=isNotModeler):
+                # alert the user somehow
+                continue
             otw.addRow({
-                0 : valueMap["name"],
-                1 : valueMap["layer_a"],
-                2 : valueMap["filter_a"],
-                3 : valueMap["predicate"],
-                4 : valueMap["de9im_predicate"],
-                5 : valueMap["layer_b"],
-                6 : valueMap["filter_b"],
-                7 : valueMap["cardinality"]
+                0: rule.ruleName(),
+                1: rule.layerA(),
+                2: rule.filterA(),
+                3: rule.predicateEnum(),
+                4: rule.predicateDE9IM(),
+                5: rule.layerB(),
+                6: rule.filterB(),
+                7: rule.cardinality()
             })
-
 
     def readStandardPanel(self):
         """
         Reads widget's contents when process' parameters are set from an 
         algorithm call (e.g. Processing toolbox).
         """
-        valueMaplist = list()
+        ruleList = list()
         otw = self.panel.otw
+        useDe9im = self.useDE9IM()
         for row in range(otw.rowCount()):
-            values = dict()
-            values["name"] = otw.getValue(row, 0).strip() or \
-                             self.tr("Spatial Rule #{n}".format(n=row + 1))
-            values["layer_a"] = otw.getValue(row, 1)
-            values["filter_a"] = otw.getValue(row, 2)
-            values["predicate"] = otw.getValue(row, 3)
-            values["de9im_predicate"] = otw.getValue(row, 4)
-            values["layer_b"] = otw.getValue(row, 5)
-            values["filter_b"] = otw.getValue(row, 6)
-            values["cardinality"] = otw.getValue(row, 7) or "1..*"
-            valueMaplist.append(values)
-        return valueMaplist
+            rule = SpatialRule(
+                name=otw.getValue(row, 0).strip(), # or \
+                        # self.tr("Spatial Rule #{n}".format(n=row + 1)),
+                layer_a=otw.getValue(row, 1),
+                filter_a=otw.getValue(row, 2),
+                predicate=otw.getValue(row, 3),
+                de9im_predicate=otw.getValue(row, 4),
+                layer_b=otw.getValue(row, 5),
+                filter_b=otw.getValue(row, 6),
+                cardinality=otw.getValue(row, 7) or "1..*",
+                useDE9IM=useDe9im,
+                checkLoadedLayer=False
+            )
+            ruleList.append(rule)
+        return ruleList
 
     def readModelerPanel(self):
         """
@@ -460,16 +485,49 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         """
         return self.readStandardPanel()
 
+    def validate(self, pushAlert=False):
+        """
+        Validates fields. Returns True if all information are filled correctly.
+        :param pushAlert: (bool) whether invalidation reason should be
+                          displayed on the widget.
+        :return: (bool) whether set of filled parameters if valid.
+        """
+        inputMap = {
+            DIALOG_STANDARD : self.readStandardPanel,
+            DIALOG_MODELER : self.readModelerPanel,
+            DIALOG_BATCH : self.readBatchPanel
+        }[self.dialogType]()
+        if len(inputMap) == 0:
+            if pushAlert:
+                self.messageBar.pushMessage(
+                    self.tr("Please provide at least 1 spatial rule."),
+                    level=Qgis.Warning,
+                    duration=5
+                )
+            return False
+        for row, rule in enumerate(inputMap):
+            if not rule.isValid():
+                if pushAlert:
+                    self.messageBar.pushMessage(
+                        self.tr("{0} (row {1}).")\
+                            .format(rule.validate(), row + 1),
+                        level=Qgis.Warning,
+                        duration=5
+                    )
+                return False
+        return True
+
     def value(self):
         """
         Retrieves parameters from current widget. Method reimplementation.
         :return: (dict) value currently set to the GUI.
         """
-        return {
-            DIALOG_STANDARD : self.readStandardPanel,
-            DIALOG_MODELER : self.readModelerPanel,
-            DIALOG_BATCH : self.readBatchPanel
-        }[self.dialogType]()
+        if self.validate(pushAlert=True):
+            return {
+                DIALOG_STANDARD : self.readStandardPanel,
+                DIALOG_MODELER : self.readModelerPanel,
+                DIALOG_BATCH : self.readBatchPanel
+            }[self.dialogType]()
     
     def postInitialize(self, wrappers):
         pass

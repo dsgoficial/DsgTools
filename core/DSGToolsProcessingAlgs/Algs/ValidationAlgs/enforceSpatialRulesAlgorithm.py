@@ -249,7 +249,7 @@ class ParameterSpatialRulesSet(QgsProcessingParameterDefinition):
         return 'spatial_rules_set'
 
     def checkValueIsAcceptable(self, value, context=None):
-        return True
+        return value is not None
 
     def valueAsPythonString(self, value, context):
         return str(value)
