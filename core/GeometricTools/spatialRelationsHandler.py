@@ -29,6 +29,7 @@ from qgis.core import (Qgis,
                        QgsFeature,
                        QgsProject,
                        QgsGeometry,
+                       QgsExpression,
                        QgsVectorLayer,
                        QgsSpatialIndex,
                        QgsFeatureRequest,
@@ -36,7 +37,8 @@ from qgis.core import (Qgis,
                        QgsProcessingMultiStepFeedback)
 from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
 from qgis.PyQt.Qt import QObject
-from qgis.PyQt.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QRegExp, QCoreApplication
+from qgis.PyQt.QtGui import QRegExpValidator
 
 from .featureHandler import FeatureHandler
 from .geometryHandler import GeometryHandler
@@ -1152,3 +1154,497 @@ class SpatialRelationsHandler(QObject):
                     .format(ruleName)
                 )
         return out
+
+
+class SpatialRule(QObject):
+    """
+    Wrapper class around a map of spatial rule attributes. This object handles
+    the attributes and verifies its validity.
+    """
+
+    def __init__(self,
+                 name=None,
+                 layer_a=None,
+                 filter_a=None,
+                 predicate=None,
+                 de9im_predicate=None,
+                 layer_b=None,
+                 filter_b=None,
+                 cardinality=None,
+                 useDE9IM=False,
+                 checkLoadedLayer=True):
+        """
+        Initiates an instance of SpatialRule.
+        :param name: (str) display name for the spatial rule.
+        :param layer_a: (str) layer A's name as it would be on canvas.
+        :param filter_a: (str) filtering expression to be applied to layer A.
+        :param predicate: (int) spatial predicate to be used to compare A and
+                          B's features. These predicates are available as per
+                          SpatialRelationsHandler.
+        :param de9im_predicate: (str) string containing a DE-9IM relationship
+                                mask (linearized) to be applied between
+                                features from layers A and B.
+        :param layer_b: (str) layer B's name as it would be on canvas.
+        :param filter_b: (str) filtering expression to be applied to layer B.
+        :param cardinality: (str) text containing maximum and minimum limits of
+                            predicate's events ocurrence between layer A and B.
+        :param useDE9IM: (bool) whether this spatial rule should be using the
+                         DE-9IM mask to spatially compare features from layer A
+                         to layer B's instead of the enumerator predicate.
+        :param checkLoadedLayer: (bool) whether layers A and B should be loaded
+                                 on canvas to be considered valid for its value
+                                 setting upon object's initialization.
+        """
+        # OBS.: parameters are not following the camel case rule in order to
+        # make it compatible with the first map produced. this should be sorted
+        # when v5 is launched and map version 0.1 is not supported!
+        super(SpatialRule, self).__init__()
+        self._useDE9IM = useDE9IM
+        self._attr = dict()
+        if name is not None:
+            self.setRuleName(name)
+        if layer_a is not None:
+            self.setLayerA(layer_a, checkLoadedLayer)
+        if filter_a is not None:
+            self.setFilterA(filter_a)
+        if predicate is not None:
+            self.setPredicateEnum(predicate)
+        if de9im_predicate is not None:
+            self.setPredicateDE9IM(de9im_predicate)
+        if layer_b is not None:
+            self.setLayerB(layer_b, checkLoadedLayer)
+        if filter_b is not None:
+            self.setFilterB(filter_b)
+        if cardinality is not None:
+            self.setCardinality(cardinality)
+
+    def validateRuleName(self, name):
+        """
+        Checks whether a given name is considered a valid display name for the
+        rule.
+        :param name: (str) display name for the spatial rule.
+        :return: (bool) whether provided name is a valid setting.
+        """
+        return isinstance(name, str) and name != ""
+
+    def ruleNameIsValid(self):
+        """
+        Checks whether current name is a valid spatial rule name.
+        :return: (bool) whether current display name is valid.
+        """
+        return self.validateRuleName(self.ruleName())
+
+    def setRuleName(self, name):
+        """
+        Updates current rule's display name. If provided name is invalid,
+        rule's name is not updated.
+        :param name: (str) proposed new display name for the rule.
+        :return: (bool) whether rule's name was updated.
+        """
+        if not self.validateRuleName(name):
+            return False
+        self._attr["name"] = name
+        return self.ruleName() == name
+
+    def ruleName(self):
+        """
+        Gets current rule name.
+        :return: (str) rule's name.
+        """
+        return str(self._attr.get("name", ""))
+
+    def validateLayerName(self, layer, checkLoaded=False):
+        """
+        Checks whether a provided layer name is a valid setting. This method
+        may take its availability on canvas into consideration, if necessary.
+        :param layer: (str) layer name to be checked.
+        :param checkLoaded: (bool) whether canvas availability should be
+                            considered.
+        :return: (bool) provided layer name's validity.
+        """
+        isLoaded = False
+        if checkLoaded:
+            for vl in QgsProject.instance().mapLayersByName(layer):
+                if isinstance(vl, QgsVectorLayer):
+                    isLoaded = True
+                    break
+        return (not (checkLoaded and not isLoaded)) and layer != ""
+
+    def _setLayer(self, layer, key, checkLoaded=False):
+        """
+        Private method to route a layer's setting request to the correct dict
+        key. Sets a layer to either Layer A or Layer B property.
+        :param layer: (str) layer name to be set.
+        :param key: (str) "a" if layer is to be set as Layer A, otherwise the
+                    method populates Layer B property.
+        :param checkLoaded: (bool) whether canvas availability should be
+                            considered.
+        :return: (bool) whether value update was successful.
+        """
+        if not self.validateLayerName(layer, checkLoaded):
+            return False
+        self._attr["layer_a" if key == "a" else "layer_b"] = layer
+        return (self.layerA() if key == "a" else self.layerB()) == layer
+
+    def layerAIsValid(self, checkLoaded=False):
+        """
+        Checks whether current value stored as Layer A is valid.
+        :param checkLoaded: (bool) whether canvas availability should be
+                            considered.
+        :return: (bool) whether property stored as layer A is valid.
+        """
+        return self.validateLayerName(self.layerA(), checkLoaded)
+
+    def setLayerA(self, layer, checkLoaded=False):
+        """
+        Updates current layer A property. If provided layer is invalid, the
+        property is not updated.
+        :param layer: (str) layer name to set as layer A.
+        :param checkLoaded: (bool) whether canvas availability should be
+                            considered.
+        :return: (bool) whether property was updated.
+        """
+        return self._setLayer(layer, "a", checkLoaded)
+
+    def layerA(self):
+        """
+        Retrieves current value registered as layer A.
+        :return: (str) layer A's name.
+        """
+        return str(self._attr.get("layer_a", ""))
+    
+    def validateFilterExpression(self, exp):
+        """
+        Checks whether a filtering expression is syntactically valid.
+        :param exp: (str) filtering expression to be checked.
+        :return: (bool) whether filtering expression is syntactically valid.
+        """
+        # empty filters are allowed
+        return exp == "" or QgsExpression(exp.replace("\\", "")).isValid()
+    
+    def _setFilterExpression(self, exp, key):
+        """
+        Private method used to route filter expression's updates to the correct
+        rule property. It updates either Filter A or Filter B's value. If
+        provided expression is invalid, the value is not updated.
+        :param exp: (str) filtering expression to be applied.
+        :param key: (str) "a" if expression is to be set as Filter A, otherwise
+                    the method populates Filter B property.
+        :return: (bool) whether property was updated.
+        """
+        if not self.validateFilterExpression(exp):
+            return False
+        self._attr["filter_a" if key == "a" else "filter_b"] = exp
+        return (self.filterA() if key == "a" else self.filterB()) == exp
+
+    def filterAIsValid(self):
+        """
+        Checks whether current filtering expression for layer A is valid.
+        :return: (bool) whether filter expression for layer A is valid.
+        """
+        return self.validateFilterExpression(self.filterA())
+
+    def setFilterA(self, exp):
+        """
+        Updates the filtering expression applied to layer A's features. If the
+        provided expression is invalid, the value is not updated.
+        :param exp: (str) filtering expression to be applied.
+        :return: (bool) whether property was updated.
+        """
+        return self._setFilterExpression(exp, "a")
+
+    def filterA(self):
+        """
+        Retrieves the filtering expression applied to layer A set on the
+        spatial rule.
+        :return: (str) filtering expression to be applied to layer A.
+        """
+        return str(self._attr.get("filter_a", ""))
+
+    def setUseDE9IM(self, useDE9IM):
+        """
+        Updates whether the spatial rule should use DE-9IM masks to compare
+        features from layer A to the ones from layer B.
+        :param useDE9IM: (bool) whether spatial rule should use DE-9IM masks
+                         instead of the predicate's enumerator.
+        :return: (bool) whether the mask usage was updated.
+        """
+        if not isinstance(useDE9IM, bool):
+            return False
+        self._useDE9IM = useDE9IM
+        return self.useDE9IM() == useDE9IM
+
+    def useDE9IM(self):
+        """
+        Checks whether spatial rule should use DE-9IM masks instead of the
+        predicate's enumerator.
+        :return: (bool) whether the spatial rule is considering DE-9IM masks.
+        """
+        return self._useDE9IM
+
+    def validatePredicate(self, pred, useDE9IM):
+        """
+        Checks whether a predicate value is a valid setting. This method may be
+        used to either DE-9IM masks and the enumerator.
+        :param pred: (int/str) either the predicate enumerator or the DE-9IM
+                     mask to be checked.
+        :param useDE9IM: (bool) whether provided predicate is a DE-9IM mask.
+        :return: (bool) provided predicate's validity.
+        """
+        if useDE9IM:
+            regex = QRegExp("[FfTt012\*]{9}")
+            acceptable = QRegExpValidator.Acceptable
+            return isinstance(pred, str) and \
+                QRegExpValidator(regex).validate(pred, 9)[0] == acceptable
+        else:
+            return pred in SpatialRelationsHandler().availablePredicates()
+
+    def predicateIsValid(self):
+        """
+        Checks if current predicate is valid. If the rule is set to use DE-9IM
+        masks, the method checks the value filled for the property
+        predicateDE9IM, else it checks the enumerator property. It may return
+        true in cases that "active" predicate is valid and the other isn't.
+        :return: (bool) property's value validity.
+        """
+        return self.predicateDE9IMIsValid() if self.useDE9IM() \
+            else self.predicateEnumIsValid()
+
+    def setPredicate(self, pred):
+        """
+        Updates current value for the predicate property. The method is a proxy
+        to DE-9IM masks and the enumerator and decides which one is going to be
+        updated based on masks usage property. If the provided predicate is
+        invalid, the property is not updated.
+        :param pred: (int/str) either the predicate enumerator or the DE-9IM
+                     mask to be set.
+        :return: (bool) whether the property was updated.
+        """
+        return self.setPredicateDE9IM(pred) if self.useDE9IM() \
+            else self.setPredicateEnum(pred)
+
+    def predicate(self):
+        """
+        Retrieves current predicate. If the rule is set to use DE-9IM masks, it
+        retrieves the predicateDE9IM and predicateEnum otherwise.
+        :return: (int/bool) either the predicate enumerator or the DE-9IM mask
+                 value.
+        """
+        useDE9IM = self.useDE9IM()
+        return self.predicateDE9IM() if useDE9IM else self.predicateEnum()
+
+    def predicateEnumIsValid(self):
+        """
+        Checks whether current enumerator predicate property's value is valid.
+        :return: (bool) enumerator predicate property's value validity.
+        """
+        return self.validatePredicate(self.predicateEnum(), useDE9IM=False)
+
+    def setPredicateEnum(self, pred):
+        """
+        Updates the predicate enumerator property. If provided predicate is
+        invalid, the property is not updated.
+        :param pred: (int) predicate to be set.
+        :return: (bool) whether the property was updated.
+        """
+        if not self.validatePredicate(pred, useDE9IM=False):
+            return False
+        self._attr["predicate"] = pred
+        return self.predicateEnum() == pred
+
+    def predicateEnum(self):
+        """
+        Retrieves the predicate enumerator value set to the spatial rule.
+        :return: (int) current predicate enumerator.
+        """
+        return self._attr.get("predicate", -1)
+
+    def predicateDE9IMIsValid(self):
+        """
+        Checks the validity of current's DE-9IM mask.
+        :return: (bool) whether DE-9IM mask is a valid input.
+        """
+        return self.validatePredicate(self.predicateDE9IM(), useDE9IM=True)
+
+    def setPredicateDE9IM(self, pred):
+        """
+        Updates the value of the DE-9IM mask set for the spatial rule. If the
+        value is invalid, the property is not updated.
+        :param pred: (str) the DE-9IM mask linearized as a string to be set.
+        :return: (bool) whether the property was updated. 
+        """
+        if not self.validatePredicate(pred, useDE9IM=True):
+            return False
+        self._attr["de9im_predicate"] = pred
+        return self.predicateDE9IM() == pred
+
+    def predicateDE9IM(self):
+        """
+        Retrieves the DE-9IM mask set for the spatial rule to compare layer A's
+        features to layer B's.
+        :return: (str) DE-9IM mask set.
+        """
+        return str(self._attr.get("de9im_predicate", ""))
+
+    def layerBIsValid(self, checkLoaded=False):
+        """
+        Checks whether current value stored as Layer B is valid.
+        :param checkLoaded: (bool) whether canvas availability should be
+                            considered.
+        :return: (bool) whether property stored as layer B is valid.
+        """
+        return self.validateLayerName(self.layerB(), checkLoaded)
+
+    def setLayerB(self, layer, checkLoaded=False):
+        """
+        Updates current layer B property. If provided layer is invalid, the
+        property is not updated.
+        :param layer: (str) layer name to set as layer B.
+        :param checkLoaded: (bool) whether canvas availability should be
+                            considered.
+        :return: (bool) whether property was updated.
+        """
+        return self._setLayer(layer, "b", checkLoaded)
+
+    def layerB(self):
+        """
+        Retrieves current value registered as layer B.
+        :return: (str) layer B's name.
+        """
+        return str(self._attr.get("layer_b", ""))
+
+    def filterBIsValid(self):
+        """
+        Checks whether current filtering expression for layer B is valid.
+        :return: (bool) whether filter expression for layer B is valid.
+        """
+        return self.validateFilterExpression(self.filterB())
+
+    def setFilterB(self, exp):
+        """
+        Updates the filtering expression applied to layer B's features. If the
+        provided expression is invalid, the value is not updated.
+        :param exp: (str) filtering expression to be applied.
+        :return: (bool) whether property was updated.
+        """
+        return self._setFilterExpression(exp, "b")
+
+    def filterB(self):
+        """
+        Retrieves the filtering expression applied to layer B set on the
+        spatial rule.
+        :return: (str) filtering expression to be applied to layer B.
+        """
+        return str(self._attr.get("filter_b", ""))
+
+    def validateCardinality(self, card):
+        """
+        Checks the validity of a given string as a relationship cardinality
+        string. The expected input format is 'MIN..MAX', with '*' as wild card.
+        :param card: (str) string of cardinality to be evaluated.
+        :return: (bool) provided cardinality's validity.
+        """
+        regex = QRegExp("[0-9\*]\.\.[0-9\*]")
+        acceptable = QRegExpValidator.Acceptable
+        return isinstance(card, str) and \
+            QRegExpValidator(regex).validate(card, 9)[0] == acceptable
+
+    def cardinalityIsValid(self):
+        """
+        Checks whether current value of cardinality is a valid input.
+        :return: (bool) cardinality's validity.
+        """
+        return self.validateCardinality(self.cardinality())
+
+    def setCardinality(self, card):
+        """
+        Updates the cardinality to be used by the spatial rule. If the provided
+        cardinality is invalid, the property is not updated.
+        :param card: (str) cardinality to be set.
+        :return: (bool) whether the property was updated.
+        """
+        if not self.validateCardinality(card):
+            return False
+        self._attr["cardinality"] = card
+        return self.cardinality() == card
+
+    def cardinality(self):
+        """
+        Retrieves the cardinality to be used by the spatial rule.
+        :return: (str) cardinality's value to be used.
+        """
+        return str(self._attr.get("cardinality", ""))
+
+    def validate(self, checkLoaded=False):
+        """
+        Checks the spatial rule's validity and informs the first invalidation
+        reason, if any.
+        :param checkLoaded: (bool) whether canvas availability should be
+                            considered.
+        :return: (str) invalidation reason.
+        """
+        methodMap = {
+            "name": self.ruleNameIsValid,
+            "layer_a": lambda: self.layerAIsValid(checkLoaded),
+            "filter_a": self.filterAIsValid,
+            # "predicate": self.predicateEnum,
+            # "de9im_predicate": self.predicateDE9IM,
+            "layer_b": lambda: self.layerBIsValid(checkLoaded),
+            "filter_b": self.filterBIsValid,
+            "cardinality": self.cardinalityIsValid
+        }
+        valueMethodMap = {
+            "name": self.ruleName,
+            "layer_a": self.layerA,
+            "filter_a": self.filterA,
+            "layer_b": self.layerB,
+            "filter_b": self.filterB,
+            "cardinality": self.cardinality
+        }
+        for prop, validationMethod in methodMap.items():
+            if not validationMethod():
+                return self.tr(
+                    "'{val}' is an invalid value for property '{prop}'"
+                ).format(val=valueMethodMap[prop](), prop=prop)
+        if not self.predicateIsValid():
+            val = self.predicate()
+            if self.useDE9IM():
+                return self.tr("'{0}' is not a valid DE-9IM mask").format(val)
+            return self.tr("'{0}' is not a valid predicate").format(val)
+        return ""
+
+    def isValid(self, checkLoaded=False):
+        """
+        Checks whether the filled properties may be used as a valid spatial
+        rule. This may be true even if one of the predicates is invalid, given
+        that it is not selected to be used (either mask or enumerator).
+        :param checkLoaded: (bool) whether canvas availability should be
+                            considered.
+        :return: (bool) whether spatial rule may be enforced. 
+        """
+        return self.ruleNameIsValid() \
+            and self.layerAIsValid(checkLoaded) \
+            and self.filterAIsValid() \
+            and self.predicateIsValid() \
+            and self.layerBIsValid(checkLoaded) \
+            and self.filterBIsValid() \
+            and self.cardinalityIsValid()
+
+    def asDict(self):
+        """
+        Displays the spatial rule as a map containing all of its properties.
+        :return: (dict) map of this spatial rule instance's properties.
+        """
+        # self._attr is not directly returned to avoid in-place modifications
+        # outside this object's scope being reflected on its SpatialRule
+        # instance
+        return {
+            "name": self.ruleName(),
+            "layer_a": self.layerA(),
+            "filter_a": self.filterA(),
+            "predicate": self.predicateEnum(),
+            "de9im_predicate": self.predicateDE9IM(),
+            "layer_b": self.layerB(),
+            "filter_b": self.filterB(),
+            "cardinality": self.cardinality()
+        }
