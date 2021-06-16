@@ -157,17 +157,8 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             self.ATTRIBUTE_BLACK_LIST,
             context
         )
-        columns = layerHandler.getAttributesFromBlackList(
-            inputCenterPointLyr,
-            attributeBlackList=attributeBlackList
-        )
-        fields = QgsFields()
-        list_column_attr = []
-        for column in columns: 
-            list_column_attr.append(inputCenterPointLyr.fields().indexFromName(column))
-        for index in list_column_attr:  
-            fields.append(inputCenterPointLyr.fields()[index])
-        
+        fields = layerHandler.getFieldsFromAttributeBlackList(inputCenterPointLyr, 
+                                                        attributeBlackList)
         (
             output_polygon_sink,
             output_polygon_sink_id
