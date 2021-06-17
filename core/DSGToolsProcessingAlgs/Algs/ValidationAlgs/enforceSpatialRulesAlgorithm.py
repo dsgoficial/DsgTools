@@ -32,7 +32,8 @@ from qgis.core import (QgsProject,
                        QgsProcessingParameterDefinition,
                        QgsProcessingParameterFeatureSink)
 
-from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
+from DsgTools.core.GeometricTools\
+        .spatialRelationsHandler import SpatialRule, SpatialRelationsHandler
 from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import ValidationAlgorithm
@@ -161,7 +162,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         :param ruleList: (list-of-SpatialRule) rules to be checked.
         :return: (bool) rules validity status
         """
-        return any((r.isValid() for r in ruleList))
+        return any((r.isValid(checkLoaded=True) for r in ruleList))
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -170,6 +171,8 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         rules = self.parameterAsSpatialRulesSet(
             parameters, self.RULES_SET, context
         )
+        # GUI was crashing when the SpatialRule was passed...
+        rules = [SpatialRule(**r, checkLoadedLayer=False) for r in rules]
         if not rules or not self.validateRuleSet(rules):
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.RULES_SET)

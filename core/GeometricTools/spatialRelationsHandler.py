@@ -1712,5 +1712,6 @@ class SpatialRule(QObject):
             "de9im_predicate": self.predicateDE9IM(),
             "layer_b": self.layerB(),
             "filter_b": self.filterB(),
-            "cardinality": self.cardinality()
+            "cardinality": self.cardinality(),
+            "useDE9IM": self.useDE9IM()
         }

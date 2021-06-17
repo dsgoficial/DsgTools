@@ -426,9 +426,14 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         if not value:
             return
         otw = self.panel.otw
-        self.panel.cb.setChecked(value[0].useDE9IM())
+        useDE9IM = value[0].get("useDE9IM", False)
+        self.panel.cb.setChecked(useDE9IM)
+        # signal must be triggered to adjust the correct column display
+        self.panel.cb.toggled.emit(useDE9IM)
         isNotModeler = self.dialogType != DIALOG_MODELER
         for rule in value:
+            # GUI was crashing when passing SpatialRule straight up
+            rule = SpatialRule(**rule, checkLoadedLayer=False)
             # we want to check whether the layer is loaded as this does not
             # work properly with the map layer combobox. on the modeler it
             # won't matter as it is a line edit
@@ -468,7 +473,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                     cardinality=otw.getValue(row, 7) or "1..*",
                     useDE9IM=useDe9im,
                     checkLoadedLayer=False
-                )
+                ).asDict()
             )
         return ruleList
 
@@ -507,6 +512,8 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 )
             return False
         for row, rule in enumerate(inputMap):
+            # GUI was crashing when passing SpatialRule straight up
+            rule = SpatialRule(**rule)
             if not rule.isValid():
                 if pushAlert:
                     self.messageBar.pushMessage(
