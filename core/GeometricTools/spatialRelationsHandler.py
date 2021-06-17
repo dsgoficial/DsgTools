@@ -974,7 +974,8 @@ class SpatialRelationsHandler(QObject):
                 positives.add(test_fid)
         return positives
 
-    def checkPredicate(self, layerA, layerB, predicate, cardinality, ctx=None, feedback=None):
+    def checkPredicate(self, layerA, layerB, predicate, cardinality, ctx=None,
+                       feedback=None):
         """
         Checks if a duo of layers comply with a spatial predicate at a given
         cardinality.
@@ -984,7 +985,6 @@ class SpatialRelationsHandler(QObject):
         :param predicate: (str) topological comparison method to be applied.
         :param cardinality: (str) a formatted string that informs minimum and
                             maximum occurences of a spatial predicate.
-        
         :param ctx: (QgsProcessingContext) processing context in which algorithm
                     should be executed.
         :param feedback: (QgsFeedback) QGIS progress tracking component.
@@ -1063,6 +1063,66 @@ class SpatialRelationsHandler(QObject):
                     })
         return {fid: flag for fid, flag in flags.items() if flag}
 
+    def checkDE9IM(self, layerA, layerB, mask, cardinality, ctx=None,
+                   feedback=None):
+        """
+        Applies a DE-9IM mask to compare the features of between and checks
+        whether the occurrence limits are respected.
+        :param layerA: (QgsVectorLayer) reference layer.
+        :param layerB: (QgsVectorLayer) layer to have its features spatially
+                    compared to reference layer.
+        :param mask: (str) a linearized DE-9IM mask to be used for the spatial
+                     comparison between features of layer A and of layer B.
+        :param cardinality: (str) a formatted string that informs minimum and
+                            maximum occurences of a spatial predicate.
+        :param ctx: (QgsProcessingContext) processing context in which algorithm
+                    should be executed.
+        :param feedback: (QgsFeedback) QGIS progress tracking component.
+        :return: (dict) a map from offended to flag text and its geometry.
+        """
+        testingMethod = self.getCardinalityTest(cardinality)
+        candidates = defaultdict(list)
+        flags = defaultdict(list)
+        predicateFlagText = self.tr("feature ID {{fid_a}} from {layer_a} "
+                                        "has {{size}} occurrences using the"
+                                        "DE-9IM mask '{mask}' when compared to"
+                                        "layer {layer_b}")\
+                                .format(layer_a=layerA.name(),
+                                        mask=mask,
+                                        layer_b=layerB.name())
+        for featA in layerA.getFeatures():
+            fidA = featA.id()
+            geomA = featA.geometry()
+            engine = QgsGeometry.createGeometryEngine(geomA.constGet())
+            for featB in layerB.getFeatures(geomA.boundingBox()):
+                if engine.relatePattern(featB.geometry().constGet(), mask):
+                    candidates[fidA].append(featB.id())
+            if not testingMethod(candidates[fidA]):
+                # if the mask has an 'invalid' count of occurrences, it is a flag!
+                size = len(candidates[fidA])
+                if not size:
+                    flags[fidA].append({
+                        "text": predicateFlagText.format(fid_a=fidA, size=0),
+                        "geom": geomA
+                    })
+                    continue
+                if size > 1:
+                    predicateFlagText_ = "{0} (IDs {1})".format(
+                        predicateFlagText,
+                        ", ".join(map(str, candidates[fidA]))
+                    )
+                elif size == 1:
+                    predicateFlagText_ = "{0} (ID {1})".format(
+                        predicateFlagText.replace("occurrences", "occurrence"),
+                        str(set(candidates[fidA]).pop())
+                    )
+                flags[fidA].append({
+                    "text": predicateFlagText_\
+                                .format(fid_a=fidA, size=size),
+                    "geom": geomA
+                })
+        return flags
+
     def setupLayer(self, layerName, exp, ctx=None, feedback=None):
         """
         Retrieves layer from canvas and applies filtering expression. If CRS is
@@ -1094,28 +1154,28 @@ class SpatialRelationsHandler(QObject):
     def enforceRule(self, rule, ctx=None, feedback=None):
         """
         Applies a given set of spatial restrictions to a duo of layers.
-        :param rule: (dict) a map to spatial rule's parameters.
-        :param ctx: (QgsProcessingContext) processing context in which algorithm
-                    should be executed.
+        :param rule: (SpatialRule) objetc containing all properties for
+                     the feature comparison.
+        :param ctx: (QgsProcessingContext) processing context in which
+                    algorithm should be executed.
         :param feedback: (QgsFeedback) QGIS progress tracking component.
-        :return: (dict) a map from offended feature's ID to offenders feature set.
+        :return: (dict) a map from offended feature's ID to offenders feature
+                 set.
         """
         lh = LayerHandler()
         ctx = ctx or QgsProcessingContext()
-        layerA = self.setupLayer(
-            rule["layer_a"], rule["filter_a"], ctx, feedback
-        )
-        layerB = self.setupLayer(
-            rule["layer_b"], rule["filter_b"], ctx, feedback
-        )
-        return self.checkPredicate(
-            layerA, layerB, rule["predicate"], rule["cardinality"], ctx, feedback
+        layerA = self.setupLayer(rule.layerA(), rule.filterA(), ctx, feedback)
+        layerB = self.setupLayer(rule.layerB(), rule.filterB(), ctx, feedback)
+        method = self.checkDE9IM if rule.useDE9IM() else self.checkPredicate
+        return method(
+            layerA, layerB, rule.predicate(), rule.cardinality(), ctx, feedback
         )
 
-    def enforceRules(self, ruleSet, ctx=None, feedback=None):
+    def enforceRules(self, ruleList, ctx=None, feedback=None):
         """
         Applies a set of spatial rules to current active layers on canvas.
-        :param ruleSet: (dict) all rules that should be applied to canvas.
+        :param ruleList: (list-of-SpatialRule) all rules that should be applied
+                         to canvas.
         :param ctx: (QgsProcessingContext) processing context in which algorithm
                     should be executed.
         :param feedback: (QgsFeedback) QGIS progress tracking component.
@@ -1123,15 +1183,21 @@ class SpatialRelationsHandler(QObject):
         """
         out = dict()
         ctx = ctx or QgsProcessingContext()
-        size = len(ruleSet)
-        for idx, rule in enumerate(ruleSet):
-            ruleName = rule["name"]
+        size = len(ruleList)
+        for idx, rule in enumerate(ruleList):
+            ruleName = rule.ruleName()
             if feedback is not None:
                 feedback.pushInfo(
                     self.tr('Checking rule "{0}"... [{1}/{2}]').format(
                         ruleName, idx + 1, size
                     )
                 )
+            if not rule.isValid():
+                feedback.pushInfo(
+                    self.tr('Rule {0} is invalid and will be skipped. '
+                            'Error: {1}').format(ruleName, rule.validate())
+                )
+                continue
             flags = self.enforceRule(rule, ctx, feedback)
             if flags:
                 if ruleName in out:

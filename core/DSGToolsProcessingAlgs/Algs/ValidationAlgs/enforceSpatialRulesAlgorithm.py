@@ -154,14 +154,14 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
                         )
         return (ptLayer, lLayer, polLayer)
 
-    def validateRuleSet(self, ruleDict):
+    def validateRuleSet(self, ruleList):
         """
-        Verifies whether given rule set is valid/applicable.
-        :param ruleDict: (dict) rules to be checked.
+        Verifies whether there is at least one valid/applicable rule on the
+        input list of rules.
+        :param ruleList: (list-of-SpatialRule) rules to be checked.
         :return: (bool) rules validity status
         """
-        # TODO
-        return True
+        return any((r.isValid() for r in ruleList))
 
     def processAlgorithm(self, parameters, context, feedback):
         """

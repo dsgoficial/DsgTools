@@ -455,20 +455,21 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         otw = self.panel.otw
         useDe9im = self.useDE9IM()
         for row in range(otw.rowCount()):
-            rule = SpatialRule(
-                name=otw.getValue(row, 0).strip(), # or \
-                        # self.tr("Spatial Rule #{n}".format(n=row + 1)),
-                layer_a=otw.getValue(row, 1),
-                filter_a=otw.getValue(row, 2),
-                predicate=otw.getValue(row, 3),
-                de9im_predicate=otw.getValue(row, 4),
-                layer_b=otw.getValue(row, 5),
-                filter_b=otw.getValue(row, 6),
-                cardinality=otw.getValue(row, 7) or "1..*",
-                useDE9IM=useDe9im,
-                checkLoadedLayer=False
+            ruleList.append(
+                SpatialRule(
+                    name=otw.getValue(row, 0).strip(), # or \
+                            # self.tr("Spatial Rule #{n}".format(n=row + 1)),
+                    layer_a=otw.getValue(row, 1),
+                    filter_a=otw.getValue(row, 2),
+                    predicate=otw.getValue(row, 3),
+                    de9im_predicate=otw.getValue(row, 4),
+                    layer_b=otw.getValue(row, 5),
+                    filter_b=otw.getValue(row, 6),
+                    cardinality=otw.getValue(row, 7) or "1..*",
+                    useDE9IM=useDe9im,
+                    checkLoadedLayer=False
+                )
             )
-            ruleList.append(rule)
         return ruleList
 
     def readModelerPanel(self):
