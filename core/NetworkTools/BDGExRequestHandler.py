@@ -137,7 +137,8 @@ class BDGExRequestHandler(QObject):
                     serviceType
                 )
 
-    def getCapabilitiesDict(self, service, url, service_type='WMS'):
+    def getCapabilitiesDict(self, service, url, service_type=None):
+        service_type = service_type or 'WMS'
         capabilities_url = "{url}?service={service_type}&request=GetCapabilities".format(
             url=self.availableServicesDict[service]['url'],
             service_type=service_type
