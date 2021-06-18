@@ -94,7 +94,24 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         Retrieves a new widget for filtering expression setting.
         :return: (QgsFieldExpressionWidget) snap mode selection widget.
         """
-        return QgsFieldExpressionWidget()
+        fe = QgsFieldExpressionWidget()
+        def setValueProxy(exp):
+            layer = fe.layer()
+            if layer and exp.strip() in layer.fields().names():
+                # if a layer is set and the expression is the name purely a
+                # field, it will be ignore. single names are causing a weird
+                # crash when running the algorithm. this seems to solve it.
+                exp = ""
+            fe.setExpression(exp)
+        def getValueProxy():
+            layer = fe.layer()
+            exp = fe.currentText()
+            if layer and exp.strip() in layer.fields().names():
+                exp = ""
+            return exp
+        fe.setExpression_ = setValueProxy
+        fe.currentText_ = getValueProxy
+        return fe
 
     def predicateComboBox(self):
         """
@@ -246,8 +263,8 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 "header" : self.tr("Filter A"),
                 "type" : "widget",
                 "widget" : self.filterExpressionWidget,
-                "setter" : "setExpression",
-                "getter" : "currentText"
+                "setter" : "setExpression_",
+                "getter" : "currentText_"
             },
             3 : {
                 "header" : self.tr("Predicate"),
@@ -274,8 +291,8 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 "header" : self.tr("Filter B"),
                 "type" : "widget",
                 "widget" : self.filterExpressionWidget,
-                "setter" : "setExpression",
-                "getter" : "currentText"
+                "setter" : "setExpression_",
+                "getter" : "currentText_"
             },
             7 : {
                 "header" : self.tr("Cardinality"),
@@ -339,8 +356,8 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 "header" : self.tr("Filter A"),
                 "type" : "widget",
                 "widget" : self.filterExpressionWidget,
-                "setter" : "setExpression",
-                "getter" : "currentText"
+                "setter" : "setExpression_",
+                "getter" : "currentText_"
             },
             3 : {
                 "header" : self.tr("Predicate"),
@@ -367,8 +384,8 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 "header" : self.tr("Filter B"),
                 "type" : "widget",
                 "widget" : self.filterExpressionWidget,
-                "setter" : "setExpression",
-                "getter" : "currentText"
+                "setter" : "setExpression_",
+                "getter" : "currentText_"
             },
             7 : {
                 "header" : self.tr("Cardinality"),
