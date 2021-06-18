@@ -50,7 +50,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         """
         spatialRulesSetter = ParameterSpatialRulesSet(
             self.RULES_SET,
-            description=self.tr('Spatial Rules Set')
+            description=self.tr('Spatial rules set')
         )
         spatialRulesSetter.setMetadata({
             'widget_wrapper' : 'DsgTools.gui.ProcessingUI.enforceSpatialRuleWrapper.EnforceSpatialRuleWrapper'
@@ -60,21 +60,21 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.POINT_FLAGS,
-                self.tr('Point Flags')
+                self.tr('Point flags')
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.LINE_FLAGS,
-                self.tr('Linestring Flags')
+                self.tr('Linestring flags')
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.POLYGON_FLAGS,
-                self.tr('Polygon Flags')
+                self.tr('Polygon flags')
             )
         )
 
@@ -96,7 +96,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Enforce Spatial Rules')
+        return self.tr('Enforce spatial rules')
 
     def group(self):
         """
@@ -121,14 +121,11 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
     def createInstance(self):
         return EnforceSpatialRulesAlgorithm()
 
-    def setFlags(self, flagDict, ptLayer, lLayer, polLayer, ctx, feedback):
+    def setFlags(self, flagDict, ptLayer, lLayer, polLayer):
         """
         Saves each flag to its layer, accordingly to its geometry primitive.
         :param flags: (dict) a map from offended feature ID to offenders
                       feature set.
-        :param ctx: (QgsProcessingContext) context in which processing was run.
-        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
-                         component.
         :return: (tuple-of-QgsVectorLayer) filled flag layers.
         """
         fh = FeatureHandler()
@@ -185,7 +182,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         )
         if not pointFlags:
             raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.POINT_FLAGS)
+                self.invalidSinkError(parameters, self.POINT_FLAGS)
             )
         lineFlags, lId = self.parameterAsSink(
                 parameters, self.LINE_FLAGS, context,
@@ -193,7 +190,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         )
         if not lineFlags:
             raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.LINE_FLAGS)
+                self.invalidSinkError(parameters, self.LINE_FLAGS)
             )
         polygonFlags, polId = self.parameterAsSink(
                 parameters, self.POLYGON_FLAGS, context,
@@ -201,14 +198,13 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         )
         if not polygonFlags:
             raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.POLYGON_FLAGS)
+                self.invalidSinkError(parameters, self.POLYGON_FLAGS)
             )
+        # marked as 5 steps because I *arbitrarily* set the rule enforcing
+        # steps to be 4:1 to the flag layers creation
         flagsDict = SpatialRelationsHandler().enforceRules(
-            rules, context, feedback
-        )
-        self.setFlags(
-            flagsDict, pointFlags, lineFlags, polygonFlags, context, feedback
-        )
+            rules, context, feedback)
+        self.setFlags(flagsDict, pointFlags, lineFlags, polygonFlags)
         return {
             self.POINT_FLAGS: ptId,
             self.LINE_FLAGS: lId,

@@ -34,6 +34,7 @@ from qgis.core import (Qgis,
                        QgsSpatialIndex,
                        QgsFeatureRequest,
                        QgsProcessingContext,
+                       QgsProcessingFeedback,
                        QgsProcessingMultiStepFeedback)
 from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
 from qgis.PyQt.Qt import QObject
@@ -991,6 +992,10 @@ class SpatialRelationsHandler(QObject):
         :return: (dict) a map from offended feature IDs to the list of its
                 offending features.
         """
+        ctx = ctx or QgsProcessingContext()
+        feedback = feedback or QgsProcessingFeedback()
+        size = layerA.featureCount()
+        stepSize = 100 / size if size else 0
         flags = defaultdict(list)
         predicates = self.availablePredicates()
         denials = [
@@ -1028,7 +1033,9 @@ class SpatialRelationsHandler(QObject):
         else:
             getFlagGeometryMethod = lambda geomA, geomB: geomA.intersection(geomB)
         testingMethod = self.getCardinalityTest(cardinality)
-        for featA in layerA.getFeatures():
+        for step, featA in enumerate(layerA.getFeatures()):
+            if feedback.isCanceled():
+                break
             geomA = featA.geometry()
             engine = QgsGeometry.createGeometryEngine(geomA.constGet())
             engine.prepareGeometry()
@@ -1061,6 +1068,7 @@ class SpatialRelationsHandler(QObject):
                                     .format(fid_a=fidA, size=size),
                         "geom": getFlagGeometryMethod(geomA, geometriesB[fidB])
                     })
+            feedback.setProgress(stepSize * (step + 1))
         return {fid: flag for fid, flag in flags.items() if flag}
 
     def checkDE9IM(self, layerA, layerB, mask, cardinality, ctx=None,
@@ -1080,17 +1088,23 @@ class SpatialRelationsHandler(QObject):
         :param feedback: (QgsFeedback) QGIS progress tracking component.
         :return: (dict) a map from offended to flag text and its geometry.
         """
+        ctx = ctx or QgsProcessingContext()
+        feedback = feedback or QgsProcessingFeedback()
         testingMethod = self.getCardinalityTest(cardinality)
         candidates = defaultdict(list)
         flags = defaultdict(list)
         predicateFlagText = self.tr("feature ID {{fid_a}} from {layer_a} "
-                                        "has {{size}} occurrences using the"
+                                        "has {{size}} occurrences using the "
                                         "DE-9IM mask '{mask}' when compared to"
-                                        "layer {layer_b}")\
+                                        " layer {layer_b}")\
                                 .format(layer_a=layerA.name(),
                                         mask=mask,
                                         layer_b=layerB.name())
-        for featA in layerA.getFeatures():
+        size = layerA.featureCount()
+        stepSize = 100 / size if size else 0
+        for step, featA in enumerate(layerA.getFeatures()):
+            if feedback.isCanceled():
+                break
             fidA = featA.id()
             geomA = featA.geometry()
             engine = QgsGeometry.createGeometryEngine(geomA.constGet())
@@ -1121,6 +1135,7 @@ class SpatialRelationsHandler(QObject):
                                 .format(fid_a=fidA, size=size),
                     "geom": geomA
                 })
+            feedback.setProgress(stepSize * (step + 1))
         return flags
 
     def setupLayer(self, layerName, exp, ctx=None, feedback=None):
@@ -1164,8 +1179,10 @@ class SpatialRelationsHandler(QObject):
         """
         lh = LayerHandler()
         ctx = ctx or QgsProcessingContext()
-        layerA = self.setupLayer(rule.layerA(), rule.filterA(), ctx, feedback)
-        layerB = self.setupLayer(rule.layerB(), rule.filterB(), ctx, feedback)
+        feedback = feedback or QgsProcessingFeedback()
+        # setup step is ignored for the enforcing rule progress tracking
+        layerA = self.setupLayer(rule.layerA(), rule.filterA(), ctx, None)
+        layerB = self.setupLayer(rule.layerB(), rule.filterB(), ctx, None)
         method = self.checkDE9IM if rule.useDE9IM() else self.checkPredicate
         return method(
             layerA, layerB, rule.predicate(), rule.cardinality(), ctx, feedback
@@ -1184,21 +1201,25 @@ class SpatialRelationsHandler(QObject):
         out = dict()
         ctx = ctx or QgsProcessingContext()
         size = len(ruleList)
+        feedback = feedback or QgsProcessingFeedback()
+        multiStepFeedback = QgsProcessingMultiStepFeedback(size, feedback)
         for idx, rule in enumerate(ruleList):
             ruleName = rule.ruleName()
-            if feedback is not None:
-                feedback.pushInfo(
-                    self.tr('Checking rule "{0}"... [{1}/{2}]').format(
-                        ruleName, idx + 1, size
-                    )
+            if multiStepFeedback.isCanceled():
+                break
+            multiStepFeedback.pushInfo(
+                self.tr('Checking rule "{0}"... [{1}/{2}]').format(
+                    ruleName, idx + 1, size
                 )
+            )
             if not rule.isValid():
-                feedback.pushInfo(
+                multiStepFeedback.pushInfo(
                     self.tr('Rule {0} is invalid and will be skipped. '
-                            'Error: {1}').format(ruleName, rule.validate())
+                            'Error: {1}').format(
+                                ruleName, rule.validate(checkLoaded=True))
                 )
                 continue
-            flags = self.enforceRule(rule, ctx, feedback)
+            flags = self.enforceRule(rule, ctx, multiStepFeedback)
             if flags:
                 if ruleName in out:
                     previous = out[ruleName]
@@ -1209,16 +1230,17 @@ class SpatialRelationsHandler(QObject):
                             out[ruleName][fid] = flags[fid]
                 else:
                     out[ruleName] = flags
-                feedback.reportError(
+                multiStepFeedback.reportError(
                     self.tr('Rule "{0}" raised flags\n').format(
                         ruleName, idx + 1, size
                     )
                 )
             else:
-                feedback.pushDebugInfo(
+                multiStepFeedback.pushDebugInfo(
                     self.tr('Rule "{0}" did not raise any flags\n')
                     .format(ruleName)
                 )
+            multiStepFeedback.setCurrentStep(idx + 1)
         return out
 
 
@@ -1541,6 +1563,8 @@ class SpatialRule(QObject):
         """
         if not self.validatePredicate(pred, useDE9IM=True):
             return False
+        # geometry engine must the 'pattern'/mask as an upper case string
+        pred = pred.upper()
         self._attr["de9im_predicate"] = pred
         return self.predicateDE9IM() == pred
 
