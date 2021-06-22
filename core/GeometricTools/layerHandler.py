@@ -1511,7 +1511,6 @@ class LayerHandler(QObject):
         # making the whole algorithmn not work properly
         if geographicBoundaryLyr:
             limit = algRunner.runBuffer(geographicBoundaryLyr,0.00001,context)
-            # limit = geographicBoundaryLyr
             constraintLineLyrList = [algRunner.runClip(camada, limit, context)
                                     for camada in constraintLineLyrList]
             constraintPolygonList = [algRunner.runClip(camada, limit, context)
