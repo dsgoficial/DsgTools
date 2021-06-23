@@ -31,7 +31,8 @@ from qgis.PyQt.QtWidgets import (QWidget,
                                  QCheckBox,
                                  QComboBox,
                                  QLineEdit,
-                                 QVBoxLayout)
+                                 QVBoxLayout,
+                                 QMessageBox)
 from processing.gui.wrappers import (WidgetWrapper,
                                      DIALOG_STANDARD,
                                      DIALOG_MODELER,
@@ -435,7 +436,36 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
     
     def setLayer(self, layer):
         pass
-    
+
+    def showLoadingMsg(self, invalidRules=None, msgType=None):
+        """
+        Shows a message box to user if successfully loaded data or not.
+        If not, shows to user a list of not loaded layers and allows user
+        to choice between ignore and continue or cancel the importation.
+        :param lyrList: (list) a list of not loaded layers.
+        :param msgType: (str) type of message box - warning or information.
+        :return: (signal) value returned from the clicked button.
+        """
+        msg = QMessageBox()
+        msg.setWindowTitle(self.tr("DSGTools: importing spatial rules"))
+        if invalidRules and msgType == "warning":
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText(self.tr("Some rules have not been loaded"))
+            msg.setInformativeText(
+                self.tr("Do you want to ignore and continue or cancel?"))
+            msgString = "\n".join((r.ruleName() for r in invalidRules))
+            formatedMsgString = self.tr(
+                "The following layers have not been loaded:\n{0}"
+            ).format(msgString)
+            msg.setDetailedText(formatedMsgString)
+            msg.setStandardButtons(QMessageBox.Ignore | QMessageBox.Cancel)
+            msg.setDefaultButton(QMessageBox.Cancel)
+        else:
+            msg.setIcon(QMessageBox.Information)
+            msg.setText(self.tr("Successfully loaded rules!"))
+        choice = msg.exec_()
+        return choice
+
     def setValue(self, value):
         """
         Sets back parameters to the GUI. Method reimplementation.
@@ -449,6 +479,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         # signal must be triggered to adjust the correct column display
         self.panel.cb.toggled.emit(useDE9IM)
         isNotModeler = self.dialogType != DIALOG_MODELER
+        invalids = list()
         for rule in value:
             # GUI was crashing when passing SpatialRule straight up
             rule = SpatialRule(**rule, checkLoadedLayer=False)
@@ -456,7 +487,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             # work properly with the map layer combobox. on the modeler it
             # won't matter as it is a line edit
             if not rule.isValid(checkLoaded=isNotModeler):
-                # alert the user somehow
+                invalids.append(rule)
                 continue
             otw.addRow({
                 0: rule.ruleName(),
@@ -468,6 +499,9 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 6: rule.filterB(),
                 7: rule.cardinality()
             })
+        choice = self.showLoadingMsg(invalids, "warning" if invalids else "")
+        if choice == QMessageBox.Cancel:
+            otw.clear()
 
     def readStandardPanel(self):
         """
