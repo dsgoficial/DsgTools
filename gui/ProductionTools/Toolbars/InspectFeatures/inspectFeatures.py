@@ -352,6 +352,11 @@ class InspectFeatures(QWidget,Ui_Form):
         #     self.selectLayer(id, currentLayer)
         #     self.zoomFeature(zoom)
         # else:
+        if self.usePanCkb.isChecked():
+            currentLayer = self.getIterateLayer()
+            currentLayer.select(id)
+            self.iface.mapCanvas().panToSelected( currentLayer )
+            return
         self.zoomFeature(zoom, idDict = {'id':id, 'lyr':currentLayer})        
 
     @pyqtSlot(bool)
