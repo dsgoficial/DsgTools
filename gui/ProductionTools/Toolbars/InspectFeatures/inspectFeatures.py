@@ -353,9 +353,8 @@ class InspectFeatures(QWidget,Ui_Form):
         #     self.zoomFeature(zoom)
         # else:
         if self.usePanCkb.isChecked():
-            currentLayer = self.getIterateLayer()
             currentLayer.select(id)
-            self.iface.mapCanvas().panToSelected( currentLayer )
+            self.iface.mapCanvas().panToFeatureIds( currentLayer, [id] )
             return
         self.zoomFeature(zoom, idDict = {'id':id, 'lyr':currentLayer})        
 
