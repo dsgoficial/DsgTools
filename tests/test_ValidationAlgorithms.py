@@ -34,8 +34,13 @@ from osgeo import ogr
 
 import processing
 from qgis.utils import iface
-from qgis.core import QgsDataSourceUri, QgsVectorLayer, QgsProcessingFeedback,\
-                      QgsProcessingContext, QgsLayerTreeLayer, QgsProject
+from qgis.core import (QgsProject,
+                       QgsVectorLayer,
+                       QgsDataSourceUri,
+                       QgsLayerTreeLayer,
+                       QgsProcessingContext,
+                       QgsProcessingFeedback,
+                       QgsCoordinateReferenceSystem)
 from qgis.PyQt.QtSql import QSqlDatabase
 
 from DsgTools.core.dsgEnums import DsgEnums
@@ -1324,7 +1329,6 @@ class Tester(unittest.TestCase):
                     multipleOutputs=multipleOutputs
                 )
                 if isinstance(output, QgsVectorLayer):
-                    print("COUNT", output.featureCount(), expected.featureCount())
                     self.compareInputLayerWithOutputLayer(
                         i,
                         algName,
@@ -1649,11 +1653,12 @@ class Tester(unittest.TestCase):
         # hence it needs to be loaded to project's canvas
         proj = QgsProject.instance()
         proj.clear()
+        crs = proj.crs()
+        proj.setCrs(QgsCoordinateReferenceSystem(4326))
         layers = self.testingDataset("geojson", "spatial_rules_alg")
         for l, vl in layers.items():
             # vl = layers[l]
             # vl.setName(l)
-            print("LAYERS", l, vl.name())
             proj.addMapLayer(layers[l])
         msg = self.testAlg(
             "dsgtools:enforcespatialrules",
@@ -1664,6 +1669,8 @@ class Tester(unittest.TestCase):
         # non-existing layers
         del self.datasets["geojson:spatial_rules_alg"]
         proj.clear()
+        if crs and crs.isValid():
+            proj.setCrs(crs)
         self.assertEqual(msg, "")
 
 def run_all(filterString=None):
