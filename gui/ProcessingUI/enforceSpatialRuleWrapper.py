@@ -38,7 +38,8 @@ from processing.gui.wrappers import (WidgetWrapper,
                                      DIALOG_BATCH)
 
 from DsgTools.core.GeometricTools\
-             .spatialRelationsHandler import (SpatialRule,SpatialRelationsHandler)
+             .spatialRelationsHandler import (SpatialRule,
+                                              SpatialRelationsHandler)
 from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets\
              .orderedTableWidget import OrderedTableWidget
 

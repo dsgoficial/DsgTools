@@ -1155,6 +1155,9 @@ class SpatialRelationsHandler(QObject):
             layer = lh.filterByExpression(
                 layerName, exp, ctx, feedback
             )
+            # filter expression is an output is from another algo
+            # it is the temp output -> its name is not the same as the input
+            layer.setName(layerName)
         else:
             # this will raise an error if layer is not loaded
             layer = ctx.getMapLayer(layerName)
