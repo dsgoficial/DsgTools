@@ -182,7 +182,8 @@ class Tester(unittest.TestCase):
                 "spatial_rules_alg": os.path.join(geojsonPaths, 'spatial_rules_alg'),
                 "create_frames_layers": os.path.join(geojsonPaths, 'create_frames_layers'),
                 "identify_angles_in_invalid_range_layers": os.path.join(geojsonPaths, 'identify_angles_in_invalid_range_layers'),
-                "douglas_peucker": os.path.join(geojsonPaths, 'douglas_peucker')
+                "douglas_peucker": os.path.join(geojsonPaths, 'douglas_peucker'),
+                "polygon_sliver": os.path.join(geojsonPaths, 'polygon_sliver')
             }
         }
         # switch-case for dataset reading
@@ -1187,9 +1188,6 @@ class Tester(unittest.TestCase):
         """
         feedback = QgsProcessingFeedback() if feedback is None else feedback
         context = QgsProcessingContext() if context is None else context
-        from core.GeometricTools.spatialRelationsHandler import SpatialRule
-        for rule in parameters["RULES_SET"]:
-            sr = SpatialRule(**rule)
         return processing.run(algName, parameters, context=context, feedback=feedback)
 
     def expectedOutput(self, algName, test, multipleOutputs=False):
@@ -1204,9 +1202,14 @@ class Tester(unittest.TestCase):
         )
         gpkgOutput = False
         for f in next(os.walk(rootPath))[2]:
-            if '.gpkg' in f:
+            # in case of test case outputs are placed in different folders, this
+            # will not update the gpkgOutput
+            if '.gpkg' in f.lower():
                 gpkgOutput = True
                 break
+        # in case tests are placed as files inside algorithm's expected output
+        # folder, this will retrieve only the output for current test, if not,
+        # this will be evaluated to the path to all outputs in a folder test_TestNr
         path = os.path.join(
                     rootPath,
                     'test_{test_number}{extension}'.format(
@@ -1301,24 +1304,34 @@ class Tester(unittest.TestCase):
         """
         QgsProject.instance().clear()
 
-    def testAlg(self, algName, feedback=None, context=None, loadLayers=False, multipleOutputs=False, attributeBlackList=None, addControlKey=False):
+    def testAlg(self, algName, feedback=None, context=None, loadLayers=False,
+            multipleOutputs=False, attributeBlackList=None,
+            addControlKey=False, selected=None):
         """
         Tests if the output of a given algorithm is the expected one.
         :param algName: (str) target algorithm's name.
         :param feedback: (QgsProcessingFeedback) QGIS progress tracking object.
-        :param context: (QgsProcessingContext) execution's environmental parameters.
+        :param context: (QgsProcessingContext) execution's environmental
+                        parameters.
         :param loadLayers: (bool) indicates whether expected and output layers
                             should be loaded to canvas.
+        :param multipleOutputs: (bool) whether the algorithm tested outputs
+                                more than 1 layer.
+        :param attributeBlackList: (list-of-str) attributes to be ignored when
+                                   comparing features.
+        :param addControlKey: (bool) creates a new column to be used as ID on
+                              the output layers.
         :return: (str) failing reason.
         """
         parameters = self.algorithmParameters(algName)
         context = context or QgsProcessingContext()
         context.setProject(QgsProject.instance())
+        output = None
+        expected = None
         if parameters == dict():
             return "Unable to read a set of parameters for {alg}'s tests.".format(
                     alg=algName
                 )
-        e = None
         try:
             for i, param in enumerate(parameters):
                 output = self.runAlgWithMultipleOutputs(algName, param, feedback, context) \
@@ -1672,6 +1685,11 @@ class Tester(unittest.TestCase):
         if crs and crs.isValid():
             proj.setCrs(crs)
         self.assertEqual(msg, "")
+
+    def test_identifypolygonsliver(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifypolygonsliver", addControlKey=True), ""
+        )
 
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
