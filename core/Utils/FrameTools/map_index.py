@@ -309,10 +309,16 @@ class UtmGrid(QObject):
         return dicionario
 
     def getINomenFromMI(self,mi):
-        return self.getINomen(self.getMIdict(), mi)
+        inom = self.getINomen(self.getMIdict(), mi)
+        if inom in self.getMIexceptions():
+            return ''
+        return inom
 
     def getINomenFromMIR(self,mir):
-        return self.getINomen(self.getMIRdict(), mir)
+        inom = self.getINomen(self.getMIRdict(), mir)
+        if inom in self.getMIexceptions():
+            return ''
+        return inom
         
     def getINomen(self, dict, index):
         key = index.split('-')[0]
@@ -397,6 +403,9 @@ class UtmGrid(QObject):
     
     @staticmethod
     def getMIexceptions():
+        '''
+        Returns a set of INOMs that don't have MI
+        '''
         pathCsvExceptions25k = os.path.join(os.path.dirname(__file__),'exclusionList25k.csv')
         pathCsvExceptions50k = os.path.join(os.path.dirname(__file__),'exclusionList50k.csv')
         with open(pathCsvExceptions25k, 'r') as file:
@@ -411,3 +420,4 @@ if __name__ == "__main__":
     print(x.get_INOM_range_from_min_max_inom('SC-17','SA-22'))
     print(x.get_INOM_range_from_BB(-83, -19, -49, 9))
     print(x.get_INOM_range_from_min_max_inom('SE-17','NC-22') == x.get_INOM_range_from_BB(-83, -19, -49, 9) )
+    print(x.get_MI_MIR_from_inom('NB-20-Z-D-I-1'))
