@@ -145,7 +145,6 @@ class Tester(unittest.TestCase):
         for f in fileList:
             fullPath = os.path.join(path, f)
             for layer in ogr.Open(fullPath):
-                # layername = layer.GetName()
                 layername = os.path.splitext(f)[0]
                 layers[layername] = QgsVectorLayer(
                     fullPath,
@@ -968,6 +967,7 @@ class Tester(unittest.TestCase):
 
             "dsgtools:enforcespatialrules" : [
                 {
+                    '__comment' : "Tests 1 - tests all topological relation",
                     "RULES_SET": [
                         {
                             "cardinality": "1..1",
@@ -1152,6 +1152,33 @@ class Tester(unittest.TestCase):
                 }
             ],
 
+            "dsgtools:identifypolygonsliver" : [
+                {
+                    "__comment" : "Checks if simple cases are identified.",
+                    "INPUT_LAYERS": self.getInputLayers(
+                        'geojson', 'polygon_sliver', ['poligonos_1']
+                    ),
+                    "RATIO_TOL": 10,
+                    "SELECTED": False,
+                    "SILENT": True,
+                    "FLAGS": "memory:"
+                },
+                {
+                    "__comment" : "Checks if the algorithm works with selected"
+                        " features option on.",
+                    "INPUT_LAYERS": self.getInputLayers(
+                        'geojson',
+                        'polygon_sliver',
+                        ['poligonos_1'],
+                        idsToSelect=[0, 1]
+                    ),
+                    "RATIO_TOL": 10,
+                    "SELECTED": True,
+                    "SILENT": True,
+                    "FLAGS": "memory:"
+                }
+            ],
+
             "dsgtools:ALG" : [
                 {
                     '__comment' : "'Normal' test: checks if it works."
@@ -1306,7 +1333,7 @@ class Tester(unittest.TestCase):
 
     def testAlg(self, algName, feedback=None, context=None, loadLayers=False,
             multipleOutputs=False, attributeBlackList=None,
-            addControlKey=False, selected=None):
+            addControlKey=False):
         """
         Tests if the output of a given algorithm is the expected one.
         :param algName: (str) target algorithm's name.
@@ -1658,6 +1685,12 @@ class Tester(unittest.TestCase):
                 addControlKey=True
             ),
             ""
+        )
+
+    def test_identifypolygonsliver(self):
+        """Tests for Polygon Sliver Algorithm"""
+        self.assertEqual(
+            self.testAlg("dsgtools:identifypolygonsliver", addControlKey=True), ""
         )
 
     def test_enforcespatialrules(self):
