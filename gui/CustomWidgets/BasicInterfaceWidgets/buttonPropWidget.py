@@ -76,6 +76,8 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             self.tr("Attribute"), self.tr("Value"), self.tr("PK"),
             self.tr("Editable"), self.tr("Ignored")
         ])
+        header = self.attributeTableWidget.verticalHeader()
+        header.setSectionResizeMode(header.ResizeToContents)
         self.updateFieldTable()
 
     def confirmAction(self, msg, title=None, showNo=True):
@@ -374,6 +376,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                     "isPk": isPk
                 }
             {
+                QWidget: lambda v: valueWidget.cb.setChecked(v or False),
                 QLineEdit: lambda v: valueWidget.setText(v or ""),
                 QSpinBox: lambda v: valueWidget.setValue(v or 0),
                 QDoubleSpinBox: lambda v: valueWidget.setValue(v or 0.0),
@@ -404,6 +407,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                                             .cb.isChecked()
             # "ignored" still allows the value to be set as last priority
             attrMap[attr]["value"] = {
+                QWidget: lambda: valueWidget.cb.isChecked(),
                 QLineEdit: lambda: valueWidget.text(),
                 QSpinBox: lambda: valueWidget.value(),
                 QDoubleSpinBox: lambda: valueWidget.value(),
@@ -492,11 +496,16 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         Retrieves correct widget for a given field based on its type.
         :param field: (QgsField) field to be represented.
-        :param data: (float/int/str) initial data to be set to widget.
-        :return: (QDoubleSpinBox/QSpinBox/QLineEdit) the adequate widget for
-                 field.
+        :param data: (float/int/str/bool) initial data to be set to widget.
+        :return: (QDoubleSpinBox/QSpinBox/QLineEdit/QCheckBox) the adequate
+                 widget for field.
         """
-        if utils.fieldIsFloat(field):
+        if utils.fieldIsBool(field):
+            # vWidget = QCheckBox()
+            vWidget = self.centeredCheckBox()
+            if not data is None:
+                vWidget.cb.setChecked(data)
+        elif utils.fieldIsFloat(field):
             vWidget = QDoubleSpinBox()
             vWidget.setMaximum(99999999)
             vWidget.setMinimum(-99999999)

@@ -134,6 +134,9 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
                 text = fName
             if fName in self.attributeMap and self.attributeMap[fName]["ignored"]:
                 pass
+            elif utils.fieldIsBool(f):
+                w = QCheckBox()
+                w.setChecked(False if value is None else value)
             elif utils.fieldIsFloat(f):
                 w = QDoubleSpinBox()
                 w.setValue(0 if value is None else value)
@@ -171,6 +174,8 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
             w = self._fieldsWidgets[fName]
             if isinstance(w, QSpinBox) or isinstance(w, QDoubleSpinBox):
                 self.attributeMap[fName]["value"] = w.value()
+            elif isinstance(w, QCheckBox):
+                self.attributeMap[fName]["value"] = w.isChecked()
             else:
                 self.attributeMap[fName]["value"] = w.text()
 
@@ -200,6 +205,8 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
             w = self._fieldsWidgets[fName]
             if isinstance(w, QSpinBox) or isinstance(w, QDoubleSpinBox):
                 fMap[fName] = w.value()
+            elif isinstance(w, QCheckBox):
+                fMap[fName] = w.isChecked()
             else:
                 fMap[fName] = w.text()
         return fMap

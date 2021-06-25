@@ -97,6 +97,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                                 "show" if x else "hide")())
         self.toolBehaviourSwitch.stateChanged.connect(self.toolModeChanged)
         self.tabWidget.setTabPosition(self.tabWidget.West)
+        self.bFilterLineEdit.textEdited.connect(self.createResearchTab)
         self.bFilterLineEdit.returnPressed.connect(self.createResearchTab)
         self.visibilityChanged.connect(self.setToolEnabled)
         project = QgsProject.instance()
