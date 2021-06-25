@@ -309,13 +309,14 @@ class UtmGrid(QObject):
         return dicionario
 
     def getINomenFromMI(self,mi):
-        mi = self.checkLeftPaddingMI(mi)
+        mi = self.checkLeftPadding(mi, 4)
         inom = self.getINomen(self.getMIdict(), mi)
         if inom in self.getMIexceptions():
             return None
         return inom
 
     def getINomenFromMIR(self,mir):
+        mir = self.checkLeftPadding(mir, 3)
         inom = self.getINomen(self.getMIRdict(), mir)
         if inom in self.getMIexceptions():
             return None
@@ -416,10 +417,10 @@ class UtmGrid(QObject):
         return set((*exceptions25k, *exceptions50k))
 
     @staticmethod
-    def checkLeftPaddingMI(mi):
+    def checkLeftPadding(mi, zeroes):
         leftPart = mi.split('-')[0]
-        if len(leftPart) < 4:
-            return f'{"".join("0" for _ in range(4-len(leftPart)))}{mi}'
+        if len(leftPart) < zeroes:
+            return f'{"".join("0" for _ in range(zeroes-len(leftPart)))}{mi}'
         return mi
 
 if __name__ == "__main__":
