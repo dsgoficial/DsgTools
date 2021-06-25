@@ -27,7 +27,6 @@ from builtins import range
 from qgis.core import QgsPointXY, QgsGeometry, QgsFeature
 import string, os, math, itertools, csv
 from qgis.PyQt.QtCore import QObject
-import json
 
 class UtmGrid(QObject):
     def __init__(self):
@@ -53,7 +52,7 @@ class UtmGrid(QObject):
         self.featureBuffer=[]
         self.MIdict=[]
         self.MIRdict=[]
-                
+        
     def __del__(self):
         """Destructor."""
         pass
@@ -293,37 +292,42 @@ class UtmGrid(QObject):
     
     def getMIdict(self):
         if not self.MIdict:
-            self.MIdict = self.getDict("MI100.json")
+            self.MIdict = self.getDict("MI100.csv")
         return self.MIdict
             
     def getMIRdict(self):
         if not self.MIRdict:
-            self.MIRdict = self.getDict("MIR250.json")
+            self.MIRdict = self.getDict("MIR250.csv")
         return self.MIRdict    
     
-    def getDict(self, file_name):
-        filePathFolder = os.path.dirname(__file__)
-        filePathFile = os.path.join(filePathFolder, file_name)
-        jsonDict = json.load(open(filePathFile))
-        return jsonDict
+    def getDict(self, file_name):    
+        csvFile = open(os.path.join(os.path.dirname(__file__),file_name))
+        data = csvFile.readlines()
+        csvFile.close()
+        l1 = [(x.strip()).split(';') for x in data]
+        dicionario = dict((a[1].lstrip('0'),a[0]) for a in l1)
+        return dicionario
 
     def getINomenFromMI(self,mi):
         inom = self.getINomen(self.getMIdict(), mi)
+        if inom in self.getMIexceptions():
+            return ''
         return inom
 
     def getINomenFromMIR(self,mir):
         inom = self.getINomen(self.getMIRdict(), mir)
+        if inom in self.getMIexceptions():
+            return ''
         return inom
         
     def getINomen(self, dict, index):
         key = index.split('-')[0]
         otherParts = index.split('-')[1:]
-        for i in dict.keys():
-            if str(dict[i]['MI']) == key:
-                if len(otherParts)==0:
-                    return str(dict[i]['MI'])
-                else:
-                    return i+'-'+'-'.join(otherParts)
+        if (key in dict):
+            if len(otherParts)==0:
+                return dict[key]
+            else:
+                return dict[key]+'-'+'-'.join(otherParts)
         else:
             return ''
     
@@ -343,10 +347,12 @@ class UtmGrid(QObject):
         hundredInom = '-'.join(parts[0:4])
         remains = parts[4::]
         for k,v in miDict.items():
-            if k == hundredInom:
-                return '-'.join(str(k['MI'])+remains)
+            if v == hundredInom:
+                return '-'.join([k]+remains)
     
     def get_MI_MIR_from_inom(self, inom):
+        if inom in self.getMIexceptions():
+            return ''
         if len(inom.split('-')) > 4:
             return self.getMIfromInom(inom)
         else:
@@ -395,12 +401,23 @@ class UtmGrid(QObject):
                 )
             )[::multiplier]
     
+    @staticmethod
+    def getMIexceptions():
+        '''
+        Returns a set of INOMs that don't have MI
+        '''
+        pathCsvExceptions25k = os.path.join(os.path.dirname(__file__),'exclusionList25k.csv')
+        pathCsvExceptions50k = os.path.join(os.path.dirname(__file__),'exclusionList50k.csv')
+        with open(pathCsvExceptions25k, 'r') as file:
+            exceptions25k = [x[0] for x in csv.reader(file)]
+        with open(pathCsvExceptions50k, 'r') as file:
+            exceptions50k = [x[0] for x in csv.reader(file)]
+        return set((*exceptions25k, *exceptions50k))
 
-
-# if __name__ == "__main__":
-#     x = UtmGrid()
-#     print(x.get_INOM_range_from_min_max_inom('SE-17','NC-22'))
-#     print(x.get_INOM_range_from_min_max_inom('SC-17','SA-22'))
-#     print(x.get_INOM_range_from_BB(-83, -19, -49, 9))
-#     print(x.get_INOM_range_from_min_max_inom('SE-17','NC-22') == x.get_INOM_range_from_BB(-83, -19, -49, 9) )
-#     print(x.get_MI_MIR_from_inom('NB-20-Z-D-I-1'))
+if __name__ == "__main__":
+    x = UtmGrid()
+    print(x.get_INOM_range_from_min_max_inom('SE-17','NC-22'))
+    print(x.get_INOM_range_from_min_max_inom('SC-17','SA-22'))
+    print(x.get_INOM_range_from_BB(-83, -19, -49, 9))
+    print(x.get_INOM_range_from_min_max_inom('SE-17','NC-22') == x.get_INOM_range_from_BB(-83, -19, -49, 9) )
+    print(x.get_MI_MIR_from_inom('NB-20-Z-D-I-1'))
