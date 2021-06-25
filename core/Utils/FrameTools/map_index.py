@@ -305,10 +305,11 @@ class UtmGrid(QObject):
         data = csvFile.readlines()
         csvFile.close()
         l1 = [(x.strip()).split(';') for x in data]
-        dicionario = dict((a[1].lstrip('0'),a[0]) for a in l1)
+        dicionario = dict((a[1],a[0]) for a in l1)
         return dicionario
 
     def getINomenFromMI(self,mi):
+        mi = self.checkLeftPaddingMI(mi)
         inom = self.getINomen(self.getMIdict(), mi)
         if inom in self.getMIexceptions():
             return ''
@@ -413,6 +414,13 @@ class UtmGrid(QObject):
         with open(pathCsvExceptions50k, 'r') as file:
             exceptions50k = [x[0] for x in csv.reader(file)]
         return set((*exceptions25k, *exceptions50k))
+
+    @staticmethod
+    def checkLeftPaddingMI(mi):
+        leftPart = mi.split('-')[0]
+        if len(leftPart) < 4:
+            return f'{"".join("0" for _ in range(4-len(leftPart)))}{mi}'
+        return mi
 
 if __name__ == "__main__":
     x = UtmGrid()
