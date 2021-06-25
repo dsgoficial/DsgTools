@@ -146,7 +146,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
         if inputIndex is None or inputIndex == '':
             raise QgsProcessingException(self.tr('Invalid {index}').format(index=self.indexTypes[indexTypeIdx]))
         index = self.getIndex(inputIndex, indexTypeIdx, startScaleIdx)
-        if not self.validateIndex(index):
+        if index is None or not self.validateIndex(index):
             raise QgsProcessingException(self.tr('Invalid {index} format.').format(index=self.indexTypes[indexTypeIdx]))
         crs = self.parameterAsCrs(parameters, self.CRS, context)
         if crs is None or not crs.isValid():
