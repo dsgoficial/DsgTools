@@ -312,13 +312,13 @@ class UtmGrid(QObject):
         mi = self.checkLeftPaddingMI(mi)
         inom = self.getINomen(self.getMIdict(), mi)
         if inom in self.getMIexceptions():
-            return ''
+            return None
         return inom
 
     def getINomenFromMIR(self,mir):
         inom = self.getINomen(self.getMIRdict(), mir)
         if inom in self.getMIexceptions():
-            return ''
+            return None
         return inom
         
     def getINomen(self, dict, index):
@@ -330,7 +330,7 @@ class UtmGrid(QObject):
             else:
                 return dict[key]+'-'+'-'.join(otherParts)
         else:
-            return ''
+            return None
     
     def getMIfromInom(self,inom):
         return self.getMI(self.getMIdict(),inom)
@@ -353,7 +353,7 @@ class UtmGrid(QObject):
     
     def get_MI_MIR_from_inom(self, inom):
         if inom in self.getMIexceptions():
-            return ''
+            return None
         if len(inom.split('-')) > 4:
             return self.getMIfromInom(inom)
         else:
