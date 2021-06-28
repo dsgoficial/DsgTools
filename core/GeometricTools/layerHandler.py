@@ -1738,11 +1738,9 @@ class LayerHandler(QObject):
         flagDict = dict()
         if geomBoundary:
             geoms = []
-            for feat in next(geomBoundary.getFeatures()):
-                print(feat)
-                geoms.append(feat.geometry())
-            # merged = AlgRunner().runMergeVectorLayers(geomBoundary, None)
-            # geomMerged = next(merged.getFeatures()).geometry()
+            for feat in geomBoundary.getFeatures():
+                if not isinstance(feat, int):
+                    geoms.append(feat.geometry())
         for current, geomKey in enumerate(builtPolygonToCenterPointDict):
             if feedback is not None and feedback.isCanceled():
                 break
@@ -1761,9 +1759,12 @@ class LayerHandler(QObject):
                     insideConstraint = True
                     break
             if geomBoundary:
+                inside = False
                 for polygons in geoms:
-                    if not pointOnSurfaceGeom.intersects(polygons):
-                        insideConstraint = True    
+                    if pointOnSurfaceGeom.intersects(polygons):
+                        inside = True
+                if not inside:
+                    insideConstraint = True
             if not insideConstraint:
                 # because builtPolygonToCenterPointDict[geomKey] is an 
                 # defaultdict, everytime that it appends a different set of
