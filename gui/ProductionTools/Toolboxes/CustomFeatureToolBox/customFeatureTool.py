@@ -998,7 +998,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 return
             attrMap = button.attributeMap()
             if button.openForm():
-                form = CustomFeatureForm(vl.fields(), reclassify, attrMap)
+                form = CustomFeatureForm(vl, reclassify, attrMap)
                 form.setWindowTitle(self.tr("{0} (receiving layer: {1})")\
                         .format(form.windowTitle(), vl.name()))
                 if not form.exec_():
