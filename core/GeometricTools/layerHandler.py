@@ -1736,6 +1736,7 @@ class LayerHandler(QObject):
         size = 100/keyCount if keyCount else 0
         polygonList = []
         flagDict = dict()
+        # Create a list with geomBoundary polygons geometry 
         if geomBoundary:
             geoms = []
             for feat in geomBoundary.getFeatures():
@@ -1758,6 +1759,8 @@ class LayerHandler(QObject):
                 ):
                     insideConstraint = True
                     break
+            # if in any moment some polygon is not inside the Boundary,
+            # does not create it
             if geomBoundary:
                 inside = False
                 for polygons in geoms:
