@@ -665,6 +665,13 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         row = self.tableWidget.rowCount()
         self.tableWidget.insertRow(row)
         self.tableWidget.setCellWidget(row, 0, button.newWidget())
+        # button instances on this widget are never the same as the original
+        # and so, modifying the properties below won't modify anything outside
+        # the scope of this dialog 
+        button.setCheckable(False)
+        # button.setEnabled(False)
+        button.setCallback(
+            lambda: self.setCurrentButton(button), ignoreEnabled=True)
 
     def removeButtonFromTable(self, button):
         """
