@@ -607,6 +607,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             exclusiveCb = partial(checkExclusiveCB, ccbEdit, ccbIgnore)
             ccbIgnore.cb.toggled.connect(exclusiveCb)
             ccbEdit.cb.toggled.connect(exclusiveCb)
+            ccbIgnore.cb.toggled.emit(ccbEdit.cb.isChecked())
             # since row is from an enum of fields, field idx = row
             self.attributeTableWidget.setCellWidget(row, self.PK_COL,
                 self.pkWidget() if isPk else QWidget())

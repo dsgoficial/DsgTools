@@ -229,7 +229,9 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         self.setCurrentDynamicShortcut(newSetup.dynamicShortcut())
         for button in newSetup.buttons():
             self.addButton(button)
+        self.buttonComboBox.setCurrentIndex(0)
         self.buttonComboBox.blockSignals(False)
+        self.buttonComboBox.currentIndexChanged.emit(0)
 
     def getButtonByName(self, name):
         """
