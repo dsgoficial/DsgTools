@@ -1517,7 +1517,6 @@ class LayerHandler(QObject):
                                     for camada in constraintPolygonLyrList]
             inputCenterPointLyr = algRunner.runClip(inputCenterPointLyr, limit, 
                                                     context)
-        
         constraintPolygonListWithGeoBounds = constraintPolygonList + \
             [geographicBoundaryLyr] if geographicBoundaryLyr is not None else \
             constraintPolygonList
