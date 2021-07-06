@@ -36,7 +36,10 @@ from qgis.core import (QgsFeature,
                        QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterType,
                        QgsProcessingParameterDefinition)
+from qgis.PyQt.QtWidgets import (QMessageBox)
+
 from .validationAlgorithm import ValidationAlgorithm
+
 
 
 class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
@@ -117,20 +120,12 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
         Verifies whether given rule set is valid/applicable.
         :param ruleDict: (dict) rules to be checked;
         :return: (bool) rules validity status.
+            0: valueMap["description"],
+            1: valueMap["layerField"],
+            2: valueMap["expression"],
+            3: valueMap["errorType"],
+            4: valueMap["color"]
         """
-        # jsonStructurePattern = {
-        #     0:{
-        #         "0":"description",
-        #         "1":["layer", "field"],
-        #         "2":"expression",
-        #         "3":"error type",
-        #         "4":"string" or [255,255,255],
-        #     }
-        # }
-
-        # for key in jsonStructure:
-        #     if isinstance(key, (str, int)):
-        # TODO
         return True
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -148,49 +143,52 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
         rules = self.parameterAsAttributeRulesSet(
             parameters, self.RULES_SET, context
         )
+        
         if not rules or not self.validateRuleSet(rules):
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.RULES_SET)
             )
 
-        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        if self.validateRuleSet(rules):
 
-        crs = QgsProject.instance().crs()
-        pointFlags, ptId = self.parameterAsSink(
-            parameters, self.POINT_FLAGS, context,
-            self.flagFields, QgsWkbTypes.Point, crs)
+            onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
 
-        if not pointFlags:
-            raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.POINT_FLAGS))
+            crs = QgsProject.instance().crs()
+            pointFlags, ptId = self.parameterAsSink(
+                parameters, self.POINT_FLAGS, context,
+                self.flagFields, QgsWkbTypes.Point, crs)
 
-        lineFlags, lId = self.parameterAsSink(
-            parameters, self.LINE_FLAGS, context,
-            self.flagFields, QgsWkbTypes.LineString, crs)
+            if not pointFlags:
+                raise QgsProcessingException(
+                    self.invalidSourceError(parameters, self.POINT_FLAGS))
 
-        if not lineFlags:
-            raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.LINE_FLAGS))
+            lineFlags, lId = self.parameterAsSink(
+                parameters, self.LINE_FLAGS, context,
+                self.flagFields, QgsWkbTypes.LineString, crs)
 
-        polygonFlags, polId = self.parameterAsSink(
-            parameters, self.POLYGON_FLAGS, context,
-            self.flagFields, QgsWkbTypes.Polygon, crs)
+            if not lineFlags:
+                raise QgsProcessingException(
+                    self.invalidSourceError(parameters, self.LINE_FLAGS))
 
-        if not polygonFlags:
-            raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.POLYGON_FLAGS))
+            polygonFlags, polId = self.parameterAsSink(
+                parameters, self.POLYGON_FLAGS, context,
+                self.flagFields, QgsWkbTypes.Polygon, crs)
 
-        failedFeatures = self.applyAttrRules(rules, onlySelected)
+            if not polygonFlags:
+                raise QgsProcessingException(
+                    self.invalidSourceError(parameters, self.POLYGON_FLAGS))
 
-        self.flagsFromFailedList(failedFeatures,
-                                 pointFlags,
-                                 lineFlags,
-                                 polygonFlags,
-                                 feedback)
-        return {
-            self.POINT_FLAGS: ptId,
-            self.LINE_FLAGS: lId,
-            self.POLYGON_FLAGS: polId}
+            failedFeatures = self.applyAttrRules(rules, onlySelected)
+
+            self.flagsFromFailedList(failedFeatures,
+                                    pointFlags,
+                                    lineFlags,
+                                    polygonFlags,
+                                    feedback)
+            return {
+                self.POINT_FLAGS: ptId,
+                self.LINE_FLAGS: lId,
+                self.POLYGON_FLAGS: polId}
 
     def applyAttrRules(self, attrRulesMap, onlySelected):
         """
@@ -274,13 +272,6 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
 
                 lyr.conditionalStyles().setFieldStyles(
                     field.name(), [self.conditionalStyle])
-            # plus: to find a way to color an entire row with a different color
-            # in order to highlight the row with the error
-            # else:
-            #     for rule in l:
-            #         conditionalStyle.setRule(rule)
-            #         conditionalStyle.setBackgroundColor(QColor(171,171,171))
-            #         lyr.conditionalStyles().setRowStyles([conditionalStyle])
 
     def logResult(self, attrRulesMap, feedback):
         """
