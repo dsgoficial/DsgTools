@@ -24,26 +24,21 @@ Builds a temp rubberband with a given size and shape.
 
 import os
 
-# Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.core import Qgis, QgsUnitTypes
+from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QMessageBox, QAction
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject
-from qgis.PyQt.Qt import QWidget, QObject
+from qgis.PyQt.QtCore import QSettings, pyqtSlot
+from qgis.PyQt.Qt import QWidget
 
-#qgis imports
-import qgis.utils
-from qgis.gui import QgsMessageBar
-from qgis.core import Qgis
-#DsgTools Imports
 from .shapeTool import ShapeTool
 from .customSizeSetter import CustomSizeSetter
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'minimumAreaTool.ui'))
 
-class MinimumAreaTool(QWidget,FORM_CLASS):
-    def __init__(self, iface, parent = None):
+class MinimumAreaTool(QWidget, FORM_CLASS):
+    def __init__(self, iface, parent=None):
         """
         Constructor
         """
@@ -138,10 +133,17 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         validated = self.validateCombos(self.sizesComboBox.currentIndex(), self.shapesComboBox.currentIndex())
         if validated:
             crs = self.iface.mapCanvas().mapSettings().destinationCrs()
-            if crs.mapUnits() == 2:
-                self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('This tool does not work with angular unit reference system!'), level=Qgis.Warning, duration=3)
-            else:
-                self.run(scale, size, shape)
+            if crs.mapUnits() != QgsUnitTypes.DistanceMeters:
+                self.iface.messageBar().pushMessage(
+                    self.tr("DSGTools minimum area tool"),
+                    self.tr(
+                        "this tool is optimized to work with canvas in "
+                        "metrical CRS!"
+                    ),
+                    level=Qgis.Warning,
+                    duration=3
+                )
+            self.run(scale, size, shape)
         else:
             QMessageBox.warning(self.iface.mainWindow(), self.tr(u"Error!"), self.tr(u"<font color=red>Shape value not defined :</font><br><font color=blue>Define all values to activate tool!</font>"), QMessageBox.Close)              
     
