@@ -21,14 +21,21 @@ Builds a temp rubberband with a given size and shape.
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import range
-from qgis.gui import QgsRubberBand, QgsMapTool
-from qgis.core import QgsPointXY, Qgis, QgsWkbTypes, QgsProject
-from qgis.PyQt import QtGui, QtCore, QtWidgets
-from qgis.PyQt.QtGui import QColor, QCursor
-from qgis.PyQt.QtWidgets import QWidget
-from qgis.PyQt.QtCore import pyqtSignal, QObject, Qt as Qt2, QPoint
+
 from math import sqrt, cos, sin, pi, atan2
+
+from qgis.gui import QgsRubberBand, QgsMapTool
+from qgis.core import (QgsPointXY,
+                       QgsGeometry,
+                       QgsWkbTypes,
+                       QgsUnitTypes,
+                       QgsDistanceArea,
+                       QgsCoordinateTransform,
+                       QgsCoordinateReferenceSystem,
+                       QgsCoordinateTransformContext)
+from qgis.PyQt.QtCore import pyqtSignal, Qt as Qt2
+from qgis.PyQt.QtGui import QColor, QCursor
+from qgis.PyQt.QtWidgets import QApplication
 
 class ShapeTool(QgsMapTool):
     #signal emitted when the mouse is clicked. This indicates that the tool finished its job
@@ -85,20 +92,49 @@ class ShapeTool(QgsMapTool):
         When the canvas is pressed the tool finishes its job
         """
         # enforce mouse restoring if clicked right after rotation 
-        QtWidgets.QApplication.restoreOverrideCursor()
+        QApplication.restoreOverrideCursor()
         self.canvas.unsetMapTool(self)
         self.toolFinished.emit()
+
+    def _baseDistanceInMeters(self):
+        """
+        Calculates the distance in meters of 2 points 1 unit map away on
+        current canvas CRS.
+        :return: (float) distance in meters between two points 1 map unit apart
+                 from each other.
+        """
+        source_crs = self.canvas.mapSettings().destinationCrs()
+        dest_crs = QgsCoordinateReferenceSystem(3857)
+        tr = QgsCoordinateTransform(source_crs, dest_crs, QgsCoordinateTransformContext())
+        p1t = QgsGeometry().fromPointXY(QgsPointXY(1, 0))
+        p1t.transform(tr)
+        p2t = QgsGeometry().fromPointXY(QgsPointXY(0, 0))
+        p2t.transform(tr)
+        return QgsDistanceArea().measureLine(p1t.asPoint(), p2t.asPoint())
+
+    def getAdjustedSize(self, size):
+        """
+        If map unit is not metric, the figure to be drawn needs to have its
+        size adjusted. This is necessary because input parameters are designed
+        to be meters on tool's GUI.
+        :param size: (float) tool's radius/length reference size in meters.
+        :return: (float)  
+        """
+        source_crs = self.canvas.mapSettings().destinationCrs()
+        if source_crs.mapUnits() != QgsUnitTypes.DistanceMeters:
+            return size / self._baseDistanceInMeters()
+        return size
 
     def canvasMoveEvent(self, e):
         """
         Deals with mouse move event to update the rubber band position in the canvas
         """
-        ctrlIsHeld = QtWidgets.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier
+        ctrlIsHeld = QApplication.keyboardModifiers() == Qt2.ControlModifier
         if e.button() != None and not ctrlIsHeld:
             if self.rotate:
                 # change rotate status
                 self.rotate = False
-            QtWidgets.QApplication.restoreOverrideCursor()
+            QApplication.restoreOverrideCursor()
             self.endPoint = self.toMapCoordinates( e.pos() )
         elif e.button() != None and ctrlIsHeld \
             and self.geometryType == self.tr(u"Square"):
@@ -106,7 +142,7 @@ class ShapeTool(QgsMapTool):
             self.rotAngle = self.rotateRect(self.currentCentroid, e)
             if not self.rotate:
                 # only override mouse if it is not overriden already
-                QtWidgets.QApplication.setOverrideCursor(QCursor(Qt2.BlankCursor))
+                QApplication.setOverrideCursor(QCursor(Qt2.BlankCursor))
                 self.rotate = True
         if self.geometryType == self.tr(u"Circle"):
                 self.showCircle(self.endPoint)
@@ -121,14 +157,14 @@ class ShapeTool(QgsMapTool):
         x = startPoint.x()
         y = startPoint.y()
         if self.type == self.tr('distance'):
-            r = self.param
+            r = self.getAdjustedSize(self.param)
             self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
             for itheta in range(nPoints+1):
                 theta = itheta*(2.0*pi/nPoints)
                 self.rubberBand.addPoint(QgsPointXY(x+r*cos(theta), y+r*sin(theta)))
             self.rubberBand.show()
         else:
-            r = sqrt(self.param/pi)
+            r = sqrt(self.getAdjustedSize(self.param)/pi)
             self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
             for itheta in range(nPoints+1):
                 theta = itheta*(2.0*pi/nPoints)
@@ -147,19 +183,15 @@ class ShapeTool(QgsMapTool):
         c = cos(rotAngle)
         s = sin(rotAngle)
         # translating coordinate system to rubberband centroid
-        point1 = QgsPointXY((- param), (- param))
-        point2 = QgsPointXY((- param), ( param))
-        point3 = QgsPointXY((param), ( param))
-        point4 = QgsPointXY((param), (- param))
-        # rotating and moving to original coord. sys.
-        point1_ = QgsPointXY(point1.x()*c - point1.y()*s + x, point1.y()*c + point1.x()*s + y)
-        point2_ = QgsPointXY(point2.x()*c - point2.y()*s + x, point2.y()*c + point2.x()*s + y)
-        point3_ = QgsPointXY(point3.x()*c - point3.y()*s + x, point3.y()*c + point3.x()*s + y)
-        point4_ = QgsPointXY(point4.x()*c - point4.y()*s + x, point4.y()*c + point4.x()*s + y)
-        self.rubberBand.addPoint(point1_, False)
-        self.rubberBand.addPoint(point2_, False)
-        self.rubberBand.addPoint(point3_, False)
-        self.rubberBand.addPoint(point4_, True)
+        param = self.getAdjustedSize(param)
+        for posx, posy in ((-1, -1), (-1, 1), (1, 1), (1, -1)):
+            px = posx * param
+            py = posy * param
+            pnt = QgsPointXY(px * c - py * s + x, py * c + px * s + y)
+            self.rubberBand.addPoint(pnt, False)
+        self.rubberBand.setVisible(True)
+        self.rubberBand.updateRect()
+        self.rubberBand.update()
         self.rubberBand.show()
         self.currentCentroid = startPoint
         
@@ -170,21 +202,10 @@ class ShapeTool(QgsMapTool):
         self.rubberBand.hide()
         QgsMapTool.deactivate(self)
         # restore mouse in case tool is disabled right after rotation
-        QtWidgets.QApplication.restoreOverrideCursor()
+        QApplication.restoreOverrideCursor()
         
     def activate(self):
         """
         Activates the tool
         """
         QgsMapTool.activate(self)
-    
-    def reproject(self, geom, canvasCrs):
-        """
-        Reprojects geom from the canvas crs to the reference crs
-        geom: geometry to be reprojected
-        canvasCrs: canvas crs (from crs)
-        """
-        destCrs = self.reference.crs()
-        if canvasCrs.authid() != destCrs.authid():
-            coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
-            geom.transform(coordinateTransformer)
