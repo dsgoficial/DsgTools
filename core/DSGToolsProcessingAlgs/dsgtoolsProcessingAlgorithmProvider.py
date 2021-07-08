@@ -194,6 +194,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAnglesInIn
     IdentifyAnglesInInvalidRangeAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.enforceAttributeRulesAlgorithm import \
     EnforceAttributeRulesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyPolygonSliverAlgorithm import \
+    IdentifyPolygonSliverAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -287,7 +289,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyTerrainModelErrorsAlgorithm(),
             CreateFramesWithConstraintAlgorithm(),
             IdentifyAnglesInInvalidRangeAlgorithm(),
-            EnforceAttributeRulesAlgorithm()
+            EnforceAttributeRulesAlgorithm(),
+            IdentifyPolygonSliverAlgorithm()
         ]
         return algList
 
