@@ -49,11 +49,12 @@ from processing.gui.wrappers import (WidgetWrapper,
 from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedTableWidget import OrderedTableWidget
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.colorSelectorWidget import ColorSelectorWidget
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.layerAndFieldSelectorWidget import LayerAndFieldSelectorWidget
+from ...core.Utils.utils import ValidateImportedDataMethods
 
 
 class EnforceAttributeRulesWrapper(WidgetWrapper):
     """
-    This component is used to manage the creation of an interface, which has 
+    This component is used to manage the creation of an interface, which has
     been customized, for a specific type of parameter used in QGIS processing
     algorithms.
     """
@@ -70,7 +71,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         Constructor
         """
         super(EnforceAttributeRulesWrapper, self).__init__(*args, **kwargs)
-        # self.getLoadedLayers()
+        self.validateMethods = ValidateImportedDataMethods()
 
     def stringDataWidget(self, text):
         """
@@ -105,15 +106,19 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         Retrieves the configured error type selection combo box.
         :return: (QComboBox) configured error selection widget.
         """
-        errorTypeList = ["Atributo com valor incomum",
-                         "Atributo com valor incorreto",
-                         "Preencher atributo",
+        errorTypeList = ["Unusual Valued Attribute",
+                         "Attribute with incorrect value",
+                         "Missing attribute",
                          ]
+        errorTypeListTranslated = [
+            self.tr(error) for error in errorTypeList]
+
         cb = QComboBox()
         cb.addItem(self.tr("Select an error type"))
-        cb.addItems(errorTypeList)
+        cb.addItems(errorTypeListTranslated)
         cbSize = cb.minimumSizeHint()
         cb.setMinimumSize(cbSize)
+
         return cb
 
     def colorSelectionWidget(self):
@@ -144,54 +149,127 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         for layer in layers:
             if layer.type() == 0:
                 loaded[layer.name()] = [field.name()
-                                             for field in layer.fields()]
+                                        for field in layer.fields()]
             else:
                 pass
 
         return loaded
 
-    def modifyStateDict(self, stateDict):
+    def modifyImportedAttributeRulesMap(self, attrRulesMap):
         """
-        Compares loaded layers in canvas with input data from JSON file and
-        returns only the data that contain the already loaded layers to fill
-        the standard panel GUI.
-        :param stateDict: (dict) of the state of the otw interface.
-        :return: (dict) with data loaded in canvas.
+        Modifies an attribute rule map accordingly with the loaded layers.
+        :param attrRulesMap: (dict) of the importes rules map.
+        :return: (dict) with attribute rules accordingly loaded data in canvas.
         """
-        newDict = dict()
-        loadedLyr = self.getLoadedLayers()
-        notLoadedLyr = []
-        for k, v in stateDict.items():
-            if k == "metadata":
-                continue
-            if v["1"][0] not in loadedLyr or \
-                    v["1"][1] not in loadedLyr[v["1"][0]]:
-                notLoadedLyr.append(v["1"][0])
+        notLoadedLyr = self.getUnloadedLayers(attrRulesMap)
+        newDict, invalidRules = self.mapAttributeRulesToNewDict(attrRulesMap)
+
+        if notLoadedLyr and invalidRules:
+            notLoadedLyrWarning = self.showLoadingMsg(notLoadedLyr, "warning")
+            if notLoadedLyrWarning == QMessageBox.Ignore:
+                invalidRulesWarnign = self.showLoadingMsg(
+                    invalidRules, "invalid")
+                self.modifyAttributeRulesMap(
+                    invalidRulesWarnign, attrRulesMap, newDict)
             else:
-                newDict[k] = v
-        warning = self.showLoadingMsg(notLoadedLyr, "warning")
-        if notLoadedLyr:
-            if warning == QMessageBox.Ignore:
-                stateDict.clear()
-                for k, v in newDict.items():
-                    stateDict[k] = v
-            else:
-                stateDict.clear()
+                attrRulesMap.clear()
+
+        elif not notLoadedLyr and invalidRules:
+            invalidRulesWarnign = self.validateMethods.showLoadingMsg(
+                invalidRules, "invalid")
+            self.modifyAttributeRulesMap(
+                invalidRulesWarnign, attrRulesMap, newDict)
+
+        elif notLoadedLyr and not invalidRules:
+            notLoadedLyrWarning = self.showLoadingMsg(notLoadedLyr, "warning")
+            self.modifyAttributeRulesMap(
+                notLoadedLyrWarning, attrRulesMap, newDict)
         else:
             self.showLoadingMsg()
 
-    def modifyStateDictModeler(self, stateDict):
+    def modifyAttributeRulesMap(self, clickedAction, attrRulesMap, newDict):
+        if clickedAction == QMessageBox.Ignore:
+            attrRulesMap.clear()
+            for k, v in newDict.items():
+                attrRulesMap[k] = v
+        else:
+            attrRulesMap.clear()
+
+    def getUnloadedLayers(self, attrRulesMap):
+        notLoadedLyr = list()
+        loadedLyr = self.getLoadedLayers()
+
+        for k, v in attrRulesMap.items():
+            if k == "metadata":
+                continue
+            if self.validateMethods.validatePythonTypes(v["1"], "list") and \
+                    self.validateMethods.validateLengthOfDataTypes(v["1"], 2):
+                if v["1"][0] not in loadedLyr or \
+                        v["1"][1] not in loadedLyr[v["1"][0]]:
+                    notLoadedLyr.append(v["1"][0])
+            else:
+                self.invalidImportedRuleMessage()
+
+        return notLoadedLyr
+
+    def invalidImportedRuleMessage(self):
+        msg = QMessageBox()
+        msg.setWindowTitle("Invalid Rules Information")
+        msg.setIcon(QMessageBox.Warning)
+        msg.setText("There are one or more rule invalid and cant be loaded!")
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        msg.setDefaultButton(QMessageBox.Cancel)
+
+    def mapAttributeRulesToNewDict(self, attrRulesMap):
+        """
+        Compares loaded layers in canvas with the attribute rules map
+        and returns only the data that contains the already loaded
+        layers to fill the standard panel on GUI.
+        :param attrRulesMap: (dict) of the importes rules map.
+        :return: (dict) with data loaded in canvas.
+        """
+        newDict = dict()
+        invalidRules = list()
+
+        for attrRulesMapKey, attrRulesMapValue in attrRulesMap.items():
+            if attrRulesMapKey == "metadata":
+                continue
+            if self.validateMethods.validatePythonTypes(attrRulesMapValue["0"], "string"):
+                if self.validateMethods.validatePythonTypes(attrRulesMapValue["1"], "list") and self.validateMethods.validateLengthOfDataTypes(attrRulesMapValue["1"], 2):
+                    if self.validateMethods.validateQgsExpressions(attrRulesMapValue["2"]):
+                        if self.validateMethods.validatePythonTypes(attrRulesMapValue["3"], "string"):
+                            if self.validateMethods.validateQColor(attrRulesMapValue["4"]):
+                                newDict[attrRulesMapKey] = attrRulesMapValue
+                            else:
+                                invalidRules.append("{} : {}".format(
+                                    attrRulesMapKey, attrRulesMapValue["4"]))
+                        else:
+                            invalidRules.append("{} : {}".format(
+                                attrRulesMapKey, attrRulesMapValue["3"]))
+                    else:
+                        invalidRules.append("{} : {}".format(
+                            attrRulesMapKey, attrRulesMapValue["2"]))
+                else:
+                    invalidRules.append("{} : {}".format(
+                        attrRulesMapKey, attrRulesMapValue["1"]))
+            else:
+                invalidRules.append("{} : {}".format(
+                    attrRulesMapKey, attrRulesMapValue["0"]))
+
+        return newDict, invalidRules
+
+    def modifyImportedAttributeRulesMapToModeler(self, attrRulesMap):
         """
         Compares loaded layers in canvas with input data from JSON file and
         returns only the data that contain the already loaded layers to fill
         the modeler GUI.
-        :param stateDict: (dict) of the state of the otw interface.
+        :param attrRulesMap: (dict) of the state of the otw interface.
         :return: (dict) with data loaded in canvas.
         """
         newDict = dict()
         loadedLyr = self.getLoadedLayers()
         notLoadedLyr = []
-        for k, v in stateDict.items():
+        for k, v in attrRulesMap.items():
             if k == "metadata":
                 continue
             if v["1"][0] not in loadedLyr or \
@@ -210,11 +288,11 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         warning = self.showLoadingMsg(notLoadedLyr, "warning")
         if notLoadedLyr:
             if warning == QMessageBox.Ignore:
-                stateDict.clear()
+                attrRulesMap.clear()
                 for k, v in newDict.items():
-                    stateDict[k] = v
+                    attrRulesMap[k] = v
             else:
-                stateDict.clear()
+                attrRulesMap.clear()
         else:
             self.showLoadingMsg()
 
@@ -344,7 +422,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
             otw.horizontalHeader().setSectionResizeMode(
                 row, QHeaderView.ResizeToContents)
         otw.setHeaderDoubleClickBehaviour("order")
-        otw.dataLoaded.connect(self.modifyStateDict)
+        otw.dataLoaded.connect(self.modifyImportedAttributeRulesMap)
         otw.rowAdded.connect(self.postAddRowStandard)
         return otw
 
@@ -409,7 +487,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
             }
         })
         otw.setHeaderDoubleClickBehaviour("order")
-        otw.dataLoaded.connect(self.modifyStateDictModeler)
+        otw.dataLoaded.connect(self. modifyImportedAttributeRulesMapToModeler)
         otw.rowAdded.connect(self.postAddRowModeler)
         return otw
 
