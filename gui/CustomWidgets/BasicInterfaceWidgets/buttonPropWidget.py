@@ -351,8 +351,9 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             for fName, vMap in LayerHandler().valueMaps(vl).items():
                 valueMaps[fName] = {v: k for k, v in vMap.items()}
         def setMappedValue(cb, field, value):
-            vlFound = value in valueMaps[field]
-            if not vlFound:
+            if value is None:
+                return
+            if not (value in valueMaps[field]):
                 msg = self.tr("'{0}' is an invalid value for field {1}. (Is "
                               "the layer style generated from the current data"
                               " model?")\
@@ -360,8 +361,6 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                 title = self.tr("DSGTools Custom Feature Tool Box")
                 MessageRaiser().raiseIfaceMessage(title, msg, Qgis.Warning, 5)
                 value = None
-            if value is None:
-                return
             cb.setCurrentText(valueMaps[field][value])
         pkIdxList = vl.primaryKeyAttributes() if vl else []
         for row in range(table.rowCount()):
