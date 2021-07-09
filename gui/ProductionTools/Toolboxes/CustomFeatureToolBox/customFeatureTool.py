@@ -820,8 +820,6 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 l = iface.activeLayer()
                 layers = [l] if isinstance(l, QgsVectorLayer) else []
             for l in layers:
-                if not isinstance(l, QgsVectorLayer):
-                    continue
                 if l.geometryType() == geomType:
                     feats = l.selectedFeatures()
                     if feats:
