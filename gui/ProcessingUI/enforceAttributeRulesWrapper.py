@@ -167,10 +167,14 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         if notLoadedLyr and invalidRules:
             notLoadedLyrWarning = self.showLoadingMsg(notLoadedLyr, "warning")
             if notLoadedLyrWarning == QMessageBox.Ignore:
-                invalidRulesWarnign = self.showLoadingMsg(
+                invalidRulesWarnign = self.validateMethods.showLoadingMsg(
                     invalidRules, "invalid")
-                self.modifyAttributeRulesMap(
-                    invalidRulesWarnign, attrRulesMap, newDict)
+                if notLoadedLyrWarning == QMessageBox.Ignore:
+                    attrRulesMap.clear()
+                    for k, v in newDict.items():
+                        attrRulesMap[k] = v
+                else:
+                    attrRulesMap.clear()
             else:
                 attrRulesMap.clear()
 
@@ -194,6 +198,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
                 attrRulesMap[k] = v
         else:
             attrRulesMap.clear()
+        
 
     def getUnloadedLayers(self, attrRulesMap):
         notLoadedLyr = list()

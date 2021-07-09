@@ -1137,17 +1137,8 @@ class Tester(unittest.TestCase):
                                     "expression": "regexp_match ( \"nome\" , '^ ' ) or regexp_match ( \"nome\" , '  ' ) or regexp_match ( \"nome\" , ' $' ) or regexp_match ( \"nome\" , '^[a-z]' )",
                                     "errorType": "Atributo com valor incorreto",
                                     "color": "#ff0000"
-                                }
-                    },
-                    'SELECTED' : False,
-                    "POINT_FLAGS":"memory:",
-                    "LINE_FLAGS":"memory:",
-                    "POLYGON_FLAGS":"memory:"
-                },
-                {
-                    '__comment' : "Tests 2",
-                    "RULES_SET":{
-                                "0": {
+                                },
+                                "2": {
                                     "description": "tipoilha - Preencher atributo",
                                     "layerField": [
                                         "hid_ilha_a",
@@ -1157,7 +1148,26 @@ class Tester(unittest.TestCase):
                                     "errorType": "Preencher atributo",
                                     "color": "#b6a500"
                                 },
-                                "1": {
+                                "3": {
+                                    "description": "nome - Nome deve iniciar com letra maiuscula e nao deve ter espacos desnecessarios",
+                                    "layerField": [
+                                        "hid_ilha_a",
+                                        "nome"
+                                    ],
+                                    "expression": "regexp_match ( \"nome\" , '^ ' ) or regexp_match ( \"nome\" , '  ' ) or regexp_match ( \"nome\" , ' $' ) or regexp_match ( \"nome\" , '^[a-z]' )",
+                                    "errorType": "Atributo com valor incorreto",
+                                    "color": "#ff0000"
+                                }
+                    },
+                    'SELECTED' : False,
+                    "POINT_FLAGS":"memory:",
+                    "LINE_FLAGS":"memory:",
+                    "POLYGON_FLAGS":"memory:"
+                },
+                {
+                    '__comment' : "Test 2",
+                    "RULES_SET":{
+                                "0": {
                                     "description": "nome - Nome deve iniciar com letra maiuscula e nao deve ter espacos desnecessarios",
                                     "layerField": [
                                         "hid_ilha_a",
@@ -1709,35 +1719,36 @@ class Tester(unittest.TestCase):
 
     def test_enforceattributerulesalgorithm(self):
         """Tests for Enforce Attribute Rules algorithm"""
+        idsToSelect=[0,3]
         testsParams = self.algorithmParameters("dsgtools:enforceattributerulesalgorithm")
         # this algorithm, specifically has to set layers Context-reading ready
-        layers = self.testingDataset("geojson", "enforce_attribute_rules")  # {'hid_trecho_drenagem_l': <QgsVectorLayer: 'hid_trecho_drenagem_l' (ogr)>}
-       
-        layers = {l.split("-")[-1]: vl for l, vl in layers.items()}  # {'hid_trecho_drenagem_l': <QgsVectorLayer: 'hid_trecho_drenagem_l' (ogr)>}
+        layers = self.testingDataset("geojson", "enforce_attribute_rules")
 
         for parameters in testsParams:
-            for key, values in parameters["RULES_SET"].items():
-                if isinstance(layers, list):
-                    vl = layers[0]
-                    vl.setName(layers[0].name())  # 'hid_trecho_drenagem_l'
-                    self.loadLayerToCanvas(vl)
-                else:
-                    # for layer in values["1"]:
-                    vl = layers[values["layerField"][0]]  # <QgsVectorLayer: 'hid_trecho_drenagem_l' (ogr)>
-                    # these layers are saved as "edgv3-*"
-                    vl.setName(values["layerField"][0])  # 'hid_trecho_drenagem_l'
-                    self.loadLayerToCanvas(vl)
+                for key, values in parameters["RULES_SET"].items():
+                    if isinstance(layers, list):
+                        vl = layers[0]
+                        vl.setName(layers[0].name())
+                        self.loadLayerToCanvas(vl)
+                        if parameters['SELECTED']:
+                            vl.selectByIds(idsToSelect)
+                    else:
+                        vl = layers[values["layerField"][0]]
+                        vl.setName(values["layerField"][0])
+                        self.loadLayerToCanvas(vl)
+                        if parameters['SELECTED']:
+                            vl.selectByIds(idsToSelect)
 
         msg = self.testAlg(
             "dsgtools:enforceattributerulesalgorithm",
             multipleOutputs=True,
             addControlKey=True
         )
-        # since layers were manually removed, cache is going to refer to 
-        # non-existing layers
+        
         del self.datasets["geojson:enforce_attribute_rules"]
         self.clearProject()
         self.assertEqual(msg, "")
+        
 
     def test_identifypolygonsliver(self):
         self.assertEqual(

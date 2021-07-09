@@ -507,7 +507,7 @@ class ValidateImportedDataMethods():
         msg.setWindowTitle("Invalid Rules Information")
 
         if lyrList and msgType == "invalid":
-            msg.setIcon(QMessageBox.Warning)
+            msg.setIcon(QMessageBox.Critical)
             msg.setText("Some rules has invalid itens!")
             msg.setInformativeText("If you ignore, the invalid rules may not be loaded.")
 
