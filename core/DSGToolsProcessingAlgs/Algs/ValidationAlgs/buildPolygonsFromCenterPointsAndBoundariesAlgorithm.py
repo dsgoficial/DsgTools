@@ -68,10 +68,10 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterField(
-                self.ATTRIBUTE_BLACK_LIST, 
+                self.ATTRIBUTE_BLACK_LIST,
                 self.tr('Fields to ignore'),
-                None, 
-                'INPUT_CENTER_POINTS', 
+                None,
+                'INPUT_CENTER_POINTS',
                 QgsProcessingParameterField.Any,
                 allowMultiple=True,
                 optional = True
@@ -157,7 +157,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             self.ATTRIBUTE_BLACK_LIST,
             context
         )
-        fields = layerHandler.getFieldsFromAttributeBlackList(inputCenterPointLyr, 
+        fields = layerHandler.getFieldsFromAttributeBlackList(inputCenterPointLyr,
                                                         attributeBlackList)
         (
             output_polygon_sink,
@@ -184,7 +184,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
             context=context,
             feedback=feedback,
-            attributeBlackList=attributeBlackList, 
+            attributeBlackList=attributeBlackList,
             algRunner=algRunner
         )
         output_polygon_sink.addFeatures(
