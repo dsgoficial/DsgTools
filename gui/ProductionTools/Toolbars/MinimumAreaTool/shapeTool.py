@@ -164,7 +164,7 @@ class ShapeTool(QgsMapTool):
                 self.rubberBand.addPoint(QgsPointXY(x+r*cos(theta), y+r*sin(theta)))
             self.rubberBand.show()
         else:
-            r = sqrt(self.getAdjustedSize(self.param)/pi)
+            r = self.getAdjustedSize(sqrt(self.param/pi))
             self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
             for itheta in range(nPoints+1):
                 theta = itheta*(2.0*pi/nPoints)
