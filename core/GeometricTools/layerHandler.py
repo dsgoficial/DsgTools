@@ -1527,7 +1527,7 @@ class LayerHandler(QObject):
         linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
             constraintLineLyrList,
             constraintPolygonListWithGeoBounds,        
-            onlySelected=False,
+            onlySelected=onlySelected,
             feedback=multiStepFeedback,
             context=context,
             algRunner=algRunner
