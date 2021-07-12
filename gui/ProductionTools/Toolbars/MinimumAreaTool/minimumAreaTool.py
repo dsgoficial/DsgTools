@@ -132,17 +132,6 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
         shape = self.shapesComboBox.currentText()
         validated = self.validateCombos(self.sizesComboBox.currentIndex(), self.shapesComboBox.currentIndex())
         if validated:
-            crs = self.iface.mapCanvas().mapSettings().destinationCrs()
-            if crs.mapUnits() != QgsUnitTypes.DistanceMeters:
-                self.iface.messageBar().pushMessage(
-                    self.tr("DSGTools minimum area tool"),
-                    self.tr(
-                        "this tool is optimized to work with canvas in "
-                        "metrical CRS!"
-                    ),
-                    level=Qgis.Warning,
-                    duration=3
-                )
             self.run(scale, size, shape)
         else:
             QMessageBox.warning(self.iface.mainWindow(), self.tr(u"Error!"), self.tr(u"<font color=red>Shape value not defined :</font><br><font color=blue>Define all values to activate tool!</font>"), QMessageBox.Close)              
