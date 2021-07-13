@@ -25,11 +25,13 @@ Builds a temp rubberband with a given size and shape.
 import os
 
 from qgis.core import Qgis, QgsUnitTypes
+from qgis.gui import QgsMapMouseEvent
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QMessageBox, QAction
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import QSettings, pyqtSlot
+from qgis.PyQt.QtGui import QIcon, QMouseEvent
+from qgis.PyQt.QtCore import Qt, QEvent, QSettings, pyqtSlot
 from qgis.PyQt.Qt import QWidget
+from qgis.utils import iface
 
 from .shapeTool import ShapeTool
 from .customSizeSetter import CustomSizeSetter
@@ -132,17 +134,6 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
         shape = self.shapesComboBox.currentText()
         validated = self.validateCombos(self.sizesComboBox.currentIndex(), self.shapesComboBox.currentIndex())
         if validated:
-            crs = self.iface.mapCanvas().mapSettings().destinationCrs()
-            if crs.mapUnits() != QgsUnitTypes.DistanceMeters:
-                self.iface.messageBar().pushMessage(
-                    self.tr("DSGTools minimum area tool"),
-                    self.tr(
-                        "this tool is optimized to work with canvas in "
-                        "metrical CRS!"
-                    ),
-                    level=Qgis.Warning,
-                    duration=3
-                )
             self.run(scale, size, shape)
         else:
             QMessageBox.warning(self.iface.mainWindow(), self.tr(u"Error!"), self.tr(u"<font color=red>Shape value not defined :</font><br><font color=blue>Define all values to activate tool!</font>"), QMessageBox.Close)              
@@ -160,6 +151,15 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
         color.setAlpha(63)
         tool = ShapeTool(self.iface.mapCanvas(), shape, param, self.sizes[size]['shape'], color )
         tool.toolFinished.connect(self.refreshCombo)
+        # draw the figure instantly, no need for move event at first
+        me = QMouseEvent(
+            QEvent.MouseMove, iface.mapCanvas().mouseLastXY(),
+            Qt.NoButton, Qt.NoButton, Qt.NoModifier
+        )
+        # this maps the global positioning to canvas pos correctly and matches
+        # the canvasMoveEvent slot/method signal.
+        qgsMe = QgsMapMouseEvent(iface.mapCanvas(), me)
+        tool.canvasMoveEvent(qgsMe)
         self.iface.mapCanvas().setMapTool(tool)
 
     def refreshCombo(self):
