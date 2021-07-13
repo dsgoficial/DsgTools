@@ -84,7 +84,8 @@ class ShapeTool(QgsMapTool):
         item_position = self.canvas.mapToGlobal(e.pos())
         c = self.toCanvasCoordinates(centroid)
         c = self.canvas.mapToGlobal(c)
-        rotAngle = pi - atan2(item_position.y() - c.y(), item_position.x() - c.x())
+        rotAngle = pi - atan2(
+            item_position.y() - c.y(), item_position.x() - c.x())
         return rotAngle
 
     def canvasPressEvent(self, e):
@@ -105,7 +106,8 @@ class ShapeTool(QgsMapTool):
         """
         source_crs = self.canvas.mapSettings().destinationCrs()
         dest_crs = QgsCoordinateReferenceSystem(3857)
-        tr = QgsCoordinateTransform(source_crs, dest_crs, QgsCoordinateTransformContext())
+        tr = QgsCoordinateTransform(
+            source_crs, dest_crs, QgsCoordinateTransformContext())
         p1t = QgsGeometry().fromPointXY(QgsPointXY(1, 0))
         p1t.transform(tr)
         p2t = QgsGeometry().fromPointXY(QgsPointXY(0, 0))

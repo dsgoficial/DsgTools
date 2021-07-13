@@ -25,11 +25,13 @@ Builds a temp rubberband with a given size and shape.
 import os
 
 from qgis.core import Qgis, QgsUnitTypes
+from qgis.gui import QgsMapMouseEvent
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QMessageBox, QAction
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import QSettings, pyqtSlot
+from qgis.PyQt.QtGui import QIcon, QMouseEvent
+from qgis.PyQt.QtCore import Qt, QEvent, QSettings, pyqtSlot
 from qgis.PyQt.Qt import QWidget
+from qgis.utils import iface
 
 from .shapeTool import ShapeTool
 from .customSizeSetter import CustomSizeSetter
@@ -149,6 +151,15 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
         color.setAlpha(63)
         tool = ShapeTool(self.iface.mapCanvas(), shape, param, self.sizes[size]['shape'], color )
         tool.toolFinished.connect(self.refreshCombo)
+        # draw the figure instantly, no need for move event at first
+        me = QMouseEvent(
+            QEvent.MouseMove, iface.mapCanvas().mouseLastXY(),
+            Qt.NoButton, Qt.NoButton, Qt.NoModifier
+        )
+        # this maps the global positioning to canvas pos correctly and matches
+        # the canvasMoveEvent slot/method signal.
+        qgsMe = QgsMapMouseEvent(iface.mapCanvas(), me)
+        tool.canvasMoveEvent(qgsMe)
         self.iface.mapCanvas().setMapTool(tool)
 
     def refreshCombo(self):
