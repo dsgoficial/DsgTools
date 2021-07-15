@@ -1642,11 +1642,9 @@ class LayerHandler(QObject):
             builtPolygonLyr, onlySelected=False)
         size = 100/featCount if featCount else 0
         columns = self.getAttributesFromBlackList(
-            inputCenterPointLyr,
-            attributeBlackList=attributeBlackList
-        )
+            inputCenterPointLyr, attributeBlackList=attributeBlackList)
         fields = self.getFieldsFromAttributeBlackList(
-            inputCenterPointLyr, attributeBlackList)                                             columns)         
+            inputCenterPointLyr, attributeBlackList)  
         for current, feat in enumerate(builtPolygonLyr.getFeatures()):
             if feedback is not None and feedback.isCanceled():
                 break
@@ -1669,6 +1667,9 @@ class LayerHandler(QObject):
                     break
                 if engine.intersects(pointFeat.geometry().constGet()):
                     attr = tuple((pointFeat[f] for f in columns))
+                    # for index in listColumnAttr:
+                    #     attr.append(pointFeat.attributes()[index])
+                    # attr = tuple(attr)
                     builtPolygonToCenterPointDict[geomKey][attr] = fields
                 if feedback is not None:
                     feedback.setCurrentStep(current * size)
