@@ -143,10 +143,12 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
             raise QgsProcessingException(self.tr('The desired scale denominator must not be bigger than the base scale denominator.'))
         indexTypeIdx = self.parameterAsEnum(parameters, self.INDEX_TYPE, context)
         inputIndex = self.parameterAsString(parameters, self.INDEX, context)
+        if startScaleIdx in [0,1] and indexTypeIdx == 0:
+            raise QgsProcessingException(self.tr('{index} is only valid for scales 250k and below.').format(index=self.indexTypes[indexTypeIdx]))
         if inputIndex is None or inputIndex == '':
             raise QgsProcessingException(self.tr('Invalid {index}').format(index=self.indexTypes[indexTypeIdx]))
         index = self.getIndex(inputIndex, indexTypeIdx, startScaleIdx)
-        if not self.validateIndex(index):
+        if index is None or not self.validateIndex(index):
             raise QgsProcessingException(self.tr('Invalid {index} format.').format(index=self.indexTypes[indexTypeIdx]))
         crs = self.parameterAsCrs(parameters, self.CRS, context)
         if crs is None or not crs.isValid():
@@ -213,7 +215,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
         Returns map_index
         """
         if indexType == 0:
-            if scaleType == 1:
+            if scaleType == 2:
                 return UtmGrid().getINomenFromMIR(inputIndex)
             else:
                 return UtmGrid().getINomenFromMI(inputIndex)

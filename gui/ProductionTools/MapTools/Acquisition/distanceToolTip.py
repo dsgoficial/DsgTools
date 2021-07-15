@@ -50,7 +50,7 @@ class DistanceToolTip(ToolTip):
 		p2t = QgsGeometry().fromPointXY(p2)
 		p2t.transform(tr)
 		distance = QgsDistanceArea()
-		m = distance.measureLine(p1t.asPoint(), p2t.asPoint()) 
+		m = distance.measureLine(p1t.asPoint(), p2t.asPoint())
 		return m
 
 	def canvasMoveEvent(self, last_p, current_p):

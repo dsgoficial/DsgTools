@@ -34,8 +34,13 @@ from osgeo import ogr
 
 import processing
 from qgis.utils import iface
-from qgis.core import QgsDataSourceUri, QgsVectorLayer, QgsProcessingFeedback,\
-                      QgsProcessingContext, QgsLayerTreeLayer, QgsProject
+from qgis.core import (QgsProject,
+                       QgsVectorLayer,
+                       QgsDataSourceUri,
+                       QgsLayerTreeLayer,
+                       QgsProcessingContext,
+                       QgsProcessingFeedback,
+                       QgsCoordinateReferenceSystem)
 from qgis.PyQt.QtSql import QSqlDatabase
 
 from DsgTools.core.dsgEnums import DsgEnums
@@ -140,7 +145,7 @@ class Tester(unittest.TestCase):
         for f in fileList:
             fullPath = os.path.join(path, f)
             for layer in ogr.Open(fullPath):
-                layername = layer.GetName()
+                layername = os.path.splitext(f)[0]
                 layers[layername] = QgsVectorLayer(
                     fullPath,
                     layername,
@@ -962,156 +967,188 @@ class Tester(unittest.TestCase):
 
             "dsgtools:enforcespatialrules" : [
                 {
-                    '__comment' : "Tests 1 - tests every single topological relation to its simplest state",
-                    "RULES_SET":[
+                    '__comment' : "Tests 1 - tests all topological relation",
+                    "RULES_SET": [
                         {
                             "cardinality": "1..1",
+                            "de9im_predicate": "",
                             "filter_a": "",
                             "filter_b": "",
                             "layer_a": "rel_pico_p",
                             "layer_b": "rel_ponto_cotado_altimetrico_p",
                             "name": "Pico deve estar em cima de um ponto cotado",
-                            "predicate": 0
+                            "predicate": 0,
+                            "useDE9IM": False
                         },
                         {
                             "cardinality": "1..*",
+                            "de9im_predicate": "",
                             "filter_a": "",
                             "filter_b": "",
                             "layer_a": "rel_ponto_cotado_altimetrico_p",
                             "layer_b": "hid_massa_dagua_a",
                             "name": "Pontos cotados altimétricos não podem estar sobre massa d’água",
-                            "predicate": 2
+                            "predicate": 2,
+                            "useDE9IM": False
                         },
                         {
                             "cardinality": "1..*",
+                            "de9im_predicate": "",
                             "filter_a": "",
                             "filter_b": "",
                             "layer_a": "enc_torre_energia_p",
                             "layer_b": "enc_trecho_energia_l",
                             "name": "Torres de energia devem estar sobre um ou mais trechos de energia",
-                            "predicate": 3
+                            "predicate": 3,
+                            "useDE9IM": False
                         },
                         {
                             "cardinality": "2..2",
+                            "de9im_predicate": "",
                             "filter_a": "",
                             "filter_b": "",
                             "layer_a": "hid_barragem_p",
                             "layer_b": "hid_trecho_drenagem_l",
                             "name": "Barragens tipo ponto estão entre 2 e somente trechos de drenagem",
-                            "predicate": 5
+                            "predicate": 5,
+                            "useDE9IM": False
                         },
                         {
                             "cardinality": "1..1",
+                            "de9im_predicate": "",
                             "filter_a": "",
                             "filter_b": "",
                             "layer_a": "veg_brejo_pantano_a",
                             "layer_b": "hid_area_umida_a",
                             "name": "Brejo/Pantano deve estar contido por uma Área Úmida",
-                            "predicate": 9
+                            "predicate": 9,
+                            "useDE9IM": False
                         },
                         {
                             "cardinality": "1..*",
-                            "filter_a": "\"modaluso\" = '5'",
+                            "de9im_predicate": "",
+                            "filter_a": "modaluso = 5",
                             "filter_b": "",
                             "layer_a": "tra_ponte_l",
                             "layer_b": "fer_trecho_ferroviario_l",
                             "name": "O modalUso de Ponte deve ser Ferroviario se esta intersectar um Trecho Ferroviario.",
-                            "predicate": 3
+                            "predicate": 3,
+                            "useDE9IM": False
                         },
                         {
                             "cardinality": "1..*",
-                            "filter_a": "\"modaluso\" != '5'",
+                            "de9im_predicate": "",
+                            "filter_a": "modaluso != 5",
                             "filter_b": "",
                             "layer_a": "tra_ponte_l",
                             "layer_b": "fer_trecho_ferroviario_l",
                             "name": "O modalUso de Ponte deve ser Ferroviario se esta intersectar um Trecho Ferroviario.",
-                            "predicate": 4
+                            "predicate": 4,
+                            "useDE9IM": False
                         },
                         {
                             "cardinality": "1..*",
+                            "de9im_predicate": "",
                             "filter_a": "",
                             "filter_b": "",
                             "layer_a": "hid_trecho_drenagem_l",
                             "layer_b": "hid_vala_l",
                             "name": "Valas não são sobrepostas por drenagens",
-                            "predicate": 12
+                            "predicate": 12,
+                            "useDE9IM": False
                         },
                         {
                             "cardinality": "0..1",
+                            "de9im_predicate": "",
                             "filter_a": "",
                             "filter_b": "",
                             "layer_a": "hid_barragem_a",
                             "layer_b": "hid_trecho_drenagem_l",
                             "name": "Barragens do tipo área contêm até uma drenagem",
-                            "predicate": 13
+                            "predicate": 13,
+                            "useDE9IM": False
                         },
                         {
                             "cardinality": "0..1",
+                            "de9im_predicate": "",
                             "filter_a": "",
                             "filter_b": "",
                             "layer_a": "linhas",
                             "layer_b": "poligonos",
                             "name": "Teste: 'linhas' não cruza 'poligonos'",
-                            "predicate": 7
+                            "predicate": 7,
+                            "useDE9IM": False
                         },
                         {
                             "cardinality": "1..*",
+                            "de9im_predicate": "",
                             "filter_a": "",
                             "filter_b": "",
                             "layer_a": "poligonos_2",
                             "layer_b": "poligonos",
                             "name": "Teste: 'poligonos_2' sobrepõe 'poligonos'",
-                            "predicate": 11
+                            "predicate": 11,
+                            "useDE9IM": False
                         },
                         {
                             "cardinality": "1..*",
+                            "de9im_predicate": "",
                             "filter_a": "",
                             "filter_b": "",
                             "layer_a": "linhas_2",
                             "layer_b": "linhas",
                             "name": "Teste: 'linhas_2' não é igual a 'linhas'",
-                            "predicate": 1
+                            "predicate": 1,
+                            "useDE9IM": False
                         },
                         {
                             "cardinality": "1..*",
+                            "de9im_predicate": "",
                             "filter_a": "",
                             "filter_b": "",
                             "layer_a": "poligonos",
                             "layer_b": "poligonos_2",
                             "name": "Teste: 'poligonos' não toca 'poligonos_2'",
-                            "predicate": 6
+                            "predicate": 6,
+                            "useDE9IM": False
                         },
                         {
                             "cardinality": "1..*",
+                            "de9im_predicate": "",
                             "filter_a": "",
                             "filter_b": "",
                             "layer_a": "linhas_2",
                             "layer_b": "poligonos_2",
                             "name": "Teste: 'linhas_2' não cruza 'poligonos_2'",
-                            "predicate": 8
+                            "predicate": 8,
+                            "useDE9IM": False
                         },
                         {
                             "cardinality": "1..*",
+                            "de9im_predicate": "",
                             "filter_a": "",
                             "filter_b": "",
                             "layer_a": "points",
                             "layer_b": "poligonos_2",
                             "name": "Teste: 'points' não está contido em 'poligonos_2'",
-                            "predicate": 10
+                            "predicate": 10,
+                            "useDE9IM": False
                         },
                         {
                             "cardinality": "1..*",
+                            "de9im_predicate": "",
                             "filter_a": "",
                             "filter_b": "",
                             "layer_a": "poligonos_2",
                             "layer_b": "points",
                             "name": "Teste: 'poligonos_2' não contém 'points'",
-                            "predicate": 14
+                            "predicate": 14,
+                            "useDE9IM": False
                         }
                     ],
-                    "POINT_FLAGS":"memory:",
-                    "LINE_FLAGS":"memory:",
-                    "POLYGON_FLAGS":"memory:"
+                    "POINT_FLAGS": "memory:",
+                    "LINE_FLAGS": "memory:",
+                    "POLYGON_FLAGS": "memory:"
                 }
             ],
             "dsgtools:enforceattributerulesalgorithm" : [
@@ -1343,7 +1380,10 @@ class Tester(unittest.TestCase):
         processing context.
         :param layer: (QgsVectorLayer) layer object to be loaded to canvas.
         """
-        QgsProject.instance().addMapLayer(layer, True)
+        proj = QgsProject.instance()
+        if not proj.mapLayersByName(layer.name()):
+            return
+        proj.addMapLayer(layer, True)
 
     def clearProject(self):
         """
@@ -1353,7 +1393,7 @@ class Tester(unittest.TestCase):
 
     def testAlg(self, algName, feedback=None, context=None, loadLayers=False,
             multipleOutputs=False, attributeBlackList=None,
-            addControlKey=False, selected=None):
+            addControlKey=False):
         """
         Tests if the output of a given algorithm is the expected one.
         :param algName: (str) target algorithm's name.
@@ -1447,17 +1487,20 @@ class Tester(unittest.TestCase):
                         if isinstance(expected[key], QgsVectorLayer):
                             expected[key].rollBack()
         except Exception as e:
-            if isinstance(output, QgsVectorLayer):
-                output.rollBack()
-            elif isinstance(output, dict):
-                [lyr.rollBack() for key, lyr in output.items() if isinstance(lyr, QgsVectorLayer)]
-            if isinstance(expected, QgsVectorLayer):
-                expected.rollBack()
-            elif isinstance(expected, dict):
-                [lyr.rollBack() for key, lyr in expected.items() if isinstance(lyr, QgsVectorLayer)]
+            try:
+                if isinstance(output, QgsVectorLayer):
+                    output.rollBack()
+                elif isinstance(output, dict):
+                    [lyr.rollBack() for key, lyr in output.items() if isinstance(lyr, QgsVectorLayer)]
+                if isinstance(expected, QgsVectorLayer):
+                    expected.rollBack()
+                elif isinstance(expected, dict):
+                    [lyr.rollBack() for key, lyr in expected.items() if isinstance(lyr, QgsVectorLayer)]
+            except:
+                pass
             return "Test #{nr} for '{alg}' has failed:\n'{msg}'".format(
-                    msg=", ".join(map(str, e.args)), nr=i + 1, alg=algName
-                )
+                msg=", ".join(map(str, e.args)), nr=i + 1, alg=algName
+            )
         # missing the output testing
         return ""
     
@@ -1740,33 +1783,41 @@ class Tester(unittest.TestCase):
         self.assertEqual(msg, "")
 
     def test_identifypolygonsliver(self):
+        """Tests for Polygon Sliver Algorithm"""
         self.assertEqual(
             self.testAlg("dsgtools:identifypolygonsliver", addControlKey=True), ""
         )
 
-    # def test_enforcespatialrules(self):
-    #     """Tests for Enforce Spatial Rules algorithm"""
-    #     testsParams = self.algorithmParameters("dsgtools:enforcespatialrules")
-    #     # this algorithm, specifically has to set layers Context-reading ready
-    #     layers = self.testingDataset("geojson", "spatial_rules_alg")
-    #     layers = {l.split("-")[-1]: vl for l, vl in layers.items()}
-    #     for parameters in testsParams:
-    #         for rule in parameters["RULES_SET"]:
-    #             for key in ["layer_a", "layer_b"]:
-    #                 vl = layers[rule[key]]
-    #                 # these layers are saved as "edgv3-*"
-    #                 vl.setName(rule[key])
-    #                 self.loadLayerToCanvas(vl)
-    #     msg = self.testAlg(
-    #         "dsgtools:enforcespatialrules",
-    #         multipleOutputs=True,
-    #         addControlKey=True
-    #     )
-    #     # since layers were manually removed, cache is going to refer to 
-    #     # non-existing layers
-    #     del self.datasets["geojson:spatial_rules_alg"]
-    #     self.clearProject()
-    #     self.assertEqual(msg, "")
+    def test_enforcespatialrules(self):
+        """Tests for Enforce Spatial Rules algorithm"""
+        # this algo uses layers read from canvas using their names as inputs
+        # hence it needs to be loaded to project's canvas
+        proj = QgsProject.instance()
+        proj.clear()
+        crs = proj.crs()
+        proj.setCrs(QgsCoordinateReferenceSystem(4326))
+        layers = self.testingDataset("geojson", "spatial_rules_alg")
+        for l, vl in layers.items():
+            # vl = layers[l]
+            # vl.setName(l)
+            proj.addMapLayer(layers[l])
+        msg = self.testAlg(
+            "dsgtools:enforcespatialrules",
+            multipleOutputs=True,
+            addControlKey=True
+        )
+        # since layers were manually removed, cache is going to refer to 
+        # non-existing layers
+        del self.datasets["geojson:spatial_rules_alg"]
+        proj.clear()
+        if crs and crs.isValid():
+            proj.setCrs(crs)
+        self.assertEqual(msg, "")
+
+    def test_identifypolygonsliver(self):
+        self.assertEqual(
+            self.testAlg("dsgtools:identifypolygonsliver", addControlKey=True), ""
+        )
 
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
