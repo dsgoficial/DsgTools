@@ -126,15 +126,19 @@ class BDGExRequestHandler(QObject):
         if not self.availableServicesDict[service]['services'][serviceType]:
             self.availableServicesDict[service]['services'][serviceType] = self.getCapabilitiesDict(service, url, service_type=serviceType)
         layers = self.availableServicesDict[service]['services'][serviceType]
-        if layers is not None and layerList[0] in layers:
-            return self.getRequestString(
-                layerList,
-                url,
-                layers[layerList[0]],
-                serviceType
-            )
+        if layers is not None:
+            layer = layers.get(layerList[0], None) \
+                or layers.get("ms:{0}".format(layerList[0]), None)
+            if layer:
+                return self.getRequestString(
+                    layerList,
+                    url,
+                    layer,
+                    serviceType
+                )
 
-    def getCapabilitiesDict(self, service, url, service_type='WMS'):
+    def getCapabilitiesDict(self, service, url, service_type=None):
+        service_type = service_type or 'WMS'
         capabilities_url = "{url}?service={service_type}&request=GetCapabilities".format(
             url=self.availableServicesDict[service]['url'],
             service_type=service_type
@@ -211,7 +215,8 @@ class BDGExRequestHandler(QObject):
         for node in capabilitiesDom.getElementsByTagName('FeatureType'):
             newItem = dict()
             name = node.getElementsByTagName('Name')[0].childNodes[0].nodeValue
-            epsg = node.getElementsByTagName('DefaultSRS')[0].childNodes[0].nodeValue
+            crsNode = node.getElementsByTagName('DefaultSRS') or node.getElementsByTagName('DefaultCRS')
+            epsg = crsNode[0].childNodes[0].nodeValue
             newItem = {
                 'Name' : name,
                 'SRS' : 'EPSG:{code}'.format(code=epsg.split('::')[-1])
