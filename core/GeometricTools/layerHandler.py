@@ -21,8 +21,6 @@
  ***************************************************************************/
 """
 
-from __future__ import absolute_import
-
 from collections import defaultdict
 from functools import partial
 from itertools import combinations
@@ -151,7 +149,15 @@ class LayerHandler(QObject):
         if not epsg:
             epsg = layerList[0].crs().authid().split(':')[-1]
         if not geomType:
-            geomType = layerList[0].geometryType()
+            geomType = None
+            for layer in layerList:
+                if layer.featureCount() > 0:
+                    geomType = int(next(layer.getFeatures())\
+                        .geometry().wkbType())
+                    break
+            else:
+                raise ValueError(
+                    self.tr("No layers were provided or they are all empty."))
         unified_layer = self.createUnifiedVectorLayer(geomType, epsg,
                                                       attributeTupple=attributeTupple)
         parameterDict = self.getDestinationParameters(unified_layer)
@@ -171,7 +177,7 @@ class LayerHandler(QObject):
         """
         fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
         lyrUri = "{0}?crs=epsg:{1}".format(
-            QgsWkbTypes.displayString(geomType), srid)
+            QgsWkbTypes.displayString(int(geomType)), srid)
         lyr = QgsVectorLayer(lyrUri, "unified_layer", "memory")
         lyr.startEditing()
         fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
@@ -1839,3 +1845,41 @@ class LayerHandler(QObject):
             providerIdx = fields.fieldOriginIndex(idx)
             defaultValues[f.name()] = provider.defaultValueClause(providerIdx)
         return defaultValues
+
+    def getPolygonSlivers(
+            self, layer, ratio, selected=False, silent=False, feedback=None):
+        """
+        Identifies the polygon slivers for a given ratio area-perimeter
+        of a layer.
+        :param layer: (QgsVectorLayer) layer to be checked.
+        :param ratio: (float) ratio area-perimeter to be used as tolerance.
+        :param selected: (bool) whether exclusively selected features from
+                         input layer should be checked for polygon slivers.
+        :param silent: (bool) whether an invalid or empty geometry should be
+                       ignored.
+        :param feedback: (QgsProcessingFeedback) QGIS object to keep track of
+                         algorithm's progress/status.
+        :return: (list-of-QgsFeature) list of all polygon slivers found in the
+                 in the input layer.
+        """
+        if not layer.geometryType() != QgsWkbTypes.PolygonGeometry:
+            Exception(self.tr("Input layer is not polygon."))
+        slivers = list()
+        feats = list(layer.getSelectedFeatures() if selected \
+            else layer.getFeatures())
+        stepSize = 100 / len(feats) if feats else 0
+        for step, f in enumerate(feats):
+            geom = f.geometry()
+            if geom.length() == 0 or not geom.isGeosValid():
+                if not silent:
+                    raise Exception(
+                        self.tr("Invalid or empty geometry found!"))
+                feedback.setProgress((step + 1) * stepSize)
+                continue
+            if geom.area() / geom.length() < ratio:
+                slivers.append(f)
+            if feedback is not None:
+                if feedback.isCanceled():
+                    return slivers
+                feedback.setProgress((step + 1) * stepSize)
+        return slivers
