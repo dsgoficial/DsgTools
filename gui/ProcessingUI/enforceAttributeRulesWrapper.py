@@ -23,22 +23,11 @@
 import json
 from functools import partial
 
-from qgis.core import (QgsProject,
-                       QgsVectorLayer,
-                       QgsMapLayerProxyModel,
-                       QgsFieldProxyModel)
-from qgis.gui import (QgsColorButton,
-                      QgsMapLayerComboBox,
-                      QgsFieldComboBox,
-                      QgsFieldExpressionWidget)
-from qgis.PyQt import QtCore
-from qgis.PyQt.QtCore import Qt, QRegExp, pyqtSlot
-from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import (QHBoxLayout,
-                                 QVBoxLayout,
-                                 QMessageBox,
+from qgis.core import (QgsProject, QgsVectorLayer)
+from qgis.gui import QgsFieldExpressionWidget
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import (QMessageBox,
                                  QHeaderView,
-                                 QWidget,
                                  QComboBox,
                                  QLineEdit)
 from processing.gui.wrappers import (WidgetWrapper,
@@ -207,6 +196,10 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
                                                  attrRulesMap,
                                                  newDict,
                                                  notLoadedLyr)
+                else:
+                    attrRulesMap.clear()
+            else:
+                attrRulesMap.clear()
 
         elif not notLoadedLyr and invalidRules:
             invalidRulesWarning = self.validateMethods.showLoadingMsg(
