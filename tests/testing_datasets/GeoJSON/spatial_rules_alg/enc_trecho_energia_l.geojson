@@ -1,8 +1,8 @@
 {
 "type": "FeatureCollection",
 "name": "enc_trecho_energia_l",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::32721" } },
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
-{ "type": "Feature", "properties": { "id": 1, "nome": null, "geometriaaproximada": false, "especie": 9999, "posicaorelativa": 9999, "operacional": 9999, "situacaofisica": 5, "largurafaixaservidao": null, "sin": 9999 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 7869499.898516720160842, 10027916.181763753294945 ], [ 7878641.798765239305794, 10071797.302956646308303 ], [ 7923132.379974700510502, 10130305.464547172188759 ], [ 7987125.681714337319136, 10143713.584911666810513 ] ] ] } }
+{ "type": "Feature", "properties": { "id": 1, "nome": null, "geometriaaproximada": false, "especie": 9999, "posicaorelativa": 9999, "operacional": 9999, "situacaofisica": 5, "largurafaixaservidao": null, "sin": 9999 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ -2.019666514582805, 0.143934990273848 ], [ -1.971416238203387, 0.369739621759111 ], [ -1.740564808353586, 0.667136300841211 ], [ -1.41527791761212, 0.729634877455642 ] ] ] } }
 ]
 }
