@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 
-import processing
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtGui import QColor, QFont
 from qgis.core import (QgsFeature,
@@ -39,7 +38,6 @@ from qgis.core import (QgsFeature,
 from qgis.PyQt.QtWidgets import (QMessageBox)
 
 from .validationAlgorithm import ValidationAlgorithm
-
 
 
 class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
@@ -143,7 +141,7 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
         rules = self.parameterAsAttributeRulesSet(
             parameters, self.RULES_SET, context
         )
-        
+
         if not rules or not self.validateRuleSet(rules):
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.RULES_SET)
@@ -151,7 +149,8 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
 
         if self.validateRuleSet(rules):
 
-            onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+            onlySelected = self.parameterAsBool(
+                parameters, self.SELECTED, context)
 
             crs = QgsProject.instance().crs()
             pointFlags, ptId = self.parameterAsSink(
@@ -181,10 +180,10 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
             failedFeatures = self.applyAttrRules(rules, onlySelected)
 
             self.flagsFromFailedList(failedFeatures,
-                                    pointFlags,
-                                    lineFlags,
-                                    polygonFlags,
-                                    feedback)
+                                     pointFlags,
+                                     lineFlags,
+                                     polygonFlags,
+                                     feedback)
             return {
                 self.POINT_FLAGS: ptId,
                 self.LINE_FLAGS: lId,
@@ -208,7 +207,8 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
                 request = QgsFeatureRequest().setFilterExpression(
                     ruleParam["expression"])
                 selectedFeatures = lyr.getSelectedFeatures(request)
-                ruleParam["features"] = [feature for feature in selectedFeatures]
+                ruleParam["features"] = [
+                    feature for feature in selectedFeatures]
             else:
                 ruleParam["features"] = [
                     feature for feature in proj.mapLayersByName(

@@ -22,8 +22,7 @@
 """
 import os
 from qgis.core import QgsProject, QgsMapLayerProxyModel
-from qgis.gui import QgsMapLayerComboBox, QgsFieldComboBox
-from qgis.PyQt import QtCore, QtWidgets, uic
+from qgis.PyQt import uic
 from qgis.PyQt.QtCore import QSize
 from qgis.PyQt.QtWidgets import QWidget
 
