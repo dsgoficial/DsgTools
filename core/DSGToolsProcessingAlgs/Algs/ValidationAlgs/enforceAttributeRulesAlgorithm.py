@@ -195,9 +195,9 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
                 ruleParam["features"] = [
                     feature for feature in selectedFeatures]
             else:
+                lyr = proj.mapLayersByName(ruleParam["layerField"][0])[0]
                 ruleParam["features"] = [
-                    feature for feature in proj.mapLayersByName(
-                        ruleParam["layerField"][0])[0].getFeatures(ruleParam["expression"])]
+                    feature for feature in lyr.getFeatures(ruleParam["expression"])]
             self.applyConditionalStyle(proj.mapLayersByName(
                 ruleParam["layerField"][0])[0], ruleParam)
         return attrRulesMap
