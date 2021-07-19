@@ -1768,24 +1768,24 @@ class Tester(unittest.TestCase):
         layers = self.testingDataset("geojson", "enforce_attribute_rules")
 
         for parameters in testsParams:
-                for key, values in parameters["RULES_SET"].items():
-                    if isinstance(layers, list):
-                        vl = layers[0]
-                        vl.setName(layers[0].name())
-                        self.loadLayerToCanvas(vl)
-                        if parameters['SELECTED']:
-                            vl.selectByIds(idsToSelect)
-                    else:
-                        vl = layers[values["layerField"][0]]
-                        vl.setName(values["layerField"][0])
-                        self.loadLayerToCanvas(vl)
-                        if parameters['SELECTED']:
-                            vl.selectByIds(idsToSelect)
+            for key, values in parameters["RULES_SET"].items():
+                if isinstance(layers, list):
+                    vl = layers[0]
+                    vl.setName(layers[0].name())
+                    self.loadLayerToCanvas(vl)
+                    if parameters['SELECTED']:
+                        vl.selectByIds(idsToSelect)
+                else:
+                    vl = layers[values["layerField"][0]]
+                    vl.setName(values["layerField"][0])
+                    self.loadLayerToCanvas(vl)
+                    if parameters['SELECTED']:
+                        vl.selectByIds(idsToSelect)
 
         msg = self.testAlg(
-            "dsgtools:enforceattributerulesalgorithm",
-            multipleOutputs=True,
-            addControlKey=True
+                "dsgtools:enforceattributerulesalgorithm",
+                multipleOutputs=True,
+                addControlKey=True
         )
         
         del self.datasets["geojson:enforce_attribute_rules"]

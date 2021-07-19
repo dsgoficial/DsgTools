@@ -113,19 +113,6 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
         """
         return parameters[name]
 
-    def validateRuleSet(self, attrRulesMap):
-        """
-        Verifies whether given rule set is valid/applicable.
-        :param ruleDict: (dict) rules to be checked;
-        :return: (bool) rules validity status.
-            0: valueMap["description"],
-            1: valueMap["layerField"],
-            2: valueMap["expression"],
-            3: valueMap["errorType"],
-            4: valueMap["color"]
-        """
-        return True
-
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
@@ -142,52 +129,50 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
             parameters, self.RULES_SET, context
         )
 
-        if not rules or not self.validateRuleSet(rules):
+        if not rules:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.RULES_SET)
             )
 
-        if self.validateRuleSet(rules):
+        onlySelected = self.parameterAsBool(
+            parameters, self.SELECTED, context)
 
-            onlySelected = self.parameterAsBool(
-                parameters, self.SELECTED, context)
+        crs = QgsProject.instance().crs()
+        pointFlags, ptId = self.parameterAsSink(
+            parameters, self.POINT_FLAGS, context,
+            self.flagFields, QgsWkbTypes.Point, crs)
 
-            crs = QgsProject.instance().crs()
-            pointFlags, ptId = self.parameterAsSink(
-                parameters, self.POINT_FLAGS, context,
-                self.flagFields, QgsWkbTypes.Point, crs)
+        if not pointFlags:
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.POINT_FLAGS))
 
-            if not pointFlags:
-                raise QgsProcessingException(
-                    self.invalidSourceError(parameters, self.POINT_FLAGS))
+        lineFlags, lId = self.parameterAsSink(
+            parameters, self.LINE_FLAGS, context,
+            self.flagFields, QgsWkbTypes.LineString, crs)
 
-            lineFlags, lId = self.parameterAsSink(
-                parameters, self.LINE_FLAGS, context,
-                self.flagFields, QgsWkbTypes.LineString, crs)
+        if not lineFlags:
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.LINE_FLAGS))
 
-            if not lineFlags:
-                raise QgsProcessingException(
-                    self.invalidSourceError(parameters, self.LINE_FLAGS))
+        polygonFlags, polId = self.parameterAsSink(
+            parameters, self.POLYGON_FLAGS, context,
+            self.flagFields, QgsWkbTypes.Polygon, crs)
 
-            polygonFlags, polId = self.parameterAsSink(
-                parameters, self.POLYGON_FLAGS, context,
-                self.flagFields, QgsWkbTypes.Polygon, crs)
+        if not polygonFlags:
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.POLYGON_FLAGS))
 
-            if not polygonFlags:
-                raise QgsProcessingException(
-                    self.invalidSourceError(parameters, self.POLYGON_FLAGS))
+        failedFeatures = self.applyAttrRules(rules, onlySelected)
 
-            failedFeatures = self.applyAttrRules(rules, onlySelected)
-
-            self.flagsFromFailedList(failedFeatures,
-                                     pointFlags,
-                                     lineFlags,
-                                     polygonFlags,
-                                     feedback)
-            return {
-                self.POINT_FLAGS: ptId,
-                self.LINE_FLAGS: lId,
-                self.POLYGON_FLAGS: polId}
+        self.flagsFromFailedList(failedFeatures,
+                                    pointFlags,
+                                    lineFlags,
+                                    polygonFlags,
+                                    feedback)
+        return {
+            self.POINT_FLAGS: ptId,
+            self.LINE_FLAGS: lId,
+            self.POLYGON_FLAGS: polId}
 
     def applyAttrRules(self, attrRulesMap, onlySelected):
         """
