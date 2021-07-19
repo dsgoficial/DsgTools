@@ -85,7 +85,7 @@ class Polygon(GeometricaAcquisition):
                             else:
                                 self.iface.messageBar().pushMessage(
                                         self.tr("Info:"),
-                                        self.tr("Not possible to digitise, segment smaller than minimun distance."),
+                                        self.tr("Not possible to digitize, segment smaller than minimun distance."),
                                         level=Qgis.Info
                                     )                        
                     else:

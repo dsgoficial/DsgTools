@@ -21,17 +21,18 @@
  ***************************************************************************/
 """
 import os
+import json
+from collections import defaultdict
 
-# Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
-from qgis.PyQt.Qt import QObject
+from qgis.core import (Qgis,
+                       QgsProject,
+                       QgsMessageLog,
+                       QgsVectorLayer,
+                       QgsDataSourceUri,
+                       QgsEditorWidgetSetup,
+                       QgsCoordinateReferenceSystem)
+from qgis.PyQt.QtSql import QSqlQuery
 
-# QGIS imports
-from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog, Qgis, QgsProject, QgsEditorWidgetSetup
-from qgis.utils import iface
-
-#DsgTools imports
 from .edgvLayerLoader import EDGVLayerLoader
 from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
@@ -72,6 +73,98 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
                     return ll
         return loaded
 
+    def specialEdgvAttributes(self):
+        """
+        Gets the list of attributes shared by many EDGV classes and have a different domain
+        depending on which category the EDGV class belongs to.
+        :return: (list-of-str) list of "special" EDGV classes. 
+        """
+        return ["finalidade", "relacionado", "coincidecomdentrode", "tipo"]
+
+    def tableFields(self, table):
+        """
+        Gets all attribute names for a table.
+        :return: (list-of-str) list of attribute names.
+        """
+        return self.abstractDb.tableFields(table)
+
+    def domainMapping(self, modelVersion):
+        """
+        Identifies wich table and attribute is related to all tables available
+        in the database that has a mapping (FK to a domain table).
+        :param modelVersion: (str) which model version is identified (e.g. 3.0)
+        :return: (dict) mapping from each layer's attributes to its FK relative
+        - Mapping format:
+            {
+                "schema_layer_name": {
+                    "layer_attribute_name": [
+                        "domain_table_name",
+                        "domain_refereced_attribute_name"
+                    ]
+                }
+            }
+        """
+        basePath = os.path.join(
+            os.path.dirname(__file__), "..", "..", "DbModels", "DomainMapping")
+        path = {
+            "EDGV 3.0": os.path.join(basePath, "edgv_3.json"),
+            "3.0": os.path.join(basePath, "edgv_3.json"),
+            "EDGV 2.1.3 Pro": os.path.join(basePath, "edgv_213_pro.json"),
+            "2.1.3 Pro": os.path.join(basePath, "edgv_213_pro.json"),
+            "EDGV 2.1.3": os.path.join(basePath, "edgv_213.json"),
+            "2.1.3": os.path.join(basePath, "edgv_213.json")
+        }.pop(modelVersion, None)
+        if path is None or not os.path.exists(path):
+            return dict()
+        with open(path, "r") as fp:
+            # file generated based on PostGIS FK metadata
+            return json.load(fp)
+
+    def getAllEdgvDomainsFromTableName(self, schema, table):
+        """
+        EDGV databases deployed by DSGTools have a set of domain tables. Gets the value map from such DB.
+        It checks for all attributes found.
+        :param table: (str) layer to be checked for its EDGV mapping.
+        :return: (dict) value map for all attributes that have one.
+        """
+        self.abstractDb.checkAndOpenDb()
+        ret = defaultdict(dict)
+        db = self.abstractDb.db
+        edgv = self.abstractDb.getDatabaseVersion()
+        domainMap = self.domainMapping(edgv)
+        fullTablaName = schema + "_" + table
+        sql = 'select code, code_name from dominios_{field} order by code'
+        for fieldName in self.tableFields(fullTablaName):
+            if fullTablaName in domainMap:
+                domains = domainMap[fullTablaName]
+                # if domain mapping is not yet available for current version
+                if fieldName in domains:
+                    # replace this method over querying db for the table...
+                    domainTable = domains[fieldName][0]
+                else:
+                    # non-mapped attribute
+                    continue
+                query = QSqlQuery(sql.format(field=domainTable), db)
+            elif fieldName in self.specialEdgvAttributes():
+                # EDGV "special" attributes that are have different domains depending on
+                # which class it belongs to
+                if edgv in ("2.1.3 Pro", "3.0 Pro"):
+                    # Pro versions now follow the logic "{attribute}_{CLASS_NAME}"
+                    cat = table.rsplit("_", 1)[0].split("_", 1)[-1]
+                else:
+                    cat = table.split("_")[0]
+                attrTable = "{attribute}_{cat}".format(attribute=fieldName, cat=cat)
+                query = QSqlQuery(sql.format(field=attrTable), db)
+            else:
+                query = QSqlQuery(sql.format(field=fieldName), db)
+            if not query.isActive():
+                continue
+            while query.next():
+                code = str(query.value(0))
+                code_name = query.value(1)
+                ret[fieldName][code_name] = code
+        return ret
+
     def load(self, inputList, useQml=False, uniqueLoad=False, useInheritance=False, stylePath=None, onlyWithElements=False, geomFilterList=[], isEdgv=True, customForm=False, editingDict=None, parent=None):
         """
         1. Get loaded layers
@@ -89,9 +182,14 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         edgvVersion = self.abstractDb.getDatabaseVersion()
         rootNode = QgsProject.instance().layerTreeRoot()
         dbNode = self.getDatabaseGroup(rootNode)
-        #3. Load Domains
-        #do this only if EDGV Version = FTer
-        domLayerDict = self.loadDomains(filteredLayerList, dbNode, edgvVersion)
+        # #3. Load Domains
+        # #do this only if EDGV Version = FTer
+        # domLayerDict = self.loadDomains(filteredLayerList, dbNode, edgvVersion)
+        # NOTE: iface.interfaceLegend() has changed and loadDomain must change its signature.
+        #       since this whole feature MUST be refactored and domain tables are not to be
+        #       loaded in any of our current use cases, this will be ignored and set to an
+        #       empty dict
+        domLayerDict = dict()
         #4. Get Aux dicts
         lyrDict = self.getLyrDict(filteredDictList, isEdgv = isEdgv)
         #5. Build Groups
@@ -149,17 +247,32 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         QgsProject.instance().addMapLayer(vlayer, addToLegend = False)
         crs = QgsCoordinateReferenceSystem(int(srid), QgsCoordinateReferenceSystem.EpsgCrsId)
         vlayer.setCrs(crs)
-        vlayer = self.setDomainsAndRestrictionsWithQml(vlayer)
-        vlayer = self.setMulti(vlayer,domLayerDict)
+        # vlayer = self.setDomainsAndRestrictionsWithQml(vlayer)
+        # vlayer = self.setMulti(vlayer, domLayerDict)
+        self.setDomainMappingToLayer(vlayer, schema)
         if stylePath:
             fullPath = self.getStyle(stylePath, tableName)
             if fullPath:
                 vlayer.loadNamedStyle(fullPath, True)
-        parentNode.addLayer(vlayer) 
-        if not vlayer.isValid():
-            QgsMessageLog.logMessage(vlayer.error().summary(), "DSGTools Plugin", Qgis.Critical)
+        parentNode.addLayer(vlayer)
         vlayer = self.createMeasureColumn(vlayer)
         return vlayer
+
+    def setDomainMappingToLayer(self, layer, schema):
+        """
+        Sets the maps the attributes that are represented as value maps on the
+        EDGV implementation for a given layer.
+        :param layer: (QgsVectorLayer) layer to have its attributes mapped.
+        :param schema: (str) first "part" of table names in SpatiaLite
+                       implementations of EDGV from DSGTools. They are
+                       equivalent to the schema in PostgreSQL implementations.
+        """
+        fields = layer.fields()
+        mappings = self.getAllEdgvDomainsFromTableName(schema, layer.name())
+        for field, valueMap in mappings.items():
+            fieldIndex = fields.indexFromName(field)
+            widgetSetup = QgsEditorWidgetSetup("ValueMap", {"map": valueMap})
+            layer.setEditorWidgetSetup(fieldIndex, widgetSetup)
 
     def loadDomain(self, domainTableName, domainGroup):
         """
@@ -173,7 +286,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         uri.setDatabase(self.abstractDb.db.databaseName())
         uri.setDataSource('', 'dominios_'+domainTableName, None)
         #TODO Load domain layer into a group
-        domLayer = iface.addVectorLayer(uri.uri(), domainTableName, self.provider)
+        domLayer = self.iface.addVectorLayer(uri.uri(), domainTableName, self.provider)
         self.iface.legendInterface().moveLayer(domLayer, domainGroup)
         return domLayer
 
