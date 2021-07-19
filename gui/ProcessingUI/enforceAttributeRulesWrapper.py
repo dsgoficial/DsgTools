@@ -106,16 +106,16 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         Retrieves the configured error type selection combo box.
         :return: (QComboBox) configured error selection widget.
         """
-        errorTypeList = ["Unusual Valued Attribute",
-                         "Attribute with incorrect value",
-                         "Missing attribute",
+        errorTypeList = ["Atributo de valor incomum",
+                         "Atributo com valor incorreto",
+                         "Preencher atributo",
                          ]
-        errorTypeListTranslated = [
-            self.tr(error) for error in errorTypeList]
+        # errorTypeListTranslated = [
+        #     self.tr(error) for error in errorTypeList]
 
         cb = QComboBox()
         cb.addItem(self.tr("Select an error type"))
-        cb.addItems(errorTypeListTranslated)
+        cb.addItems(errorTypeList)
         cbSize = cb.minimumSizeHint()
         cb.setMinimumSize(cbSize)
 
@@ -152,8 +152,41 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
                                         for field in layer.fields()]
             else:
                 pass
-
         return loaded
+
+    def getUnloadedLayers(self, attrRulesMap):
+        """
+        Returns the unloaded canvas layers.
+        :param attrRulesMap: (dict) of the importes rules map.
+        :return: (list) with unloaded canvas layers names.
+        """
+        unsortedNotLoadedLyr = list()
+        loadedLyr = self.getLoadedLayers()
+
+        for k, v in attrRulesMap.items():
+            if k == "metadata":
+                continue
+            if self.validateMethods.validatePythonTypes(v["1"], "list") and \
+                    self.validateMethods.validateLengthOfDataTypes(v["1"], 2):
+                if v["1"][0] not in loadedLyr:
+                    unsortedNotLoadedLyr.append(v["1"][0])
+            else:
+                self.invalidImportedRuleMessage()
+
+        notLoadedLyr = sorted(set(unsortedNotLoadedLyr))
+
+        return notLoadedLyr
+
+    def invalidImportedRuleMessage(self):
+        """
+        Shows a message box to user if has some invalid rules.
+        """
+        msg = QMessageBox()
+        msg.setWindowTitle("Invalid Rules Information")
+        msg.setIcon(QMessageBox.Warning)
+        msg.setText("There are one or more rule invalid and cant be loaded!")
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        msg.setDefaultButton(QMessageBox.Cancel)
 
     def modifyImportedAttributeRulesMap(self, attrRulesMap):
         """
@@ -167,63 +200,42 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         if notLoadedLyr and invalidRules:
             notLoadedLyrWarning = self.showLoadingMsg(notLoadedLyr, "warning")
             if notLoadedLyrWarning == QMessageBox.Ignore:
-                invalidRulesWarnign = self.validateMethods.showLoadingMsg(
+                invalidRulesWarning = self.validateMethods.showLoadingMsg(
                     invalidRules, "invalid")
-                if notLoadedLyrWarning == QMessageBox.Ignore:
-                    attrRulesMap.clear()
-                    for k, v in newDict.items():
-                        attrRulesMap[k] = v
-                else:
-                    attrRulesMap.clear()
-            else:
-                attrRulesMap.clear()
+                if invalidRulesWarning == QMessageBox.Ignore:
+                    self.modifyAttributeRulesMap(invalidRulesWarning,
+                                                 attrRulesMap,
+                                                 newDict,
+                                                 notLoadedLyr)
 
         elif not notLoadedLyr and invalidRules:
-            invalidRulesWarnign = self.validateMethods.showLoadingMsg(
+            invalidRulesWarning = self.validateMethods.showLoadingMsg(
                 invalidRules, "invalid")
             self.modifyAttributeRulesMap(
-                invalidRulesWarnign, attrRulesMap, newDict)
+                invalidRulesWarning, attrRulesMap, newDict, notLoadedLyr)
 
         elif notLoadedLyr and not invalidRules:
             notLoadedLyrWarning = self.showLoadingMsg(notLoadedLyr, "warning")
             self.modifyAttributeRulesMap(
-                notLoadedLyrWarning, attrRulesMap, newDict)
+                notLoadedLyrWarning, attrRulesMap, newDict, notLoadedLyr)
         else:
             self.showLoadingMsg()
 
-    def modifyAttributeRulesMap(self, clickedAction, attrRulesMap, newDict):
+    def modifyAttributeRulesMap(self, clickedAction, attrRulesMap, newDict, notLoadedLyr):
+        """
+        Modifies the attrRulesMap dict with newDict data.
+        :param clickedAction: (QtAction) clicked button signal.
+        :param attrRulesMap: (dict) of the importes rules map.
+        :param newDict: (dict) cleared rules map.
+        :param notLoadedLyr: (list) with unloaded canvas layers names.
+        """
         if clickedAction == QMessageBox.Ignore:
             attrRulesMap.clear()
             for k, v in newDict.items():
-                attrRulesMap[k] = v
+                if v["1"][0] not in notLoadedLyr:
+                    attrRulesMap[k] = v
         else:
             attrRulesMap.clear()
-        
-
-    def getUnloadedLayers(self, attrRulesMap):
-        notLoadedLyr = list()
-        loadedLyr = self.getLoadedLayers()
-
-        for k, v in attrRulesMap.items():
-            if k == "metadata":
-                continue
-            if self.validateMethods.validatePythonTypes(v["1"], "list") and \
-                    self.validateMethods.validateLengthOfDataTypes(v["1"], 2):
-                if v["1"][0] not in loadedLyr or \
-                        v["1"][1] not in loadedLyr[v["1"][0]]:
-                    notLoadedLyr.append(v["1"][0])
-            else:
-                self.invalidImportedRuleMessage()
-
-        return notLoadedLyr
-
-    def invalidImportedRuleMessage(self):
-        msg = QMessageBox()
-        msg.setWindowTitle("Invalid Rules Information")
-        msg.setIcon(QMessageBox.Warning)
-        msg.setText("There are one or more rule invalid and cant be loaded!")
-        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-        msg.setDefaultButton(QMessageBox.Cancel)
 
     def mapAttributeRulesToNewDict(self, attrRulesMap):
         """
@@ -240,26 +252,32 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
             if attrRulesMapKey == "metadata":
                 continue
             if self.validateMethods.validatePythonTypes(attrRulesMapValue["0"], "string"):
-                if self.validateMethods.validatePythonTypes(attrRulesMapValue["1"], "list") and self.validateMethods.validateLengthOfDataTypes(attrRulesMapValue["1"], 2):
+                if self.validateMethods.validatePythonTypes(attrRulesMapValue["1"], "list") \
+                        and self.validateMethods.validateLengthOfDataTypes(attrRulesMapValue["1"], 2):
                     if self.validateMethods.validateQgsExpressions(attrRulesMapValue["2"]):
                         if self.validateMethods.validatePythonTypes(attrRulesMapValue["3"], "string"):
                             if self.validateMethods.validateQColor(attrRulesMapValue["4"]):
                                 newDict[attrRulesMapKey] = attrRulesMapValue
                             else:
-                                invalidRules.append("{} : {}".format(
-                                    attrRulesMapKey, attrRulesMapValue["4"]))
+                                invalidRules.append(
+                                    "Rule number {} : {} - is not a valid color.".format(
+                                        attrRulesMapKey, attrRulesMapValue["4"]))
                         else:
-                            invalidRules.append("{} : {}".format(
-                                attrRulesMapKey, attrRulesMapValue["3"]))
+                            invalidRules.append(
+                                "Rule number {} : {} - is not a valid string.".format(
+                                    attrRulesMapKey, attrRulesMapValue["3"]))
                     else:
-                        invalidRules.append("{} : {}".format(
-                            attrRulesMapKey, attrRulesMapValue["2"]))
+                        invalidRules.append(
+                            "Rule number {} : {} - is not a valid expression.".format(
+                                attrRulesMapKey, attrRulesMapValue["2"]))
                 else:
-                    invalidRules.append("{} : {}".format(
-                        attrRulesMapKey, attrRulesMapValue["1"]))
+                    invalidRules.append(
+                        "Rule number {} : {} - is not a valid length = 2 list.".format(
+                            attrRulesMapKey, attrRulesMapValue["1"]))
             else:
-                invalidRules.append("{} : {}".format(
-                    attrRulesMapKey, attrRulesMapValue["0"]))
+                invalidRules.append(
+                    "Rule number {} : {} - is not a valid string description.".format(
+                        attrRulesMapKey, attrRulesMapValue["0"]))
 
         return newDict, invalidRules
 
