@@ -24,26 +24,23 @@ Builds a temp rubberband with a given size and shape.
 
 import os
 
-# Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.core import Qgis, QgsUnitTypes
+from qgis.gui import QgsMapMouseEvent
+from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QMessageBox, QAction
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject
-from qgis.PyQt.Qt import QWidget, QObject
+from qgis.PyQt.QtGui import QIcon, QMouseEvent
+from qgis.PyQt.QtCore import Qt, QEvent, QSettings, pyqtSlot
+from qgis.PyQt.Qt import QWidget
+from qgis.utils import iface
 
-#qgis imports
-import qgis.utils
-from qgis.gui import QgsMessageBar
-from qgis.core import Qgis
-#DsgTools Imports
 from .shapeTool import ShapeTool
 from .customSizeSetter import CustomSizeSetter
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'minimumAreaTool.ui'))
 
-class MinimumAreaTool(QWidget,FORM_CLASS):
-    def __init__(self, iface, parent = None):
+class MinimumAreaTool(QWidget, FORM_CLASS):
+    def __init__(self, iface, parent=None):
         """
         Constructor
         """
@@ -137,11 +134,7 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         shape = self.shapesComboBox.currentText()
         validated = self.validateCombos(self.sizesComboBox.currentIndex(), self.shapesComboBox.currentIndex())
         if validated:
-            crs = self.iface.mapCanvas().mapSettings().destinationCrs()
-            if crs.mapUnits() == 2:
-                self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('This tool does not work with angular unit reference system!'), level=Qgis.Warning, duration=3)
-            else:
-                self.run(scale, size, shape)
+            self.run(scale, size, shape)
         else:
             QMessageBox.warning(self.iface.mainWindow(), self.tr(u"Error!"), self.tr(u"<font color=red>Shape value not defined :</font><br><font color=blue>Define all values to activate tool!</font>"), QMessageBox.Close)              
     
@@ -158,6 +151,15 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         color.setAlpha(63)
         tool = ShapeTool(self.iface.mapCanvas(), shape, param, self.sizes[size]['shape'], color )
         tool.toolFinished.connect(self.refreshCombo)
+        # draw the figure instantly, no need for move event at first
+        me = QMouseEvent(
+            QEvent.MouseMove, iface.mapCanvas().mouseLastXY(),
+            Qt.NoButton, Qt.NoButton, Qt.NoModifier
+        )
+        # this maps the global positioning to canvas pos correctly and matches
+        # the canvasMoveEvent slot/method signal.
+        qgsMe = QgsMapMouseEvent(iface.mapCanvas(), me)
+        tool.canvasMoveEvent(qgsMe)
         self.iface.mapCanvas().setMapTool(tool)
 
     def refreshCombo(self):
