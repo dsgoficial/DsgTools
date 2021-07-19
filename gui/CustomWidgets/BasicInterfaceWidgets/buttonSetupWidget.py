@@ -569,10 +569,18 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         prevName = self.currentButton().name()
         button = self.getButtonByName(prevName)
         self.updateButton(prevName, props)
-        newName = button.name()
+        # button update method repaints all of its widgets
+        # in order to maintain the "local name pattern" (include group - #559),
+        # it has to be set manually
+        idx = self.buttonComboBox.findText(prevName)
+        group = button.category()
+        if group:
+            # rename the button that is currently set on the ordering table
+            w = self.tableWidget.cellWidget(idx - 1, 0)
+            w.setText("({g}) {dn}".format(g=group, dn=button.displayName()))
         self.buttonPropWidget.button = button
+        newName = button.name()
         if prevName != newName:
-            idx = self.buttonComboBox.findText(prevName)
             self.buttonComboBox.setItemText(idx, newName)
         self.setCurrentButton(button)
 
@@ -657,6 +665,18 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         b = self.getButtonByName(self.buttonComboBox.itemText(row + 1))
         self.setCurrentButton(b)
 
+    def _getWidgetForTable(self, button):
+        """
+        Retrieves the widget to be displayed at the ordering table widget.
+        :param button: (CustomFeatureButton) button to have its widget setup.
+        :return: (QPushButton) button ready to be set to order table.
+        """
+        w = button.newWidget()
+        group = button.category()
+        if group:
+            w.setText("({g}) {dn}".format(g=group, dn=button.displayName()))
+        return w
+
     def addButtonToTable(self, button):
         """
         Adds widget to table widget.
@@ -664,7 +684,9 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         row = self.tableWidget.rowCount()
         self.tableWidget.insertRow(row)
-        self.tableWidget.setCellWidget(row, 0, button.newWidget())
+        # add group name for ordering whenever it exists - demand from #559
+        w = self._getWidgetForTable(button)
+        self.tableWidget.setCellWidget(row, 0, w)
         # button instances on this widget are never the same as the original
         # and so, modifying the properties below won't modify anything outside
         # the scope of this dialog 
@@ -680,8 +702,12 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         name = button.displayName()
         for row in range(self.tableWidget.rowCount()):
-            bName = self.tableWidget.cellWidget(row, 0).text().replace("&", "")
+            button = self.buttonFromRow(row)
+            bName = button.displayName()
             if bName == name:
+                # clear any callbacks set for this dlg (e.g. set as active on
+                # GUI)
+                button.setCallback()
                 self.tableWidget.removeRow(row)
                 return
 
@@ -689,16 +715,15 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         Reads all registered buttons from button table and returns it, in
         order.
-        :return: (list-of-CustomFeature) ordered buttons.
+        :return: (list-of-str) ordered buttons' names.
         """
         buttons = list()
         count = self.tableWidget.rowCount()
         if count > 0:
             for row in range(count):
                 buttons.append(
-                    self.tableWidget.cellWidget(row, 0).text()\
-                        .rsplit(" [", 1)[0].replace("&", "")
-                ) # Qt mnemonic shortcut for it widgets introduces "&"...
+                    self.buttonFromRow(row).name()
+                )
         return buttons
 
     def buttonsOrder(self):
@@ -708,9 +733,8 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         """
         buttons = dict()
         for row in range(self.tableWidget.rowCount()):
-            button = self.tableWidget.cellWidget(row, 0).text()\
-                         .rsplit(" [", 1)[0].replace("&", "")
-            buttons[button] = row
+            buttonName = self.buttonFromRow(row).name()
+            buttons[buttonName] = row
         return buttons
 
     def selectedIndexes(self):
@@ -782,10 +806,12 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         if row <= 0:
             return
         button = self.buttonFromRow(row)
+        w = self._getWidgetForTable(button)
         upperButton = self.buttonFromRow(row - 1)
-        self.tableWidget.setCellWidget(row - 1, 0, button.newWidget())
+        upperW = self._getWidgetForTable(upperButton)
+        self.tableWidget.setCellWidget(row - 1, 0, w)
         self.buttonComboBox.setItemText(row, button.name())
-        self.tableWidget.setCellWidget(row, 0, upperButton.newWidget())
+        self.tableWidget.setCellWidget(row, 0, upperW)
         self.buttonComboBox.setItemText(row + 1, upperButton.name())
         self.addRowToSelection(row - 1)
         self.removeRowFromSelection(row)
@@ -798,10 +824,12 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         if row >= self.tableWidget.rowCount() - 1:
             return
         button = self.buttonFromRow(row)
+        w = self._getWidgetForTable(button)
         lowerButton = self.buttonFromRow(row + 1)
-        self.tableWidget.setCellWidget(row + 1, 0, button.newWidget())
+        lowerW = self._getWidgetForTable(lowerButton)
+        self.tableWidget.setCellWidget(row + 1, 0, w)
         self.buttonComboBox.setItemText(row + 1 + 1, button.name())
-        self.tableWidget.setCellWidget(row, 0, lowerButton.newWidget())
+        self.tableWidget.setCellWidget(row, 0, lowerW)
         self.buttonComboBox.setItemText(row + 1, lowerButton.name())
         self.addRowToSelection(row + 1)
         self.removeRowFromSelection(row)
