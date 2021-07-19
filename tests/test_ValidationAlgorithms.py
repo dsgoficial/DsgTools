@@ -1730,39 +1730,39 @@ class Tester(unittest.TestCase):
             ""
         )
 
-    def test_enforceattributerulesalgorithm(self):
-        """Tests for Enforce Attribute Rules algorithm"""
-        idsToSelect=[0,3]
-        testsParams = self.algorithmParameters("dsgtools:enforceattributerulesalgorithm")
-        # this algorithm, specifically has to set layers Context-reading ready
-        layers = self.testingDataset("geojson", "enforce_attribute_rules")
+    # def test_enforceattributerulesalgorithm(self):
+    #     """Tests for Enforce Attribute Rules algorithm"""
+    #     idsToSelect=[0,3]
+    #     testsParams = self.algorithmParameters("dsgtools:enforceattributerulesalgorithm")
+    #     # this algorithm, specifically has to set layers Context-reading ready
+    #     layers = self.testingDataset("geojson", "enforce_attribute_rules")
 
-        layers = {l.split("-")[-1]: vl for l, vl in layers.items()}
+    #     layers = {l.split("-")[-1]: vl for l, vl in layers.items()}
 
-        for parameters in testsParams:
-            for key, values in parameters["RULES_SET"].items():
-                if isinstance(layers, list):
-                    vl = layers[0]
-                    vl.setName(layers[0].name())
-                    self.loadLayerToCanvas(vl)
-                    if parameters['SELECTED']:
-                        vl.selectByIds(idsToSelect)
-                else:
-                    vl = layers[values["layerField"][0]]
-                    # vl.setName(values["layerField"][0])
-                    self.loadLayerToCanvas(vl)
-                    if parameters['SELECTED']:
-                        vl.selectByIds(idsToSelect)
+    #     for parameters in testsParams:
+    #         for key, values in parameters["RULES_SET"].items():
+    #             if isinstance(layers, list):
+    #                 vl = layers[0]
+    #                 vl.setName(layers[0].name())
+    #                 self.loadLayerToCanvas(vl)
+    #                 if parameters['SELECTED']:
+    #                     vl.selectByIds(idsToSelect)
+    #             else:
+    #                 vl = layers[values["layerField"][0]]
+    #                 # vl.setName(values["layerField"][0])
+    #                 self.loadLayerToCanvas(vl)
+    #                 if parameters['SELECTED']:
+    #                     vl.selectByIds(idsToSelect)
 
-        msg = self.testAlg(
-                "dsgtools:enforceattributerulesalgorithm",
-                multipleOutputs=True,
-                addControlKey=True
-        )
+    #     msg = self.testAlg(
+    #             "dsgtools:enforceattributerulesalgorithm",
+    #             multipleOutputs=True,
+    #             addControlKey=True
+    #     )
         
-        # del self.datasets["geojson:enforce_attribute_rules"]
-        # self.clearProject()
-        # self.assertEqual(msg, "")
+    #     # del self.datasets["geojson:enforce_attribute_rules"]
+    #     # self.clearProject()
+    #     # self.assertEqual(msg, "")
         
 
     def test_identifypolygonsliver(self):
