@@ -166,8 +166,7 @@ class Tester(unittest.TestCase):
         geojsonPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'GeoJSON')
         datasets = {
             "sqlite" : {
-                "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite'),
-                "douglas_peucker" : os.path.join(spatiaLitePaths, 'douglas_peucker.sqlite')
+                "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite')
             },
             "gpkg" : {
                 "testes_wgs84" : os.path.join(gpkgPaths, 'testes_wgs84.gpkg'),
@@ -182,6 +181,7 @@ class Tester(unittest.TestCase):
                 "create_frames_layers": os.path.join(geojsonPaths, 'create_frames_layers'),
                 "identify_angles_in_invalid_range_layers": os.path.join(geojsonPaths, 'identify_angles_in_invalid_range_layers'),
                 "douglas_peucker": os.path.join(geojsonPaths, 'douglas_peucker'),
+                "enforce_attribute_rules": os.path.join(geojsonPaths, 'enforce_attribute_rules'),
                 "polygon_sliver": os.path.join(geojsonPaths, 'polygon_sliver')
             }
         }
@@ -1151,6 +1151,46 @@ class Tester(unittest.TestCase):
                     "POLYGON_FLAGS": "memory:"
                 }
             ],
+            "dsgtools:enforceattributerulesalgorithm" : [
+                {
+                    '__comment' : "Test 1",
+                    "RULES_SET":{
+                                "0": {
+                                    "description": "regime - Preencher atributo",
+                                    "layerField": [
+                                        "hid_trecho_drenagem_l",
+                                        "regime"
+                                    ],
+                                    "expression": "\"regime\" not in  (0,1,2,3,4,5)",
+                                    "errorType": "Preencher atributo",
+                                    "color": "#b6a500"
+                                }
+                    },
+                    'SELECTED' : False,
+                    "POINT_FLAGS":"memory:",
+                    "LINE_FLAGS":"memory:",
+                    "POLYGON_FLAGS":"memory:"
+                },
+                {
+                    '__comment' : "Test 2",
+                    "RULES_SET":{
+                                "0": {
+                                    "description": "nome - Nome deve iniciar com letra maiuscula e nao deve ter espacos desnecessarios",
+                                    "layerField": [
+                                        "hid_ilha_a",
+                                        "nome"
+                                    ],
+                                    "expression": "regexp_match ( \"nome\" , '^ ' ) or regexp_match ( \"nome\" , '  ' ) or regexp_match ( \"nome\" , ' $' ) or regexp_match ( \"nome\" , '^[a-z]' )",
+                                    "errorType": "Atributo com valor incorreto",
+                                    "color": "#ff0000"
+                                }
+                    },
+                    'SELECTED' : True,
+                    "POINT_FLAGS":"memory:",
+                    "LINE_FLAGS":"memory:",
+                    "POLYGON_FLAGS":"memory:"
+                }
+            ],
 
             "dsgtools:identifypolygonsliver" : [
                 {
@@ -1496,6 +1536,9 @@ class Tester(unittest.TestCase):
                 "dsgtools:adjustnetworkconnectivity"
             ]
         multipleOutputAlgs = [
+            # identification algs
+            "dsgtools:enforceattributerulesalgorithm",
+            # manipulation algs
             "dsgtools:unbuildpolygonsalgorithm",
             "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
              # manipulation algs
@@ -1686,6 +1729,41 @@ class Tester(unittest.TestCase):
             ),
             ""
         )
+
+    # def test_enforceattributerulesalgorithm(self):
+    #     """Tests for Enforce Attribute Rules algorithm"""
+    #     idsToSelect=[0,3]
+    #     testsParams = self.algorithmParameters("dsgtools:enforceattributerulesalgorithm")
+    #     # this algorithm, specifically has to set layers Context-reading ready
+    #     layers = self.testingDataset("geojson", "enforce_attribute_rules")
+
+    #     layers = {l.split("-")[-1]: vl for l, vl in layers.items()}
+
+    #     for parameters in testsParams:
+    #         for key, values in parameters["RULES_SET"].items():
+    #             if isinstance(layers, list):
+    #                 vl = layers[0]
+    #                 vl.setName(layers[0].name())
+    #                 self.loadLayerToCanvas(vl)
+    #                 if parameters['SELECTED']:
+    #                     vl.selectByIds(idsToSelect)
+    #             else:
+    #                 vl = layers[values["layerField"][0]]
+    #                 # vl.setName(values["layerField"][0])
+    #                 self.loadLayerToCanvas(vl)
+    #                 if parameters['SELECTED']:
+    #                     vl.selectByIds(idsToSelect)
+
+    #     msg = self.testAlg(
+    #             "dsgtools:enforceattributerulesalgorithm",
+    #             multipleOutputs=True,
+    #             addControlKey=True
+    #     )
+        
+    #     # del self.datasets["geojson:enforce_attribute_rules"]
+    #     # self.clearProject()
+    #     # self.assertEqual(msg, "")
+        
 
     def test_identifypolygonsliver(self):
         """Tests for Polygon Sliver Algorithm"""

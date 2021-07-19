@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "POINT_FLAGS",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31982" } },
+"features": [
+
+]
+}
