@@ -181,6 +181,7 @@ class Tester(unittest.TestCase):
                 "create_frames_layers": os.path.join(geojsonPaths, 'create_frames_layers'),
                 "identify_angles_in_invalid_range_layers": os.path.join(geojsonPaths, 'identify_angles_in_invalid_range_layers'),
                 "douglas_peucker": os.path.join(geojsonPaths, 'douglas_peucker'),
+                "build_polygons_from_center_points": os.path.join(geojsonPaths, 'build_polygons_from_center_points'),
                 "enforce_attribute_rules": os.path.join(geojsonPaths, 'enforce_attribute_rules'),
                 "polygon_sliver": os.path.join(geojsonPaths, 'polygon_sliver')
             }
@@ -884,7 +885,54 @@ class Tester(unittest.TestCase):
                     )[0],
                     'OUTPUT_POLYGONS' : "memory:",
                     'FLAGS' : "memory:"
-                }  
+                },
+                {
+                    '__comment' : "test 11 - without polygons, just lines, with attributeblacklist",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['pontos']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : ['id','nome','tipo_comprovacao','tipo_insumo','observacao', 'data_modificacao', 'controle_id', 'ultimo_usuario'],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['linhas1', 'linhas2']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : None,
+                    'GEOGRAPHIC_BOUNDARY' : None,
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 12 - without polygons, just lines, with attributeblacklist and geoboundary. Should create 5 pol, not 6. The tip of the triangle is outside of the boundary ",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['pontos']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : ['id','nome','tipo_comprovacao','tipo_insumo','observacao', 'data_modificacao', 'controle_id', 'ultimo_usuario'],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['linhas1', 'linhas2']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : None,
+                    'GEOGRAPHIC_BOUNDARY' : self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['moldura']
+                    )[0],
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
+                },
+                {
+                    '__comment' : "test 13 - without polygons, just lines, with a different attributeblacklist",
+                    "INPUT_CENTER_POINTS" : self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['pontos']
+                    )[0],
+                    'SELECTED' : False,
+                    'ATTRIBUTE_BLACK_LIST' : ['id','nome','tipo_comprovacao','tipo_insumo','observacao'],
+                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['linhas1', 'linhas2']
+                    ),
+                    'CONSTRAINT_POLYGON_LAYERS' : None,
+                    'GEOGRAPHIC_BOUNDARY' : None,
+                    'OUTPUT_POLYGONS' : "memory:",
+                    'FLAGS' : "memory:"
+                }        
             ],
             "dsgtools:identifyterrainmodelerrorsalgorithm" : [
                 {
@@ -1298,7 +1346,7 @@ class Tester(unittest.TestCase):
                             "ogr"
                         )
 
-    def compareLayers(self, target, reference, attributeBlackList=None, addControlKey=False):
+    def compareLayers(self, target, reference, attributeBlackList=None, addControlKey=False, distTol=1e-5, areaTol=1e-10):
         """
         Compares two vector layers. The algorithm stops on the first difference found.
         :param target: (QgsVectorLayer) layer to be checked.
@@ -1337,19 +1385,49 @@ class Tester(unittest.TestCase):
                 continue
             if fieldname not in targetFieldNames:
                 return "Incorrect set of attributes for output layer (missing '{attr}').".format(attr=fieldname)
+        msg = ""
         for featId, refFeat in refFeatDict.items():
             if featId not in targetFeatDict:
-                return "Feature id={0} was not found on output layer.".format(featId)
+                msg = "Feature id={0} was not found on output layer.".format(featId)
+                break
             testFeat = targetFeatDict[featId]
             if not (testFeat.geometry().isGeosEqual(refFeat.geometry()) or\
                 testFeat.geometry().equals(refFeat.geometry())):
-                return "Feature {fid} has incorrect geometry.".format(fid=featId)
+                msg = "Feature {fid} has incorrect geometry.".format(fid=featId)
+                break
             for attr in targetFieldNames:
                 if attr not in attributeBlackList and testFeat[attr] != refFeat[attr]:
+                    # if geometries match, but attributes don't, then the dataset
+                    # should not even be checked for near geometry matches
                     return "Incorrect set of attributes for feature {fid}:\nAttribute {attr} in the test feature is: {test_attr}\nAttribute {attr} in the reference feature is: {ref_attr}".format(
                         fid=featId,
                         attr=attr,
                         test_attr=testFeat[attr],
+                        ref_attr=refFeat[attr]
+                    )
+                    break
+        if not msg:
+            return ""
+        # in case a dataset exact match fails, we'll try an approximate comparison
+        areaSortedRefFeats = sorted(reference.getFeatures(), key=lambda f: f.geometry().area())
+        areaSortedTargetFeats = sorted(target.getFeatures(), key=lambda f: f.geometry().area())
+        for refFeat, targetFeat in zip(areaSortedRefFeats, areaSortedTargetFeats):
+            refGeom = refFeat.geometry()
+            targetGeom = targetFeat.geometry()
+            if refGeom.distance(targetGeom) > distTol:
+                return "Feature {fid} has incorrect geometry.".format(fid=targetFeat.id())
+            refArea = refGeom.area()
+            targetArea = targetGeom.area()
+            if not refArea or abs(targetArea - refArea) / refArea > areaTol:
+                # areas may be similar, but not too different from each other
+                # (minimal CRS transforming and coordinate precision errors)
+                return "Feature {fid} has incorrect geometry.".format(fid=targetFeat.id())
+            for attr in targetFieldNames:
+                if attr not in attributeBlackList and targetFeat[attr] != refFeat[attr]:
+                    return "Incorrect set of attributes for feature {fid}:\nAttribute {attr} in the test feature is: {test_attr}\nAttribute {attr} in the reference feature is: {ref_attr}".format(
+                        fid=targetFeat.id(),
+                        attr=attr,
+                        test_attr=targetFeat[attr],
                         ref_attr=refFeat[attr]
                     )
         return ""
