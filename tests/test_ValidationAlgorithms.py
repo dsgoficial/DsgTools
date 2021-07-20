@@ -181,7 +181,7 @@ class Tester(unittest.TestCase):
                 "create_frames_layers": os.path.join(geojsonPaths, 'create_frames_layers'),
                 "identify_angles_in_invalid_range_layers": os.path.join(geojsonPaths, 'identify_angles_in_invalid_range_layers'),
                 "douglas_peucker": os.path.join(geojsonPaths, 'douglas_peucker'),
-                "build_polygons_from_center_points": os.path.join(geojsonPaths, 'build_polygons_from_center_points')
+                "build_polygons_from_center_points": os.path.join(geojsonPaths, 'build_polygons_from_center_points'),
                 "enforce_attribute_rules": os.path.join(geojsonPaths, 'enforce_attribute_rules'),
                 "polygon_sliver": os.path.join(geojsonPaths, 'polygon_sliver')
             }
