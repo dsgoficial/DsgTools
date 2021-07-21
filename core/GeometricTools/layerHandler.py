@@ -152,8 +152,8 @@ class LayerHandler(QObject):
             geomType = None
             for layer in layerList:
                 if layer.featureCount() > 0:
-                    geomType = int(next(layer.getFeatures())\
-                        .geometry().wkbType())
+                    geomType = int(next(layer.getFeatures())
+                                   .geometry().wkbType())
                     break
             else:
                 raise ValueError(
@@ -1478,15 +1478,15 @@ class LayerHandler(QObject):
             if feat not in notBoundarySet:
                 outputBoundarySink.addFeature(feat, QgsFeatureSink.FastInsert)
 
-    def getPolygonsFromCenterPointsAndBoundaries(self, inputCenterPointLyr, 
-                                                constraintLineLyrList=None,
-                                                constraintPolygonLyrList=None, 
-                                                attributeBlackList=None, 
-                                                geographicBoundaryLyr=None,
-                                                onlySelected=False, 
-                                                context=None, 
-                                                feedback=None, 
-                                                algRunner=None):
+    def getPolygonsFromCenterPointsAndBoundaries(self, inputCenterPointLyr,
+                                                 constraintLineLyrList=None,
+                                                 constraintPolygonLyrList=None,
+                                                 attributeBlackList=None,
+                                                 geographicBoundaryLyr=None,
+                                                 onlySelected=False,
+                                                 context=None,
+                                                 feedback=None,
+                                                 algRunner=None):
         """
 
         1. Merge Polygon lyrs into one and coerce polygons to lines
@@ -1507,21 +1507,22 @@ class LayerHandler(QObject):
         """
         algRunner = AlgRunner() if algRunner is None else algRunner
         constraintLineLyrList = [] if constraintLineLyrList is None else \
-                                constraintLineLyrList
+            constraintLineLyrList
         constraintPolygonList = [] if constraintPolygonLyrList is None else \
-                                constraintPolygonLyrList
+            constraintPolygonLyrList
         attributeBlackList = [] if attributeBlackList is None else \
-                                attributeBlackList
+            attributeBlackList
         # Clip Points, Lines and Polygons according to geographicBoundaryLyr
         # Buffer because sometimes the line stops before the boundary itself,
         # making the whole algorithmn not work properly
         if geographicBoundaryLyr:
-            limit = algRunner.runBuffer(geographicBoundaryLyr,0.00001,context)
+            limit = algRunner.runBuffer(
+                geographicBoundaryLyr, 0.00001, context)
             constraintLineLyrList = [algRunner.runClip(camada, limit, context)
-                                    for camada in constraintLineLyrList]
+                                     for camada in constraintLineLyrList]
             constraintPolygonList = [algRunner.runClip(camada, limit, context)
-                                    for camada in constraintPolygonLyrList]
-            inputCenterPointLyr = algRunner.runClip(inputCenterPointLyr, limit, 
+                                     for camada in constraintPolygonLyrList]
+            inputCenterPointLyr = algRunner.runClip(inputCenterPointLyr, limit,
                                                     context)
         constraintPolygonListWithGeoBounds = constraintPolygonList + \
             [geographicBoundaryLyr] if geographicBoundaryLyr is not None else \
@@ -1532,7 +1533,7 @@ class LayerHandler(QObject):
         multiStepFeedback.pushInfo(self.tr('Getting constraint lines'))
         linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
             constraintLineLyrList,
-            constraintPolygonListWithGeoBounds,        
+            constraintPolygonListWithGeoBounds,
             onlySelected=onlySelected,
             feedback=multiStepFeedback,
             context=context,
@@ -1557,22 +1558,23 @@ class LayerHandler(QObject):
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(4)
-        return self.relateCenterPointsWithPolygons(
+        polygonList, flagList = self.relateCenterPointsWithPolygons(
             inputCenterPointLyr,
             builtPolygonLyr,
             constraintPolygonList=constraintPolygonList,
-            geomBoundary = geographicBoundaryLyr,
+            geomBoundary=geographicBoundaryLyr,
             attributeBlackList=attributeBlackList,
             context=context,
             feedback=multiStepFeedback
         )
+        return polygonList, flagList
 
-    def relateCenterPointsWithPolygons(self,inputCenterPointLyr, 
-                                        builtPolygonLyr,context=None,
-                                        constraintPolygonList=None, 
-                                        attributeBlackList=None,
-                                        geomBoundary = None,
-                                        feedback=None):
+    def relateCenterPointsWithPolygons(self, inputCenterPointLyr,
+                                       builtPolygonLyr, context=None,
+                                       constraintPolygonList=None,
+                                       attributeBlackList=None,
+                                       geomBoundary=None,
+                                       feedback=None):
         """
         1. Merge constraint polygon list;
         2. Build search structure into constraint polygon list
@@ -1590,9 +1592,9 @@ class LayerHandler(QObject):
         """
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
-        
-        # If there were no polygon list, it was breaking the method. 
-        # tried to solve it with this if else 
+
+        # If there were no polygon list, it was breaking the method.
+        # tried to solve it with this if else
         if constraintPolygonList:
             constraintPolygonLyr = self.algRunner.runMergeVectorLayers(
                 constraintPolygonList,
@@ -1600,14 +1602,14 @@ class LayerHandler(QObject):
                 feedback=multiStepFeedback
             )
             constraintPolygonLyrSpatialIdx, constraintPolygonLyrIdDict = \
-            self.buildSpatialIndexAndIdDict(
-                constraintPolygonLyr,
-                feedback=multiStepFeedback
-            )
-        else: 
+                self.buildSpatialIndexAndIdDict(
+                    constraintPolygonLyr,
+                    feedback=multiStepFeedback
+                )
+        else:
             constraintPolygonLyrSpatialIdx, constraintPolygonLyrIdDict = \
                 QgsSpatialIndex(), {}
-            
+
         multiStepFeedback.setCurrentStep(1)
         builtPolygonToCenterPointDict = self.buildCenterPolygonToCenterPointDict(
             inputCenterPointLyr,
@@ -1617,21 +1619,21 @@ class LayerHandler(QObject):
         )
         multiStepFeedback.setCurrentStep(2)
         polygonList, flagList = \
-        self.getPolygonListAndFlagDictFromBuiltPolygonToCenterPointDict(
-            builtPolygonToCenterPointDict,
-            constraintPolygonLyrSpatialIdx,
-            constraintPolygonLyrIdDict,
-            geomBoundary = geomBoundary,
-            feedback=multiStepFeedback
-        )
+            self.getPolygonListAndFlagDictFromBuiltPolygonToCenterPointDict(
+                builtPolygonToCenterPointDict,
+                constraintPolygonLyrSpatialIdx,
+                constraintPolygonLyrIdDict,
+                geomBoundary=geomBoundary,
+                feedback=multiStepFeedback
+            )
         return polygonList, flagList
 
-    def buildCenterPolygonToCenterPointDict(self, inputCenterPointLyr, 
+    def buildCenterPolygonToCenterPointDict(self, inputCenterPointLyr,
                                             builtPolygonLyr,
-                                            attributeBlackList=None, 
+                                            attributeBlackList=None,
                                             feedback=None):
         """
-        
+
         :params inputCenterPointLyr: (QgsVectorLayer) with Point which you want to take
             the attr
         :params builtPolygonLyr: (QgsVectorLayer) with the polygons
@@ -1650,7 +1652,7 @@ class LayerHandler(QObject):
         columns = self.getAttributesFromBlackList(
             inputCenterPointLyr, attributeBlackList=attributeBlackList)
         fields = self.getFieldsFromAttributeBlackList(
-            inputCenterPointLyr, attributeBlackList)  
+            inputCenterPointLyr, attributeBlackList)
         for current, feat in enumerate(builtPolygonLyr.getFeatures()):
             if feedback is not None and feedback.isCanceled():
                 break
@@ -1663,11 +1665,11 @@ class LayerHandler(QObject):
             request = QgsFeatureRequest().setFilterRect(featBB)
             engine = QgsGeometry.createGeometryEngine(featGeom.constGet())
             engine.prepareGeometry()
-            
+
             # for each point inside the polygon, extract attrkey and attr
-            # attrkey is basically attr but in an string. therefore, if 
+            # attrkey is basically attr but in an string. therefore, if
             # if there two point with different attr, it will make two columns
-            # with two attrkey different            
+            # with two attrkey different
             for pointFeat in inputCenterPointLyr.getFeatures(request):
                 if feedback is not None and feedback.isCanceled():
                     break
@@ -1681,7 +1683,7 @@ class LayerHandler(QObject):
                     feedback.setCurrentStep(current * size)
         return builtPolygonToCenterPointDict
 
-    def getFieldsFromAttributeBlackList(self, originalLayer, 
+    def getFieldsFromAttributeBlackList(self, originalLayer,
                                         attributeBlackList):
         """
         Create a QgsFields with only columns that are not at attributeBlackList
@@ -1708,9 +1710,9 @@ class LayerHandler(QObject):
         :return listColumnAttr: (list) list of indexes
         """
         listColumnAttr = []
-        for column in columns: 
-            listColumnAttr.append(originalLayer.fields()\
-                                            .indexFromName(column))
+        for column in columns:
+            listColumnAttr.append(originalLayer.fields()
+                                  .indexFromName(column))
         return listColumnAttr
 
     def getPolygonListAndFlagDictFromBuiltPolygonToCenterPointDict(
@@ -1734,7 +1736,7 @@ class LayerHandler(QObject):
         size = 100/keyCount if keyCount else 0
         polygonList = []
         flagDict = dict()
-        # Create a list with geomBoundary polygons geometry 
+        # Create a list with geomBoundary polygons geometry
         if geomBoundary:
             geoms = [f.geometry() for f in geomBoundary.getFeatures()]
         for current, geomKey in enumerate(builtPolygonToCenterPointDict):
@@ -1749,13 +1751,13 @@ class LayerHandler(QObject):
             # provided and the polygon is not within any of its polygons
             isOffBoundary = geomBoundary is not None \
                 and not any(
-                    (pointOnSurfaceGeom.intersects(boundaryGeom) \
+                    (pointOnSurfaceGeom.intersects(boundaryGeom)
                         for boundaryGeom in geoms)
                 )
             if isOffBoundary:
                 continue
             for candidateId in constraintPolygonLyrSpatialIdx.intersects(
-                                    geom.boundingBox()):
+                    geom.boundingBox()):
                 # this loop is broken by either user canceling it or built
                 # polygon overlapping any of the polygon constraints, which
                 # means that it will have its geometry ignored on the next
@@ -1769,13 +1771,14 @@ class LayerHandler(QObject):
                 if isNotFlag and isConstraintPol:
                     break
             else:
-                # because builtPolygonToCenterPointDict[geomKey] is an 
+                # because builtPolygonToCenterPointDict[geomKey] is an
                 # defaultdict, everytime that it appends a different set of
-                # attr, it creates a new column. Therefore, when 
+                # attr, it creates a new column. Therefore, when
                 # structureLen is 0, there is no attr, when is more than 1
-                # it had two points with differents attr. 
+                # it had two points with differents attr.
                 if structureLen == 1:
-                    fields = list(builtPolygonToCenterPointDict[geomKey].values())
+                    fields = list(
+                        builtPolygonToCenterPointDict[geomKey].values())
                     attr = list(builtPolygonToCenterPointDict[geomKey].keys())
                     newFeat = QgsFeature(fields[0])
                     newFeat.setAttributes(list(attr[0]))
@@ -1783,16 +1786,38 @@ class LayerHandler(QObject):
                     polygonList.append(newFeat)
                 else:
                     if structureLen == 0:
-                        flagText = self.tr("Polygon without center point.")
+                        flagText = self.tr("Polygon without a centroid.")
                     else:
+                        conflictingPointsText = self.flagTextFromConflictingPoints(
+                            builtPolygonToCenterPointDict[geomKey])
+
                         flagText = self.tr(
-                            "Polygon with more than one center point with "
-                            "conflicting attributes."
+                            "Polygon with more than one centroid with "
+                            "conflicting attributes. {}".format(
+                                conflictingPointsText)
                         )
                     flagDict[geomKey] = flagText
             if feedback is not None:
                 feedback.setCurrentStep(current * size)
         return polygonList, flagDict
+
+    def flagTextFromConflictingPoints(self, builtPolygonToCenterPointDict):
+        """
+        Creates an warning text about points with conflicting attributes.
+        :params builtPolygonToCenterPointDict: (dict) in the following format:
+        :return conflictingPointsText: (str) flag text
+        """
+        conflictingPoints = list()
+        for fieldValues, qgsFields in builtPolygonToCenterPointDict.items():
+            if qgsFields[0].name() == 'id':
+                conflictingPoints.append((fieldValues[0], fieldValues[2]))
+
+        conflictingPointsText = self.tr(
+            "First point [Id: {}, type: {}], second point [Id: {},type: {}]".format(
+                conflictingPoints[0][0], conflictingPoints[0][1],
+                conflictingPoints[1][0], conflictingPoints[1][1]))
+
+        return conflictingPointsText
 
     def valueMaps(self, layer):
         """
@@ -1865,8 +1890,8 @@ class LayerHandler(QObject):
         if not layer.geometryType() != QgsWkbTypes.PolygonGeometry:
             Exception(self.tr("Input layer is not polygon."))
         slivers = list()
-        feats = list(layer.getSelectedFeatures() if selected \
-            else layer.getFeatures())
+        feats = list(layer.getSelectedFeatures() if selected
+                     else layer.getFeatures())
         stepSize = 100 / len(feats) if feats else 0
         for step, f in enumerate(feats):
             geom = f.geometry()
