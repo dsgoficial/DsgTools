@@ -1809,35 +1809,36 @@ class LayerHandler(QObject):
                     if structureLen == 0:
                         flagText = self.tr("Polygon without a centroid.")
                     else:
-                        # conflictingPointsText = self.flagTextFromConflictingPoints(
-                        #     builtPolygonToCenterPointDict[geomKey])
+                        
+                        conflictingValuesText = self.compareAttributeValuesTupleList(
+                            builtPolygonToCenterPointDict[geomKey])
 
                         flagText = self.tr(
                             "Polygon with more than one centroid with "
-                            "conflicting attributes."
+                            "conflicting attributes.{}".format(conflictingValuesText)
                         )
                     flagDict[geomKey] = flagText
             if feedback is not None:
                 feedback.setCurrentStep(current * size)
         return polygonList, flagDict
-
-    def flagTextFromConflictingPoints(self, builtPolygonToCenterPointDict):
+    
+    def compareAttributeValuesTupleList(self, builtPolygonToCenterPointDict):
         """
         Creates an warning text about points with conflicting attributes.
         :params builtPolygonToCenterPointDict: (dict) in the following format:
         :return conflictingPointsText: (str) flag text
         """
-        conflictingPoints = list()
-        for fieldValues, qgsFields in builtPolygonToCenterPointDict.items():
-            if qgsFields[0].name() == 'id':
-                conflictingPoints.append((fieldValues[0], fieldValues[2]))
+        conflictingValues = []
+        listOfTupleValues = [tupleOfValues for tupleOfValues in builtPolygonToCenterPointDict]
 
-        conflictingPointsText = self.tr(
-            "First point [Id: {}, type: {}], second point [Id: {},type: {}]".format(
-                conflictingPoints[0][0], conflictingPoints[0][1],
-                conflictingPoints[1][0], conflictingPoints[1][1]))
+        for idx in range(len(listOfTupleValues)):
+            conflict = set(listOfTupleValues[idx - 1]) - set(listOfTupleValues[idx])
+            if conflict:
+                conflictingValues.append(conflict)
+        conflictingValuesText = str(conflictingValues).replace("[", "").replace("]","")
+        conflictingText = " This values are conflicting {}".format(conflictingValuesText)
 
-        return conflictingPointsText
+        return conflictingText
 
     def valueMaps(self, layer):
         """
