@@ -448,6 +448,18 @@ class LayerHandler(QObject):
                 feedback.setProgress(localTotal*current)
         return attributeFeatDict
 
+    def getVirtualAndPrimaryKeyFields(self, lyr):
+
+        virtualAndPrimaryKeyFields = []
+        pkIndexes = lyr.primaryKeyAttributes()
+        typeBlackList = [6]
+
+        for idx, field in enumerate(lyr.fields()):
+            if idx in pkIndexes or field.type() in typeBlackList:
+                virtualAndPrimaryKeyFields.append(field.name())
+
+        return virtualAndPrimaryKeyFields
+
     def getAttributesFromBlackList(self, lyr, attributeBlackList=None, ignoreVirtualFields=True, excludePrimaryKeys=True):
         attributeBlackList = [] if attributeBlackList is None else attributeBlackList
         pkIndexes = lyr.primaryKeyAttributes() if excludePrimaryKeys else []
@@ -1524,13 +1536,16 @@ class LayerHandler(QObject):
                                      for camada in constraintPolygonLyrList]
             inputCenterPointLyr = algRunner.runClip(inputCenterPointLyr, limit,
                                                     context)
+
         constraintPolygonListWithGeoBounds = constraintPolygonList + \
             [geographicBoundaryLyr] if geographicBoundaryLyr is not None else \
             constraintPolygonList
+
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         # 1. Merge Polygon lyrs into one
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Getting constraint lines'))
+
         linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
             constraintLineLyrList,
             constraintPolygonListWithGeoBounds,
@@ -1646,13 +1661,17 @@ class LayerHandler(QObject):
         }
         """
         builtPolygonToCenterPointDict = dict()
+
         iterator, featCount = self.getFeatureList(
             builtPolygonLyr, onlySelected=False)
         size = 100/featCount if featCount else 0
-        columns = self.getAttributesFromBlackList(
-            inputCenterPointLyr, attributeBlackList=attributeBlackList)
-        fields = self.getFieldsFromAttributeBlackList(
-            inputCenterPointLyr, attributeBlackList)
+
+        columns = self.getAttributesFromBlackList(inputCenterPointLyr,
+                                                  attributeBlackList=attributeBlackList)
+
+        fields = self.getFieldsFromAttributeBlackList(inputCenterPointLyr,
+                                                      attributeBlackList=attributeBlackList)
+
         for current, feat in enumerate(builtPolygonLyr.getFeatures()):
             if feedback is not None and feedback.isCanceled():
                 break
@@ -1684,7 +1703,7 @@ class LayerHandler(QObject):
         return builtPolygonToCenterPointDict
 
     def getFieldsFromAttributeBlackList(self, originalLayer,
-                                        attributeBlackList):
+                                        attributeBlackList, ignoreVirtualFields=True, excludePrimaryKeys=True):
         """
         Create a QgsFields with only columns that are not at attributeBlackList
         :params originalLayer: Layer from where will be taken the fields
@@ -1694,7 +1713,9 @@ class LayerHandler(QObject):
         """
         columns = self.getAttributesFromBlackList(
             originalLayer,
-            attributeBlackList=attributeBlackList
+            attributeBlackList=attributeBlackList,
+            ignoreVirtualFields=ignoreVirtualFields,
+            excludePrimaryKeys=excludePrimaryKeys
         )
         fields = QgsFields()
         for f in originalLayer.fields():
@@ -1788,13 +1809,12 @@ class LayerHandler(QObject):
                     if structureLen == 0:
                         flagText = self.tr("Polygon without a centroid.")
                     else:
-                        conflictingPointsText = self.flagTextFromConflictingPoints(
-                            builtPolygonToCenterPointDict[geomKey])
+                        # conflictingPointsText = self.flagTextFromConflictingPoints(
+                        #     builtPolygonToCenterPointDict[geomKey])
 
                         flagText = self.tr(
                             "Polygon with more than one centroid with "
-                            "conflicting attributes. {}".format(
-                                conflictingPointsText)
+                            "conflicting attributes."
                         )
                     flagDict[geomKey] = flagText
             if feedback is not None:

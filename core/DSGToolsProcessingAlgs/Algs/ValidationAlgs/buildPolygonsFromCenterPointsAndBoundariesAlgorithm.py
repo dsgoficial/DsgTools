@@ -43,6 +43,8 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
     INPUT_CENTER_POINTS = 'INPUT_CENTER_POINTS'
     SELECTED = 'SELECTED'
     ATTRIBUTE_BLACK_LIST = 'ATTRIBUTE_BLACK_LIST'
+    IGNORE_VIRTUAL_FIELDS = 'IGNORE_VIRTUAL_FIELDS'
+    IGNORE_PK_FIELDS = 'IGNORE_PK_FIELDS'
     CONSTRAINT_LINE_LAYERS = 'CONSTRAINT_LINE_LAYERS'
     CONSTRAINT_POLYGON_LAYERS = 'CONSTRAINT_POLYGON_LAYERS'
     GEOGRAPHIC_BOUNDARY = 'GEOGRAPHIC_BOUNDARY'
@@ -74,7 +76,21 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 'INPUT_CENTER_POINTS',
                 QgsProcessingParameterField.Any,
                 allowMultiple=True,
-                optional = True
+                optional=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.IGNORE_VIRTUAL_FIELDS,
+                self.tr('Ignore virtual fields'),
+                defaultValue=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.IGNORE_PK_FIELDS,
+                self.tr('Ignore primary key fields'),
+                defaultValue=True
             )
         )
         self.addParameter(
@@ -157,8 +173,18 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             self.ATTRIBUTE_BLACK_LIST,
             context
         )
-        fields = layerHandler.getFieldsFromAttributeBlackList(inputCenterPointLyr,
-                                                        attributeBlackList)
+        ignoreVirtual = self.parameterAsBool(
+            parameters, self.IGNORE_VIRTUAL_FIELDS, context)
+        ignorePK = self.parameterAsBool(
+            parameters, self.IGNORE_PK_FIELDS, context)
+
+        if ignoreVirtual or ignorePK:
+            virtualAndPrimaryKeyFields = layerHandler.getVirtualAndPrimaryKeyFields(inputCenterPointLyr)
+            attributeBlackList.extend(virtualAndPrimaryKeyFields)
+            outputFields = layerHandler.getFieldsFromAttributeBlackList(inputCenterPointLyr,
+                                                                        attributeBlackList,
+                                                                        ignoreVirtualFields=ignoreVirtual,
+                                                                        excludePrimaryKeys=ignorePK)
         (
             output_polygon_sink,
             output_polygon_sink_id
@@ -166,7 +192,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             parameters,
             self.OUTPUT_POLYGONS,
             context,
-            fields,
+            outputFields,
             QgsWkbTypes.Polygon,
             inputCenterPointLyr.sourceCrs()
         )
@@ -194,8 +220,8 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             self.flagFeature(flagGeom, flagText, fromWkb=True)
 
         return {
-            self.OUTPUT_POLYGONS : output_polygon_sink_id,
-            self.FLAGS : self.flag_id
+            self.OUTPUT_POLYGONS: output_polygon_sink_id,
+            self.FLAGS: self.flag_id
         }
 
     def name(self):
