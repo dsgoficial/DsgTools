@@ -30,6 +30,7 @@ from qgis.PyQt.QtWidgets import (QLabel,
                                  QDialog,
                                  QSpinBox,
                                  QLineEdit,
+                                 QComboBox,
                                  QCheckBox,
                                  QGridLayout,
                                  QSpacerItem,
@@ -38,6 +39,7 @@ from qgis.PyQt.QtWidgets import (QLabel,
 from qgis.PyQt import uic, QtWidgets, QtGui
 
 from DsgTools.core.Utils.utils import Utils
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'customFeatureForm.ui'))
@@ -48,20 +50,24 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
     Feature Tool Box. This form was copied from `Ferramentas de Produção` and
     modified for the DSGTools plugin.
     """
-    def __init__(self, fields, layerMap, attributeMap=None):
+    def __init__(self, layer, layerMap, attributeMap=None, valueMaps=None):
         """
         Class constructor.
-        :param fields: (QgsFields) set of fields that will be applied to new
-                       feature(s).
+        :param layer: (QgsVectorLayer) layer that will receive the reclassified
+                      features.
         :param layerMap: (dict) a map from vector layer to feature list to be
                          reclassified (allocated to another layer).
         :param attributeMap: (dict) a map from attribute name to its
                              (reclassified) value.
+        :param valueMaps: (dict) map of all value/relations maps set to layer's
+                          fields. These maps will be used for domain checking
+                          operations. 
         """
         super(CustomFeatureForm, self).__init__()
         self.setupUi(self)
-        self.fields = fields
+        self._layer = layer
         self.layerMap = layerMap
+        self.valueMaps = valueMaps or LayerHandler().valueMaps(layer)
         self.attributeMap = attributeMap or dict()
         self._layersWidgets = dict()
         self.setupReclassifiedLayers()
@@ -101,17 +107,65 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
             self._layersWidgets[l.name()] = cb
             layout.addWidget(cb)
 
+    def fieldHasDomainMap(self, field):
+        """
+        Identifies whether a given field has a value/relations map.
+        :param field: (QgsField) field to be checked.
+        :return: (bool) whether field has a value/relations map set.
+        """
+        return field.name() in self.valueMaps
+
+    def getFieldComboBox(self, field):
+        """
+        Provides a combo box containing all values possible for a field set to
+        have value/relations map value. This method also set a getValue and
+        setValue proxy that handles value management through its 'real' value.
+        E.G. a given domain {"Not available": 1, "Available": 2} shall have its
+        values set and read as '1' and '2', instead of either combo box's text
+        and index usually used. This also handles setting invalid value setting
+        attempts.
+        :param field: (QgsField) field to have its field's values exposed.
+        :return: (QComboBox) combo box widget filled with all possible values.
+        """
+        cb = QComboBox()
+        # this methods assumes that if a field is used, than it has a value map
+        domain = self.valueMaps.get(field.name(), None)
+        inverseDomain = {v: k for k, v in domain.items()}
+        if not domain:
+            raise ValueError(
+                self.tr("Field {0} does not have a value/relations map")\
+                    .format(field.name())
+            )
+        cb.addItems(list(domain.keys()))
+        def setValue(val):
+            """val: field's real value"""
+            if val not in domain.values():
+                return
+            cb.setCurrentText(inverseDomain[val])
+        def value():
+            return domain[cb.currentText()]
+        cb.setValue = setValue
+        cb.value = value
+        return cb
+
+    def layer(self):
+        """
+        Retrieves layer set to receive the reclassified features from the
+        other layers.
+        :return: (QgsVectorLayer) layer to get the newly reclassified features.
+        """
+        return self._layer
+
     def setupFields(self):
         """
-        Setups up all fields and fill up with available data on the attribute
+        Sets up all fields and fill up with available data on the attribute
         map.
         """
         utils = Utils()
         row = 0 # in case no fields are provided
-        for row, f in enumerate(self.fields):
+        for row, f in enumerate(self.layer().fields()):
             fName = f.name()
-            fMap = self.attributeMap[fName] if fName in self.attributeMap \
-                        else None
+            fMap = self.attributeMap.get(fName, None)
             if fName in self.attributeMap:
                 fMap = self.attributeMap[fName]
                 if fMap["ignored"]:
@@ -134,6 +188,15 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
                 text = fName
             if fName in self.attributeMap and self.attributeMap[fName]["ignored"]:
                 pass
+            if self.fieldHasDomainMap(f):
+                # this will provide the combo box already filled with the
+                # possible values for the provided field
+                w = self.getFieldComboBox(f)
+                # proxy method added on customized qcombobox
+                w.setValue(value)
+            elif utils.fieldIsBool(f):
+                w = QCheckBox()
+                w.setChecked(False if value is None else value)
             elif utils.fieldIsFloat(f):
                 w = QDoubleSpinBox()
                 w.setValue(0 if value is None else value)
@@ -171,6 +234,10 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
             w = self._fieldsWidgets[fName]
             if isinstance(w, QSpinBox) or isinstance(w, QDoubleSpinBox):
                 self.attributeMap[fName]["value"] = w.value()
+            elif isinstance(w, QCheckBox):
+                self.attributeMap[fName]["value"] = w.isChecked()
+            elif isinstance(w, QComboBox):
+                self.attributeMap[fName]["value"] = w.value()
             else:
                 self.attributeMap[fName]["value"] = w.text()
 
@@ -199,6 +266,10 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
                 continue
             w = self._fieldsWidgets[fName]
             if isinstance(w, QSpinBox) or isinstance(w, QDoubleSpinBox):
+                fMap[fName] = w.value()
+            elif isinstance(w, QCheckBox):
+                fMap[fName] = w.isChecked()
+            elif isinstance(w, QComboBox):
                 fMap[fName] = w.value()
             else:
                 fMap[fName] = w.text()

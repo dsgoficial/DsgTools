@@ -674,10 +674,18 @@ class CustomFeatureButton(QObject):
             return True
         return False
 
-    def setCallback(self, callback=None):
+    def setCallback(self, callback=None, ignoreEnabled=False):
         """
         Sets callback to be triggered whenever button is pushed.
         :param callback: (*) any callable object.
+        :param ignoreEnabled: (bool) custom buttons are designed to be used
+                              only when actively set as enabled by the user.
+                              However, this might not be the case for when the
+                              button needs to have a callback and a shortcut is
+                              not assigned (or should not be), for instance.
+                              This flag allows callback to forcefully ignore
+                              button's enabled status and trigger shortcut
+                              whenever any of its managed widgets is clicked.
         """
         if callback is None:
             callback = lambda: None
@@ -688,7 +696,7 @@ class CustomFeatureButton(QObject):
         def callbackWrapper():
             if self.isEnabled():
                 callback()
-        self._callback = callbackWrapper
+        self._callback = callback if ignoreEnabled else callbackWrapper
         self.action().triggered.connect(self._callback)
         self.__callbackConnected = True
 
