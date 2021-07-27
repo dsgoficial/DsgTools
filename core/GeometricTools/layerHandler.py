@@ -448,13 +448,17 @@ class LayerHandler(QObject):
                 feedback.setProgress(localTotal*current)
         return attributeFeatDict
 
-    def getVirtualAndPrimaryKeyFields(self, lyr):
-
+    def getVirtualAndPrimaryKeyFields(self, inputLyr):
+        """
+        Returns primary key and virtual names fields.
+        :param inputLyr: (QgsVectorLayer) input vector layer;
+        :return: (list) list os fields names.
+        """
         virtualAndPrimaryKeyFields = []
-        pkIndexes = lyr.primaryKeyAttributes()
+        pkIndexes = inputLyr.primaryKeyAttributes()
         typeBlackList = [6]
 
-        for idx, field in enumerate(lyr.fields()):
+        for idx, field in enumerate(inputLyr.fields()):
             if idx in pkIndexes or field.type() in typeBlackList:
                 virtualAndPrimaryKeyFields.append(field.name())
 
@@ -623,7 +627,6 @@ class LayerHandler(QObject):
     def buildSizeSearchStructure(self, layer, tol, feedback=None):
         """
         Builds search structure according to layer and tol.
-
         Returns a list with small features, another list with big features and the spatial index of the big feats.
         """
         smallFeatureList = []
@@ -1809,36 +1812,70 @@ class LayerHandler(QObject):
                     if structureLen == 0:
                         flagText = self.tr("Polygon without a centroid.")
                     else:
-                        
-                        conflictingValuesText = self.compareAttributeValuesTupleList(
+                        fields = list(
+                            builtPolygonToCenterPointDict[geomKey].values())
+
+                        conflictingAttributeValue = self.compareAttributeValuesTupleList(
                             builtPolygonToCenterPointDict[geomKey])
 
-                        flagText = self.tr(
-                            "Polygon with more than one centroid with "
-                            "conflicting attributes.{}".format(conflictingValuesText)
-                        )
+                        fieldName = self.retrieveFieldNameFromIdx(
+                            conflictingAttributeValue, fields)
+
+                        flagText = self.returnFlagText(fieldName)
+
                     flagDict[geomKey] = flagText
             if feedback is not None:
                 feedback.setCurrentStep(current * size)
         return polygonList, flagDict
-    
+
     def compareAttributeValuesTupleList(self, builtPolygonToCenterPointDict):
         """
         Creates an warning text about points with conflicting attributes.
         :params builtPolygonToCenterPointDict: (dict) in the following format:
         :return conflictingPointsText: (str) flag text
+        Polígono com mais de um centróide com atributo nomedoatributo em conflito
         """
-        conflictingValues = []
-        listOfTupleValues = [tupleOfValues for tupleOfValues in builtPolygonToCenterPointDict]
+        conflictingAttributeValue = []
+        listOfTupleValues = [
+            tupleOfValues for tupleOfValues in builtPolygonToCenterPointDict]
 
         for idx in range(len(listOfTupleValues)):
-            conflict = set(listOfTupleValues[idx - 1]) - set(listOfTupleValues[idx])
+            conflict = set(
+                listOfTupleValues[idx - 1]) - set(listOfTupleValues[idx])
             if conflict:
-                conflictingValues.append(conflict)
-        conflictingValuesText = str(conflictingValues).replace("[", "").replace("]","")
-        conflictingText = " This values are conflicting {}".format(conflictingValuesText)
+                attributeValue = [value for value in conflict]
+                # attributeValue = self.retrieveListOfValues(conflict)
+                for value in attributeValue:
+                    tupleValueidx = listOfTupleValues[idx-1].index(value)
+                    conflictingAttributeValue.append(tupleValueidx)
+        conflictingAttributeIdx = [idx for idx in set(conflictingAttributeValue)]
+        # conflictingAttributeIdx = self.retrieveListOfValues(set(conflictingAttributeValue))
+        return conflictingAttributeIdx
 
-        return conflictingText
+    def retrieveListOfValues(self, values):
+        listOfValues = list()
+        for value in values:
+            listOfValues.append(value)
+        return listOfValues
+
+    def retrieveFieldNameFromIdx(self, index, qgsFields):
+        fieldNamesList = list()
+        if isinstance(index, (list, tuple)):
+            for idx in index:
+                fieldNamesList.append(qgsFields[0][idx].name())
+            return fieldNamesList
+        else:
+            return qgsFields.field(index).name()
+
+    def returnFlagText(self, fieldName):
+        if len(fieldName) > 1:
+            attributes = str(fieldName).replace('[','').replace(']','')
+            flagText = self.tr(
+                "Polygon with more than one centroid with conflicting values at {} attributes.".format(attributes))
+        else:
+            flagText = self.tr(
+                "Polygon with more than one centroid with conflicting value at '{}' attribute.".format(fieldName[0]))
+        return flagText
 
     def valueMaps(self, layer):
         """
