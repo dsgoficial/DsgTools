@@ -22,7 +22,7 @@ from builtins import range
 
 from qgis.PyQt.QtCore import Qt, QSettings
 from qgis.PyQt.QtGui import QCursor, QPixmap, QColor
-from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing,\
+from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, \
                      QgsAttributeForm, QgsSnapIndicator
 from qgis.utils import iface
 from qgis.core import QgsPointXY, QgsFeature, QgsGeometry, Qgis, QgsCoordinateReferenceSystem,\
@@ -31,9 +31,10 @@ from qgis.core import QgsPointXY, QgsFeature, QgsGeometry, Qgis, QgsCoordinateRe
 
 from DsgTools.gui.ProductionTools.MapTools.Acquisition.distanceToolTip import DistanceToolTip
 
-class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
+class GeometricaAcquisition(QgsMapTool):
     def __init__(self, canvas, iface, action):
-        super(GeometricaAcquisition, self).__init__(canvas, None)
+        super(GeometricaAcquisition, self).__init__(canvas)
+        super(GeometricaAcquisition, self).__init__(canvas)
         self.iface=iface
         self.canvas = canvas
         self.rubberBand = None
@@ -142,27 +143,23 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         return new_geom, pf
 
     def bufferDistanceTest(self, geom, penult, last):
-        teste_answer = True
-        for i in range(len(geom)-1):
-            p1 = geom[i]
-            p2 = geom[i+1]
-            line = QgsGeometry.fromPolylineXY([p1,p2])
-            last_buffer = QgsGeometry.fromPointXY(last).buffer(self.minSegmentDistance,4).boundingBox()
-            penult_buffer = QgsGeometry.fromPointXY(penult).buffer(self.minSegmentDistance,4).boundingBox()
-            last_stop = line.intersects(last_buffer)
-            penult_stop = line.intersects(penult_buffer)
-            if (last_stop or penult_stop):
-                teste_answer = False
-                break
-            else:
-                continue
-        return teste_answer
+        def isWithinLimits(pnt):
+            """checks whether point is distant enough from proposed geom's
+            ending points (penult and last)"""
+            return self.distanceToolTip.calculateDistance(
+                    last, pnt) >= self.minSegmentDistance and \
+                self.distanceToolTip.calculateDistance(
+                    penult, pnt) >= self.minSegmentDistance
+        for i in range(len(geom)):
+            if not isWithinLimits(geom[i]):
+                return False
+        return True
 
     def distanceBetweenLinesTest(self, geom, p):
         teste_answer = True
         for i in range(len(geom)-1):
             p1 = geom[i]
-            p2 = geom[i+1]
+            p2 = geom[i + 1]
             projected_point = self.projectPoint(p1,p2,p)
             distance = self.distanceToolTip.calculateDistance(projected_point,p2)
             if distance > self.minSegmentDistance:

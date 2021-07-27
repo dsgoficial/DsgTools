@@ -1,10 +1,10 @@
 {
 "type": "FeatureCollection",
 "name": "rel_pico_p",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::32721" } },
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
-{ "type": "Feature", "properties": { "id": 12, "nome": null, "geometriaaproximada": false, "tipoelemnat": 9999 }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 8112101.567413220182061, 9989247.860791744664311 ] ] } },
-{ "type": "Feature", "properties": { "id": 13, "nome": null, "geometriaaproximada": true, "tipoelemnat": 9999 }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 8147578.513242670334876, 10015666.863005163148046 ] ] } },
-{ "type": "Feature", "properties": { "id": 14, "nome": null, "geometriaaproximada": false, "tipoelemnat": 9999 }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 8189094.088149473071098, 9979435.08854104578495 ] ] } }
+{ "type": "Feature", "properties": { "id": 12, "nome": null, "geometriaaproximada": false, "tipoelemnat": 9999 }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -0.796935542800459, -0.05370040848156 ] ] } },
+{ "type": "Feature", "properties": { "id": 13, "nome": null, "geometriaaproximada": true, "tipoelemnat": 9999 }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -0.621305951376881, 0.077879803769753 ] ] } },
+{ "type": "Feature", "properties": { "id": 14, "nome": null, "geometriaaproximada": false, "tipoelemnat": 9999 }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -0.416819605223887, -0.101666281919465 ] ] } }
 ]
 }

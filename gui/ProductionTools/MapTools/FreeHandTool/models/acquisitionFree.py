@@ -337,7 +337,10 @@ class AcquisitionFree(gui.QgsMapTool):
         if geom.type() == core.QgsWkbTypes.LineGeometry:
             line = geom.asPolyline()
         elif geom.type() == core.QgsWkbTypes.PolygonGeometry:
-            line = geom.asPolygon()[0]
+            if geom.isMultipart():
+                line = geom.asMultiPolygon()[0][0]
+            else:
+                line = geom.asPolygon()[0]
             del line[-1]
         
         self.reshapeLineCreated.emit(QgsGeometry.fromPolylineXY(line))

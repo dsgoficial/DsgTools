@@ -24,9 +24,7 @@ import uuid
 
 import processing
 from qgis.core import (Qgis,
-                       QgsVectorLayer,
                        QgsProcessingUtils,
-                       QgsProcessingContext,
                        QgsProcessingFeatureSourceDefinition)
 
 class AlgRunner:
@@ -548,7 +546,7 @@ class AlgRunner:
                 'OUTPUT' : output or 'memory:',
                 'TARGET_CRS' : targetCrs
             },
-            context=ctx or QgsProcessingContext(),
+            context=ctx,
             feedback=feedback
         )['OUTPUT']
 

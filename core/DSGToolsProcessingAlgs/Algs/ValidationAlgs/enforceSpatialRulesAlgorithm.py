@@ -32,7 +32,8 @@ from qgis.core import (QgsProject,
                        QgsProcessingParameterDefinition,
                        QgsProcessingParameterFeatureSink)
 
-from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
+from DsgTools.core.GeometricTools\
+        .spatialRelationsHandler import SpatialRule, SpatialRelationsHandler
 from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import ValidationAlgorithm
@@ -49,7 +50,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         """
         spatialRulesSetter = ParameterSpatialRulesSet(
             self.RULES_SET,
-            description=self.tr('Spatial Rules Set')
+            description=self.tr('Spatial rules set')
         )
         spatialRulesSetter.setMetadata({
             'widget_wrapper' : 'DsgTools.gui.ProcessingUI.enforceSpatialRuleWrapper.EnforceSpatialRuleWrapper'
@@ -59,21 +60,21 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.POINT_FLAGS,
-                self.tr('Point Flags')
+                self.tr('Point flags')
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.LINE_FLAGS,
-                self.tr('Linestring Flags')
+                self.tr('Linestring flags')
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.POLYGON_FLAGS,
-                self.tr('Polygon Flags')
+                self.tr('Polygon flags')
             )
         )
 
@@ -95,7 +96,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Enforce Spatial Rules')
+        return self.tr('Enforce spatial rules')
 
     def group(self):
         """
@@ -120,14 +121,11 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
     def createInstance(self):
         return EnforceSpatialRulesAlgorithm()
 
-    def setFlags(self, flagDict, ptLayer, lLayer, polLayer, ctx, feedback):
+    def setFlags(self, flagDict, ptLayer, lLayer, polLayer):
         """
         Saves each flag to its layer, accordingly to its geometry primitive.
         :param flags: (dict) a map from offended feature ID to offenders
                       feature set.
-        :param ctx: (QgsProcessingContext) context in which processing was run.
-        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
-                         component.
         :return: (tuple-of-QgsVectorLayer) filled flag layers.
         """
         fh = FeatureHandler()
@@ -154,14 +152,14 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
                         )
         return (ptLayer, lLayer, polLayer)
 
-    def validateRuleSet(self, ruleDict):
+    def validateRuleSet(self, ruleList):
         """
-        Verifies whether given rule set is valid/applicable.
-        :param ruleDict: (dict) rules to be checked.
+        Verifies whether there is at least one valid/applicable rule on the
+        input list of rules.
+        :param ruleList: (list-of-SpatialRule) rules to be checked.
         :return: (bool) rules validity status
         """
-        # TODO
-        return True
+        return any((r.isValid(checkLoaded=True) for r in ruleList))
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -170,6 +168,8 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         rules = self.parameterAsSpatialRulesSet(
             parameters, self.RULES_SET, context
         )
+        # GUI was crashing when the SpatialRule was passed...
+        rules = [SpatialRule(**r, checkLoadedLayer=False) for r in rules]
         if not rules or not self.validateRuleSet(rules):
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.RULES_SET)
@@ -182,7 +182,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         )
         if not pointFlags:
             raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.POINT_FLAGS)
+                self.invalidSinkError(parameters, self.POINT_FLAGS)
             )
         lineFlags, lId = self.parameterAsSink(
                 parameters, self.LINE_FLAGS, context,
@@ -190,7 +190,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         )
         if not lineFlags:
             raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.LINE_FLAGS)
+                self.invalidSinkError(parameters, self.LINE_FLAGS)
             )
         polygonFlags, polId = self.parameterAsSink(
                 parameters, self.POLYGON_FLAGS, context,
@@ -198,14 +198,13 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         )
         if not polygonFlags:
             raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.POLYGON_FLAGS)
+                self.invalidSinkError(parameters, self.POLYGON_FLAGS)
             )
+        # marked as 5 steps because I *arbitrarily* set the rule enforcing
+        # steps to be 4:1 to the flag layers creation
         flagsDict = SpatialRelationsHandler().enforceRules(
-            rules, context, feedback
-        )
-        self.setFlags(
-            flagsDict, pointFlags, lineFlags, polygonFlags, context, feedback
-        )
+            rules, context, feedback)
+        self.setFlags(flagsDict, pointFlags, lineFlags, polygonFlags)
         return {
             self.POINT_FLAGS: ptId,
             self.LINE_FLAGS: lId,
@@ -249,7 +248,7 @@ class ParameterSpatialRulesSet(QgsProcessingParameterDefinition):
         return 'spatial_rules_set'
 
     def checkValueIsAcceptable(self, value, context=None):
-        return True
+        return value is not None
 
     def valueAsPythonString(self, value, context):
         return str(value)

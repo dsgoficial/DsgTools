@@ -286,7 +286,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 4.1-dev&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.SF NS Text&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -296,6 +296,29 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Esse plugin foi desenvolvido de acordo com Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais (INDE).&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 4.0-dev&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt; {3C?} {4.0/?} {3.?} {40/?} {1&quot;?} {13p?} {400;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {4.1-?}</translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/ui_about_.ui" line="89"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.SF NS Text&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 4.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.SF NS Text&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Exército Brasileiro&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Diretoria do Serviço Geográfico&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais do Brasil.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 4.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -2213,7 +2236,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="353"/>
         <source>&apos;{0}&apos; is an invalid value for field {1}. (Is the layer style generated from the current data model?</source>
-        <translation>&apos;{0}&apos; é um valor inválido para o atributo {1}. (Verifique se o estilo da camada foi gerada para o atual modelo de dados)</translation>
+        <translation>&apos;{0}&apos; é um valor inválido para o atributo {1}. (O estilo da camada foi gerado a partir do modelo de dados atual?</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="357"/>
@@ -5833,7 +5856,7 @@ Passo de conversão {0} iniciado...
     <message>
         <location filename="../core/Factories/DbCustomizationFactory/dbCustomizationFactory.py" line="54"/>
         <source>Customization type not defined.</source>
-        <translation type="obsolete">Tipo de Customização não definido.</translation>
+        <translation>Tipo de Customização não definido.</translation>
     </message>
 </context>
 <context>
@@ -8141,6 +8164,69 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     </message>
 </context>
 <context>
+    <name>EnforceAttributeRulesAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="70"/>
+        <source>Attribute Rules Set</source>
+        <translation>Conjunto de regras de atributo</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="79"/>
+        <source>Process only selected features</source>
+        <translation>Processar apenas feições selecionadas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="85"/>
+        <source>Point Flags</source>
+        <translation>Flags do tipo ponto</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="91"/>
+        <source>Linestring Flags</source>
+        <translation>Flags do tipo linha</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="97"/>
+        <source>Polygon Flags</source>
+        <translation>Flags do tipo polígono</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="275"/>
+        <source>LOG START</source>
+        <translation>INÍCIO DO REGISTRO</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="280"/>
+        <source>[RULE]</source>
+        <translation>[REGRA]</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="280"/>
+        <source>features</source>
+        <translation>feições</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="280"/>
+        <source>feature</source>
+        <translation>feição</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="290"/>
+        <source>LOG END</source>
+        <translation>FIM DO REGISTRO</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="308"/>
+        <source>Enforce Attribute Rules</source>
+        <translation>Aplicar Regras de Atributo</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="315"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+</context>
+<context>
     <name>EnforceSpatialRuleWrapper</name>
     <message>
         <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="51"/>
@@ -9578,6 +9664,21 @@ Ativa</translation>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.ui" line="287"/>
         <source>Export</source>
         <translation>Exportar</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ValidationWidgets/validationSetOfAttributesWidget.ui" line="30"/>
+        <source>Create Attribute Rules</source>
+        <translation>Criar regras de atributo</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ValidationWidgets/validationSetOfAttributesWidget.ui" line="42"/>
+        <source>Enter attribute rule description</source>
+        <translation>Digite a descrição da regra de atributo</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ValidationWidgets/validationSetOfAttributesWidget.ui" line="91"/>
+        <source>Run Attribute Rules</source>
+        <translation>Executar regras de atributo</translation>
     </message>
 </context>
 <context>
@@ -12893,6 +12994,74 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>IdentifyWrongSetOfAttributesAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongSetOfAttributesAlgorithm.py" line="70"/>
+        <source>Attribute Rules Set</source>
+        <translation type="obsolete">Conjunto de regras de atributo</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongSetOfAttributesAlgorithm.py" line="79"/>
+        <source>Process only selected features</source>
+        <translation type="obsolete">Processar apenas feições selecionadas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongSetOfAttributesAlgorithm.py" line="85"/>
+        <source>Point Flags</source>
+        <translation type="obsolete">Flags do tipo ponto</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongSetOfAttributesAlgorithm.py" line="91"/>
+        <source>Linestring Flags</source>
+        <translation type="obsolete">Flags do tipo linha</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongSetOfAttributesAlgorithm.py" line="97"/>
+        <source>Polygon Flags</source>
+        <translation type="obsolete">Flags do tipo polígono</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongSetOfAttributesAlgorithm.py" line="226"/>
+        <source>{name}</source>
+        <translation type="obsolete">{name}</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongSetOfAttributesAlgorithm.py" line="275"/>
+        <source>LOG START</source>
+        <translation type="obsolete">INÍCIO DO REGISTRO</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongSetOfAttributesAlgorithm.py" line="280"/>
+        <source>[RULE]</source>
+        <translation type="obsolete">[REGRA]</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongSetOfAttributesAlgorithm.py" line="280"/>
+        <source>features</source>
+        <translation type="obsolete">feições</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongSetOfAttributesAlgorithm.py" line="280"/>
+        <source>feature</source>
+        <translation type="obsolete">feição</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongSetOfAttributesAlgorithm.py" line="290"/>
+        <source>LOG END</source>
+        <translation type="obsolete">FIM DO REGISTRO</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongSetOfAttributesAlgorithm.py" line="308"/>
+        <source>Identify Wrong Sets of Attributes</source>
+        <translation type="obsolete">Identificar Conjunto de Atributos Errados</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongSetOfAttributesAlgorithm.py" line="315"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation type="obsolete">Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+</context>
+<context>
     <name>InspectFeatures</name>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="261"/>
@@ -15472,34 +15641,39 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <translation>Descer</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.py" line="197"/>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.py" line="198"/>
         <source>Getter method must be defined for widget type.</source>
         <translation>Método aquisitor tem que ser definido pelo tipo de ferramenta.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.py" line="218"/>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.py" line="219"/>
         <source>Setter method must be defined for widget type.</source>
         <translation>Método compositor tem que ser definido pelo tipo de ferramenta.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.py" line="576"/>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.py" line="561"/>
         <source>Unable to import {0}</source>
         <translation>Impossível de importar {0}</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.py" line="589"/>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.py" line="591"/>
         <source>Select a {0} to export data from</source>
         <translation>Selecione um {0} para exportar os dados a partir dele</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.py" line="645"/>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.py" line="647"/>
         <source>{0} (*{1})</source>
         <translation>{0} (*{1})</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.py" line="645"/>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.py" line="647"/>
         <source>Select a {0} to export data to</source>
         <translation>Selecione um {0} para exportar os dados para</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedTableWidget.py" line="578"/>
+        <source>Unable to export {0}</source>
+        <translation>Impossível de exportar {0}</translation>
     </message>
 </context>
 <context>
@@ -17441,6 +17615,19 @@ Usuários com erro:</translation>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/progressWidget.py" line="48"/>
         <source>INFO: </source>
         <translation>INFO: </translation>
+    </message>
+</context>
+<context>
+    <name>QCoreApplication.self</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="352"/>
+        <source>Attribute Rules Set</source>
+        <translation>Conjunto de regras de atributo</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="358"/>
+        <source>Set of attribute rules. Used on Attribute Rules Checker.</source>
+        <translation>Conjunto de regras de atributo. Usado no verificador de regras.</translation>
     </message>
 </context>
 <context>
@@ -21323,6 +21510,91 @@ Camada</translation>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="56"/>
         <source>Enter a value.</source>
         <translation>Insira um valor.</translation>
+    </message>
+</context>
+<context>
+    <name>ValidationAttributeRulesWrapper</name>
+    <message>
+        <location filename="../gui/ProcessingUI/validationAttributeRulesWrapper.py" line="82"/>
+        <source>Entire rule expression</source>
+        <translation type="obsolete">Digite a regra</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/validationAttributeRulesWrapper.py" line="103"/>
+        <source>Select an error type</source>
+        <translation type="obsolete">Selecione um tipo de erro</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/validationAttributeRulesWrapper.py" line="215"/>
+        <source>Import Rules Information</source>
+        <translation type="obsolete">Importar regras</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/validationAttributeRulesWrapper.py" line="219"/>
+        <source>Some rules have not been loaded</source>
+        <translation type="obsolete">Algumas regras não foram carregadas</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/validationAttributeRulesWrapper.py" line="220"/>
+        <source>Do you want to ignore and continue or cancel?</source>
+        <translation type="obsolete">Gostaria de ignorar e continuar ou cancelar?</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/validationAttributeRulesWrapper.py" line="226"/>
+        <source>The following layers have not been loaded:
+</source>
+        <translation type="obsolete">As seguintes camadas não estão carregadas:
+</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/validationAttributeRulesWrapper.py" line="235"/>
+        <source>Successfully loaded rules!</source>
+        <translation type="obsolete">Regras carregadas com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/validationAttributeRulesWrapper.py" line="288"/>
+        <source>Description</source>
+        <translation type="obsolete">Descrição</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/validationAttributeRulesWrapper.py" line="288"/>
+        <source>Layer and field</source>
+        <translation type="obsolete">Camadas e atributos</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/validationAttributeRulesWrapper.py" line="344"/>
+        <source>Expression</source>
+        <translation type="obsolete">Expressão</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/validationAttributeRulesWrapper.py" line="344"/>
+        <source>Error type</source>
+        <translation type="obsolete">Tipo de erro</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/validationAttributeRulesWrapper.py" line="344"/>
+        <source>Color</source>
+        <translation type="obsolete">Cor</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/validationAttributeRulesWrapper.py" line="344"/>
+        <source>Rule description</source>
+        <translation type="obsolete">Descrição da regra</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/validationAttributeRulesWrapper.py" line="344"/>
+        <source>Layer</source>
+        <translation type="obsolete">Camada</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/validationAttributeRulesWrapper.py" line="344"/>
+        <source>Field</source>
+        <translation type="obsolete">Atributo</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/validationAttributeRulesWrapper.py" line="411"/>
+        <source>Set of DSGTools Attribute Rules</source>
+        <translation type="obsolete">Conjunto de regras de atributos do DSGTools</translation>
     </message>
 </context>
 <context>
