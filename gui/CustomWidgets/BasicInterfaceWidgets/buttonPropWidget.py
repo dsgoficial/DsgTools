@@ -24,11 +24,11 @@
 import os
 from functools import partial
 
-from qgis.core import Qgis
+from qgis.core import Qgis, QgsVectorLayer, QgsMapLayerProxyModel
 from qgis.utils import iface
 from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QIcon, QColor, QKeySequence
-from qgis.PyQt.QtCore import Qt, QSize, pyqtSlot, pyqtSignal, QSettings
+from qgis.PyQt.QtCore import Qt, QSize, pyqtSlot, QSettings, pyqtSignal
 from qgis.PyQt.QtWidgets import (QWidget,
                                  QSpinBox,
                                  QLineEdit,
@@ -60,6 +60,10 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         super(ButtonPropWidget, self).__init__(parent)
         self.setupUi(self)
+        self.mMapLayerComboBox.setFilters(
+            QgsMapLayerProxyModel.HasGeometry|
+            QgsMapLayerProxyModel.WritableLayer
+        )
         self.button = button or CustomFeatureButton()
         self.fillToolComboBox()
         self.colorCheckBox.toggled.connect(self.mColorButton.setEnabled)
@@ -72,6 +76,8 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             self.tr("Attribute"), self.tr("Value"), self.tr("PK"),
             self.tr("Editable"), self.tr("Ignored")
         ])
+        header = self.attributeTableWidget.verticalHeader()
+        header.setSectionResizeMode(header.ResizeToContents)
         self.updateFieldTable()
 
     def confirmAction(self, msg, title=None, showNo=True):
@@ -345,8 +351,9 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             for fName, vMap in LayerHandler().valueMaps(vl).items():
                 valueMaps[fName] = {v: k for k, v in vMap.items()}
         def setMappedValue(cb, field, value):
-            vlFound = value in valueMaps[field]
-            if not vlFound:
+            if value is None:
+                return
+            if not (value in valueMaps[field]):
                 msg = self.tr("'{0}' is an invalid value for field {1}. (Is "
                               "the layer style generated from the current data"
                               " model?")\
@@ -354,8 +361,6 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                 title = self.tr("DSGTools Custom Feature Tool Box")
                 MessageRaiser().raiseIfaceMessage(title, msg, Qgis.Warning, 5)
                 value = None
-            if value is None:
-                return
             cb.setCurrentText(valueMaps[field][value])
         pkIdxList = vl.primaryKeyAttributes() if vl else []
         for row in range(table.rowCount()):
@@ -370,6 +375,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                     "isPk": isPk
                 }
             {
+                QWidget: lambda v: valueWidget.cb.setChecked(v or False),
                 QLineEdit: lambda v: valueWidget.setText(v or ""),
                 QSpinBox: lambda v: valueWidget.setValue(v or 0),
                 QDoubleSpinBox: lambda v: valueWidget.setValue(v or 0.0),
@@ -400,6 +406,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                                             .cb.isChecked()
             # "ignored" still allows the value to be set as last priority
             attrMap[attr]["value"] = {
+                QWidget: lambda: valueWidget.cb.isChecked(),
                 QLineEdit: lambda: valueWidget.text(),
                 QSpinBox: lambda: valueWidget.value(),
                 QDoubleSpinBox: lambda: valueWidget.value(),
@@ -488,11 +495,16 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         Retrieves correct widget for a given field based on its type.
         :param field: (QgsField) field to be represented.
-        :param data: (float/int/str) initial data to be set to widget.
-        :return: (QDoubleSpinBox/QSpinBox/QLineEdit) the adequate widget for
-                 field.
+        :param data: (float/int/str/bool) initial data to be set to widget.
+        :return: (QDoubleSpinBox/QSpinBox/QLineEdit/QCheckBox) the adequate
+                 widget for field.
         """
-        if utils.fieldIsFloat(field):
+        if utils.fieldIsBool(field):
+            # vWidget = QCheckBox()
+            vWidget = self.centeredCheckBox()
+            if not data is None:
+                vWidget.cb.setChecked(data)
+        elif utils.fieldIsFloat(field):
             vWidget = QDoubleSpinBox()
             vWidget.setMaximum(99999999)
             vWidget.setMinimum(-99999999)
@@ -519,7 +531,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         layer = layer or self.vectorLayer()
         self.attributeTableWidget.setRowCount(0)
-        if layer is None:
+        if layer is None or not isinstance(layer, QgsVectorLayer):
             return
         fields = layer.fields()
         pkIdxList = layer.primaryKeyAttributes() if layer else []
@@ -594,6 +606,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             exclusiveCb = partial(checkExclusiveCB, ccbEdit, ccbIgnore)
             ccbIgnore.cb.toggled.connect(exclusiveCb)
             ccbEdit.cb.toggled.connect(exclusiveCb)
+            ccbIgnore.cb.toggled.emit(ccbEdit.cb.isChecked())
             # since row is from an enum of fields, field idx = row
             self.attributeTableWidget.setCellWidget(row, self.PK_COL,
                 self.pkWidget() if isPk else QWidget())

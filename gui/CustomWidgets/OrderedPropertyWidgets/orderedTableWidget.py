@@ -41,6 +41,7 @@ FORM_CLASS, _ = uic.loadUiType(
 class OrderedTableWidget(QWidget, FORM_CLASS):
     rowAdded = pyqtSignal(int)
     rowRemoved = pyqtSignal(int)
+    dataLoaded = pyqtSignal(dict)
     # rowModified = pyqtSignal(int)
     # ordering modes
     ORDER_MODE_COUNT = 2
@@ -540,6 +541,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :return: (bool) whether data was fully loaded to OTW.
         """
         self.clear()
+        self.dataLoaded.emit(stateDict)
         for row, colValues in stateDict.items():
             if row == "metadata":
                 continue
@@ -575,14 +577,14 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         except Exception as e:
             QMessageBox.warning(
                 iface.mainWindow(),
-                self.tr("Unable to import {0}").format(filepath),
+                self.tr("Unable to export {0}").format(filepath),
                 "Check file {0}:\n{1}".format(filepath, "\n".join(e.args))
             )
 
     @pyqtSlot()
     def on_loadPushButton_clicked(self):
         """
-        Collects filepath and 
+        Collects filepath and
         """
         fd = QFileDialog()
         # fd.setDirectory(QDir.homePath())

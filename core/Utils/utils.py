@@ -23,14 +23,16 @@
 
 import os
 import json
-import requests
+import re
 from xml.dom.minidom import parse, parseString
 
 from qgis.utils import iface
-from qgis.core import Qgis, QgsMessageLog
+from qgis.core import Qgis, QgsMessageLog, QgsExpression
 from qgis.gui import QgsGui
 from qgis.PyQt.QtCore import QObject, QSettings, QVariant
 from qgis.PyQt.QtWidgets import QAction, QToolBar, QMessageBox, QTreeWidgetItem
+from qgis.PyQt.QtGui import QColor
+
 
 class Utils(object):
 
@@ -219,9 +221,9 @@ class Utils(object):
                 itemList.append(key)
             self.getAllItemsInDict(inputDict[key], itemList)
 
-    def createWidgetItem(self, parent, text, column = None):
+    def createWidgetItem(self, parent, text, column=None):
         item = QTreeWidgetItem(parent)
-        if isinstance(text,list) and column == None:
+        if isinstance(text, list) and column == None:
             for i in range(len(text)):
                 item.setText(i, text[i])
             return item
@@ -234,17 +236,17 @@ class Utils(object):
             item = self.createWidgetItem(parentNode, key, column)
             self.createTreeWidgetFromDict(
                 item, inputDict[key], treeWidget, column)
-    
+
     def getTreeBranchFromNode(self, startNode, inputDict):
         if 'root' not in list(inputDict.keys()):
-            graph = {'root':inputDict}
+            graph = {'root': inputDict}
         else:
             graph = inputDict
         path = self.find_all_paths(graph, 'root', startNode)[0]
         for node in path:
             graph = graph[node]
-        return {startNode:graph}
-    
+        return {startNode: graph}
+
     def getNodeLineage(self, node, inputDict):
         return self.find_all_paths(inputDict, 'root', node)[0][1::]
 
@@ -281,9 +283,11 @@ class Utils(object):
         if enabled and host:
             port_str = str(port) if port else ''
             for protocol in ['http', 'https', 'ftp']:
-                proxy_dict[protocol] = '{}://{}:{}'.format(protocol, host, port_str)
+                proxy_dict[protocol] = '{}://{}:{}'.format(
+                    protocol, host, port_str)
 
-        auth = requests.auth.HTTPProxyAuth(user, password) if enabled and user and password else None
+        auth = requests.auth.HTTPProxyAuth(
+            user, password) if enabled and user and password else None
 
         return proxy_dict, auth
 
@@ -295,7 +299,8 @@ class Utils(object):
         """
         settings = QSettings()
         settings.beginGroup('proxy')
-        enabled = str(settings.value('proxyEnabled')).lower() == 'true'  # to be compatible with QGIS 2 and 3
+        enabled = str(settings.value('proxyEnabled')).lower(
+        ) == 'true'  # to be compatible with QGIS 2 and 3
         # proxy_type = settings.value("proxyType")
         host = settings.value('proxyHost')
         port = settings.value('proxyPort')
@@ -346,6 +351,14 @@ class Utils(object):
                 actions[item.text().replace("&", "")] = item
         return actions
 
+    def fieldIsBool(self, field):
+        """
+        Checks if a field is filled with a bool type data.
+        :param field: (QgsField) field to be checked.
+        :return: (bool) if data is boolean.
+        """
+        return field.type() == QVariant.Bool
+
     def fieldIsFloat(self, field):
         """
         Checks if a field is filled with any float type data.
@@ -394,6 +407,7 @@ class MessageRaiser(QObject):
     """
     Raises messages to QGIS interface, global log and message boxes.
     """
+
     def raiseIfaceMessage(self, title, msg, level=None, duration=None):
         """
         Raises messages to the user on a message box on the main QGIS window.
@@ -432,3 +446,91 @@ class MessageRaiser(QObject):
         else:
             return QMessageBox.question(
                 parent, title, msg, QMessageBox.Ok) == QMessageBox.Ok
+
+
+class ValidateImportedDataMethods():
+    """
+    Docstring.
+    """
+
+    def __init__(self) -> None:
+        pass
+
+    def validateQColor(self, colorToEvaluate):
+        """
+        Docstring.
+        """
+
+        colorStrWithoutSpaces = re.sub(r'\s', '', str(colorToEvaluate))
+
+        hexColor = re.search(r"^#[0-9a-fA-F]{3,6}$", colorStrWithoutSpaces)
+        listColor = re.search(r"\d{1,3},\d{1,3},\d{1,3}", colorStrWithoutSpaces)
+
+        if hexColor is not None:
+            if QColor(hexColor[0]).isValid():
+                return True
+        elif listColor is not None:
+            color = listColor[0].split(",")
+            rgb = QColor(int(color[0]),int(color[1]),int(color[2]))
+            if rgb.isValid():
+                return True
+        return False
+
+    def validatePythonTypes(self, value, pythonType):
+        if pythonType.lower() == "string":
+            if isinstance(value, str):
+                return True
+        elif pythonType.lower() == "list":
+            if isinstance(value, list):
+                return True
+        return False
+
+    def validateLengthOfDataTypes(self, data, dataLength):
+
+        if isinstance(data, (list, tuple, dict, str)):
+            if len(data) == dataLength:
+                return True
+        return False
+
+    def validateQgsExpressions(self, qgsExpression):
+
+        exp = QgsExpression(qgsExpression)
+
+        if exp.isValid():
+            if exp.isField():
+                return False
+            return True
+        return False
+
+    def showLoadingMsg(self, lyrList=None, msgType=None):
+        """
+        Shows a message box to user if successfully loaded data or not.
+        If not, shows to user a list of not loaded layers and allows user
+        to choice between ignore and continue or cancel the importation.
+        :param lyrList: (list) a list of not loaded layers.
+        :param msgType: (str) type of message box - warning or information.
+        :return: (signal) value returned from the clicked button.
+        """
+        msg = QMessageBox()
+        msg.setWindowTitle("Invalid Rules Information")
+
+        if lyrList and msgType == "invalid":
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("Some rules has invalid itens!")
+            msg.setInformativeText("If you ignore, the invalid rules may not be loaded.")
+
+            textLyrList = sorted(set(lyrList))
+            formatedLyrList = ["{}" for item in textLyrList]
+            msgString = ",".join(formatedLyrList).replace(",", "\n")
+            formatedMsgString = "The following rules are not valid:\n" + \
+                msgString.format(*textLyrList)
+
+            msg.setDetailedText(formatedMsgString)
+            msg.setStandardButtons(QMessageBox.Ignore | QMessageBox.Cancel)
+            msg.setDefaultButton(QMessageBox.Cancel)
+        else:
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("Successfully loaded rules!")
+
+        choice = msg.exec_()
+        return choice
