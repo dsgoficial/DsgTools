@@ -302,7 +302,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyTerrainModelErrorsAlgorithm(),
             CreateFramesWithConstraintAlgorithm(),
             IdentifyAnglesInInvalidRangeAlgorithm(),
-            RunFMESAPAlgorithm()
+            RunFMESAPAlgorithm(),
             EnforceAttributeRulesAlgorithm(),
             IdentifyPolygonSliverAlgorithm()
         ]
