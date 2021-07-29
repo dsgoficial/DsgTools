@@ -27,8 +27,6 @@ from itertools import combinations
 
 from processing.tools import dataobjects
 
-from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
 from qgis.core import (edit, Qgis, QgsCoordinateReferenceSystem, QgsCoordinateTransform,
                        QgsExpression, QgsFeature, QgsFeatureRequest, QgsField, QgsFields, QgsGeometry, QgsMessageLog,
@@ -37,6 +35,8 @@ from qgis.core import (edit, Qgis, QgsCoordinateReferenceSystem, QgsCoordinateTr
                        QgsProcessingFeatureSourceDefinition, QgsFeatureSink)
 from qgis.PyQt.Qt import QObject, QVariant
 
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 from .featureHandler import FeatureHandler
 from .geometryHandler import GeometryHandler
 
@@ -1499,6 +1499,7 @@ class LayerHandler(QObject):
                                                  attributeBlackList=None,
                                                  geographicBoundaryLyr=None,
                                                  onlySelected=False,
+                                                 spatialRule=None,
                                                  context=None,
                                                  feedback=None,
                                                  algRunner=None):
@@ -1569,12 +1570,18 @@ class LayerHandler(QObject):
             context,
             feedback=multiStepFeedback
         )
+        segmentsWithoutDuplicates.setName("segmentsWithoutDuplicates")
+        QgsProject.instance().addMapLayer(segmentsWithoutDuplicates)
+        
         multiStepFeedback.setCurrentStep(3)
         builtPolygonLyr = algRunner.runPolygonize(
             segmentsWithoutDuplicates,
             context,
             feedback=multiStepFeedback
         )
+        builtPolygonLyr.setName("builtPolygonLyr")
+        QgsProject.instance().addMapLayer(builtPolygonLyr)
+
         multiStepFeedback.setCurrentStep(4)
         polygonList, flagList = self.relateCenterPointsWithPolygons(
             inputCenterPointLyr,
@@ -1585,7 +1592,34 @@ class LayerHandler(QObject):
             context=context,
             feedback=multiStepFeedback
         )
-        return polygonList, flagList
+        multiStepFeedback.setCurrentStep(5)
+        #  explicar usar context.getMapLayer(layerName)
+        unusedDelimiters = algRunner.runEnforceSpatialRule(
+            spatialRule,
+            context,
+            feedback=multiStepFeedback)
+
+        delimitersFlagList = self.createDelimiterFlagDict(unusedDelimiters['LINE_FLAGS'])
+
+        QgsProject.instance().removeMapLayers([segmentsWithoutDuplicates.id(), builtPolygonLyr.id()])
+
+        return polygonList, flagList, delimitersFlagList
+    
+    def createDelimiterFlagDict(self, unusedDelimiters):
+        """
+        Returns a dictionary with flagText from unused polygon delimiters
+        :params unusedDelimiters: (QgsVectorLayer) with unused delimiters
+        :return delimiterFlagDict: (dict) dict with geom as key and flag text as value
+        """
+        delimiterFlagDict = dict()
+        delimiterFlagTxt = self.tr("This delimiter was not used in the polygons' construction")
+
+        for delimiter in unusedDelimiters.getFeatures():
+            geomKey = delimiter.geometry()
+            delimiterFlagDict[geomKey] = delimiterFlagTxt
+
+        return delimiterFlagDict
+
 
     def relateCenterPointsWithPolygons(self, inputCenterPointLyr,
                                        builtPolygonLyr, context=None,
@@ -1833,7 +1867,6 @@ class LayerHandler(QObject):
         Creates an warning text about points with conflicting attributes.
         :params builtPolygonToCenterPointDict: (dict) in the following format:
         :return conflictingPointsText: (str) flag text
-        Polígono com mais de um centróide com atributo nomedoatributo em conflito
         """
         conflictingAttributeValue = []
         listOfTupleValues = [
@@ -1844,22 +1877,23 @@ class LayerHandler(QObject):
                 listOfTupleValues[idx - 1]) - set(listOfTupleValues[idx])
             if conflict:
                 attributeValue = [value for value in conflict]
-                # attributeValue = self.retrieveListOfValues(conflict)
                 for value in attributeValue:
                     tupleValueidx = listOfTupleValues[idx-1].index(value)
                     conflictingAttributeValue.append(tupleValueidx)
+
         conflictingAttributeIdx = [idx for idx in set(conflictingAttributeValue)]
-        # conflictingAttributeIdx = self.retrieveListOfValues(set(conflictingAttributeValue))
+
         return conflictingAttributeIdx
 
-    def retrieveListOfValues(self, values):
-        listOfValues = list()
-        for value in values:
-            listOfValues.append(value)
-        return listOfValues
-
     def retrieveFieldNameFromIdx(self, index, qgsFields):
+        """
+        Gets the the field name from your id().
+        :param index: (int) field layer id.
+        :param qgsFields: (QgsFields) fields from a layer.
+        :return: (list or str) list of field names or a name.
+        """
         fieldNamesList = list()
+
         if isinstance(index, (list, tuple)):
             for idx in index:
                 fieldNamesList.append(qgsFields[0][idx].name())
@@ -1868,6 +1902,11 @@ class LayerHandler(QObject):
             return qgsFields.field(index).name()
 
     def returnFlagText(self, fieldName):
+        """
+        Returns a warning text.
+        :param fieldName: (str) conflicting field's name.
+        :return: (str) warning text.
+        """
         if len(fieldName) > 1:
             attributes = str(fieldName).replace('[','').replace(']','')
             flagText = self.tr(
