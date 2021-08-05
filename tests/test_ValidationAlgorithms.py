@@ -41,20 +41,19 @@ from qgis.core import (QgsProject,
                        QgsProcessingContext,
                        QgsProcessingFeedback,
                        QgsCoordinateReferenceSystem)
-from qgis.PyQt.QtSql import QSqlDatabase
 
+from qgis.PyQt.QtSql import QSqlDatabase
 from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 from qgis.testing import unittest
-
 class Tester(unittest.TestCase):
-    
+
     CURRENT_PATH = os.path.dirname(__file__)
     DEFAULT_ALG_PATH = os.path.join(
-                            CURRENT_PATH, '..', 'core', 'DSGToolsProcessingAlgs',
-                            'Algs', 'ValidationAlgs'
-                        )
+        CURRENT_PATH, '..', 'core', 'DSGToolsProcessingAlgs',
+        'Algs', 'ValidationAlgs'
+    )
     datasets = dict()
 
     def readAvailableAlgs(self, path):
@@ -128,7 +127,7 @@ class Tester(unittest.TestCase):
         for layer in ogr.Open(path):
             layername = layer.GetName()
             layers[layername] = QgsVectorLayer(
-                "{0}|layername={1}".format(path, layername), 
+                "{0}|layername={1}".format(path, layername),
                 layername,
                 "ogr"
             )
@@ -161,19 +160,22 @@ class Tester(unittest.TestCase):
                         be given.
         :return: (dict) a map from layer name to vector layer read from database.
         """
-        spatiaLitePaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'SpatiaLite')
-        gpkgPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'Geopackage')
-        geojsonPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'GeoJSON')
+        spatiaLitePaths = os.path.join(
+            self.CURRENT_PATH, "testing_datasets", 'SpatiaLite')
+        gpkgPaths = os.path.join(
+            self.CURRENT_PATH, "testing_datasets", 'Geopackage')
+        geojsonPaths = os.path.join(
+            self.CURRENT_PATH, "testing_datasets", 'GeoJSON')
         datasets = {
-            "sqlite" : {
-                "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite')
+            "sqlite": {
+                "banco_capacitacao": os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite')
             },
-            "gpkg" : {
-                "testes_wgs84" : os.path.join(gpkgPaths, 'testes_wgs84.gpkg'),
-                "testes_sirgas2000_23s" : os.path.join(gpkgPaths, 'testes_sirgas2000_23s.gpkg'),
-                "test_dataset_unbuild_polygons" : os.path.join(gpkgPaths, 'test_dataset_unbuild_polygons.gpkg')
+            "gpkg": {
+                "testes_wgs84": os.path.join(gpkgPaths, 'testes_wgs84.gpkg'),
+                "testes_sirgas2000_23s": os.path.join(gpkgPaths, 'testes_sirgas2000_23s.gpkg'),
+                "test_dataset_unbuild_polygons": os.path.join(gpkgPaths, 'test_dataset_unbuild_polygons.gpkg')
             },
-            "geojson" : {
+            "geojson": {
                 "land_cover_layers": os.path.join(geojsonPaths, 'land_cover_layers'),
                 "terrain_model_layers": os.path.join(geojsonPaths, 'terrain_model_layers'),
                 "testes_sirgas2000_24s": os.path.join(geojsonPaths, 'testes_sirgas2000_24s'),
@@ -188,9 +190,9 @@ class Tester(unittest.TestCase):
         }
         # switch-case for dataset reading
         funcs = {
-            "sqlite" : lambda ds: self.readSpatiaLite(datasets["sqlite"][ds]),
-            "gpkg" : lambda ds: self.readGeopackage(datasets["gpkg"][ds]),
-            "geojson" : lambda ds: self.readGeojson(datasets["geojson"][ds])
+            "sqlite": lambda ds: self.readSpatiaLite(datasets["sqlite"][ds]),
+            "gpkg": lambda ds: self.readGeopackage(datasets["gpkg"][ds]),
+            "geojson": lambda ds: self.readGeojson(datasets["geojson"][ds])
         }
         layers = dict()
         if driver in datasets and dataset in datasets[driver]:
@@ -203,7 +205,7 @@ class Tester(unittest.TestCase):
         return layers
 
     def getInputLayers(self, driver, dataset, layers,
-                        addControlKey=False, idsToSelect=None):
+                       addControlKey=False, idsToSelect=None):
         """
         Gets the vector layers from an input dataset.
         :param driver: (str) driver's to be read.
@@ -229,23 +231,23 @@ class Tester(unittest.TestCase):
                     self.addControlKey(vls[l])
                 out.append(lyr)
         return out
-    
+
     def addControlKey(self, lyr):
         return processing.run(
-                    'native:addautoincrementalfield',
-                    {
-                        'INPUT' : lyr,
-                        'FIELD_NAME' : 'AUTO',
-                        'START' : 0,
-                        'GROUP_FIELDS' : [],
-                        'SORT_EXPRESSION' : '',
-                        'SORT_ASCENDING' : True,
-                        'SORT_NULLS_FIRST' : False,
-                        'OUTPUT' : 'memory:'
-                    },
-                    context = QgsProcessingContext(),
-                    feedback = QgsProcessingFeedback()
-                )['OUTPUT']
+            'native:addautoincrementalfield',
+            {
+                'INPUT': lyr,
+                'FIELD_NAME': 'AUTO',
+                'START': 0,
+                'GROUP_FIELDS': [],
+                'SORT_EXPRESSION': '',
+                'SORT_ASCENDING': True,
+                'SORT_NULLS_FIRST': False,
+                'OUTPUT': 'memory:'
+            },
+            context=QgsProcessingContext(),
+            feedback=QgsProcessingFeedback()
+        )['OUTPUT']
 
     def addLayerToGroup(self, layer, groupname):
         """
@@ -271,751 +273,794 @@ class Tester(unittest.TestCase):
                  tests.
         """
         parameters = {
-            "dsgtools:topologicaldouglaspeuckerareasimplification" : [
+            "dsgtools:topologicaldouglaspeuckerareasimplification": [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'INPUTLAYERS' : self.getInputLayers(
+                    '__comment': "'Normal' test: checks if it works.",
+                    'INPUTLAYERS': self.getInputLayers(
                         'geojson', 'douglas_peucker',
                         ['cb_veg_campo_a'],
                         addControlKey=True,
                         idsToSelect=None
                     )[0],
-                    'SELECTED' : False,
+                    'SELECTED': False,
                     'SNAP': 1,
                     'DOUGLASPARAMETER': 150,
-                    'FLAGS' : "memory:",
-                    'OUTPUT' : "memory:"
+                    'FLAGS': "memory:",
+                    'OUTPUT': "memory:"
                 },
                 {
-                    '__comment' : "Second test: checks if it works with onlySelected=True.",
-                    'INPUTLAYERS' : self.getInputLayers(
+                    '__comment': "Second test: checks if it works with onlySelected=True.",
+                    'INPUTLAYERS': self.getInputLayers(
                         'geojson', 'douglas_peucker',
                         ['cb_veg_campo_a'],
                         addControlKey=True,
                         idsToSelect=[1, 2]
                     )[0],
-                    'SELECTED' : True,
+                    'SELECTED': True,
                     'SNAP': 1,
                     'DOUGLASPARAMETER': 150,
-                    'FLAGS' : "memory:",
-                    'OUTPUT' : "memory:"
+                    'FLAGS': "memory:",
+                    'OUTPUT': "memory:"
                 }
             ],
 
-            "dsgtools:topologicaldouglaspeuckerlinesimplification" : [
+            "dsgtools:topologicaldouglaspeuckerlinesimplification": [
                 {
-                    '__comment' : "First test: checks if it works.",
-                    'INPUTLAYERS' : self.getInputLayers(
+                    '__comment': "First test: checks if it works.",
+                    'INPUTLAYERS': self.getInputLayers(
                         'geojson', 'douglas_peucker',
                         ['cb_tra_trecho_rodoviario_l'],
                         addControlKey=True,
                         idsToSelect=None
                     )[0],
-                    'SELECTED' : False,
+                    'SELECTED': False,
                     'SNAP': 1,
                     'DOUGLASPARAMETER': 2.5,
-                    'FLAGS' : "memory:",
-                    'OUTPUT' : "memory:"
+                    'FLAGS': "memory:",
+                    'OUTPUT': "memory:"
                 },
                 {
-                    '__comment' : "Second test: checks if it works with onlySelected=True.",
-                    'INPUTLAYERS' : self.getInputLayers(
+                    '__comment': "Second test: checks if it works with onlySelected=True.",
+                    'INPUTLAYERS': self.getInputLayers(
                         'geojson', 'douglas_peucker',
                         ['cb_tra_trecho_rodoviario_l'],
                         addControlKey=True,
                         idsToSelect=[19, 20, 21]
                     )[0],
-                    'SELECTED' : True,
+                    'SELECTED': True,
                     'SNAP': 1,
                     'DOUGLASPARAMETER': 2.5,
-                    'FLAGS' : "memory:",
-                    'OUTPUT' : "memory:"
+                    'FLAGS': "memory:",
+                    'OUTPUT': "memory:"
                 }
             ],
 
-            "dsgtools:identifyduplicatedfeatures" : [
+            "dsgtools:identifyduplicatedfeatures": [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'ATTRIBUTE_BLACK_LIST' : [],
-                    'FLAGS' : "memory:",
-                    'IGNORE_PK_FIELDS' : True,
-                    'IGNORE_VIRTUAL_FIELDS' : True,
-                    'INPUT' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao',
-                            ['cb_rel_ponto_cotado_altimetrico_p']
-                        )[0],
-                    'SELECTED' : False
-                }
-            ],
-
-            "dsgtools:identifyoutofboundsangles" : [
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'FLAGS' : 'memory:',
-                    'INPUT' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_hid_terreno_suj_inundacao_a']
-                        )[0],
-                    'SELECTED' : False,
-                    'TOLERANCE' : 10
-                }
-            ],
-
-            "dsgtools:identifyoutofboundsanglesincoverage" : [
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'FLAGS' : 'memory:',
-                    'INPUTLAYERS' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
-                        ),
-                    'SELECTED' : False,
-                    'TOLERANCE' : 10
-                }
-            ],
-
-            "dsgtools:identifyanglesininvalidrangealgorithm" : [
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'FLAGS' : 'memory:',
-                    'INPUT' : self.getInputLayers(
-                        'geojson', 'identify_angles_in_invalid_range_layers', ['lines1']
+                    '__comment': "'Normal' test: checks if it works.",
+                    'ATTRIBUTE_BLACK_LIST': [],
+                    'FLAGS': "memory:",
+                    'IGNORE_PK_FIELDS': True,
+                    'IGNORE_VIRTUAL_FIELDS': True,
+                    'INPUT': self.getInputLayers(
+                        'sqlite', 'banco_capacitacao',
+                        ['cb_rel_ponto_cotado_altimetrico_p']
                     )[0],
-                    'SELECTED' : False,
-                    'MIN_ANGLE' : 80,
-                    'MAX_ANGLE' : 100
+                    'SELECTED': False
                 }
             ],
 
-            "dsgtools:identifygaps" : [
+            "dsgtools:identifyoutofboundsangles": [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'FLAGS' : 'memory:',
-                    'INPUT' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_hid_terreno_suj_inundacao_a']
-                        )[0],
-                    'SELECTED' : False
-                }
-            ],
-
-            "dsgtools:identifyandfixinvalidgeometries" : [
-                {
-                    '__comment' : "'Normal' test: checks if it works. This test does not check fixes!",
-                    'FLAGS' : 'memory:',
-                    'INPUT' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_veg_campo_a']
-                        )[0],
-                    'IGNORE_CLOSED' : False,
-                    'SELECTED' : False,
-                    'TYPE' : False
-                }
-            ],
-
-            "dsgtools:identifyduplicatedgeometries" : [
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'FLAGS' : 'memory:',
-                    'INPUT' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_rel_ponto_cotado_altimetrico_p']
-                        )[0],
-                    'SELECTED' : False
-                }
-            ],
-
-            "dsgtools:identifyduplicatedlinesoncoverage" : [
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'FLAGS' : 'memory:',
-                    'INPUTLAYERS' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao',
-                            ['cb_hid_corredeira_l', 'cb_hid_trecho_drenagem_l']
-                        ),
-                    'SELECTED' : False
-                }
-            ],
-
-            "dsgtools:identifysmalllines" : [
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'FLAGS' : 'memory:',
-                    'INPUT' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
-                        )[0],
-                    'SELECTED' : False,
-                    'TOLERANCE' : 5
-                }
-            ],
-
-            "dsgtools:identifyduplicatedpolygonsoncoverage" : [
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'FLAGS' : 'memory:',
-                    'INPUTLAYERS' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao',
-                            ['cb_veg_campo_a', 'cb_veg_floresta_a']
-                        ),
-                    'SELECTED' : False
-                    
-                }
-            ],
-
-            "dsgtools:identifysmallpolygons" : [
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
+                    '__comment': "'Normal' test: checks if it works.",
                     'FLAGS': 'memory:',
                     'INPUT': self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_veg_campo_a']
-                        )[0],
+                        'sqlite', 'banco_capacitacao', [
+                            'cb_hid_terreno_suj_inundacao_a']
+                    )[0],
+                    'SELECTED': False,
+                    'TOLERANCE': 10
+                }
+            ],
+
+            "dsgtools:identifyoutofboundsanglesincoverage": [
+                {
+                    '__comment': "'Normal' test: checks if it works.",
+                    'FLAGS': 'memory:',
+                    'INPUTLAYERS': self.getInputLayers(
+                        'sqlite', 'banco_capacitacao', [
+                            'cb_hid_trecho_drenagem_l']
+                    ),
+                    'SELECTED': False,
+                    'TOLERANCE': 10
+                }
+            ],
+
+            "dsgtools:identifyanglesininvalidrangealgorithm": [
+                {
+                    '__comment': "'Normal' test: checks if it works.",
+                    'FLAGS': 'memory:',
+                    'INPUT': self.getInputLayers(
+                        'geojson', 'identify_angles_in_invalid_range_layers', [
+                            'lines1']
+                    )[0],
+                    'SELECTED': False,
+                    'MIN_ANGLE': 80,
+                    'MAX_ANGLE': 100
+                }
+            ],
+
+            "dsgtools:identifygaps": [
+                {
+                    '__comment': "'Normal' test: checks if it works.",
+                    'FLAGS': 'memory:',
+                    'INPUT': self.getInputLayers(
+                        'sqlite', 'banco_capacitacao', [
+                            'cb_hid_terreno_suj_inundacao_a']
+                    )[0],
+                    'SELECTED': False
+                }
+            ],
+
+            "dsgtools:identifyandfixinvalidgeometries": [
+                {
+                    '__comment': "'Normal' test: checks if it works. This test does not check fixes!",
+                    'FLAGS': 'memory:',
+                    'INPUT': self.getInputLayers(
+                        'sqlite', 'banco_capacitacao', ['cb_veg_campo_a']
+                    )[0],
+                    'IGNORE_CLOSED': False,
+                    'SELECTED': False,
+                    'TYPE': False
+                }
+            ],
+
+            "dsgtools:identifyduplicatedgeometries": [
+                {
+                    '__comment': "'Normal' test: checks if it works.",
+                    'FLAGS': 'memory:',
+                    'INPUT': self.getInputLayers(
+                        'sqlite', 'banco_capacitacao', [
+                            'cb_rel_ponto_cotado_altimetrico_p']
+                    )[0],
+                    'SELECTED': False
+                }
+            ],
+
+            "dsgtools:identifyduplicatedlinesoncoverage": [
+                {
+                    '__comment': "'Normal' test: checks if it works.",
+                    'FLAGS': 'memory:',
+                    'INPUTLAYERS': self.getInputLayers(
+                        'sqlite', 'banco_capacitacao',
+                        ['cb_hid_corredeira_l', 'cb_hid_trecho_drenagem_l']
+                    ),
+                    'SELECTED': False
+                }
+            ],
+
+            "dsgtools:identifysmalllines": [
+                {
+                    '__comment': "'Normal' test: checks if it works.",
+                    'FLAGS': 'memory:',
+                    'INPUT': self.getInputLayers(
+                        'sqlite', 'banco_capacitacao', [
+                            'cb_hid_trecho_drenagem_l']
+                    )[0],
+                    'SELECTED': False,
+                    'TOLERANCE': 5
+                }
+            ],
+
+            "dsgtools:identifyduplicatedpolygonsoncoverage": [
+                {
+                    '__comment': "'Normal' test: checks if it works.",
+                    'FLAGS': 'memory:',
+                    'INPUTLAYERS': self.getInputLayers(
+                        'sqlite', 'banco_capacitacao',
+                        ['cb_veg_campo_a', 'cb_veg_floresta_a']
+                    ),
+                    'SELECTED': False
+
+                }
+            ],
+
+            "dsgtools:identifysmallpolygons": [
+                {
+                    '__comment': "'Normal' test: checks if it works.",
+                    'FLAGS': 'memory:',
+                    'INPUT': self.getInputLayers(
+                        'sqlite', 'banco_capacitacao', ['cb_veg_campo_a']
+                    )[0],
                     'SELECTED': False,
                     'TOLERANCE': 625
                 }
             ],
 
-            "dsgtools:identifydangles" : [
+            "dsgtools:identifydangles": [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'FLAGS' : 'memory:',
-                    'IGNOREINNER' : False,
-                    'INPUT' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
-                        )[0],
-                    'LINEFILTERLAYERS' : '',
-                    'POLYGONFILTERLAYERS' : '',
-                    'SELECTED' : False,
-                    'TOLERANCE' : 2,
-                    'TYPE' : False
-                }
-            ],
-
-            "dsgtools:identifyduplicatedpointsoncoverage" : [
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'FLAGS' : 'memory:',
-                    'INPUTLAYERS' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao',
-                            ['cb_adm_edif_pub_civil_p', 'cb_rel_ponto_cotado_altimetrico_p']
-                        ),
-                    'SELECTED' : False
-                }
-            ],
-
-            "dsgtools:identifyoverlaps" : [
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'FLAGS': "memory:",
+                    '__comment': "'Normal' test: checks if it works.",
+                    'FLAGS': 'memory:',
+                    'IGNOREINNER': False,
                     'INPUT': self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_hid_ilha_a']
-                        )[0],
+                        'sqlite', 'banco_capacitacao', [
+                            'cb_hid_trecho_drenagem_l']
+                    )[0],
+                    'LINEFILTERLAYERS': '',
+                    'POLYGONFILTERLAYERS': '',
+                    'SELECTED': False,
+                    'TOLERANCE': 2,
+                    'TYPE': False
+                }
+            ],
+
+            "dsgtools:identifyduplicatedpointsoncoverage": [
+                {
+                    '__comment': "'Normal' test: checks if it works.",
+                    'FLAGS': 'memory:',
+                    'INPUTLAYERS': self.getInputLayers(
+                        'sqlite', 'banco_capacitacao',
+                        ['cb_adm_edif_pub_civil_p',
+                         'cb_rel_ponto_cotado_altimetrico_p']
+                    ),
                     'SELECTED': False
                 }
             ],
-            "dsgtools:identifyvertexnearedges" : [
+
+            "dsgtools:identifyoverlaps": [
                 {
-                    '__comment' : "'Normal' test: checks if it works with polygon.",
+                    '__comment': "'Normal' test: checks if it works.",
                     'FLAGS': "memory:",
                     'INPUT': self.getInputLayers(
-                            'geojson', 'testes_sirgas2000_24s', ['test1_vertexnearedge_a']
-                        )[0],
+                        'sqlite', 'banco_capacitacao', ['cb_hid_ilha_a']
+                    )[0],
+                    'SELECTED': False
+                }
+            ],
+            "dsgtools:identifyvertexnearedges": [
+                {
+                    '__comment': "'Normal' test: checks if it works with polygon.",
+                    'FLAGS': "memory:",
+                    'INPUT': self.getInputLayers(
+                        'geojson', 'testes_sirgas2000_24s', [
+                            'test1_vertexnearedge_a']
+                    )[0],
                     'SEARCH_RADIUS':1,
                     'SELECTED': False
                 },
                 {
-                    '__comment' : "'Normal' test: checks if it works with line.",
+                    '__comment': "'Normal' test: checks if it works with line.",
                     'FLAGS': "memory:",
                     'INPUT': self.getInputLayers(
-                            'geojson', 'testes_sirgas2000_24s', ['test2_vertexnearedge_l']
-                        )[0],
+                        'geojson', 'testes_sirgas2000_24s', [
+                            'test2_vertexnearedge_l']
+                    )[0],
                     'SEARCH_RADIUS':1,
                     'SELECTED': False
                 }
             ],
-            "dsgtools:removeduplicatedfeatures" : [
+            "dsgtools:removeduplicatedfeatures": [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'ATTRIBUTE_BLACK_LIST' : [],
-                    'IGNORE_PK_FIELDS' : True,
-                    'IGNORE_VIRTUAL_FIELDS' : True,
-                    'INPUT' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_rel_ponto_cotado_altimetrico_p']
-                        )[0],
-                    'SELECTED' : False
+                    '__comment': "'Normal' test: checks if it works.",
+                    'ATTRIBUTE_BLACK_LIST': [],
+                    'IGNORE_PK_FIELDS': True,
+                    'IGNORE_VIRTUAL_FIELDS': True,
+                    'INPUT': self.getInputLayers(
+                        'sqlite', 'banco_capacitacao', [
+                            'cb_rel_ponto_cotado_altimetrico_p']
+                    )[0],
+                    'SELECTED': False
                 }
             ],
 
-            "dsgtools:removeduplicatedgeometries" : [
+            "dsgtools:removeduplicatedgeometries": [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'FLAGS' : 'memory:',
-                    'INPUT' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_rel_ponto_cotado_altimetrico_p']
-                        )[0],
-                    'SELECTED' : False
+                    '__comment': "'Normal' test: checks if it works.",
+                    'FLAGS': 'memory:',
+                    'INPUT': self.getInputLayers(
+                        'sqlite', 'banco_capacitacao', [
+                            'cb_rel_ponto_cotado_altimetrico_p']
+                    )[0],
+                    'SELECTED': False
                 }
             ],
 
-            "dsgtools:removesmalllines" : [
+            "dsgtools:removesmalllines": [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'INPUT' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
-                        )[0],
-                    'SELECTED' : False,
-                    'TOLERANCE' : 5
+                    '__comment': "'Normal' test: checks if it works.",
+                    'INPUT': self.getInputLayers(
+                        'sqlite', 'banco_capacitacao', [
+                            'cb_hid_trecho_drenagem_l']
+                    )[0],
+                    'SELECTED': False,
+                    'TOLERANCE': 5
                 }
             ],
 
-            "dsgtools:removesmallpolygons" : [
+            "dsgtools:removesmallpolygons": [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'INPUT' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_veg_campo_a']
-                        )[0],
-                    'SELECTED' : False,
-                    'TOLERANCE' : 625
-                }
-            ],
-            
-            "dsgtools:overlayelementswithareas" : [
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'BEHAVIOR' : 0,
-                    'INPUT' : self.getInputLayers(
-                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_1']
-                        )[0],
-                    'OVERLAY' : self.getInputLayers(
-                            'gpkg', 'testes_sirgas2000_23s', ['camada_poligono_1']
-                        )[0],
-                    'SELECTED' : False,
-                    'SELECTED_OVERLAY' : False
+                    '__comment': "'Normal' test: checks if it works.",
+                    'INPUT': self.getInputLayers(
+                        'sqlite', 'banco_capacitacao', ['cb_veg_campo_a']
+                    )[0],
+                    'SELECTED': False,
+                    'TOLERANCE': 625
                 }
             ],
 
-            "dsgtools:deaggregategeometries" : [
+            "dsgtools:overlayelementswithareas": [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'INPUT' : self.getInputLayers(
-                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_1'], addControlKey=True
-                        )[0],
-                    'SELECTED' : False
-                }
-            ],
-            
-            "dsgtools:dissolvepolygonswithsameattributes" : [
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'ATTRIBUTE_BLACK_LIST' : [],
-                    'IGNORE_PK_FIELDS' : True,
-                    'IGNORE_VIRTUAL_FIELDS' : True,
-                    'INPUT' : self.getInputLayers(
-                            'gpkg', 'testes_sirgas2000_23s', ['camada_poligono_1']
-                        )[0],
-                    'MIN_AREA' : None,
-                    'SELECTED' : False
+                    '__comment': "'Normal' test: checks if it works.",
+                    'BEHAVIOR': 0,
+                    'INPUT': self.getInputLayers(
+                        'gpkg', 'testes_sirgas2000_23s', ['camada_linha_1']
+                    )[0],
+                    'OVERLAY': self.getInputLayers(
+                        'gpkg', 'testes_sirgas2000_23s', [
+                                'camada_poligono_1']
+                    )[0],
+                    'SELECTED': False,
+                    'SELECTED_OVERLAY': False
                 }
             ],
 
-            "dsgtools:removeemptyandupdate" : [
+            "dsgtools:deaggregategeometries": [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'INPUT' : self.getInputLayers(
-                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_2']
-                        )[0],
-                    'SELECTED' : False
+                    '__comment': "'Normal' test: checks if it works.",
+                    'INPUT': self.getInputLayers(
+                        'gpkg', 'testes_sirgas2000_23s', ['camada_linha_1'], addControlKey=True
+                    )[0],
+                    'SELECTED': False
                 }
             ],
 
-            "dsgtools:lineonlineoverlayer" : [
+            "dsgtools:dissolvepolygonswithsameattributes": [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'INPUT' : self.getInputLayers(
-                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_4']
-                        )[0],
-                    'SELECTED' : False,
-                    'TOLERANCE' : 1
+                    '__comment': "'Normal' test: checks if it works.",
+                    'ATTRIBUTE_BLACK_LIST': [],
+                    'IGNORE_PK_FIELDS': True,
+                    'IGNORE_VIRTUAL_FIELDS': True,
+                    'INPUT': self.getInputLayers(
+                        'gpkg', 'testes_sirgas2000_23s', ['camada_poligono_1']
+                    )[0],
+                    'MIN_AREA': None,
+                    'SELECTED': False
                 }
             ],
 
-            "dsgtools:mergelineswithsameattributeset" : [
+            "dsgtools:removeemptyandupdate": [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'ATTRIBUTE_BLACK_LIST' : ['OGC_FID'],
-                    'IGNORE_NETWORK' : True,
-                    'IGNORE_PK_FIELDS' : True,
-                    'IGNORE_VIRTUAL_FIELDS' : True,
-                    'INPUT' : self.getInputLayers(
-                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_3']
-                        )[0],
-                    'SELECTED' : False
+                    '__comment': "'Normal' test: checks if it works.",
+                    'INPUT': self.getInputLayers(
+                        'gpkg', 'testes_sirgas2000_23s', ['camada_linha_2']
+                    )[0],
+                    'SELECTED': False
                 }
             ],
 
-            "dsgtools:snaplayeronlayer" : [
+            "dsgtools:lineonlineoverlayer": [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'BEHAVIOR' : 0,
-                    'INPUT' : self.getInputLayers(
-                            'gpkg', 'testes_sirgas2000_23s', ['camada_poligono_1']
-                        )[0],
-                    'REFERENCE_LAYER' : self.getInputLayers(
-                            'gpkg', 'testes_sirgas2000_23s', ['camada_poligono_2']
-                        )[0],
-                    'SELECTED' : False,
-                    'TOLERANCE' : 25
+                    '__comment': "'Normal' test: checks if it works.",
+                    'INPUT': self.getInputLayers(
+                        'gpkg', 'testes_sirgas2000_23s', ['camada_linha_4']
+                    )[0],
+                    'SELECTED': False,
+                    'TOLERANCE': 1
                 }
             ],
 
-            "dsgtools:adjustnetworkconnectivity" : [
+            "dsgtools:mergelineswithsameattributeset": [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'INPUT' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
-                        )[0],
-                    'SELECTED' : False,
-                    'TOLERANCE' : 2
+                    '__comment': "'Normal' test: checks if it works.",
+                    'ATTRIBUTE_BLACK_LIST': ['OGC_FID'],
+                    'IGNORE_NETWORK': True,
+                    'IGNORE_PK_FIELDS': True,
+                    'IGNORE_VIRTUAL_FIELDS': True,
+                    'INPUT': self.getInputLayers(
+                        'gpkg', 'testes_sirgas2000_23s', ['camada_linha_3']
+                    )[0],
+                    'SELECTED': False
                 }
             ],
 
-            "dsgtools:identifyunsharedvertexonintersectionsalgorithm" : [
+            "dsgtools:snaplayeronlayer": [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'INPUT_LINES' : self.getInputLayers(
+                    '__comment': "'Normal' test: checks if it works.",
+                    'BEHAVIOR': 0,
+                    'INPUT': self.getInputLayers(
+                        'gpkg', 'testes_sirgas2000_23s', ['camada_poligono_1']
+                    )[0],
+                    'REFERENCE_LAYER': self.getInputLayers(
+                        'gpkg', 'testes_sirgas2000_23s', [
+                                'camada_poligono_2']
+                    )[0],
+                    'SELECTED': False,
+                    'TOLERANCE': 25
+                }
+            ],
+
+            "dsgtools:adjustnetworkconnectivity": [
+                {
+                    '__comment': "'Normal' test: checks if it works.",
+                    'INPUT': self.getInputLayers(
+                        'sqlite', 'banco_capacitacao', [
+                            'cb_hid_trecho_drenagem_l']
+                    )[0],
+                    'SELECTED': False,
+                    'TOLERANCE': 2
+                }
+            ],
+
+            "dsgtools:identifyunsharedvertexonintersectionsalgorithm": [
+                {
+                    '__comment': "'Normal' test: checks if it works.",
+                    'INPUT_LINES': self.getInputLayers(
                         'gpkg', 'testes_wgs84', ['line_input']
                     )[0],
-                    'INPUT_POLYGONS' : self.getInputLayers(
+                    'INPUT_POLYGONS': self.getInputLayers(
                         'gpkg', 'testes_wgs84', ['polygon_input']
                     )[0],
-                    'SELECTED' : False,
-                    'FLAGS' : "memory:"
+                    'SELECTED': False,
+                    'FLAGS': "memory:"
                 }
             ],
 
-            "dsgtools:unbuildpolygonsalgorithm" : [
+            "dsgtools:unbuildpolygonsalgorithm": [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'INPUT_POLYGONS' : self.getInputLayers(
+                    '__comment': "'Normal' test: checks if it works.",
+                    'INPUT_POLYGONS': self.getInputLayers(
                         'geojson', 'land_cover_layers', ['vegetation']
                     )[0],
-                    'SELECTED' : False,
-                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
+                    'SELECTED': False,
+                    'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
                         'geojson', 'land_cover_layers', ['fence', 'road']
                     ),
-                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
+                    'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
                         'geojson', 'land_cover_layers', ['water']
                     ),
-                    'GEOGRAPHIC_BOUNDARY' : '',
-                    'OUTPUT_CENTER_POINTS' : "memory:",
-                    'OUTPUT_BOUNDARIES' : "memory:"
+                    'GEOGRAPHIC_BOUNDARY': '',
+                    'OUTPUT_CENTER_POINTS': "memory:",
+                    'OUTPUT_BOUNDARIES': "memory:"
                 }
             ],
-            "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm" : [
+            "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm": [
                 {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    "INPUT_CENTER_POINTS" : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['center_points_test1']
-                    )[0],
-                    'SELECTED' : False,
-                    'ATTRIBUTE_BLACK_LIST' : [],
-                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries']
-                    ),
-                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['water']
-                    ),
-                    'GEOGRAPHIC_BOUNDARY' : '',
-                    'OUTPUT_POLYGONS' : "memory:",
-                    'FLAGS' : "memory:"
-                },
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    "INPUT_CENTER_POINTS" : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['center_points_test2']
-                    )[0],
-                    'SELECTED' : False,
-                    'ATTRIBUTE_BLACK_LIST' : [],
-                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries']
-                    ),
-                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['water']
-                    ),
-                    'GEOGRAPHIC_BOUNDARY' : '',
-                    'OUTPUT_POLYGONS' : "memory:",
-                    'FLAGS' : "memory:"
-                },
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    "INPUT_CENTER_POINTS" : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['center_points_test3']
-                    )[0],
-                    'SELECTED' : False,
-                    'ATTRIBUTE_BLACK_LIST' : [],
-                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries']
-                    ),
-                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['water']
-                    ),
-                    'GEOGRAPHIC_BOUNDARY' : '',
-                    'OUTPUT_POLYGONS' : "memory:",
-                    'FLAGS' : "memory:"
-                },
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    "INPUT_CENTER_POINTS" : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['center_points_test4']
-                    )[0],
-                    'SELECTED' : False,
-                    'ATTRIBUTE_BLACK_LIST' : [],
-                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries']
-                    ),
-                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['water']
-                    ),
-                    'GEOGRAPHIC_BOUNDARY' : '',
-                    'OUTPUT_POLYGONS' : "memory:",
-                    'FLAGS' : "memory:"
-                },
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    "INPUT_CENTER_POINTS" : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['center_points_test5']
-                    )[0],
-                    'SELECTED' : False,
-                    'ATTRIBUTE_BLACK_LIST' : [],
-                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries']
-                    ),
-                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['water']
-                    ),
-                    'GEOGRAPHIC_BOUNDARY' : '',
-                    'OUTPUT_POLYGONS' : "memory:",
-                    'FLAGS' : "memory:"
-                },
-                {
-                    '__comment' : "test 6 - same as test 1, but with geo bounds",
-                    "INPUT_CENTER_POINTS" : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['center_points_test1']
-                    )[0],
-                    'SELECTED' : False,
-                    'ATTRIBUTE_BLACK_LIST' : [],
-                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries_within_geo_bounds']
-                    ),
-                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['water']
-                    ),
-                    'GEOGRAPHIC_BOUNDARY' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['geographic_bounds']
-                    )[0],
-                    'OUTPUT_POLYGONS' : "memory:",
-                    'FLAGS' : "memory:"
-                },
-                {
-                    '__comment' : "test 7 - same as test 2, but with geo bounds",
-                    "INPUT_CENTER_POINTS" : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['center_points_test2']
-                    )[0],
-                    'SELECTED' : False,
-                    'ATTRIBUTE_BLACK_LIST' : [],
-                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries_within_geo_bounds']
-                    ),
-                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['water']
-                    ),
-                    'GEOGRAPHIC_BOUNDARY' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['geographic_bounds']
-                    )[0],
-                    'OUTPUT_POLYGONS' : "memory:",
-                    'FLAGS' : "memory:"
-                },
-                {
-                    '__comment' : "test 8 - same as test 3, but with geo bounds",
-                    "INPUT_CENTER_POINTS" : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['center_points_test3']
-                    )[0],
-                    'SELECTED' : False,
-                    'ATTRIBUTE_BLACK_LIST' : [],
-                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries_within_geo_bounds']
-                    ),
-                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['water']
-                    ),
-                    'GEOGRAPHIC_BOUNDARY' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['geographic_bounds']
-                    )[0],
-                    'OUTPUT_POLYGONS' : "memory:",
-                    'FLAGS' : "memory:"
-                },
-                {
-                    '__comment' : "test 9 - same as test 4, but with geo bounds",
-                    "INPUT_CENTER_POINTS" : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['center_points_test4']
-                    )[0],
-                    'SELECTED' : False,
-                    'ATTRIBUTE_BLACK_LIST' : [],
-                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries_within_geo_bounds']
-                    ),
-                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['water']
-                    ),
-                    'GEOGRAPHIC_BOUNDARY' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['geographic_bounds']
-                    )[0],
-                    'OUTPUT_POLYGONS' : "memory:",
-                    'FLAGS' : "memory:"
-                },
-                {
-                    '__comment' : "test 10 - same as test 5, but with geo bounds",
-                    "INPUT_CENTER_POINTS" : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['center_points_test5']
-                    )[0],
-                    'SELECTED' : False,
-                    'ATTRIBUTE_BLACK_LIST' : [],
-                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['fence', 'road', 'boundaries_within_geo_bounds']
-                    ),
-                    'CONSTRAINT_POLYGON_LAYERS' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['water']
-                    ),
-                    'GEOGRAPHIC_BOUNDARY' : self.getInputLayers(
-                        'geojson', 'land_cover_layers', ['geographic_bounds']
-                    )[0],
-                    'OUTPUT_POLYGONS' : "memory:",
-                    'FLAGS' : "memory:"
-                },
-                {
-                    '__comment' : "test 11 - without polygons, just lines, with attributeblacklist",
-                    "INPUT_CENTER_POINTS" : self.getInputLayers(
-                        'geojson', 'build_polygons_from_center_points', ['pontos']
-                    )[0],
-                    'SELECTED' : False,
-                    'ATTRIBUTE_BLACK_LIST' : ['id','nome','tipo_comprovacao','tipo_insumo','observacao', 'data_modificacao', 'controle_id', 'ultimo_usuario'],
-                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
-                        'geojson', 'build_polygons_from_center_points', ['linhas1', 'linhas2']
-                    ),
-                    'CONSTRAINT_POLYGON_LAYERS' : None,
-                    'GEOGRAPHIC_BOUNDARY' : None,
-                    'OUTPUT_POLYGONS' : "memory:",
-                    'FLAGS' : "memory:"
-                },
-                {
-                    '__comment' : "test 12 - without polygons, just lines, with attributeblacklist and geoboundary. Should create 5 pol, not 6. The tip of the triangle is outside of the boundary ",
-                    "INPUT_CENTER_POINTS" : self.getInputLayers(
-                        'geojson', 'build_polygons_from_center_points', ['pontos']
-                    )[0],
-                    'SELECTED' : False,
-                    'ATTRIBUTE_BLACK_LIST' : ['id','nome','tipo_comprovacao','tipo_insumo','observacao', 'data_modificacao', 'controle_id', 'ultimo_usuario'],
-                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
-                        'geojson', 'build_polygons_from_center_points', ['linhas1', 'linhas2']
-                    ),
-                    'CONSTRAINT_POLYGON_LAYERS' : None,
-                    'GEOGRAPHIC_BOUNDARY' : self.getInputLayers(
-                        'geojson', 'build_polygons_from_center_points', ['moldura']
-                    )[0],
-                    'OUTPUT_POLYGONS' : "memory:",
-                    'FLAGS' : "memory:"
-                },
-                {
-                    '__comment' : "test 13 - without polygons, just lines, with a different attributeblacklist",
-                    "INPUT_CENTER_POINTS" : self.getInputLayers(
-                        'geojson', 'build_polygons_from_center_points', ['pontos']
-                    )[0],
-                    'SELECTED' : False,
-                    'ATTRIBUTE_BLACK_LIST' : ['id','nome','tipo_comprovacao','tipo_insumo','observacao'],
-                    'CONSTRAINT_LINE_LAYERS' : self.getInputLayers(
-                        'geojson', 'build_polygons_from_center_points', ['linhas1', 'linhas2']
-                    ),
-                    'CONSTRAINT_POLYGON_LAYERS' : None,
-                    'GEOGRAPHIC_BOUNDARY' : None,
-                    'OUTPUT_POLYGONS' : "memory:",
-                    'FLAGS' : "memory:"
-                }        
+                    '__comment': "'Normal' test: checks if it works.",
+                    "INPUT_CENTER_POINTS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['aquisicao_centroide_hidrografia_p',
+                                                         'aquisicao_centroide_vegetacao_p']),
+                    "ATTRIBUTE_BLACK_LIST": [],
+                    "IGNORE_VIRTUAL_FIELDS": True,
+                    "IGNORE_PK_FIELDS": True,
+                    "CONSTRAINT_LINE_LAYERS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['elemnat_trecho_drenagem_l',
+                                                                         'infra_via_deslocamento_l']),
+                    "DELIMITER_LAYERS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['aquisicao_limite_hidrografia_l',
+                                                                         'aquisicao_limite_vegetacao_l']),
+                    "CONSTRAINT_POLYGON_LAYERS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['cobter_area_edificada_a',
+                                                                         'cobter_corpo_dagua_a']),
+                    "GEOGRAPHIC_BOUNDARY": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['aux_moldura_a']),
+                    "OUTPUT_POLYGONS": "memory:",
+                    "FLAGS": "memory:",
+                    "DELIMITERS_FLAGS": "memory:"
+                }#,
+                # {
+                #     '__comment': "'Normal' test: checks if it works.",
+                #     "INPUT_CENTER_POINTS": self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['center_points_test2']
+                #     )[0],
+                #     'SELECTED': False,
+                #     'ATTRIBUTE_BLACK_LIST': [],
+                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', [
+                #             'fence', 'road', 'boundaries']
+                #     ),
+                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['water']
+                #     ),
+                #     'GEOGRAPHIC_BOUNDARY': '',
+                #     'OUTPUT_POLYGONS': "memory:",
+                #     'FLAGS': "memory:"
+                # },
+                # {
+                #     '__comment': "'Normal' test: checks if it works.",
+                #     "INPUT_CENTER_POINTS": self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['center_points_test3']
+                #     )[0],
+                #     'SELECTED': False,
+                #     'ATTRIBUTE_BLACK_LIST': [],
+                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', [
+                #             'fence', 'road', 'boundaries']
+                #     ),
+                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['water']
+                #     ),
+                #     'GEOGRAPHIC_BOUNDARY': '',
+                #     'OUTPUT_POLYGONS': "memory:",
+                #     'FLAGS': "memory:"
+                # },
+                # {
+                #     '__comment': "'Normal' test: checks if it works.",
+                #     "INPUT_CENTER_POINTS": self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['center_points_test4']
+                #     )[0],
+                #     'SELECTED': False,
+                #     'ATTRIBUTE_BLACK_LIST': [],
+                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', [
+                #             'fence', 'road', 'boundaries']
+                #     ),
+                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['water']
+                #     ),
+                #     'GEOGRAPHIC_BOUNDARY': '',
+                #     'OUTPUT_POLYGONS': "memory:",
+                #     'FLAGS': "memory:"
+                # },
+                # {
+                #     '__comment': "'Normal' test: checks if it works.",
+                #     "INPUT_CENTER_POINTS": self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['center_points_test5']
+                #     )[0],
+                #     'SELECTED': False,
+                #     'ATTRIBUTE_BLACK_LIST': [],
+                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', [
+                #             'fence', 'road', 'boundaries']
+                #     ),
+                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['water']
+                #     ),
+                #     'GEOGRAPHIC_BOUNDARY': '',
+                #     'OUTPUT_POLYGONS': "memory:",
+                #     'FLAGS': "memory:"
+                # },
+                # {
+                #     '__comment': "test 6 - same as test 1, but with geo bounds",
+                #     "INPUT_CENTER_POINTS": self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['center_points_test1']
+                #     )[0],
+                #     'SELECTED': False,
+                #     'ATTRIBUTE_BLACK_LIST': [],
+                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', [
+                #             'fence', 'road', 'boundaries_within_geo_bounds']
+                #     ),
+                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['water']
+                #     ),
+                #     'GEOGRAPHIC_BOUNDARY': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['geographic_bounds']
+                #     )[0],
+                #     'OUTPUT_POLYGONS': "memory:",
+                #     'FLAGS': "memory:"
+                # },
+                # {
+                #     '__comment': "test 7 - same as test 2, but with geo bounds",
+                #     "INPUT_CENTER_POINTS": self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['center_points_test2']
+                #     )[0],
+                #     'SELECTED': False,
+                #     'ATTRIBUTE_BLACK_LIST': [],
+                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', [
+                #             'fence', 'road', 'boundaries_within_geo_bounds']
+                #     ),
+                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['water']
+                #     ),
+                #     'GEOGRAPHIC_BOUNDARY': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['geographic_bounds']
+                #     )[0],
+                #     'OUTPUT_POLYGONS': "memory:",
+                #     'FLAGS': "memory:"
+                # },
+                # {
+                #     '__comment': "test 8 - same as test 3, but with geo bounds",
+                #     "INPUT_CENTER_POINTS": self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['center_points_test3']
+                #     )[0],
+                #     'SELECTED': False,
+                #     'ATTRIBUTE_BLACK_LIST': [],
+                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', [
+                #             'fence', 'road', 'boundaries_within_geo_bounds']
+                #     ),
+                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['water']
+                #     ),
+                #     'GEOGRAPHIC_BOUNDARY': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['geographic_bounds']
+                #     )[0],
+                #     'OUTPUT_POLYGONS': "memory:",
+                #     'FLAGS': "memory:"
+                # },
+                # {
+                #     '__comment': "test 9 - same as test 4, but with geo bounds",
+                #     "INPUT_CENTER_POINTS": self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['center_points_test4']
+                #     )[0],
+                #     'SELECTED': False,
+                #     'ATTRIBUTE_BLACK_LIST': [],
+                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', [
+                #             'fence', 'road', 'boundaries_within_geo_bounds']
+                #     ),
+                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['water']
+                #     ),
+                #     'GEOGRAPHIC_BOUNDARY': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['geographic_bounds']
+                #     )[0],
+                #     'OUTPUT_POLYGONS': "memory:",
+                #     'FLAGS': "memory:"
+                # },
+                # {
+                #     '__comment': "test 10 - same as test 5, but with geo bounds",
+                #     "INPUT_CENTER_POINTS": self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['center_points_test5']
+                #     )[0],
+                #     'SELECTED': False,
+                #     'ATTRIBUTE_BLACK_LIST': [],
+                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', [
+                #             'fence', 'road', 'boundaries_within_geo_bounds']
+                #     ),
+                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['water']
+                #     ),
+                #     'GEOGRAPHIC_BOUNDARY': self.getInputLayers(
+                #         'geojson', 'land_cover_layers', ['geographic_bounds']
+                #     )[0],
+                #     'OUTPUT_POLYGONS': "memory:",
+                #     'FLAGS': "memory:"
+                # },
+                # {
+                #     '__comment': "test 11 - without polygons, just lines, with attributeblacklist",
+                #     "INPUT_CENTER_POINTS": self.getInputLayers(
+                #         'geojson', 'build_polygons_from_center_points', [
+                #             'pontos']
+                #     )[0],
+                #     'SELECTED': False,
+                #     'ATTRIBUTE_BLACK_LIST': ['id', 'nome', 'tipo_comprovacao', 'tipo_insumo', 'observacao', 'data_modificacao', 'controle_id', 'ultimo_usuario'],
+                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
+                #         'geojson', 'build_polygons_from_center_points', [
+                #             'linhas1', 'linhas2']
+                #     ),
+                #     'CONSTRAINT_POLYGON_LAYERS': None,
+                #     'GEOGRAPHIC_BOUNDARY': None,
+                #     'OUTPUT_POLYGONS': "memory:",
+                #     'FLAGS': "memory:"
+                # },
+                # {
+                #     '__comment': "test 12 - without polygons, just lines, with attributeblacklist and geoboundary. Should create 5 pol, not 6. The tip of the triangle is outside of the boundary ",
+                #     "INPUT_CENTER_POINTS": self.getInputLayers(
+                #         'geojson', 'build_polygons_from_center_points', [
+                #             'pontos']
+                #     )[0],
+                #     'SELECTED': False,
+                #     'ATTRIBUTE_BLACK_LIST': ['id', 'nome', 'tipo_comprovacao', 'tipo_insumo', 'observacao', 'data_modificacao', 'controle_id', 'ultimo_usuario'],
+                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
+                #         'geojson', 'build_polygons_from_center_points', [
+                #             'linhas1', 'linhas2']
+                #     ),
+                #     'CONSTRAINT_POLYGON_LAYERS': None,
+                #     'GEOGRAPHIC_BOUNDARY': self.getInputLayers(
+                #         'geojson', 'build_polygons_from_center_points', [
+                #             'moldura']
+                #     )[0],
+                #     'OUTPUT_POLYGONS': "memory:",
+                #     'FLAGS': "memory:"
+                # },
+                # {
+                #     '__comment': "test 13 - without polygons, just lines, with a different attributeblacklist",
+                #     "INPUT_CENTER_POINTS": self.getInputLayers(
+                #         'geojson', 'build_polygons_from_center_points', [
+                #             'pontos']
+                #     )[0],
+                #     'SELECTED': False,
+                #     'ATTRIBUTE_BLACK_LIST': ['id', 'nome', 'tipo_comprovacao', 'tipo_insumo', 'observacao'],
+                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
+                #         'geojson', 'build_polygons_from_center_points', [
+                #             'linhas1', 'linhas2']
+                #     ),
+                #     'CONSTRAINT_POLYGON_LAYERS': None,
+                #     'GEOGRAPHIC_BOUNDARY': None,
+                #     'OUTPUT_POLYGONS': "memory:",
+                #     'FLAGS': "memory:"
+                # }
             ],
-            "dsgtools:identifyterrainmodelerrorsalgorithm" : [
+            "dsgtools:identifyterrainmodelerrorsalgorithm": [
                 {
-                    '__comment' : "test 1",
-                    "INPUT" : self.getInputLayers(
+                    '__comment': "test 1",
+                    "INPUT": self.getInputLayers(
                         'geojson', 'terrain_model_layers', ['contours_test1']
                     )[0],
-                    'SELECTED' : False,
+                    'SELECTED': False,
                     'CONTOUR_ATTR':'contour',
                     'CONTOUR_INTERVAL':10,
                     'TOPOLOGY_RADIUS':2,
-                    'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
-                        'geojson', 'terrain_model_layers', ['geographic_bounds_test1']
+                    'GEOGRAPHIC_BOUNDS': self.getInputLayers(
+                        'geojson', 'terrain_model_layers', [
+                            'geographic_bounds_test1']
                     )[0],
-                    'POINT_FLAGS' : "memory:",
-                    'LINE_FLAGS' : "memory:"
+                    'POINT_FLAGS': "memory:",
+                    'LINE_FLAGS': "memory:"
                 },
                 {
-                    '__comment' : "test 2",
-                    "INPUT" : self.getInputLayers(
+                    '__comment': "test 2",
+                    "INPUT": self.getInputLayers(
                         'geojson', 'terrain_model_layers', ['contours_test2']
                     )[0],
-                    'SELECTED' : False,
+                    'SELECTED': False,
                     'CONTOUR_ATTR':'contour',
                     'CONTOUR_INTERVAL':10,
                     'TOPOLOGY_RADIUS':2,
-                    'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
-                        'geojson', 'terrain_model_layers', ['geographic_bounds_test2']
+                    'GEOGRAPHIC_BOUNDS': self.getInputLayers(
+                        'geojson', 'terrain_model_layers', [
+                            'geographic_bounds_test2']
                     )[0],
-                    'POINT_FLAGS' : "memory:",
-                    'LINE_FLAGS' : "memory:"
+                    'POINT_FLAGS': "memory:",
+                    'LINE_FLAGS': "memory:"
                 },
                 {
-                    '__comment' : "test 3",
-                    "INPUT" : self.getInputLayers(
+                    '__comment': "test 3",
+                    "INPUT": self.getInputLayers(
                         'geojson', 'terrain_model_layers', ['contours_test3']
                     )[0],
-                    'SELECTED' : False,
+                    'SELECTED': False,
                     'CONTOUR_ATTR':'contour',
                     'CONTOUR_INTERVAL':10,
                     'TOPOLOGY_RADIUS':2,
-                    'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
-                        'geojson', 'terrain_model_layers', ['geographic_bounds_test3']
+                    'GEOGRAPHIC_BOUNDS': self.getInputLayers(
+                        'geojson', 'terrain_model_layers', [
+                            'geographic_bounds_test3']
                     )[0],
-                    'POINT_FLAGS' : "memory:",
-                    'LINE_FLAGS' : "memory:"
+                    'POINT_FLAGS': "memory:",
+                    'LINE_FLAGS': "memory:"
                 },
                 {
-                    '__comment' : "test 4",
-                    "INPUT" : self.getInputLayers(
+                    '__comment': "test 4",
+                    "INPUT": self.getInputLayers(
                         'geojson', 'terrain_model_layers', ['contours_test4']
                     )[0],
-                    'SELECTED' : False,
+                    'SELECTED': False,
                     'CONTOUR_ATTR':'contour',
                     'CONTOUR_INTERVAL':10,
                     'TOPOLOGY_RADIUS':2,
-                    'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
-                        'geojson', 'terrain_model_layers', ['geographic_bounds_test4']
+                    'GEOGRAPHIC_BOUNDS': self.getInputLayers(
+                        'geojson', 'terrain_model_layers', [
+                            'geographic_bounds_test4']
                     )[0],
-                    'POINT_FLAGS' : "memory:",
-                    'LINE_FLAGS' : "memory:"
+                    'POINT_FLAGS': "memory:",
+                    'LINE_FLAGS': "memory:"
                 },
                 {
-                    '__comment' : "test 5",
-                    "INPUT" : self.getInputLayers(
+                    '__comment': "test 5",
+                    "INPUT": self.getInputLayers(
                         'geojson', 'terrain_model_layers', ['contours_test5']
                     )[0],
-                    'SELECTED' : False,
+                    'SELECTED': False,
                     'CONTOUR_ATTR':'contour',
                     'CONTOUR_INTERVAL':10,
                     'TOPOLOGY_RADIUS':2,
-                    'GEOGRAPHIC_BOUNDS' : self.getInputLayers(
-                        'geojson', 'terrain_model_layers', ['geographic_bounds_test5']
+                    'GEOGRAPHIC_BOUNDS': self.getInputLayers(
+                        'geojson', 'terrain_model_layers', [
+                            'geographic_bounds_test5']
                     )[0],
-                    'POINT_FLAGS' : "memory:",
-                    'LINE_FLAGS' : "memory:"
+                    'POINT_FLAGS': "memory:",
+                    'LINE_FLAGS': "memory:"
                 }
             ],
-                    # '__comment' : "'Normal' test: checks if it works."
+            # '__comment' : "'Normal' test: checks if it works."
 
-            "dsgtools:enforcespatialrules" : [
+            "dsgtools:enforcespatialrules": [
                 {
-                    '__comment' : "Tests 1 - tests all topological relation",
+                    '__comment': "Tests 1 - tests all topological relation",
                     "RULES_SET": [
                         {
                             "cardinality": "1..1",
@@ -1199,50 +1244,50 @@ class Tester(unittest.TestCase):
                     "POLYGON_FLAGS": "memory:"
                 }
             ],
-            "dsgtools:enforceattributerulesalgorithm" : [
+            "dsgtools:enforceattributerulesalgorithm": [
                 {
-                    '__comment' : "Test 1",
-                    "RULES_SET":{
-                                "0": {
-                                    "description": "regime - Preencher atributo",
-                                    "layerField": [
-                                        "hid_trecho_drenagem_l",
-                                        "regime"
-                                    ],
-                                    "expression": "\"regime\" not in  (0,1,2,3,4,5)",
-                                    "errorType": "Preencher atributo",
-                                    "color": "#b6a500"
-                                }
+                    '__comment': "Test 1",
+                    "RULES_SET": {
+                        "0": {
+                            "description": "regime - Preencher atributo",
+                            "layerField": [
+                                "hid_trecho_drenagem_l",
+                                "regime"
+                            ],
+                            "expression": "\"regime\" not in  (0,1,2,3,4,5)",
+                            "errorType": "Preencher atributo",
+                            "color": "#b6a500"
+                        }
                     },
-                    'SELECTED' : False,
+                    'SELECTED': False,
                     "POINT_FLAGS":"memory:",
                     "LINE_FLAGS":"memory:",
                     "POLYGON_FLAGS":"memory:"
                 },
                 {
-                    '__comment' : "Test 2",
-                    "RULES_SET":{
-                                "0": {
-                                    "description": "nome - Nome deve iniciar com letra maiuscula e nao deve ter espacos desnecessarios",
-                                    "layerField": [
-                                        "hid_ilha_a",
-                                        "nome"
-                                    ],
-                                    "expression": "regexp_match ( \"nome\" , '^ ' ) or regexp_match ( \"nome\" , '  ' ) or regexp_match ( \"nome\" , ' $' ) or regexp_match ( \"nome\" , '^[a-z]' )",
-                                    "errorType": "Atributo com valor incorreto",
-                                    "color": "#ff0000"
-                                }
+                    '__comment': "Test 2",
+                    "RULES_SET": {
+                        "0": {
+                            "description": "nome - Nome deve iniciar com letra maiuscula e nao deve ter espacos desnecessarios",
+                            "layerField": [
+                                "hid_ilha_a",
+                                "nome"
+                            ],
+                            "expression": "regexp_match ( \"nome\" , '^ ' ) or regexp_match ( \"nome\" , '  ' ) or regexp_match ( \"nome\" , ' $' ) or regexp_match ( \"nome\" , '^[a-z]' )",
+                            "errorType": "Atributo com valor incorreto",
+                            "color": "#ff0000"
+                        }
                     },
-                    'SELECTED' : True,
+                    'SELECTED': True,
                     "POINT_FLAGS":"memory:",
                     "LINE_FLAGS":"memory:",
                     "POLYGON_FLAGS":"memory:"
                 }
             ],
 
-            "dsgtools:identifypolygonsliver" : [
+            "dsgtools:identifypolygonsliver": [
                 {
-                    "__comment" : "Checks if simple cases are identified.",
+                    "__comment": "Checks if simple cases are identified.",
                     "INPUT_LAYERS": self.getInputLayers(
                         'geojson', 'polygon_sliver', ['poligonos_1']
                     ),
@@ -1252,8 +1297,8 @@ class Tester(unittest.TestCase):
                     "FLAGS": "memory:"
                 },
                 {
-                    "__comment" : "Checks if the algorithm works with selected"
-                        " features option on.",
+                    "__comment": "Checks if the algorithm works with selected"
+                    " features option on.",
                     "INPUT_LAYERS": self.getInputLayers(
                         'geojson',
                         'polygon_sliver',
@@ -1267,9 +1312,9 @@ class Tester(unittest.TestCase):
                 }
             ],
 
-            "dsgtools:ALG" : [
+            "dsgtools:ALG": [
                 {
-                    '__comment' : "'Normal' test: checks if it works."
+                    '__comment': "'Normal' test: checks if it works."
                 }
             ]
         }
@@ -1283,15 +1328,15 @@ class Tester(unittest.TestCase):
         :param feedback: (QgsProcessingFeedback) QGIS progress tracking object.
         :param context: (QgsProcessingContext) execution's environmental parameters.
         """
-        out = processing.run(algName, parameters, None,\
-                    feedback or QgsProcessingFeedback(),
-                    context or QgsProcessingContext()
-                )
+        out = processing.run(algName, parameters, None,
+                             feedback or QgsProcessingFeedback(),
+                             context or QgsProcessingContext()
+                             )
         outputstr = 'FLAGS' if 'FLAGS' in out else 'OUTPUT' if 'OUTPUT' in out else ''
         if outputstr:
             out = out[outputstr]
         return out if not addControlKey else self.addControlKey(out)
-    
+
     def runAlgWithMultipleOutputs(self, algName, parameters, feedback=None, context=None):
         """
         Executes a given algorithm that has multiple outputs. Returns a dict 
@@ -1326,12 +1371,12 @@ class Tester(unittest.TestCase):
         # folder, this will retrieve only the output for current test, if not,
         # this will be evaluated to the path to all outputs in a folder test_TestNr
         path = os.path.join(
-                    rootPath,
-                    'test_{test_number}{extension}'.format(
-                        test_number=test,
-                        extension='.gpkg' if gpkgOutput else ''
-                        )
-                )
+            rootPath,
+            'test_{test_number}{extension}'.format(
+                test_number=test,
+                extension='.gpkg' if gpkgOutput else ''
+            )
+        )
         if os.path.exists(path):
             if multipleOutputs:
                 return self.readGeopackage(path) if gpkgOutput else self.readGeojson(path)
@@ -1341,10 +1386,11 @@ class Tester(unittest.TestCase):
                     'test_{test_number}.geojson'.format(test_number=test)
                 )
                 return QgsVectorLayer(
-                            path, 
-                            "{alg}_test_{test}_output".format(alg=algName.split(':')[-1], test=test),
-                            "ogr"
-                        )
+                    path,
+                    "{alg}_test_{test}_output".format(
+                        alg=algName.split(':')[-1], test=test),
+                    "ogr"
+                )
 
     def compareLayers(self, target, reference, attributeBlackList=None, addControlKey=False, distTol=1e-5, areaTol=1e-10):
         """
@@ -1361,20 +1407,20 @@ class Tester(unittest.TestCase):
         if target.geometryType() != reference.geometryType():
             return "Incorrect geometry type for the output layer."
         # feature check
-        targetFeatDict = {f.id():f for f in target.getFeatures()}
-        refFeatDict = {f.id():f for f in reference.getFeatures()}
+        targetFeatDict = {f.id(): f for f in target.getFeatures()}
+        refFeatDict = {f.id(): f for f in reference.getFeatures()}
         targetFeaureIds = set(targetFeatDict.keys())
         refFeaureIds = set(refFeatDict.keys())
-        if target.featureCount() != reference.featureCount():    
+        if target.featureCount() != reference.featureCount():
             msg = ""
             if targetFeaureIds - refFeaureIds:
                 msg += "Output layer has more features than the control layer (Exceeding ID: {idlist}).\n".format(
-                        idlist=", ".join(map(str, targetFeaureIds - refFeaureIds))
-                    )
+                    idlist=", ".join(map(str, targetFeaureIds - refFeaureIds))
+                )
             if refFeaureIds - targetFeaureIds:
                 msg += "Output layer has fewer features than the control layer (Missing ID: {idlist}).".format(
-                        idlist=", ".join(map(str, refFeaureIds - targetFeaureIds))
-                    )
+                    idlist=", ".join(map(str, refFeaureIds - targetFeaureIds))
+                )
             return msg
         # attribute names check
         targetFieldNames = [f.name() for f in target.fields()]
@@ -1388,12 +1434,14 @@ class Tester(unittest.TestCase):
         msg = ""
         for featId, refFeat in refFeatDict.items():
             if featId not in targetFeatDict:
-                msg = "Feature id={0} was not found on output layer.".format(featId)
+                msg = "Feature id={0} was not found on output layer.".format(
+                    featId)
                 break
             testFeat = targetFeatDict[featId]
-            if not (testFeat.geometry().isGeosEqual(refFeat.geometry()) or\
-                testFeat.geometry().equals(refFeat.geometry())):
-                msg = "Feature {fid} has incorrect geometry.".format(fid=featId)
+            if not (testFeat.geometry().isGeosEqual(refFeat.geometry()) or
+                    testFeat.geometry().equals(refFeat.geometry())):
+                msg = "Feature {fid} has incorrect geometry.".format(
+                    fid=featId)
                 break
             for attr in targetFieldNames:
                 if attr not in attributeBlackList and testFeat[attr] != refFeat[attr]:
@@ -1409,8 +1457,10 @@ class Tester(unittest.TestCase):
         if not msg:
             return ""
         # in case a dataset exact match fails, we'll try an approximate comparison
-        areaSortedRefFeats = sorted(reference.getFeatures(), key=lambda f: f.geometry().area())
-        areaSortedTargetFeats = sorted(target.getFeatures(), key=lambda f: f.geometry().area())
+        areaSortedRefFeats = sorted(
+            reference.getFeatures(), key=lambda f: f.geometry().area())
+        areaSortedTargetFeats = sorted(
+            target.getFeatures(), key=lambda f: f.geometry().area())
         for refFeat, targetFeat in zip(areaSortedRefFeats, areaSortedTargetFeats):
             refGeom = refFeat.geometry()
             targetGeom = targetFeat.geometry()
@@ -1450,8 +1500,8 @@ class Tester(unittest.TestCase):
         QgsProject.instance().clear()
 
     def testAlg(self, algName, feedback=None, context=None, loadLayers=False,
-            multipleOutputs=False, attributeBlackList=None,
-            addControlKey=False):
+                multipleOutputs=False, attributeBlackList=None,
+                addControlKey=False):
         """
         Tests if the output of a given algorithm is the expected one.
         :param algName: (str) target algorithm's name.
@@ -1475,8 +1525,8 @@ class Tester(unittest.TestCase):
         expected = None
         if parameters == dict():
             return "Unable to read a set of parameters for {alg}'s tests.".format(
-                    alg=algName
-                )
+                alg=algName
+            )
         try:
             for i, param in enumerate(parameters):
                 output = self.runAlgWithMultipleOutputs(algName, param, feedback, context) \
@@ -1507,10 +1557,11 @@ class Tester(unittest.TestCase):
                                 if "{0}_{1}".format(key, idx) not in expected:
                                     raise Exception(
                                         "Output dictionary key {k} was not "
-                                        "found in expected output dictionary.".\
-                                            format(k="{0}_{1}".format(key, idx))
+                                        "found in expected output dictionary.".
+                                        format(k="{0}_{1}".format(key, idx))
                                     )
-                                expectedLyr = expected["{0}_{1}".format(key, idx)]
+                                expectedLyr = expected["{0}_{1}".format(
+                                    key, idx)]
                                 self.compareInputLayerWithOutputLayer(
                                     i,
                                     algName,
@@ -1527,9 +1578,9 @@ class Tester(unittest.TestCase):
                             # from now on commands are for single output only
                             continue
                         elif key not in expected:
-                            raise Exception("Output dictionary key was not found in expected output dictionary.".\
-                                format(alg=algName, nr=i + 1)
-                            )
+                            raise Exception("Output dictionary key was not found in expected output dictionary.".
+                                            format(alg=algName, nr=i + 1)
+                                            )
                         else:
                             self.compareInputLayerWithOutputLayer(
                                 i,
@@ -1549,11 +1600,13 @@ class Tester(unittest.TestCase):
                 if isinstance(output, QgsVectorLayer):
                     output.rollBack()
                 elif isinstance(output, dict):
-                    [lyr.rollBack() for key, lyr in output.items() if isinstance(lyr, QgsVectorLayer)]
+                    [lyr.rollBack() for key, lyr in output.items()
+                     if isinstance(lyr, QgsVectorLayer)]
                 if isinstance(expected, QgsVectorLayer):
                     expected.rollBack()
                 elif isinstance(expected, dict):
-                    [lyr.rollBack() for key, lyr in expected.items() if isinstance(lyr, QgsVectorLayer)]
+                    [lyr.rollBack() for key, lyr in expected.items()
+                     if isinstance(lyr, QgsVectorLayer)]
             except:
                 pass
             return "Test #{nr} for '{alg}' has failed:\n'{msg}'".format(
@@ -1561,18 +1614,19 @@ class Tester(unittest.TestCase):
             )
         # missing the output testing
         return ""
-    
+
     def compareInputLayerWithOutputLayer(self, i, algName, output, expected, loadLayers=False, attributeBlackList=None, addControlKey=False):
         if not output.isValid():
-            raise Exception("Output is an INVALID vector layer.".\
-                    format(alg=algName, nr=i + 1)
-                )
+            raise Exception("Output is an INVALID vector layer.".
+                            format(alg=algName, nr=i + 1)
+                            )
         if expected is None:
-            raise Exception("No expected output registered for the test, yet an output was generated.".\
-                    format(alg=algName, nr=i + 1)
-                )
+            raise Exception("No expected output registered for the test, yet an output was generated.".
+                            format(alg=algName, nr=i + 1)
+                            )
         expected = self.addControlKey(expected) if addControlKey else expected
-        msg = self.compareLayers(output, expected, attributeBlackList=attributeBlackList, addControlKey=addControlKey)
+        msg = self.compareLayers(
+            output, expected, attributeBlackList=attributeBlackList, addControlKey=addControlKey)
         # once layer is compared, revert all modifications in order to not compromise layer reusage
         if isinstance(output, QgsVectorLayer):
             output.rollBack()
@@ -1593,33 +1647,33 @@ class Tester(unittest.TestCase):
         # still missing how to define default datasets
         results = dict()
         algs = [
-                # identification algs
-                "dsgtools:identifyoutofboundsangles", "dsgtools:identifyoutofboundsanglesincoverage",
-                "dsgtools:identifygaps", "dsgtools:identifyandfixinvalidgeometries",
-                "dsgtools:identifyduplicatedfeatures", "dsgtools:identifyduplicatedgeometries",
-                "dsgtools:identifyduplicatedlinesoncoverage", "dsgtools:identifysmalllines",
-                "dsgtools:identifyduplicatedpolygonsoncoverage", "dsgtools:identifysmallpolygons",
-                "dsgtools:identifydangles", "dsgtools:identifyduplicatedpointsoncoverage",
-                "dsgtools:identifyoverlaps", "dsgtools:identifyvertexnearedges",
-                "dsgtools:identifyunsharedvertexonintersectionsalgorithm"
-                # correction algs
-                "dsgtools:removeduplicatedfeatures", "dsgtools:removeduplicatedgeometries",
-                "dsgtools:removesmalllines", "dsgtools:removesmallpolygons",
-                # manipulation algs
-                "dsgtools:lineonlineoverlayer", "dsgtools:mergelineswithsameattributeset",
-                "dsgtools:overlayelementswithareas", "dsgtools:deaggregategeometries",
-                "dsgtools:dissolvepolygonswithsameattributes", "dsgtools:removeemptyandupdate",
-                "dsgtools:snaplayeronlayer",
-                # network algs
-                "dsgtools:adjustnetworkconnectivity"
-            ]
+            # identification algs
+            "dsgtools:identifyoutofboundsangles", "dsgtools:identifyoutofboundsanglesincoverage",
+            "dsgtools:identifygaps", "dsgtools:identifyandfixinvalidgeometries",
+            "dsgtools:identifyduplicatedfeatures", "dsgtools:identifyduplicatedgeometries",
+            "dsgtools:identifyduplicatedlinesoncoverage", "dsgtools:identifysmalllines",
+            "dsgtools:identifyduplicatedpolygonsoncoverage", "dsgtools:identifysmallpolygons",
+            "dsgtools:identifydangles", "dsgtools:identifyduplicatedpointsoncoverage",
+            "dsgtools:identifyoverlaps", "dsgtools:identifyvertexnearedges",
+            "dsgtools:identifyunsharedvertexonintersectionsalgorithm"
+            # correction algs
+            "dsgtools:removeduplicatedfeatures", "dsgtools:removeduplicatedgeometries",
+            "dsgtools:removesmalllines", "dsgtools:removesmallpolygons",
+            # manipulation algs
+            "dsgtools:lineonlineoverlayer", "dsgtools:mergelineswithsameattributeset",
+            "dsgtools:overlayelementswithareas", "dsgtools:deaggregategeometries",
+            "dsgtools:dissolvepolygonswithsameattributes", "dsgtools:removeemptyandupdate",
+            "dsgtools:snaplayeronlayer",
+            # network algs
+            "dsgtools:adjustnetworkconnectivity"
+        ]
         multipleOutputAlgs = [
             # identification algs
             "dsgtools:enforceattributerulesalgorithm",
             # manipulation algs
             "dsgtools:unbuildpolygonsalgorithm",
             "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
-             # manipulation algs
+            # manipulation algs
             "dsgtools:topologicaldouglaspeuckerlinesimplification",
             "dsgtools:topologicaldouglaspeuckerareasimplification"
         ]
@@ -1639,12 +1693,12 @@ class Tester(unittest.TestCase):
             except KeyError:
                 results[alg] = "No tests registered."
         return results
-    
+
     def test_identifyoutofboundsangles(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifyoutofboundsangles"), ""
         )
-    
+
     def test_identifyanglesininvalidrangealgorithm(self):
         self.assertEqual(
             self.testAlg(
@@ -1667,12 +1721,12 @@ class Tester(unittest.TestCase):
     #         self.assertEqual(
     #             self.testAlg("dsgtools:identifygaps"), ""
     #         )
-    
+
     def test_identifyandfixinvalidgeometries(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifyandfixinvalidgeometries"), ""
         )
-    
+
     def test_identifyduplicatedfeatures(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifyduplicatedfeatures"), ""
@@ -1687,7 +1741,7 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg("dsgtools:identifyduplicatedlinesoncoverage"), ""
         )
-    
+
     def test_identifyduplicatedpointsoncoverage(self):
         self.assertEqual(
             self.testAlg("dsgtools:identifyduplicatedpointsoncoverage"), ""
@@ -1715,9 +1769,10 @@ class Tester(unittest.TestCase):
 
     def test_identifyunsharedvertexonintersectionsalgorithm(self):
         self.assertEqual(
-            self.testAlg("dsgtools:identifyunsharedvertexonintersectionsalgorithm"), ""
+            self.testAlg(
+                "dsgtools:identifyunsharedvertexonintersectionsalgorithm"), ""
         )
-    
+
     # def test_identifyvertexnearedges(self):
     #     self.assertEqual(
     #         self.testAlg(
@@ -1726,27 +1781,29 @@ class Tester(unittest.TestCase):
     #             multipleOutputs=True
     #         ), ""
     #     )
-    
+
     # def test_overlayelementswithareas(self):
     #     self.assertEqual(
     #         self.testAlg("dsgtools:overlayelementswithareas"), ""
     #     )
-    
+
     def test_deaggregategeometries(self):
         self.assertEqual(
-            self.testAlg("dsgtools:deaggregategeometries", addControlKey=True), ""
+            self.testAlg("dsgtools:deaggregategeometries",
+                         addControlKey=True), ""
         )
-    
+
     def test_dissolvepolygonswithsameattributes(self):
         self.assertEqual(
-            self.testAlg("dsgtools:dissolvepolygonswithsameattributes", addControlKey=True), ""
+            self.testAlg(
+                "dsgtools:dissolvepolygonswithsameattributes", addControlKey=True), ""
         )
-    
+
     def test_removeemptyandupdate(self):
         self.assertEqual(
             self.testAlg("dsgtools:removeemptyandupdate"), ""
         )
-    
+
     def test_snaplayeronlayer(self):
         self.assertEqual(
             self.testAlg("dsgtools:snaplayeronlayer"), ""
@@ -1756,7 +1813,7 @@ class Tester(unittest.TestCase):
         self.assertEqual(
             self.testAlg("dsgtools:adjustnetworkconnectivity"), ""
         )
-    
+
     def test_unbuildpolygonsalgorithm(self):
         self.assertEqual(
             self.testAlg(
@@ -1767,8 +1824,10 @@ class Tester(unittest.TestCase):
             ),
             ""
         )
-    
+
     def test_buildpolygonsfromcenterpointsandboundariesalgorithm(self):
+        proj = QgsProject.instance()
+        proj.clear()
         self.assertEqual(
             self.testAlg(
                 "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
@@ -1810,10 +1869,11 @@ class Tester(unittest.TestCase):
 
     def test_enforceattributerulesalgorithm(self):
         """Tests for Enforce Attribute Rules algorithm"""
-        
+
         proj = QgsProject.instance()
-        idsToSelect=[0,3]
-        testsParams = self.algorithmParameters("dsgtools:enforceattributerulesalgorithm")
+        idsToSelect = [0, 3]
+        testsParams = self.algorithmParameters(
+            "dsgtools:enforceattributerulesalgorithm")
         # this algorithm, specifically has to set layers Context-reading ready
         layers = self.testingDataset("geojson", "enforce_attribute_rules")
 
@@ -1833,20 +1893,20 @@ class Tester(unittest.TestCase):
                         vl.selectByIds(idsToSelect)
 
         msg = self.testAlg(
-                "dsgtools:enforceattributerulesalgorithm",
-                multipleOutputs=True,
-                addControlKey=True
+            "dsgtools:enforceattributerulesalgorithm",
+            multipleOutputs=True,
+            addControlKey=True
         )
-        
+
         del self.datasets["geojson:enforce_attribute_rules"]
         self.clearProject()
         self.assertEqual(msg, "")
-        
 
     def test_identifypolygonsliver(self):
         """Tests for Polygon Sliver Algorithm"""
         self.assertEqual(
-            self.testAlg("dsgtools:identifypolygonsliver", addControlKey=True), ""
+            self.testAlg("dsgtools:identifypolygonsliver",
+                         addControlKey=True), ""
         )
 
     def test_enforcespatialrules(self):
@@ -1867,7 +1927,7 @@ class Tester(unittest.TestCase):
             multipleOutputs=True,
             addControlKey=True
         )
-        # since layers were manually removed, cache is going to refer to 
+        # since layers were manually removed, cache is going to refer to
         # non-existing layers
         del self.datasets["geojson:spatial_rules_alg"]
         proj.clear()
@@ -1877,8 +1937,10 @@ class Tester(unittest.TestCase):
 
     def test_identifypolygonsliver(self):
         self.assertEqual(
-            self.testAlg("dsgtools:identifypolygonsliver", addControlKey=True), ""
+            self.testAlg("dsgtools:identifypolygonsliver",
+                         addControlKey=True), ""
         )
+
 
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
