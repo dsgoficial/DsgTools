@@ -1498,7 +1498,6 @@ class LayerHandler(QObject):
                                                  constraintPolygonLyrList=None,
                                                  attributeBlackList=None,
                                                  geographicBoundaryLyr=None,
-                                                 onlySelected=False,
                                                  spatialRule=None,
                                                  context=None,
                                                  feedback=None,
@@ -1532,14 +1531,16 @@ class LayerHandler(QObject):
         # Buffer because sometimes the line stops before the boundary itself,
         # making the whole algorithmn not work properly
         if geographicBoundaryLyr:
-            limit = algRunner.runBuffer(
-                geographicBoundaryLyr, 0.00001, context)
-            constraintLineLyrList = [algRunner.runClip(camada, limit, context)
-                                     for camada in constraintLineLyrList]
-            constraintPolygonList = [algRunner.runClip(camada, limit, context)
-                                     for camada in constraintPolygonLyrList]
-            inputCenterPointLyr = algRunner.runClip(inputCenterPointLyr, limit,
-                                                    context)
+            layerMap = self.clipByGeographicBoundaryLyr(inputCenterPointLyr,
+                                                        constraintLineLyrList, 
+                                                        constraintPolygonList, 
+                                                        geographicBoundaryLyr, 
+                                                        context=context,
+                                                        feedback=feedback,
+                                                        algRunner=algRunner)
+            inputCenterPointLyr = layerMap["centroid"]
+            constraintLineLyrList = [layerMap["line"]]
+            constraintPolygonList = [layerMap["polygon"]]
 
         constraintPolygonListWithGeoBounds = constraintPolygonList + \
             [geographicBoundaryLyr] if geographicBoundaryLyr is not None else \
@@ -1553,15 +1554,17 @@ class LayerHandler(QObject):
         linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
             constraintLineLyrList,
             constraintPolygonListWithGeoBounds,
-            onlySelected=onlySelected,
+            onlySelected=False,
             feedback=multiStepFeedback,
             context=context,
             algRunner=algRunner
         )
         multiStepFeedback.setCurrentStep(1)
-        splitSegmentsLyr = algRunner.runExplodeLines(
+        splitSegmentsLyr = algRunner.runClean(
             linesLyr,
+            [0,1,2,3,4,5,6,7,8,9,10,11,12],
             context,
+            snap=1,
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(2)
@@ -1570,9 +1573,12 @@ class LayerHandler(QObject):
             context,
             feedback=multiStepFeedback
         )
+        # to use the enforce spatial rules algorithm we have to
+        # load the segmentsWithoutDuplicates and builtPolygonLyr
+        # layers to the canvas and unload it at the end
         segmentsWithoutDuplicates.setName("segmentsWithoutDuplicates")
         QgsProject.instance().addMapLayer(segmentsWithoutDuplicates)
-        
+
         multiStepFeedback.setCurrentStep(3)
         builtPolygonLyr = algRunner.runPolygonize(
             segmentsWithoutDuplicates,
@@ -1593,18 +1599,39 @@ class LayerHandler(QObject):
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(5)
-        #  explicar usar context.getMapLayer(layerName)
+
         unusedDelimiters = algRunner.runEnforceSpatialRule(
             spatialRule,
             context,
             feedback=multiStepFeedback)
 
-        delimitersFlagList = self.createDelimiterFlagDict(unusedDelimiters['LINE_FLAGS'])
+        QgsProject.instance().removeMapLayers(
+            [segmentsWithoutDuplicates.id(), builtPolygonLyr.id()])
 
-        QgsProject.instance().removeMapLayers([segmentsWithoutDuplicates.id(), builtPolygonLyr.id()])
+        delimitersFlagList = self.createDelimiterFlagDict(
+            unusedDelimiters['LINE_FLAGS'])
 
         return polygonList, flagList, delimitersFlagList
-    
+
+    def clipByGeographicBoundaryLyr(self, inputCenterPointLyr,
+                                    constraintLineLyrList,
+                                    constraintPolygonLyrList,
+                                    geographicBoundaryLyr,
+                                    context=None,
+                                    feedback=None,
+                                    algRunner=None):
+
+        layerMap = {"centroid": inputCenterPointLyr,
+                    "line": constraintLineLyrList[0], 
+                    "polygon": constraintPolygonLyrList[0]}
+
+        for geomType, layer in layerMap.items():
+            clipped = algRunner.runClip(
+                layer, geographicBoundaryLyr, context)
+            layerMap[geomType] = clipped
+
+        return layerMap
+
     def createDelimiterFlagDict(self, unusedDelimiters):
         """
         Returns a dictionary with flagText from unused polygon delimiters
@@ -1612,14 +1639,14 @@ class LayerHandler(QObject):
         :return delimiterFlagDict: (dict) dict with geom as key and flag text as value
         """
         delimiterFlagDict = dict()
-        delimiterFlagTxt = self.tr("This delimiter was not used in the polygons' construction")
+        delimiterFlagTxt = self.tr(
+            "This delimiter was not used in the polygons' construction")
 
         for delimiter in unusedDelimiters.getFeatures():
             geomKey = delimiter.geometry()
             delimiterFlagDict[geomKey] = delimiterFlagTxt
 
         return delimiterFlagDict
-
 
     def relateCenterPointsWithPolygons(self, inputCenterPointLyr,
                                        builtPolygonLyr, context=None,
@@ -1881,7 +1908,8 @@ class LayerHandler(QObject):
                     tupleValueidx = listOfTupleValues[idx-1].index(value)
                     conflictingAttributeValue.append(tupleValueidx)
 
-        conflictingAttributeIdx = [idx for idx in set(conflictingAttributeValue)]
+        conflictingAttributeIdx = [
+            idx for idx in set(conflictingAttributeValue)]
 
         return conflictingAttributeIdx
 
@@ -1908,7 +1936,7 @@ class LayerHandler(QObject):
         :return: (str) warning text.
         """
         if len(fieldName) > 1:
-            attributes = str(fieldName).replace('[','').replace(']','')
+            attributes = str(fieldName).replace('[', '').replace(']', '')
             flagText = self.tr(
                 "Polygon with more than one centroid with conflicting values at {} attributes.".format(attributes))
         else:
@@ -2005,3 +2033,37 @@ class LayerHandler(QObject):
                     return slivers
                 feedback.setProgress((step + 1) * stepSize)
         return slivers
+
+    def mergeLayerByGeometryType(self, inputLyrList, merge=True, feedback=None, context=None, algRunner=None):
+        mergedLayerMap = {
+            QgsWkbTypes.PointGeometry: [],
+            QgsWkbTypes.LineGeometry: [],
+            QgsWkbTypes.PolygonGeometry: []
+        }
+        layerMap = self.filterLayerByGeometryType(inputLyrList)
+        if merge:
+            for geomType, lyrList in layerMap.items():
+                mergedLayerMap[geomType] = self.getMergedLayer(lyrList,
+                                                               feedback=feedback,
+                                                               context=context,
+                                                               algRunner=algRunner)
+        return mergedLayerMap
+
+    def filterLayerByGeometryType(self, inputLyrList):
+        layerMap = {
+            QgsWkbTypes.PointGeometry: [],
+            QgsWkbTypes.LineGeometry: [],
+            QgsWkbTypes.PolygonGeometry: []
+        }
+
+        for layer in inputLyrList:
+            lyrGeom = layer.geometryType()
+            if lyrGeom == 0:
+                layerMap[lyrGeom].append(layer)
+            elif lyrGeom == 1:
+                layerMap[lyrGeom].append(layer)
+            elif lyrGeom == 2:
+                layerMap[lyrGeom].append(layer)
+            else:
+                pass
+        return layerMap
