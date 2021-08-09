@@ -763,9 +763,9 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             # this solution achieves it in a non-optimal form, by checking the
             # commands's stack label (displayed to the user). "supports"
             # EN, PT-BR, ES and PT-PT
-            attrChanged = cmd.text() in (
-                "Attributes changed", "Atributos cambiados",
-                "Atributos modificados", "Atributos alterados"
+            attrChanged = cmd.text().lower() in (
+                "attributes changed", "atributos cambiados",
+                "atributos modificados", "atributos alterados"
             )
             cmd.undo()
             cmd.setObsolete(True)
