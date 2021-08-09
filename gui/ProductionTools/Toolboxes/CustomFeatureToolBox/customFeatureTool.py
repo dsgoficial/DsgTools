@@ -759,7 +759,14 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             # the tool's modification
             stack = inLayer.undoStack()
             cmd = stack.command(stack.count() - 1)
-            attrChanged = cmd.text() == 'Attributes changed'
+            # no easy way to identify the attribute modification command, so
+            # this solution achieves it in a non-optimal form, by checking the
+            # commands's stack label (displayed to the user). "supports"
+            # EN, PT-BR, ES and PT-PT
+            attrChanged = cmd.text() in (
+                "Attributes changed", "Atributos cambiados",
+                "Atributos modificados", "Atributos alterados"
+            )
             cmd.undo()
             cmd.setObsolete(True)
             stack.undo()
