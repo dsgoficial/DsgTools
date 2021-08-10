@@ -55,10 +55,10 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         Parameter setting.
         """
         self.addParameter(
-            QgsProcessingParameterMultipleLayers(
+            QgsProcessingParameterVectorLayer(
                 self.INPUT_CENTER_POINTS,
-                self.tr('Center point layers'),
-                QgsProcessing.TypeVectorPoint
+                self.tr('Center point layer'),
+                [QgsProcessing.TypeVectorPoint]
             )
         )
         self.addParameter(
@@ -155,14 +155,12 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                                   checkLoadedLayer=False)
         chosenLayers = list()
 
-        inputCenterPointLyrList = self.parameterAsLayerList(
+        inputCenterPointLyr = self.parameterAsVectorLayer(
             parameters,
             self.INPUT_CENTER_POINTS,
             context)
 
-        chosenLayers.extend(inputCenterPointLyrList)
-
-        if inputCenterPointLyrList is None:
+        if inputCenterPointLyr is None:
             raise QgsProcessingException(
                 self.invalidSourceError(
                     parameters,
@@ -192,7 +190,6 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         layerMap = self.layerHandler.mergeLayerByGeometryType(
             chosenLayers, feedback=feedback, context=context, algRunner=algRunner)
 
-        inputMergedCentroidLyr = layerMap[0]
         mergedConstraintLineLyr = layerMap[1]
         mergedConstraintPolygonLyr = layerMap[2]
 
@@ -212,18 +209,17 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         ignorePK = self.parameterAsBool(
             parameters, self.IGNORE_PK_FIELDS, context)
 
-        outputFields = self.retrieveFieldsFromInputToOutputLyr(inputCenterPointLyrList,
+        outputFields = self.retrieveFieldsFromInputToOutputLyr(inputCenterPointLyr,
                                                                attributeBlackList,
                                                                ignorePK,
-                                                               ignoreVirtual,
-                                                               mergedLyr=inputMergedCentroidLyr)
+                                                               ignoreVirtual)
 
         (output_polygon_sink, output_polygon_sink_id) = self.parameterAsSink(parameters,
                                                                              self.OUTPUT_POLYGONS,
                                                                              context,
                                                                              outputFields,
                                                                              QgsWkbTypes.Polygon,
-                                                                             inputMergedCentroidLyr.sourceCrs())
+                                                                             inputCenterPointLyr.sourceCrs())
 
         unusedDelimitersFields = self.getFlagFields()
 
@@ -232,13 +228,13 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                                                                                    context,
                                                                                    unusedDelimitersFields,
                                                                                    QgsWkbTypes.LineString,
-                                                                                   inputMergedCentroidLyr.sourceCrs())
+                                                                                   inputCenterPointLyr.sourceCrs())
 
-        self.prepareFlagSink(parameters, inputMergedCentroidLyr,
+        self.prepareFlagSink(parameters, inputCenterPointLyr,
                              QgsWkbTypes.Polygon, context)
 
         polygonFeatList, flagDict, delimiterFlagDict = self.layerHandler.getPolygonsFromCenterPointsAndBoundaries(
-            inputMergedCentroidLyr,
+            inputCenterPointLyr,
             geographicBoundaryLyr=geographicBoundaryLyr,
             constraintLineLyrList=[mergedConstraintLineLyr],
             constraintPolygonLyrList=[mergedConstraintPolygonLyr],
@@ -263,7 +259,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             self.FLAGS: self.flag_id,
             self.DELIMITERS_FLAGS: unused_delimiters_sink_id}
 
-    def retrieveFieldsFromInputToOutputLyr(self, inputLyrList, attributeBlackList, ignorePK, ignoreVirtual, mergedLyr=None):
+    def retrieveFieldsFromInputToOutputLyr(self, inputLyr, attributeBlackList, ignorePK, ignoreVirtual):
         """
         Prepare a list of fields based on the attributeBlackList to the
         algorithm outputs
@@ -275,15 +271,13 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         :return: (list) list of fields to output
         """
         if ignoreVirtual or ignorePK:
-            virtualAndPrimaryKeyFields = []
-            for layer in inputLyrList:
-                virtualAndPKFields = self.layerHandler.getVirtualAndPrimaryKeyFields(layer)
-                virtualAndPrimaryKeyFields.extend(virtualAndPKFields)
 
-            attributeBlackList.extend(set(virtualAndPrimaryKeyFields))
+            virtualAndPKFields = self.layerHandler.getVirtualAndPrimaryKeyFields(inputLyr)
+
+            attributeBlackList.extend(virtualAndPKFields)
 
             outputFields = self.layerHandler.getFieldsFromAttributeBlackList(
-                mergedLyr,
+                inputLyr,
                 attributeBlackList,
                 ignoreVirtualFields=ignoreVirtual,
                 excludePrimaryKeys=ignorePK)
@@ -291,7 +285,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             return outputFields
         else:
             outputFields = self.layerHandler.getFieldsFromAttributeBlackList(
-                mergedLyr,
+                inputLyr,
                 attributeBlackList,
                 ignoreVirtualFields=ignoreVirtual,
                 excludePrimaryKeys=ignorePK)

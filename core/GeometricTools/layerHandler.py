@@ -1319,7 +1319,7 @@ class LayerHandler(QObject):
         """
         return AlgRunner().runReprojectLayer(layer, targetEpsg, output)
 
-    def getMergedLayer(self, inputLayerList, onlySelected=False, feedback=None, context=None, algRunner=None):
+    def getMergedLayer(self, inputLayerList, onlySelected=False, cleanFields=True, feedback=None, context=None, algRunner=None):
         """
         This does almost the same of createAndPopulateUnifiedVectorLayer, but it
         is much faster. Maybe the implementation of createAndPopulateUnifiedVectorLayer
@@ -1337,18 +1337,26 @@ class LayerHandler(QObject):
             multiStepFeedback.setCurrentStep(currentStep)
             lyrList.append(
                 lyr if not onlySelected else algRunner.runSaveSelectedFeatures(
-                    lineLyr,
+                    lyr,
                     context,
                     feedback=multiStepFeedback
                 )
             )
             currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        return algRunner.runMergeVectorLayers(
-            lyrList,
-            context,
-            feedback=multiStepFeedback
-        )
+        if cleanFields:
+            mergedLyrNewFields = algRunner.runMergeVectorLayers(lyrList,
+                                                                context,
+                                                                feedback=multiStepFeedback)
+            mergedVectorLayers = algRunner.runDeleteColumn(mergedLyrNewFields,
+                                                           ['layer','path'],
+                                                           context,
+                                                           feedback=multiStepFeedback)
+        else:
+            mergedVectorLayers = algRunner.runMergeVectorLayers(lyrList,
+                                                                context,
+                                                                feedback=multiStepFeedback)
+        return mergedVectorLayers
 
     def getCentroidsAndBoundariesFromPolygons(self, inputLyr, outputCenterPointSink, outputBoundarySink,
                                               constraintLineLyrList=None, constraintPolygonLyrList=None, context=None, feedback=None, algRunner=None):
@@ -1530,7 +1538,7 @@ class LayerHandler(QObject):
         # Clip Points, Lines and Polygons according to geographicBoundaryLyr
         # Buffer because sometimes the line stops before the boundary itself,
         # making the whole algorithmn not work properly
-        if geographicBoundaryLyr:
+        if geographicBoundaryLyr is not None:
             layerMap = self.clipByGeographicBoundaryLyr(inputCenterPointLyr,
                                                         constraintLineLyrList, 
                                                         constraintPolygonList, 
@@ -1605,6 +1613,8 @@ class LayerHandler(QObject):
             context,
             feedback=multiStepFeedback)
 
+        segmentsWithoutDuplicates.commitChanges()
+        builtPolygonLyr.commitChanges()
         QgsProject.instance().removeMapLayers(
             [segmentsWithoutDuplicates.id(), builtPolygonLyr.id()])
 
@@ -1627,7 +1637,7 @@ class LayerHandler(QObject):
 
         for geomType, layer in layerMap.items():
             clipped = algRunner.runClip(
-                layer, geographicBoundaryLyr, context)
+                layer, geographicBoundaryLyr, context, feedback=feedback)
             layerMap[geomType] = clipped
 
         return layerMap
@@ -2036,11 +2046,11 @@ class LayerHandler(QObject):
 
     def mergeLayerByGeometryType(self, inputLyrList, merge=True, feedback=None, context=None, algRunner=None):
         mergedLayerMap = {
-            QgsWkbTypes.PointGeometry: [],
             QgsWkbTypes.LineGeometry: [],
-            QgsWkbTypes.PolygonGeometry: []
-        }
+            QgsWkbTypes.PolygonGeometry: []}
+
         layerMap = self.filterLayerByGeometryType(inputLyrList)
+        
         if merge:
             for geomType, lyrList in layerMap.items():
                 mergedLayerMap[geomType] = self.getMergedLayer(lyrList,
@@ -2051,16 +2061,13 @@ class LayerHandler(QObject):
 
     def filterLayerByGeometryType(self, inputLyrList):
         layerMap = {
-            QgsWkbTypes.PointGeometry: [],
             QgsWkbTypes.LineGeometry: [],
             QgsWkbTypes.PolygonGeometry: []
         }
 
         for layer in inputLyrList:
             lyrGeom = layer.geometryType()
-            if lyrGeom == 0:
-                layerMap[lyrGeom].append(layer)
-            elif lyrGeom == 1:
+            if lyrGeom == 1:
                 layerMap[lyrGeom].append(layer)
             elif lyrGeom == 2:
                 layerMap[lyrGeom].append(layer)
