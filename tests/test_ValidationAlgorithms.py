@@ -727,8 +727,7 @@ class Tester(unittest.TestCase):
                 {
                     '__comment': "'Normal' test: checks if it works.",
                     "INPUT_CENTER_POINTS": self.getInputLayers(
-                        'geojson', 'build_polygons_from_center_points', ['aquisicao_centroide_hidrografia_p',
-                                                         'aquisicao_centroide_vegetacao_p']),
+                        'geojson', 'build_polygons_from_center_points', ['aquisicao_centroide_vegetacao_p'])[0],
                     "ATTRIBUTE_BLACK_LIST": [],
                     "IGNORE_VIRTUAL_FIELDS": True,
                     "IGNORE_PK_FIELDS": True,
@@ -742,237 +741,93 @@ class Tester(unittest.TestCase):
                         'geojson', 'build_polygons_from_center_points', ['cobter_area_edificada_a',
                                                                          'cobter_corpo_dagua_a']),
                     "GEOGRAPHIC_BOUNDARY": self.getInputLayers(
-                        'geojson', 'build_polygons_from_center_points', ['aux_moldura_a']),
+                        'geojson', 'build_polygons_from_center_points', ['aux_moldura_a'])[0],
                     "OUTPUT_POLYGONS": "memory:",
                     "FLAGS": "memory:",
                     "DELIMITERS_FLAGS": "memory:"
-                }#,
-                # {
-                #     '__comment': "'Normal' test: checks if it works.",
-                #     "INPUT_CENTER_POINTS": self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['center_points_test2']
-                #     )[0],
-                #     'SELECTED': False,
-                #     'ATTRIBUTE_BLACK_LIST': [],
-                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', [
-                #             'fence', 'road', 'boundaries']
-                #     ),
-                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['water']
-                #     ),
-                #     'GEOGRAPHIC_BOUNDARY': '',
-                #     'OUTPUT_POLYGONS': "memory:",
-                #     'FLAGS': "memory:"
-                # },
-                # {
-                #     '__comment': "'Normal' test: checks if it works.",
-                #     "INPUT_CENTER_POINTS": self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['center_points_test3']
-                #     )[0],
-                #     'SELECTED': False,
-                #     'ATTRIBUTE_BLACK_LIST': [],
-                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', [
-                #             'fence', 'road', 'boundaries']
-                #     ),
-                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['water']
-                #     ),
-                #     'GEOGRAPHIC_BOUNDARY': '',
-                #     'OUTPUT_POLYGONS': "memory:",
-                #     'FLAGS': "memory:"
-                # },
-                # {
-                #     '__comment': "'Normal' test: checks if it works.",
-                #     "INPUT_CENTER_POINTS": self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['center_points_test4']
-                #     )[0],
-                #     'SELECTED': False,
-                #     'ATTRIBUTE_BLACK_LIST': [],
-                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', [
-                #             'fence', 'road', 'boundaries']
-                #     ),
-                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['water']
-                #     ),
-                #     'GEOGRAPHIC_BOUNDARY': '',
-                #     'OUTPUT_POLYGONS': "memory:",
-                #     'FLAGS': "memory:"
-                # },
-                # {
-                #     '__comment': "'Normal' test: checks if it works.",
-                #     "INPUT_CENTER_POINTS": self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['center_points_test5']
-                #     )[0],
-                #     'SELECTED': False,
-                #     'ATTRIBUTE_BLACK_LIST': [],
-                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', [
-                #             'fence', 'road', 'boundaries']
-                #     ),
-                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['water']
-                #     ),
-                #     'GEOGRAPHIC_BOUNDARY': '',
-                #     'OUTPUT_POLYGONS': "memory:",
-                #     'FLAGS': "memory:"
-                # },
-                # {
-                #     '__comment': "test 6 - same as test 1, but with geo bounds",
-                #     "INPUT_CENTER_POINTS": self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['center_points_test1']
-                #     )[0],
-                #     'SELECTED': False,
-                #     'ATTRIBUTE_BLACK_LIST': [],
-                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', [
-                #             'fence', 'road', 'boundaries_within_geo_bounds']
-                #     ),
-                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['water']
-                #     ),
-                #     'GEOGRAPHIC_BOUNDARY': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['geographic_bounds']
-                #     )[0],
-                #     'OUTPUT_POLYGONS': "memory:",
-                #     'FLAGS': "memory:"
-                # },
-                # {
-                #     '__comment': "test 7 - same as test 2, but with geo bounds",
-                #     "INPUT_CENTER_POINTS": self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['center_points_test2']
-                #     )[0],
-                #     'SELECTED': False,
-                #     'ATTRIBUTE_BLACK_LIST': [],
-                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', [
-                #             'fence', 'road', 'boundaries_within_geo_bounds']
-                #     ),
-                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['water']
-                #     ),
-                #     'GEOGRAPHIC_BOUNDARY': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['geographic_bounds']
-                #     )[0],
-                #     'OUTPUT_POLYGONS': "memory:",
-                #     'FLAGS': "memory:"
-                # },
-                # {
-                #     '__comment': "test 8 - same as test 3, but with geo bounds",
-                #     "INPUT_CENTER_POINTS": self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['center_points_test3']
-                #     )[0],
-                #     'SELECTED': False,
-                #     'ATTRIBUTE_BLACK_LIST': [],
-                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', [
-                #             'fence', 'road', 'boundaries_within_geo_bounds']
-                #     ),
-                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['water']
-                #     ),
-                #     'GEOGRAPHIC_BOUNDARY': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['geographic_bounds']
-                #     )[0],
-                #     'OUTPUT_POLYGONS': "memory:",
-                #     'FLAGS': "memory:"
-                # },
-                # {
-                #     '__comment': "test 9 - same as test 4, but with geo bounds",
-                #     "INPUT_CENTER_POINTS": self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['center_points_test4']
-                #     )[0],
-                #     'SELECTED': False,
-                #     'ATTRIBUTE_BLACK_LIST': [],
-                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', [
-                #             'fence', 'road', 'boundaries_within_geo_bounds']
-                #     ),
-                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['water']
-                #     ),
-                #     'GEOGRAPHIC_BOUNDARY': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['geographic_bounds']
-                #     )[0],
-                #     'OUTPUT_POLYGONS': "memory:",
-                #     'FLAGS': "memory:"
-                # },
-                # {
-                #     '__comment': "test 10 - same as test 5, but with geo bounds",
-                #     "INPUT_CENTER_POINTS": self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['center_points_test5']
-                #     )[0],
-                #     'SELECTED': False,
-                #     'ATTRIBUTE_BLACK_LIST': [],
-                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', [
-                #             'fence', 'road', 'boundaries_within_geo_bounds']
-                #     ),
-                #     'CONSTRAINT_POLYGON_LAYERS': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['water']
-                #     ),
-                #     'GEOGRAPHIC_BOUNDARY': self.getInputLayers(
-                #         'geojson', 'land_cover_layers', ['geographic_bounds']
-                #     )[0],
-                #     'OUTPUT_POLYGONS': "memory:",
-                #     'FLAGS': "memory:"
-                # },
-                # {
-                #     '__comment': "test 11 - without polygons, just lines, with attributeblacklist",
-                #     "INPUT_CENTER_POINTS": self.getInputLayers(
-                #         'geojson', 'build_polygons_from_center_points', [
-                #             'pontos']
-                #     )[0],
-                #     'SELECTED': False,
-                #     'ATTRIBUTE_BLACK_LIST': ['id', 'nome', 'tipo_comprovacao', 'tipo_insumo', 'observacao', 'data_modificacao', 'controle_id', 'ultimo_usuario'],
-                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
-                #         'geojson', 'build_polygons_from_center_points', [
-                #             'linhas1', 'linhas2']
-                #     ),
-                #     'CONSTRAINT_POLYGON_LAYERS': None,
-                #     'GEOGRAPHIC_BOUNDARY': None,
-                #     'OUTPUT_POLYGONS': "memory:",
-                #     'FLAGS': "memory:"
-                # },
-                # {
-                #     '__comment': "test 12 - without polygons, just lines, with attributeblacklist and geoboundary. Should create 5 pol, not 6. The tip of the triangle is outside of the boundary ",
-                #     "INPUT_CENTER_POINTS": self.getInputLayers(
-                #         'geojson', 'build_polygons_from_center_points', [
-                #             'pontos']
-                #     )[0],
-                #     'SELECTED': False,
-                #     'ATTRIBUTE_BLACK_LIST': ['id', 'nome', 'tipo_comprovacao', 'tipo_insumo', 'observacao', 'data_modificacao', 'controle_id', 'ultimo_usuario'],
-                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
-                #         'geojson', 'build_polygons_from_center_points', [
-                #             'linhas1', 'linhas2']
-                #     ),
-                #     'CONSTRAINT_POLYGON_LAYERS': None,
-                #     'GEOGRAPHIC_BOUNDARY': self.getInputLayers(
-                #         'geojson', 'build_polygons_from_center_points', [
-                #             'moldura']
-                #     )[0],
-                #     'OUTPUT_POLYGONS': "memory:",
-                #     'FLAGS': "memory:"
-                # },
-                # {
-                #     '__comment': "test 13 - without polygons, just lines, with a different attributeblacklist",
-                #     "INPUT_CENTER_POINTS": self.getInputLayers(
-                #         'geojson', 'build_polygons_from_center_points', [
-                #             'pontos']
-                #     )[0],
-                #     'SELECTED': False,
-                #     'ATTRIBUTE_BLACK_LIST': ['id', 'nome', 'tipo_comprovacao', 'tipo_insumo', 'observacao'],
-                #     'CONSTRAINT_LINE_LAYERS': self.getInputLayers(
-                #         'geojson', 'build_polygons_from_center_points', [
-                #             'linhas1', 'linhas2']
-                #     ),
-                #     'CONSTRAINT_POLYGON_LAYERS': None,
-                #     'GEOGRAPHIC_BOUNDARY': None,
-                #     'OUTPUT_POLYGONS': "memory:",
-                #     'FLAGS': "memory:"
-                # }
+                },
+                {
+                    '__comment': "'Normal' test: without GEOGRAPHIC_BOUNDARY.",
+                    "INPUT_CENTER_POINTS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['aquisicao_centroide_vegetacao_p'])[0],
+                    "ATTRIBUTE_BLACK_LIST": [],
+                    "IGNORE_VIRTUAL_FIELDS": True,
+                    "IGNORE_PK_FIELDS": True,
+                    "CONSTRAINT_LINE_LAYERS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['elemnat_trecho_drenagem_l',
+                                                                         'infra_via_deslocamento_l']),
+                    "DELIMITER_LAYERS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['aquisicao_limite_hidrografia_l',
+                                                                         'aquisicao_limite_vegetacao_l']),
+                    "CONSTRAINT_POLYGON_LAYERS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['cobter_area_edificada_a',
+                                                                         'cobter_corpo_dagua_a']),
+                    "GEOGRAPHIC_BOUNDARY": None,
+                    "OUTPUT_POLYGONS": "memory:",
+                    "FLAGS": "memory:",
+                    "DELIMITERS_FLAGS": "memory:"
+                },
+                {
+                    '__comment': "'Normal' test: without CONSTRAINT_LINE_LAYERS.",
+                    "INPUT_CENTER_POINTS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['aquisicao_centroide_vegetacao_p'])[0],
+                    "ATTRIBUTE_BLACK_LIST": [],
+                    "IGNORE_VIRTUAL_FIELDS": True,
+                    "IGNORE_PK_FIELDS": True,
+                    "CONSTRAINT_LINE_LAYERS": None,
+                    "DELIMITER_LAYERS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['aquisicao_limite_hidrografia_l',
+                                                                         'aquisicao_limite_vegetacao_l']),
+                    "CONSTRAINT_POLYGON_LAYERS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['cobter_area_edificada_a',
+                                                                         'cobter_corpo_dagua_a']),
+                    "GEOGRAPHIC_BOUNDARY": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['aux_moldura_a'])[0],
+                    "OUTPUT_POLYGONS": "memory:",
+                    "FLAGS": "memory:",
+                    "DELIMITERS_FLAGS": "memory:"
+                },
+                {
+                    '__comment': "'Normal' test: without CONSTRAINT_LINE_LAYERS and GEOGRAPHIC_BOUNDARY.",
+                    "INPUT_CENTER_POINTS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['aquisicao_centroide_vegetacao_p'])[0],
+                    "ATTRIBUTE_BLACK_LIST": [],
+                    "IGNORE_VIRTUAL_FIELDS": True,
+                    "IGNORE_PK_FIELDS": True,
+                    "CONSTRAINT_LINE_LAYERS": None,
+                    "DELIMITER_LAYERS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['aquisicao_limite_hidrografia_l',
+                                                                         'aquisicao_limite_vegetacao_l']),
+                    "CONSTRAINT_POLYGON_LAYERS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['cobter_area_edificada_a',
+                                                                         'cobter_corpo_dagua_a']),
+                    "GEOGRAPHIC_BOUNDARY": None,
+                    "OUTPUT_POLYGONS": "memory:",
+                    "FLAGS": "memory:",
+                    "DELIMITERS_FLAGS": "memory:"
+                },
+                {
+                    '__comment': "'Normal' test: default with full blacklist.",
+                    "INPUT_CENTER_POINTS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['aquisicao_centroide_vegetacao_p'])[0],
+                    "ATTRIBUTE_BLACK_LIST": ['nome', 'tipo_comprovacao', 'tipo_insumo', 'observacao', 'data_modificacao', 'controle_id', 'ultimo_usuario'],
+                    "IGNORE_VIRTUAL_FIELDS": True,
+                    "IGNORE_PK_FIELDS": True,
+                    "CONSTRAINT_LINE_LAYERS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['elemnat_trecho_drenagem_l',
+                                                                         'infra_via_deslocamento_l']),
+                    "DELIMITER_LAYERS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['aquisicao_limite_hidrografia_l',
+                                                                         'aquisicao_limite_vegetacao_l']),
+                    "CONSTRAINT_POLYGON_LAYERS": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['cobter_area_edificada_a',
+                                                                         'cobter_corpo_dagua_a']),
+                    "GEOGRAPHIC_BOUNDARY": self.getInputLayers(
+                        'geojson', 'build_polygons_from_center_points', ['aux_moldura_a'])[0],
+                    "OUTPUT_POLYGONS": "memory:",
+                    "FLAGS": "memory:",
+                    "DELIMITERS_FLAGS": "memory:"
+                }
             ],
             "dsgtools:identifyterrainmodelerrorsalgorithm": [
                 {
