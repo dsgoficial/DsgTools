@@ -688,3 +688,16 @@ class AlgRunner:
                                 context=context,
                                 feedback=feedback)
         return output
+
+    def runDeleteColumn(self, inputLyr, fieldList, context, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT': inputLyr,
+            'COLUMN': fieldList,
+            'OUTPUT':outputLyr
+        }
+        output = processing.run("qgis:deletecolumn",
+                                parameters,
+                                context=context,
+                                feedback=feedback)
+        return output['OUTPUT']
