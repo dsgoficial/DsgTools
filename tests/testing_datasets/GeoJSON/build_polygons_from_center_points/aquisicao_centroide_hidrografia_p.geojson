@@ -1,9 +1,0 @@
-{
-"type": "FeatureCollection",
-"name": "aquisicao_centroide_hidrografia_p",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31982" } },
-"features": [
-{ "type": "Feature", "properties": { "id": 2, "nome": null, "tipo": 1, "tipo_comprovacao": 999, "tipo_insumo": 999, "observacao": null, "data_modificacao": null, "controle_id": null, "ultimo_usuario": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 306852.563267335062847, 9986213.5782157368958 ] ] } },
-{ "type": "Feature", "properties": { "id": 3, "nome": null, "tipo": 4, "tipo_comprovacao": 999, "tipo_insumo": 999, "observacao": null, "data_modificacao": null, "controle_id": null, "ultimo_usuario": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 306165.87442779581761, 9986038.677217576652765 ] ] } }
-]
-}

@@ -3,9 +3,11 @@
 "name": "aquisicao_centroide_vegetacao_p",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31982" } },
 "features": [
+{ "type": "Feature", "properties": { "id": 2, "nome": null, "tipo": 151, "tipo_comprovacao": 999, "tipo_insumo": 999, "observacao": null, "data_modificacao": null, "controle_id": null, "ultimo_usuario": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 306852.563267335062847, 9986213.5782157368958 ] ] } },
+{ "type": "Feature", "properties": { "id": 1, "nome": null, "tipo": 401, "tipo_comprovacao": 999, "tipo_insumo": 999, "observacao": null, "data_modificacao": null, "controle_id": null, "ultimo_usuario": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 306106.971947557642125, 9984508.289960756897926 ] ] } },
 { "type": "Feature", "properties": { "id": 2, "nome": null, "tipo": 150, "tipo_comprovacao": 999, "tipo_insumo": 999, "observacao": null, "data_modificacao": null, "controle_id": null, "ultimo_usuario": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 306096.896389182540588, 9984840.783387133851647 ] ] } },
 { "type": "Feature", "properties": { "id": 3, "nome": null, "tipo": 901, "tipo_comprovacao": 999, "tipo_insumo": 999, "observacao": null, "data_modificacao": null, "controle_id": null, "ultimo_usuario": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 307376.492302854487207, 9985828.188107887282968 ] ] } },
-{ "type": "Feature", "properties": { "id": 1, "nome": null, "tipo": 401, "tipo_comprovacao": 999, "tipo_insumo": 999, "observacao": null, "data_modificacao": null, "controle_id": null, "ultimo_usuario": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 306106.971947557642125, 9984508.289960756897926 ] ] } },
-{ "type": "Feature", "properties": { "id": 4, "nome": null, "tipo": 150, "tipo_comprovacao": 999, "tipo_insumo": 999, "observacao": null, "data_modificacao": null, "controle_id": null, "ultimo_usuario": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 307470.817557982983999, 9986739.480009714141488 ] ] } }
+{ "type": "Feature", "properties": { "id": 4, "nome": null, "tipo": 150, "tipo_comprovacao": 999, "tipo_insumo": 999, "observacao": null, "data_modificacao": null, "controle_id": null, "ultimo_usuario": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 307470.817557982983999, 9986739.480009714141488 ] ] } },
+{ "type": "Feature", "properties": { "id": 3, "nome": null, "tipo": 1296, "tipo_comprovacao": 999, "tipo_insumo": 999, "observacao": null, "data_modificacao": null, "controle_id": null, "ultimo_usuario": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 306165.87442779581761, 9986038.677217576652765 ] ] } }
 ]
 }
