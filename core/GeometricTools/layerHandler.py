@@ -1319,7 +1319,7 @@ class LayerHandler(QObject):
         """
         return AlgRunner().runReprojectLayer(layer, targetEpsg, output)
 
-    def getMergedLayer(self, inputLayerList, onlySelected=False, cleanFields=True, feedback=None, context=None, algRunner=None):
+    def getMergedLayer(self, inputLayerList, onlySelected=False, cleanFields=False, feedback=None, context=None, algRunner=None):
         """
         This does almost the same of createAndPopulateUnifiedVectorLayer, but it
         is much faster. Maybe the implementation of createAndPopulateUnifiedVectorLayer
@@ -2054,6 +2054,7 @@ class LayerHandler(QObject):
         if merge:
             for geomType, lyrList in layerMap.items():
                 mergedLayerMap[geomType] = self.getMergedLayer(lyrList,
+                                                               cleanFields=True,
                                                                feedback=feedback,
                                                                context=context,
                                                                algRunner=algRunner)
