@@ -7,7 +7,8 @@ before_install:
     # - docker pull qgis/qgis:final-3_10_9
     - docker pull qgis/qgis:release-3_16
 install:
-    - docker run -d --name dsgtools-testing-env -v ${TRAVIS_BUILD_DIR}:/tests_directory -e DISPLAY=:99 qgis/qgis:final-3_10_9
+    # - docker run -d --name dsgtools-testing-env -v ${TRAVIS_BUILD_DIR}:/tests_directory -e DISPLAY=:99 qgis/qgis:final-3_10_9
+    - docker run -d --name dsgtools-testing-env -v ${TRAVIS_BUILD_DIR}:/tests_directory -e DISPLAY=:99 qgis/qgis:release-3_16
     - sleep 10
     # Setup qgis and enable the plugin
     - docker exec -it dsgtools-testing-env sh -c "qgis_setup.sh DsgTools"
