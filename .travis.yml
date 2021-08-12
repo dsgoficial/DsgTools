@@ -1,6 +1,9 @@
 services:
     - docker
 before_install:
+    # After the qgis_setup.sh update, these commands will be necessary to move the 
+    # tests_directory content to the right place.
+    - mkdir ${TRAVIS_BUILD_DIR}/DsgTools
     # Build this docker:
     # - cd qgis-testing-environment && docker build -t qgis-testing-environment .
     # or just pull it:
@@ -10,9 +13,6 @@ install:
     # - docker run -d --name dsgtools-testing-env -v ${TRAVIS_BUILD_DIR}:/tests_directory -e DISPLAY=:99 qgis/qgis:final-3_10_9
     - docker run -d --name dsgtools-testing-env -v ${TRAVIS_BUILD_DIR}:/tests_directory -e DISPLAY=:99 qgis/qgis:release-3_16
     - sleep 10
-    # After the qgis_setup.sh update, these commands will be necessary to move the 
-    # tests_directory content to the right place.
-    - mkdir ${TRAVIS_BUILD_DIR}/DsgTools
     # Setup qgis and enable the plugin
     - docker exec -it dsgtools-testing-env sh -c "qgis_setup.sh DsgTools"
     # If needd additional steps (for example make or paver setup, place it here)
