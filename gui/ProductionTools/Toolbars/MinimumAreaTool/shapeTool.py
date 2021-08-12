@@ -167,7 +167,7 @@ class ShapeTool(QgsMapTool):
         """
         if not( self.type == self.tr('distance') ):
             param = sqrt(param)/2
-        r = self.convertDistance( param )
+        #r = self.convertDistance( param )
         nPoints = 50
         x = startPoint.x()
         y = startPoint.y()
@@ -192,7 +192,7 @@ class ShapeTool(QgsMapTool):
         """  
         if not( self.type == self.tr('distance') ):
             param = sqrt(param)/2
-        param = self.convertDistance( param )
+        #param = self.convertDistance( param )
        
         self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
         x = startPoint.x() # center point x
