@@ -66,8 +66,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.ruleStatisticsAlgorithm
     RuleStatisticsAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runRemoteFMEAlgorithm import (
     ParameterFMEManagerType, RunRemoteFMEAlgorithm)
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import \
-    SingleOutputUnitTestAlgorithm
+# from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import \
+#     SingleOutputUnitTestAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateOriginalLayerAlgorithm import \
     UpdateOriginalLayerAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.adjustNetworkConnectivityAlgorithm import \
@@ -166,7 +166,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.matchAndApply
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.applyStylesFromDatabaseToLayersAlgorithm import \
     ApplyStylesFromDatabaseToLayersAlgorithm
 
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
+# from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWrongBuildingAnglesAlgorithm import \
     IdentifyWrongBuildingAnglesAlgorithm
 
@@ -184,8 +184,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.setFreeHand
     SetFreeHandToolParametersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.buildPolygonsFromCenterPointsAndBoundariesAlgorithm import \
     BuildPolygonsFromCenterPointsAndBoundariesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.multipleOutputUnitTestAlgorithm import \
-    MultipleOutputUnitTestAlgorithm
+# from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.multipleOutputUnitTestAlgorithm import \
+#     MultipleOutputUnitTestAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyTerrainModelErrorsAlgorithm import \
     IdentifyTerrainModelErrorsAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFramesWithConstraintAlgorithm import \
@@ -267,7 +267,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             RuleStatisticsAlgorithm(),
             MatchAndApplyQmlStylesToLayersAlgorithm(),
             ApplyStylesFromDatabaseToLayersAlgorithm(),
-            SingleOutputUnitTestAlgorithm(),
+            # SingleOutputUnitTestAlgorithm(),
             ExportToMemoryLayer(),
             AssignCustomFormAndFormatRulesToLayersAlgorithm(),
             AssignValueMapToLayersAlgorithm(),
@@ -285,7 +285,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyUnsharedVertexOnIntersectionsAlgorithm(),
             SetFreeHandToolParametersAlgorithm(),
             BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(),
-            MultipleOutputUnitTestAlgorithm(),
+            # MultipleOutputUnitTestAlgorithm(),
             IdentifyTerrainModelErrorsAlgorithm(),
             CreateFramesWithConstraintAlgorithm(),
             IdentifyAnglesInInvalidRangeAlgorithm(),
