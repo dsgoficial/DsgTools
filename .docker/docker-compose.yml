@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  qgis:
+    image: qgis/qgis:final-3_10_9
+    container_name: dsgtools-testing-env
+    volumes:
+      # - /tmp/.X11-unix:/tmp/.X11-unix
+      - ../DsgTools:/tests_directory
+      - ../tests:/tests_directory/tests
+    environment:
+      # - DISPLAY=unix$DISPLAY
+      - DISPLAY=:99

@@ -1,0 +1,29 @@
+name: unittests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master, dev]
+
+jobs:
+  test-desktop:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .docker
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+      - name: Pull docker images
+        run: docker-compose pull
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
+      - name: Start the environment
+        run: ./start.sh
+      - name: Tests
+        run: ./exec.sh
+      - name: Stop the environment
+        run: docker-compose down 
