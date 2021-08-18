@@ -66,11 +66,11 @@ LayerTools/CustomFormTools/formsCustom
 
 # DSGTools conversion maps
 # =========================
-gui/DatabaseTools/ConversionTools/conversion_map.json
+DsgTools/gui/DatabaseTools/ConversionTools/conversion_map.json
 
 # Built files
 # =========================
-gui/AboutAndFurtherInfo/ui_about_.ui
+DsgTools/gui/AboutAndFurtherInfo/ui_about_.ui
 
 # Caching formats and other file handling temporary files
 # =========================

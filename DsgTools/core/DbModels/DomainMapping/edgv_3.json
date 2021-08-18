@@ -1,0 +1,6384 @@
+{
+    "edgv_aer_pista_ponto_pouso_a": {
+        "homologacao": [
+            "auxiliar",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopista": [
+            "tipo_pista",
+            "code"
+        ],
+        "usopista": [
+            "uso_pista",
+            "code"
+        ]
+    },
+    "edgv_aer_pista_ponto_pouso_l": {
+        "homologacao": [
+            "auxiliar",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopista": [
+            "tipo_pista",
+            "code"
+        ],
+        "usopista": [
+            "uso_pista",
+            "code"
+        ]
+    },
+    "edgv_aer_pista_ponto_pouso_p": {
+        "homologacao": [
+            "auxiliar",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopista": [
+            "tipo_pista",
+            "code"
+        ],
+        "usopista": [
+            "uso_pista",
+            "code"
+        ]
+    },
+    "edgv_cbge_area_agropec_ext_vegetal_pesca_a": {
+        "destinadoa": [
+            "destinado_a",
+            "code"
+        ],
+        "tipoarea": [
+            "tipo_area",
+            "code"
+        ]
+    },
+    "edgv_cbge_area_de_propriedade_particular_a": {
+        "tipoarea": [
+            "tipo_area",
+            "code"
+        ]
+    },
+    "edgv_cbge_area_duto_a": {
+        "areavalvulas": [
+            "auxiliar",
+            "code"
+        ],
+        "bombeamento": [
+            "auxiliar",
+            "code"
+        ],
+        "tipoarea": [
+            "tipo_area",
+            "code"
+        ]
+    },
+    "edgv_cbge_area_habitacional_a": {
+        "tipoarea": [
+            "tipo_area",
+            "code"
+        ]
+    },
+    "edgv_cbge_area_uso_especifico_a": {
+        "tipoarea": [
+            "tipo_area",
+            "code"
+        ]
+    },
+    "edgv_cbge_canteiro_central_a": {
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ]
+    },
+    "edgv_cbge_canteiro_central_l": {
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ]
+    },
+    "edgv_cbge_cemiterio_a": {
+        "denominacaoassociada": [
+            "denominacao_associada",
+            "code"
+        ],
+        "destinacaocemiterio": [
+            "destinacao_cemiterio",
+            "code"
+        ],
+        "tipocemiterio": [
+            "tipo_cemiterio",
+            "code"
+        ]
+    },
+    "edgv_cbge_cemiterio_p": {
+        "denominacaoassociada": [
+            "denominacao_associada",
+            "code"
+        ],
+        "destinacaocemiterio": [
+            "destinacao_cemiterio",
+            "code"
+        ],
+        "tipocemiterio": [
+            "tipo_cemiterio",
+            "code"
+        ]
+    },
+    "edgv_cbge_delimitacao_fisica_l": {
+        "eletrificada": [
+            "auxiliar",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "tipodelimfis": [
+            "tipo_delim_fis",
+            "code"
+        ]
+    },
+    "edgv_cbge_deposito_geral_a": {
+        "estadofisico": [
+            "estado_fisico",
+            "code"
+        ],
+        "finalidadedep": [
+            "finalidade_deposito",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoconteudo": [
+            "tipo_conteudo",
+            "code"
+        ],
+        "tipodepgeral": [
+            "tipo_dep_geral",
+            "code"
+        ],
+        "tipoexposicao": [
+            "tipo_exposicao",
+            "code"
+        ],
+        "tipoprodutoresiduo": [
+            "tipo_produto_residuo",
+            "code"
+        ],
+        "tratamento": [
+            "auxiliar",
+            "code"
+        ],
+        "unidadevolume": [
+            "unidade_volume",
+            "code"
+        ]
+    },
+    "edgv_cbge_deposito_geral_p": {
+        "estadofisico": [
+            "estado_fisico",
+            "code"
+        ],
+        "finalidadedep": [
+            "finalidade_deposito",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoconteudo": [
+            "tipo_conteudo",
+            "code"
+        ],
+        "tipodepgeral": [
+            "tipo_dep_geral",
+            "code"
+        ],
+        "tipoexposicao": [
+            "tipo_exposicao",
+            "code"
+        ],
+        "tipoprodutoresiduo": [
+            "tipo_produto_residuo",
+            "code"
+        ],
+        "tratamento": [
+            "auxiliar",
+            "code"
+        ],
+        "unidadevolume": [
+            "unidade_volume",
+            "code"
+        ]
+    },
+    "edgv_cbge_entroncamento_area_a": {
+        "tipoentroncamento": [
+            "tipo_entroncamento",
+            "code"
+        ]
+    },
+    "edgv_cbge_estacionamento_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "finalidadepatio": [
+            "finalidade_patio",
+            "code"
+        ],
+        "modaluso": [
+            "modal_uso",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "publico": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_cbge_passeio_a": {
+        "calcada": [
+            "auxiliar",
+            "code"
+        ],
+        "pavimentacao": [
+            "tipo_pavimentacao",
+            "code"
+        ]
+    },
+    "edgv_cbge_passeio_l": {
+        "calcada": [
+            "auxiliar",
+            "code"
+        ],
+        "pavimentacao": [
+            "tipo_pavimentacao",
+            "code"
+        ]
+    },
+    "edgv_cbge_poste_p": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "tipoposte": [
+            "tipo_poste",
+            "code"
+        ]
+    },
+    "edgv_cbge_praca_a": {
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_cbge_trecho_arruamento_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "canteirodivisorio": [
+            "auxiliar",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "meiofio": [
+            "auxiliar",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "sarjeta": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopavimentacao": [
+            "tipo_pavimentacao",
+            "code"
+        ],
+        "tipovia": [
+            "tipo_via",
+            "code"
+        ],
+        "trafego": [
+            "trafego",
+            "code"
+        ]
+    },
+    "edgv_cbge_trecho_arruamento_l": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "canteirodivisorio": [
+            "auxiliar",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "meiofio": [
+            "auxiliar",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "sarjeta": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopavimentacao": [
+            "tipo_pavimentacao",
+            "code"
+        ],
+        "tipovia": [
+            "tipo_via",
+            "code"
+        ],
+        "trafego": [
+            "trafego",
+            "code"
+        ]
+    },
+    "edgv_dut_galeria_bueiro_l": {
+        "finalidade": [
+            "finalidade_galeria_bueiro",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "mattransp": [
+            "mat_transp",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "posicaorelativa": [
+            "posicao_relativa",
+            "code"
+        ],
+        "setor": [
+            "setor",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipotrechoduto": [
+            "tipo_trecho_duto",
+            "code"
+        ]
+    },
+    "edgv_dut_galeria_bueiro_p": {
+        "finalidade": [
+            "finalidade_galeria_bueiro",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "mattransp": [
+            "mat_transp",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "posicaorelativa": [
+            "posicao_relativa",
+            "code"
+        ],
+        "setor": [
+            "setor",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipotrechoduto": [
+            "tipo_trecho_duto",
+            "code"
+        ]
+    },
+    "edgv_dut_trecho_duto_l": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "mattransp": [
+            "mat_transp",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "posicaorelativa": [
+            "posicao_relativa",
+            "code"
+        ],
+        "setor": [
+            "setor",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipotrechoduto": [
+            "tipo_trecho_duto",
+            "code"
+        ]
+    },
+    "edgv_eco_equip_agropec_a": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoequipagropec": [
+            "tipo_equip_agropec",
+            "code"
+        ]
+    },
+    "edgv_eco_equip_agropec_l": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoequipagropec": [
+            "tipo_equip_agropec",
+            "code"
+        ]
+    },
+    "edgv_eco_equip_agropec_p": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoequipagropec": [
+            "tipo_equip_agropec",
+            "code"
+        ]
+    },
+    "edgv_eco_ext_mineral_a": {
+        "atividade": [
+            "atividade",
+            "code"
+        ],
+        "formaextracao": [
+            "forma_extracao",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "procextracao": [
+            "proc_extracao",
+            "code"
+        ],
+        "secaoativecon": [
+            "secao_ativ_econ",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoalterantrop": [
+            "tipo_alter_antrop",
+            "code"
+        ],
+        "tipoextmin": [
+            "tipo_ext_min",
+            "code"
+        ],
+        "tipopocomina": [
+            "tipo_poco_mina",
+            "code"
+        ],
+        "tipoproduto": [
+            "tipo_produto_residuo",
+            "code"
+        ]
+    },
+    "edgv_eco_ext_mineral_p": {
+        "atividade": [
+            "atividade",
+            "code"
+        ],
+        "formaextracao": [
+            "forma_extracao",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "procextracao": [
+            "proc_extracao",
+            "code"
+        ],
+        "secaoativecon": [
+            "secao_ativ_econ",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoalterantrop": [
+            "tipo_alter_antrop",
+            "code"
+        ],
+        "tipoextmin": [
+            "tipo_ext_min",
+            "code"
+        ],
+        "tipopocomina": [
+            "tipo_poco_mina",
+            "code"
+        ],
+        "tipoproduto": [
+            "tipo_produto_residuo",
+            "code"
+        ]
+    },
+    "edgv_eco_plataforma_a": {
+        "tipoplataforma": [
+            "tipo_plataforma",
+            "code"
+        ]
+    },
+    "edgv_eco_plataforma_p": {
+        "tipoplataforma": [
+            "tipo_plataforma",
+            "code"
+        ]
+    },
+    "edgv_edf_banheiro_publico_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_banheiro_publico_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_abast_agua_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifabast": [
+            "tipo_edif_abast",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_abast_agua_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifabast": [
+            "tipo_edif_abast",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_agropec_ext_vegetal_pesca_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifagropec": [
+            "tipo_edif_agropec",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_agropec_ext_vegetal_pesca_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifagropec": [
+            "tipo_edif_agropec",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_comerc_serv_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "finalidade": [
+            "finalidade",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifcomercserv": [
+            "tipo_edif_comerc_serv",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_comerc_serv_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "finalidade": [
+            "finalidade",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifcomercserv": [
+            "tipo_edif_comerc_serv",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_comunic_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "modalidade": [
+            "modalidade",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifcomunic": [
+            "tipo_edif_comunic",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_comunic_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "modalidade": [
+            "modalidade",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifcomunic": [
+            "tipo_edif_comunic",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_constr_aeroportuaria_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifaero": [
+            "tipo_edif_aero",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_constr_aeroportuaria_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifaero": [
+            "tipo_edif_aero",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_constr_est_med_fen_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_constr_est_med_fen_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_constr_lazer_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoediflazer": [
+            "tipo_edif_lazer",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_constr_lazer_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoediflazer": [
+            "tipo_edif_lazer",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_constr_portuaria_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifport": [
+            "tipo_edif_port",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_constr_portuaria_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifport": [
+            "tipo_edif_port",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_constr_turistica_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "ovgd": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifturist": [
+            "tipo_edif_turist",
+            "code"
+        ],
+        "tombada": [
+            "auxiliar",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_constr_turistica_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "ovgd": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifturist": [
+            "tipo_edif_turist",
+            "code"
+        ],
+        "tombada": [
+            "auxiliar",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_desenv_social_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "localizacaoequipdesenvsocial": [
+            "local_equip_desenv_social",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoequipdesenvsocial": [
+            "tipo_equip_desenv_social",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_desenv_social_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "localizacaoequipdesenvsocial": [
+            "local_equip_desenv_social",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoequipdesenvsocial": [
+            "tipo_equip_desenv_social",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_energia_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifenergia": [
+            "tipo_edif_energia",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_energia_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifenergia": [
+            "tipo_edif_energia",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_ensino_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_ensino_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_ext_mineral_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_ext_mineral_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_industrial_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "chamine": [
+            "auxiliar",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_industrial_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "chamine": [
+            "auxiliar",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_metro_ferroviaria_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifmetroferrov": [
+            "tipo_edif_metro_ferrov",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_metro_ferroviaria_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifmetroferrov": [
+            "tipo_edif_metro_ferrov",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_policia_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifpubcivil": [
+            "tipo_org_civil",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipo_uso_edif",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_policia_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifpubcivil": [
+            "tipo_org_civil",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipo_uso_edif",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_pub_civil_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifpubcivil": [
+            "tipo_org_civil",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipo_uso_edif",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_pub_civil_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifpubcivil": [
+            "tipo_org_civil",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipo_uso_edif",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_pub_militar_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoinstalmilitar": [
+            "tipo_instal_militar",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipo_uso_edif",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_pub_militar_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoinstalmilitar": [
+            "tipo_instal_militar",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipo_uso_edif",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_religiosa_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "crista": [
+            "auxiliar",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "ensino": [
+            "auxiliar",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifrelig": [
+            "tipo_edif_relig",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_religiosa_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "crista": [
+            "auxiliar",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "ensino": [
+            "auxiliar",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifrelig": [
+            "tipo_edif_relig",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_residencial_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_residencial_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_rodoviaria_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifrod": [
+            "tipo_edif_rod",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_rodoviaria_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifrod": [
+            "tipo_edif_rod",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_saneamento_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifsaneam": [
+            "tipo_edif_saneam",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_saneamento_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifsaneam": [
+            "tipo_edif_saneam",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_saude_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "nivelatencao": [
+            "nivel_atencao",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edif_saude_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "nivelatencao": [
+            "nivel_atencao",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edificacao_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_edificacao_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_hab_indigena_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "coletiva": [
+            "auxiliar",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "isolada": [
+            "auxiliar",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_hab_indigena_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "coletiva": [
+            "auxiliar",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "isolada": [
+            "auxiliar",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_posto_combustivel_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "finalidade": [
+            "finalidade",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifcomercserv": [
+            "tipo_edif_comerc_serv",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_posto_combustivel_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "finalidade": [
+            "finalidade",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifcomercserv": [
+            "tipo_edif_comerc_serv",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_posto_fiscal_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifpubcivil": [
+            "tipo_org_civil",
+            "code"
+        ],
+        "tipopostofisc": [
+            "tipo_posto_fisc",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipo_uso_edif",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_posto_fiscal_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifpubcivil": [
+            "tipo_org_civil",
+            "code"
+        ],
+        "tipopostofisc": [
+            "tipo_posto_fisc",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipo_uso_edif",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_posto_guarda_municipal_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifpubcivil": [
+            "tipo_org_civil",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipo_uso_edif",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_posto_guarda_municipal_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifpubcivil": [
+            "tipo_org_civil",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipo_uso_edif",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_posto_policia_militar_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoinstalmilitar": [
+            "tipo_instal_militar",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipo_uso_edif",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_posto_policia_militar_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoinstalmilitar": [
+            "tipo_instal_militar",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipo_uso_edif",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_posto_policia_rod_federal_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifpubcivil": [
+            "tipo_org_civil",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipo_uso_edif",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_posto_policia_rod_federal_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoedifpubcivil": [
+            "tipo_org_civil",
+            "code"
+        ],
+        "tipousoedif": [
+            "tipo_uso_edif",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_representacao_diplomatica_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tiporepdiplomatica": [
+            "tipo_rep_diplomatica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_edf_representacao_diplomatica_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "divisaoativecon": [
+            "divisao_ativ_econ",
+            "code"
+        ],
+        "grupoativecon": [
+            "grupo_ativ_econ",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "proprioadm": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tiporepdiplomatica": [
+            "tipo_rep_diplomatica",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_emu_acesso_a": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_emu_acesso_l": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_emu_acesso_p": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_emu_ciclovia_l": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_emu_elevador_a": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoelevador": [
+            "tipo_elevador",
+            "code"
+        ]
+    },
+    "edgv_emu_elevador_l": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoelevador": [
+            "tipo_elevador",
+            "code"
+        ]
+    },
+    "edgv_emu_elevador_p": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoelevador": [
+            "tipo_elevador",
+            "code"
+        ]
+    },
+    "edgv_emu_escadaria_a": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_emu_escadaria_l": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_emu_escadaria_p": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_emu_poste_sinalizacao_p": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "tipoposte": [
+            "tipo_poste",
+            "code"
+        ]
+    },
+    "edgv_emu_rampa_a": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_emu_rampa_l": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_emu_rampa_p": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_enc_antena_comunic_p": {
+        "posicaoreledific": [
+            "posicao_rel_edific",
+            "code"
+        ]
+    },
+    "edgv_enc_central_geradora_eolica_a": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoestgerad": [
+            "tipo_est_gerad",
+            "code"
+        ]
+    },
+    "edgv_enc_central_geradora_eolica_p": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoestgerad": [
+            "tipo_est_gerad",
+            "code"
+        ]
+    },
+    "edgv_enc_est_gerad_energia_eletrica_a": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoestgerad": [
+            "tipo_est_gerad",
+            "code"
+        ]
+    },
+    "edgv_enc_est_gerad_energia_eletrica_p": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoestgerad": [
+            "tipo_est_gerad",
+            "code"
+        ]
+    },
+    "edgv_enc_hidreletrica_a": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoahe": [
+            "tipo_ahe",
+            "code"
+        ],
+        "tipoestgerad": [
+            "tipo_est_gerad",
+            "code"
+        ]
+    },
+    "edgv_enc_hidreletrica_l": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoahe": [
+            "tipo_ahe",
+            "code"
+        ],
+        "tipoestgerad": [
+            "tipo_est_gerad",
+            "code"
+        ]
+    },
+    "edgv_enc_hidreletrica_p": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoahe": [
+            "tipo_ahe",
+            "code"
+        ],
+        "tipoestgerad": [
+            "tipo_est_gerad",
+            "code"
+        ]
+    },
+    "edgv_enc_subest_transm_distrib_energia_eletrica_a": {
+        "centrodecarga": [
+            "auxiliar",
+            "code"
+        ],
+        "classeativecon": [
+            "classe_ativ_econ",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_enc_termeletrica_a": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipocombustivel": [
+            "tipo_combustivel",
+            "code"
+        ],
+        "tipoestgerad": [
+            "tipo_est_gerad",
+            "code"
+        ]
+    },
+    "edgv_enc_termeletrica_p": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipocombustivel": [
+            "tipo_combustivel",
+            "code"
+        ],
+        "tipoestgerad": [
+            "tipo_est_gerad",
+            "code"
+        ]
+    },
+    "edgv_enc_torre_comunic_p": {
+        "modalidade": [
+            "modalidade",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "ovgd": [
+            "auxiliar",
+            "code"
+        ],
+        "posicaoreledific": [
+            "posicao_rel_edific",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_enc_torre_energia_p": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "ovgd": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_enc_trecho_comunic_l": {
+        "emduto": [
+            "auxiliar",
+            "code"
+        ],
+        "matcondutor": [
+            "mat_condutor",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "posicaorelativa": [
+            "posicao_relativa",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipotrechocomunic": [
+            "tipo_trecho_comunic",
+            "code"
+        ]
+    },
+    "edgv_enc_trecho_energia_l": {
+        "especie": [
+            "especie_trecho_energia",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "posicaorelativa": [
+            "posicao_relativa",
+            "code"
+        ],
+        "sin": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_fer_cremalheira_l": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_fer_cremalheira_p": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_fer_girador_ferroviario_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_fer_trecho_ferroviario_l": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "bitola": [
+            "bitola",
+            "code"
+        ],
+        "eletrificada": [
+            "auxiliar",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "nrlinhas": [
+            "nr_linhas",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "posicaorelativa": [
+            "posicao_relativa",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipotrechoferrov": [
+            "tipo_trecho_ferrov",
+            "code"
+        ]
+    },
+    "edgv_hdv_atracadouro_terminal_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "aptidaooperacional": [
+            "aptidao_operacional_atracadouro",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoatracad": [
+            "tipo_atracad",
+            "code"
+        ]
+    },
+    "edgv_hdv_atracadouro_terminal_l": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "aptidaooperacional": [
+            "aptidao_operacional_atracadouro",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoatracad": [
+            "tipo_atracad",
+            "code"
+        ]
+    },
+    "edgv_hdv_atracadouro_terminal_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "aptidaooperacional": [
+            "aptidao_operacional_atracadouro",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoatracad": [
+            "tipo_atracad",
+            "code"
+        ]
+    },
+    "edgv_hdv_eclusa_a": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_hdv_eclusa_l": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_hdv_eclusa_p": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_hdv_fundeadouro_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "tipofundeadouro": [
+            "tipo_fundeadouro",
+            "code"
+        ]
+    },
+    "edgv_hdv_fundeadouro_p": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "tipofundeadouro": [
+            "tipo_fundeadouro",
+            "code"
+        ]
+    },
+    "edgv_hdv_obstaculo_navegacao_a": {
+        "situacaoemagua": [
+            "situacao_em_agua",
+            "code"
+        ],
+        "tipoobst": [
+            "tipo_obst",
+            "code"
+        ]
+    },
+    "edgv_hdv_obstaculo_navegacao_l": {
+        "situacaoemagua": [
+            "situacao_em_agua",
+            "code"
+        ],
+        "tipoobst": [
+            "tipo_obst",
+            "code"
+        ]
+    },
+    "edgv_hdv_obstaculo_navegacao_p": {
+        "situacaoemagua": [
+            "situacao_em_agua",
+            "code"
+        ],
+        "tipoobst": [
+            "tipo_obst",
+            "code"
+        ]
+    },
+    "edgv_hdv_sinalizacao_p": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tiposinal": [
+            "tipo_sinal",
+            "code"
+        ]
+    },
+    "edgv_hdv_trecho_hidroviario_l": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "regime": [
+            "regime",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_hid_area_umida_a": {
+        "tipoareaumida": [
+            "tipo_area_umida",
+            "code"
+        ]
+    },
+    "edgv_hid_banco_areia_a": {
+        "materialpredominante": [
+            "material_predominante",
+            "code"
+        ],
+        "situacaoemagua": [
+            "situacao_em_agua",
+            "code"
+        ],
+        "tipobanco": [
+            "tipo_banco",
+            "code"
+        ]
+    },
+    "edgv_hid_barragem_a": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "usoprincipal": [
+            "uso_principal",
+            "code"
+        ]
+    },
+    "edgv_hid_barragem_l": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "usoprincipal": [
+            "uso_principal",
+            "code"
+        ]
+    },
+    "edgv_hid_barragem_p": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "usoprincipal": [
+            "uso_principal",
+            "code"
+        ]
+    },
+    "edgv_hid_canal_a": {
+        "finalidade": [
+            "finalidade_galeria_bueiro",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoalterantrop": [
+            "tipo_alter_antrop",
+            "code"
+        ],
+        "usoprincipal": [
+            "uso_principal",
+            "code"
+        ]
+    },
+    "edgv_hid_canal_l": {
+        "finalidade": [
+            "finalidade_galeria_bueiro",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoalterantrop": [
+            "tipo_alter_antrop",
+            "code"
+        ],
+        "usoprincipal": [
+            "uso_principal",
+            "code"
+        ]
+    },
+    "edgv_hid_comporta_l": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_hid_comporta_p": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_hid_dique_a": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ]
+    },
+    "edgv_hid_dique_l": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ]
+    },
+    "edgv_hid_dique_p": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ]
+    },
+    "edgv_hid_fonte_dagua_p": {
+        "qualidagua": [
+            "qualid_agua",
+            "code"
+        ],
+        "regime": [
+            "regime",
+            "code"
+        ],
+        "tipofontedagua": [
+            "tipo_fonte_dagua",
+            "code"
+        ]
+    },
+    "edgv_hid_ilha_a": {
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ],
+        "tipoilha": [
+            "tipo_ilha",
+            "code"
+        ]
+    },
+    "edgv_hid_ilha_p": {
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ],
+        "tipoilha": [
+            "tipo_ilha",
+            "code"
+        ]
+    },
+    "edgv_hid_massa_dagua_a": {
+        "artificial": [
+            "auxiliar",
+            "code"
+        ],
+        "dominialidade": [
+            "jurisdicao",
+            "code"
+        ],
+        "regime": [
+            "regime",
+            "code"
+        ],
+        "salgada": [
+            "auxiliar",
+            "code"
+        ],
+        "tipomassadagua": [
+            "tipo_massa_dagua",
+            "code"
+        ]
+    },
+    "edgv_hid_quebramar_molhe_a": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoemagua": [
+            "situacao_em_agua",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoquebramolhe": [
+            "tipo_quebra_molhe",
+            "code"
+        ]
+    },
+    "edgv_hid_quebramar_molhe_l": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoemagua": [
+            "situacao_em_agua",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoquebramolhe": [
+            "tipo_quebra_molhe",
+            "code"
+        ]
+    },
+    "edgv_hid_queda_dagua_l": {
+        "tipoqueda": [
+            "tipo_queda",
+            "code"
+        ]
+    },
+    "edgv_hid_queda_dagua_p": {
+        "tipoqueda": [
+            "tipo_queda",
+            "code"
+        ]
+    },
+    "edgv_hid_recife_a": {
+        "situacaocosta": [
+            "situacao_costa",
+            "code"
+        ],
+        "situacaoemagua": [
+            "situacao_em_agua",
+            "code"
+        ],
+        "tiporecife": [
+            "tipo_recife",
+            "code"
+        ]
+    },
+    "edgv_hid_recife_p": {
+        "situacaocosta": [
+            "situacao_costa",
+            "code"
+        ],
+        "situacaoemagua": [
+            "situacao_em_agua",
+            "code"
+        ],
+        "tiporecife": [
+            "tipo_recife",
+            "code"
+        ]
+    },
+    "edgv_hid_rocha_em_agua_a": {
+        "formarocha": [
+            "forma_rocha",
+            "code"
+        ],
+        "situacaoemagua": [
+            "situacao_em_agua",
+            "code"
+        ],
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ]
+    },
+    "edgv_hid_rocha_em_agua_p": {
+        "formarocha": [
+            "forma_rocha",
+            "code"
+        ],
+        "situacaoemagua": [
+            "situacao_em_agua",
+            "code"
+        ],
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ]
+    },
+    "edgv_hid_sumidouro_vertedouro_p": {
+        "causa": [
+            "causa",
+            "code"
+        ],
+        "tiposumvert": [
+            "tipo_sum_vert",
+            "code"
+        ]
+    },
+    "edgv_hid_trecho_drenagem_l": {
+        "navegavel": [
+            "auxiliar",
+            "code"
+        ],
+        "regime": [
+            "regime",
+            "code"
+        ],
+        "tipotrechodrenagem": [
+            "tipo_trecho_drenagem",
+            "code"
+        ]
+    },
+    "edgv_hid_vala_a": {
+        "finalidade": [
+            "finalidade_galeria_bueiro",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoalterantrop": [
+            "tipo_alter_antrop",
+            "code"
+        ],
+        "usoprincipal": [
+            "uso_principal",
+            "code"
+        ]
+    },
+    "edgv_hid_vala_l": {
+        "finalidade": [
+            "finalidade_galeria_bueiro",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoalterantrop": [
+            "tipo_alter_antrop",
+            "code"
+        ],
+        "usoprincipal": [
+            "uso_principal",
+            "code"
+        ]
+    },
+    "edgv_laz_arquibancada_a": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_laz_campo_quadra_a": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipocampoquadra": [
+            "tipo_campo_quadra",
+            "code"
+        ]
+    },
+    "edgv_laz_campo_quadra_p": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipocampoquadra": [
+            "tipo_campo_quadra",
+            "code"
+        ]
+    },
+    "edgv_laz_piscina_a": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_laz_pista_competicao_a": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopistacomp": [
+            "tipo_pista_comp",
+            "code"
+        ]
+    },
+    "edgv_laz_pista_competicao_l": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopistacomp": [
+            "tipo_pista_comp",
+            "code"
+        ]
+    },
+    "edgv_laz_pista_competicao_p": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopistacomp": [
+            "tipo_pista_comp",
+            "code"
+        ]
+    },
+    "edgv_laz_ruina_a": {
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_laz_ruina_p": {
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_laz_sitio_arqueologico_a": {
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_laz_sitio_arqueologico_p": {
+        "cultura": [
+            "auxiliar",
+            "code"
+        ],
+        "turistica": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_lml_area_pub_militar_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ]
+    },
+    "edgv_lml_area_urbana_isolada_a": {
+        "tipoassociado": [
+            "tipo_associado",
+            "code"
+        ]
+    },
+    "edgv_lml_posic_geo_localidade_p": {
+        "tipolocalidade": [
+            "tipo_localidade",
+            "code"
+        ]
+    },
+    "edgv_lml_terra_indigena_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "situacaojuridica": [
+            "situacao_juridica",
+            "code"
+        ]
+    },
+    "edgv_lml_terra_publica_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ]
+    },
+    "edgv_lml_unidade_conservacao_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "tipounidprotegida": [
+            "tipo_unid_protegida",
+            "code"
+        ]
+    },
+    "edgv_lml_unidade_federacao_a": {
+        "sigla": [
+            "sigla_uf",
+            "code"
+        ]
+    },
+    "edgv_lml_unidade_protecao_integral_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "tipounidprotegida": [
+            "tipo_unid_protegida",
+            "code"
+        ],
+        "tipounidprotinteg": [
+            "tipo_unid_prot_integ",
+            "code"
+        ]
+    },
+    "edgv_lml_unidade_uso_sustentavel_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "tipounidprotegida": [
+            "tipo_unid_protegida",
+            "code"
+        ],
+        "tipounidusosust": [
+            "tipo_unid_uso_sust",
+            "code"
+        ]
+    },
+    "edgv_pto_marco_de_limite_p": {
+        "referencialaltim": [
+            "referencial_altim",
+            "code"
+        ],
+        "sistemageodesico": [
+            "sistema_geodesico",
+            "code"
+        ],
+        "tipomarcolim": [
+            "tipo_hierarquia",
+            "code"
+        ]
+    },
+    "edgv_pto_pto_est_med_fenomenos_p": {
+        "tipoptoestmed": [
+            "tipo_pto_est_med",
+            "code"
+        ]
+    },
+    "edgv_pto_pto_geod_topo_controle_p": {
+        "referencialaltim": [
+            "referencial_altim",
+            "code"
+        ],
+        "sistemageodesico": [
+            "sistema_geodesico",
+            "code"
+        ],
+        "tiporef": [
+            "tipo_ref",
+            "code"
+        ]
+    },
+    "edgv_pto_pto_ref_geod_topo_p": {
+        "proximidade": [
+            "proximidade",
+            "code"
+        ],
+        "redereferencia": [
+            "rede_referencia",
+            "code"
+        ],
+        "referencialaltim": [
+            "referencial_altim",
+            "code"
+        ],
+        "referencialgrav": [
+            "referencial_grav",
+            "code"
+        ],
+        "sistemageodesico": [
+            "sistema_geodesico",
+            "code"
+        ],
+        "situacaomarco": [
+            "situacao_marco",
+            "code"
+        ],
+        "tipoptorefgeodtopo": [
+            "tipo_pto_ref_geod_topo",
+            "code"
+        ],
+        "tiporef": [
+            "tipo_ref",
+            "code"
+        ]
+    },
+    "edgv_rel_alteracao_fisiografica_antropica_a": {
+        "tipoalterantrop": [
+            "tipo_alter_antrop",
+            "code"
+        ]
+    },
+    "edgv_rel_alteracao_fisiografica_antropica_l": {
+        "tipoalterantrop": [
+            "tipo_alter_antrop",
+            "code"
+        ]
+    },
+    "edgv_rel_alteracao_fisiografica_antropica_p": {
+        "tipoalterantrop": [
+            "tipo_alter_antrop",
+            "code"
+        ]
+    },
+    "edgv_rel_aterro_a": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "tipoalterantrop": [
+            "tipo_alter_antrop",
+            "code"
+        ]
+    },
+    "edgv_rel_aterro_l": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "tipoalterantrop": [
+            "tipo_alter_antrop",
+            "code"
+        ]
+    },
+    "edgv_rel_aterro_p": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "tipoalterantrop": [
+            "tipo_alter_antrop",
+            "code"
+        ]
+    },
+    "edgv_rel_corte_a": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "tipoalterantrop": [
+            "tipo_alter_antrop",
+            "code"
+        ]
+    },
+    "edgv_rel_corte_l": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "tipoalterantrop": [
+            "tipo_alter_antrop",
+            "code"
+        ]
+    },
+    "edgv_rel_corte_p": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "tipoalterantrop": [
+            "tipo_alter_antrop",
+            "code"
+        ]
+    },
+    "edgv_rel_curva_nivel_l": {
+        "tipocurvanivel": [
+            "tipo_curva_nivel",
+            "code"
+        ]
+    },
+    "edgv_rel_dolina_a": {
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ]
+    },
+    "edgv_rel_dolina_p": {
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ]
+    },
+    "edgv_rel_duna_a": {
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ]
+    },
+    "edgv_rel_duna_l": {
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ]
+    },
+    "edgv_rel_duna_p": {
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ]
+    },
+    "edgv_rel_elemento_fisiografico_natural_a": {
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ]
+    },
+    "edgv_rel_elemento_fisiografico_natural_l": {
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ]
+    },
+    "edgv_rel_elemento_fisiografico_natural_p": {
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ]
+    },
+    "edgv_rel_gruta_caverna_l": {
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ]
+    },
+    "edgv_rel_gruta_caverna_p": {
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ]
+    },
+    "edgv_rel_pico_p": {
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ]
+    },
+    "edgv_rel_rocha_a": {
+        "formarocha": [
+            "forma_rocha",
+            "code"
+        ],
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ]
+    },
+    "edgv_rel_rocha_l": {
+        "formarocha": [
+            "forma_rocha",
+            "code"
+        ],
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ]
+    },
+    "edgv_rel_rocha_p": {
+        "formarocha": [
+            "forma_rocha",
+            "code"
+        ],
+        "tipoelemnat": [
+            "tipo_elem_nat",
+            "code"
+        ]
+    },
+    "edgv_rel_terreno_exposto_a": {
+        "causaexposicao": [
+            "causa_exposicao",
+            "code"
+        ],
+        "tipoterrexp": [
+            "tipo_terreno_exposto",
+            "code"
+        ]
+    },
+    "edgv_rod_trecho_rodoviario_a": {
+        "acostamento": [
+            "auxiliar",
+            "code"
+        ],
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "canteirodivisorio": [
+            "auxiliar",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopavimentacao": [
+            "tipo_pavimentacao",
+            "code"
+        ],
+        "tipovia": [
+            "tipo_via",
+            "code"
+        ],
+        "trafego": [
+            "trafego",
+            "code"
+        ],
+        "trechoemperimetrourbano": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_rod_trecho_rodoviario_l": {
+        "acostamento": [
+            "auxiliar",
+            "code"
+        ],
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "canteirodivisorio": [
+            "auxiliar",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopavimentacao": [
+            "tipo_pavimentacao",
+            "code"
+        ],
+        "tipovia": [
+            "tipo_via",
+            "code"
+        ],
+        "trafego": [
+            "trafego",
+            "code"
+        ],
+        "trechoemperimetrourbano": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_snb_barragem_calcadao_a": {
+        "localizacaoequipdesenvsocial": [
+            "local_equip_desenv_social",
+            "code"
+        ],
+        "tipoequipdesenvsocial": [
+            "tipo_equip_desenv_social",
+            "code"
+        ]
+    },
+    "edgv_snb_dep_abast_agua_a": {
+        "estadofisico": [
+            "estado_fisico",
+            "code"
+        ],
+        "finalidadedep": [
+            "finalidade_deposito",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoagua": [
+            "situacao_agua",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoconteudo": [
+            "tipo_conteudo",
+            "code"
+        ],
+        "tipodepgeral": [
+            "tipo_dep_geral",
+            "code"
+        ],
+        "tipoexposicao": [
+            "tipo_exposicao",
+            "code"
+        ],
+        "tipoprodutoresiduo": [
+            "tipo_produto_residuo",
+            "code"
+        ],
+        "tratamento": [
+            "auxiliar",
+            "code"
+        ],
+        "unidadevolume": [
+            "unidade_volume",
+            "code"
+        ]
+    },
+    "edgv_snb_dep_abast_agua_p": {
+        "estadofisico": [
+            "estado_fisico",
+            "code"
+        ],
+        "finalidadedep": [
+            "finalidade_deposito",
+            "code"
+        ],
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoagua": [
+            "situacao_agua",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipoconteudo": [
+            "tipo_conteudo",
+            "code"
+        ],
+        "tipodepgeral": [
+            "tipo_dep_geral",
+            "code"
+        ],
+        "tipoexposicao": [
+            "tipo_exposicao",
+            "code"
+        ],
+        "tipoprodutoresiduo": [
+            "tipo_produto_residuo",
+            "code"
+        ],
+        "tratamento": [
+            "auxiliar",
+            "code"
+        ],
+        "unidadevolume": [
+            "unidade_volume",
+            "code"
+        ]
+    },
+    "edgv_tra_caminho_aereo_l": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipocaminhoaereo": [
+            "tipo_caminho_aereo",
+            "code"
+        ],
+        "tipousocaminhoaer": [
+            "tipo_transporte",
+            "code"
+        ]
+    },
+    "edgv_tra_entroncamento_pto_p": {
+        "tipoentroncamento": [
+            "tipo_entroncamento",
+            "code"
+        ]
+    },
+    "edgv_tra_funicular_l": {
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_tra_passagem_elevada_viaduto_a": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "modaluso": [
+            "modal_uso",
+            "code"
+        ],
+        "necessitamanutencao": [
+            "auxiliar",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "posicaopista": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopassagviad": [
+            "tipo_passag_viad",
+            "code"
+        ],
+        "tipopavimentacao": [
+            "tipo_pavimentacao",
+            "code"
+        ]
+    },
+    "edgv_tra_passagem_elevada_viaduto_l": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "modaluso": [
+            "modal_uso",
+            "code"
+        ],
+        "necessitamanutencao": [
+            "auxiliar",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "posicaopista": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopassagviad": [
+            "tipo_passag_viad",
+            "code"
+        ],
+        "tipopavimentacao": [
+            "tipo_pavimentacao",
+            "code"
+        ]
+    },
+    "edgv_tra_passagem_elevada_viaduto_p": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "modaluso": [
+            "modal_uso",
+            "code"
+        ],
+        "necessitamanutencao": [
+            "auxiliar",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "posicaopista": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopassagviad": [
+            "tipo_passag_viad",
+            "code"
+        ],
+        "tipopavimentacao": [
+            "tipo_pavimentacao",
+            "code"
+        ]
+    },
+    "edgv_tra_patio_a": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "finalidadepatio": [
+            "finalidade_patio",
+            "code"
+        ],
+        "modaluso": [
+            "modal_uso",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ]
+    },
+    "edgv_tra_ponte_a": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "modaluso": [
+            "modal_uso",
+            "code"
+        ],
+        "necessitamanutencao": [
+            "auxiliar",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "posicaopista": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopavimentacao": [
+            "tipo_pavimentacao",
+            "code"
+        ],
+        "tipoponte": [
+            "tipo_ponte",
+            "code"
+        ]
+    },
+    "edgv_tra_ponte_l": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "modaluso": [
+            "modal_uso",
+            "code"
+        ],
+        "necessitamanutencao": [
+            "auxiliar",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "posicaopista": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopavimentacao": [
+            "tipo_pavimentacao",
+            "code"
+        ],
+        "tipoponte": [
+            "tipo_ponte",
+            "code"
+        ]
+    },
+    "edgv_tra_ponte_p": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "modaluso": [
+            "modal_uso",
+            "code"
+        ],
+        "necessitamanutencao": [
+            "auxiliar",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "posicaopista": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopavimentacao": [
+            "tipo_pavimentacao",
+            "code"
+        ],
+        "tipoponte": [
+            "tipo_ponte",
+            "code"
+        ]
+    },
+    "edgv_tra_travessia_l": {
+        "tipoembarcacao": [
+            "tipo_embarcacao",
+            "code"
+        ],
+        "tipotravessia": [
+            "tipo_travessia",
+            "code"
+        ],
+        "tipouso": [
+            "tipo_transporte",
+            "code"
+        ]
+    },
+    "edgv_tra_travessia_p": {
+        "tipoembarcacao": [
+            "tipo_embarcacao",
+            "code"
+        ],
+        "tipotravessia": [
+            "tipo_travessia",
+            "code"
+        ],
+        "tipouso": [
+            "tipo_transporte",
+            "code"
+        ]
+    },
+    "edgv_tra_travessia_pedestre_a": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipotravessiaped": [
+            "tipo_travessia_ped",
+            "code"
+        ]
+    },
+    "edgv_tra_travessia_pedestre_l": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipotravessiaped": [
+            "tipo_travessia_ped",
+            "code"
+        ]
+    },
+    "edgv_tra_travessia_pedestre_p": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "situacaoespacial": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipotravessiaped": [
+            "tipo_travessia_ped",
+            "code"
+        ]
+    },
+    "edgv_tra_tunel_a": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "modaluso": [
+            "modal_uso",
+            "code"
+        ],
+        "necessitamanutencao": [
+            "auxiliar",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "posicaopista": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopavimentacao": [
+            "tipo_pavimentacao",
+            "code"
+        ],
+        "tipotunel": [
+            "tipo_tunel",
+            "code"
+        ]
+    },
+    "edgv_tra_tunel_l": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "modaluso": [
+            "modal_uso",
+            "code"
+        ],
+        "necessitamanutencao": [
+            "auxiliar",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "posicaopista": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopavimentacao": [
+            "tipo_pavimentacao",
+            "code"
+        ],
+        "tipotunel": [
+            "tipo_tunel",
+            "code"
+        ]
+    },
+    "edgv_tra_tunel_p": {
+        "matconstr": [
+            "mat_constr",
+            "code"
+        ],
+        "modaluso": [
+            "modal_uso",
+            "code"
+        ],
+        "necessitamanutencao": [
+            "auxiliar",
+            "code"
+        ],
+        "operacional": [
+            "auxiliar",
+            "code"
+        ],
+        "posicaopista": [
+            "situacao_espacial",
+            "code"
+        ],
+        "situacaofisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipopavimentacao": [
+            "tipo_pavimentacao",
+            "code"
+        ],
+        "tipotunel": [
+            "tipo_tunel",
+            "code"
+        ]
+    },
+    "edgv_veg_brejo_pantano_a": {
+        "antropizada": [
+            "auxiliar",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacao_porte",
+            "code"
+        ],
+        "densidade": [
+            "densidade",
+            "code"
+        ],
+        "secundaria": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_veg_caatinga_a": {
+        "antropizada": [
+            "auxiliar",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacao_porte",
+            "code"
+        ],
+        "densidade": [
+            "densidade",
+            "code"
+        ],
+        "secundaria": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_veg_campinarana_a": {
+        "antropizada": [
+            "auxiliar",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacao_porte",
+            "code"
+        ],
+        "densidade": [
+            "densidade",
+            "code"
+        ],
+        "secundaria": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_veg_campo_a": {
+        "antropizada": [
+            "auxiliar",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacao_porte",
+            "code"
+        ],
+        "densidade": [
+            "densidade",
+            "code"
+        ],
+        "secundaria": [
+            "auxiliar",
+            "code"
+        ],
+        "tipocampo": [
+            "tipo_campo",
+            "code"
+        ]
+    },
+    "edgv_veg_cerrado_a": {
+        "antropizada": [
+            "auxiliar",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacao_porte",
+            "code"
+        ],
+        "densidade": [
+            "densidade",
+            "code"
+        ],
+        "secundaria": [
+            "auxiliar",
+            "code"
+        ],
+        "vereda": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_veg_floresta_a": {
+        "antropizada": [
+            "auxiliar",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacao_porte",
+            "code"
+        ],
+        "densidade": [
+            "densidade",
+            "code"
+        ],
+        "especiepredominante": [
+            "especie",
+            "code"
+        ],
+        "secundaria": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_veg_mangue_a": {
+        "antropizada": [
+            "auxiliar",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacao_porte",
+            "code"
+        ],
+        "densidade": [
+            "densidade",
+            "code"
+        ],
+        "secundaria": [
+            "auxiliar",
+            "code"
+        ],
+        "tipomanguezal": [
+            "tipo_manguezal",
+            "code"
+        ]
+    },
+    "edgv_veg_reflorestamento_a": {
+        "classificacaoporte": [
+            "classificacao_porte",
+            "code"
+        ],
+        "cultivopredominante": [
+            "cultivo_predominante",
+            "code"
+        ],
+        "finalidade": [
+            "finalidade_cultura",
+            "code"
+        ],
+        "terreno": [
+            "condicao_terreno",
+            "code"
+        ],
+        "tipolavoura": [
+            "tipo_lavoura",
+            "code"
+        ]
+    },
+    "edgv_veg_veg_area_contato_a": {
+        "antropizada": [
+            "auxiliar",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacao_porte",
+            "code"
+        ],
+        "densidade": [
+            "densidade",
+            "code"
+        ],
+        "secundaria": [
+            "auxiliar",
+            "code"
+        ],
+        "tipoveg": [
+            "tipo_vegetacao",
+            "code"
+        ]
+    },
+    "edgv_veg_veg_cultivada_a": {
+        "classificacaoporte": [
+            "classificacao_porte",
+            "code"
+        ],
+        "cultivopredominante": [
+            "cultivo_predominante",
+            "code"
+        ],
+        "finalidade": [
+            "finalidade_cultura",
+            "code"
+        ],
+        "terreno": [
+            "condicao_terreno",
+            "code"
+        ],
+        "tipolavoura": [
+            "tipo_lavoura",
+            "code"
+        ]
+    },
+    "edgv_veg_veg_restinga_a": {
+        "antropizada": [
+            "auxiliar",
+            "code"
+        ],
+        "classificacaoporte": [
+            "classificacao_porte",
+            "code"
+        ],
+        "densidade": [
+            "densidade",
+            "code"
+        ],
+        "secundaria": [
+            "auxiliar",
+            "code"
+        ]
+    },
+    "edgv_ver_jardim_a": {
+        "classificacaoporte": [
+            "classificacao_porte",
+            "code"
+        ],
+        "cultivopredominante": [
+            "cultivo_predominante",
+            "code"
+        ],
+        "finalidade": [
+            "finalidade_cultura",
+            "code"
+        ],
+        "terreno": [
+            "condicao_terreno",
+            "code"
+        ],
+        "tipolavoura": [
+            "tipo_lavoura",
+            "code"
+        ]
+    }
+}
