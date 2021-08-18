@@ -157,8 +157,6 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
                     self.validateMethods.validateLengthOfDataTypes(v["1"], 2):
                 if v["1"][0] not in loadedLyr:
                     unsortedNotLoadedLyr.append(v["1"][0])
-            else:
-                self.invalidImportedRuleMessage()
 
         notLoadedLyr = sorted(set(unsortedNotLoadedLyr))
 
