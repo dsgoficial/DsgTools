@@ -450,7 +450,7 @@ class ValidateImportedDataMethods():
 
     def validateQColor(self, colorToEvaluate):
         """
-        Docstring.
+        This method receives a string and evaluate if its an valid QColor.
         """
 
         colorStrWithoutSpaces = re.sub(r'\s', '', str(colorToEvaluate))
