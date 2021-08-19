@@ -43,24 +43,7 @@ about=
 # Optional items:
 
 # Uncomment the following line and add your changelog:
-changelog=
-    4.2 - New algorithms and a Refactor to DSGTools feature extraction tool.
-			New algorithms:
-				. Enforce Attribute Rules;
-				. Identify Polygon Sliver;
-            Enhancements:
-                . Enforce Spatial Rules has improved to accept rules using the DE-9IM mask;
-				. Build Polygons From Center Points has now a spatial relationship check;
-            A few bug fixes:
-				. Topological Clean deleting features;
-				. Run Remote FME Workspace listing workspaces;
-				. Build Polygons From Center Points and Boundaries API compatibility;
-				. Remove obsolete pg_constraint.consrc column for PostgreSQL 12+;
-				. BDGEx WFS connection fixes;
-				. Using Reshape Freehand at polygons don't cause a crash anymore
-
-            Checkout the full changelog at https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.2
-    
+changelog=changelog
 
 # Tags are comma separated with spaces allowed
 tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script

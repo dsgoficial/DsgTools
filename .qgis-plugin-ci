@@ -1,4 +1,4 @@
 plugin_path: DsgTools
 github_organization_slug: dsgoficial
 project_slug: DsgTools
-changelog_include: False
+changelog_include: True
