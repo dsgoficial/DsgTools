@@ -1,0 +1,1420 @@
+{
+    "edgv_aquisicao_centroide_hidrografia_p": {
+        "tipo": [
+            "tipo_hid",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_aquisicao_centroide_vegetacao_p": {
+        "tipo": [
+            "tipo_veg",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_aquisicao_limite_hidrografia_l": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_aquisicao_limite_vegetacao_l": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_aux_insumo_externo_a": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_aux_insumo_externo_l": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_aux_insumo_externo_p": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_aux_moldura_a": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_aux_moldura_area_continua_a": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_aux_objeto_desconhecido_a": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_aux_objeto_desconhecido_l": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_aux_objeto_desconhecido_p": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_aux_rascunho_a": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_aux_rascunho_l": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_cobter_area_edificada_a": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_cobter_corpo_dagua_a": {
+        "regime": [
+            "regime",
+            "code"
+        ],
+        "tipo": [
+            "tipo_corpo_dagua",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_cobter_vegetacao_a": {
+        "tipo": [
+            "tipo_veg",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_constr_deposito_a": {
+        "finalidade": [
+            "finalidade",
+            "code"
+        ],
+        "material_construcao": [
+            "material_construcao",
+            "code"
+        ],
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_deposito",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_exposicao": [
+            "tipo_exposicao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ],
+        "tipo_produto_residuo": [
+            "tipo_produto_residuo",
+            "code"
+        ]
+    },
+    "edgv_constr_deposito_p": {
+        "finalidade": [
+            "finalidade",
+            "code"
+        ],
+        "material_construcao": [
+            "material_construcao",
+            "code"
+        ],
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_deposito",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_exposicao": [
+            "tipo_exposicao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ],
+        "tipo_produto_residuo": [
+            "tipo_produto_residuo",
+            "code"
+        ]
+    },
+    "edgv_constr_edificacao_a": {
+        "material_construcao": [
+            "material_construcao",
+            "code"
+        ],
+        "tipo": [
+            "tipo_edificacao",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_constr_edificacao_p": {
+        "material_construcao": [
+            "material_construcao",
+            "code"
+        ],
+        "tipo": [
+            "tipo_edificacao",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_constr_extracao_mineral_a": {
+        "forma_extracao": [
+            "forma_extracao",
+            "code"
+        ],
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_extracao_mineral",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ],
+        "tipo_produto_residuo": [
+            "tipo_produto_residuo",
+            "code"
+        ]
+    },
+    "edgv_constr_extracao_mineral_p": {
+        "forma_extracao": [
+            "forma_extracao",
+            "code"
+        ],
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_extracao_mineral",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ],
+        "tipo_produto_residuo": [
+            "tipo_produto_residuo",
+            "code"
+        ]
+    },
+    "edgv_constr_ocupacao_solo_a": {
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_ocupacao_solo",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_constr_ocupacao_solo_l": {
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_ocupacao_solo",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_constr_ocupacao_solo_p": {
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_ocupacao_solo",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_elemnat_curva_nivel_l": {
+        "depressao": [
+            "booleano",
+            "code"
+        ],
+        "indice": [
+            "indice",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_elemnat_elemento_fisiografico_a": {
+        "tipo": [
+            "tipo_elemento_fisiografico",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_elemnat_elemento_fisiografico_l": {
+        "tipo": [
+            "tipo_elemento_fisiografico",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_elemnat_elemento_fisiografico_p": {
+        "tipo": [
+            "tipo_elemento_fisiografico",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_elemnat_elemento_hidrografico_a": {
+        "tipo": [
+            "tipo_elemento_hidrografico",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_elemnat_elemento_hidrografico_l": {
+        "tipo": [
+            "tipo_elemento_hidrografico",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_elemnat_elemento_hidrografico_p": {
+        "tipo": [
+            "tipo_elemento_hidrografico",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_elemnat_ponto_cotado_p": {
+        "cota_comprovada": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_elemnat_trecho_drenagem_l": {
+        "regime": [
+            "regime",
+            "code"
+        ],
+        "tipo": [
+            "tipo_trecho_drenagem",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_infra_elemento_infraestrutura_a": {
+        "material_construcao": [
+            "material_construcao",
+            "code"
+        ],
+        "posicao_relativa": [
+            "posicao_relativa",
+            "code"
+        ],
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_elemento_infraestrutura",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_infra_elemento_infraestrutura_l": {
+        "material_construcao": [
+            "material_construcao",
+            "code"
+        ],
+        "posicao_relativa": [
+            "posicao_relativa",
+            "code"
+        ],
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_elemento_infraestrutura",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_infra_elemento_infraestrutura_p": {
+        "material_construcao": [
+            "material_construcao",
+            "code"
+        ],
+        "posicao_relativa": [
+            "posicao_relativa",
+            "code"
+        ],
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_elemento_infraestrutura",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_infra_elemento_transportes_a": {
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_elemento_transportes",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_infra_elemento_transportes_l": {
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_elemento_transportes",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_infra_elemento_transportes_p": {
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_elemento_transportes",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_infra_elemento_viario_l": {
+        "material_construcao": [
+            "material_construcao",
+            "code"
+        ],
+        "modal_uso": [
+            "modal_uso",
+            "code"
+        ],
+        "posicao_pista": [
+            "posicao_pista",
+            "code"
+        ],
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_elemento_viario",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_infra_elemento_viario_p": {
+        "material_construcao": [
+            "material_construcao",
+            "code"
+        ],
+        "modal_uso": [
+            "modal_uso",
+            "code"
+        ],
+        "posicao_pista": [
+            "posicao_pista",
+            "code"
+        ],
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_elemento_viario",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_infra_ferrovia_l": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "em_arruamento": [
+            "booleano",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "nr_linhas": [
+            "nr_linhas",
+            "code"
+        ],
+        "posicao_relativa": [
+            "posicao_relativa",
+            "code"
+        ],
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_ferrovia",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_infra_pista_pouso_a": {
+        "homologacao": [
+            "booleano_estendido",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_pista_pouso",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ],
+        "uso_pista": [
+            "uso_pista",
+            "code"
+        ]
+    },
+    "edgv_infra_pista_pouso_l": {
+        "homologacao": [
+            "booleano_estendido",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_pista_pouso",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ],
+        "uso_pista": [
+            "uso_pista",
+            "code"
+        ]
+    },
+    "edgv_infra_pista_pouso_p": {
+        "homologacao": [
+            "booleano_estendido",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_pista_pouso",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ],
+        "uso_pista": [
+            "uso_pista",
+            "code"
+        ]
+    },
+    "edgv_infra_via_deslocamento_l": {
+        "administracao": [
+            "administracao",
+            "code"
+        ],
+        "canteiro_divisorio": [
+            "canteiro_divisorio",
+            "code"
+        ],
+        "jurisdicao": [
+            "jurisdicao",
+            "code"
+        ],
+        "revestimento": [
+            "revestimento",
+            "code"
+        ],
+        "situacao_fisica": [
+            "situacao_fisica",
+            "code"
+        ],
+        "tipo": [
+            "tipo_via_deslocamento",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ],
+        "trafego": [
+            "trafego",
+            "code"
+        ]
+    },
+    "edgv_llp_delimitacao_fisica_l": {
+        "material_construcao": [
+            "material_construcao",
+            "code"
+        ],
+        "tipo": [
+            "tipo_delimitacao_fisica",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_llp_limite_especial_a": {
+        "geometria_aproximada": [
+            "booleano",
+            "code"
+        ],
+        "tipo": [
+            "tipo_limite_especial",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_delimitacao": [
+            "tipo_linha_limites",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_llp_limite_especial_l": {
+        "geometria_aproximada": [
+            "booleano",
+            "code"
+        ],
+        "tipo": [
+            "tipo_limite_especial",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_delimitacao": [
+            "tipo_linha_limites",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_llp_limite_legal_a": {
+        "geometria_aproximada": [
+            "booleano",
+            "code"
+        ],
+        "tipo": [
+            "tipo_limite_legal",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_delimitacao": [
+            "tipo_linha_limites",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_llp_limite_legal_l": {
+        "geometria_aproximada": [
+            "booleano",
+            "code"
+        ],
+        "tipo": [
+            "tipo_limite_legal",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_delimitacao": [
+            "tipo_linha_limites",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_llp_localidade_p": {
+        "tipo": [
+            "tipo_localidade",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_llp_ponto_controle_p": {
+        "referencial_altim": [
+            "referencial_altim",
+            "code"
+        ],
+        "referencial_grav": [
+            "referencial_grav",
+            "code"
+        ],
+        "sistema_geodesico": [
+            "sistema_geodesico",
+            "code"
+        ],
+        "situacao_marco": [
+            "situacao_marco",
+            "code"
+        ],
+        "tipo": [
+            "tipo_pto",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ],
+        "tipo_ref": [
+            "tipo_ref",
+            "code"
+        ]
+    },
+    "edgv_rev_edificacao_a": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_rev_edificacao_l": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_rev_edificacao_p": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_rev_hidrografia_a": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_rev_hidrografia_l": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_rev_hidrografia_p": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_rev_reambulacao_a": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_rev_reambulacao_l": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_rev_reambulacao_p": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_rev_revisao_a": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_rev_revisao_l": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_rev_revisao_p": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_rev_transportes_a": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_rev_transportes_l": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_rev_transportes_p": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_rev_vegetacao_a": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_rev_vegetacao_l": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_rev_vegetacao_p": {
+        "corrigido": [
+            "booleano",
+            "code"
+        ],
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_val_edificacao_a": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_val_edificacao_l": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_val_edificacao_p": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_val_hidrografia_a": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_val_hidrografia_l": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_val_hidrografia_p": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_val_transportes_a": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_val_transportes_l": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_val_transportes_p": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_val_vegetacao_a": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_val_vegetacao_l": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    },
+    "edgv_val_vegetacao_p": {
+        "tipo_comprovacao": [
+            "tipo_comprovacao",
+            "code"
+        ],
+        "tipo_insumo": [
+            "tipo_insumo",
+            "code"
+        ]
+    }
+}
