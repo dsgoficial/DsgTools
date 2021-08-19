@@ -25,4 +25,4 @@ Bug fixes:
 - BDGEx WFS connection fixes;
 - Using Reshape Freehand at polygons don't cause a crash anymore
 
-The full changelog at https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.2
+Complete changelog: https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.2
