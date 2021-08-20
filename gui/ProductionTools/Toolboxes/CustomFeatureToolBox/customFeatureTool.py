@@ -97,8 +97,19 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                                 "show" if x else "hide")())
         self.toolBehaviourSwitch.stateChanged.connect(self.toolModeChanged)
         self.tabWidget.setTabPosition(self.tabWidget.West)
+        self.bFilterLineEdit.textEdited.connect(self.createResearchTab)
         self.bFilterLineEdit.returnPressed.connect(self.createResearchTab)
         self.visibilityChanged.connect(self.setToolEnabled)
+        # importing multiple button setups is under review and, for now, is
+        # going to be HIDDEN for now. If the feature is not requested till next
+        # major version update, then it should be wiped from code.
+        self.importPushButton.hide()
+        self.exportPushButton.hide()
+        # a request of integration with other systems: hide edition buttons
+        # from the user in order for the DSG activity manager system (SAP) be
+        # the only source of input buttons, forcing conformity on its
+        # production lines. This should not be the default, but API callable! 
+        self._buttonsHidden = False
         project = QgsProject.instance()
         project.writeProject.connect(self.saveStateToProject)
         project.readProject.connect(self.restoreStateFromProject)
@@ -748,7 +759,14 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
             # the tool's modification
             stack = inLayer.undoStack()
             cmd = stack.command(stack.count() - 1)
-            attrChanged = cmd.text() == 'Attributes changed'
+            # no easy way to identify the attribute modification command, so
+            # this solution achieves it in a non-optimal form, by checking the
+            # commands's stack label (displayed to the user). "supports"
+            # EN, PT-BR, ES and PT-PT
+            attrChanged = cmd.text().lower() in (
+                "attributes changed", "atributos cambiados",
+                "atributos modificados", "atributos alterados"
+            )
             cmd.undo()
             cmd.setObsolete(True)
             stack.undo()
@@ -820,6 +838,8 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 l = iface.activeLayer()
                 layers = [l] if isinstance(l, QgsVectorLayer) else []
             for l in layers:
+                if not isinstance(l, QgsVectorLayer):
+                    continue
                 if l.geometryType() == geomType:
                     feats = l.selectedFeatures()
                     if feats:
@@ -997,7 +1017,7 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
                 return
             attrMap = button.attributeMap()
             if button.openForm():
-                form = CustomFeatureForm(vl.fields(), reclassify, attrMap)
+                form = CustomFeatureForm(vl, reclassify, attrMap)
                 form.setWindowTitle(self.tr("{0} (receiving layer: {1})")\
                         .format(form.windowTitle(), vl.name()))
                 if not form.exec_():
@@ -1235,51 +1255,80 @@ class CustomFeatureTool(QDockWidget, FORM_CLASS):
         )
         self.setToolState(state)
 
-    @pyqtSlot()
-    def on_importPushButton_clicked(self):
-        """
-        Loads setups from a file.
-        """
-        fd = QFileDialog()
-        filename = fd.getOpenFileName(
-            caption=self.tr("Import a DSGTools button profile set"),
-            filter=self.tr("DSGTools button profile set (*.setups)")
-        )
-        filename = filename[0] if isinstance(filename, tuple) else filename
-        if not filename:
-            return
-        with open(filename, "r", encoding="utf-8") as fp:
-            self.setToolState(json.load(fp))
-        msg = self.tr("current state imported from '{0}'.").format(filename)
-        MessageRaiser().raiseIfaceMessage(
-            self.tr("DSGTools Custom Feature"), msg, Qgis.Success)
+    # @pyqtSlot()
+    # def on_importPushButton_clicked(self):
+    #     """
+    #     Loads setups from a file.
+    #     """
+    #     fd = QFileDialog()
+    #     filename = fd.getOpenFileName(
+    #         caption=self.tr("Import a DSGTools button profile set"),
+    #         filter=self.tr("DSGTools button profile set (*.setups)")
+    #     )
+    #     filename = filename[0] if isinstance(filename, tuple) else filename
+    #     if not filename:
+    #         return
+    #     with open(filename, "r", encoding="utf-8") as fp:
+    #         self.setToolState(json.load(fp))
+    #     msg = self.tr("current state imported from '{0}'.").format(filename)
+    #     MessageRaiser().raiseIfaceMessage(
+    #         self.tr("DSGTools Custom Feature"), msg, Qgis.Success)
 
-    @pyqtSlot()
-    def on_exportPushButton_clicked(self):
+    # @pyqtSlot()
+    # def on_exportPushButton_clicked(self):
+    #     """
+    #     Saves current set of setups state to a file.
+    #     """
+    #     fd = QFileDialog()
+    #     filename = fd.getSaveFileName(
+    #         caption=self.tr("Export a DSGTools button profile set"),
+    #         filter=self.tr("DSGTools button profile set (*.setups)")
+    #     )
+    #     filename = filename[0] if isinstance(filename, tuple) else filename
+    #     if not filename:
+    #         return False
+    #     with open(filename, "w", encoding="utf-8") as fp:
+    #         fp.write(json.dumps(self.toolState(), indent=4))
+    #     ret = os.path.exists(filename)
+    #     if ret:
+    #         msg = self.tr("current state exported to '{0}'.").format(filename)
+    #         lvl = Qgis.Success
+    #     else:
+    #         msg = self.tr("unable to export current state to '{0}'.")\
+    #                   .format(filename)
+    #         lvl = Qgis.Critical
+    #     MessageRaiser().raiseIfaceMessage(
+    #         self.tr("DSGTools Custom Feature"), msg, lvl)
+    #     return ret
+
+    def hideToolEditButton(self, hide):
         """
-        Saves current set of setups state to a file.
+        This method allows all button setups edition calls from buttons on the
+        GUI to be hidden from (or displayed to) the user. This allows the tool
+        state to be handled exclusively by API calls from external services,
+        such as SAP.
+        :param hide: (bool) whether buttons should be hidden from the GUI.
         """
-        fd = QFileDialog()
-        filename = fd.getSaveFileName(
-            caption=self.tr("Export a DSGTools button profile set"),
-            filter=self.tr("DSGTools button profile set (*.setups)")
-        )
-        filename = filename[0] if isinstance(filename, tuple) else filename
-        if not filename:
-            return False
-        with open(filename, "w", encoding="utf-8") as fp:
-            fp.write(json.dumps(self.toolState(), indent=4))
-        ret = os.path.exists(filename)
-        if ret:
-            msg = self.tr("current state exported to '{0}'.").format(filename)
-            lvl = Qgis.Success
-        else:
-            msg = self.tr("unable to export current state to '{0}'.")\
-                      .format(filename)
-            lvl = Qgis.Critical
-        MessageRaiser().raiseIfaceMessage(
-            self.tr("DSGTools Custom Feature"), msg, lvl)
-        return ret
+        if hide == self._buttonsHidden:
+            return
+        tools = [
+            # self.importPushButton,
+            # self.exportPushButton,
+            self.editSetupPushButton,
+            self.addPushButton,
+            self.removePushButton
+        ]
+        method = "hide" if hide else "show"
+        for t in tools:
+            getattr(t, method)()
+        self._buttonsHidden = hide
+
+    def isToolEditButtonHidden(self):
+        """
+        Identifies whether button setup GUI buttons are hidden from the user.
+        :return: (bool) button setup edit GUI buttons visibility status.
+        """
+        return bool(self._buttonsHidden)
 
     def unload(self):
         """

@@ -56,6 +56,7 @@
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/createNetworkNodesAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/deaggregateGeometriesAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/dissolvePolygonsWithSameAttributesAlgorithm.py \
+                    core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/fixNetworkAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py \
@@ -74,6 +75,7 @@
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesInCoverageAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOverlapsAlgorithm.py \
+                    core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallLinesAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallPolygonsAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyTerrainModelErrorsAlgorithm.py \
@@ -81,7 +83,6 @@
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyUnsharedVertexOnSharedEdgesAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyVertexNearEdgesAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyWrongBuildingAnglesAlgorithm.py \
-                    core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py \
@@ -232,6 +233,7 @@
                     gui/CustomWidgets/BasicInterfaceWidgets/snapWithLayerChooserWidget.py \
                     gui/CustomWidgets/BasicInterfaceWidgets/switchButton.py \
                     gui/CustomWidgets/BasicInterfaceWidgets/textBrowserDialog.py \
+                    gui/CustomWidgets/BasicInterfaceWidgets/toggleButton.py \
                     gui/CustomWidgets/BasicInterfaceWidgets/__init__.py \
                     gui/CustomWidgets/ConnectionWidgets/connectionWidget.py \
                     gui/CustomWidgets/ConnectionWidgets/__init__.py \
@@ -371,11 +373,11 @@
                     gui/Misc/ToolboxTools/__init__.py \
                     gui/ProcessingUI/attributeRulesWrapper.py \
                     gui/ProcessingUI/colorWidgetWrapper.py \
+                    gui/ProcessingUI/enforceAttributeRulesWrapper.py \
                     gui/ProcessingUI/enforceSpatialRuleWrapper.py \
                     gui/ProcessingUI/fmeManagerWrapper.py \
                     gui/ProcessingUI/fontWidgetWrapper.py \
                     gui/ProcessingUI/snapHierarchyWrapper.py \
-                    gui/ProcessingUI/validationAttributeRulesWrapper.py \
                     gui/ProcessingUI/__init__.py \
                     gui/ProductionTools/productionToolsGuiManager.py \
                     gui/ProductionTools/__init__.py \
@@ -525,7 +527,6 @@
                     gui/CustomWidgets/SelectionWidgets/selectTaskWizard.ui \
                     gui/CustomWidgets/SelectionWidgets/tabDbSelectorWidget.ui \
                     gui/CustomWidgets/ValidationWidgets/validationProcessWidget.ui \
-                    gui/CustomWidgets/ValidationWidgets/validationSetOfAttributesWidget.ui \
                     gui/CustomWidgets/ValidationWidgets/validationWorkflowItemWidget.ui \
                     gui/DatabaseTools/ConversionTools/datasourceConversion.ui \
                     gui/DatabaseTools/DbTools/BatchDbCreator/batchDbCreator.ui \

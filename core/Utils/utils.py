@@ -351,6 +351,14 @@ class Utils(object):
                 actions[item.text().replace("&", "")] = item
         return actions
 
+    def fieldIsBool(self, field):
+        """
+        Checks if a field is filled with a bool type data.
+        :param field: (QgsField) field to be checked.
+        :return: (bool) if data is boolean.
+        """
+        return field.type() == QVariant.Bool
+
     def fieldIsFloat(self, field):
         """
         Checks if a field is filled with any float type data.
@@ -450,7 +458,7 @@ class ValidateImportedDataMethods():
 
     def validateQColor(self, colorToEvaluate):
         """
-        Docstring.
+        This method receives a string and evaluate if its an valid QColor.
         """
 
         colorStrWithoutSpaces = re.sub(r'\s', '', str(colorToEvaluate))

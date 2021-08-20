@@ -309,7 +309,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 4.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.SF NS Text&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -320,6 +320,20 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 4.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/ui_about_.ui" line="89"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.SF NS Text&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 4.2_dev_5929378c03c154bf1f9c744fe3a45cc3ff402100&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>AbstractDb</name>
@@ -329,160 +343,165 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Erro abrindo banco de dados.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="108"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="99"/>
         <source>Problem counting elements: </source>
         <translation>Problema na contagem dos elementos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="238"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="241"/>
         <source>Validation Problems Summary</source>
         <translation>Resumo de Problemas de Validação</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="242"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="245"/>
         <source>Classes with null lines:</source>
         <translation>Classes com linhas nulas:</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="599"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="602"/>
         <source>Class</source>
         <translation>Classe</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="393"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="396"/>
         <source>Elements</source>
         <translation>Elementos</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="248"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="251"/>
         <source>Classes with null primary keys:</source>
         <translation>Classes com chaves primárias nulas:</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="254"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="257"/>
         <source>Features with attributes not in domain:</source>
         <translation>Feições com atributos fora do domínio:</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="298"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="301"/>
         <source>Class: </source>
         <translation>Classe: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="267"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="270"/>
         <source>Features with null attributes in a not null field:</source>
         <translation>Feições com atributos nulos em campo não nulo:</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="291"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="294"/>
         <source>Classes with classes that have elements but do not have output equivalent:</source>
         <translation>Classes com classes que tem elementos mas não tem equivalente de saída:</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="296"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="299"/>
         <source>Classes with attributes that have no output attribute equivalent:</source>
         <translation>Classes com atributos que não possuem atributo de saída equivalente:</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="311"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="314"/>
         <source>Conversion type: </source>
         <translation>Tipo de Conversão: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="312"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="315"/>
         <source>Input database: </source>
         <translation>Banco de dados de entrada: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="313"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="316"/>
         <source>Output database: </source>
         <translation>Banco de dados de saída: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="314"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="317"/>
         <source>Read Summary</source>
         <translation>Resumo de Leitura</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="392"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="395"/>
         <source>Write Summary</source>
         <translation>Resumo de Escrita</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="428"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="431"/>
         <source>Error on layer </source>
         <translation>Erro na camada </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="428"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="431"/>
         <source>. Conversion not performed.</source>
         <translation>. Conversão não realizada.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="598"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="601"/>
         <source>Features not converted</source>
         <translation>Feições não convertidas</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="599"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="602"/>
         <source>Feature id</source>
         <translation>Id da Feição</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="152"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="155"/>
         <source>Problem finding EPSG: </source>
         <translation>Problema para encontrar EPSG: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="193"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="196"/>
         <source>Problem getting aggregation attributes: </source>
         <translation>Problema ao obter atributos de agregação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="79"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="70"/>
         <source>Error opening database: </source>
         <translation>Erro abrindo banco de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="724"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="726"/>
         <source>Problem inserting frame: </source>
         <translation>Problema inserindo moldura: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="279"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="282"/>
         <source>Features with invalid uuid foreign key:</source>
         <translation>Feições com chave estrangeira do tipo uuid inválidas:</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="761"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="767"/>
         <source>Problem getting qmlRecordDict: </source>
         <translation>Problema ao obter qmlRecordDict: </translation>
+    </message>
+    <message>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="132"/>
+        <source>Unable to read table {0}. Error message: &apos;{1}&apos;</source>
+        <translation>Incapaz de ler a tabela {0}. Mensagem de erro: &apos;{1}&apos;</translation>
     </message>
 </context>
 <context>
     <name>AbstractSelectionWidget</name>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="65"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="64"/>
         <source>No database selected.</source>
         <translation>Nenhuma base de dados selecionada.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="67"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="66"/>
         <source>Select a datasource driver</source>
         <translation>Selecione um driver de fonte de dados</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="69"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="68"/>
         <source>PostGIS (create new database)</source>
         <translation>PostGIS (criar nova base de dados)</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="71"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="70"/>
         <source>SpatiaLite (create new database)</source>
         <translation>SpatiaLite (criar nova base de dados)</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="73"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="72"/>
         <source>Shapefile (create new database)</source>
         <translation>Shapefile (criar nova base de dados)</translation>
     </message>
@@ -492,7 +511,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Geopackage (criar nova base de dados)</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="207"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="203"/>
         <source>Selection widget not available.</source>
         <translation>Widget de seleção não disponível.</translation>
     </message>
@@ -510,12 +529,12 @@ p, li { white-space: pre-wrap; }
         <translation>Ferramenta não funciona com pontos</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/Acquisition/acquisition.py" line="78"/>
+        <location filename="../gui/ProductionTools/MapTools/Acquisition/acquisition.py" line="77"/>
         <source>Start editing in current layer!</source>
         <translation>Inicie a edição na camada atual!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/Acquisition/acquisition.py" line="78"/>
+        <location filename="../gui/ProductionTools/MapTools/Acquisition/acquisition.py" line="77"/>
         <source>Warning</source>
         <translation>Atenção</translation>
     </message>
@@ -540,19 +559,19 @@ Tecla Ctrl: ferramenta é pausada enquanto Ctrl é pressionado.</translation>
 <context>
     <name>AddAttributeWidget</name>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py" line="152"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py" line="151"/>
         <source>EDGV Domain</source>
         <translation>Domínio EDGV</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py" line="142"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py" line="141"/>
         <source>Attribute must have a name.
 </source>
         <translation>O atributo deve ter um nome.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py" line="144"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py" line="143"/>
         <source>Attribute must have a type.
 </source>
         <translation>O atributo deve ter um tipo.
@@ -660,35 +679,35 @@ Tecla Ctrl: ferramenta é pausada enquanto Ctrl é pressionado.</translation>
         <translation>Selecione um valor para alterar</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="262"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="261"/>
         <source>A value must be chosen.
 </source>
         <translation>Um valor deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="264"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="263"/>
         <source>A schema must be chosen.
 </source>
         <translation>Um esquema deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="266"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="265"/>
         <source>A table must be chosen.
 </source>
         <translation>Uma tabela deve ser escolhida.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="268"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="267"/>
         <source>An attribute must be chosen.
 </source>
         <translation>Um atributio deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="273"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="272"/>
         <source>Error in default customization </source>
         <translation>Erro na customização padrão </translation>
     </message>
@@ -785,19 +804,19 @@ Usuários com sucesso: </translation>
         <translation type="obsolete">Usuários com erro:</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="115"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="114"/>
         <source>
 Error messages for each user were output in qgis log.</source>
         <translation>
 Mensagens de erro para cada usuário foram registradas no log do QGIS.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="117"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="116"/>
         <source>Error for user </source>
         <translation>Erro para o usuário </translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="113"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="112"/>
         <source>
 Users with error:</source>
         <translation>
@@ -835,12 +854,12 @@ Usuários com erro:</translation>
 <context>
     <name>AssignAliasesToLayersAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignAliasesToLayersAlgorithm.py" line="134"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignAliasesToLayersAlgorithm.py" line="133"/>
         <source>Assign Aliases to Layers</source>
         <translation>Atribuindo apelidos às camadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignAliasesToLayersAlgorithm.py" line="141"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignAliasesToLayersAlgorithm.py" line="140"/>
         <source>Layer Management Algorithms</source>
         <translation>Algoritmos de gestão de camadas</translation>
     </message>
@@ -901,12 +920,12 @@ Usuários com erro:</translation>
         <translation>Operação definida somente para provedores PostgreSQL. Camada {layer} será rejeitada.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignBoundingBoxFilterToLayersAlgorithm.py" line="179"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignBoundingBoxFilterToLayersAlgorithm.py" line="178"/>
         <source>Assign Bounding Box Filter to Layers</source>
         <translation>Atribuindo filtro delimitador às camadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignBoundingBoxFilterToLayersAlgorithm.py" line="186"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignBoundingBoxFilterToLayersAlgorithm.py" line="185"/>
         <source>Layer Management Algorithms</source>
         <translation>Algoritmos de gestão de camadas</translation>
     </message>
@@ -1147,7 +1166,7 @@ Usuários com erro:</translation>
         <translation>Configuração JSON inválida para a ferramenta!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleTypeWidget.py" line="109"/>
+        <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleTypeWidget.py" line="108"/>
         <source>Invalid rule name!
 </source>
         <translation>Nome de regra inválido!
@@ -1212,21 +1231,21 @@ Usuários com erro:</translation>
         <translation>Configuração JSON inválida para a ferramenta!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.py" line="153"/>
+        <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.py" line="152"/>
         <source>Invalid layer!
 </source>
         <translation>Camada inválida!
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.py" line="155"/>
+        <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.py" line="154"/>
         <source>Invalid attribute!
 </source>
         <translation>Atributo inválido!
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.py" line="158"/>
+        <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.py" line="157"/>
         <source>Invalid rule!
 </source>
         <translation>Regra inválida!
@@ -1437,12 +1456,12 @@ Usuários com erro:</translation>
 <context>
     <name>BDGExRequestHandler</name>
     <message>
-        <location filename="../core/NetworkTools/BDGExRequestHandler.py" line="161"/>
+        <location filename="../core/NetworkTools/BDGExRequestHandler.py" line="165"/>
         <source>BDGEx layers (DSGTools)</source>
         <translation>Camadas do BDGEx (DSGTools)</translation>
     </message>
     <message>
-        <location filename="../core/NetworkTools/BDGExRequestHandler.py" line="162"/>
+        <location filename="../core/NetworkTools/BDGExRequestHandler.py" line="166"/>
         <source>Unable to provide requested layer. Please check your network settings (proxy and exceptions too, if necessary).</source>
         <translation>Não foi possível carregar a camada solicitada. Por favor, verifique suas configurações de rede (proxy e suas exceções também, se for o seu caso).</translation>
     </message>
@@ -1730,14 +1749,14 @@ Bancos de dados com sucesso: </translation>
         <translation>Operação concluída!</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="158"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="157"/>
         <source>
 Databases with error:</source>
         <translation>
 Bancos de dados com erro:</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="160"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="159"/>
         <source>
 Error messages for each database were output in qgis log.</source>
         <translation>
@@ -1749,63 +1768,63 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <translation type="obsolete">Erro para o banco de dados </translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="242"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="241"/>
         <source>Warning</source>
         <translation>Atenção</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="170"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="169"/>
         <source>Please select one or more databases to drop!</source>
         <translation>Por favor, selecione um ou mais bancos para apagar!</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="195"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="194"/>
         <source>Question</source>
         <translation>Pergunta</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="172"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="171"/>
         <source>Do you really want to drop databases: </source>
         <translation>Você realmente quer apagar os bancos de dados: </translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="178"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="177"/>
         <source>Drop operation complete. 
 </source>
         <translation>Operação de deleção concluída. 
 </translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="242"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="241"/>
         <source>Multiple edgv versions are not allowed!</source>
         <translation>Múltiplas versões da EDGV não são permitidas!</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="254"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="253"/>
         <source>Import operation complete. 
 </source>
         <translation>Operação de importação concluída. 
 </translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="367"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="365"/>
         <source>Delete operation complete. 
 </source>
         <translation>Operação de deleção completa. 
 </translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="387"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="385"/>
         <source>Select a SQL file</source>
         <translation>Selecione um arquivo SQL</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="387"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="385"/>
         <source>sql file (*.sql)</source>
         <translation>arquivo SQL (*.sql)</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="399"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="397"/>
         <source>Customize from SQL file operation complete. 
 </source>
         <translation>Operação de cutomização a partir de arquivo SQL completa. 
@@ -1862,7 +1881,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <translation type="obsolete">Configuração da Ferramenta de Classificação</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="189"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="188"/>
         <source>Upgrade Posgtis operation complete. 
 </source>
         <translation>Operação de atualização do PostGIS completa. 
@@ -1929,12 +1948,12 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <translation>Não utilizar formulário customizado (bancos das versões Pro o usam por padrão)</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="162"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="161"/>
         <source>Error for database {0}: </source>
         <translation>Erro para o banco de dados {0}: </translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="195"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="194"/>
         <source>This operation will upgrade PostGIS version for templates databases as well as the selected databases. Would you like to continue?</source>
         <translation>Essa operação irá atualizar a versão do PostGIS para as bases de templates, além dos bancos de dados selecionados. Deseja continuar?</translation>
     </message>
@@ -2071,12 +2090,12 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <translation>{0} Flags</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="208"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="216"/>
         <source>Build Polygons From Center Points and Boundaries</source>
         <translation>Construir polígonos a partir de centroids e linhas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="215"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="223"/>
         <source>Quality Assurance Tools (Manipulation Processes)</source>
         <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
@@ -2164,82 +2183,82 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <translation>Grupo ao qual o botão será atribuído...</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="71"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="75"/>
         <source>Attribute</source>
         <translation>Atributo</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="71"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="75"/>
         <source>Value</source>
         <translation>Valor</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="71"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="75"/>
         <source>PK</source>
         <translation>PK</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="71"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="75"/>
         <source>Editable</source>
         <translation>Editável</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="71"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="75"/>
         <source>Ignored</source>
         <translation>Ignorado</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="85"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="91"/>
         <source>Confirm action</source>
         <translation>Confirmar a ação</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="102"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="108"/>
         <source>QGIS default feature extraction tool</source>
         <translation>Ferramenta de aquisição padrão do QGIS</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="103"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="109"/>
         <source>DSGTools: Free Hand Acquisition</source>
         <translation>DSGTools: Ferramenta de Aquisição à Mão Livre</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="105"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="111"/>
         <source>QGIS Circle extraction tool</source>
         <translation>Ferramenta de aquisição de círculos do QGIS</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="107"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="113"/>
         <source>DSGTools: Right Degree Angle Digitizing</source>
         <translation>DSGTools: Ferramenta de aquisição com ângulos retos</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="305"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="309"/>
         <source>Shortcut {s} is already assigned to {a}, would you like to replace it?</source>
         <translation>Atalho {s} já está atribuído a {a}, gostaria de substituí-lo?</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="307"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="311"/>
         <source>Replace shortcut</source>
         <translation>Substituir atalho</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="485"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="489"/>
         <source>Field cannot be empty</source>
         <translation>Campo não pode estar vazio</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="512"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="521"/>
         <source>Type the value for {0}</source>
         <translation>Digite um valor para {0}</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="353"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="357"/>
         <source>&apos;{0}&apos; is an invalid value for field {1}. (Is the layer style generated from the current data model?</source>
         <translation>&apos;{0}&apos; é um valor inválido para o atributo {1}. (O estilo da camada foi gerado a partir do modelo de dados atual?</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="357"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="361"/>
         <source>DSGTools Custom Feature Tool Box</source>
         <translation>DSGTools Caixa de Ferramenta de Classificação de Feições</translation>
     </message>
@@ -2247,7 +2266,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
 <context>
     <name>ButtonSetupWidget</name>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="905"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="953"/>
         <source>No button selected</source>
         <translation>Nenhum botão selecionado</translation>
     </message>
@@ -2257,62 +2276,62 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <translation>Fluxo de trabalho inválido</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="510"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="512"/>
         <source>No name provided for current setup.</source>
         <translation>Nenhum nome fornecido para a atual configuração.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="513"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="515"/>
         <source>Please register at least one button.</source>
         <translation>Por favor registre ao menos um botão.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="595"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="604"/>
         <source>Button {b} already exists. Would you like to replace it?</source>
         <translation>Botão {b} já existe. Deseja substituí-lo?</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="597"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="606"/>
         <source>Replace existing button</source>
         <translation>Substituir botão existente</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="622"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="631"/>
         <source>Confirm button &apos;{b}&apos; removal?</source>
         <translation>Confirmar a remoção do botão {b}?</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="930"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="978"/>
         <source>Invalid input data: {r}</source>
         <translation>Dado de entrada inválido: {r}</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="837"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="885"/>
         <source>Current button has been modified and not saved. Would you like to save it?</source>
         <translation>O botão atual foi modificade e não foi salvo. Gostaria de salvá-lo?</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="839"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="887"/>
         <source>Unsaved modifications</source>
         <translation>Modificações não salvas</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="883"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="931"/>
         <source>Import a DSGTools Button Setup (set of buttons)</source>
         <translation>Importar uma configuração de botões do DSGTools (conjunto de botões)</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="936"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="984"/>
         <source>DSGTools Buttons Setup (*.setup)</source>
         <translation>Configuração de botões do DSGTools (*.setup)</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="918"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="966"/>
         <source>Setup &quot;{0}&quot; imported from &quot;{1}&quot;</source>
         <translation>Configuração &quot;{0}&quot; importada de &quot;{1}&quot;</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="920"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="968"/>
         <source>Imported workflow</source>
         <translation>Fluxo de trabalho importado</translation>
     </message>
@@ -2322,12 +2341,12 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <translation type="obsolete">Exportar configuração - {0}</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="947"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="995"/>
         <source>Setup &quot;{0}&quot; exported to &quot;{1}&quot;</source>
         <translation>Configuração &quot;{0}&quot; exportada para &quot;{1}&quot;</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="949"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="997"/>
         <source>Exported workflow</source>
         <translation>Fluxo de trabalho exportado</translation>
     </message>
@@ -2337,7 +2356,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <translation type="obsolete">Exportar configuração {0}</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="936"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="984"/>
         <source>Export setup - {0}</source>
         <translation>Exportar configuração - {0}</translation>
     </message>
@@ -2458,42 +2477,42 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <translation>Selecione um valor para alterar</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="300"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="299"/>
         <source>A value must be chosen.
 </source>
         <translation>Um valor deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="302"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="301"/>
         <source>An action must be chosen.
 </source>
         <translation>Uma ação deve ser escolhida.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="309"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="308"/>
         <source>A schema must be chosen.
 </source>
         <translation>Um esquema deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="311"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="310"/>
         <source>A table must be chosen.
 </source>
         <translation>Uma tabela deve ser escolhida.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="313"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="312"/>
         <source>An attribute must be chosen.
 </source>
         <translation>Um atributo deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="318"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="317"/>
         <source>Error in change filter customization </source>
         <translation>Erro na customização de mudança de filtro </translation>
     </message>
@@ -2606,35 +2625,35 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <translation>Selecione um atributo</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="163"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="162"/>
         <source>A schema must be chosen.
 </source>
         <translation>Um esquema deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="165"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="164"/>
         <source>A table must be chosen.
 </source>
         <translation>Uma tabela deve ser escolhida.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="167"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="166"/>
         <source>An action be chosen.
 </source>
         <translation>Uma ação deve ser escolhida.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="169"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="168"/>
         <source>An attribute must be chosen.
 </source>
         <translation>Um atributo deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="174"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="173"/>
         <source>Error in change nullity customization </source>
         <translation>Erro na customização de mudança de nulidade </translation>
     </message>
@@ -2976,28 +2995,28 @@ camada</translation>
         <translation>Escolha um domínio</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="117"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="116"/>
         <source>A domain table must be chosen.
 </source>
         <translation>Um tabela de domínio deve ser escolhida.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="119"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="118"/>
         <source>An old code name value must be chosen.
 </source>
         <translation>Um code name antigo deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="121"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="120"/>
         <source>A new code name value must be chosen.
 </source>
         <translation>Um novo code name deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="127"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="126"/>
         <source>Error in code name customization </source>
         <translation>Erro na customização de code name </translation>
     </message>
@@ -3038,7 +3057,7 @@ camada</translation>
         <translation>selecione um banco de dados</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="484"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="480"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
@@ -3058,37 +3077,37 @@ camada</translation>
         <translation>Selecione um complexo.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="334"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="332"/>
         <source>The class you&apos;re trying to disassociate must loaded in the table of contents.</source>
         <translation>A classe que você está tentando desassociar precisa ser carregada na tabela de conteúdo.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="382"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="380"/>
         <source>Please, select an aggregated class or aggregated id.</source>
         <translation>Por favor, selecione uma classe agregada ou o seu ID de agregação.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="435"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="433"/>
         <source>Please, select a complex.</source>
         <translation>Por favor, selecione um complexo.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="481"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="477"/>
         <source>The following layers cannot be associated to complexes from </source>
         <translation>As camadas a seguir não podem ser associadas a complexos de </translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="360"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="358"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="460"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="457"/>
         <source>Critical</source>
         <translation>Crítico</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="460"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="457"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
@@ -3126,7 +3145,7 @@ camada</translation>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="161"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="160"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
@@ -3146,17 +3165,17 @@ camada</translation>
         <translation>Selecione um banco de dados</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="197"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="196"/>
         <source>Invalid datasource.</source>
         <translation>Fonte de dados inválido.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="201"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="200"/>
         <source>Invalid connection to server.</source>
         <translation>Conexão com o servidor inválida.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="204"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="203"/>
         <source>Database {0} does not exist.</source>
         <translation>A base de dados {0} não existe.</translation>
     </message>
@@ -3164,27 +3183,27 @@ camada</translation>
 <context>
     <name>ConnectionWidget</name>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="224"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="220"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de coordenadas não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="280"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="274"/>
         <source>Select Database</source>
         <translation>Selecione o banco de dados</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="210"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="206"/>
         <source>This is not a valid DsgTools database!</source>
         <translation>Este não é um banco válido!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="266"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="260"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="290"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="284"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -3194,7 +3213,7 @@ camada</translation>
         <translation>Formulário</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="171"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="167"/>
         <source>Database connection</source>
         <translation>Conexão do Banco de Dados</translation>
     </message>
@@ -3239,7 +3258,7 @@ camada</translation>
         <translation>Pesquisar</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="198"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="194"/>
         <source> on </source>
         <translation> no </translation>
     </message>
@@ -3405,42 +3424,42 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Arquivo CSV</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="98"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="97"/>
         <source>Database(s) {0} created successfully.</source>
         <translation>Banco(s) de dados {0} criado(s) com sucesso.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="107"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="104"/>
         <source>Invalid inomen parameter!</source>
         <translation>Parâmetro de índice de nomenclatura inválido!</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="111"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="108"/>
         <source>Error on {0}: </source>
         <translation>Erro no(s) banco(s) de dados {0}: </translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="113"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="110"/>
         <source>Frame was not created on the following databases: {0}</source>
         <translation>Moldura não criada no(s) seguinte(s) banco(s) de dados: {0}</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="115"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="112"/>
         <source>Some errors occurred while trying to create database(s) {0}</source>
         <translation>Ocorreu erro ao tentar criar o(s) banco(s) de dados: {0}</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="119"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="115"/>
         <source>Check log for more details.</source>
         <translation>Verifique o log para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="121"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="117"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="121"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="117"/>
         <source>Process finished.</source>
         <translation>Processo finalizado.</translation>
     </message>
@@ -3458,32 +3477,32 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Número de bancos</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="83"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="82"/>
         <source>Database(s) {0} created successfully.</source>
         <translation>Banco(s) de dados {0} criado(s) com sucesso.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="91"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="89"/>
         <source>Error on {0}: </source>
         <translation>Erro no(s) banco(s) de dados {0}: </translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="93"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="91"/>
         <source>Some errors occurred while trying to create database(s) {0}</source>
         <translation>Ocorreu erro ao tentar criar o(s) banco(s) de dados: {0}</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="97"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="94"/>
         <source>Check log for more details.</source>
         <translation>Verifique o log para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="99"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="96"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="99"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="96"/>
         <source>Process finished.</source>
         <translation>Processo finalizado.</translation>
     </message>
@@ -3581,7 +3600,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Nova customização de filtro de atributo</translation>
     </message>
     <message>
-        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="266"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="265"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
@@ -3591,12 +3610,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Preparando para exportar customizações... </translation>
     </message>
     <message>
-        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="263"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="262"/>
         <source>Errors occured while trying to export customs built. Check qgis log for further details.</source>
         <translation>Ocorreram erros durante a exportação de customizações. Verifique o log do QGIS para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="265"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="264"/>
         <source>Customization error: </source>
         <translation>Erro de customização: </translation>
     </message>
@@ -3751,29 +3770,34 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>O denominador da escala desejada não pode ser maior que o da escala base.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="147"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="149"/>
         <source>Invalid {index}</source>
         <translation>{index} inválido</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="150"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="152"/>
         <source>Invalid {index} format.</source>
         <translation>Formato de {index} inválido.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="153"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="155"/>
         <source>Invalid CRS.</source>
         <translation>SRC inválido.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="186"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="188"/>
         <source>Generate Systematic Grid</source>
         <translation>Gerar Grid Sistematicamente</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="193"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="195"/>
         <source>Other Algorithms</source>
         <translation>Outros algoritmos</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="147"/>
+        <source>{index} is only valid for scales 250k and below.</source>
+        <translation>{index} só é válido para escalas de 250k e abaixo.</translation>
     </message>
 </context>
 <context>
@@ -4049,32 +4073,32 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Selecione um caminho para a base de dados</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="112"/>
+        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="111"/>
         <source>Database {0} successfully created.</source>
         <translation>Banco de dados {0} criado.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="120"/>
+        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="118"/>
         <source>Error on {0}: </source>
         <translation>Erro em {0}: </translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="122"/>
+        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="120"/>
         <source>Some errors occurred while trying to create database(s) {0}</source>
         <translation>Ocorreu erro ao tentar criar o(s) banco(s) de dados: {0}</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="126"/>
+        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="123"/>
         <source>Check log for more details.</source>
         <translation>Verifique o log para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="128"/>
+        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="125"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="128"/>
+        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="125"/>
         <source>Process finished.</source>
         <translation>Processo finalizado.</translation>
     </message>
@@ -4084,7 +4108,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation type="obsolete">Criação bancos PostGIS ou SpatiaLite</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="150"/>
+        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="147"/>
         <source>Create a PostGIS, SpatiaLite or Geopackage Database</source>
         <translation>Criação de bancos PostGIS, SpatiaLite ou Geopackage</translation>
     </message>
@@ -4327,7 +4351,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
 <context>
     <name>CustomButtonSetup</name>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="1035"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="1043"/>
         <source>Custom Button Setup</source>
         <translation>Configuração de botões customizada</translation>
     </message>
@@ -4345,7 +4369,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Erro ao atualizar &apos;{0}&apos; ({1})</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="700"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="708"/>
         <source>DSGTools: Custom Feature Toolbox - button {0}</source>
         <translation>DSGTools: Caixa de Ferramenta de Classificação de Feições - botão {0}</translation>
     </message>
@@ -4400,67 +4424,67 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Palavra chave deverá ser um conjunto ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="761"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="769"/>
         <source>Callback must be a callable object.</source>
         <translation>Callback deverá ser um objeto exigível.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="780"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="788"/>
         <source>Layer name must be a str ({0}).</source>
         <translation>Nome de camada deverá ser uma string ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="847"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="855"/>
         <source>{0} is not a valid value for field {1}.</source>
         <translation>{0} não é um valor válido para o campo {1}.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="861"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="869"/>
         <source>Attribute map must be a dict ({0}).</source>
         <translation>Mapa de atributos deverá ser um dicionário ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="880"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="888"/>
         <source>QGIS default feature extraction tool</source>
         <translation>Ferramenta de aquisição padrão do QGIS</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="881"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="889"/>
         <source>DSGTools: Free Hand Acquisition</source>
         <translation>DSGTools: Ferramenta de Aquisição à Mão Livre</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="882"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="890"/>
         <source>QGIS Circle extraction tool</source>
         <translation>Ferramenta de aquisição de círculos do QGIS</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="883"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="891"/>
         <source>DSGTools: Right Degree Angle Digitizing</source>
         <translation>DSGTools: Ferramenta de aquisição com ângulos retos</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="893"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="901"/>
         <source>&apos;{0}&apos; not supported.</source>
         <translation>&apos;{0}&apos; not supported.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="896"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="904"/>
         <source>Digitizing tool prop must be a str ({0}).</source>
         <translation>Propriedade da ferramenta de aquisição deverá ser uma string ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="930"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="938"/>
         <source>Toggling usage must be a bool ({0}).</source>
         <translation>A alternância de uso deve ser um booleano ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="960"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="968"/>
         <source>Toggling status must be a bool ({0}).</source>
         <translation>A alternância de estado deve ser um booleano ({0}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="1001"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="1009"/>
         <source>Enabled status must be a bool ({0}).</source>
         <translation>O estado ativado deverá ser um boleano({0}).</translation>
     </message>
@@ -4468,34 +4492,39 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
 <context>
     <name>CustomFeatureForm</name>
     <message>
-        <location filename="../gui/CustomWidgets/AdvancedInterfaceWidgets/customFeatureForm.py" line="71"/>
+        <location filename="../gui/CustomWidgets/AdvancedInterfaceWidgets/customFeatureForm.py" line="77"/>
         <source>DSGTools Feature Reclassification Form</source>
         <translation>Formulário de Reclassificação de Feições do DSGTools</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/AdvancedInterfaceWidgets/customFeatureForm.py" line="97"/>
+        <location filename="../gui/CustomWidgets/AdvancedInterfaceWidgets/customFeatureForm.py" line="103"/>
         <source>features</source>
         <translation>feições</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/AdvancedInterfaceWidgets/customFeatureForm.py" line="97"/>
+        <location filename="../gui/CustomWidgets/AdvancedInterfaceWidgets/customFeatureForm.py" line="103"/>
         <source>feature</source>
         <translation>feição</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/AdvancedInterfaceWidgets/customFeatureForm.py" line="119"/>
+        <location filename="../gui/CustomWidgets/AdvancedInterfaceWidgets/customFeatureForm.py" line="173"/>
         <source>Field is set to be ignored</source>
         <translation>Campo está configurado para ser ignorado</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/AdvancedInterfaceWidgets/customFeatureForm.py" line="217"/>
+        <location filename="../gui/CustomWidgets/AdvancedInterfaceWidgets/customFeatureForm.py" line="288"/>
         <source>Invalid layer selection</source>
         <translation>Seleção de camada inválida</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/AdvancedInterfaceWidgets/customFeatureForm.py" line="217"/>
+        <location filename="../gui/CustomWidgets/AdvancedInterfaceWidgets/customFeatureForm.py" line="288"/>
         <source>select at least one layer for reclassification!</source>
         <translation>selecione ao menos um a camada para reclassificação!</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/AdvancedInterfaceWidgets/customFeatureForm.py" line="135"/>
+        <source>Field {0} does not have a value/relations map</source>
+        <translation>O campo {0} não tem um mapa de valor/relações</translation>
     </message>
 </context>
 <context>
@@ -4521,52 +4550,52 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Reclassificação</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="163"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="174"/>
         <source>Select a buttons profile...</source>
         <translation>Selecione um perfil de botões...</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="177"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="188"/>
         <source>{0} (1 feature)</source>
         <translation>{0} (1 feição)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="179"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="190"/>
         <source>{0} ({1} features)</source>
         <translation>{0} ({1} feições)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="183"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="194"/>
         <source>Reclassified features</source>
         <translation>Feições reclassificadas</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="185"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="196"/>
         <source>Reclassified feature</source>
         <translation>Feição reclassificada</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="315"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="325"/>
         <source>No category</source>
         <translation>Sem categoria</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="348"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="358"/>
         <source>Searched buttons</source>
         <translation>Botões encontrados</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="352"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="362"/>
         <source>Searched buttons ({0})</source>
         <translation>Botões encontrados ({0})</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="579"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="589"/>
         <source>DSGTools Custom Feature Tool: confirm removal</source>
         <translation>DSGTools Ferramenta de feição customizada: confirmação de remoção</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="580"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="590"/>
         <source>Would like to delete setup {0}?</source>
         <translation>Gostaria de deletar a configuração{0}?</translation>
     </message>
@@ -4581,59 +4610,59 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation type="obsolete">DSGTools Caixa de Ferramenta de Classificação de Feições</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="971"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="990"/>
         <source>layer &apos;{0}&apos; not loaded. Can&apos;t use button &apos;{1}&apos;.</source>
         <translation>camada &apos;{0}&apos; não foi carregada. Não poderá usar o botão &apos;{1}&apos;.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="994"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1013"/>
         <source>DSGTools feature reclassification</source>
         <translation>DSGTools reclassificação de feições</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="991"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1010"/>
         <source>could not reclassify using button {0} (no compatible features selected)</source>
         <translation>não foi possível reclassificar usando o botão {0} (nenhuma feição compatível selecionada)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1002"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1021"/>
         <source>{0} (receiving layer: {1})</source>
         <translation>{0} (camada receptora: {1})</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1245"/>
         <source>Import a DSGTools button profile set</source>
-        <translation>Importar um conjunto de perfis de botão do DSGTools</translation>
+        <translation type="obsolete">Importar um conjunto de perfis de botão do DSGTools</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1264"/>
         <source>DSGTools button profile set (*.setups)</source>
-        <translation>Conjunto de perfis de botão do DSGTools (*.setups)</translation>
+        <translation type="obsolete">Conjunto de perfis de botão do DSGTools (*.setups)</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1254"/>
         <source>current state imported from &apos;{0}&apos;.</source>
-        <translation>estado atual importado de &apos;{0}&apos;.</translation>
+        <translation type="obsolete">estado atual importado de &apos;{0}&apos;.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1281"/>
         <source>DSGTools Custom Feature</source>
-        <translation>DSGTools Feição Customizada</translation>
+        <translation type="obsolete">DSGTools Feição Customizada</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1264"/>
         <source>Export a DSGTools button profile set</source>
-        <translation>Exportar um conjunto de perfis de botão do DSGTools</translation>
+        <translation type="obsolete">Exportar um conjunto de perfis de botão do DSGTools</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1275"/>
         <source>current state exported to &apos;{0}&apos;.</source>
-        <translation>estado atual exportado para &apos;{0}&apos;.</translation>
+        <translation type="obsolete">estado atual exportado para &apos;{0}&apos;.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1278"/>
         <source>unable to export current state to &apos;{0}&apos;.</source>
-        <translation>incapaz de exportar o estado atual para &apos;{0}&apos;.</translation>
+        <translation type="obsolete">incapaz de exportar o estado atual para &apos;{0}&apos;.</translation>
     </message>
 </context>
 <context>
@@ -4843,31 +4872,31 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="56"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="55"/>
         <source>Enter a combo box text!
 </source>
         <translation>Insira um texto para o combo box!
 </translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="58"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="57"/>
         <source>Enter a measurement!
 </source>
         <translation>Insira uma medida!
 </translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="65"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="64"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="86"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="85"/>
         <source>Distance in mm</source>
         <translation>Distância em mm</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="84"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="83"/>
         <source>Area in mmÂ²</source>
         <translation>Área em mm²</translation>
     </message>
@@ -5112,100 +5141,100 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Executar o modelo atual.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="135"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="133"/>
         <source>Select a model...</source>
         <translation>Selecione um modelo...</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="169"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="167"/>
         <source>Confirm Action</source>
         <translation>Confirmar a ação</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="252"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="250"/>
         <source>Select a QGIS processing model to be added</source>
         <translation>Selecione um arquivo de modelo do QGIS para ser adicionado</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="252"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="250"/>
         <source>QGIS Processing Model (*.model *.model3)</source>
         <translation>Modelo do provedor de processamento do QGISl (*.model *.model3)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="259"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="257"/>
         <source>Model seems to be already registered, would you like to overwrite it?</source>
         <translation>Modelo parece já estar registrado, gostaria de sobrescrevê-lo?</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="266"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="264"/>
         <source>Model {model} was not imported.</source>
         <translation>Modelo {model} não foi mportado.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="279"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="277"/>
         <source>Model {model} imported to {dest}.</source>
         <translation>Modelo {model} importado para {dest}.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="300"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="298"/>
         <source>Remove model &apos;{modelName}&apos;?</source>
         <translation>Remover modelo &apos;{modelName}&apos;?</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="308"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="306"/>
         <source>Unable to remove &apos;{model}&apos;:
 {error}.</source>
         <translation>Impossível de remover &apos;{model}&apos;:
 {error}.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="329"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="327"/>
         <source>Failed</source>
         <translation>Falha</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="329"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="327"/>
         <source>model {model} seems to have been deleted.</source>
         <translation>modelo {model} parece ter sido deletado.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="341"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="339"/>
         <source>Would you like to run {model}</source>
         <translation>Gostaria de executar {model}</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="346"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="344"/>
         <source>Sucess</source>
         <translation>Sucesso</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="346"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="344"/>
         <source>model {model} finished.</source>
         <translation>modelo {model} finalizado.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="352"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="350"/>
         <source>Model {model} finished running with no errors. You may check model output on Processing log tab.</source>
         <translation>Modelo {model} execução finalizada sem erros. Você pode verificar a saída do modelo na aba de log do provedor de processamento.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="371"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="369"/>
         <source>Unable to run (check Processing tab for details on model execution log) {model}:
 {error}</source>
         <translation>Impossível de executar (Verifique o log de execução na aba de processamento para mais detalhes) {model}: {error}</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="375"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="373"/>
         <source>Model {model} failed</source>
         <translation>Modelo {model} falhou</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="375"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="373"/>
         <source>check log for more information.</source>
         <translation>verifique o log para mais informações.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="401"/>
+        <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="399"/>
         <source>DSGTools: Validation Toolbar - Run Processing Model</source>
         <translation>DSGTools: Barra de ferramentas de Validação - Executar Modelo de Processamento</translation>
     </message>
@@ -5223,22 +5252,22 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Selecione uma fonte de dados</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="121"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="120"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="134"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="133"/>
         <source>Invalid datasource.</source>
         <translation>Fonte de dados inválida.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="138"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="137"/>
         <source>Invalid connection to server.</source>
         <translation>Conexão com o servidor inválida.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="141"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="140"/>
         <source>Database {0} does not exist.</source>
         <translation>A base de dados {0} não existe.</translation>
     </message>
@@ -5309,21 +5338,21 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation type="obsolete">Sufixo</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="141"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="140"/>
         <source>Enter a database name!
 </source>
         <translation>Insira o nome do banco de dados!
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="143"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="142"/>
         <source>Select a coordinate reference system!
 </source>
         <translation>Selecione um sistema de referência de coordenadas!
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="156"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="155"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -5357,7 +5386,7 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <translation>Sufixo (opcional)</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="146"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="145"/>
         <source>Select a template database!
 </source>
         <translation>Selecione um banco como modelo!
@@ -5389,21 +5418,21 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <translation>Selecione um atributo da tabela selecionada</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="149"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="148"/>
         <source>Select a frame layer!
 </source>
         <translation>Selecione uma camada de moldura!
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="151"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="150"/>
         <source>Select an index attribute!
 </source>
         <translation>Selecione o atributo de MI!
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="153"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="152"/>
         <source>Select an INOM attribute!
 </source>
         <translation>Selecione o atributo de MI!
@@ -5531,7 +5560,7 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <translation>Modo de conversão</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="649"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="644"/>
         <source>Select a datasource</source>
         <translation>Selecione uma fonte de dados</translation>
     </message>
@@ -5541,7 +5570,7 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <translation type="obsolete">Fan-Out utilizando as feições filtradas da camada de referência</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="641"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="636"/>
         <source>Choose Conversion Mode</source>
         <translation>Escolha o modo de conversão</translation>
     </message>
@@ -5596,57 +5625,57 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <translation type="obsolete">{0} ({1} feature)</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="638"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="633"/>
         <source>new</source>
         <translation>nova</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="712"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="706"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="623"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="618"/>
         <source>No datasets were selected (input or output)</source>
         <translation>Alguma fonte de dados não foi definida (entrada ou saída)</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="642"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="637"/>
         <source>Conversion mode not selected for input {0} (row {1})</source>
         <translation>Modo de conversão não selecionado para a entrada {0} (linha {1})</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="645"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="640"/>
         <source>Conversion map unavailable for {0} to {1} (row {2})</source>
         <translation>Mapa de conversão não disponível para conversão entre {0} e {1} (linha {2})</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="650"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="645"/>
         <source>Output datasource not selected for {0} (row {1})</source>
         <translation>Fonte de dados de saída não selecionado para a entrada {0} (linha {1})</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="657"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="652"/>
         <source>Output datasource {0} was not used.</source>
         <translation>Fonte de dados de saída {0} não utilizado.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="657"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="652"/>
         <source>Output datasources {0} were not used.</source>
         <translation>Fontes de dados de saída {0} não utilizados.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="673"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="667"/>
         <source>&lt;span style=&quot;color: #ff0000;&quot;&gt;&lt;br&gt;&lt;p&gt;CONVERSION TASK WAS CANCELLED.&lt;/span&gt;&lt;/p&gt;</source>
         <translation>&lt;span style=&quot;color: #ff0000;&quot;&gt;&lt;br&gt;&lt;p&gt;TAREFA DE CONVERSÃO FOI CANCELADA.&lt;/span&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="695"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="689"/>
         <source>DSGTools Dataset Conversion</source>
         <translation>Ferramenta de Conversão de Fontes de Dados do DSGTools</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="745"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="739"/>
         <source>Convert Databases</source>
         <translation>Converter Bancos de Dados</translation>
     </message>
@@ -5656,17 +5685,17 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <translation>Conversão Flexível</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="703"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="697"/>
         <source>Dataset conversion has finished with some errors. Check conversion log for details.</source>
         <translation>A conversão terminou com erros. Verifique o log da conversão para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="711"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="705"/>
         <source>Dataset conversion has failed: &apos;{0}&apos;</source>
         <translation>Conversão falhou: &apos;{0}&apos;</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="639"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="634"/>
         <source>EDGV 2.1.3 F Ter model was terminated. DSGTools no longer support its creation (row {1})</source>
         <translation>O modelo EDGV 2.1.3 F Ter foi descontinuado. Sua criação não é mais suportada pelo DSGTools (linha {1})</translation>
     </message>
@@ -5774,12 +5803,12 @@ geométrica</translation>
 <context>
     <name>DbConverter</name>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="136"/>
+        <location filename="../core/DbTools/dbConverter.py" line="135"/>
         <source>Dataset {0} already exists.</source>
         <translation>Fonte de dados {0} já existe.</translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="653"/>
+        <location filename="../core/DbTools/dbConverter.py" line="647"/>
         <source>
 Conversion Step {0} started...
 
@@ -5790,55 +5819,55 @@ Passo de conversão {0} iniciado...
 </translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="654"/>
+        <location filename="../core/DbTools/dbConverter.py" line="648"/>
         <source>[INPUT] Reading {0}&apos;s layers...
 </source>
         <translation>[ENTRADA] Lendo camadas de {0}...
 </translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="677"/>
+        <location filename="../core/DbTools/dbConverter.py" line="671"/>
         <source>[OUTPUT] Reading {0}&apos;s layers...
 </source>
         <translation>[SAÍDA] Lendo camadas de {0}...
 </translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="666"/>
+        <location filename="../core/DbTools/dbConverter.py" line="660"/>
         <source>[OUTPUT] Creating dataset {0}...
 </source>
         <translation>[SAÍDA] Criando fonte de dados {0}...
 </translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="671"/>
+        <location filename="../core/DbTools/dbConverter.py" line="665"/>
         <source>Dataset creation error ({0}): &apos;{1}&apos;
 </source>
         <translation>Erro de criação de fonte de dados ({0}): &apos;{1}&apos;
 </translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="683"/>
+        <location filename="../core/DbTools/dbConverter.py" line="677"/>
         <source>Preparing {0}&apos;s layers for conversion...</source>
         <translation>Preparando as camadas de {0} para a conversão...</translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="688"/>
+        <location filename="../core/DbTools/dbConverter.py" line="682"/>
         <source>Mapping features...</source>
         <translation>Mapeando feições...</translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="693"/>
+        <location filename="../core/DbTools/dbConverter.py" line="687"/>
         <source>Loading layers to {0}...</source>
         <translation>Carregando camadas para {0}...</translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="547"/>
+        <location filename="../core/DbTools/dbConverter.py" line="545"/>
         <source>{0} successfully loaded.</source>
         <translation>{0} foi carregada.</translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="550"/>
+        <location filename="../core/DbTools/dbConverter.py" line="548"/>
         <source>{0} failed to be loaded.</source>
         <translation>{0} não pode ser carregada.</translation>
     </message>
@@ -5904,19 +5933,19 @@ Perfis com sucesso: </translation>
         <translation>Operação completa!</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="96"/>
+        <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="95"/>
         <source>Profiles with error:</source>
         <translation>Perfis com erro:</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="98"/>
+        <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="97"/>
         <source>
 Error messages for each profile were output in qgis log.</source>
         <translation>
 Mensagens de erro para cada perfil foram geradas no log do QGIS.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="100"/>
+        <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="99"/>
         <source>Error for profile </source>
         <translation>Erro para o perfil </translation>
     </message>
@@ -7322,47 +7351,47 @@ camada</translation>
         <translation>Comportamento da ferramenta</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="68"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="80"/>
         <source>Imports a set of buttons setup (profile) from a file</source>
         <translation>Importa um conjunto de configurações de botões (perfil) a partir de um arquivo</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="95"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="113"/>
         <source>Exports current set of buttons setup (profile) to a file</source>
         <translation>Exporta o atual conjunto de configurações de botões (perfil) para um arquivo</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="113"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="137"/>
         <source>Edits current buttons setup (profile) from a file</source>
         <translation>Edita a atual configuração de botões (perfil) a partir de um arquivo</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="131"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="161"/>
         <source>Adds a buttons setup (profile)</source>
         <translation>Adiciona uma configuração de botões (perfil)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="152"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="188"/>
         <source>Removes current buttons setup (profile)</source>
         <translation>Remove a atual configuração de botões (perfil)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="178"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="214"/>
         <source>Words are space separated and case insensitive</source>
         <translation>Palavras são separadas por espaço e não diferencia maiúsculas de minúsculas</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="181"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="217"/>
         <source>Type in to filter buttons...</source>
         <translation>Digite aqui para filtrar os botões...</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="205"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="241"/>
         <source>Small</source>
         <translation>Pequeno</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="228"/>
+        <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="264"/>
         <source>Large</source>
         <translation>Grande</translation>
     </message>
@@ -7388,32 +7417,32 @@ camada</translation>
 <context>
     <name>DonutHoleExtractorAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py" line="55"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py" line="58"/>
         <source>Input Polygon Layer</source>
         <translation>Camada de Polígonos de Entrada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py" line="63"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py" line="66"/>
         <source>Process only selected features</source>
         <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py" line="70"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py" line="73"/>
         <source>Outer Shell</source>
         <translation>Camada Externa</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py" line="76"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py" line="79"/>
         <source>Donut Hole</source>
         <translation>Buraco</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py" line="138"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py" line="141"/>
         <source>Donut Hole Extractor</source>
         <translation>Separar Buraco do Exterior de um Polígono</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py" line="145"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py" line="148"/>
         <source>Geometric Algorithms</source>
         <translation>Algoritmos Geométricos</translation>
     </message>
@@ -7917,37 +7946,37 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Thread não iniciado ainda.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="116"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="115"/>
         <source>Model source is not defined.</source>
         <translation>Fonte do modelo não definida.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="119"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="118"/>
         <source>Input model type is not supported (or missing).</source>
         <translation>Tipo do modelo de entrada não suportado (ou faltando).</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="122"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="121"/>
         <source>Input model source was not identified.</source>
         <translation>Fonte do modelo de entrada não identificada.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="222"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="214"/>
         <source>Model {name} v{version} ({lastModified}) by {author}.</source>
         <translation>Modelo {name} v{version} ({lastModified}) por {author}.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="260"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="249"/>
         <source>DSGTools Validation Model ({0})</source>
         <translation>DSGTools modelo de validação ({0})</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="383"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="377"/>
         <source>DSGTools Quality Assurance Models</source>
         <translation>DSGTools Modelos de Validação</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="435"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="430"/>
         <source>Model has failed:
 &apos;{error}&apos;</source>
         <translation>Modelo fracassou: &apos;{error}&apos;</translation>
@@ -7979,17 +8008,17 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Área</translation>
     </message>
     <message>
-        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="100"/>
+        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="99"/>
         <source>area_otf</source>
         <translation>area_otf</translation>
     </message>
     <message>
-        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="102"/>
+        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="101"/>
         <source>lenght_otf</source>
         <translation>comprimento_otf</translation>
     </message>
     <message>
-        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="202"/>
+        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="200"/>
         <source>Error for lyr </source>
         <translation>Erro para camada </translation>
     </message>
@@ -7999,7 +8028,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="177"/>
+        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="176"/>
         <source>Domains</source>
         <translation>Domínios</translation>
     </message>
@@ -8173,110 +8202,312 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="85"/>
         <source>Point Flags</source>
-        <translation>Flags do tipo ponto</translation>
+        <translation type="obsolete">Flags do tipo ponto</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="91"/>
         <source>Linestring Flags</source>
-        <translation>Flags do tipo linha</translation>
+        <translation type="obsolete">Flags do tipo linha</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="97"/>
         <source>Polygon Flags</source>
-        <translation>Flags do tipo polígono</translation>
+        <translation type="obsolete">Flags do tipo polígono</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="275"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="269"/>
         <source>LOG START</source>
         <translation>INÍCIO DO REGISTRO</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="280"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="274"/>
         <source>[RULE]</source>
         <translation>[REGRA]</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="280"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="274"/>
         <source>features</source>
         <translation>feições</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="280"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="274"/>
         <source>feature</source>
         <translation>feição</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="290"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="284"/>
         <source>LOG END</source>
         <translation>FIM DO REGISTRO</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="308"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="302"/>
         <source>Enforce Attribute Rules</source>
         <translation>Aplicar Regras de Atributo</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="315"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="309"/>
         <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="85"/>
+        <source>Point flags</source>
+        <translation>Flags do tipo ponto</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="91"/>
+        <source>Linestring flags</source>
+        <translation>Flags do tipo linha</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="97"/>
+        <source>Polygon flags</source>
+        <translation>Flags do tipo polígono</translation>
+    </message>
+</context>
+<context>
+    <name>EnforceAttributeRulesWrapper</name>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="81"/>
+        <source>Entire rule expression</source>
+        <translation>Digite a regra</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="104"/>
+        <source>Select an error type</source>
+        <translation>Selecione um tipo de erro</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="325"/>
+        <source>Import Rules Information</source>
+        <translation type="obsolete">Informações sobre a importação de regras</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="316"/>
+        <source>Some rules have not been loaded</source>
+        <translation>Algumas regras não foram carregadas</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="317"/>
+        <source>Do you want to ignore and continue or cancel?</source>
+        <translation>Gostaria de ignorar e continuar ou cancelar?</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="323"/>
+        <source>The following layers have not been loaded:
+</source>
+        <translation>As seguintes camadas não foram carregadas:
+</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="332"/>
+        <source>Successfully loaded rules!</source>
+        <translation>Regras carregadas com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="385"/>
+        <source>Description</source>
+        <translation>Descrição</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="385"/>
+        <source>Layer and field</source>
+        <translation>Camada e atributo</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <source>Expression</source>
+        <translation>Expressão</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <source>Error type</source>
+        <translation>Tipo de erro</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <source>Color</source>
+        <translation>Cor</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <source>Rule description</source>
+        <translation>Descrição da regra</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <source>Layer</source>
+        <translation>Camada</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <source>Field</source>
+        <translation>Atributo</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="511"/>
+        <source>Set of DSGTools Attribute Rules</source>
+        <translation>Conjunto de regras de atributos do DSGTools</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="242"/>
+        <source>Rule number {} : {} - is not a valid color.</source>
+        <translation>Regra número {} : {} - não é uma cor válida.</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="246"/>
+        <source>Rule number {} : {} - is not a valid string.</source>
+        <translation>Regra número {} : {} - não é uma string válida.</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="250"/>
+        <source>Rule number {} : {} - is not a valid expression.</source>
+        <translation>Regra número {} : {} - não é uma expressão válida.</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="254"/>
+        <source>Rule number {} : {} - is not a valid length = 2 list.</source>
+        <translation>Regra número {} : {} - não é uma lista válida com comprimento igual a 2.</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="258"/>
+        <source>Rule number {} : {} - is not a valid string description.</source>
+        <translation>Regra número {} : {} - não é uma descrição válida.</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="312"/>
+        <source>Information about importing rules</source>
+        <translation>Informações sobre importação de regras</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <source>Set a name for this attribute rule...</source>
+        <translation>Defina um nome para esta regra de atributo ...</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <source>Type a vector layer name...</source>
+        <translation>Digite o nome de uma camada vetorial...</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <source>Type a field layer name...</source>
+        <translation>Digite o nome do atributo da camada...</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <source>Type an error type...</source>
+        <translation>Digite um tipo de erro...</translation>
     </message>
 </context>
 <context>
     <name>EnforceSpatialRuleWrapper</name>
     <message>
-        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="51"/>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="72"/>
         <source>Set a name for this spatial rule...</source>
         <translation>Determine um nome para esta regra espacial...</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="70"/>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="91"/>
         <source>Type a vector layer&apos;s name...</source>
         <translation>Digite o nome da camada de vetor...</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="244"/>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="342"/>
         <source>Rule name</source>
         <translation>Nome da regra</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="244"/>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="342"/>
         <source>Layer A</source>
         <translation>Camada A</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="244"/>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="342"/>
         <source>Filter A</source>
         <translation>Filtro A</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="244"/>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="342"/>
         <source>Predicate</source>
         <translation>Predicado</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="244"/>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="342"/>
         <source>Layer B</source>
         <translation>Camada B</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="244"/>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="342"/>
         <source>Filter B</source>
         <translation>Filtro B</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="244"/>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="342"/>
         <source>Cardinality</source>
         <translation>Cardinalidade</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="310"/>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="428"/>
         <source>Set of DSGTools Spatial Rules</source>
         <translation>Conjunto de regras espaciais do DSGTools</translation>
     </message>
     <message>
         <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="349"/>
         <source>Spatial Rule #{n}</source>
-        <translation>Regra espacial #{n}</translation>
+        <translation type="obsolete">Regra espacial #{n}</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="137"/>
+        <source>Type in a DE-9IM as &apos;T*F0*F21*&apos;...</source>
+        <translation>Digite um DE-9IM como &apos;T * F0 * F21 *&apos; ...</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="340"/>
+        <source>Use DE-9IM inputs</source>
+        <translation>Usar entradas tipo DE-9IM</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="342"/>
+        <source>DE-9IM mask predicate</source>
+        <translation>Predicado do tipo DE-9IM</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="450"/>
+        <source>DSGTools: importing spatial rules</source>
+        <translation>DSGTools: importing spatial rules</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="453"/>
+        <source>Some rules have not been loaded</source>
+        <translation>Algumas regras não foram carregadas</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="454"/>
+        <source>Do you want to ignore and continue or cancel?</source>
+        <translation>Gostaria de ignorar e continuar ou cancelar?</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="457"/>
+        <source>The following layers have not been loaded:
+{0}</source>
+        <translation>As seguintes camadas não foram carregadas:
+{0}</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="465"/>
+        <source>Successfully loaded rules!</source>
+        <translation>Regras carregadas com sucesso!</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="560"/>
+        <source>Please provide at least 1 spatial rule.</source>
+        <translation>Por favor forneça pelo menos uma regra espacial.</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="571"/>
+        <source>{0} (row {1}).</source>
+        <translation>{0}(linha {1}).</translation>
     </message>
 </context>
 <context>
@@ -8284,112 +8515,137 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="50"/>
         <source>Spatial Rules Set</source>
-        <translation>Conjunto de regras espaciais</translation>
+        <translation type="obsolete">Conjunto de regras espaciais</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="59"/>
         <source>Point Flags</source>
-        <translation>Flags do tipo ponto</translation>
+        <translation type="obsolete">Flags do tipo ponto</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="66"/>
         <source>Linestring Flags</source>
-        <translation>Flags do tipo linha</translation>
+        <translation type="obsolete">Flags do tipo linha</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="73"/>
         <source>Polygon Flags</source>
-        <translation>Flags do tipo polígono</translation>
+        <translation type="obsolete">Flags do tipo polígono</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="98"/>
         <source>Enforce Spatial Rules</source>
-        <translation>Aplicar Regras Espaciais</translation>
+        <translation type="obsolete">Aplicar Regras Espaciais</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="105"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="106"/>
         <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="142"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="140"/>
         <source>Rule &quot;{name}&quot; broken: {{text}}</source>
         <translation>Regra &quot;{name}&quot; interrompida: {{text}}</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="50"/>
         <source>equals</source>
         <translation>é igual a</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="50"/>
         <source>is not equals</source>
         <translation>não é igual a</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="50"/>
         <source>disjoint</source>
         <translation>disjunto</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="50"/>
         <source>intersects</source>
         <translation>intersecta</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="50"/>
         <source>does not intersect</source>
         <translation>não intersecta</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="50"/>
         <source>touches</source>
         <translation>toca</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="50"/>
         <source>does not touch</source>
         <translation>não toca</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="50"/>
         <source>crosses</source>
         <translation>cruza</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="50"/>
         <source>does not cross</source>
         <translation>não cruza</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="50"/>
         <source>within</source>
         <translation>dentro</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="50"/>
         <source>is not within</source>
         <translation>não está dentro</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="50"/>
         <source>overlaps</source>
         <translation>sobrepõe</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="50"/>
         <source>does not overlap</source>
         <translation>não sobrepõe</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="50"/>
         <source>contains</source>
         <translation>contém</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="47"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="50"/>
         <source>does not contain</source>
         <translation>não contém</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="51"/>
+        <source>Spatial rules set</source>
+        <translation>Conjunto de regras espaciais</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="60"/>
+        <source>Point flags</source>
+        <translation>Flags do tipo ponto</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="67"/>
+        <source>Linestring flags</source>
+        <translation>Flags do tipo linha</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="74"/>
+        <source>Polygon flags</source>
+        <translation>Flags do tipo polígono</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="99"/>
+        <source>Enforce spatial rules</source>
+        <translation>Aplicar Regras Espaciais</translation>
     </message>
 </context>
 <context>
@@ -8534,19 +8790,64 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Endereço do Servidor</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.ui" line="36"/>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.ui" line="52"/>
         <source>Load / Reload</source>
         <translation>(Re) Carregar</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.ui" line="50"/>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.ui" line="66"/>
         <source>Workspace</source>
         <translation>Workspace</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.ui" line="57"/>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.ui" line="27"/>
         <source>Parameters</source>
         <translation>Parâmetros</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.ui" line="73"/>
+        <source>Version</source>
+        <translation>Versão</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.ui" line="80"/>
+        <source>Use SSL</source>
+        <translation>Usar SSL</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.ui" line="90"/>
+        <source>Use proxy</source>
+        <translation>Usar proxy</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="154"/>
+        <source>Connection timed out.</source>
+        <translation>Conexão expirou.</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="158"/>
+        <source>Connection timed out (max attempts).</source>
+        <translation>Conexão expirou (tentativas máximas).</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="164"/>
+        <source>Missing connection schema (e.g.&apos;http&apos;, etc).</source>
+        <translation>Esquema de conexão ausente (por exemplo &apos;http&apos;, etc).</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="170"/>
+        <source>Unexpected error while trying to reach server. Check your parameters. Error message: {}</source>
+        <translation>Erro inesperado ao tentar acessar o servidor. Verifique seus parâmetros. Mensagem de erro: {}</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="230"/>
+        <source>Proxy usage is set but no QGIS proxy settings was found.</source>
+        <translation>O uso de proxy está definido, mas nenhuma configuração de proxy QGIS foi encontrada.</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="238"/>
+        <source>URL to FME Manager server was not provided.</source>
+        <translation>URL para o servidor FME Manager não foi fornecido.</translation>
     </message>
 </context>
 <context>
@@ -9663,17 +9964,17 @@ Ativa</translation>
     <message>
         <location filename="../gui/CustomWidgets/ValidationWidgets/validationSetOfAttributesWidget.ui" line="30"/>
         <source>Create Attribute Rules</source>
-        <translation>Criar regras de atributo</translation>
+        <translation type="obsolete">Criar regras de atributo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ValidationWidgets/validationSetOfAttributesWidget.ui" line="42"/>
         <source>Enter attribute rule description</source>
-        <translation>Digite a descrição da regra de atributo</translation>
+        <translation type="obsolete">Digite a descrição da regra de atributo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ValidationWidgets/validationSetOfAttributesWidget.ui" line="91"/>
         <source>Run Attribute Rules</source>
-        <translation>Executar regras de atributo</translation>
+        <translation type="obsolete">Executar regras de atributo</translation>
     </message>
 </context>
 <context>
@@ -10081,7 +10382,7 @@ Reshapes polygon or line features from mouse movement.</source>
         <translation>Banco de Dados</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="363"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="362"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
@@ -10101,7 +10402,7 @@ Reshapes polygon or line features from mouse movement.</source>
         <translation> importado com sucesso.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="452"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="451"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
@@ -10163,111 +10464,111 @@ Com sucesso </translation>
         <translation>Operação completa!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="304"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="303"/>
         <source>
 Config with error:</source>
         <translation>
 Configuração com erro:</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="305"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="304"/>
         <source>
 Error messages for each config and database were output in qgis log.</source>
         <translation>
 Mensagens de erro para cada config e banco de dados foram geradas no log do QGIS.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="309"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="308"/>
         <source>Error for config </source>
         <translation>Erro para a configuração </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="347"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="346"/>
         <source>Select at least one configuration!</source>
         <translation>Selecione pelo menos uma configuração!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="363"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="362"/>
         <source>Operation canceled by user!</source>
         <translation>Operação cancelada pelo usuário!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="381"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="380"/>
         <source>Uninstall all settings from selected database</source>
         <translation>Desinstalar todos os ajustes do banco selecionado</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="382"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="381"/>
         <source>Manage settings from selected database</source>
         <translation>Gerenciar configurações do banco selecionado</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="395"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="394"/>
         <source>Update selected setting</source>
         <translation>Atualizar configuração selecionada</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="396"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="395"/>
         <source>Clone selected setting</source>
         <translation>Clonar configuração selecionada</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="386"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="385"/>
         <source>Uninstall selected setting</source>
         <translation>Desinstalar configuração selecionada</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="399"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="398"/>
         <source>Delete selected setting</source>
         <translation>Apagar configuração selecionada</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="397"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="396"/>
         <source>Manage selected setting</source>
         <translation>Gerenciar configuração selecionada</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="398"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="397"/>
         <source>Uninstall selected setting on all databases</source>
         <translation>Desinstalar configuração selecionada de todos os bancos</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="401"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="400"/>
         <source>Manage Settings on database</source>
         <translation>Gerenciar configurações do banco de dados</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="402"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="401"/>
         <source>Uninstall selected setting on selected database</source>
         <translation>Desinstalar configuração selecionada do banco selecionado</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="422"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="421"/>
         <source>Select at least one configuration to manage!</source>
         <translation>Selecione pelo menos uma configuração para gerenciar!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="452"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="451"/>
         <source>Select at least one configuration database to manage!</source>
         <translation>Selecione pelo menos uma configuração de banco para gerenciar!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="568"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="567"/>
         <source>Question</source>
         <translation>Pergunta</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="555"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="554"/>
         <source>Do you really want to delete </source>
         <translation>Você realmente deseja apagar </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="568"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="567"/>
         <source>Do you really want to apply selected operation on </source>
         <translation>Você realmente deseja aplicar a operação selecionada em </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="568"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="567"/>
         <source> (Data may be lost in the process)</source>
         <translation> (dados podem ser perdidos no processo)</translation>
     </message>
@@ -10350,28 +10651,28 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do QGIS
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.py" line="64"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.py" line="63"/>
         <source>Enter a parameter name!
 </source>
         <translation>Insira um nome para o parâmetro!
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.py" line="67"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.py" line="66"/>
         <source>Parameter already exists! Choose another name!
 </source>
         <translation>Parâmetro já existe! Escolha outro nome para o parâmetro!
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.py" line="70"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.py" line="69"/>
         <source>Select a template database!
 </source>
         <translation>Selecione um banco como modelo!
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.py" line="77"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.py" line="76"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
@@ -10435,12 +10736,12 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
 <context>
     <name>GeometryHandler</name>
     <message>
-        <location filename="../core/GeometricTools/geometryHandler.py" line="575"/>
+        <location filename="../core/GeometricTools/geometryHandler.py" line="574"/>
         <source>Lines id={0} and id={1} have conflicting directions ({2:.2f} deg).</source>
         <translation>Linhas id={0} e id={1} possuem direções conflitantes ({2:.2f} graus).</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/geometryHandler.py" line="587"/>
+        <location filename="../core/GeometricTools/geometryHandler.py" line="586"/>
         <source>Cannot infer directions for lines {0} and {1} (Right Angle)</source>
         <translation>Não foi possível inferir as direções das linhas {0} e {1} (ângulo reto)</translation>
     </message>
@@ -10496,7 +10797,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
 <context>
     <name>GeopackageDbCreator</name>
     <message>
-        <location filename="../core/Factories/DbCreatorFactory/geopackageDbCreator.py" line="66"/>
+        <location filename="../core/Factories/DbCreatorFactory/geopackageDbCreator.py" line="65"/>
         <source>Creating Geopackage {0}... </source>
         <translation>Criando o arquivo Geopackage {0}... </translation>
     </message>
@@ -10922,12 +11223,12 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <translation>Ponta solta em {0}</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="348"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="347"/>
         <source>Identify Dangles</source>
         <translation>Identificar Pontas Soltas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="355"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="354"/>
         <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
@@ -11421,32 +11722,32 @@ Camada</translation>
         <translation>{0} Flags</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="179"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="178"/>
         <source>Gap in coverage with frame</source>
         <translation>Buraco entre a camada de cobertura terrestre e de referência</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="197"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="196"/>
         <source>Gap in coverage layer.</source>
         <translation>Buraco na camada de cobertura terrestre.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="209"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="208"/>
         <source>Overlapping features (id,layer): {0}</source>
         <translation>Sobreposição entre as feições (id,camada): {0}</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="227"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="226"/>
         <source>Identify Gaps and Overlaps in Coverage Layers</source>
         <translation>Identificar Buracos e Sobreposições na Camada de Cobertura Terrestre</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="234"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="233"/>
         <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="157"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="156"/>
         <source>Gap in coverage layer</source>
         <translation>Buraco na camada de cobertura</translation>
     </message>
@@ -12053,12 +12354,12 @@ Camada</translation>
         <translation>{0} Flags</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesInCoverageAlgorithm.py" line="169"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesInCoverageAlgorithm.py" line="168"/>
         <source>Identify Out Of Bounds Angles in Coverage</source>
         <translation>Identificar Ângulos Fora de Limites na Cobertura Terrestre</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesInCoverageAlgorithm.py" line="176"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesInCoverageAlgorithm.py" line="175"/>
         <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
@@ -12267,17 +12568,17 @@ Camada</translation>
         <translation>{0} Flags</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOverlapsAlgorithm.py" line="137"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOverlapsAlgorithm.py" line="136"/>
         <source>Features from {0} overlap.</source>
         <translation>Sobreposição de feições da camada {0}.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOverlapsAlgorithm.py" line="157"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOverlapsAlgorithm.py" line="156"/>
         <source>Identify Overlaps</source>
         <translation>Identificar Sobreposições</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOverlapsAlgorithm.py" line="164"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOverlapsAlgorithm.py" line="163"/>
         <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
@@ -12370,6 +12671,74 @@ Camada</translation>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="33"/>
         <source>Identify Layer Overlaps</source>
         <translation type="obsolete">Identificar Sobreposições na camada</translation>
+    </message>
+</context>
+<context>
+    <name>IdentifyPolygonSliverAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py" line="54"/>
+        <source>Polygons to be checked</source>
+        <translation>Polígonos a serem verificados</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py" line="61"/>
+        <source>Process only selected features</source>
+        <translation>Processar apenas feições selecionadas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py" line="67"/>
+        <source>Ignore empty and invalid geometries</source>
+        <translation>Ignorar geometrias vazias e inválidas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py" line="73"/>
+        <source>Tolerance area-perimeter ratio</source>
+        <translation>Tolerância para a razão área-perímetro</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py" line="82"/>
+        <source>{0} flags</source>
+        <translation>{0} flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py" line="130"/>
+        <source>No layers were provided.</source>
+        <translation>Nenhuma camada foi fornecida.</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py" line="136"/>
+        <source>All layers are empty.</source>
+        <translation>Todas as camdas estão vazias.</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py" line="150"/>
+        <source>Checking {0}...</source>
+        <translation>Checando {0}...</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py" line="157"/>
+        <source>{0} slivers were found on {1}!</source>
+        <translation>{0} slivers foram encontrados em {1}!</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py" line="164"/>
+        <source>Populating flags layer...</source>
+        <translation>Preparando camada de flags...</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py" line="188"/>
+        <source>Feature {0} from layer {1} has ratio {2:.2f}</source>
+        <translation>Feição {0} da camada {1} tem proporção de {2:.2f}</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py" line="213"/>
+        <source>Identify polygon slivers</source>
+        <translation>Identificar polígonos alongados</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyPolygonSliverAlgorithm.py" line="220"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -13246,69 +13615,84 @@ Camada</translation>
 <context>
     <name>LayerHandler</name>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="103"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="101"/>
         <source>DsgTools reclassification</source>
         <translation>Reclassificação do DSGTools</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="412"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="418"/>
         <source>Merging Lines</source>
         <translation>Unindo linhas</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1020"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1024"/>
         <source>Creating index</source>
         <translation>Criando índice espacial</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1357"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1361"/>
         <source>Building auxiliar search structures</source>
         <translation>Construindo estruturas auxiliares de busca</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1038"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1042"/>
         <source>Getting flags</source>
         <translation>Obtendo lags</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1212"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1216"/>
         <source>Getting lines</source>
         <translation>Obtendo linhas</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1180"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1184"/>
         <source>Building vertex near edge dict</source>
         <translation>Construindo dicionário de vértices próximos à borda</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1221"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1225"/>
         <source>Building intersections</source>
         <translation>Executando interseções</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1229"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1233"/>
         <source>Finding vertexes</source>
         <translation>Encontrando vértices</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1236"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1240"/>
         <source>Finding unshared vertexes</source>
         <translation>Encontrando vértices não compartilhados</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1497"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1532"/>
         <source>Getting constraint lines</source>
         <translation>Obtendo linhas restritas</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1649"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1786"/>
         <source>Polygon without center point.</source>
         <translation>Polígono sem ponto central.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1650"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1788"/>
         <source>Polygon with more than one center point with conflicting attributes.</source>
         <translation>Polígono com mais de um ponto central com atributos contraditórios.</translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="159"/>
+        <source>No layers were provided or they are all empty.</source>
+        <translation>Nenhuma camada foi fornecida ou estão todas vazias.</translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1866"/>
+        <source>Input layer is not polygon.</source>
+        <translation>A camada de entrada não é de polígono.</translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1875"/>
+        <source>Invalid or empty geometry found!</source>
+        <translation>Geometria inválida ou vazia encontrada!</translation>
     </message>
 </context>
 <context>
@@ -13968,31 +14352,31 @@ Camada</translation>
         <translation>Carregando camadas dos bancos de dados selecionados... </translation>
     </message>
     <message>
-        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="191"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="190"/>
         <source>
 Databases with error:</source>
         <translation>
 Bancos de dados com erros:</translation>
     </message>
     <message>
-        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="193"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="192"/>
         <source>
 Error messages for each database were output in qgis log.</source>
         <translation>
 Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</translation>
     </message>
     <message>
-        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="195"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="194"/>
         <source>Error for database </source>
         <translation>Erro para o banco de dados </translation>
     </message>
     <message>
-        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="206"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="205"/>
         <source>Select Style</source>
         <translation>Selecione o estilo</translation>
     </message>
     <message>
-        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="210"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="209"/>
         <source>No available styles</source>
         <translation>Sem estilos disponíveis</translation>
     </message>
@@ -14188,32 +14572,32 @@ camada</translation>
 <context>
     <name>ManageComplexDialog</name>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="395"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="394"/>
         <source>edit this field</source>
         <translation>edite este campo</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="427"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="426"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="427"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="426"/>
         <source>The field: &apos;nome&apos; must be filled in all rows. Please, check and try again.</source>
         <translation>O campo &apos;nome&apos; precisa ser preenchido em todas as linhas. Por favor, verifique e tente novamente.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="443"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="442"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="274"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="273"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="274"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="273"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
@@ -14320,7 +14704,7 @@ Usuários com sucesso: </translation>
         <translation type="obsolete">Usuários com erro:</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="138"/>
+        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="137"/>
         <source>
 Error messages for each user were output in qgis log.</source>
         <translation>
@@ -14332,14 +14716,14 @@ Mensagens de erro para cada usuário foram registradas no log do QGIS.</translat
         <translation type="obsolete">Erro para o usuário </translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="136"/>
+        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="135"/>
         <source>
 Users with error:</source>
         <translation>
 Usuários com erro:</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="140"/>
+        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="139"/>
         <source>Error for user {user}: {exception}</source>
         <translation>Erro para o usuário {user}: {exception}</translation>
     </message>
@@ -14596,7 +14980,7 @@ Camada</translation>
 <context>
     <name>MessageRaiser</name>
     <message>
-        <location filename="../core/Utils/utils.py" line="429"/>
+        <location filename="../core/Utils/utils.py" line="441"/>
         <source>Confirm action</source>
         <translation>Confirmar a ação</translation>
     </message>
@@ -14639,35 +15023,35 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="142"/>
         <source>Critical!</source>
-        <translation>Crítico!</translation>
+        <translation type="obsolete">Crítico!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="142"/>
         <source>This tool does not work with angular unit reference system!</source>
-        <translation>Esta ferramenta não funciona com sistemas de referência angulares!</translation>
+        <translation type="obsolete">Esta ferramenta não funciona com sistemas de referência angulares!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="146"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="139"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="146"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="139"/>
         <source>&lt;font color=red&gt;Shape value not defined :&lt;/font&gt;&lt;br&gt;&lt;font color=blue&gt;Define all values to activate tool!&lt;/font&gt;</source>
         <translation>&lt;font color=red&gt;Valor de forma não definido: &lt;/font&gt;&lt;br&gt;&lt;font color=blue&gt;defina todos os valores para ativar a ferramenta!&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="234"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="236"/>
         <source>SIZES</source>
         <translation>TAMANHOS</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="61"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="58"/>
         <source>DSGTools: Minimum Area Tool</source>
         <translation>DSGTools: Ferramenta de Área Mínima</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="65"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="62"/>
         <source>DSGTools: Draw Shape</source>
         <translation>DSGTools: Desenhar Forma</translation>
     </message>
@@ -14717,27 +15101,27 @@ Camada</translation>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py" line="79"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py" line="78"/>
         <source>EDGV Version...</source>
         <translation>Versão da EDGV...</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py" line="114"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py" line="111"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py" line="136"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py" line="133"/>
         <source>Select the amount of datasources to be created.</source>
         <translation>Selecione a quantidade de fontes de dados a serem criados.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py" line="139"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py" line="136"/>
         <source>Invalid EDGV version.</source>
         <translation>Versão da EDGV inválida.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py" line="142"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py" line="139"/>
         <source>Invalid CRS.</source>
         <translation>SRC inválido.</translation>
     </message>
@@ -14745,12 +15129,12 @@ Camada</translation>
 <context>
     <name>MultiPostgisSelector</name>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiPostgisSelectorWidget.py" line="53"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiPostgisSelectorWidget.py" line="52"/>
         <source>Available Databases</source>
         <translation>Bancos de dados disponíveis</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiPostgisSelectorWidget.py" line="152"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiPostgisSelectorWidget.py" line="150"/>
         <source>Select Server</source>
         <translation>Selecione o servidor</translation>
     </message>
@@ -14927,112 +15311,112 @@ Camada</translation>
         <translation>Nó com fluxo incorreto</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="815"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="814"/>
         <source>Lines id={0} and id={1} have conflicting directions ({2:.2f} deg).</source>
         <translation>Linhas id={0} e id={1} possuem direções conflitantes ({2:.2f} graus).</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="827"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="826"/>
         <source>Cannot infer directions for lines {0} and {1} (Right Angle)</source>
         <translation>Não foi possível inferir as direções das linhas {0} e {1} (ângulo reto)</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="871"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="870"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="871"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="870"/>
         <source>There are unclassified nodes! Node (re)creation process is recommended before this process.</source>
         <translation>Existem nós sem classificação! É recomendo a execução do processo de criação/classificação de nós antes deste processo.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="900"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="899"/>
         <source>Node was flagged upon classification (probably cannot be an ending hidrography node).</source>
         <translation>Nó inválido desde sua classificação (provavelmente não pode ser um nó final na rede).</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="889"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="888"/>
         <source>Redundant node. Connected lines ({0}, {1}) share the same set of attributes.</source>
         <translation>Nó redundante. Está conectado a linhas ({0}, {1}) que compartilham o mesmo conjunto de atributos.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="907"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="906"/>
         <source>Line {0} disconnected from network.</source>
         <translation>Linha {0} desconectada da rede.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="909"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="908"/>
         <source>Node is overloaded - 4 or more lines are flowing in (&gt;= 2 lines) and out (&gt;= 2 lines).</source>
         <translation>Nó está sobrecarregado - 4 ou mais linhas fluem a partir (&gt;= 2 linhas) ou para (&gt;= 2 linhas) o nó.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="935"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="932"/>
         <source>Line id={0} does not end at a node with IN flow type (node type is {1}). </source>
         <translation>Linhas id={0} termina em um nó com fluxo de ENTRADA (nó do tipo {1}). </translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="942"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="939"/>
         <source>Line id={0} does not start at a node with OUT flow type (node type is {1}). </source>
         <translation>Linhas id={0} termina em um nó com fluxo de SAÍDA (nó do tipo {1}). </translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="948"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="945"/>
         <source>Lines are either flowing only in or out of node. Node classification is {0}.</source>
         <translation>Linhas possuem apenas fluxo de saída ou entrada no nó. Nó é do tipo {0}.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="957"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="954"/>
         <source>Line {0} seems to be invalid (unable to point specific reason).</source>
         <translation>Linha {0} aparentemente é inválida (incapaz de especificar o motivo).</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1097"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1093"/>
         <source>No network starting point was found</source>
         <translation>Não foi possível identificar pontos de início da rede</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1201"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1196"/>
         <source>does not end at a node with IN flow type</source>
         <translation>termina em um nó com fluxo de ENTRADA</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1202"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1197"/>
         <source>does not start at a node with OUT flow type</source>
         <translation>termina em um nó com fluxo de SAÍDA</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1203"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1198"/>
         <source>have conflicting directions</source>
         <translation>possuem direções conflitantes</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1204"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1199"/>
         <source>Redundant node.</source>
         <translation>Nó redundante.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1205"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1200"/>
         <source>Node was flagged upon classification</source>
         <translation>Nó inválido desde sua classificação</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1229"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1224"/>
         <source>id=</source>
         <translation>id=</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1234"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1229"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1300"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1295"/>
         <source>{0} to {1}</source>
         <translation>{0} a {1}</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1433"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1426"/>
         <source>Lines that were flipped while directioning hidrography lines: {0}
 
 </source>
@@ -15041,7 +15425,7 @@ Camada</translation>
 </translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1435"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1428"/>
         <source>Lines that were merged while directioning hidrography lines: {0}
 
 </source>
@@ -15050,7 +15434,7 @@ Camada</translation>
 </translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1439"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1432"/>
         <source>
 Verify Network Directioning: Flipped/Merged Lines
 </source>
@@ -15059,32 +15443,32 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
 </translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1499"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1492"/>
         <source>Connected to invalid hidrography node.</source>
         <translation>Conectada a um nó inválido.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1500"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1493"/>
         <source>Line not yet visited.</source>
         <translation>Linha ainda não verificada.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1593"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1586"/>
         <source>Cycle {0}/{1} completed.</source>
         <translation>Ciclo {0}/{1} concluído.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1609"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1602"/>
         <source>Invalid lines were exposed in line flags layer.</source>
         <translation>Linhas inválidas expostas na camada de flags do tipo linha.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1634"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1627"/>
         <source>{0} nodes may be invalid ({1:.2f}% of network is well directed). Check flags.</source>
         <translation>{0} nós podem estar inválidos ({1:.2f}%) da rede está direcionada corretamente). Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/networkHandler.py" line="1637"/>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1630"/>
         <source>{1:.2f}% of network is well directed.</source>
         <translation>{1:.2f}%) da rede está direcionada corretamente.</translation>
     </message>
@@ -15102,21 +15486,21 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <translation>Selecione uma tabela</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py" line="122"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py" line="121"/>
         <source>A table name must be chosen.
 </source>
         <translation>Um nome de tabela deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py" line="124"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py" line="123"/>
         <source>A schema must be chosen.
 </source>
         <translation>Um esquema deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py" line="130"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py" line="129"/>
         <source>Error in attribute </source>
         <translation>Erro no atributo </translation>
     </message>
@@ -15139,28 +15523,28 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <translation>Área</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="143"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="142"/>
         <source>Class must have a category.
 </source>
         <translation>A classe deve ter uma categoria.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="145"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="144"/>
         <source>Class must have a name.
 </source>
         <translation>A classe deve ter um nome.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="147"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="146"/>
         <source>Class must have a geometric primitive.
 </source>
         <translation>A classe deve ter uma primitiva geométrica.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="153"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="152"/>
         <source>Error in class </source>
         <translation>Erro na classe </translation>
     </message>
@@ -15168,42 +15552,42 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
 <context>
     <name>NewConnectionLineEdit</name>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="104"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="103"/>
         <source>EDGV Version...</source>
         <translation>Versão da EDGV...</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="128"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="125"/>
         <source>New Database</source>
         <translation>Banco de dados novo</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="173"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="170"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="188"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="185"/>
         <source>Invalid datasource (is there a blank space on it?).</source>
         <translation>Fonte de dados inválida (possui espaços no nome?).</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="192"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="189"/>
         <source>Invalid connection to server.</source>
         <translation>Conexão com o servidor inválida.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="195"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="192"/>
         <source>Database {0} already exists into selected server.</source>
         <translation>Banco de dados {0} já existe no servidor selecionado.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="198"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="195"/>
         <source>Invalid EDGV version.</source>
         <translation>Versão da EDGV inválida.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="201"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="198"/>
         <source>Invalid CRS.</source>
         <translation>SRC inválido.</translation>
     </message>
@@ -15211,42 +15595,42 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
 <context>
     <name>NewDatabaseLineEdit</name>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="96"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="93"/>
         <source>EDGV Version...</source>
         <translation>Versão da EDGV...</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="120"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="115"/>
         <source>New Database</source>
         <translation>Banco de dados novo</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="177"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="172"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="192"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="187"/>
         <source>Invalid datasource.</source>
         <translation>Fonte de dados inválida.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="196"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="191"/>
         <source>Invalid connection to server.</source>
         <translation>Conexão com o servidor inválida.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="199"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="194"/>
         <source>Database {0} already exists.</source>
         <translation>Banco de dados {0} já existe.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="203"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="198"/>
         <source>Invalid EDGV version.</source>
         <translation>Versão da EDGV inválida.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="206"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="201"/>
         <source>Invalid CRS.</source>
         <translation>SRC inválido.</translation>
     </message>
@@ -15289,28 +15673,28 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <translation>Code value já existe, escolha outro.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="143"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="142"/>
         <source>A code value must be entered.
 </source>
         <translation>Um code value deve ser entrado.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="145"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="144"/>
         <source>A code name value must be entered.
 </source>
         <translation>Um code name deve ser fornecido.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="147"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="146"/>
         <source>A domain table must be chosen.
 </source>
         <translation>Uma tabela de domínio deve ser escolhida.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="152"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="151"/>
         <source>Error in new domain value </source>
         <translation>Erro no novo valor de domínio </translation>
     </message>
@@ -15328,28 +15712,28 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <translation>Code value já inserido.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="171"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="170"/>
         <source>A domain name must be chosen.
 </source>
         <translation>Um nome de domínio deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="173"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="172"/>
         <source>There must be no empty codes or values.
 </source>
         <translation>Não pode haver códigos ou valores vazios.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="175"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="174"/>
         <source>Codes must be unique.
 </source>
         <translation>Códigos devem ser únicos.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="197"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="196"/>
         <source>Error in domain </source>
         <translation>Erro no domínio </translation>
     </message>
@@ -15601,7 +15985,7 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <translation>Descer</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.py" line="138"/>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.py" line="137"/>
         <source>Error for rule #{0}:
 </source>
         <translation>Erro para a regra #{0}:
@@ -16337,6 +16721,11 @@ Camada</translation>
         <source>Not possible to digitise, segment smaller than minimun distance.</source>
         <translation>Não foi possível adquirir o nó: distância menor que a tolerância.</translation>
     </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/Acquisition/polygon.py" line="86"/>
+        <source>Not possible to digitize, segment smaller than minimun distance.</source>
+        <translation>Não é possível digitalizar, segmento menor que a distância mínima.</translation>
+    </message>
 </context>
 <context>
     <name>PostGISLayer</name>
@@ -16393,7 +16782,7 @@ Camada</translation>
         <translation type="obsolete">Erro!</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2019"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2038"/>
         <source>Operation not defined for this database version!</source>
         <translation>Operação não definida para esta versão de banco de dados!</translation>
     </message>
@@ -16423,7 +16812,7 @@ Camada</translation>
         <translation>Problema criando usuário: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2878"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2894"/>
         <source>Problem removing user: </source>
         <translation>Problema removendo usuário: </translation>
     </message>
@@ -16438,7 +16827,7 @@ Camada</translation>
         <translation>Problema ao revogar perfil: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="908"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="927"/>
         <source>Problem dropping database: </source>
         <translation>Problema apagando o banco de dados: </translation>
     </message>
@@ -16448,7 +16837,7 @@ Camada</translation>
         <translation type="obsolete">Problema acessando banco de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="935"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="954"/>
         <source>Problem creating views: </source>
         <translation>Problema criando visões: </translation>
     </message>
@@ -16458,27 +16847,27 @@ Camada</translation>
         <translation type="obsolete">Problema obtendo a versão do banco de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="197"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="199"/>
         <source>Problem listing geom classes: </source>
         <translation>Problema ao listar classes geométricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="233"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="234"/>
         <source>Problem listing complex classes: </source>
         <translation>Problema ao listar classes complexas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="300"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="301"/>
         <source>Problem getting database structure: </source>
         <translation>Problema ao obter a estrutura do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2025"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2044"/>
         <source>Problem executing query: </source>
         <translation>Problema ao executar a query: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="447"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="448"/>
         <source>Problem obtaining link column: </source>
         <translation>Problema obtendo a coluna de ligação: </translation>
     </message>
@@ -16488,7 +16877,7 @@ Camada</translation>
         <translation>Problema ao carregar feições associadas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2868"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2884"/>
         <source>Problem getting users: </source>
         <translation>Problema ao obter usuários: </translation>
     </message>
@@ -16523,57 +16912,57 @@ Camada</translation>
         <translation type="obsolete">Problema ao acessar bancos de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="847"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="866"/>
         <source>Problem getting databases: </source>
         <translation>Problema ao obter bancos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="865"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="884"/>
         <source>Problem checking user: </source>
         <translation>Problema ao checar usuário: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="963"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="982"/>
         <source>Problem getting invalid geometries: </source>
         <translation>Problema obtendo geometrias inválidas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1000"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1019"/>
         <source>Problem inserting flags: </source>
         <translation>Problema inserindo flags: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1021"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1040"/>
         <source>Problem deleting flags: </source>
         <translation>Problema removendo flags: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3597"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3613"/>
         <source>Problem creating structure: </source>
         <translation>Problema criando estrutura: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1075"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1094"/>
         <source>Problem acquiring status: </source>
         <translation>Problema adquirindo status: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1090"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1109"/>
         <source>Problem setting status: </source>
         <translation>Problema ajustando o status: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1100"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1119"/>
         <source>Problem getting running process: </source>
         <translation>Problema obtendo processo atual: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1129"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1148"/>
         <source>Problem testing spatial rule: </source>
         <translation>Problema testando regra espacial: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1149"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1168"/>
         <source>Problem getting dimension: </source>
         <translation>Problema obtendo dimensão: </translation>
     </message>
@@ -16583,142 +16972,142 @@ Camada</translation>
         <translation type="obsolete">Problema explodindo geometrias: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1227"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1246"/>
         <source>Problem getting duplicated geometries: </source>
         <translation>Problema obtendo geometrias duplicadas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1245"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1264"/>
         <source>Problem getting small areas: </source>
         <translation>Problema obtendo áreas pequenas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1264"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1283"/>
         <source>Problem getting small lines: </source>
         <translation>Problema obtendo linhas pequenas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1289"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1308"/>
         <source>Problem preparing auxiliary structure: </source>
         <translation>Problema preparando estrutura auxiliar: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1298"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1317"/>
         <source>Problem getting vertex near edges: </source>
         <translation>Problema obtendo vértice próximo à arestas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1324"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1343"/>
         <source>Problem deleting features from </source>
         <translation>Problema deletando feições de </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1342"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1361"/>
         <source>Problem getting not simple geometries: </source>
         <translation>Problema obtendo geometrias não simples: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1361"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1380"/>
         <source>Problem getting not out of bounds angles: </source>
         <translation>Problema obtendo ângulos fora dos limites: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1378"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1397"/>
         <source>Problem getting flags dict: </source>
         <translation>Problema obtendo dicionário de flags: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1409"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1428"/>
         <source>Problem forcing validity of features from </source>
         <translation>Problema forçando validade de feições de </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1424"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1443"/>
         <source>Problem getting table extent: </source>
         <translation>Problema obtendo extensão da tabela: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1457"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1476"/>
         <source>Problem getting orphan tables: </source>
         <translation>Problema obtendo tabelas órfãs: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1464"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1483"/>
         <source>Problem counting orphan table: </source>
         <translation>Problema contando tabelas órfãs: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1487"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1506"/>
         <source>Problem updating geometries: </source>
         <translation>Problema atualizando geometrias: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1493"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1512"/>
         <source>Problem deleting geometries: </source>
         <translation>Problema deletando geometrias: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1505"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1524"/>
         <source>Problem checking structure: </source>
         <translation>Problema checando estrutura: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1537"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1556"/>
         <source>Problem creating centroid structure: </source>
         <translation>Problema criando estrutura de centróides: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1557"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1576"/>
         <source>Problem getting earth coverage tables: </source>
         <translation>Problema obtendo tabelas de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1655"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1674"/>
         <source>Problem getting earth coverage structure: </source>
         <translation>Problema obtendo estrutura de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1588"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1607"/>
         <source>Problem setting earth coverage structure: </source>
         <translation>Problema ajustando a estrutura de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1631"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1650"/>
         <source>Problem dropping centroids: </source>
         <translation>Problema apagando centróides: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1673"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1692"/>
         <source>Problem getting class name: </source>
         <translation>Problema obtendo nome da classe: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1702"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1721"/>
         <source>Problem snapping to grid: </source>
         <translation>Problema ao realizar snap para o grid: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1723"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1742"/>
         <source>Problem snapping to frame: </source>
         <translation>Problema ao realizar snap para a moldura: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1740"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1759"/>
         <source>Problem densifying frame: </source>
         <translation>Problema densificando moldura: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1758"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1777"/>
         <source>Problem creating recursive snap function: </source>
         <translation>Problema criando função de snap recursivo: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1764"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1783"/>
         <source>Problem snapping class: </source>
         <translation>Problema ao realizar snap na classe: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2895"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2911"/>
         <source>Problem deleting flag: </source>
         <translation>Problema deletando flag: </translation>
     </message>
@@ -16728,7 +17117,7 @@ Camada</translation>
         <translation>Problema ao obter tabelas do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2913"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2929"/>
         <source>Problem removing empty geometries: </source>
         <translation>Problema removendo geometrias vazias: </translation>
     </message>
@@ -16758,52 +17147,52 @@ Camada</translation>
         <translation type="obsolete">Problema ao apagar a tabela temporária: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1850"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1869"/>
         <source>Problem creating style table: </source>
         <translation>Problema criando tabela de estilos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1839"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1858"/>
         <source>Problem getting style table: </source>
         <translation>Problema obtendo tabela de estilos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1981"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2000"/>
         <source>Problem getting styles from db: </source>
         <translation>Problema obtendo estilos do db: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1927"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1946"/>
         <source>Problem importing style</source>
         <translation>Problema importanto estilo</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1937"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1956"/>
         <source>Style </source>
         <translation>Estilo </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1937"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1956"/>
         <source> does not match the version of database </source>
         <translation> não combina com a versão do banco de dados </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1960"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1979"/>
         <source>Problem importing style </source>
         <translation>Problema importando estilos </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2004"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2023"/>
         <source>Problem running sql </source>
         <translation>Problema ao rodar sql </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3922"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3938"/>
         <source>Problem getting geom schemas from db: </source>
         <translation>Problema obtendo esquemas geométricos do db: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2067"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2086"/>
         <source>Problem getting geom tables from db: </source>
         <translation>Problema obtendo tabelas geométricas do db: </translation>
     </message>
@@ -16813,37 +17202,37 @@ Camada</translation>
         <translation type="obsolete">Versão de EDGV não reconhecida!</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2300"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2317"/>
         <source>Problem getting geom types from db: </source>
         <translation>Problema obtendo tipos geométricos do db: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2323"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2340"/>
         <source>Problem getting geom column dict: </source>
         <translation>Problema obtendo dicionário de colunas geométricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2568"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2585"/>
         <source>Problem getting not null dict: </source>
         <translation>Problema obtendo dicionário de não nulos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2585"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2602"/>
         <source>Problem getting domain dict from table </source>
         <translation>Problema obtendo dicionário de domínios da tabela </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2597"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2614"/>
         <source>Problem getting layer column dict from table </source>
         <translation>Problema obtendo dicionário de colunas da tabela </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2620"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2637"/>
         <source>Problem getting geom struct dict: </source>
         <translation>Problema obtendo dicionário de estruturas geométricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2643"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2660"/>
         <source>Problem creating from template: </source>
         <translation>Problema criando a partir de template: </translation>
     </message>
@@ -16853,47 +17242,47 @@ Camada</translation>
         <translation type="obsolete">Problema ajustando srid: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2721"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2738"/>
         <source>Problem setting as template: </source>
         <translation>Problema ajustando template: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2933"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2949"/>
         <source>Problem creating database: </source>
         <translation>Problema criando banco de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2773"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2790"/>
         <source>Problem setting database as template: </source>
         <translation>Problema ajustando banco como template: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2836"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2852"/>
         <source>Error on database creation! </source>
         <translation>Erro na criação de banco de dados! </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2836"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2852"/>
         <source> Db will be dropped.</source>
         <translation> Db será apagado.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2854"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2870"/>
         <source>Problem altering search path: </source>
         <translation>Problema alterando search path: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1163"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1182"/>
         <source>Problem exploding candidates: </source>
         <translation>Problema explodindo candidatos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1682"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1701"/>
         <source>Problem getting db oid: </source>
         <translation>Problema obtendo oid do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1967"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1986"/>
         <source>Problem getting table schema from db: </source>
         <translation>Problema obtendo esquema de tabela do db: </translation>
     </message>
@@ -16905,182 +17294,182 @@ Camada</translation>
 </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2782"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2799"/>
         <source>Problem checking  template: </source>
         <translation>Problema checando template: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2943"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2959"/>
         <source>Problem looking for admindb: </source>
         <translation>Problema procurando pelo admindb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2957"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2973"/>
         <source>Problem getting roles dict: </source>
         <translation>Problema ao obter dicionário de perfis: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3311"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3327"/>
         <source>Error! Operation not defined for non dsgtools_admindb</source>
         <translation>Erro! Operação não definida para bancos nãodsgtools_admindb</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2976"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2992"/>
         <source>Problem inserting into permission profile: </source>
         <translation>Problema inserindo no perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2987"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3003"/>
         <source>Problem dropping profile: </source>
         <translation>Problema apagando perfil: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2997"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3013"/>
         <source>Problem getting roles from adminDb: </source>
         <translation>Problema obtendo perfis do adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3009"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3025"/>
         <source>Problem getting all roles from adminDb: </source>
         <translation>Problema obtendo todos os perfis do adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3024"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3040"/>
         <source>Problem deleting permission profile: </source>
         <translation>Problema deletando perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3035"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3051"/>
         <source>Problem getting granted roles dict: </source>
         <translation>Problema ao obter dicionário de perfis permitidos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3054"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3070"/>
         <source>Problem updating permission profile: </source>
         <translation>Problema atualizando perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3064"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3080"/>
         <source>Problem getting domain tables: </source>
         <translation>Problema obtendo tabelas de domínio: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3078"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3094"/>
         <source>Problem getting geometric schema list: </source>
         <translation>Problema obtendo lista de esquemas geométricos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3092"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3108"/>
         <source>Problem getting geometric table list: </source>
         <translation>Problema obtendo lista de tabelas geométricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3171"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3187"/>
         <source>Problem getting inheritance: </source>
         <translation>Problema obtendo herança: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3209"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3225"/>
         <source>Problem getting attribute list: </source>
         <translation>Problema obtendo lista de atributos: </translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/postgisDb.py" line="3270"/>
         <source>Problem constraint dict from db: </source>
-        <translation>Problema obtendo dicionário de constraints do banco: </translation>
+        <translation type="obsolete">Problema obtendo dicionário de constraints do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3300"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3316"/>
         <source>Problem getting default from db: </source>
         <translation>Problema obtendo default do db: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3315"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3331"/>
         <source>Problem inserting property </source>
         <translation>Problema inserindo propriedade </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3315"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3331"/>
         <source> into dsgtools_admindb: </source>
         <translation> no banco dsgtools_admindb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3334"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3350"/>
         <source>Problem getting setting from adminDb: </source>
         <translation>Problema obtendo ajuste do adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3348"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3364"/>
         <source>Problem getting settings from adminDb: </source>
         <translation>Problema obtendo ajustes do adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3363"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3379"/>
         <source>Problem deleting permission setting: </source>
         <translation>Problema deletando ajuste de permissão: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3376"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3392"/>
         <source>Problem upgrading postgis: </source>
         <translation>Problema atualizando o PostGIS: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3385"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3401"/>
         <source>Problem getting postgis version: </source>
         <translation>Problema obtendo versão do PostGIS: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3411"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3427"/>
         <source>Problem getting applied customizations: </source>
         <translation>Problema obtendo customizações aplicadas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3427"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3443"/>
         <source>Problem creating Setting table: </source>
         <translation>Problema criando tabela de ajustes: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3436"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3452"/>
         <source>Problem getting checking if table exists: </source>
         <translation>Problema checando se tabela existe: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3451"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3467"/>
         <source>Problem getting getting record from adminDb: </source>
         <translation>Problema obtendo registro do adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3464"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3480"/>
         <source>Invalid property with database version.</source>
         <translation>Propriedade invalida com versão de banco.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3472"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3488"/>
         <source>Problem inserting record inside property table: </source>
         <translation>Problema inserindo registro na tabela de propriedades: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3483"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3499"/>
         <source>Problem getting getting property dict: </source>
         <translation>Problema obtendo dicionário de domínios: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3506"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3522"/>
         <source>Problem inserting installed record into adminDb: </source>
         <translation>Problema inserindo registro no adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3547"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3563"/>
         <source>Problem removing installed record into db: </source>
         <translation>Problema removendo registro do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3556"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3572"/>
         <source>Problem getting primary key column: </source>
         <translation>Problema ao identificar a coluna de chave primária: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2289"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2306"/>
         <source>Problem getting tables dict from db: </source>
         <translation>Problema obtendo tabelas do bd: </translation>
     </message>
@@ -17090,83 +17479,83 @@ Camada</translation>
         <translation type="obsolete">É obrigatório informar a versão! </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2488"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2505"/>
         <source>Problem getting geom tuple list: </source>
         <translation>Problema ao obter a lista de tuplas geometricas: </translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/postgisDb.py" line="812"/>
         <source>Problem opening databases: </source>
-        <translation>Problema ao abrir os seguintes bancos: </translation>
+        <translation type="obsolete">Problema ao abrir os seguintes bancos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2222"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2240"/>
         <source>Error parsing check constraint!
 :</source>
         <translation>Erro ao decodificar o check constraint! :</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3569"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3585"/>
         <source>Problem dropping database conections: </source>
         <translation>Problema ao derrubar as conexões ao banco de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2635"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2652"/>
         <source>Creating database {0} from template {1}... </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2655"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2672"/>
         <source>Problem getting view definition: </source>
         <translation>Problema ao tentar obter uma definição de view: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2668"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2685"/>
         <source>Updating SRIDs from {0}... </source>
         <translation>Atualizando os sistemas de referência de {0}... </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2704"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2721"/>
         <source>Problem dropping views: </source>
         <translation>Problema ao tentar apagar views: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3579"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3595"/>
         <source>Problem getting attributes from table {0}.{1}: {2}</source>
         <translation>Problema ao tentar obter os atributos da tabela {0}.{1}:{2}</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1134"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1153"/>
         <source>Feature id {} from {} violates rule {} {}</source>
         <translation>Feição id {} de {} viola a regra {} {}</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3623"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3639"/>
         <source>Problem creating coverage temp table: </source>
         <translation>Problema criando tabela de cobertura temporária: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3651"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3667"/>
         <source>Problem populating coverage temp table: </source>
         <translation>Problema populando tabela de cobertura temporária: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3656"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3672"/>
         <source>Problem creating spatial index on coverage temp table: </source>
         <translation>Problema criando índice espacial na tabela de cobertura temporária: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3755"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3771"/>
         <source>Problem getting gaps: </source>
         <translation>Problema obtendo gaps: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3672"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3688"/>
         <source>Gap between the frame layer and coverage layer</source>
         <translation>Gap entre a camada de referência e a camada de cobertura</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3692"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3708"/>
         <source>Problem getting overlaps: </source>
         <translation>Problema obtendo overlaps: </translation>
     </message>
@@ -17176,32 +17565,32 @@ Camada</translation>
         <translation type="obsolete">Overlap entre a camada de referência e a camada de cobertura</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3694"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3710"/>
         <source>Overlap between the features of the layer</source>
         <translation>Overlap entre as feições da camada</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1800"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1819"/>
         <source>Problem creating temp table {}: </source>
         <translation>Problema criando tabela temporária {}: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1805"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1824"/>
         <source>Problem creating spatial index on temp table {}: </source>
         <translation>Problema criando índice espacial na tabela temporária {}: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1818"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1837"/>
         <source>Problem dropping temp table {}: </source>
         <translation>Problema ao apagar a tabela temporária {}: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3741"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3757"/>
         <source>Problem filtering flags: </source>
         <translation>Problema filtrando as flags: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3757"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3773"/>
         <source>Gap between the features of the layer</source>
         <translation>Gap entre as feições da camada</translation>
     </message>
@@ -17211,59 +17600,69 @@ Camada</translation>
         <translation type="obsolete">Problema ao obter o histórico dos processos de validação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="891"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="910"/>
         <source>Problem getting implementation version: </source>
         <translation>Problema ao obter a versão de implementação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="910"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="929"/>
         <source>Problem dropping database: user must have permission for that.</source>
         <translation>Problema ao tentar apagar banco de dados: o usuário deve ter permissão para tal procedimento.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3770"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3786"/>
         <source>Problem while retrieving flags dict: </source>
         <translation>Problema ao obter dicionário de flags: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3819"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3835"/>
         <source>Problem while retrieving validation processes history table: </source>
         <translation>Problema ao tentar ler a tabela de histórico dos processos de validação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3833"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3849"/>
         <source>Problem while creating compact validation processes history table: </source>
         <translation>Problema ao tentar criar a tabela compacta de histórico de processos de validação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3840"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3856"/>
         <source>Problem while populating compact validation processes history table: </source>
         <translation>Problema ao tentar popular a tabela compacta de histórico de processos de validação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3870"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3886"/>
         <source>Problem getting list of attributes with filter: </source>
         <translation>Problema obtendo lista de atributos com filtros: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3884"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3900"/>
         <source>Problem getting domain json list: </source>
         <translation>Problemas ao tentar ler lista de JSON de domínios: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2421"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2438"/>
         <source>Problem getting AttributeDomainDict: </source>
         <translation>Problema ao adquirir o dicionário de domínios: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2449"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2466"/>
         <source>Problem getting filter: </source>
         <translation>Problema ao obter o filtro: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2535"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2552"/>
         <source>Problem getting getDomainDictFromDomainTable from table {table_name}:{query_error}</source>
         <translation>Problema ao obter getDomainDictFromDomainTable from table {table_name}:{query_error}</translation>
+    </message>
+    <message>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="813"/>
+        <source>Unable to load {0}. Error message: &apos;{1}&apos;</source>
+        <translation>Não foi possível carregar {0}. Mensagem de erro: &apos;{1}&apos;</translation>
+    </message>
+    <message>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="839"/>
+        <source>Unable to load &apos;{0}&apos;. User &apos;{1}&apos; has insufficient privileges.</source>
+        <translation>Não foi possível carregar &apos;{0}&apos;. O usuário &apos;{1}&apos; tem privilégios insuficientes.</translation>
     </message>
 </context>
 <context>
@@ -17367,12 +17766,12 @@ camada</translation>
         <translation>Snap Hierárquico</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="177"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="276"/>
         <source>FME Manager Parameters</source>
         <translation>Parâmetros do FME Manager</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="183"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="282"/>
         <source>FME Manager parameters. Used on Run Remote FME Workspace</source>
         <translation>Parâmetros do FME Manager. Utilizado na Execução Remota do FME Workspace</translation>
     </message>
@@ -17585,19 +17984,19 @@ Usuários com sucesso: </translation>
         <translation type="obsolete">Usuários com erro:</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/profileUserManager.py" line="97"/>
+        <location filename="../gui/DatabaseTools/UserTools/profileUserManager.py" line="96"/>
         <source>
 Error messages for each user were output in qgis log.</source>
         <translation>
 Mensagens de erro para cada usuário foram registradas no log do QGIS.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/profileUserManager.py" line="99"/>
+        <location filename="../gui/DatabaseTools/UserTools/profileUserManager.py" line="98"/>
         <source>Error for user </source>
         <translation>Erro para o usuário </translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/profileUserManager.py" line="95"/>
+        <location filename="../gui/DatabaseTools/UserTools/profileUserManager.py" line="94"/>
         <source>
 Users with error:</source>
         <translation>
@@ -17615,12 +18014,12 @@ Usuários com erro:</translation>
 <context>
     <name>QCoreApplication.self</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="352"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="346"/>
         <source>Attribute Rules Set</source>
         <translation>Conjunto de regras de atributo</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="358"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceAttributeRulesAlgorithm.py" line="352"/>
         <source>Set of attribute rules. Used on Attribute Rules Checker.</source>
         <translation>Conjunto de regras de atributo. Usado no verificador de regras.</translation>
     </message>
@@ -17715,47 +18114,47 @@ Versão do fluxo de trabalho: {version}
 Última modificação: {lastModified}</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="288"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="287"/>
         <source>Are you sure you want to remove workflow {0}?</source>
         <translation>Você tem certeza que quer remover o fluxo de trabalho {0}?</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="738"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="736"/>
         <source>DSGTools Q&amp;A Tool Box</source>
         <translation>DSGTools Caixa de Ferramentas de Validação</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="322"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="321"/>
         <source>modified name is already set for other workflow. Nothing changed.</source>
         <translation>nome modificado já foi atribuído a outro fluxo de trabalho. Nenhuma modificação foi feita.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="334"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="333"/>
         <source>{0} updated (make sure you exported it).</source>
         <translation>{0} atualizado (certifique-se de exportá-lo).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="339"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="338"/>
         <source>{1} renamed to {0} and updated (make sure you exported it).</source>
         <translation>{1}renomeado para {0} e atualizado (certifique-se de exportá-lo).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="691"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="690"/>
         <source>DSGTools Q&amp;A Toolbox</source>
         <translation>DSGTools Caixa de Ferramentas de Validação</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="425"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="424"/>
         <source>model {0} status changed to {1}.</source>
         <translation>Estado do modelo {0} mudado para {1}.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="441"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="440"/>
         <source>Model {0} status changed to {1}.</source>
         <translation>Estado do modelo {0} mudado para {1}.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="484"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="483"/>
         <source>Model author: {0}
 Model version: {1}
 Last modification: {2}
@@ -17768,37 +18167,37 @@ Versão do modelo: {1}
 {3}</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="685"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="684"/>
         <source>workflow {0} finished with flags.</source>
         <translation>Fluxo de trabalho {0} finalizado com flags.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="689"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="688"/>
         <source>workflow {0} finished.</source>
         <translation>Fluxo de trabalho {0} finalizado.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="710"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="709"/>
         <source>please select a valid Workflow.</source>
         <translation>por favor selecionar um fluxo de trablaho válido.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="724"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="723"/>
         <source>Select Workflow files</source>
         <translation>Selecione arquivos de fluxo de trabalho</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="724"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="723"/>
         <source>DSGTools Workflow (*.workflow *.json)</source>
         <translation>Fluxo de Trabalho do DSGTools (*.workflow *.json)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="738"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="736"/>
         <source>workflow &apos;{path}&apos; was not imported: &apos;{msg}&apos;</source>
         <translation>fluxo de trbalho &apos;{path}&apos; não foi importado: &apos;{msg}&apos;</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="760"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="758"/>
         <source>Model {model} imported.</source>
         <translation>Modelo {model} importado.</translation>
     </message>
@@ -17827,7 +18226,7 @@ Versão do modelo: {1}
         <translation>Modelo {model} é inválido: &apos;{reason}&apos;.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Models/qualityAssuranceWorkflow.py" line="130"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Models/qualityAssuranceWorkflow.py" line="125"/>
         <source>Workflow {name} v{version} ({lastModified}) by {author}.</source>
         <translation>Fluxo de trabalho {name} v{version} ({lastModified}) por {author}.</translation>
     </message>
@@ -18493,12 +18892,12 @@ Camada</translation>
 <context>
     <name>RuleStatisticsAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/ruleStatisticsAlgorithm.py" line="182"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/ruleStatisticsAlgorithm.py" line="179"/>
         <source>Rule Statistics</source>
         <translation>Estatísticas de regras</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/ruleStatisticsAlgorithm.py" line="189"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/ruleStatisticsAlgorithm.py" line="186"/>
         <source>Other Algorithms</source>
         <translation>Outros algoritmos</translation>
     </message>
@@ -18538,54 +18937,74 @@ Camada</translation>
 <context>
     <name>RunRemoteFMEAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="70"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="42"/>
         <source>FME Manager Parameters</source>
         <translation>Parâmetros do FME Manager</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="106"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="192"/>
         <source>Canceled by user.
 </source>
         <translation>Cancelado pelo usuário.
 </translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="115"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="205"/>
         <source>Workspace {0} completed with success.
 </source>
         <translation>Worspace {0} executado com sucesso.
 </translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="117"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="211"/>
         <source>Number of flags: {0}
 </source>
-        <translation type="obsolete">Número de flags: {0}
+        <translation>Número de flags: {0}
 </translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="120"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="218"/>
         <source>Task completed with error.
 </source>
         <translation>Tarefa executada com erros.
 </translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="140"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="238"/>
         <source>Run Remote FME Workspace</source>
         <translation>Executar FME Workspace Remotamente</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="147"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="245"/>
         <source>Other Algorithms</source>
         <translation>Outros algoritmos</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="117"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="213"/>
         <source>Number of flags in {0}: {1}
 </source>
         <translation>Número de flags em {0}: {1}
 </translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="83"/>
+        <source>Unable to get the routine&apos;s output from FME Manager: &apos;{0}&apos;</source>
+        <translation>Não foi possível obter a saída da rotina do FME Manager: &apos;{0}&apos;</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="126"/>
+        <source>Unable to send processing request to FME Manager: &apos;{0}&apos;</source>
+        <translation>Não foi possível enviar a solicitação de processamento para o Gerente FME: &apos;{0}&apos;</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="175"/>
+        <source>Requesting server to run the workspace...</source>
+        <translation>Solicitando servidor para executar o arquivo FME ...</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="184"/>
+        <source>Request successful. Waiting for the workspace to be executed...</source>
+        <translation>Solicitação bem-sucedida. Aguardando a execução do arquivo FME ...</translation>
     </message>
 </context>
 <context>
@@ -18732,32 +19151,32 @@ Camada</translation>
 <context>
     <name>ServerConfigurator</name>
     <message>
-        <location filename="../gui/ServerTools/serverConfigurator.py" line="100"/>
+        <location filename="../gui/ServerTools/serverConfigurator.py" line="99"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/serverConfigurator.py" line="67"/>
+        <location filename="../gui/ServerTools/serverConfigurator.py" line="66"/>
         <source>Fill all parameters.</source>
         <translation>Preencha todos os parâmetros.</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/serverConfigurator.py" line="64"/>
+        <location filename="../gui/ServerTools/serverConfigurator.py" line="63"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/serverConfigurator.py" line="64"/>
+        <location filename="../gui/ServerTools/serverConfigurator.py" line="63"/>
         <source>Server stored.</source>
         <translation>Servidor armazenado.</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/serverConfigurator.py" line="100"/>
+        <location filename="../gui/ServerTools/serverConfigurator.py" line="99"/>
         <source>Already has a server with this name.</source>
         <translation>Já existe um servidor com este nome.</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/serverConfigurator.py" line="89"/>
+        <location filename="../gui/ServerTools/serverConfigurator.py" line="88"/>
         <source>Server name cannot contain the character &quot;_&quot;.</source>
         <translation>O nome do servidor não pode conter o caractere &quot;_&quot;.</translation>
     </message>
@@ -19260,47 +19679,47 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>Arquivo de Cobertura Terrestre (*.dsgearthcov)</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="247"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="246"/>
         <source>An Earth Coverage name must be set.
 </source>
         <translation>Um nome de Cobertura Terrestre deve ser entrado.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="250"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="249"/>
         <source>An Earth Coverage with this name already exists.
 </source>
         <translation>Uma Cobertura Terrestre com este nome já existe.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="253"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="252"/>
         <source>A frame layer must be chosen.
 </source>
         <translation>Uma camada de moldura deve ser escolhida.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="274"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="273"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="260"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="259"/>
         <source>Areas must be chosen for Earth Coverage.
 </source>
         <translation>Áreas devem ser selecionadas para a Cobertura Terrestre.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="266"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="265"/>
         <source>Lines must be chosen for Earth Coverage.
 </source>
         <translation>Linhas devem ser selecionadas para a Cobertura Terrestre.
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="273"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="272"/>
         <source>At least one line must be chosen for each Earth Coverage area.
 </source>
         <translation>Pelo menos uma linha deve ser escolhida para cada área da Cobertura Terrestre.
@@ -19315,17 +19734,17 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation type="obsolete">area</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/shapeTool.py" line="111"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/shapeTool.py" line="149"/>
         <source>Circle</source>
         <translation>Círculo</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/shapeTool.py" line="113"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/shapeTool.py" line="151"/>
         <source>Square</source>
         <translation>Quadrado</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/shapeTool.py" line="123"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/shapeTool.py" line="161"/>
         <source>distance</source>
         <translation>distância</translation>
     </message>
@@ -19333,32 +19752,32 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
 <context>
     <name>ShapefileDb</name>
     <message>
-        <location filename="../core/Factories/DbFactory/shapefileDb.py" line="93"/>
+        <location filename="../core/Factories/DbFactory/shapefileDb.py" line="92"/>
         <source>Error opening database: a (valid) shapefiles path was not given.</source>
         <translation>Erro ao conectar ao banco de dados: não foi dado um caminho (válido) para os arquivos Shapefile.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/shapefileDb.py" line="131"/>
+        <location filename="../core/Factories/DbFactory/shapefileDb.py" line="128"/>
         <source>Select a Path to Shapefiles</source>
         <translation>Selecione um diretório para os Shapefiles</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/shapefileDb.py" line="272"/>
+        <location filename="../core/Factories/DbFactory/shapefileDb.py" line="269"/>
         <source>Problem obtaining link column: </source>
         <translation>Problemas ao tentar obter as colunas geomtétricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/shapefileDb.py" line="292"/>
+        <location filename="../core/Factories/DbFactory/shapefileDb.py" line="288"/>
         <source>Problem loading associated features: </source>
         <translation>Problema ao carregar feições agregadas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/shapefileDb.py" line="326"/>
+        <location filename="../core/Factories/DbFactory/shapefileDb.py" line="322"/>
         <source>Problem executing query: </source>
         <translation>Problema ao tentar realizar a consulta: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/shapefileDb.py" line="459"/>
+        <location filename="../core/Factories/DbFactory/shapefileDb.py" line="455"/>
         <source>Unable to locate file &apos;[SCHEMA]_{}.shp&apos;.</source>
         <translation>Não foi possível localizar o arquivo &apos;[ESQUEMA]_{}.shp&apos;.</translation>
     </message>
@@ -19511,14 +19930,14 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>Seletor de raio de atração inválido para a configuração JSON da ferramenta!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapChooserWidget.py" line="134"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapChooserWidget.py" line="133"/>
         <source>Invalid layer!
 </source>
         <translation>Camada inválida!
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapChooserWidget.py" line="136"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapChooserWidget.py" line="135"/>
         <source>Invalid snap value!
 </source>
         <translation>Valor de snap inválido!
@@ -20181,14 +20600,14 @@ Camada</translation>
         <translation>Seletor de raio de atração inválido para a configuração JSON da ferramenta!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapWithLayerChooserWidget.py" line="136"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapWithLayerChooserWidget.py" line="135"/>
         <source>Invalid layer!
 </source>
         <translation>Camada inválida!
 </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapWithLayerChooserWidget.py" line="138"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapWithLayerChooserWidget.py" line="137"/>
         <source>Invalid snap value!
 </source>
         <translation>Valor de snap inválido!
@@ -20198,22 +20617,22 @@ Camada</translation>
 <context>
     <name>SpatialRelationsHandler</name>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="316"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="319"/>
         <source>Building contour structures...</source>
         <translation>Construindo estruturas das curvas de nível...</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="329"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="332"/>
         <source>Validating contour structures. Check 1/4...</source>
         <translation>Validando estruturas das curvas de nível. 1/4 verificado ...</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="345"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="348"/>
         <source>Building drainage spatial index...</source>
         <translation>Contruindo índice espacial da drenagem...</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="357"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="360"/>
         <source>Relating contours with drainages...</source>
         <translation>Relacionando as curvas de nível às drenagens...</translation>
     </message>
@@ -20228,85 +20647,113 @@ Camada</translation>
         <translation type="obsolete">Curvas de nível id=({ids}) se tocam. Curvas de nível podem apenas se tocar ou tocar outra em um único ponto.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="573"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="576"/>
         <source>Contour id={c_id} intersects drainage id={d_id} in more than one point</source>
         <translation>Curva de nível id={c_id} intersecta a drenagem id={d_id} em mais de um ponto</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="631"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="634"/>
         <source>Difference between contour with values {id1}                         and {id2} do not match equidistance {equidistance}.                        Probably one contour is                         missing or one of the contours have wrong value.
 </source>
         <translation>Diferença de cotas entre as curvas {id1} e {id2} é diferente da equidistância {equidistance}. É possível que estejam faltando curvas de nível ou uma delas possui valor de cota incorreto.
 </translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="249"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="252"/>
         <source>Contour out of threshold.</source>
         <translation>Cota não condiz com a equidistância.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="275"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="278"/>
         <source>Missing contour between contour lines of values {v1} and {v2}</source>
         <translation>Falta curva de nível entre as curvas de valores {v1} e {v2}</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="504"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="507"/>
         <source>Contour lines must be closed or intersect the geographic boundary.</source>
         <translation>Curvas de nível têm que ser fechadas ou tocar a moldura.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="508"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="511"/>
         <source>Contour lines touch each other and have different height values.</source>
         <translation>Curvas de nível se conectam mas têm cotas diferentes.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="512"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="515"/>
         <source>Contour lines intersect each other. Contour lines must touch itself or only one other with same height value.</source>
         <translation>Curvas de nível intersectam entre si. Curvas de nível só podem tocar-se ou tocar outras de mesma cota.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="900"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="903"/>
         <source>Feature from {input} with id {input_id} violates the following predicate with feature from {candidate} with id {candidate_id}: {predicate_text}</source>
         <translation>Feição da {input} com id {input_id} viola o seguinte predicado com feição da {candidate} com id {candidate_id}: {predicate_text}</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="966"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="969"/>
         <source>Invalid predicate ({0}).</source>
         <translation>Predicado inválido ({0}).</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1010"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1017"/>
         <source>feature ID {{fid_a}} from {layer_a} id not {pred} to {{size}} features of {layer_b}</source>
         <translation>ID da feição {{fid_a}} da camada {layer_a} id não {pred} para {{size}} feições da camada {layer_b}</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1018"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1025"/>
         <source>feature ID {{fid_a}} from {layer_a} {pred} {{size}} features of {layer_b}</source>
         <translation>ID da feição {{fid_a}} da camada {layer_a} {pred} {{size}} feições da camada {layer_b}</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1085"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1165"/>
         <source>Layer not found on canvas.</source>
         <translation>Camada não encontrada na área de trabalho.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1128"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1213"/>
         <source>Checking rule &quot;{0}&quot;... [{1}/{2}]</source>
         <translation>Verificando a regra &quot;{0}&quot;... [{1}/{2}]</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1144"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1236"/>
         <source>Rule &quot;{0}&quot; raised flags
 </source>
         <translation>A regra &quot;{0}&quot; gerou flags
 </translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1150"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1242"/>
         <source>Rule &quot;{0}&quot; did not raise any flags
 </source>
         <translation>A regra &quot;{0}&quot; nãp gerou flags
 </translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1096"/>
+        <source>feature ID {{fid_a}} from {layer_a} has {{size}} occurrences using the DE-9IM mask &apos;{mask}&apos; when compared to layer {layer_b}</source>
+        <translation>o ID da feição {{fid_a}} de {layer_a} tem {{size}} ocorrências usando a máscara DE-9IM &apos;{mask}&apos; em comparação com a camada {layer_b}</translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1219"/>
+        <source>Rule {0} is invalid and will be skipped. Error: {1}</source>
+        <translation>A regra {0} é inválida e será ignorada. Erro: {1}</translation>
+    </message>
+</context>
+<context>
+    <name>SpatialRule</name>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1699"/>
+        <source>&apos;{val}&apos; is an invalid value for property &apos;{prop}&apos;</source>
+        <translation>&apos;{val}&apos; é um valor inválido para a propriedade &apos;{prop}&apos;</translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1705"/>
+        <source>&apos;{0}&apos; is not a valid DE-9IM mask</source>
+        <translation>&apos;{0}&apos; não é um formato DE-9IM válido&quot;</translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1706"/>
+        <source>&apos;{0}&apos; is not a valid predicate</source>
+        <translation>{0}&apos; não é um predicado válido</translation>
     </message>
 </context>
 <context>
@@ -20458,7 +20905,7 @@ Camada</translation>
         <translation>Conversão não realizada devido à erros de validação! Verifique o log acima para maiores informações.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="402"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="401"/>
         <source>Problem disassociating complex from complex: </source>
         <translation>Problema disassociando complexo de complexo: </translation>
     </message>
@@ -20488,7 +20935,7 @@ Camada</translation>
         <translation>Problema ao obter estrutura do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="384"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="383"/>
         <source>Problem executing query: </source>
         <translation>Problema ao executar query: </translation>
     </message>
@@ -20498,42 +20945,42 @@ Camada</translation>
         <translation>Problema ao obter coluna de ligação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="333"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="332"/>
         <source>Problem loading associated features: </source>
         <translation>Problema ao carregar feições associadas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="415"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="414"/>
         <source>Problem getting tables from database: </source>
         <translation>Problema ao obter tabelas do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="446"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="445"/>
         <source>Problem getting geom types from db: </source>
         <translation>Problema obtendo tipos geométricos do db: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="472"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="471"/>
         <source>Problem getting geom tables from db: </source>
         <translation>Problema obtendo tabelas geométricas do db: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="504"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="503"/>
         <source>Problem getting geom column dict: </source>
         <translation>Problema obtendo dicionário de colunas geométricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="549"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="548"/>
         <source>Problem getting full table name: </source>
         <translation>Problema obtendo nome completo da tabela: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="563"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="622"/>
         <source>Problem getting geom tuple list: </source>
         <translation>Problema ao obter a lista de tuplas geometricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="600"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="599"/>
         <source>Problem getting geom schemas from db: </source>
         <translation>Problema ao tentar obter os esquemas geométricos do banco de dados: </translation>
     </message>
@@ -20567,12 +21014,12 @@ Camada</translation>
         <translation type="obsolete">Dom;inios</translation>
     </message>
     <message>
-        <location filename="../core/Factories/LayerLoaderFactory/spatialiteLayerLoader.py" line="124"/>
+        <location filename="../core/Factories/LayerLoaderFactory/spatialiteLayerLoader.py" line="222"/>
         <source>Error for layer </source>
         <translation>Erro para camada </translation>
     </message>
     <message>
-        <location filename="../core/Factories/LayerLoaderFactory/spatialiteLayerLoader.py" line="106"/>
+        <location filename="../core/Factories/LayerLoaderFactory/spatialiteLayerLoader.py" line="204"/>
         <source>Loading layers... </source>
         <translation>Carregando Camadas... </translation>
     </message>
@@ -20850,44 +21297,54 @@ Camada</translation>
         <translation>{0} Flags</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="132"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="141"/>
         <source>Building unified layer...</source>
         <translation>Construindo camada unificada...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="141"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="151"/>
         <source>Running clean on unified layer...</source>
         <translation>Executando a limpeza na camada unificada...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="158"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="168"/>
         <source>Updating original layer...</source>
         <translation>Atualizando a camada originais...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="186"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="196"/>
         <source>Features from {0} overlap</source>
         <translation>Feições da camada {0} se sobrepõem</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="190"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="201"/>
         <source>Gap in coverage.</source>
         <translation>Buraco na cobertura terrestre.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="196"/>
         <source>Clean error on coverage.</source>
-        <translation>Erro de limpeza na cobertura terrestre.</translation>
+        <translation type="obsolete">Erro de limpeza na cobertura terrestre.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="213"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="226"/>
         <source>Topological Clean Polygons</source>
         <translation>Limpeza Topológicas de Polígonos</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="220"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="233"/>
         <source>Quality Assurance Tools (Topological Processes)</source>
         <translation>Ferramentas de Validação (Processos Topológicos)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="113"/>
+        <source>Provided layers have no features in it.</source>
+        <translation>As camadas fornecidas não possuem feições.</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="208"/>
+        <source>Clean error on unified layer.</source>
+        <translation>Limpando erro na camada unificada.</translation>
     </message>
 </context>
 <context>
@@ -21971,7 +22428,7 @@ Não foi possível obter o tempo total gasto.</translation>
         <translation>Configuração JSON inválida para o processo de validação!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ValidationWidgets/validationProcessWidget.py" line="112"/>
+        <location filename="../gui/CustomWidgets/ValidationWidgets/validationProcessWidget.py" line="111"/>
         <source>Invalid rule name!
 </source>
         <translation>Nome de regra inválido!
@@ -22396,7 +22853,7 @@ fluxo de trabalho</translation>
         <translation>Configuração JSON inválida para a ferramenta!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ValidationWidgets/validationWorkflowItemWidget.py" line="111"/>
+        <location filename="../gui/CustomWidgets/ValidationWidgets/validationWorkflowItemWidget.py" line="110"/>
         <source>Invalid rule name!
 </source>
         <translation>Nome de regra inválido!
@@ -22781,92 +23238,92 @@ fluxo de trabalho</translation>
         <translation>Selecione um modelo do provedor de processamento do QGISl (*.model *.model3)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="361"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="360"/>
         <source>Model &apos;{0}&apos; is already imported would you like to overwrite it?</source>
         <translation>Modelo &apos;{0}&apos; já foi importado, gostaria de sobrescrevê-lo?</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="389"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="388"/>
         <source>Missing model&apos;s name.</source>
         <translation>Nome do modelo ausente.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="391"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="390"/>
         <source>Model is empty or file was not found.</source>
         <translation>O modelo está vazio ou o arquivo não foi encontrado.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="417"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="415"/>
         <source>Check if no model name is repeated.</source>
         <translation>Verifique se o nome do modelo está repetido.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="451"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="448"/>
         <source>Workflow&apos;s name needs to be filled.</source>
         <translation>Nome do fluxo de trabalho têm que ser preenchido.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="453"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="450"/>
         <source>Workflow&apos;s author needs to be filled.</source>
         <translation>Autor do fluxo de trabalho têm que ser preenchido.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="455"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="452"/>
         <source>Workflow&apos;s version needs to be filled.</source>
         <translation>Versão do fluxo de trabalho têm que ser preenchida.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="574"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="568"/>
         <source>Invalid workflow</source>
         <translation>Fluxo de trabalho inválido</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="482"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="478"/>
         <source>Export DSGTools Workflow</source>
         <translation>Exportar fluxo de trabalho do DSGTools</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="482"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="478"/>
         <source>DSGTools Workflow (*.workflow)</source>
         <translation>Fluxo de Trabalho do DSGTools (*.workflow)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="546"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="540"/>
         <source>Unable to export workflow to &apos;{fp}&apos; ({error}).</source>
         <translation>Impossível exportar o fluxo de trabalho para &apos;{fp}&apos; ({error}).</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="505"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="500"/>
         <source>Workflow exported to {fp}</source>
         <translation>Fluxo de trabalho exportado para {fp}</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="505"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="500"/>
         <source>Unable to export workflow to &apos;{fp}&apos;</source>
         <translation>Impossível exportar o fluxo de trabalho para &apos;{fp}&apos;</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="508"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="503"/>
         <source>Workflow exportation</source>
         <translation>Exportação do fluxo de trabalho</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="535"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="530"/>
         <source>Select a Workflow file</source>
         <translation>Selecione um arquivo de fluxo de trabalho</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="535"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="530"/>
         <source>DSGTools Workflow (*.workflow *.json)</source>
         <translation>Fluxo de Trabalho do DSGTools (*.workflow *.json)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="555"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="549"/>
         <source>Success</source>
         <translation>Sucesso</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="555"/>
+        <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="549"/>
         <source>Workflow &apos;{fp}&apos; imported!</source>
         <translation>Fluxo de trabalho &apos;{fp}&apos; importado com sucesso!</translation>
     </message>

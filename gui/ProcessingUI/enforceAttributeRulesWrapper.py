@@ -68,7 +68,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         :return: (QLineEdit)
         """
         le = QLineEdit()
-        le.setPlaceholderText(self.tr(text))
+        le.setPlaceholderText(text)
         le.setAlignment(Qt.AlignLeft)
         return le
 
@@ -99,8 +99,6 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
                          "Atributo com valor incorreto",
                          "Preencher atributo",
                          ]
-        # errorTypeListTranslated = [
-        #     self.tr(error) for error in errorTypeList]
 
         cb = QComboBox()
         cb.addItem(self.tr("Select an error type"))
@@ -159,23 +157,10 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
                     self.validateMethods.validateLengthOfDataTypes(v["1"], 2):
                 if v["1"][0] not in loadedLyr:
                     unsortedNotLoadedLyr.append(v["1"][0])
-            else:
-                self.invalidImportedRuleMessage()
 
         notLoadedLyr = sorted(set(unsortedNotLoadedLyr))
 
         return notLoadedLyr
-
-    def invalidImportedRuleMessage(self):
-        """
-        Shows a message box to user if has some invalid rules.
-        """
-        msg = QMessageBox()
-        msg.setWindowTitle("Invalid Rules Information")
-        msg.setIcon(QMessageBox.Warning)
-        msg.setText("There are one or more rule invalid and cant be loaded!")
-        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-        msg.setDefaultButton(QMessageBox.Cancel)
 
     def modifyImportedAttributeRulesMap(self, attrRulesMap):
         """
@@ -252,25 +237,25 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
                             if self.validateMethods.validateQColor(attrRulesMapValue["4"]):
                                 newDict[attrRulesMapKey] = attrRulesMapValue
                             else:
-                                invalidRules.append(
+                                invalidRules.append(self.tr(
                                     "Rule number {} : {} - is not a valid color.".format(
-                                        attrRulesMapKey, attrRulesMapValue["4"]))
+                                        attrRulesMapKey, attrRulesMapValue["4"])))
                         else:
-                            invalidRules.append(
+                            invalidRules.append(self.tr(
                                 "Rule number {} : {} - is not a valid string.".format(
-                                    attrRulesMapKey, attrRulesMapValue["3"]))
+                                    attrRulesMapKey, attrRulesMapValue["3"])))
                     else:
-                        invalidRules.append(
+                        invalidRules.append(self.tr(
                             "Rule number {} : {} - is not a valid expression.".format(
-                                attrRulesMapKey, attrRulesMapValue["2"]))
+                                attrRulesMapKey, attrRulesMapValue["2"])))
                 else:
-                    invalidRules.append(
+                    invalidRules.append(self.tr(
                         "Rule number {} : {} - is not a valid length = 2 list.".format(
-                            attrRulesMapKey, attrRulesMapValue["1"]))
+                            attrRulesMapKey, attrRulesMapValue["1"])))
             else:
-                invalidRules.append(
+                invalidRules.append(self.tr(
                     "Rule number {} : {} - is not a valid string description.".format(
-                        attrRulesMapKey, attrRulesMapValue["0"]))
+                        attrRulesMapKey, attrRulesMapValue["0"])))
 
         return newDict, invalidRules
 
@@ -322,7 +307,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         :return: (signal) value returned from the clicked button.
         """
         msg = QMessageBox()
-        msg.setWindowTitle(self.tr("Import Rules Information"))
+        msg.setWindowTitle(self.tr("Information about importing rules"))
 
         if lyrList and msgType == "warning":
             msg.setIcon(QMessageBox.Warning)
@@ -399,8 +384,8 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
             0: {
                 "header": self.tr("Description"),
                 "type": "widget",
-                "widget": lambda: self.stringDataWidget(
-                    "Set a name for this attribute rule..."),
+                "widget": lambda: self.stringDataWidget(self.tr(
+                    "Set a name for this attribute rule...")),
                 "setter": "setText",
                 "getter": "text"
             },
@@ -458,24 +443,24 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
             0: {
                 "header": self.tr("Rule description"),
                 "type": "widget",
-                "widget": lambda: self.stringDataWidget(
-                    "Set a name for this attribute rule..."),
+                "widget": lambda: self.stringDataWidget(self.tr(
+                    "Set a name for this attribute rule...")),
                 "setter": "setText",
                 "getter": "text"
             },
             1: {
                 "header": self.tr("Layer"),
                 "type": "widget",
-                "widget": lambda: self.stringDataWidget(
-                    "Type a vector layer name..."),
+                "widget": lambda: self.stringDataWidget(self.tr(
+                    "Type a vector layer name...")),
                 "setter": "setText",
                 "getter": "text"
             },
             2: {
                 "header": self.tr("Field"),
                 "type": "widget",
-                "widget": lambda: self.stringDataWidget(
-                    "Type a field layer name..."),
+                "widget": lambda: self.stringDataWidget(self.tr(
+                    "Type a field layer name...")),
                 "setter": "setText",
                 "getter": "text"
             },
@@ -489,8 +474,8 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
             4: {
                 "header": self.tr("Error type"),
                 "type": "widget",
-                "widget": lambda: self.stringDataWidget(
-                    "Type an error type..."),
+                "widget": lambda: self.stringDataWidget(self.tr(
+                    "Type an error type...")),
                 "setter": "setText",
                 "getter": "text"
             },
