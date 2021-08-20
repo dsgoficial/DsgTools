@@ -674,3 +674,30 @@ class AlgRunner:
             feedback=feedback
         )
         return output['OUTPUT']
+
+    def runEnforceSpatialRule(self, spatialRule, context, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'RULES_SET': spatialRule,
+            'POINT_FLAGS':'TEMPORARY_OUTPUT',
+            'LINE_FLAGS':'TEMPORARY_OUTPUT',
+            'POLYGON_FLAGS':'TEMPORARY_OUTPUT'
+        }
+        output = processing.run("dsgtools:enforcespatialrules",
+                                parameters,
+                                context=context,
+                                feedback=feedback)
+        return output
+
+    def runDeleteColumn(self, inputLyr, fieldList, context, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT': inputLyr,
+            'COLUMN': fieldList,
+            'OUTPUT':outputLyr
+        }
+        output = processing.run("qgis:deletecolumn",
+                                parameters,
+                                context=context,
+                                feedback=feedback)
+        return output['OUTPUT']

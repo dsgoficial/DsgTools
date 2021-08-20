@@ -23,31 +23,32 @@
 from PyQt5.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink, QgsFields,
-                       QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
+from qgis.core import (QgsFeatureSink,
+                       QgsProcessing,
+                       QgsProcessingException,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingParameterDistance,
                        QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterField,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterVectorLayer, QgsWkbTypes)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
+from ....GeometricTools.spatialRelationsHandler import SpatialRule
 
 
 class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
     INPUT_CENTER_POINTS = 'INPUT_CENTER_POINTS'
-    SELECTED = 'SELECTED'
     ATTRIBUTE_BLACK_LIST = 'ATTRIBUTE_BLACK_LIST'
+    IGNORE_VIRTUAL_FIELDS = 'IGNORE_VIRTUAL_FIELDS'
+    IGNORE_PK_FIELDS = 'IGNORE_PK_FIELDS'
     CONSTRAINT_LINE_LAYERS = 'CONSTRAINT_LINE_LAYERS'
+    DELIMITER_LAYERS = 'DELIMITER_LAYERS'
     CONSTRAINT_POLYGON_LAYERS = 'CONSTRAINT_POLYGON_LAYERS'
     GEOGRAPHIC_BOUNDARY = 'GEOGRAPHIC_BOUNDARY'
     OUTPUT_POLYGONS = 'OUTPUT_POLYGONS'
     FLAGS = 'FLAGS'
+    DELIMITERS_FLAGS = 'DELIMITERS_FLAGS'
 
     def initAlgorithm(self, config):
         """
@@ -56,14 +57,8 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT_CENTER_POINTS,
-                self.tr('Center Point Layer'),
+                self.tr('Center point layer'),
                 [QgsProcessing.TypeVectorPoint]
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
             )
         )
         self.addParameter(
@@ -74,7 +69,29 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 'INPUT_CENTER_POINTS',
                 QgsProcessingParameterField.Any,
                 allowMultiple=True,
-                optional = True
+                optional=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.IGNORE_VIRTUAL_FIELDS,
+                self.tr('Ignore virtual fields'),
+                defaultValue=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.IGNORE_PK_FIELDS,
+                self.tr('Ignore primary key fields'),
+                defaultValue=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.DELIMITER_LAYERS,
+                self.tr('Delimiters Layers'),
+                QgsProcessing.TypeVectorLine,
+                optional=False
             )
         )
         self.addParameter(
@@ -103,14 +120,20 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT_POLYGONS,
-                self.tr('Output Polygons')
+                self.DELIMITERS_FLAGS,
+                self.tr('Delimiters Flags')
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.tr('{0} Polygon Flags').format(self.displayName())
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.OUTPUT_POLYGONS,
+                self.tr('Output Polygons')
             )
         )
 
@@ -118,85 +141,156 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        layerHandler = LayerHandler()
+        self.layerHandler = LayerHandler()
         algRunner = AlgRunner()
+        spatialRule = SpatialRule(name="Unused delimiters",
+                                  layer_a="segmentsWithoutDuplicates",
+                                  filter_a=None,
+                                  predicate=None,
+                                  de9im_predicate="*1*******",
+                                  layer_b="builtPolygonLyr",
+                                  filter_b=None,
+                                  cardinality="1..*",
+                                  useDE9IM=True,
+                                  checkLoadedLayer=False)
+        chosenLayers = list()
+
         inputCenterPointLyr = self.parameterAsVectorLayer(
             parameters,
             self.INPUT_CENTER_POINTS,
-            context
-        )
+            context)
+
         if inputCenterPointLyr is None:
             raise QgsProcessingException(
                 self.invalidSourceError(
                     parameters,
-                    self.INPUT_CENTER_POINTS
-                )
-            )
+                    self.INPUT_CENTER_POINTS))
+
         constraintLineLyrList = self.parameterAsLayerList(
             parameters,
             self.CONSTRAINT_LINE_LAYERS,
-            context
-        )
+            context)
+
+        chosenLayers.extend(constraintLineLyrList)
+            
+        delimiterLineLyrList = self.parameterAsLayerList(
+            parameters,
+            self.DELIMITER_LAYERS,
+            context)
+
+        chosenLayers.extend(delimiterLineLyrList)
+
         constraintPolygonLyrList = self.parameterAsLayerList(
             parameters,
             self.CONSTRAINT_POLYGON_LAYERS,
-            context
-        )
-        onlySelected = self.parameterAsBool(
-            parameters,
-            self.SELECTED,
-            context
-        )
+            context)
+
+        chosenLayers.extend(constraintPolygonLyrList)
+
+        layerMap = self.layerHandler.mergeLayerByGeometryType(
+            chosenLayers, feedback=feedback, context=context, algRunner=algRunner)
+
+        mergedConstraintLineLyr = layerMap[1]
+        mergedConstraintPolygonLyr = layerMap[2]
+
         geographicBoundaryLyr = self.parameterAsLayer(
             parameters,
             self.GEOGRAPHIC_BOUNDARY,
-            context
-        )
+            context)
+
         attributeBlackList = self.parameterAsFields(
             parameters,
             self.ATTRIBUTE_BLACK_LIST,
-            context
-        )
-        fields = layerHandler.getFieldsFromAttributeBlackList(inputCenterPointLyr,
-                                                        attributeBlackList)
-        (
-            output_polygon_sink,
-            output_polygon_sink_id
-        ) = self.parameterAsSink(
-            parameters,
-            self.OUTPUT_POLYGONS,
-            context,
-            fields,
-            QgsWkbTypes.Polygon,
-            inputCenterPointLyr.sourceCrs()
-        )
-        self.prepareFlagSink(
-            parameters,
-            inputCenterPointLyr,
-            QgsWkbTypes.Polygon,
-            context
-        )
-        polygonFeatList, flagDict = layerHandler.getPolygonsFromCenterPointsAndBoundaries(
+            context)
+
+        ignoreVirtual = self.parameterAsBool(
+            parameters, self.IGNORE_VIRTUAL_FIELDS, context)
+
+        ignorePK = self.parameterAsBool(
+            parameters, self.IGNORE_PK_FIELDS, context)
+
+        outputFields = self.retrieveFieldsFromInputToOutputLyr(inputCenterPointLyr,
+                                                               attributeBlackList,
+                                                               ignorePK,
+                                                               ignoreVirtual)
+
+        (output_polygon_sink, output_polygon_sink_id) = self.parameterAsSink(parameters,
+                                                                             self.OUTPUT_POLYGONS,
+                                                                             context,
+                                                                             outputFields,
+                                                                             QgsWkbTypes.Polygon,
+                                                                             inputCenterPointLyr.sourceCrs())
+
+        unusedDelimitersFields = self.getFlagFields()
+
+        (unused_delimiters_sink, unused_delimiters_sink_id) = self.parameterAsSink(parameters,
+                                                                                   self.DELIMITERS_FLAGS,
+                                                                                   context,
+                                                                                   unusedDelimitersFields,
+                                                                                   QgsWkbTypes.LineString,
+                                                                                   inputCenterPointLyr.sourceCrs())
+
+        self.prepareFlagSink(parameters, inputCenterPointLyr,
+                             QgsWkbTypes.Polygon, context)
+
+        polygonFeatList, flagDict, delimiterFlagDict = self.layerHandler.getPolygonsFromCenterPointsAndBoundaries(
             inputCenterPointLyr,
             geographicBoundaryLyr=geographicBoundaryLyr,
-            constraintLineLyrList=constraintLineLyrList,
-            constraintPolygonLyrList=constraintPolygonLyrList,
-            onlySelected=onlySelected,
+            constraintLineLyrList=[mergedConstraintLineLyr],
+            constraintPolygonLyrList=[mergedConstraintPolygonLyr],
+            spatialRule=[spatialRule.asDict()],
             context=context,
             feedback=feedback,
             attributeBlackList=attributeBlackList,
-            algRunner=algRunner
-        )
+            algRunner=algRunner)
+
+        for delimiterFlagGeom, delimiterFlagText in delimiterFlagDict.items():
+            self.flagFeature(delimiterFlagGeom, delimiterFlagText,
+                             fromWkb=False, sink=unused_delimiters_sink)
+
         output_polygon_sink.addFeatures(
-            polygonFeatList, QgsFeatureSink.FastInsert
-        )
+            polygonFeatList, QgsFeatureSink.FastInsert)
+
         for flagGeom, flagText in flagDict.items():
             self.flagFeature(flagGeom, flagText, fromWkb=True)
 
         return {
-            self.OUTPUT_POLYGONS : output_polygon_sink_id,
-            self.FLAGS : self.flag_id
-        }
+            self.OUTPUT_POLYGONS: output_polygon_sink_id,
+            self.FLAGS: self.flag_id,
+            self.DELIMITERS_FLAGS: unused_delimiters_sink_id}
+
+    def retrieveFieldsFromInputToOutputLyr(self, inputLyr, attributeBlackList, ignorePK, ignoreVirtual):
+        """
+        Prepare a list of fields based on the attributeBlackList to the
+        algorithm outputs
+        :param inputLyr: (QgsVectorLayer) Layer with Point which you want
+            to take the attr
+        :param attributeBlackList: (list) list of fields blacklisted
+        :param ignorePK: (bool) to ignore primary key fields
+        :param ignoreVirtual: (bool) to ignore virtual fields
+        :return: (list) list of fields to output
+        """
+        if ignoreVirtual or ignorePK:
+
+            virtualAndPKFields = self.layerHandler.getVirtualAndPrimaryKeyFields(inputLyr)
+
+            attributeBlackList.extend(virtualAndPKFields)
+
+            outputFields = self.layerHandler.getFieldsFromAttributeBlackList(
+                inputLyr,
+                attributeBlackList,
+                ignoreVirtualFields=ignoreVirtual,
+                excludePrimaryKeys=ignorePK)
+
+            return outputFields
+        else:
+            outputFields = self.layerHandler.getFieldsFromAttributeBlackList(
+                inputLyr,
+                attributeBlackList,
+                ignoreVirtualFields=ignoreVirtual,
+                excludePrimaryKeys=ignorePK)
+
+            return outputFields
 
     def name(self):
         """

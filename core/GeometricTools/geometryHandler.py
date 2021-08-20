@@ -703,3 +703,24 @@ class GeometryHandler(QObject):
         :return: (list-of-QgsGeometry) list of single part geometries found.
         """
         return [part for part in geom.asGeometryCollection()]
+
+    def filterLayerByGeometry(self, listOfLayers):
+        """
+        Returns a dict from layers with geom type as key.
+        :param listOfLayers: (QgsVectorLayer) list of layers.
+        :return: (dict) dict of filtered layers.
+        """
+        filteredLayers = dict()
+
+        for layer in listOfLayers:
+            if layer.geometryType() == 0:
+                filteredLayers['Point'] = layer
+            elif layer.geometryType() == 1:
+                filteredLayers['Line'] = layer
+            elif layer.geometryType() == 2:
+                filteredLayers['Polygon'] = layer
+            else:
+                pass
+
+        return filteredLayers
+
