@@ -5,8 +5,8 @@
 
 |branch|status|
 |-------|--------|
-|master|[![Build Status](https://travis-ci.com/dsgoficial/DsgTools.svg?branch=master)](https://travis-ci.com/dsgoficial/DsgTools)|
-|dev|[![Build Status](https://travis-ci.com/dsgoficial/DsgTools.svg?branch=dev)](https://travis-ci.com/dsgoficial/DsgTools)|
+|master|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=master)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|
+|dev|[![unittests](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml/badge.svg?branch=dev)](https://github.com/dsgoficial/DsgTools/actions/workflows/test_plugin_on_qgis.yml)|
 
 ------------------------------------
 # DSGTools Plugin (English Version)
