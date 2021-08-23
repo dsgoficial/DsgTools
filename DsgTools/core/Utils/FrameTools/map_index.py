@@ -252,8 +252,6 @@ class UtmGrid(QObject):
         #first run
         if (self.stepsTotal==0):
             self.stepsTotal=self.computeNumberOfSteps(self.getScaleIdFromScale(scale), self.getScaleIdFromScale(stopScale))
-            # fix_print_with_import
-            print("Total:",self.stepsTotal)
             self.stepsDone=0
         if scale == stopScale:
             (x, y) = self.getLLCorner(iNomen)
@@ -264,8 +262,6 @@ class UtmGrid(QObject):
             self.insertFrameIntoQgsLayer(layer, poly, iNomen)
             
             self.stepsDone+=1
-            # fix_print_with_import
-            print(self.stepsDone, '/', self.stepsTotal)
         else:
             scaleId = self.getScaleIdFromiNomen(iNomen)
             matrix = self.scaleText[ scaleId+1 ]
@@ -312,7 +308,6 @@ class UtmGrid(QObject):
         mi = self.checkLeftPadding(mi, 4)
         inom = self.getINomen(self.getMIdict(), mi)
         exceptions = self.getMIexceptions()
-        print(inom)
         if inom in exceptions or self.checkContainedUpperLevel(inom, exceptions):
             return None
         return inom
