@@ -22,7 +22,7 @@
 
 from PyQt5.QtCore import QCoreApplication
 
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+
 from qgis.core import (QgsFeatureSink,
                        QgsProcessing,
                        QgsProcessingException,
@@ -32,6 +32,7 @@ from qgis.core import (QgsFeatureSink,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterVectorLayer, QgsWkbTypes)
 
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 from ....GeometricTools.spatialRelationsHandler import SpatialRule
