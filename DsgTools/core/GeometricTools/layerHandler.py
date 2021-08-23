@@ -24,7 +24,6 @@
 from collections import defaultdict
 from functools import partial
 from itertools import combinations
-
 from processing.tools import dataobjects
 
 from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper

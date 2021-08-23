@@ -723,4 +723,3 @@ class GeometryHandler(QObject):
                 pass
 
         return filteredLayers
-
