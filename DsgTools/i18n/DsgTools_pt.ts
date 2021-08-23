@@ -2092,7 +2092,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="216"/>
         <source>Build Polygons From Center Points and Boundaries</source>
-        <translation>Construir polígonos a partir de centroids e linhas</translation>
+        <translation>Construir polígonos a partir de centróides e linhas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="223"/>
