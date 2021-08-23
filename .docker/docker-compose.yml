@@ -9,5 +9,5 @@ services:
       - ../DsgTools:/tests_directory
       - ../tests:/tests_directory/tests
     environment:
-      # - DISPLAY=unix$DISPLAY
-      - DISPLAY=:99
+      - DISPLAY=unix$DISPLAY
+      # - DISPLAY=:99
