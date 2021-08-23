@@ -22,6 +22,10 @@ jobs:
       - name: Start the environment
         run: ./start.sh
       - name: Tests
-        run: ./exec.sh
+        run: docker-compose exec -T qgis sh -c "cd /tests_directory && qgis_testrunner.sh tests.test_ValidationAlgorithms \
+                                            && qgis_testrunner.sh tests.test_EnvironmentSetterAlgorithms \
+                                            && qgis_testrunner.sh tests.test_CustomButtonSetup && \ 
+                                            qgis_testrunner.sh tests.test_DsgToolsProcessingModel && \
+                                            qgis_testrunner.sh tests.test_OtherAlgorithms"
       - name: Stop the environment
         run: docker-compose down 
