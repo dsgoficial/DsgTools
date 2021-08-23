@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-docker-compose up -d --build
+docker-compose up -d --build --exit-code-from qgis
 echo 'Wait 10 seconds'
 sleep 10
 echo 'Installation of the plugin'
