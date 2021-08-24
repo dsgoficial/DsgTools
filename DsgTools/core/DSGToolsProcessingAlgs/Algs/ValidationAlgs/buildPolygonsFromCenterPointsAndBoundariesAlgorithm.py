@@ -144,7 +144,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         """
         self.layerHandler = LayerHandler()
         algRunner = AlgRunner()
-        spatialRule = SpatialRule(name="Unused delimiters",
+        spatialRule = SpatialRule(name=self.tr("Unused delimiters"),
                                   layer_a="segmentsWithoutDuplicates",
                                   filter_a=None,
                                   predicate=None,
@@ -190,7 +190,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
 
         layerMap = self.layerHandler.mergeLayerByGeometryType(
             chosenLayers, feedback=feedback, context=context, algRunner=algRunner)
-
+ 
         mergedConstraintLineLyr = layerMap[1]
         mergedConstraintPolygonLyr = layerMap[2]
 
@@ -237,8 +237,8 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         polygonFeatList, flagDict, delimiterFlagDict = self.layerHandler.getPolygonsFromCenterPointsAndBoundaries(
             inputCenterPointLyr,
             geographicBoundaryLyr=geographicBoundaryLyr,
-            constraintLineLyrList=[mergedConstraintLineLyr],
-            constraintPolygonLyrList=[mergedConstraintPolygonLyr],
+            constraintLineLyrList=layerMap[1],
+            constraintPolygonLyrList=layerMap[2],
             spatialRule=[spatialRule.asDict()],
             context=context,
             feedback=feedback,

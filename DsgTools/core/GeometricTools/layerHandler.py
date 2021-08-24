@@ -1348,7 +1348,7 @@ class LayerHandler(QObject):
                                                                 context,
                                                                 feedback=multiStepFeedback)
             mergedVectorLayers = algRunner.runDeleteColumn(mergedLyrNewFields,
-                                                           ['layer','path'],
+                                                           ['layer', 'path'],
                                                            context,
                                                            feedback=multiStepFeedback)
         else:
@@ -1539,19 +1539,18 @@ class LayerHandler(QObject):
         # making the whole algorithmn not work properly
         if geographicBoundaryLyr is not None:
             layerMap = self.clipByGeographicBoundaryLyr(inputCenterPointLyr,
-                                                        constraintLineLyrList, 
-                                                        constraintPolygonList, 
-                                                        geographicBoundaryLyr, 
+                                                        constraintLineLyrList,
+                                                        constraintPolygonList,
+                                                        geographicBoundaryLyr,
                                                         context=context,
                                                         feedback=feedback,
                                                         algRunner=algRunner)
             inputCenterPointLyr = layerMap["centroid"]
             constraintLineLyrList = [layerMap["line"]]
-            constraintPolygonList = [layerMap["polygon"]]
+            constraintPolygonList = layerMap["polygon"]
 
-        constraintPolygonListWithGeoBounds = constraintPolygonList + \
-            [geographicBoundaryLyr] if geographicBoundaryLyr is not None else \
-            constraintPolygonList
+        constraintPolygonListWithGeoBounds = self.getPolygonListWithGeoBounds(
+            constraintPolygonList, geographicBoundaryLyr)
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         # 1. Merge Polygon lyrs into one
@@ -1569,7 +1568,7 @@ class LayerHandler(QObject):
         multiStepFeedback.setCurrentStep(1)
         splitSegmentsLyr = algRunner.runClean(
             linesLyr,
-            [0,1,2,3,4,5,6,7,8,9,10,11,12],
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
             context,
             snap=1,
             feedback=multiStepFeedback
@@ -1629,17 +1628,56 @@ class LayerHandler(QObject):
                                     context=None,
                                     feedback=None,
                                     algRunner=None):
+        """
+        Performs an overlay in the input layers using the clip 
+        algorithm with the geographic boundary as clipper.
+        :params inputCenterPointLyr: centroid layer
+        :params constraintLineLyrList: list of constraint line layers
+        :params constraintPolygonLyrList: list of constraint polygon layers
+        :params geographicBoundaryLyr: boundary vector layer
+        :return layerMap: dictionary of clipped layers
+        """
 
         layerMap = {"centroid": inputCenterPointLyr,
-                    "line": constraintLineLyrList[0], 
-                    "polygon": constraintPolygonLyrList[0]}
+                    "line": constraintLineLyrList,
+                    "polygon": constraintPolygonLyrList}
 
         for geomType, layer in layerMap.items():
-            clipped = algRunner.runClip(
-                layer, geographicBoundaryLyr, context, feedback=feedback)
-            layerMap[geomType] = clipped
+            if not layer:
+                layerMap[geomType] = None
+            else:
+                clipped = algRunner.runClip(
+                    layer, geographicBoundaryLyr, context, feedback=feedback)
+                layerMap[geomType] = clipped
 
         return layerMap
+
+    def getPolygonListWithGeoBounds(self, polygonList, boundaryLyr):
+        """
+        Creates a list of polygons with geographic boundary.
+        :params constraintPolygonList: list of polygon layers
+        :params geographicBoundaryLyr: boundary vector layer
+        :return polygonListWithGeoBounds: list of all polygons
+        """
+        polygonListWithGeoBounds = list()
+
+        if polygonList is not None and boundaryLyr is not None:
+            if isinstance(polygonList, list):
+                polygonListWithGeoBounds.extend(polygonList)
+            else:
+                polygonListWithGeoBounds.append(polygonList)
+            polygonListWithGeoBounds.append(boundaryLyr)
+        elif polygonList is None and boundaryLyr is not None:
+            polygonListWithGeoBounds.append(boundaryLyr)
+        elif polygonList is not None and boundaryLyr is None:
+            if isinstance(polygonList, list):
+                polygonListWithGeoBounds.extend(polygonList)
+            else:
+                polygonListWithGeoBounds.append(polygonList)
+        else:
+            polygonListWithGeoBounds = None
+
+        return polygonListWithGeoBounds
 
     def createDelimiterFlagDict(self, unusedDelimiters):
         """
@@ -1649,7 +1687,7 @@ class LayerHandler(QObject):
         """
         delimiterFlagDict = dict()
         delimiterFlagTxt = self.tr(
-            "This delimiter was not used in the polygons' construction")
+            "This delimiter was not used in the polygon construction.")
 
         for delimiter in unusedDelimiters.getFeatures():
             geomKey = delimiter.geometry()
@@ -2049,24 +2087,30 @@ class LayerHandler(QObject):
             QgsWkbTypes.PolygonGeometry: []}
 
         layerMap = self.filterLayerByGeometryType(inputLyrList)
-        
+
         if merge:
             for geomType, lyrList in layerMap.items():
-                mergedLayerMap[geomType] = self.getMergedLayer(lyrList,
-                                                               cleanFields=True,
-                                                               feedback=feedback,
-                                                               context=context,
-                                                               algRunner=algRunner)
+                if not lyrList:
+                    mergedLayerMap[geomType] = None
+                else:
+                    mergedLayerMap[geomType] = self.getMergedLayer(lyrList,
+                                                                   cleanFields=True,
+                                                                   feedback=feedback,
+                                                                   context=context,
+                                                                   algRunner=algRunner)
         return mergedLayerMap
 
     def filterLayerByGeometryType(self, inputLyrList):
         layerMap = {
+            QgsWkbTypes.PointGeometry: [],
             QgsWkbTypes.LineGeometry: [],
             QgsWkbTypes.PolygonGeometry: []
         }
 
         for layer in inputLyrList:
             lyrGeom = layer.geometryType()
+            if lyrGeom == 0:
+                layerMap[lyrGeom].append(layer)
             if lyrGeom == 1:
                 layerMap[lyrGeom].append(layer)
             elif lyrGeom == 2:
