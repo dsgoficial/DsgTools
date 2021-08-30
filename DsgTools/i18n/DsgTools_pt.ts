@@ -331,7 +331,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 4.2_dev_5929378c03c154bf1f9c744fe3a45cc3ff402100&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 4.2.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
 </context>
@@ -2052,52 +2052,87 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="56"/>
         <source>Center Point Layer</source>
-        <translation>Camada de ponto central</translation>
+        <translation type="obsolete">Camada de ponto central</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="63"/>
         <source>Process only selected features</source>
-        <translation>Processar apenas feições selecionadas</translation>
+        <translation type="obsolete">Processar apenas feições selecionadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="69"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="65"/>
         <source>Fields to ignore</source>
         <translation>Campos à ignorar</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="80"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="98"/>
         <source>Line Constraint Layers</source>
         <translation>Delimitadores do tipo linha</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="88"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="106"/>
         <source>Polygon Constraint Layers</source>
         <translation>Delimitadores do tipo polígono</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="96"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="114"/>
         <source>Geographic Boundary</source>
         <translation>Limite geográfico</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="104"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="134"/>
         <source>Output Polygons</source>
         <translation>Polígonos de saída</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="110"/>
         <source>{0} Flags</source>
-        <translation>{0} Flags</translation>
+        <translation type="obsolete">{0} Flags</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="216"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="311"/>
         <source>Build Polygons From Center Points and Boundaries</source>
         <translation>Construir polígonos a partir de centróides e linhas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="223"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="318"/>
         <source>Quality Assurance Tools (Manipulation Processes)</source>
         <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="58"/>
+        <source>Center point layer</source>
+        <translation>Camada de centróides</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="76"/>
+        <source>Ignore virtual fields</source>
+        <translation>Ignorar campos virtuais</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="83"/>
+        <source>Ignore primary key fields</source>
+        <translation>Ignorar campos de chaves primárias</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="90"/>
+        <source>Delimiters Layers</source>
+        <translation>Camadas de delimitadores</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="122"/>
+        <source>Delimiters Flags</source>
+        <translation>Camadas de flag de delimitadores</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="128"/>
+        <source>{0} Polygon Flags</source>
+        <translation>{0} Flags do tipo polígono</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/buildPolygonsFromCenterPointsAndBoundariesAlgorithm.py" line="147"/>
+        <source>Unused delimiters</source>
+        <translation>Delimitadores não utilizados</translation>
     </message>
 </context>
 <context>
@@ -8283,119 +8318,119 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Informações sobre a importação de regras</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="316"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="314"/>
         <source>Some rules have not been loaded</source>
         <translation>Algumas regras não foram carregadas</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="317"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="315"/>
         <source>Do you want to ignore and continue or cancel?</source>
         <translation>Gostaria de ignorar e continuar ou cancelar?</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="323"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="321"/>
         <source>The following layers have not been loaded:
 </source>
         <translation>As seguintes camadas não foram carregadas:
 </translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="332"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="330"/>
         <source>Successfully loaded rules!</source>
         <translation>Regras carregadas com sucesso!</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="385"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="383"/>
         <source>Description</source>
         <translation>Descrição</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="385"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="383"/>
         <source>Layer and field</source>
         <translation>Camada e atributo</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Expression</source>
         <translation>Expressão</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Error type</source>
         <translation>Tipo de erro</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Color</source>
         <translation>Cor</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Rule description</source>
         <translation>Descrição da regra</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Layer</source>
         <translation>Camada</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Field</source>
         <translation>Atributo</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="511"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="509"/>
         <source>Set of DSGTools Attribute Rules</source>
         <translation>Conjunto de regras de atributos do DSGTools</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="242"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="240"/>
         <source>Rule number {} : {} - is not a valid color.</source>
         <translation>Regra número {} : {} - não é uma cor válida.</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="246"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="244"/>
         <source>Rule number {} : {} - is not a valid string.</source>
         <translation>Regra número {} : {} - não é uma string válida.</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="250"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="248"/>
         <source>Rule number {} : {} - is not a valid expression.</source>
         <translation>Regra número {} : {} - não é uma expressão válida.</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="254"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="252"/>
         <source>Rule number {} : {} - is not a valid length = 2 list.</source>
         <translation>Regra número {} : {} - não é uma lista válida com comprimento igual a 2.</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="258"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="256"/>
         <source>Rule number {} : {} - is not a valid string description.</source>
         <translation>Regra número {} : {} - não é uma descrição válida.</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="312"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="310"/>
         <source>Information about importing rules</source>
         <translation>Informações sobre importação de regras</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Set a name for this attribute rule...</source>
         <translation>Defina um nome para esta regra de atributo ...</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Type a vector layer name...</source>
         <translation>Digite o nome de uma camada vetorial...</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Type a field layer name...</source>
         <translation>Digite o nome do atributo da camada...</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Type an error type...</source>
         <translation>Digite um tipo de erro...</translation>
     </message>
@@ -13615,84 +13650,104 @@ Camada</translation>
 <context>
     <name>LayerHandler</name>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="101"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="100"/>
         <source>DsgTools reclassification</source>
         <translation>Reclassificação do DSGTools</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="418"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="417"/>
         <source>Merging Lines</source>
         <translation>Unindo linhas</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1024"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1038"/>
         <source>Creating index</source>
         <translation>Criando índice espacial</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1361"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1383"/>
         <source>Building auxiliar search structures</source>
         <translation>Construindo estruturas auxiliares de busca</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1042"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1056"/>
         <source>Getting flags</source>
         <translation>Obtendo lags</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1216"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1230"/>
         <source>Getting lines</source>
         <translation>Obtendo linhas</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1184"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1198"/>
         <source>Building vertex near edge dict</source>
         <translation>Construindo dicionário de vértices próximos à borda</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1225"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1239"/>
         <source>Building intersections</source>
         <translation>Executando interseções</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1233"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1247"/>
         <source>Finding vertexes</source>
         <translation>Encontrando vértices</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1240"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1254"/>
         <source>Finding unshared vertexes</source>
         <translation>Encontrando vértices não compartilhados</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1532"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1558"/>
         <source>Getting constraint lines</source>
         <translation>Obtendo linhas restritas</translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/layerHandler.py" line="1786"/>
         <source>Polygon without center point.</source>
-        <translation>Polígono sem ponto central.</translation>
+        <translation type="obsolete">Polígono sem ponto central.</translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/layerHandler.py" line="1788"/>
         <source>Polygon with more than one center point with conflicting attributes.</source>
-        <translation>Polígono com mais de um ponto central com atributos contraditórios.</translation>
+        <translation type="obsolete">Polígono com mais de um ponto central com atributos contraditórios.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="159"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="158"/>
         <source>No layers were provided or they are all empty.</source>
         <translation>Nenhuma camada foi fornecida ou estão todas vazias.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1866"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="2057"/>
         <source>Input layer is not polygon.</source>
         <translation>A camada de entrada não é de polígono.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1875"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="2066"/>
         <source>Invalid or empty geometry found!</source>
         <translation>Geometria inválida ou vazia encontrada!</translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1683"/>
+        <source>This delimiter was not used in the polygon construction.</source>
+        <translation>Este delimitador não foi utilizado na construção de polígonos.</translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1915"/>
+        <source>Polygon without a centroid.</source>
+        <translation>Polígono sem um centróide.</translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1981"/>
+        <source>Polygon with more than one centroid with conflicting values at {} attributes.</source>
+        <translation>Polígono com mais de um centróide com valores contraditórios nos atributos {}.</translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1984"/>
+        <source>Polygon with more than one centroid with conflicting value at &apos;{}&apos; attribute.</source>
+        <translation>Polígono com mais de um centróide com valores contraditórios no atributo {}.</translation>
     </message>
 </context>
 <context>

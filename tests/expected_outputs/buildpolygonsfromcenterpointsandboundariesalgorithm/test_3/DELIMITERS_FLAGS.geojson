@@ -3,9 +3,9 @@
 "name": "DELIMITERS_FLAGS",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31982" } },
 "features": [
-{ "type": "Feature", "properties": { "reason": "This delimiter was not used in the polygons' construction" }, "geometry": { "type": "LineString", "coordinates": [ [ 306187.576414560666308, 9986898.716185240074992 ], [ 305824.856313047115691, 9986314.333799486979842 ] ] } },
-{ "type": "Feature", "properties": { "reason": "This delimiter was not used in the polygons' construction" }, "geometry": { "type": "LineString", "coordinates": [ [ 306673.47200365975732, 9984654.21584477648139 ], [ 306580.523191200278234, 9984548.592194257304072 ] ] } },
-{ "type": "Feature", "properties": { "reason": "This delimiter was not used in the polygons' construction" }, "geometry": { "type": "LineString", "coordinates": [ [ 306570.447632824769244, 9983762.698641004040837 ], [ 306490.13521099218633, 9983781.973622243851423 ] ] } },
-{ "type": "Feature", "properties": { "reason": "This delimiter was not used in the polygons' construction" }, "geometry": { "type": "LineString", "coordinates": [ [ 306594.902871599886566, 9985738.877575883641839 ], [ 306630.900983077066485, 9985757.659199262037873 ] ] } }
+{ "type": "Feature", "properties": { "reason": "This delimiter was not used in the polygon construction." }, "geometry": { "type": "LineString", "coordinates": [ [ 306187.576414560666308, 9986898.716185240074992 ], [ 305824.856313047115691, 9986314.333799486979842 ] ] } },
+{ "type": "Feature", "properties": { "reason": "This delimiter was not used in the polygon construction." }, "geometry": { "type": "LineString", "coordinates": [ [ 306673.47200365975732, 9984654.21584477648139 ], [ 306580.523191200278234, 9984548.592194257304072 ] ] } },
+{ "type": "Feature", "properties": { "reason": "This delimiter was not used in the polygon construction." }, "geometry": { "type": "LineString", "coordinates": [ [ 306570.447632824769244, 9983762.698641004040837 ], [ 306490.13521099218633, 9983781.973622243851423 ] ] } },
+{ "type": "Feature", "properties": { "reason": "This delimiter was not used in the polygon construction." }, "geometry": { "type": "LineString", "coordinates": [ [ 306594.902871599886566, 9985738.877575883641839 ], [ 306630.900983077066485, 9985757.659199262037873 ] ] } }
 ]
 }
