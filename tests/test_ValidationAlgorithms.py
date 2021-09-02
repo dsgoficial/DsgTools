@@ -727,14 +727,13 @@ class Tester(unittest.TestCase):
                 {
                     '__comment': "'Normal' test: checks if it works.",
                     "INPUT_CENTER_POINTS": self.getInputLayers(
-                        'geojson', 'build_polygons_from_center_points', ['centroide_md'])[0],
-                    "ATTRIBUTE_BLACK_LIST": ['id'],
+                        'geojson', 'build_polygons_from_center_points', ['centroide'])[0],
+                    "ATTRIBUTE_BLACK_LIST": [],
                     "IGNORE_VIRTUAL_FIELDS": True,
                     "IGNORE_PK_FIELDS": True,
-                    "CONSTRAINT_LINE_LAYERS": self.getInputLayers(
-                        'geojson', 'build_polygons_from_center_points', ['barragem']),
+                    "CONSTRAINT_LINE_LAYERS": None,
                     "DELIMITER_LAYERS": self.getInputLayers(
-                        'geojson', 'build_polygons_from_center_points', ['limite_massa_dagua']),
+                        'geojson', 'build_polygons_from_center_points', ['delimiter']),
                     "CONSTRAINT_POLYGON_LAYERS": None,
                     "GEOGRAPHIC_BOUNDARY": self.getInputLayers(
                         'geojson', 'build_polygons_from_center_points', ['moldura'])[0],
