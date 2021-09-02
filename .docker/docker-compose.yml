@@ -2,7 +2,7 @@ version: '3'
 
 services:
   qgis:
-    image: qgis/qgis:release-3_16
+    image: qgis/qgis:final-3_10_9
     container_name: dsgtools-testing-env
     volumes:
       # - /tmp/.X11-unix:/tmp/.X11-unix
