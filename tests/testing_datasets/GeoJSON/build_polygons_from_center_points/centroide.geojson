@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "centroide",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31981" } },
+"features": [
+{ "type": "Feature", "properties": { "id": 178, "nome": null, "tipo": 7, "regime": 1, "observacao": null, "data_modif": null, "controle_u": "240c3d10-0a01-4529-95ef-b079196b8f27", "usuario_cr": null, "usuario_at": null, "insumo": null, "data_insum": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 399005.102594136144035, 7783557.949767455458641 ] ] } },
+{ "type": "Feature", "properties": { "id": 293, "nome": null, "tipo": 7, "regime": 1, "observacao": null, "data_modif": null, "controle_u": "569d99ed-7810-4e13-af6b-fc74eee28393", "usuario_cr": null, "usuario_at": null, "insumo": null, "data_insum": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 398743.362995653355028, 7787523.693488261662424 ] ] } },
+{ "type": "Feature", "properties": { "id": 529, "nome": "Rio Paraguai", "tipo": 1, "regime": 1, "observacao": null, "data_modif": null, "controle_u": "0cdfeb5d-e0bb-4ede-9110-1b221ef00d33", "usuario_cr": null, "usuario_at": null, "insumo": null, "data_insum": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 402109.488993166014552, 7785952.921245224773884 ] ] } },
+{ "type": "Feature", "properties": { "id": 602, "nome": null, "tipo": 7, "regime": 3, "observacao": null, "data_modif": null, "controle_u": "582d6617-c126-4d55-a9f3-b29e6a9e426b", "usuario_cr": null, "usuario_at": null, "insumo": null, "data_insum": null }, "geometry": { "type": "MultiPoint", "coordinates": [ [ 402012.702310761029366, 7787265.101678027771413 ] ] } }
+]
+}

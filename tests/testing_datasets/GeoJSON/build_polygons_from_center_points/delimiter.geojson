@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "delimiter",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31981" } },
+"features": [
+{ "type": "Feature", "properties": { "observacao": null, "data_modif": null, "controle_u": null, "usuario_cr": null, "usuario_at": null, "insumo": null, "data_insum": null, "lenght_otf": null, "id": 2 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 400590.447354471252766, 7790035.728216254152358 ], [ 400645.883632947516162, 7788942.19630609638989 ], [ 400854.036804840783589, 7780445.535801297985017 ], [ 400793.626633941254113, 7779470.405683815479279 ] ] ] } },
+{ "type": "Feature", "properties": { "observacao": null, "data_modif": null, "controle_u": null, "usuario_cr": null, "usuario_at": null, "insumo": null, "data_insum": null, "lenght_otf": null, "id": 1 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 406501.117302688537166, 7782462.682345100678504 ], [ 405214.504530915815849, 7782808.770184279419482 ], [ 396182.231414396257605, 7787116.372529540210962 ], [ 394993.781747253029607, 7787172.74746008682996 ] ] ] } },
+{ "type": "Feature", "properties": { "observacao": null, "data_modif": null, "controle_u": null, "usuario_cr": null, "usuario_at": null, "insumo": null, "data_insum": null, "lenght_otf": null, "id": 3 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 398300.062749537057243, 7782167.148847689852118 ], [ 397782.879129068052862, 7783829.52477062586695 ] ] ] } }
+]
+}

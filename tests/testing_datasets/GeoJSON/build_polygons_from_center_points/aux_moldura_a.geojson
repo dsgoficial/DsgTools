@@ -1,8 +1,0 @@
-{
-"type": "FeatureCollection",
-"name": "aux_moldura_a",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31982" } },
-"features": [
-{ "type": "Feature", "properties": { "id": 2, "nome": "teste", "mi": "teste", "tipo_comprovacao": 999, "tipo_insumo": 999, "observacao": null, "data_modificacao": null, "controle_id": null, "ultimo_usuario": null, "area_otf": 10557370.956439456 }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 305441.985094783245586, 9987228.690722018480301 ], [ 308424.350373894209042, 9987268.992955518886447 ], [ 308384.048140392173082, 9983712.320849128067493 ], [ 305462.136211534030735, 9983631.716382129117846 ], [ 305441.985094783245586, 9987228.690722018480301 ] ] ] ] } }
-]
-}

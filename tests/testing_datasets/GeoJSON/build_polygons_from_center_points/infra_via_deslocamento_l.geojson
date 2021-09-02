@@ -1,8 +1,0 @@
-{
-"type": "FeatureCollection",
-"name": "infra_via_deslocamento_l",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31982" } },
-"features": [
-{ "type": "Feature", "properties": { "id": 2, "nome": null, "tipo": 999, "revestimento": 999, "trafego": 999, "nr_faixas": null, "nr_pistas": null, "canteiro_divisorio": 999, "situacao_fisica": 999, "jurisdicao": 999, "sigla": null, "administracao": 999, "concessionaria": null, "tipo_comprovacao": 999, "tipo_insumo": 999, "observacao": null, "data_modificacao": null, "controle_id": null, "ultimo_usuario": null, "lenght_otf": 844.53967069286603 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 305217.374097058549523, 9985737.362223979085684 ], [ 305895.38522167498013, 9985233.730163760483265 ] ] ] } }
-]
-}

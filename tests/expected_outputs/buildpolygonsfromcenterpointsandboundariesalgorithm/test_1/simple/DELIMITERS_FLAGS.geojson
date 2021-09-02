@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "DELIMITERS_FLAGS",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31981" } },
+"features": [
+{ "type": "Feature", "properties": { "reason": "This delimiter was not used in the polygon construction." }, "geometry": { "type": "LineString", "coordinates": [ [ 398300.062749537057243, 7782167.148847689852118 ], [ 397782.879129068052862, 7783829.52477062586695 ] ] } }
+]
+}

@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "FLAGS",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31981" } },
+"features": [
+{ "type": "Feature", "properties": { "reason": "Polygon with more than one centroid with conflicting values at 'id', 'nome', 'tipo', 'regime', 'controle_u' attributes." }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 400743.909498512570281, 7784940.852042064070702 ], [ 400645.883632947516162, 7788942.19630609638989 ], [ 404866.546878470224328, 7788968.909364611841738 ], [ 405214.504530915815849, 7782808.770184279419482 ], [ 400743.909498512570281, 7784940.852042064070702 ] ] ] } },
+{ "type": "Feature", "properties": { "reason": "Polygon without a centroid." }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 400854.036804840783589, 7780445.535801297985017 ], [ 400743.909498512570281, 7784940.852042064070702 ], [ 405214.504530915815849, 7782808.770184279419482 ], [ 405362.368334623344708, 7780191.033214938826859 ], [ 400854.036804840783589, 7780445.535801297985017 ] ] ] } }
+]
+}

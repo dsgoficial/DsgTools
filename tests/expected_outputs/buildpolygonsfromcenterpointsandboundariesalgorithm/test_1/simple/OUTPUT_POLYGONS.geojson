@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "OUTPUT_POLYGONS",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::31981" } },
+"features": [
+{ "type": "Feature", "properties": { "id": 293, "nome": null, "tipo": 7, "regime": 1, "observacao": null, "data_modif": null, "controle_u": "569d99ed-7810-4e13-af6b-fc74eee28393", "usuario_cr": null, "usuario_at": null, "insumo": null, "data_insum": null }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 400645.883632947516162, 7788942.19630609638989 ], [ 400743.909498512570281, 7784940.852042064070702 ], [ 396182.231414396257605, 7787116.372529540210962 ], [ 396162.12575933849439, 7788913.818091706372797 ], [ 400645.883632947516162, 7788942.19630609638989 ] ] ] } },
+{ "type": "Feature", "properties": { "id": 178, "nome": null, "tipo": 7, "regime": 1, "observacao": null, "data_modif": null, "controle_u": "240c3d10-0a01-4529-95ef-b079196b8f27", "usuario_cr": null, "usuario_at": null, "insumo": null, "data_insum": null }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 400743.909498512570281, 7784940.852042064070702 ], [ 400854.036804840783589, 7780445.535801297985017 ], [ 396253.944547514955048, 7780705.21842872723937 ], [ 396182.231414396257605, 7787116.372529540210962 ], [ 400743.909498512570281, 7784940.852042064070702 ] ] ] } }
+]
+}
