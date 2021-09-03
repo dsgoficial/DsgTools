@@ -723,24 +723,24 @@ class Tester(unittest.TestCase):
                     'OUTPUT_BOUNDARIES': "memory:"
                 }
             ],
-            "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm": [
-                {
-                    '__comment': "'Normal' test: checks if it works.",
-                    "INPUT_CENTER_POINTS": self.getInputLayers(
-                        'geojson', 'build_polygons_from_center_points', ['centroide'])[0],
-                    "ATTRIBUTE_BLACK_LIST": [],
-                    "IGNORE_VIRTUAL_FIELDS": True,
-                    "IGNORE_PK_FIELDS": True,
-                    "CONSTRAINT_LINE_LAYERS": None,
-                    "DELIMITER_LAYERS": self.getInputLayers(
-                        'geojson', 'build_polygons_from_center_points', ['delimiter']),
-                    "CONSTRAINT_POLYGON_LAYERS": None,
-                    "GEOGRAPHIC_BOUNDARY": self.getInputLayers(
-                        'geojson', 'build_polygons_from_center_points', ['moldura'])[0],
-                    "OUTPUT_POLYGONS": "memory:",
-                    "FLAGS": "memory:",
-                    "DELIMITERS_FLAGS": "memory:"
-                }#,
+            # "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm": [
+            #     {
+            #         '__comment': "'Normal' test: checks if it works.",
+            #         "INPUT_CENTER_POINTS": self.getInputLayers(
+            #             'geojson', 'build_polygons_from_center_points', ['centroide'])[0],
+            #         "ATTRIBUTE_BLACK_LIST": [],
+            #         "IGNORE_VIRTUAL_FIELDS": True,
+            #         "IGNORE_PK_FIELDS": True,
+            #         "CONSTRAINT_LINE_LAYERS": None,
+            #         "DELIMITER_LAYERS": self.getInputLayers(
+            #             'geojson', 'build_polygons_from_center_points', ['delimiter']),
+            #         "CONSTRAINT_POLYGON_LAYERS": None,
+            #         "GEOGRAPHIC_BOUNDARY": self.getInputLayers(
+            #             'geojson', 'build_polygons_from_center_points', ['moldura'])[0],
+            #         "OUTPUT_POLYGONS": "memory:",
+            #         "FLAGS": "memory:",
+            #         "DELIMITERS_FLAGS": "memory:"
+            #     }#,
                 # {
                 #     '__comment': "'Normal' test: without GEOGRAPHIC_BOUNDARY.",
                 #     "INPUT_CENTER_POINTS": self.getInputLayers(
@@ -1677,17 +1677,17 @@ class Tester(unittest.TestCase):
             ""
         )
 
-    # def test_buildpolygonsfromcenterpointsandboundariesalgorithm(self):
-    #     proj = QgsProject.instance()
-    #     proj.clear()
-    #     self.assertEqual(
-    #         self.testAlg(
-    #             "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
-    #             multipleOutputs=True,
-    #             addControlKey=True
-    #         ),
-    #         ""
-    #     )
+    def test_buildpolygonsfromcenterpointsandboundariesalgorithm(self):
+        proj = QgsProject.instance()
+        proj.clear()
+        self.assertEqual(
+            self.testAlg(
+                "dsgtools:buildpolygonsfromcenterpointsandboundariesalgorithm",
+                multipleOutputs=True,
+                addControlKey=True
+            ),
+            ""
+        )
 
     def test_identifyterrainmodelerrorsalgorithm(self):
         self.assertEqual(
