@@ -254,12 +254,12 @@ class GeometricaAcquisition(QgsMapTool):
             fieldName = layer.fields().field( fieldIndex ).name()
             if fieldIndex in primaryKeyIndexes:
                 continue
-            attributeValue = self.evaluateExpression(layer, layer.defaultValueDefinition( fieldIndex ).expression()) 
-            attributeConfig = layer.editorWidgetSetup( fieldIndex ).config()
-            isMapValue = ( 'map' in attributeConfig )
-            if isMapValue and not( attributeValue in attributeConfig['map'] ):
+            attributeExpression = layer.defaultValueDefinition( fieldIndex ).expression()
+            evaluatedExpression = self.evaluateExpression(layer, layer.defaultValueDefinition( fieldIndex ).expression() )
+            if evaluatedExpression is None:
+                feature[ fieldName ] = attributeExpression
                 continue
-            feature[ fieldName ] = attributeValue
+            feature[ fieldName ] = evaluatedExpression
 
     def evaluateExpression(self, layer, expression):
         context = core.QgsExpressionContext()
