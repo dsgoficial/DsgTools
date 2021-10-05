@@ -266,12 +266,33 @@ class AcquisitionFreeController(object):
         suppressForm = s.value(u"qgis/digitizing/disable_enter_attribute_values_dialog")
         return suppressForm == "true"
 
+    def loadDefaultFields(self, layer, feature):
+        attributesValues = {}
+        primaryKeyIndexes = layer.dataProvider().pkAttributeIndexes()
+        for fieldIndex in layer.attributeList():
+            fieldName = layer.fields().field( fieldIndex ).name()
+            if fieldIndex in primaryKeyIndexes:
+                continue
+            attributeValue = self.evaluateExpression(layer, layer.defaultValueDefinition( fieldIndex ).expression()) 
+            attributeConfig = layer.editorWidgetSetup( fieldIndex ).config()
+            isMapValue = ( 'map' in attributeConfig )
+            if isMapValue and not( attributeValue in attributeConfig['map'] ):
+                continue
+            feature[ fieldName ] = attributeValue 
+
+    def evaluateExpression(self, layer, expression):
+        context = core.QgsExpressionContext()
+        context.appendScopes( core.QgsExpressionContextUtils.globalProjectLayerScopes(layer) )
+        return core.QgsExpression( expression ).evaluate( context )
+
     def addFeatureWithForm(self, layer, feature):
         #Método para adicionar a feição com formulário
         #Parâmetro de entrada: layer (Camada ativa), feature (Feição adquirida)
         layer.beginEditCommand("dsgtools freehand feature added")
+        self.loadDefaultFields( layer, feature )
         attrDialog = gui.QgsAttributeDialog(layer, feature, False)
-        attrDialog.setMode(int(gui.QgsAttributeForm.AddFeatureMode))
+        attrDialog.setAttribute( QtCore.Qt.WA_DeleteOnClose )
+        attrDialog.setMode( int( gui.QgsAttributeForm.AddFeatureMode ) )
         res = attrDialog.exec_()
         if res == 0:
             layer.destroyEditCommand()
