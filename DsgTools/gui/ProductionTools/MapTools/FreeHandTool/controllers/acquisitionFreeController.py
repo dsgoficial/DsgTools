@@ -274,6 +274,8 @@ class AcquisitionFreeController(object):
             if fieldIndex in primaryKeyIndexes:
                 continue
             attributeExpression = layer.defaultValueDefinition( fieldIndex ).expression()
+            if attributeExpression == '':
+                continue
             evaluatedExpression = self.evaluateExpression(layer, layer.defaultValueDefinition( fieldIndex ).expression() )
             if evaluatedExpression is None:
                 feature[ fieldName ] = attributeExpression
