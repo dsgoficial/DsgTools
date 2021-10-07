@@ -109,10 +109,7 @@ class AttributeTableWidget( QtWidgets.QWidget ):
 
     def loadAttributes(self, attributesConfig):
         self.clearAllItems()
-        attributeBacklist = self.getController().getAttributeBacklist()
         for attributeName in attributesConfig:
-            if attributeName in attributeBacklist:
-                continue
             if 'map' in attributesConfig[ attributeName ]:
                 widget = self.createComboBox( attributesConfig[ attributeName ]['map'] )
             else:

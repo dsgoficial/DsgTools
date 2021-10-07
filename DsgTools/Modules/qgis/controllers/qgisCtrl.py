@@ -33,20 +33,35 @@ class QgisCtrl:
             if l.dataProvider().uri().table() == layerName and l.type() == core.QgsMapLayer.VectorLayer
         ]
 
-    def getAttributesConfigByLayerName(self, layerName):
+    def getAttributesConfigByLayerName(
+            self, 
+            layerName,
+            withPrimaryKey=False,
+            withVirtualField=False
+        ):
         for l in core.QgsProject.instance().mapLayers().values():
             if not( l.name() == layerName ):
                 continue
-            return self.getAttributesConfigByLayer( l )
+            return self.getAttributesConfigByLayer( l, withPrimaryKey,  withVirtualField )
         return {}
 
-    def getAttributesConfigByLayer(self, layer):
+    def getAttributesConfigByLayer(self, layer, withPrimaryKey,  withVirtualField):
         attrConfig = {}
-        for idx in layer.attributeList():
-            fieldName = layer.fields().field( idx ).name()
-            fieldConfig = layer.fields().field( idx ).editorWidgetSetup().config()
+        for fieldIndex in layer.attributeList():
+            if not( withPrimaryKey ) and ( fieldIndex in self.getLayerPrimaryKeyIndexes( layer ) ):
+                continue
+            if not( withVirtualField ) and ( self.getFieldTypeName( layer, fieldIndex ) == '' ) :
+                continue
+            fieldName = layer.fields().field( fieldIndex ).name()
+            fieldConfig = layer.fields().field( fieldIndex ).editorWidgetSetup().config()
             attrConfig[ fieldName ] = fieldConfig
         return attrConfig
+    
+    def getLayerPrimaryKeyIndexes(self, layer):
+        return layer.dataProvider().pkAttributeIndexes()
+
+    def getFieldTypeName(self, layer, fieldIndex):
+        return layer.fields().field( fieldIndex ).typeName()
 
     def getAcquisitionToolNames(self):
         return {
@@ -68,11 +83,10 @@ class QgisCtrl:
         gui.QgsGui.shortcutsManager().unregisterShortcut( shortcut )
 
     def setDefaultFields(self, layer, attributes, reset=False):
-        attributeBackList = self.getAttributeBacklist()
         primaryKeyIndexes = layer.dataProvider().pkAttributeIndexes()
         for attributeName in attributes:
             fieldIndex = layer.fields().indexFromName( attributeName )
-            if ( attributeName in attributeBackList ) or ( fieldIndex in primaryKeyIndexes ):
+            if fieldIndex in primaryKeyIndexes:
                 continue
             attributeValue = attributes[ attributeName ]
             configField = layer.defaultValueDefinition( fieldIndex )
@@ -92,18 +106,14 @@ class QgisCtrl:
 
     def getDefaultFields(self, layer):
         attributesValues = {}
-        attributeBackList = self.getAttributeBacklist()
         primaryKeyIndexes = layer.dataProvider().pkAttributeIndexes()
         for fieldIndex in layer.attributeList():
             fieldName = layer.fields().field( fieldIndex ).name()
-            if ( fieldName in attributeBackList ) or ( fieldIndex in primaryKeyIndexes ):
+            if fieldIndex in primaryKeyIndexes:
                 continue
             configField = layer.defaultValueDefinition( fieldIndex )
             attributesValues[ fieldName ] = configField.expression()
         return attributesValues
-
-    def getAttributeBacklist(self):
-        return [ 'data_modificacao', 'controle_uuid', 'usuario_criacao', 'usuario_atualizacao', 'id' ]
 
     def setActiveLayer(self, layer):
         iface.setActiveLayer( layer )

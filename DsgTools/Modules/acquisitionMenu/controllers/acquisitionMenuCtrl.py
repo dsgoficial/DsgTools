@@ -164,9 +164,6 @@ class AcquisitionMenuCtrl:
     def removeMenuDock(self):
         self.qgis.removeDockWidget( self.menuDock ) if self.menuDock else ''
 
-    def getAttributeBacklist(self):
-        return self.qgis.getAttributeBacklist()
-
     def openReclassifyDialog(self, buttonConfig, callback):
         layers = self.qgis.getVectorLayersByName( buttonConfig['buttonLayer'] )
         if not layers:
