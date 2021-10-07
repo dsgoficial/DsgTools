@@ -155,12 +155,14 @@ class AcquisitionMenuCtrl:
         return self.qgis.getAttributesConfigByLayerName( layerName )
 
     def createMenuDock(self, menuConfigs):
-        if self.menuDock:
-            self.qgis.removeDockWidget( self.menuDock )
+        self.removeMenuDock()
         self.menuDock = self.widgetFactory.createWidget( 'MenuDock', self )
         self.menuDock.setMenuWidget( self.getMenuWidget() )
         self.menuDock.loadMenus( menuConfigs )
         self.qgis.addDockWidget( self.menuDock )
+
+    def removeMenuDock(self):
+        self.qgis.removeDockWidget( self.menuDock ) if self.menuDock else ''
 
     def getAttributeBacklist(self):
         return self.qgis.getAttributeBacklist()
