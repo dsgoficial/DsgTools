@@ -39,6 +39,7 @@ class MenuEditorDialog( QtWidgets.QDialog ):
 
     def setMenuWidget(self, menuWidget):
         self.menuWidget = menuWidget
+        self.menuWidget.setMovable(True)
         self.menuLayout.addWidget( self.menuWidget )  
 
     def setTabEditorWidget(self, tabEditorWidget):
