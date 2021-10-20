@@ -702,3 +702,14 @@ class AlgRunner:
                                 feedback=feedback)
         return output['OUTPUT']
 
+    def runCreateSpatialIndex(self, inputLyr, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT': inputLyr
+        }
+        output = processing.run("native:createspatialindex",
+                                parameters,
+                                context=None,
+                                feedback=None)
+        return output['OUTPUT']
+

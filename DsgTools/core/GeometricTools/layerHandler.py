@@ -31,7 +31,9 @@ from qgis.core import (edit, Qgis, QgsCoordinateReferenceSystem, QgsCoordinateTr
                        QgsExpression, QgsFeature, QgsFeatureRequest, QgsField, QgsFields, QgsGeometry, QgsMessageLog,
                        QgsProcessingContext, QgsProcessingMultiStepFeedback, QgsProcessingUtils, QgsProject,
                        QgsSpatialIndex, QgsVectorDataProvider, QgsVectorLayer, QgsVectorLayerUtils, QgsWkbTypes,
-                       QgsProcessingFeatureSourceDefinition, QgsFeatureSink)
+                       QgsProcessingFeatureSourceDefinition, QgsFeatureSink,
+                       QgsTaskManager, QgsProcessingAlgRunnerTask, QgsApplication, QgsProcessingFeedback,
+                       QgsProject)
 from qgis.PyQt.Qt import QObject, QVariant
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
@@ -1305,7 +1307,8 @@ class LayerHandler(QObject):
             context,
             feedback=multiStepFeedback
         )
-        return mergedLayer
+        cleanedMergedLayer = algRunner.runDeleteColumn(mergedLayer, ['area_otf', 'lenght_otf'], context, feedback=multiStepFeedback)
+        return cleanedMergedLayer
 
     def reprojectLayer(self, layer, targetEpsg, output=None):
         """
@@ -1579,6 +1582,7 @@ class LayerHandler(QObject):
             context,
             feedback=multiStepFeedback
         )
+
         # to use the enforce spatial rules algorithm we have to
         # load the segmentsWithoutDuplicates and builtPolygonLyr
         # layers to the canvas and unload it at the end
@@ -1591,6 +1595,7 @@ class LayerHandler(QObject):
             context,
             feedback=multiStepFeedback
         )
+
         builtPolygonLyr.setName("builtPolygonLyr")
         QgsProject.instance().addMapLayer(builtPolygonLyr)
 
@@ -1604,8 +1609,8 @@ class LayerHandler(QObject):
             context=context,
             feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(5)
 
+        multiStepFeedback.setCurrentStep(5)
         unusedDelimiters = algRunner.runEnforceSpatialRule(
             spatialRule,
             context,
@@ -1647,7 +1652,8 @@ class LayerHandler(QObject):
                 layerMap[geomType] = None
             else:
                 clipped = algRunner.runClip(
-                    layer, geographicBoundaryLyr, context, feedback=feedback)
+                    layer, geographicBoundaryLyr, context, feedback)
+                algRunner.runCreateSpatialIndex(clipped)
                 layerMap[geomType] = clipped
 
         return layerMap
@@ -2098,6 +2104,8 @@ class LayerHandler(QObject):
                                                                    feedback=feedback,
                                                                    context=context,
                                                                    algRunner=algRunner)
+                    self.algRunner.runCreateSpatialIndex(mergedLayerMap[geomType])
+
         return mergedLayerMap
 
     def filterLayerByGeometryType(self, inputLyrList):

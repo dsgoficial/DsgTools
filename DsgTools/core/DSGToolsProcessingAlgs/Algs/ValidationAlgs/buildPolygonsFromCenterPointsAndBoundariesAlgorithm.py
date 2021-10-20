@@ -161,6 +161,8 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             self.INPUT_CENTER_POINTS,
             context)
 
+        algRunner.runCreateSpatialIndex(inputCenterPointLyr)
+
         if inputCenterPointLyr is None:
             raise QgsProcessingException(
                 self.invalidSourceError(
@@ -190,14 +192,12 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
 
         layerMap = self.layerHandler.mergeLayerByGeometryType(
             chosenLayers, feedback=feedback, context=context, algRunner=algRunner)
- 
-        mergedConstraintLineLyr = layerMap[1]
-        mergedConstraintPolygonLyr = layerMap[2]
 
         geographicBoundaryLyr = self.parameterAsLayer(
             parameters,
             self.GEOGRAPHIC_BOUNDARY,
             context)
+        algRunner.runCreateSpatialIndex(geographicBoundaryLyr)
 
         attributeBlackList = self.parameterAsFields(
             parameters,
