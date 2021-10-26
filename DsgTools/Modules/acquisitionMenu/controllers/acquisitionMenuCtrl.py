@@ -193,7 +193,7 @@ class AcquisitionMenuCtrl:
             self.qgis.attributeSelectedFeatures( layer, attributes )
     
     def getLayersForReclassification(self, layerName, geometryType):
-        layers = self.qgis.getVectorLayersByName( layerName )
+        layers = self.qgis.getLoadedVectorLayers()
         return [
             l
             for l in layers
