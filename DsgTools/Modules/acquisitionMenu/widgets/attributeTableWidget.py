@@ -122,6 +122,8 @@ class AttributeTableWidget( QtWidgets.QWidget ):
         attributeNames = [ key for key in attributesValues ]
         for rowIndex in range(self.tableWidget.rowCount()):
             attributeName = self.tableWidget.model().index(rowIndex, 1).data()
+            if not( attributeName in attributeNames ):
+                continue
             attributeValue = attributesValues[ attributeName ]
             widget = self.tableWidget.cellWidget(rowIndex, 2).layout().itemAt(0).widget()
             if isinstance( widget, QtWidgets.QLineEdit ):
