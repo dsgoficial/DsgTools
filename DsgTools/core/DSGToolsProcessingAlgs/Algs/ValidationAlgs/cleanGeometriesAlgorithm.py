@@ -72,7 +72,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
                 self.TOLERANCE, 
                 self.tr('Snap radius'), 
                 parentParameterName=self.INPUT,                                         
-                minValue=0, 
+                minValue=-1.0, 
                 defaultValue=1.0
             )
         )
