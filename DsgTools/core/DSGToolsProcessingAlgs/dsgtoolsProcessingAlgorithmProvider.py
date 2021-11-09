@@ -206,6 +206,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyInvalidUUI
     IdentifyInvalidUUIDsAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyCountourStackingAlgorithm import \
     VerifyCountourStackingAlgorihtm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyCountourStreamIntersectionAlgorithm import \
+    IdentifyCountourStreamIntersectionAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -305,7 +307,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifySmallHolesAlgorithm(),
             IdentifyInvalidUUIDsAlgorithm(),
             VerifyCountourStackingAlgorihtm(),
-            LoadShapefileAlgorithm()
+            LoadShapefileAlgorithm(),
+            IdentifyCountourStreamIntersectionAlgorithm()
 
         ]
         return algList
