@@ -200,6 +200,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyZAnglesBet
     identifyZAnglesBetweenLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallHolesAlgorithm import \
     IdentifySmallHolesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyInvalidUUIDs import \
+    IdentifyInvalidUUIDs
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -296,7 +298,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             EnforceAttributeRulesAlgorithm(),
             IdentifyPolygonSliverAlgorithm(),
             identifyZAnglesBetweenLayersAlgorithm(),
-            IdentifySmallHolesAlgorithm()
+            IdentifySmallHolesAlgorithm(),
+            IdentifyInvalidUUIDs()
         ]
         return algList
 
