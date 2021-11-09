@@ -50,6 +50,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadNonSpatia
     LoadNonSpatialLayersFromPostgreSQLAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.matchAndApplyQmlStylesToLayersAlgorithm import \
     MatchAndApplyQmlStylesToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadShapefileAlgorithm import \
+    LoadShapefileAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.convertLayer2LayerAlgorithm import \
     ConvertLayer2LayerAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm import \
@@ -302,7 +304,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             identifyZAnglesBetweenLayersAlgorithm(),
             IdentifySmallHolesAlgorithm(),
             IdentifyInvalidUUIDsAlgorithm(),
-            VerifyCountourStackingAlgorihtm()
+            VerifyCountourStackingAlgorihtm(),
+            LoadShapefileAlgorithm()
 
         ]
         return algList
