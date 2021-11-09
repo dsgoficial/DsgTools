@@ -272,7 +272,7 @@ class InspectFeatures(QWidget,Ui_Form):
     def zoomToLayer(self, layer, zoom = None):
         box = layer.boundingBoxOfSelected()
         if zoom is not None:
-            box.grow(100-zoom)
+            box.grow((100-zoom)/100)
         # Defining the crs from src and destiny
         epsg = self.iface.mapCanvas().mapSettings().destinationCrs().authid()
         crsDest = QgsCoordinateReferenceSystem(epsg)
