@@ -196,6 +196,10 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.enforceAttributeRu
     EnforceAttributeRulesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyPolygonSliverAlgorithm import \
     IdentifyPolygonSliverAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyZAnglesBetweenLayersAlgorithm import \
+    identifyZAnglesBetweenLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallHolesAlgorithm import \
+    IdentifySmallHolesAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -290,7 +294,9 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             CreateFramesWithConstraintAlgorithm(),
             IdentifyAnglesInInvalidRangeAlgorithm(),
             EnforceAttributeRulesAlgorithm(),
-            IdentifyPolygonSliverAlgorithm()
+            IdentifyPolygonSliverAlgorithm(),
+            identifyZAnglesBetweenLayersAlgorithm(),
+            IdentifySmallHolesAlgorithm()
         ]
         return algList
 
