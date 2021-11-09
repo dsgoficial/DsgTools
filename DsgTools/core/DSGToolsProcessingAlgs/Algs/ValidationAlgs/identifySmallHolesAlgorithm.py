@@ -154,7 +154,7 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Quality Assurance Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('identifySmallHolesAlgorithm', string)
+        return QCoreApplication.translate('IdentifySmallHolesAlgorithm', string)
 
     def createInstance(self):
         return IdentifySmallHolesAlgorithm()
