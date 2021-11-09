@@ -13,11 +13,34 @@ class QgisCtrl:
         self.actionsFactory = actionsFactory
 
     def getLoadedVectorLayerNames(self):
-        return [
-            l.dataProvider().uri().table()
-            for l in core.QgsProject.instance().mapLayers().values()
-            if l.type() == core.QgsMapLayer.VectorLayer
-        ]
+        layerNames = []
+        for l in core.QgsProject.instance().mapLayers().values():
+            if not( l.type() == core.QgsMapLayer.VectorLayer ):
+                continue
+            layerName = None
+            if l.providerType() == 'postgres':
+                layerName = l.dataProvider().uri().table()
+            elif l.providerType() == 'ogr':
+                layerName = l.dataProvider().uri().uri().split('|')[-1].split('=')[-1][1:-1]
+            if not layerName:
+                continue
+            layerNames.append( layerName )
+        return layerNames
+
+    def getVectorLayerNames(self, layers):
+        layerNames = []
+        for l in layers:
+            if not( l.type() == core.QgsMapLayer.VectorLayer ):
+                continue
+            layerName = None
+            if l.providerType() == 'postgres':
+                layerName = l.dataProvider().uri().table()
+            elif l.providerType() == 'ogr':
+                layerName = l.dataProvider().uri().uri().split('|')[-1].split('=')[-1][1:-1]
+            if not layerName:
+                continue
+            layerNames.append( layerName )
+        return layerNames
 
     def getLoadedVectorLayers(self):
         return [
@@ -26,12 +49,26 @@ class QgisCtrl:
             if l.type() == core.QgsMapLayer.VectorLayer
         ]
 
-    def getVectorLayersByName(self, layerName):
-        return [
-            l
-            for l in core.QgsProject.instance().mapLayers().values()
-            if l.dataProvider().uri().table() == layerName and l.type() == core.QgsMapLayer.VectorLayer
-        ]
+    def getVectorLayersByName(self, name):
+        layers = []
+        for l in core.QgsProject.instance().mapLayers().values():
+            if not( l.type() == core.QgsMapLayer.VectorLayer ):
+                continue
+            layerName = None
+            if l.providerType() == 'postgres':
+                layerName = l.dataProvider().uri().table()
+            elif l.providerType() == 'ogr':
+                layerName = l.dataProvider().uri().uri().split('|')[-1].split('=')[-1][1:-1]
+            if not layerName or layerName != name:
+                continue
+            layers.append( l )
+        return layers
+
+    def getVectorLayerByName(self, name):
+        layers = self.getVectorLayersByName( name )
+        if not layers:
+            return None
+        return layers[0]
 
     def getAttributesConfigByLayerName(
             self, 
@@ -39,11 +76,11 @@ class QgisCtrl:
             withPrimaryKey=False,
             withVirtualField=False
         ):
-        for l in core.QgsProject.instance().mapLayers().values():
-            if not( l.name() == layerName ):
-                continue
-            return self.getAttributesConfigByLayer( l, withPrimaryKey,  withVirtualField )
-        return {}
+        layer = self.getVectorLayerByName( layerName )
+        if not layer:
+            return {}
+        return self.getAttributesConfigByLayer( layer, withPrimaryKey,  withVirtualField )
+        
 
     def getAttributesConfigByLayer(self, layer, withPrimaryKey,  withVirtualField):
         attrConfig = {}
@@ -131,25 +168,45 @@ class QgisCtrl:
         return core.QgsExpressionContextUtils.layerScope( layer ).variable( key )
 
     def attributeSelectedFeatures(self, layer, attributes):
+        layer.startEditing()
         features = layer.selectedFeatures()
         for feature in features:
-            for fieldName in attributes:
-                indx = layer.fields().indexFromName( fieldName )
-                if indx < 0:
-                    continue
-                config = layer.editorWidgetSetup( indx ).config()
-                isMapValue = ('map' in config)
-                attributeValue  = attributes[ fieldName ]
-                if isMapValue:
-                    valueMap = config['map']
-                    if attributeValue in valueMap:
-                        feature.setAttribute( indx, valueMap[ attributeValue ] )
-                elif attributeValue and not( attributeValue in ['NULL', 'IGNORAR'] ):
-                    """ if re.match('^\@value\(".+"\)$', value):
-                        variable = value.split('"')[-2]
-                        value = ProjectQgis(self.iface).getVariableProject(variable) """
-                    feature.setAttribute( indx, attributeValue )   
+            self.attributeFeature( feature, layer, attributes )
             layer.updateFeature( feature )
+        self.canvasRefresh()
+
+    def attributeFeature(self, feature, layer, attributes):
+        for fieldName in attributes:
+            indx = layer.fields().indexFromName( fieldName )
+            if indx < 0:
+                continue
+            config = layer.editorWidgetSetup( indx ).config()
+            isMapValue = ('map' in config)
+            attributeValue  = attributes[ fieldName ]
+            if isMapValue:
+                valueMap = config['map']
+                if attributeValue in valueMap:
+                    feature.setAttribute( indx, valueMap[ attributeValue ] )
+            elif attributeValue and not( attributeValue in ['NULL', 'IGNORAR'] ):
+                """ if re.match('^\@value\(".+"\)$', value):
+                    variable = value.split('"')[-2]
+                    value = ProjectQgis(self.iface).getVariableProject(variable) """
+                feature.setAttribute( indx, attributeValue )   
+
+    def cutAndPasteSelectedFeatures(self, layer, destinatonLayer, attributes):
+        layer.startEditing()
+        destinatonLayer.startEditing()
+        features = layer.selectedFeatures()
+        newFeatures = []
+        for feature in features:
+            newFeat = core.QgsFeature()
+            newFeat.setFields( destinatonLayer.fields() )
+            newFeat.setGeometry( feature.geometry() )
+            self.attributeFeature( newFeat, destinatonLayer, attributes )
+            newFeatures.append( newFeat )
+        layer.deleteSelectedFeatures()
+        destinatonLayer.addFeatures( newFeatures )
+        self.canvasRefresh()
 
     def startToolByName(self, name):
         action = self.actionsFactory.getAction( name )
@@ -186,3 +243,6 @@ class QgisCtrl:
             core.QgsEditFormConfig.SuppressOn if suppress else core.QgsEditFormConfig.SuppressOff
         )
         layer.setEditFormConfig(setup)
+
+    def canvasRefresh(self):
+        iface.mapCanvas().refresh()

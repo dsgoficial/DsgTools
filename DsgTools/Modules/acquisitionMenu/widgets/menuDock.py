@@ -80,4 +80,4 @@ class MenuDock( QtWidgets.QDockWidget ):
     def reclassify(self, reclassifyData):
         if not reclassifyData:
             return
-        self.getController().reclassify( reclassifyData['layers'], reclassifyData['attributes'] )
+        self.getController().reclassify( self.getCurrentButtonConfig(), reclassifyData )

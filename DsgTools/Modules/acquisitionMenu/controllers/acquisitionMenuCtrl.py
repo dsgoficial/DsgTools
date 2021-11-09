@@ -182,15 +182,23 @@ class AcquisitionMenuCtrl:
             self.reclassifyDialog.close()
         self.reclassifyDialog  = self.widgetFactory.createWidget( 'ReclassifyDialog', self )
         self.reclassifyDialog.setAttributeTableWidget( self.getAttributeTableWidget() )
-        self.reclassifyDialog.loadAttributes( self.getAttributesConfigByLayerName( layerName ) )
+        self.reclassifyDialog.loadAttributes( self.getAttributesConfigByLayerName( buttonConfig['buttonLayer'] ) )
         self.reclassifyDialog.setAttributesValues( buttonConfig['buttonAttributes'] )
         self.reclassifyDialog.loadLayersStatus( layersToReclassification )
-        self.reclassifyDialog.setCallback( callback )
+        self.reclassifyDialog.success.connect( callback )
         self.reclassifyDialog.showTopLevel()
 
-    def reclassify(self, layers, attributes):
-        for layer in layers:
-            self.qgis.attributeSelectedFeatures( layer, attributes )
+    def reclassify(self, buttonConfig, reclassifyData):
+        destinatonLayerName = buttonConfig['buttonLayer']
+        destinatonLayer = self.qgis.getVectorLayerByName( destinatonLayerName )
+        selectedLayers = reclassifyData['layers']
+        attributes = reclassifyData['attributes']
+        layerNames = self.qgis.getVectorLayerNames( selectedLayers )
+        for layerName, layer in zip(layerNames, selectedLayers):
+            if destinatonLayerName == layerName:
+                self.qgis.attributeSelectedFeatures( layer, attributes )
+            else:
+                self.qgis.cutAndPasteSelectedFeatures( layer, destinatonLayer, attributes )
     
     def getLayersForReclassification(self, layerName, geometryType):
         layers = self.qgis.getLoadedVectorLayers()
