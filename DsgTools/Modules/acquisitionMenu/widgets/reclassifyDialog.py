@@ -4,6 +4,8 @@ import os, sys
 
 class ReclassifyDialog(QtWidgets.QDialog):
 
+    success = QtCore.pyqtSignal(dict)
+
     def __init__(self, controller):
         super(ReclassifyDialog, self).__init__()
         uic.loadUi(self.getUiPath(), self)
@@ -74,12 +76,6 @@ class ReclassifyDialog(QtWidgets.QDialog):
 
     def showTopLevel(self):
         return self.exec_() == QtWidgets.QDialog.Accepted 
-    
-    def setCallback(self, callback):
-        self.callback = callback
-
-    def getCallback(self):
-        return self.callback
 
     @QtCore.pyqtSlot(bool)
     def on_saveBtn_clicked(self):
@@ -87,7 +83,7 @@ class ReclassifyDialog(QtWidgets.QDialog):
             self.reject()
         else:
             self.accept()
-            self.getCallback()( self.getData() )
+            self.success.emit( self.getData() )
 
     @QtCore.pyqtSlot(bool)
     def on_cancelBtn_clicked(self):
