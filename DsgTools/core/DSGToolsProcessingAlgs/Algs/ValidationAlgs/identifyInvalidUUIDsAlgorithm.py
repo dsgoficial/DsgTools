@@ -32,7 +32,7 @@ from qgis.PyQt.QtCore import QCoreApplication, QVariant
 from .validationAlgorithm import ValidationAlgorithm
 
 
-class IdentifyInvalidUUIDs(ValidationAlgorithm):
+class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
 
     INPUT_LAYERS = 'INPUT_LAYERS'
     ATTRIBUTE_NAME = 'ATTRIBUTE_NAME'
@@ -161,7 +161,7 @@ class IdentifyInvalidUUIDs(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifyinvaliduuids'
+        return 'identifyinvaliduuidsalgorithm'
 
     def displayName(self):
         """
@@ -188,7 +188,7 @@ class IdentifyInvalidUUIDs(ValidationAlgorithm):
         return 'DSGTools: Quality Assurance Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyInvalidUUIDs', string)
+        return QCoreApplication.translate('IdentifyInvalidUUIDsAlgorithm', string)
 
     def createInstance(self):
-        return IdentifyInvalidUUIDs()
+        return IdentifyInvalidUUIDsAlgorithm()
