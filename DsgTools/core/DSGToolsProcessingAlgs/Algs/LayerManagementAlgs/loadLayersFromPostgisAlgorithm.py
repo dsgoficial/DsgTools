@@ -46,7 +46,8 @@ from qgis.core import (QgsCoordinateReferenceSystem, QgsCoordinateTransform,
                        QgsProcessingParameterString,
                        QgsProcessingParameterType,
                        QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsProject, QgsSpatialIndex, QgsWkbTypes)
+                       QgsProject, QgsSpatialIndex, QgsWkbTypes,
+                       QgsMapLayer)
 from qgis.utils import iface
 
 class LoadLayersFromPostgisAlgorithm(QgsProcessingAlgorithm):
@@ -168,20 +169,53 @@ class LoadLayersFromPostgisAlgorithm(QgsProcessingAlgorithm):
         )
         abstractDb = self.getAbstractDb(host, port, database, user, password)
         inputParamList = layerStringList.split(',')
+        unloadedLayerNames = self.getUnloadedLayerNames( inputParamList )
+        if not unloadedLayerNames:
+            return { self.OUTPUT: [] }
         layerLoader = LayerLoaderFactory().makeLoader(
             iface, abstractDb
         )
         if loadToCanvas:
             iface.mapCanvas().freeze(True)
         outputLayers = layerLoader.loadLayersInsideProcessing(
-            inputParamList,
+            unloadedLayerNames,
             uniqueLoad=uniqueLoad,
             addToCanvas=loadToCanvas,
             feedback=feedback
         )
         if loadToCanvas:
             iface.mapCanvas().freeze(False)
-        return {self.OUTPUT: [i.id() for i in outputLayers]}
+        return { self.OUTPUT: self.getLoadedLayerIds(layerNamesFilter=unloadedLayerNames) }
+
+    def getLoadedLayerIds(self, layerNamesFilter):
+        layerIds = []
+        for l in QgsProject.instance().mapLayers().values():
+            if not( l.type() == QgsMapLayer.VectorLayer ):
+                continue
+            layerName = None
+            if l.providerType() == 'postgres':
+                layerName = l.dataProvider().uri().table()
+            elif l.providerType() == 'ogr':
+                layerName = l.dataProvider().uri().uri().split('|')[-1].split('=')[-1][1:-1]
+            if not layerName or not( layerName in layerNamesFilter ):
+                continue
+            layerIds.append( l.id() )
+        return layerIds
+
+    def getUnloadedLayerNames(self, layerNames):
+        loadedLayerNames = []
+        for l in QgsProject.instance().mapLayers().values():
+            if not( l.type() == QgsMapLayer.VectorLayer ):
+                continue
+            layerName = None
+            if l.providerType() == 'postgres':
+                layerName = l.dataProvider().uri().table()
+            elif l.providerType() == 'ogr':
+                layerName = l.dataProvider().uri().uri().split('|')[-1].split('=')[-1][1:-1]
+            if not layerName or not( layerName in layerNames ):
+                continue
+            loadedLayerNames.append( layerName )
+        return list(set(layerNames) - set(loadedLayerNames))
     
     def getAbstractDb(self, host, port, database, user, password):
         abstractDb = DbFactory().createDbFactory(DsgEnums.DriverPostGIS)
