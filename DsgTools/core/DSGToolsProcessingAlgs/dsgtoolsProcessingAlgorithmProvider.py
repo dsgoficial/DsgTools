@@ -198,8 +198,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.enforceAttributeRu
     EnforceAttributeRulesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyPolygonSliverAlgorithm import \
     IdentifyPolygonSliverAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyZAnglesBetweenLayersAlgorithm import \
-    identifyZAnglesBetweenLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyZAnglesBetweenFeaturesAlgorithm import \
+    identifyZAnglesBetweenFeaturesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallHolesAlgorithm import \
     IdentifySmallHolesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyInvalidUUIDsAlgorithm import \
@@ -303,7 +303,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyAnglesInInvalidRangeAlgorithm(),
             EnforceAttributeRulesAlgorithm(),
             IdentifyPolygonSliverAlgorithm(),
-            identifyZAnglesBetweenLayersAlgorithm(),
+            identifyZAnglesBetweenFeaturesAlgorithm(),
             IdentifySmallHolesAlgorithm(),
             IdentifyInvalidUUIDsAlgorithm(),
             VerifyCountourStackingAlgorihtm(),

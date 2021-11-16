@@ -23735,6 +23735,72 @@ Lógico</translation>
     </message>
 </context>
 <context>
+    <name>identifyZAnglesBetweenFeaturesAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenFeaturesAlgorithm.py" line="43"/>
+        <source>Line features to be verified</source>
+        <translation>Feições do tipo linha a serem verificadas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenFeaturesAlgorithm.py" line="51"/>
+        <source>Area features to be verified</source>
+        <translation>Feições do tipo área a serem verificadas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenFeaturesAlgorithm.py" line="59"/>
+        <source>Minimum angle</source>
+        <translation>Ângulo mínimo</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenFeaturesAlgorithm.py" line="69"/>
+        <source>Flags</source>
+        <translation>Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenFeaturesAlgorithm.py" line="244"/>
+        <source>Identify Z Angles Between Features</source>
+        <translation>Identifica ângulos Z entre feições</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenFeaturesAlgorithm.py" line="251"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+</context>
+<context>
+    <name>identifyZAnglesBetweenLayersAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenLayersAlgorithm.py" line="59"/>
+        <source>Minimum angle</source>
+        <translation type="obsolete">Ângulo mínimo</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenLayersAlgorithm.py" line="69"/>
+        <source>Flags</source>
+        <translation type="obsolete">Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenLayersAlgorithm.py" line="244"/>
+        <source>Identify Z Angles Between Features</source>
+        <translation type="obsolete">Identifica ângulos Z entre feições</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenLayersAlgorithm.py" line="251"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation type="obsolete">Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenLayersAlgorithm.py" line="43"/>
+        <source>Line features to be verified</source>
+        <translation type="obsolete">Feições do tipo linha a serem verificadas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenLayersAlgorithm.py" line="51"/>
+        <source>Area features to be verified</source>
+        <translation type="obsolete">Feições do tipo área a serem verificadas</translation>
+    </message>
+</context>
+<context>
     <name>militarySimbology</name>
     <message>
         <location filename="MilitarySimbologyTools/militarySimbologyDock.ui" line="21"/>

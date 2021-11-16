@@ -107,6 +107,7 @@
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallHolesAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py \
+                    core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenFeaturesAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/__init__.py \
                     core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py \
                     core/DSGToolsProcessingAlgs/Models/qualityAssuranceWorkflow.py \
