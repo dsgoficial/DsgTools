@@ -20,7 +20,8 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtCore import (QCoreApplication, QVariant)
+# from qgis.PyQt.QtCore import (QCoreApplication, QVariant)
+from PyQt5.QtCore import QCoreApplication, QVariant
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
                        QgsProcessingParameterFeatureSink,
@@ -44,7 +45,7 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
     OUTPUT = 'OUTPUT'
 
 
-    def initAlgorithm(self, config=None):
+    def initAlgorithm(self, config):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 'INPUT_LAYER_LIST',
@@ -127,14 +128,14 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifysmallholesalgorithm'
+        return 'identifysmallholes'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify small holes')
+        return self.tr('Identify Small Holes')
 
     def group(self):
         """
