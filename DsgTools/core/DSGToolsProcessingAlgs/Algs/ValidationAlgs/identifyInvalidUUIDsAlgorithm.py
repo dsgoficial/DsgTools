@@ -168,7 +168,7 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Verifies feature\'s UUIDs')
+        return self.tr("Verifies features UUIDs")
 
     def group(self):
         """
