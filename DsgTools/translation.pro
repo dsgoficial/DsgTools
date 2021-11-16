@@ -34,6 +34,7 @@
                     core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadNonSpatialLayersFromPostgreSQLAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/sapLoadLayersAlgorithm.py \
+                    core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadShapefileAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/__init__.py \
                     core/DSGToolsProcessingAlgs/Algs/OtherAlgs/batchRunAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/OtherAlgs/convertLayer2LayerAlgorithm.py \
@@ -102,6 +103,10 @@
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/unbuildPolygonsAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/validationAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyNetworkDirectioningAlgorithm.py \
+                    core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidUUIDsAlgorithm.py \
+                    core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallHolesAlgorithm.py \
+                    core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py \
+                    core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/__init__.py \
                     core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py \
                     core/DSGToolsProcessingAlgs/Models/qualityAssuranceWorkflow.py \

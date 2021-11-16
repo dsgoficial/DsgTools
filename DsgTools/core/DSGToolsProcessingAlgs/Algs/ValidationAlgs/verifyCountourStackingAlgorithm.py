@@ -50,7 +50,7 @@ class VerifyCountourStackingAlgorihtm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 'INPUT_COUNTOUR_LINES',
-                self.tr('Selecione a camada contendo as curvas de nível'),
+                self.tr('Select'),
                 types=[QgsProcessing.TypeVectorLine]
             )
         )
@@ -58,7 +58,7 @@ class VerifyCountourStackingAlgorihtm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 'INPUT_LEVES_FIELD',
-                self.tr('Input contour level layer'), 
+                self.tr('Contour levels layer'), 
                 type=QgsProcessingParameterField.Numeric, 
                 parentLayerParameterName='INPUT_COUNTOUR_LINES', 
                 allowMultiple=False, 
@@ -243,7 +243,7 @@ class VerifyCountourStackingAlgorihtm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'verifycountourstackingalgorithm'
+        return 'verifycountourstacking'
 
     def displayName(self):
         """

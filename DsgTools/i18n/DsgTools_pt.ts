@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="pt_BR">
+<!DOCTYPE TS><TS version="2.0" language="pt_BR" sourcelanguage="">
 <context>
     <name>@default</name>
     <message>
@@ -331,8 +330,17 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 4.2_dev_5929378c03c154bf1f9c744fe3a45cc3ff402100&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 4.2.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 3.1.2&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt; {3C?} {4.0/?} {3.?} {40/?} {1&quot;?} {13p?} {400;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {4.2.0&lt;?}</translation>
     </message>
 </context>
 <context>
@@ -4858,7 +4866,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="84"/>
-        <source>Area in mm²</source>
+        <source>Area in mm&#xb2;</source>
         <translation type="obsolete">Área em mm²</translation>
     </message>
     <message>
@@ -4897,7 +4905,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="83"/>
-        <source>Area in mmÂ²</source>
+        <source>Area in mm&#xc2;&#xb2;</source>
         <translation>Área em mm²</translation>
     </message>
 </context>
@@ -8283,119 +8291,119 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Informações sobre a importação de regras</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="316"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="314"/>
         <source>Some rules have not been loaded</source>
         <translation>Algumas regras não foram carregadas</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="317"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="315"/>
         <source>Do you want to ignore and continue or cancel?</source>
         <translation>Gostaria de ignorar e continuar ou cancelar?</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="323"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="321"/>
         <source>The following layers have not been loaded:
 </source>
         <translation>As seguintes camadas não foram carregadas:
 </translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="332"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="330"/>
         <source>Successfully loaded rules!</source>
         <translation>Regras carregadas com sucesso!</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="385"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="383"/>
         <source>Description</source>
         <translation>Descrição</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="385"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="383"/>
         <source>Layer and field</source>
         <translation>Camada e atributo</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Expression</source>
         <translation>Expressão</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Error type</source>
         <translation>Tipo de erro</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Color</source>
         <translation>Cor</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Rule description</source>
         <translation>Descrição da regra</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Layer</source>
         <translation>Camada</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Field</source>
         <translation>Atributo</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="511"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="509"/>
         <source>Set of DSGTools Attribute Rules</source>
         <translation>Conjunto de regras de atributos do DSGTools</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="242"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="240"/>
         <source>Rule number {} : {} - is not a valid color.</source>
         <translation>Regra número {} : {} - não é uma cor válida.</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="246"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="244"/>
         <source>Rule number {} : {} - is not a valid string.</source>
         <translation>Regra número {} : {} - não é uma string válida.</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="250"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="248"/>
         <source>Rule number {} : {} - is not a valid expression.</source>
         <translation>Regra número {} : {} - não é uma expressão válida.</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="254"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="252"/>
         <source>Rule number {} : {} - is not a valid length = 2 list.</source>
         <translation>Regra número {} : {} - não é uma lista válida com comprimento igual a 2.</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="258"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="256"/>
         <source>Rule number {} : {} - is not a valid string description.</source>
         <translation>Regra número {} : {} - não é uma descrição válida.</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="312"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="310"/>
         <source>Information about importing rules</source>
         <translation>Informações sobre importação de regras</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Set a name for this attribute rule...</source>
         <translation>Defina um nome para esta regra de atributo ...</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Type a vector layer name...</source>
         <translation>Digite o nome de uma camada vetorial...</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Type a field layer name...</source>
         <translation>Digite o nome do atributo da camada...</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Type an error type...</source>
         <translation>Digite um tipo de erro...</translation>
     </message>
@@ -8758,12 +8766,12 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/exportToMemoryLayer.py" line="55"/>
-        <source>Nome da camada de saÃ­da</source>
+        <source>Nome da camada de sa&#xc3;&#xad;da</source>
         <translation>Nome da camada de saída</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/exportToMemoryLayer.py" line="63"/>
-        <source>Estilo da camada de saÃ­da</source>
+        <source>Estilo da camada de sa&#xc3;&#xad;da</source>
         <translation>Estilo da camada de saída</translation>
     </message>
     <message>
@@ -11146,6 +11154,59 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     </message>
 </context>
 <context>
+    <name>IdentifyCountourStreamIntersectionAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="42"/>
+        <source>Drainage layer</source>
+        <translation>Layer de trecho de drenagem</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="49"/>
+        <source>Contour levels layer</source>
+        <translation>Layer de curva de nível</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="57"/>
+        <source>Flags</source>
+        <translation>Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="71"/>
+        <source>Verifying inconsistency</source>
+        <translation>Verificando inconsistências</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="75"/>
+        <source>Building intermediary structuces</source>
+        <translation>Construindo estruturas intermediárias</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="89"/>
+        <source>Doing spatial join</source>
+        <translation>Realizando spatial join</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="93"/>
+        <source>Finding flags</source>
+        <translation>Procurando por flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="105"/>
+        <source>No flags found</source>
+        <translation>Sem flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="220"/>
+        <source>Identifies intersections between contour lines and drainage lines</source>
+        <translation>Identifica interseções entre curvas de nível e linhas de drenagem</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="227"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+</context>
+<context>
     <name>IdentifyDanglesAlgorithm</name>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="60"/>
@@ -12194,6 +12255,39 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>IdentifyInvalidUUIDsAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidUUIDsAlgorithm.py" line="54"/>
+        <source>Attribute name</source>
+        <translation>Nome do atributo</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidUUIDsAlgorithm.py" line="61"/>
+        <source>Fix?</source>
+        <translation>Consertar?</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidUUIDsAlgorithm.py" line="68"/>
+        <source>Flags</source>
+        <translation>Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidUUIDsAlgorithm.py" line="178"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidUUIDsAlgorithm.py" line="171"/>
+        <source>Verifies features UUIDs</source>
+        <translation>Verifica o UUID das feições</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidUUIDsAlgorithm.py" line="46"/>
+        <source>Input layer(s)</source>
+        <translation>Camada(s) de entrada</translation>
+    </message>
+</context>
+<context>
     <name>IdentifyNotSimpleGeometriesProcess</name>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="35"/>
@@ -12834,6 +12928,44 @@ Geométrico</translation>
 Type</source>
         <translation type="obsolete">Tipo da 
 Camada</translation>
+    </message>
+</context>
+<context>
+    <name>IdentifySmallHolesAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallHolesAlgorithm.py" line="49"/>
+        <source>Input layer(s)</source>
+        <translation>Camada(s) de entrada</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallHolesAlgorithm.py" line="57"/>
+        <source>Tolerance</source>
+        <translation>Tolerância</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallHolesAlgorithm.py" line="64"/>
+        <source>Flags</source>
+        <translation>Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallHolesAlgorithm.py" line="72"/>
+        <source>Searching holes smaller than tolerance</source>
+        <translation>Procurando por buracos menores que a tolerância</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallHolesAlgorithm.py" line="97"/>
+        <source>Holes smaller than {str(maxSize)} were not found</source>
+        <translation>Buracos menores que {str(maxSize)} não foram encontrados</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallHolesAlgorithm.py" line="138"/>
+        <source>Identify Small Holes</source>
+        <translation>Identifica pequenos buracos</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallHolesAlgorithm.py" line="145"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -14502,6 +14634,29 @@ camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadNonSpatialLayersFromPostgreSQLAlgorithm.py" line="242"/>
+        <source>Layer Management Algorithms</source>
+        <translation>Algoritmos de gestão de camadas</translation>
+    </message>
+</context>
+<context>
+    <name>LoadShapefileAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadShapefileAlgorithm.py" line="42"/>
+        <source>Pasta com Shapefiles</source>
+        <translation>Pasta com shapefiles</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadShapefileAlgorithm.py" line="50"/>
+        <source>Loaded layers</source>
+        <translation>Camadas carregadas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadShapefileAlgorithm.py" line="121"/>
+        <source>Loads a shapefile (.shp)</source>
+        <translation>Carrega um shapefile (.shp)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadShapefileAlgorithm.py" line="128"/>
         <source>Layer Management Algorithms</source>
         <translation>Algoritmos de gestão de camadas</translation>
     </message>
@@ -22504,7 +22659,7 @@ Não foi possível obter o tempo total gasto.</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.ui" line="118"/>
-        <source>Situação</source>
+        <source>Situa&#xe7;&#xe3;o</source>
         <translation type="obsolete">Situação</translation>
     </message>
     <message>
@@ -22881,6 +23036,69 @@ fluxo de trabalho</translation>
         <location filename="../gui/ProductionTools/Toolboxes/ContourTool/contour_value.ui" line="37"/>
         <source>OK</source>
         <translation>Ok</translation>
+    </message>
+</context>
+<context>
+    <name>VerifyCountourStackingAlgorihtm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="67"/>
+        <source>Attribute information about &quot;depression&quot;</source>
+        <translation>Atributo que informa a depressão</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="76"/>
+        <source>Equidistance value</source>
+        <translation>Equidistância</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="84"/>
+        <source>Flags</source>
+        <translation>Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="113"/>
+        <source>No flags</source>
+        <translation>Sem flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="222"/>
+        <source>Extern and intern are normal, but elevation differences are not greater than one equidistance</source>
+        <translation>Externo e interno são normais, mas as diferenças the elevação não são maiores que uma equidistância</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="223"/>
+        <source>Extern and intern are depressions, but elevation differences are not smaller than one equidistance</source>
+        <translation>Externo e interno são depressões, mas as diferenças the elevação não são maiores que uma equidistância</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="224"/>
+        <source>Extern is normal, intern is depression, but elevations are different</source>
+        <translation>Externo é normal, interno é depressão, mas as elevações são diferentes</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="225"/>
+        <source>Extern is depression, intern is normal, but elevations are different</source>
+        <translation>Externo é depressão, interno é normal, mas as elevações são diferentes</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="253"/>
+        <source>Verifies the stacking of contour lines</source>
+        <translation>Verifica a sobreposição de curvas de nível</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="260"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="50"/>
+        <source>Select</source>
+        <translation>Selecionar</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="58"/>
+        <source>Contour levels layer</source>
+        <translation>Layer de curva de nível</translation>
     </message>
 </context>
 <context>
