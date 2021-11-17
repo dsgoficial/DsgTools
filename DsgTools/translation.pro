@@ -35,6 +35,7 @@
                     core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/sapLoadLayersAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadShapefileAlgorithm.py \
+                    core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellCheckerAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/__init__.py \
                     core/DSGToolsProcessingAlgs/Algs/OtherAlgs/batchRunAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/OtherAlgs/convertLayer2LayerAlgorithm.py \
