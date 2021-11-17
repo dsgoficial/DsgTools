@@ -21193,6 +21193,34 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>SpellCheckerAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellCheckerAlgorithm.py" line="32"/>
+        <source>Attribute name</source>
+        <translation>Nome do atributo</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellCheckerAlgorithm.py" line="39"/>
+        <source>Flags</source>
+        <translation>Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellCheckerAlgorithm.py" line="119"/>
+        <source>Spell check</source>
+        <translation>Corretor ortográfico</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellCheckerAlgorithm.py" line="122"/>
+        <source>Layer Management Algorithms</source>
+        <translation>Algoritmos de gestão de camadas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellCheckerAlgorithm.py" line="24"/>
+        <source>Layer</source>
+        <translation>Camada</translation>
+    </message>
+</context>
+<context>
     <name>StringCsvToLayerListAlgorithm</name>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/stringCsvToLayerListAlgorithm.py" line="48"/>
