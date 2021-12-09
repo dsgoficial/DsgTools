@@ -58,6 +58,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadNonSpatia
     LoadNonSpatialLayersFromPostgreSQLAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.matchAndApplyQmlStylesToLayersAlgorithm import \
     MatchAndApplyQmlStylesToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadShapefileAlgorithm import \
+    LoadShapefileAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.convertLayer2LayerAlgorithm import \
     ConvertLayer2LayerAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm import \
@@ -205,6 +207,17 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.enforceAttributeRu
     EnforceAttributeRulesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyPolygonSliverAlgorithm import \
     IdentifyPolygonSliverAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyZAnglesBetweenFeaturesAlgorithm import \
+    identifyZAnglesBetweenFeaturesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallHolesAlgorithm import \
+    IdentifySmallHolesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyInvalidUUIDsAlgorithm import \
+    IdentifyInvalidUUIDsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyCountourStackingAlgorithm import \
+    VerifyCountourStackingAlgorihtm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyCountourStreamIntersectionAlgorithm import \
+    IdentifyCountourStreamIntersectionAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.spellCheckerAlgorithm import SpellCheckerAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -304,7 +317,15 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyAnglesInInvalidRangeAlgorithm(),
             RunFMESAPAlgorithm(),
             EnforceAttributeRulesAlgorithm(),
-            IdentifyPolygonSliverAlgorithm()
+            IdentifyPolygonSliverAlgorithm(),
+            identifyZAnglesBetweenFeaturesAlgorithm(),
+            IdentifySmallHolesAlgorithm(),
+            IdentifyInvalidUUIDsAlgorithm(),
+            VerifyCountourStackingAlgorihtm(),
+            LoadShapefileAlgorithm(),
+            IdentifyCountourStreamIntersectionAlgorithm(),
+            SpellCheckerAlgorithm()
+
         ]
         return algList
 
