@@ -28,7 +28,7 @@ from functools import partial
 
 from qgis.gui import QgsMapTool, QgsRubberBand
 from qgis.core import QgsPointXY, QgsRectangle, QgsFeatureRequest, QgsVectorLayer, \
-                        QgsProject, QgsWkbTypes
+                        QgsProject, QgsWkbTypes, QgsRasterLayer
 from qgis.PyQt.QtCore import Qt, QSettings
 from qgis.PyQt.QtGui import QColor, QCursor
 from qgis.PyQt.QtWidgets import QMenu, QApplication
@@ -610,6 +610,26 @@ class GenericSelectionTool(QgsMapTool):
                         notSelectedFeaturesDict[cl].append(feat)
         return selectedFeaturesDict, notSelectedFeaturesDict
 
+    def getSelectedRasters(self, e):
+        rasters = []
+        rect = self.getCursorRect(e)
+        layers = self.iface.mapCanvas().layers()
+        for layer in self.iface.mapCanvas().layers():
+            if not isinstance(layer, QgsRasterLayer):
+                continue
+            bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, rect)
+            if not layer.extent().intersects(bbRect):
+                continue
+            rasters.append(layer)
+        return rasters
+
+    def addRasterMenu(self, menu, rasters):
+        rasterMenu = QMenu(title="Rasters", parent=menu)
+        for raster in rasters:
+            action = rasterMenu.addAction(raster.name())
+            action.triggered.connect(lambda : self.iface.setActiveLayer(raster))
+        menu.addMenu(rasterMenu)
+
     def createContextMenu(self, e):
         """
         Creates the context menu for overlapping layers.
@@ -655,12 +675,17 @@ class GenericSelectionTool(QgsMapTool):
                                 else:
                                     lyrFeatDict[layer] = [feature]
             lyrFeatDict = self.filterStrongestGeometry(lyrFeatDict)
+            #rasters = self.getSelectedRasters(e)
             if lyrFeatDict:
                 moreThanOneFeat = len(list(lyrFeatDict.values())) > 1 or len(list(lyrFeatDict.values())[0]) > 1
                 if moreThanOneFeat:
                     # if there are overlapping features (valid candidates only)
                     selectedFeaturesDict, notSelectedFeaturesDict = self.checkSelectedFeaturesOnDict(menuDict=lyrFeatDict)
-                    self.setContextMenuStyle(e=e, dictMenuSelected=selectedFeaturesDict, dictMenuNotSelected=notSelectedFeaturesDict)
+                    self.setContextMenuStyle(
+                        e=e, 
+                        dictMenuSelected=selectedFeaturesDict, 
+                        dictMenuNotSelected=notSelectedFeaturesDict
+                    )
                 else:
                     layer = list(lyrFeatDict.keys())[0]
                     feature = lyrFeatDict[layer][0]
@@ -672,6 +697,13 @@ class GenericSelectionTool(QgsMapTool):
                         self.iface.setActiveLayer(layer)
                     else:
                         self.iface.openFeatureForm(layer, feature, showModal=False)
+            #elif rasters and e.button() == Qt.LeftButton:
+            #    self.openRastersMenu(e, rasters)
+            
+    def openRastersMenu(self, e, rasters):
+        menu = QMenu()
+        self.addRasterMenu(menu, rasters)
+        menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
 
     def unload(self):
         self.deactivate()

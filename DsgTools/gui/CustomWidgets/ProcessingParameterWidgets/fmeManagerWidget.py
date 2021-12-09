@@ -123,13 +123,14 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
         :return: (bool) whether Proxy is set. Proxy setup is read from
                  QSettings (QGIS settings).
         """
-        return self.sslCheckBox.isChecked()
+        return self.proxyCheckBox.isChecked()
 
     def getWorkspacesFromServer(self):
         """
         Reads all available workspaces from a filled server.
         :return: (list-of-dict) list of available workspaces and its metadata.
         """
+        useSsl = self.useSsl()
         if self.version() == "v1":
             url = "{server}/versions?last=true".format(server=self.server())
             jsonKey = "data"
@@ -140,7 +141,8 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
             if not self.useProxy():
                 workspaceList = requests.get(
                     url,
-                    timeout=8
+                    verify=useSsl,
+                    timeout=15
                 ).json()[jsonKey]
             else:
                 proxyInfo, proxyAuth = self.getProxyInfo()
@@ -148,7 +150,8 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
                     url,
                     proxies=proxyInfo,
                     auth=proxyAuth,
-                    timeout=8
+                    verify=useSsl,
+                    timeout=15
                 ).json()[jsonKey]
         except ReadTimeout:
             self.messageBar.pushMessage(

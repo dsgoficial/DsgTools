@@ -71,7 +71,7 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
                 self.TOLERANCE, 
                 self.tr('Snap radius'), 
                 parentParameterName=self.INPUT,                                         
-                minValue=0, 
+                minValue=-1.0, 
                 defaultValue=1.0
             )
         )
@@ -94,38 +94,40 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(
-            self.tr(
-                'Identifying dangles on {layer}...'
-                ).format(layer=inputLyr.name()))
-        dangleLyr = algRunner.runIdentifyDangles(
-            inputLyr,
-            tol,
-            context,
-            feedback=multiStepFeedback,
-            onlySelected=onlySelected
-            )
 
-        multiStepFeedback.setCurrentStep(1)
-        layerHandler.filterDangles(
-            dangleLyr,
-            tol,
-            feedback=multiStepFeedback
-            )
+        if tol > 0:
+            multiStepFeedback.pushInfo(
+                self.tr(
+                    'Identifying dangles on {layer}...'
+                    ).format(layer=inputLyr.name()))
+            dangleLyr = algRunner.runIdentifyDangles(
+                inputLyr,
+                tol,
+                context,
+                feedback=multiStepFeedback,
+                onlySelected=onlySelected
+                )
 
-        multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(
-            self.tr(
-                'Snapping layer {layer} to dangles...'
-                ).format(layer=inputLyr.name()))
-        algRunner.runSnapLayerOnLayer(
-            inputLyr,
-            dangleLyr,
-            tol,
-            context,
-            feedback=multiStepFeedback,
-            onlySelected=onlySelected
-            )
+            multiStepFeedback.setCurrentStep(1)
+            layerHandler.filterDangles(
+                dangleLyr,
+                tol,
+                feedback=multiStepFeedback
+                )
+
+            multiStepFeedback.setCurrentStep(2)
+            multiStepFeedback.pushInfo(
+                self.tr(
+                    'Snapping layer {layer} to dangles...'
+                    ).format(layer=inputLyr.name()))
+            algRunner.runSnapLayerOnLayer(
+                inputLyr,
+                dangleLyr,
+                tol,
+                context,
+                feedback=multiStepFeedback,
+                onlySelected=onlySelected
+                )
 
         multiStepFeedback.setCurrentStep(3)
         multiStepFeedback.pushInfo(

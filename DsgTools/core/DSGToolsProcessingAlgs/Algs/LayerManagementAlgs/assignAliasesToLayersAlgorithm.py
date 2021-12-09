@@ -57,63 +57,113 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingOutputMultipleLayers,
                        QgsProcessingParameterString,
                        QgsConditionalStyle)
-
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.ruleStatisticsAlgorithm import \
-    RuleStatisticsAlgorithm
 from operator import itemgetter
 from collections import defaultdict
+import json, os
 
+class AssignAliasesToLayersAlgorithm(QgsProcessingAlgorithm):
+    INPUT_LAYERS = 'INPUT_LAYERS'
+    FILE = 'FILE'
+    TEXT = 'TEXT'
+    OUTPUT = 'OUTPUT'
 
-class AssignAliasesToLayersAlgorithm(RuleStatisticsAlgorithm):
+    def initAlgorithm(self, config):
+        """
+        Parameter setting.
+        """
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.INPUT_LAYERS,
+                self.tr('Input Layers'),
+                QgsProcessing.TypeVectorAnyGeometry
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterFile(
+                self.FILE,
+                self.tr('Input json file'),
+                defaultValue = ".json"
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.TEXT,
+                description =  self.tr('Input json text'),
+                multiLine = True,
+                defaultValue = '[]'
+            )
+        )
+
+        self.addOutput(
+            QgsProcessingOutputMultipleLayers(
+                self.OUTPUT,
+                self.tr('Original layers id with aliases')
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
+
         """
         inputLyrList = self.parameterAsLayerList(
             parameters,
-            self.INPUTLAYERS,
+            self.INPUT_LAYERS,
             context
         )
-        if not inputLyrList:
-            return {}
-        input_data = self.load_rules_from_parameters(parameters)
-        listSize = len(inputLyrList)
-        stepSize = 100/listSize if listSize else 0
-        aliasDict = self.buildAliasDict(input_data)
+        inputJSONFile = self.parameterAsFile(
+            parameters,
+            self.FILE,
+            context
+        )
+        inputJSONData = json.loads(
+            self.parameterAsString(
+                parameters,
+                self.TEXT,
+                context
+            )
+        )
+        if os.path.exists(inputJSONFile):
+            self.loadAliasFromJSONFile(inputJSONFile, inputLyrList, feedback)
+        elif len(inputJSONData) > 0:
+            self.loadAliasFromJSONData(inputJSONData, inputLyrList, feedback)
+        else:
+            return {self.OUTPUT: []}
+        return {self.OUTPUT: [i.id() for i in inputLyrList]}
 
+    def loadAliasFromJSONFile(self, inputJSONFile, inputLyrList, feedback):
+        inputJSONData = json.load(inputJSONFile)
+        self.loadAliasFromJSONData(inputJSONData, inputLyrList, feedback)
+            
+    def loadAliasFromJSONData(self, inputJSONData, inputLyrList, feedback):
+        listSize = len(inputLyrList)
+        progressStep = 100/listSize if listSize else 0
+        layerNames = [ item['camadaNome'] for item in inputJSONData]
         for current, lyr in enumerate(inputLyrList):
+            
             if feedback.isCanceled():
                 break
-            layerName = lyr.name()
-            for idx, field in enumerate(lyr.fields()):
-                if feedback.isCanceled() or layerName not in aliasDict:
-                    break
-                fieldName = field.name()
-                if fieldName in aliasDict[layerName]['attributeAlias']:
-                    lyr.setFieldAlias(
-                        idx,
-                        aliasDict[layerName]['attributeAlias'][fieldName]
-                    )
-            if layerName in aliasDict:
-                lyr.setLayerName(aliasDict[layerName]['layerAlias'])
-            feedback.setProgress(current * stepSize)
 
-        return {}
+            feedback.setProgress(current*progressStep)
+            
+            if not(lyr.dataProvider().uri().table() in layerNames):
+                continue
+            
+            layerIdx = layerNames.index(lyr.dataProvider().uri().table())
+            
+            layerAlias = inputJSONData[layerIdx]['camadaApelido']
+            if layerAlias:
+                lyr.setName(layerAlias)
 
-    def buildAliasDict(self, input_data):
-        """
-        atividade.camadas é um array de dict que tem os atributos "nome", "alias", "atributos".
-        "atributos" é um array de dict com atributos "nome" e "alias"
-        """
-        input_data = input_data[0] if isinstance(input_data, list) else input_data
-        aliasDict = dict()
-        for data in input_data:
-            attributeAliasDict = defaultdict(lambda: defaultdict(list))
-            attributeAliasDict['layerAlias'] = data['alias']
-            attributeAliasDict['attributeAlias'] = {i['nome']:i['alias'] for i in data['atributos']}
-            aliasDict[data['nome']] = attributeAliasDict
-        return aliasDict
+            attributeAlias = inputJSONData[layerIdx]['atributosApelido']
+            if len(attributeAlias) > 0:
+                for attr in attributeAlias:
+                    idx = lyr.fields().indexOf(attr["nome"])
+                    if not(idx > 0):
+                        continue
+                    lyr.setFieldAlias(idx, attr["alias"])
 
     def name(self):
         """
@@ -123,7 +173,7 @@ class AssignAliasesToLayersAlgorithm(RuleStatisticsAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'AssignAliasesToLayersAlgorithm'
+        return 'assignaliasestolayersalgorithm'
 
     def displayName(self):
         """

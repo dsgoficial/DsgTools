@@ -220,7 +220,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="lenght_otf">
+    <field name="length_otf">
       <editWidget type="TextEdit">
         <config>
           <Option/>
@@ -239,7 +239,7 @@
     <alias name="" index="7" field="data_modificacao"/>
     <alias name="" index="8" field="controle_id"/>
     <alias name="" index="9" field="ultimo_usuario"/>
-    <alias name="" index="10" field="lenght_otf"/>
+    <alias name="" index="10" field="length_otf"/>
   </aliases>
   <excludeAttributesWMS/>
   <excludeAttributesWFS/>
@@ -254,7 +254,7 @@
     <default applyOnUpdate="0" field="data_modificacao" expression=""/>
     <default applyOnUpdate="0" field="controle_id" expression=""/>
     <default applyOnUpdate="0" field="ultimo_usuario" expression=""/>
-    <default applyOnUpdate="0" field="lenght_otf" expression=""/>
+    <default applyOnUpdate="0" field="length_otf" expression=""/>
   </defaults>
   <constraints>
     <constraint notnull_strength="1" unique_strength="1" field="id" constraints="3" exp_strength="0"/>
@@ -267,7 +267,7 @@
     <constraint notnull_strength="0" unique_strength="0" field="data_modificacao" constraints="0" exp_strength="0"/>
     <constraint notnull_strength="0" unique_strength="0" field="controle_id" constraints="0" exp_strength="0"/>
     <constraint notnull_strength="0" unique_strength="0" field="ultimo_usuario" constraints="0" exp_strength="0"/>
-    <constraint notnull_strength="0" unique_strength="0" field="lenght_otf" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" unique_strength="0" field="length_otf" constraints="0" exp_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint exp="" field="id" desc=""/>
@@ -280,11 +280,11 @@
     <constraint exp="" field="data_modificacao" desc=""/>
     <constraint exp="" field="controle_id" desc=""/>
     <constraint exp="" field="ultimo_usuario" desc=""/>
-    <constraint exp="" field="lenght_otf" desc=""/>
+    <constraint exp="" field="length_otf" desc=""/>
   </constraintExpressions>
   <expressionfields>
-    <field comment="" precision="0" name="lenght_otf" typeName="" type="6" subType="0" length="0" expression="$length"/>
-    <field comment="" precision="0" name="lenght_otf" typeName="" type="6" subType="0" length="0" expression="$length"/>
+    <field comment="" precision="0" name="length_otf" typeName="" type="6" subType="0" length="0" expression="$length"/>
+    <field comment="" precision="0" name="length_otf" typeName="" type="6" subType="0" length="0" expression="$length"/>
   </expressionfields>
   <attributeactions>
     <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
@@ -301,7 +301,7 @@
       <column name="data_modificacao" type="field" hidden="0" width="-1"/>
       <column name="controle_id" type="field" hidden="0" width="-1"/>
       <column name="ultimo_usuario" type="field" hidden="0" width="-1"/>
-      <column name="lenght_otf" type="field" hidden="0" width="-1"/>
+      <column name="length_otf" type="field" hidden="0" width="-1"/>
       <column type="actions" hidden="1" width="-1"/>
     </columns>
   </attributetableconfig>
@@ -336,7 +336,7 @@ def my_form_open(dialog, layer, feature):
     <field name="controle_id" editable="1"/>
     <field name="data_modificacao" editable="1"/>
     <field name="id" editable="1"/>
-    <field name="lenght_otf" editable="0"/>
+    <field name="length_otf" editable="0"/>
     <field name="nome" editable="1"/>
     <field name="observacao" editable="1"/>
     <field name="regime" editable="1"/>
@@ -349,7 +349,7 @@ def my_form_open(dialog, layer, feature):
     <field labelOnTop="0" name="controle_id"/>
     <field labelOnTop="0" name="data_modificacao"/>
     <field labelOnTop="0" name="id"/>
-    <field labelOnTop="0" name="lenght_otf"/>
+    <field labelOnTop="0" name="length_otf"/>
     <field labelOnTop="0" name="nome"/>
     <field labelOnTop="0" name="observacao"/>
     <field labelOnTop="0" name="regime"/>
