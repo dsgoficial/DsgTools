@@ -24,6 +24,7 @@
 import os
 import json
 import re
+import requests
 from xml.dom.minidom import parse, parseString
 
 from qgis.utils import iface

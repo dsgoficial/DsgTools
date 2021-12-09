@@ -46,6 +46,7 @@ except Exception as e:
 
 from .gui.guiManager import GuiManager
 from .core.DSGToolsProcessingAlgs.dsgtoolsProcessingAlgorithmProvider import DSGToolsProcessingAlgorithmProvider
+from .Modules.acquisitionMenu.controllers.acquisitionMenuCtrl import AcquisitionMenuCtrl
 
 class DsgTools(object):
     """QGIS Plugin Implementation."""
@@ -130,3 +131,6 @@ class DsgTools(object):
         self.guiManager.initGui()
         #provider
         QgsApplication.processingRegistry().addProvider(self.provider)
+
+    def getAcquisitionMenu(self):
+        return AcquisitionMenuCtrl()

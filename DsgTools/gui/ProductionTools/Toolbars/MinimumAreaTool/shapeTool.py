@@ -25,6 +25,16 @@ Builds a temp rubberband with a given size and shape.
 from math import sqrt, cos, sin, pi, atan2
 
 from qgis.gui import QgsRubberBand, QgsMapTool
+from qgis.core import (
+    QgsPointXY, 
+    Qgis, 
+    QgsWkbTypes, 
+    QgsProject, 
+    QgsDistanceArea, 
+    QgsCoordinateTransformContext, 
+    QgsCoordinateReferenceSystem
+)
+from qgis.PyQt import QtGui, QtCore, QtWidgets
 from qgis.core import (QgsPointXY,
                        QgsGeometry,
                        QgsWkbTypes,
@@ -147,14 +157,17 @@ class ShapeTool(QgsMapTool):
                 QApplication.setOverrideCursor(QCursor(Qt2.BlankCursor))
                 self.rotate = True
         if self.geometryType == self.tr(u"Circle"):
-                self.showCircle(self.endPoint)
+                self.showCircle(self.endPoint, self.param)
         elif self.geometryType == self.tr(u"Square"):
-            self.showRect(self.endPoint, sqrt(self.param)/2, self.rotAngle)
+            self.showRect(self.endPoint, self.param, self.rotAngle)
     
-    def showCircle(self, startPoint):
+    def showCircle(self, startPoint, param):
         """
         Draws a circle in the canvas
         """
+        if not( self.type == self.tr('distance') ):
+            param = sqrt(param)/2
+        #r = self.convertDistance( param )
         nPoints = 50
         x = startPoint.x()
         y = startPoint.y()
@@ -177,6 +190,10 @@ class ShapeTool(QgsMapTool):
         """
         Draws a rectangle in the canvas
         """  
+        if not( self.type == self.tr('distance') ):
+            param = sqrt(param)/2
+        #param = self.convertDistance( param )
+       
         self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
         x = startPoint.x() # center point x
         y = startPoint.y() # center point y
@@ -196,6 +213,14 @@ class ShapeTool(QgsMapTool):
         self.rubberBand.update()
         self.rubberBand.show()
         self.currentCentroid = startPoint
+
+    def convertDistance(self, distance):
+        distanceArea = QgsDistanceArea()
+        distanceArea.setSourceCrs( QgsCoordinateReferenceSystem(3857), QgsCoordinateTransformContext())
+        return distanceArea.convertLengthMeasurement( 
+            distance, 
+            self.canvas.mapSettings().destinationCrs().mapUnits()
+        )
         
     def deactivate(self):
         """

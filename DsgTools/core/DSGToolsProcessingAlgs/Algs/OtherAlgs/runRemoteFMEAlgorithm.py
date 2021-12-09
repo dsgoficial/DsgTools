@@ -218,7 +218,7 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
                 feedback.reportError(self.tr("Task completed with error.\n"))
                 break
 
-        return {}
+        return {'result': jobOutput}
 
     def name(self):
         """
