@@ -39,6 +39,7 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
     INPUT_LAYERS = 'INPUT_LAYERS'
     ATTRIBUTE_NAME = 'ATTRIBUTE_NAME'
     CORRECT = 'CORRECT'
+    COMPARE_LAYER = 'COMPARE_LAYER'
     OUTPUT = 'OUTPUT'
 
     def __init__(self):
@@ -64,6 +65,13 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterBoolean(
                 self.CORRECT,
                 self.tr('Fix?')
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.COMPARE_LAYER,
+                self.tr('Compare only within same layer?')
             )
         )
 
@@ -124,12 +132,21 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
             self.CORRECT,
             context
         )
+        compare_layer = self.parameterAsBool(
+            parameters,
+            self.COMPARE_LAYER,
+            context
+        )
+
         output_dest_id = ''
-        uuids = []
+        uuids = {}
         errors = []
         listSize = len(inputLyrList)
         progressStep = 100/listSize if listSize else 0
         for step, layer in enumerate(inputLyrList):
+            layer_name = layer.name() if compare_layer else 'single_layer'
+            if not(layer_name in uuids):
+                uuids[layer_name] = []
             attributeIndex = self.getAttributeIndex(attributeName, layer)
             if attributeIndex < 0:
                 continue
@@ -140,9 +157,9 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
                     return {self.OUTPUT: output_dest_id}
                 attributeValue = feature[attributeIndex]
                 isValidUuid = self.isValidUuid(attributeValue)
-                hasDuplicateValues = self.hasDuplicateValues(attributeValue, uuids)
+                hasDuplicateValues = self.hasDuplicateValues(attributeValue, uuids[layer_name])
                 if isValidUuid and not hasDuplicateValues:
-                    uuids.append(attributeValue)
+                    uuids[layer_name].append(attributeValue)
                     continue
                 if correct:
                     feature[attributeIndex] = str(uuid.uuid4())
