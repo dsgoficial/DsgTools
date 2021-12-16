@@ -72,6 +72,15 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
             )
         )
 
+    def getAttributeIndex(self, attributeName, layer):
+        for attrName, attrAlias  in list(layer.attributeAliases().items()):
+            if not(attributeName in [attrName, attrAlias]):
+                continue
+            if layer.fields().indexOf(attrName) < 0:
+                return layer.fields().indexOf(attrAlias)
+            return layer.fields().indexOf(attrName) 
+        return -1
+
     def processAlgorithm(self, parameters, context, feedback):
         inputLyrList = self.parameterAsLayerList(
             parameters,
