@@ -25,6 +25,7 @@ import uuid
 from qgis.core import (QgsField, QgsFields, QgsProcessing,
                        QgsProcessingParameterBoolean,
                        QgsFeature,
+                       QgsGeometry,
                        QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterString, QgsWkbTypes)
