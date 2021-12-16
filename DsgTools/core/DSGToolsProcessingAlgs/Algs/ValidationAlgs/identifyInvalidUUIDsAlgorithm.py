@@ -24,6 +24,7 @@ import uuid
 
 from qgis.core import (QgsField, QgsFields, QgsProcessing,
                        QgsProcessingParameterBoolean,
+                       QgsFeature,
                        QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterString, QgsWkbTypes)
@@ -81,6 +82,31 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
             return layer.fields().indexOf(attrName) 
         return -1
 
+    def getFlagGeometry(self, feature):
+        if QgsWkbTypes.geometryType(feature.geometry().wkbType()) == QgsWkbTypes.LineGeometry:
+            multiPoints = feature.geometry().convertToType(0, True)
+            pointList = multiPoints.asMultiPoint()
+            return QgsGeometry.fromPointXY(pointList[int(len(pointList)/2)])
+        else:
+            return feature.geometry().centroid()
+
+    def createFlagLayer(self, parameters, context ,crs):
+        return self.parameterAsSink(
+            parameters,
+            self.OUTPUT,
+            context,
+            self.getFlagFields(),
+            self.getFlagWkbType(),
+            crs
+        )
+
+    def createFlagFeature(self, attributes, geometry):
+        feat = QgsFeature(self.getFlagFields())
+        for attrName in attributes:
+            feat.setAttribute(attrName, attributes[attrName])
+        feat.setGeometry(geometry)
+        return feat
+
     def processAlgorithm(self, parameters, context, feedback):
         inputLyrList = self.parameterAsLayerList(
             parameters,
@@ -124,7 +150,7 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
                 [
                     errors.append({
                         'geometry': self.getFlagGeometry(feature),
-                        'fields' : {'erro': descr, 'classe': layer.name(), 'feature_id': feature['id']}
+                        'fields' : {'erro': descr, 'classe': layer.name(), 'feature_id': feature.id()}
                     })
                     for descr, hasError in [
                         ('uuid inválido', not isValidUuid),
@@ -133,8 +159,10 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
                     if hasError
                 ]
             feedback.setProgress(step*progressStep)
+        
+        crs = inputLyrList[0].sourceCrs()
         if not correct and len(errors) > 0:
-            (output_sink, output_dest_id) = self.createFlagLayer(parameters, context)
+            (output_sink, output_dest_id) = self.createFlagLayer(parameters, context, crs)
             for error in errors:
                 output_sink.addFeature(
                     self.createFlagFeature(error['fields'], error['geometry'])
