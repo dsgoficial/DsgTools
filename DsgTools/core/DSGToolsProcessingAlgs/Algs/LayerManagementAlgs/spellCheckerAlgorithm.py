@@ -3,7 +3,7 @@ import re
 from PyQt5.QtCore import QCoreApplication
 from qgis import core
 from qgis.core import (QgsFeature, QgsField, QgsFields, QgsProcessing,
-                       QgsProcessingAlgorithm,
+                       QgsProcessingAlgorithm, QgsProcessingParameterField,
                        QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterString,
                        QgsProcessingParameterVectorLayer, QgsWkbTypes)
@@ -15,6 +15,7 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
 
     INPUT_LAYER = 'INPUT_LAYER'
     ATTRIBUTE_NAME = 'ATTRIBUTE_NAME'
+    PRIMARY_KEY_FIELD = 'PRIMARY_KEY_FIELD'
     OUTPUT = 'OUTPUT'
 
     def __init__(self):
@@ -37,6 +38,16 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
+            QgsProcessingParameterField(
+                self.PRIMARY_KEY_FIELD,
+                self.tr('Primary key field'), 
+                type=QgsProcessingParameterField.Any, 
+                parentLayerParameterName=self.INPUT_LAYER, 
+                allowMultiple=False, 
+                defaultValue='id')
+            )
+
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT,
                 self.tr('Flags')
@@ -54,14 +65,20 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
             self.ATTRIBUTE_NAME,
             context
         )
+        pkField = self.parameterAsFields(
+            parameters,
+            self.PRIMARY_KEY_FIELD,
+            context
+        )[0]
         spellchecker = SpellCheckerCtrl('pt-BR')
         
         errorFieldName = '{}_erro'.format(attributeName)
-        fieldRelation = core.QgsField('id', QVariant.Double)
+        
         layer.startEditing()
         attributeIndex = self.getAttributeIndex(attributeName, layer)
         if attributeIndex < 0:
             return {self.OUTPUT: ''}
+        fieldRelation = layer.fields().field(pkField)
         auxLayer = core.QgsAuxiliaryStorage().createAuxiliaryLayer(fieldRelation, layer)
         vdef = core.QgsPropertyDefinition(
             errorFieldName,
@@ -88,7 +105,7 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
             if len(wrongWords) == 0:
                 continue
             auxFeature = QgsFeature(auxFields)
-            auxFeature['ASPK'] = feature['id']
+            auxFeature['ASPK'] = feature[pkField]
             auxFeature['_{}'.format(errorFieldName)] = ';'.join(wrongWords)
             auxLayer.addFeature(auxFeature)
         return {self.OUTPUT: ''}
