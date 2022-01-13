@@ -942,7 +942,8 @@ class LayerHandler(QObject):
             for i, validate_type in enumerate(['GEOS', 'QGIS']):
                 if feedback is not None and feedback.isCanceled():
                     break
-                for error in geom.validateGeometry(i):
+                validateGeometryParameters = [Qgis.GeometryValidationEngine.QgisInternal, Qgis.GeometryValidationEngine.Geos]
+                for error in geom.validateGeometry(validateGeometryParameters[i]):
                     if feedback is not None and feedback.isCanceled():
                         break
 
