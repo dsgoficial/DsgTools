@@ -6,7 +6,7 @@ from qgis.core import (QgsFeature, QgsField, QgsFields, QgsProcessing,
                        QgsProcessingAlgorithm, QgsProcessingParameterField,
                        QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterString,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+                       QgsProcessingParameterVectorLayer, QgsWkbTypes, QgsProcessingException,)
 from qgis.PyQt.Qt import QVariant
 
 from .spellChecker.spellCheckerCtrl import SpellCheckerCtrl
@@ -70,7 +70,11 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
             self.PRIMARY_KEY_FIELD,
             context
         )[0]
-        spellchecker = SpellCheckerCtrl('pt-BR')
+        
+        try:
+            spellchecker = SpellCheckerCtrl('pt-BR')
+        except:
+            raise QgsProcessingException(self.tr('Error loading spellchecker files. Please go to the DSGTools menu and run "Download external data".'))
         
         errorFieldName = '{}_erro'.format(attributeName)
         
