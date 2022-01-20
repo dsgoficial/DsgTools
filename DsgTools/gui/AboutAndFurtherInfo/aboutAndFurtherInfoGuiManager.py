@@ -122,12 +122,13 @@ class AboutAndFurtherInfoGuiManager(QObject):
                 PalavrasFileConfig,
             ]
         )
-        message = self.tr('Everyting up to date') if not output else self.tr('External files updated')
-        self.iface.messageBar().pushMessage(
-            self.tr('Info'),
-            message,
-            level=Qgis.Info
-        )
+        if output:
+            message = self.tr('Everyting up to date') if output==1 else self.tr('External files updated')
+            self.iface.messageBar().pushMessage(
+                self.tr('Info'),
+                message,
+                level=Qgis.Info
+            )
     
     def showHelp(self):
         """

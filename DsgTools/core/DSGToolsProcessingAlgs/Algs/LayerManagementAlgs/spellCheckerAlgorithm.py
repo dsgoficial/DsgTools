@@ -5,7 +5,6 @@ from qgis import core
 from qgis.core import (QgsFeature, QgsField, QgsFields, QgsProcessing,
                        QgsProcessingAlgorithm, QgsProcessingParameterField,
                        QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterString,
                        QgsProcessingParameterVectorLayer, QgsWkbTypes, QgsProcessingException,)
 from qgis.PyQt.Qt import QVariant
 
@@ -31,11 +30,14 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterString(
+            QgsProcessingParameterField(
                 self.ATTRIBUTE_NAME,
-                description =  self.tr('Attribute name'),
+                self.tr('Attribute name'), 
+                type=QgsProcessingParameterField.String, 
+                parentLayerParameterName=self.INPUT_LAYER, 
+                allowMultiple=False, 
+                defaultValue='nome')
             )
-        )
 
         self.addParameter(
             QgsProcessingParameterField(
@@ -60,11 +62,11 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
             self.INPUT_LAYER,
             context
         )
-        attributeName = self.parameterAsFile(
+        attributeName = self.parameterAsFields(
             parameters,
             self.ATTRIBUTE_NAME,
             context
-        )
+        )[0]
         pkField = self.parameterAsFields(
             parameters,
             self.PRIMARY_KEY_FIELD,
@@ -81,7 +83,7 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
         layer.startEditing()
         attributeIndex = self.getAttributeIndex(attributeName, layer)
         if attributeIndex < 0:
-            return {self.OUTPUT: ''}
+            return {self.OUTPUT: 'Attribute index not found'}
         fieldRelation = layer.fields().field(pkField)
         auxLayer = core.QgsAuxiliaryStorage().createAuxiliaryLayer(fieldRelation, layer)
         vdef = core.QgsPropertyDefinition(
@@ -112,9 +114,12 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
             auxFeature['ASPK'] = feature[pkField]
             auxFeature['_{}'.format(errorFieldName)] = ';'.join(wrongWords)
             auxLayer.addFeature(auxFeature)
-        return {self.OUTPUT: ''}
+        returnMessage = 'Field {} added/edited'.format(errorFieldName)
+        return {self.OUTPUT: returnMessage}
 
     def getAttributeIndex(self, attributeName, layer):
+        if not layer.fields().indexOf(attributeName) < 0:
+            return layer.fields().indexOf(attributeName)
         for attrName, attrAlias  in list(layer.attributeAliases().items()):
             if not(attributeName in [attrName, attrAlias]):
                 continue
