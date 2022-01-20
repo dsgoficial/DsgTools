@@ -23,9 +23,7 @@
 
 import os
 from typing import List
-import requests
 from dataclasses import MISSING, dataclass
-from DsgTools.core.Utils.utils import Utils
 from qgis.PyQt.QtWidgets import QMessageBox, QApplication
 from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtCore import QObject, Qt
@@ -53,45 +51,43 @@ class ExternalFileDownloadProcessor(QObject):
         Checks if the file is already downloaded.
         """
         return os.path.isfile(self.getFullPath(config))
-    
-    def downloadFile(self, config: ExternalFileHandlerConfig, proxyInfo=None, proxyAuth=None) -> bool:
-        """
-        Downloads the file.
-        """
-        if not self.isFileDownloaded(config):
-            r = requests.get(config.url, stream=True, proxies=proxyInfo, auth=proxyAuth)
-            with open(self.getFullPath(config), 'wb') as f:
-                for chunk in r.iter_content(chunk_size=1024):
-                    if chunk:
-                        f.write(chunk)
-                        f.flush()
-            return True
-        else:
-            return False
 
-    def promptForDownload(self, externalFileConfigList: List[ExternalFileHandlerConfig]) -> List[ExternalFileHandlerConfig]:
+    def promptForDownload(self, externalFileConfigList: List[ExternalFileHandlerConfig]) -> bool:
         """
         Prompts the user to download the file if it is not already downloaded.
         """
-        notDownloadedList = [i for i in externalFileConfigList if not self.isFileDownloaded(i)]
-        if len(notDownloadedList) == 0:
-            return []
+        fileName =''
+        for file in externalFileConfigList:
+            if len(fileName)>100:
+                fileName = fileName + ' and others'
+            if fileName=='':
+                fileName=file.file_name
+            else:
+                fileName = fileName + ', ' + file.file_name
         reply = QMessageBox.question(
             self.parent,
             self.tr('Download Files'),
-            self.tr('The following files are not downloaded. Do you want to download them?'), 
+            self.tr('The following files: {} are not downloaded. Do you want to download them?'.format(fileName)), 
             QMessageBox.Yes | QMessageBox.No, QMessageBox.No
         )
-        return notDownloadedList
+        if reply == QMessageBox.No:
+            return False        
+        return True
 
-    def process(self, fileConfigList: List[ExternalFileHandlerConfig], prompt=True) -> bool:
+    def process(self, fileConfigList: List[ExternalFileHandlerConfig], prompt=True) -> int:
         """
         Processes the list of files.
         """
-        downloadList = self.promptForDownload(fileConfigList) if prompt else fileConfigList
+        downloadList = [i for i in fileConfigList if not self.isFileDownloaded(i)] if prompt else fileConfigList
         if len(downloadList) == 0:
-            return False
+            return 1
+        reply = self.promptForDownload(fileConfigList)
+        if not reply:
+            return 0
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        for file in fileConfigList:
+            if not os.path.isdir(file.output_folder):
+                os.makedirs(file.output_folder)
         try:
             for fileConfig in downloadList:
                 processing.run(
@@ -108,4 +104,4 @@ class ExternalFileDownloadProcessor(QObject):
                 self.tr('Could not download the following files: {}'.format(e))
             )
         QApplication.restoreOverrideCursor()
-        return True
+        return 2
