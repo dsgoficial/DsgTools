@@ -1,28 +1,25 @@
 # CHANGELOG
 
-## Unreleased
+## 4.3.0 - 2022-01-20
 
-## 4.2.0 - 2021-08-18
+Novas funcionalidades:
+- Novo menu de classificação
 
-New algorithms and a Refactor to DSGTools feature extraction tool.
+Novos algoritmos:
+- Corretor ortográfico
+- Verifica o UUID das feições
+- Verifica a sobreposição de curvas de nível
+- Identifica pequenos buracos
+- Identifica interseções entre curvas de nível e linhas de drenagem
+- Carrega um shapefile
 
-New algorithms:
+Melhorias:
+- Adequação dos processings de camadas para ser compatível com o SAP
+- Compatibilidade com QGIS 3.22
 
-- Enforce Attribute Rules;
-- Identify Polygon Sliver;
+Correção de bugs:
+- Ferramenta de inspeção de feições, agora mostra a aproximação correta quando utilizado em linha ou áreas em latlong com porcentagem inferior a 100%
+- O problema onde a Ferramenta de Aquisição com Ângulos Retos e a Ferramenta de Aquisição à Mão Livre não atribuíam os valores padrões nos formulários da feição foi corrigido
+- Correção nos processings de geração de MI: remover MI que não existem
 
-Enhancements:
-
-- Enforce Spatial Rules has improved to accept rules using the DE-9IM mask;
-- Build Polygons From Center Points has now a spatial relationship check;
-
-Bug fixes:
-
-- Topological Clean deleting features;
-- Run Remote FME Workspace listing workspaces;
-- Build Polygons From Center Points and Boundaries API compatibility;
-- Remove obsolete pg_constraint.consrc column for PostgreSQL 12+;
-- BDGEx WFS connection fixes;
-- Using Reshape Freehand at polygons don't cause a crash anymore
-
-Complete changelog: https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.2
+Changelog completo: https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.3
