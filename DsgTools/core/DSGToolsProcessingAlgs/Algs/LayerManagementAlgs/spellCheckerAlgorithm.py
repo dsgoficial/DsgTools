@@ -3,10 +3,9 @@ import re
 from PyQt5.QtCore import QCoreApplication
 from qgis import core
 from qgis.core import (QgsFeature, QgsField, QgsFields, QgsProcessing,
-                       QgsProcessingAlgorithm,
+                       QgsProcessingAlgorithm, QgsProcessingParameterField,
                        QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterString,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+                       QgsProcessingParameterVectorLayer, QgsWkbTypes, QgsProcessingException,)
 from qgis.PyQt.Qt import QVariant
 
 from .spellChecker.spellCheckerCtrl import SpellCheckerCtrl
@@ -15,6 +14,7 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
 
     INPUT_LAYER = 'INPUT_LAYER'
     ATTRIBUTE_NAME = 'ATTRIBUTE_NAME'
+    PRIMARY_KEY_FIELD = 'PRIMARY_KEY_FIELD'
     OUTPUT = 'OUTPUT'
 
     def __init__(self):
@@ -30,11 +30,24 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterString(
+            QgsProcessingParameterField(
                 self.ATTRIBUTE_NAME,
-                description =  self.tr('Attribute name'),
+                self.tr('Attribute name'), 
+                type=QgsProcessingParameterField.String, 
+                parentLayerParameterName=self.INPUT_LAYER, 
+                allowMultiple=False, 
+                defaultValue='nome')
             )
-        )
+
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.PRIMARY_KEY_FIELD,
+                self.tr('Primary key field'), 
+                type=QgsProcessingParameterField.Any, 
+                parentLayerParameterName=self.INPUT_LAYER, 
+                allowMultiple=False, 
+                defaultValue='id')
+            )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
@@ -49,19 +62,29 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
             self.INPUT_LAYER,
             context
         )
-        attributeName = self.parameterAsFile(
+        attributeName = self.parameterAsFields(
             parameters,
             self.ATTRIBUTE_NAME,
             context
-        )
-        spellchecker = SpellCheckerCtrl('pt-BR')
+        )[0]
+        pkField = self.parameterAsFields(
+            parameters,
+            self.PRIMARY_KEY_FIELD,
+            context
+        )[0]
+        
+        try:
+            spellchecker = SpellCheckerCtrl('pt-BR')
+        except:
+            raise QgsProcessingException(self.tr('Error loading spellchecker files. Please go to the DSGTools menu and run "Download external data".'))
         
         errorFieldName = '{}_erro'.format(attributeName)
-        fieldRelation = core.QgsField('id', QVariant.Double)
+        
         layer.startEditing()
         attributeIndex = self.getAttributeIndex(attributeName, layer)
         if attributeIndex < 0:
-            return {self.OUTPUT: ''}
+            return {self.OUTPUT: 'Attribute index not found'}
+        fieldRelation = layer.fields().field(pkField)
         auxLayer = core.QgsAuxiliaryStorage().createAuxiliaryLayer(fieldRelation, layer)
         vdef = core.QgsPropertyDefinition(
             errorFieldName,
@@ -88,12 +111,15 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
             if len(wrongWords) == 0:
                 continue
             auxFeature = QgsFeature(auxFields)
-            auxFeature['ASPK'] = feature['id']
+            auxFeature['ASPK'] = feature[pkField]
             auxFeature['_{}'.format(errorFieldName)] = ';'.join(wrongWords)
             auxLayer.addFeature(auxFeature)
-        return {self.OUTPUT: ''}
+        returnMessage = 'Field {} added/edited'.format(errorFieldName)
+        return {self.OUTPUT: returnMessage}
 
     def getAttributeIndex(self, attributeName, layer):
+        if not layer.fields().indexOf(attributeName) < 0:
+            return layer.fields().indexOf(attributeName)
         for attrName, attrAlias  in list(layer.attributeAliases().items()):
             if not(attributeName in [attrName, attrAlias]):
                 continue

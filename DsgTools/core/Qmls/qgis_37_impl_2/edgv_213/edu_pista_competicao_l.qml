@@ -135,7 +135,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="lenght_otf">
+    <field name="length_otf">
       <editWidget type="">
         <config>
           <Option/>
@@ -152,7 +152,7 @@
     <alias field="situacaofisica" name="" index="5"/>
     <alias field="tipopista" name="" index="6"/>
     <alias field="id_complexo_lazer" name="" index="7"/>
-    <alias field="lenght_otf" name="" index="8"/>
+    <alias field="length_otf" name="" index="8"/>
   </aliases>
   <excludeAttributesWMS/>
   <excludeAttributesWFS/>
@@ -165,7 +165,7 @@
     <default field="situacaofisica" expression="" applyOnUpdate="0"/>
     <default field="tipopista" expression="" applyOnUpdate="0"/>
     <default field="id_complexo_lazer" expression="" applyOnUpdate="0"/>
-    <default field="lenght_otf" expression="" applyOnUpdate="0"/>
+    <default field="length_otf" expression="" applyOnUpdate="0"/>
   </defaults>
   <constraints>
     <constraint field="id" unique_strength="1" exp_strength="0" constraints="3" notnull_strength="1"/>
@@ -176,7 +176,7 @@
     <constraint field="situacaofisica" unique_strength="0" exp_strength="0" constraints="1" notnull_strength="1"/>
     <constraint field="tipopista" unique_strength="0" exp_strength="0" constraints="1" notnull_strength="1"/>
     <constraint field="id_complexo_lazer" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="lenght_otf" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="length_otf" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint field="id" desc="" exp=""/>
@@ -187,10 +187,10 @@
     <constraint field="situacaofisica" desc="" exp=""/>
     <constraint field="tipopista" desc="" exp=""/>
     <constraint field="id_complexo_lazer" desc="" exp=""/>
-    <constraint field="lenght_otf" desc="" exp=""/>
+    <constraint field="length_otf" desc="" exp=""/>
   </constraintExpressions>
   <expressionfields>
-    <field expression="$length" type="6" typeName="" length="0" subType="0" precision="0" comment="" name="lenght_otf"/>
+    <field expression="$length" type="6" typeName="" length="0" subType="0" precision="0" comment="" name="length_otf"/>
   </expressionfields>
   <attributeactions/>
   <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">

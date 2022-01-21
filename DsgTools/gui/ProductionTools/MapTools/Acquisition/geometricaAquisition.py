@@ -19,7 +19,8 @@ Some parts were inspired by QGIS plugin FreeHandEditting
 """
 
 from builtins import range
-
+from qgis.PyQt import QtCore
+from qgis import core, gui
 from qgis.PyQt.QtCore import Qt, QSettings
 from qgis.PyQt.QtGui import QCursor, QPixmap, QColor
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, \
@@ -44,12 +45,12 @@ class GeometricaAcquisition(QgsMapTool):
         self.minSegmentDistance = self.getMinSegmentDistance()
         self.distanceToolTip = DistanceToolTip(self.iface, self.minSegmentDistance)
 
-    def getSuppressOptions(self):
+    def getSuppressOption(self):
         qgisSettigns = QSettings()
         qgisSettigns.beginGroup('qgis/digitizing')
         setting = qgisSettigns.value('disable_enter_attribute_values_dialog')
         qgisSettigns.endGroup()
-        return setting
+        return setting == 'true'
 
     def setAction(self, action):
         self.toolAction = action
@@ -246,31 +247,56 @@ class GeometricaAcquisition(QgsMapTool):
         self.rubberBand.setSecondaryStrokeColor(QColor(255, 255, 0, 200))
         self.rubberBand.setFillColor(QColor(255, 0, 0, 40))
 
+    def loadDefaultFields(self, layer, feature):
+        attributesValues = {}
+        primaryKeyIndexes = layer.dataProvider().pkAttributeIndexes()
+        for fieldIndex in layer.attributeList():
+            fieldName = layer.fields().field( fieldIndex ).name()
+            if fieldIndex in primaryKeyIndexes:
+                continue
+            attributeExpression = layer.defaultValueDefinition( fieldIndex ).expression()
+            if attributeExpression == '':
+                continue
+            evaluatedExpression = self.evaluateExpression(layer, layer.defaultValueDefinition( fieldIndex ).expression() )
+            if evaluatedExpression is None:
+                feature[ fieldName ] = attributeExpression
+                continue
+            feature[ fieldName ] = evaluatedExpression
+
+    def evaluateExpression(self, layer, expression):
+        context = core.QgsExpressionContext()
+        context.appendScopes( core.QgsExpressionContextUtils.globalProjectLayerScopes(layer) )
+        return core.QgsExpression( expression ).evaluate( context )
+
     def createGeometry(self, geom):
         geom = self.reprojectRubberBand(geom)
         if geom :
             layer = self.canvas.currentLayer()
-            feature = QgsFeature()
             fields = layer.fields()
+            feature = core.QgsFeature()
+            feature.setFields(fields)
             feature.setGeometry(geom)
+            
             feature.initAttributes(fields.count())            
             provider = layer.dataProvider()              
             for i in range(fields.count()):
                 defaultClauseCandidate = provider.defaultValueClause(i)
                 if defaultClauseCandidate:
-                    feature.setAttribute(i, defaultClauseCandidate)                
+                    feature.setAttribute(i, defaultClauseCandidate) 
+
+            self.loadDefaultFields( layer, feature )               
+            
             form = QgsAttributeDialog(layer, feature, False)
+            form.setAttribute( QtCore.Qt.WA_DeleteOnClose )
             form.setMode(int(QgsAttributeForm.AddFeatureMode))
             formSuppress = layer.editFormConfig().suppress()
             if formSuppress == QgsEditFormConfig.SuppressDefault:
-                if self.getSuppressOptions(): #this is calculated every time because user can switch options while using tool
+                if self.getSuppressOption(): #this is calculated every time because user can switch options while using tool
                     layer.addFeature(feature)
                 else:
-                    if not form.exec_():
-                        feature.setAttributes(form.feature().attributes())
+                    form.exec_()
             elif formSuppress == QgsEditFormConfig.SuppressOff:
-                if not form.exec_():
-                    feature.setAttributes(form.feature().attributes())
+                form.exec_()
             else:
                 layer.addFeature(feature)
             layer.endEditCommand()

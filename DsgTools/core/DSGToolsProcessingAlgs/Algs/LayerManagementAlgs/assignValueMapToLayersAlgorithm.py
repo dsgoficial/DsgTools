@@ -76,17 +76,23 @@ class AssignValueMapToLayersAlgorithm(QgsProcessingAlgorithm):
             self.INPUT_LAYERS,
             context
         )
-        self.domainDict = self.loadMapFromParameters(parameters)
+        #self.domainDict = self.loadMapFromParameters(parameters)
+        layerValueMaps = self.loadMapFromParameters(parameters)
         listSize = len(inputLyrList)
         stepSize = 100/listSize if listSize else 0
 
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
-            self.setDomainsAndRestrictions(lyr)
+            if  (
+                    lyr.dataProvider().uri().table() in layerValueMaps 
+                    and 
+                    len(layerValueMaps[lyr.dataProvider().uri().table()]) > 0
+                ):
+                self.loadLayerValueMap(lyr, layerValueMaps[lyr.dataProvider().uri().table()])
             feedback.setProgress(current * stepSize)
 
-        return {self.OUTPUT: inputLyrList}
+        return {self.OUTPUT: [ lyr.id() for lyr in inputLyrList]}
 
     def loadMapFromParameters(self, parameters):
         """
@@ -102,74 +108,21 @@ class AssignValueMapToLayersAlgorithm(QgsProcessingAlgorithm):
             rules_input = json.loads(rules_text)
         return rules_input
 
-    def setDomainsAndRestrictions(self, lyr):
-        """
-        Adjusts the domain restriction to all attributes in the layer
-        :param lyr:
-        :param lyrName:
-        :param domLayerDict:
-        :return:
-        """
+    def loadLayerValueMap(self, lyr, valueMap):
         pkIdxList = lyr.primaryKeyAttributes()
-        lyrName = lyr.name()
-        self.multiColumnsDict = {}
+        attributes = [ item['attribute'] for item in valueMap]
         for i, field in enumerate(lyr.fields()):
             attrName = field.name()
             if attrName == 'id' or 'id_' in attrName or i in pkIdxList:
                 formConfig = lyr.editFormConfig()
                 formConfig.setReadOnly(i, True)
                 lyr.setEditFormConfig(formConfig)
-            elif lyrName in self.domainDict \
-                and attrName in self.domainDict[lyrName]['columns'] \
-                and 'values' in self.domainDict[lyrName]['columns'][attrName]:
-                attrMetadataDict = self.domainDict[lyrName]['columns'][attrName]
-                if lyrName in self.multiColumnsDict and \
-                    attrName in self.multiColumnsDict[lyrName]:
-                    #make filter
-                    if 'constraintList' in attrMetadataDict \
-                        and lyrName in self.domLayerDict \
-                        and attrName in self.domLayerDict[lyrName]:
-                        lyrFilter = '{0} in ({1})'.format(
-                            attrMetadataDict['refPk'],
-                            ','.join(
-                                map(
-                                    str,
-                                    attrMetadataDict['constraintList']
-                                )
-                            )
-                        )
-                        editDict = {
-                            'Layer': self.domLayerDict[lyrName][attrName].id(),
-                            'Key': self.attrMetadataDict['refPk'],
-                            'Value': self.attrMetadataDict['otherKey'],
-                            'AllowMulti': True,
-                            'AllowNull': self.attrMetadataDict['nullable'],
-                            'FilterExpression': lyrFilter
-                        }
-                        widgetSetup = QgsEditorWidgetSetup(
-                            'ValueRelation',
-                            editDict
-                        )
-                        lyr.setEditorWidgetSetup(i, widgetSetup)
-                else:
-                    #filter value dict
-                    valueDict = attrMetadataDict['values']
-                    if 'constraintList' in attrMetadataDict and \
-                        attrMetadataDict['constraintList'] != [] and \
-                        attrMetadataDict['constraintList'] != list(valueDict.keys()):
-                        valueRelationDict = {
-                            v: str(k) for k, v in valueDict.items()
-                            if str(k) in map(str, attrMetadataDict['constraintList'])
-                        }
-                    else:
-                        valueRelationDict = {
-                            v : str(k) for k, v in valueDict.items()
-                        }
-                    widgetSetup = QgsEditorWidgetSetup(
-                        'ValueMap',
-                        {'map':valueRelationDict}
-                    )
-                    lyr.setEditorWidgetSetup(i, widgetSetup)
+            elif attrName in attributes:
+                widgetSetup = QgsEditorWidgetSetup(
+                    'ValueMap',
+                    {'map': valueMap[attributes.index(attrName)]['valueMap']}
+                )
+                lyr.setEditorWidgetSetup(i, widgetSetup)
         return lyr
 
     def name(self):

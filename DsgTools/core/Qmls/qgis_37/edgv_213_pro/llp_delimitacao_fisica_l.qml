@@ -177,7 +177,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="lenght_otf">
+    <field name="length_otf">
       <editWidget type="">
         <config>
           <Option/>
@@ -196,7 +196,7 @@
     <alias name="controle_id" index="7" field="controle_id"/>
     <alias name="ultimo_usuario" index="8" field="ultimo_usuario"/>
     <alias name="length_otf" index="9" field="length_otf"/>
-    <alias name="" index="10" field="lenght_otf"/>
+    <alias name="" index="10" field="length_otf"/>
   </aliases>
   <excludeAttributesWMS/>
   <excludeAttributesWFS/>
@@ -211,7 +211,7 @@
     <default applyOnUpdate="0" field="controle_id" expression=""/>
     <default applyOnUpdate="0" field="ultimo_usuario" expression="'3'"/>
     <default applyOnUpdate="0" field="length_otf" expression=""/>
-    <default applyOnUpdate="0" field="lenght_otf" expression=""/>
+    <default applyOnUpdate="0" field="length_otf" expression=""/>
   </defaults>
   <constraints>
     <constraint notnull_strength="1" unique_strength="1" field="id" constraints="3" exp_strength="0"/>
@@ -224,7 +224,7 @@
     <constraint notnull_strength="0" unique_strength="0" field="controle_id" constraints="0" exp_strength="0"/>
     <constraint notnull_strength="0" unique_strength="0" field="ultimo_usuario" constraints="0" exp_strength="0"/>
     <constraint notnull_strength="0" unique_strength="0" field="length_otf" constraints="0" exp_strength="0"/>
-    <constraint notnull_strength="0" unique_strength="0" field="lenght_otf" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" unique_strength="0" field="length_otf" constraints="0" exp_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint exp="" field="id" desc=""/>
@@ -237,12 +237,12 @@
     <constraint exp="" field="controle_id" desc=""/>
     <constraint exp="" field="ultimo_usuario" desc=""/>
     <constraint exp="" field="length_otf" desc=""/>
-    <constraint exp="" field="lenght_otf" desc=""/>
+    <constraint exp="" field="length_otf" desc=""/>
   </constraintExpressions>
   <expressionfields>
     <field comment="" precision="0" name="length_otf" typeName="" type="6" subType="0" length="0" expression="$length"/>
     <field comment="" precision="0" name="length_otf" typeName="" type="6" subType="0" length="0" expression="$length"/>
-    <field comment="" precision="0" name="lenght_otf" typeName="" type="6" subType="0" length="0" expression="$length"/>
+    <field comment="" precision="0" name="length_otf" typeName="" type="6" subType="0" length="0" expression="$length"/>
   </expressionfields>
   <attributeactions>
     <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
