@@ -28,14 +28,22 @@ import sys
 from qgis.PyQt.QtCore import QObject, Qt
 
 from .AttributeTools.code_list import CodeList
-from .CustomFeatureToolBox.customFeatureTool import CustomFeatureTool
+from DsgTools.Modules.acquisitionMenu.controllers.acquisitionMenuCtrl import AcquisitionMenuCtrl
 from .ContourTool.calc_contour import CalcContour
 from .ComplexTools.complexWindow import ComplexWindow
 from .QualityAssuranceToolBox.qualityAssuranceDockWidget import QualityAssuranceDockWidget
 
 class ToolBoxesGuiManager(QObject):
 
-    def __init__(self, manager, iface, parentMenu = None, toolbar = None, stackButton = None):
+    def __init__(
+            self, 
+            manager, 
+            iface, 
+            parentMenu = None, 
+            toolbar = None, 
+            stackButton = None,
+            acquisitionMenuCtrl = AcquisitionMenuCtrl()
+        ):
         """Constructor.
         """
         super(ToolBoxesGuiManager, self).__init__()
@@ -45,12 +53,19 @@ class ToolBoxesGuiManager(QObject):
         self.toolbar = toolbar
         self.stackButton = stackButton
         self.iconBasePath = ':/plugins/DsgTools/icons/'
+
+        self.acquisitionMenuCtrl = acquisitionMenuCtrl
     
     def initGui(self):
         self.qaToolBox = None
         self.addTool(self.showQaToolBox, 'validationtools.png', self.tr("Geospatial Data Quality Assurance Tool"), setDefaultAction=True)
-        self.cfToolbox = None
-        self.addTool(self.showCustomFeatureToolbox, 'customFeatureToolBox.png', self.tr('Custom Feature Tool'))
+        
+        self.addTool(
+            self.acquisitionMenuCtrl.openMenuEditor, 
+            'customFeatureToolBox.png', 
+            self.tr('Custom Feature Tool')
+        )
+        
         self.calcContour = None
         self.addTool(self.showCalcContourToolbox, 'calccontour.png', self.tr('Assign Contour Values'))
         self.codeList = None
@@ -89,11 +104,12 @@ class ToolBoxesGuiManager(QObject):
         """
         Shows the reclassification tool box dock
         """
-        if self.cfToolbox:
+        """ if self.cfToolbox:
             self.iface.removeDockWidget(self.cfToolbox)
         else:
             self.cfToolbox = CustomFeatureTool()
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.cfToolbox) 
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.cfToolbox) """ 
+        pass
 
     def showQaToolBox(self):
         """
