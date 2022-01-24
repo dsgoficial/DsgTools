@@ -20,9 +20,10 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
+import os, json
 from PyQt5.QtCore import QCoreApplication
 from qgis.PyQt.Qt import QVariant
+from qgis.PyQt.QtXml import QDomDocument
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
                        QgsProcessingAlgorithm,
@@ -60,6 +61,7 @@ from qgis.core import (QgsProcessing,
 class MatchAndApplyQmlStylesToLayersAlgorithm(QgsProcessingAlgorithm):
     INPUT_LAYERS = 'INPUT_LAYERS'
     QML_FOLDER = 'QML_FOLDER'
+    QML_MAP = 'QML_MAP'
     OUTPUT = 'OUTPUT'
     def initAlgorithm(self, config):
         """
@@ -77,7 +79,17 @@ class MatchAndApplyQmlStylesToLayersAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterFile(
                 self.QML_FOLDER,
                 self.tr('Input QML Folder'),
-                behavior = QgsProcessingParameterFile.Folder
+                behavior = QgsProcessingParameterFile.Folder,
+                defaultValue = "/path/to/qmlFolder"
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.QML_MAP,
+                description =  self.tr('QML json map (e.g., [{"camada": "...", "qml": "..."}])'),
+                multiLine = True,
+                defaultValue = '[]'
             )
         )
 
@@ -104,19 +116,47 @@ class MatchAndApplyQmlStylesToLayersAlgorithm(QgsProcessingAlgorithm):
             self.QML_FOLDER,
             context
         )
+        inputJSONMap = json.loads(
+            self.parameterAsString(
+                parameters,
+                self.QML_MAP,
+                context
+            )
+        )
+        if os.path.exists(inputDirectory):
+            self.loadQMlFromFolder(inputDirectory, inputLyrList, feedback)
+        elif len(inputJSONMap) > 0:
+            self.loadQMlFromJSONMap(inputJSONMap, inputLyrList, feedback)
+        else:
+            return {self.OUTPUT: []}
+        return {self.OUTPUT: [i.id() for i in inputLyrList]}
+
+    def loadQMlFromFolder(self, inputDirectory, inputLyrList, feedback):
         listSize = len(inputLyrList)
         progressStep = 100/listSize if listSize else 0
-        notSuccessfulList = []
         qmlDict = self.buildQmlDict(inputDirectory)
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
-            if lyr.name() in qmlDict:
-                lyr.loadNamedStyle(qmlDict[lyr.name()], True)
+            if lyr.dataProvider().uri().table() in qmlDict:
+                lyr.loadNamedStyle(qmlDict[lyr.dataProvider().uri().table()], True)
+                lyr.triggerRepaint()
+            feedback.setProgress(current*progressStep)
+    
+    def loadQMlFromJSONMap(self, inputJSONMap, inputLyrList, feedback):
+        listSize = len(inputLyrList)
+        layerNames = [item["camada"] for item in inputJSONMap]
+        progressStep = 100/listSize if listSize else 0
+        for current, lyr in enumerate(inputLyrList):
+            if feedback.isCanceled():
+                break
+            if lyr.dataProvider().uri().table() in layerNames and inputJSONMap[layerNames.index(lyr.dataProvider().uri().table())]["qml"]:
+                doc = QDomDocument()
+                doc.setContent(inputJSONMap[layerNames.index(lyr.dataProvider().uri().table())]["qml"])
+                lyr.importNamedStyle(doc)
                 lyr.triggerRepaint()
             feedback.setProgress(current*progressStep)
 
-        return {self.OUTPUT: [i.id() for i in inputLyrList]}
     
     def buildQmlDict(self, inputDir):
         """
