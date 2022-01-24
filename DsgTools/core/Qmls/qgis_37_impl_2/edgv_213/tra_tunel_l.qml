@@ -196,7 +196,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="lenght_otf">
+    <field name="length_otf">
       <editWidget type="">
         <config>
           <Option/>
@@ -219,7 +219,7 @@
     <alias field="posicaopista" name="" index="11"/>
     <alias field="altura" name="" index="12"/>
     <alias field="extensao" name="" index="13"/>
-    <alias field="lenght_otf" name="" index="14"/>
+    <alias field="length_otf" name="" index="14"/>
   </aliases>
   <excludeAttributesWMS/>
   <excludeAttributesWFS/>
@@ -238,7 +238,7 @@
     <default field="posicaopista" expression="" applyOnUpdate="0"/>
     <default field="altura" expression="" applyOnUpdate="0"/>
     <default field="extensao" expression="" applyOnUpdate="0"/>
-    <default field="lenght_otf" expression="" applyOnUpdate="0"/>
+    <default field="length_otf" expression="" applyOnUpdate="0"/>
   </defaults>
   <constraints>
     <constraint field="id" unique_strength="1" exp_strength="0" constraints="3" notnull_strength="1"/>
@@ -255,7 +255,7 @@
     <constraint field="posicaopista" unique_strength="0" exp_strength="0" constraints="1" notnull_strength="1"/>
     <constraint field="altura" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
     <constraint field="extensao" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="lenght_otf" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="length_otf" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint field="id" desc="" exp=""/>
@@ -272,10 +272,10 @@
     <constraint field="posicaopista" desc="" exp=""/>
     <constraint field="altura" desc="" exp=""/>
     <constraint field="extensao" desc="" exp=""/>
-    <constraint field="lenght_otf" desc="" exp=""/>
+    <constraint field="length_otf" desc="" exp=""/>
   </constraintExpressions>
   <expressionfields>
-    <field expression="$length" type="6" typeName="" length="0" subType="0" precision="0" comment="" name="lenght_otf"/>
+    <field expression="$length" type="6" typeName="" length="0" subType="0" precision="0" comment="" name="length_otf"/>
   </expressionfields>
   <attributeactions/>
   <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">

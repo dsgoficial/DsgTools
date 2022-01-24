@@ -70,7 +70,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="lenght_otf">
+    <field name="length_otf">
       <editWidget type="">
         <config>
           <Option/>
@@ -82,7 +82,7 @@
     <alias field="id" name="" index="0"/>
     <alias field="classe" name="" index="1"/>
     <alias field="descricao" name="" index="2"/>
-    <alias field="lenght_otf" name="" index="3"/>
+    <alias field="length_otf" name="" index="3"/>
   </aliases>
   <excludeAttributesWMS/>
   <excludeAttributesWFS/>
@@ -90,22 +90,22 @@
     <default field="id" expression="" applyOnUpdate="0"/>
     <default field="classe" expression="" applyOnUpdate="0"/>
     <default field="descricao" expression="" applyOnUpdate="0"/>
-    <default field="lenght_otf" expression="" applyOnUpdate="0"/>
+    <default field="length_otf" expression="" applyOnUpdate="0"/>
   </defaults>
   <constraints>
     <constraint field="id" unique_strength="1" exp_strength="0" constraints="3" notnull_strength="1"/>
     <constraint field="classe" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
     <constraint field="descricao" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="lenght_otf" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="length_otf" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint field="id" desc="" exp=""/>
     <constraint field="classe" desc="" exp=""/>
     <constraint field="descricao" desc="" exp=""/>
-    <constraint field="lenght_otf" desc="" exp=""/>
+    <constraint field="length_otf" desc="" exp=""/>
   </constraintExpressions>
   <expressionfields>
-    <field expression="$length" type="6" typeName="" length="0" subType="0" precision="0" comment="" name="lenght_otf"/>
+    <field expression="$length" type="6" typeName="" length="0" subType="0" precision="0" comment="" name="length_otf"/>
   </expressionfields>
   <attributeactions/>
   <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">

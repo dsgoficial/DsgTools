@@ -119,7 +119,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="lenght_otf">
+    <field name="length_otf">
       <editWidget type="">
         <config>
           <Option/>
@@ -134,7 +134,7 @@
     <alias field="geometriaaproximada" name="" index="3"/>
     <alias field="materialpredominante" name="" index="4"/>
     <alias field="espessalgas" name="" index="5"/>
-    <alias field="lenght_otf" name="" index="6"/>
+    <alias field="length_otf" name="" index="6"/>
   </aliases>
   <excludeAttributesWMS/>
   <excludeAttributesWFS/>
@@ -145,7 +145,7 @@
     <default field="geometriaaproximada" expression="" applyOnUpdate="0"/>
     <default field="materialpredominante" expression="" applyOnUpdate="0"/>
     <default field="espessalgas" expression="" applyOnUpdate="0"/>
-    <default field="lenght_otf" expression="" applyOnUpdate="0"/>
+    <default field="length_otf" expression="" applyOnUpdate="0"/>
   </defaults>
   <constraints>
     <constraint field="id" unique_strength="1" exp_strength="0" constraints="3" notnull_strength="1"/>
@@ -154,7 +154,7 @@
     <constraint field="geometriaaproximada" unique_strength="0" exp_strength="0" constraints="1" notnull_strength="1"/>
     <constraint field="materialpredominante" unique_strength="0" exp_strength="0" constraints="1" notnull_strength="1"/>
     <constraint field="espessalgas" unique_strength="0" exp_strength="0" constraints="1" notnull_strength="1"/>
-    <constraint field="lenght_otf" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="length_otf" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint field="id" desc="" exp=""/>
@@ -163,10 +163,10 @@
     <constraint field="geometriaaproximada" desc="" exp=""/>
     <constraint field="materialpredominante" desc="" exp=""/>
     <constraint field="espessalgas" desc="" exp=""/>
-    <constraint field="lenght_otf" desc="" exp=""/>
+    <constraint field="length_otf" desc="" exp=""/>
   </constraintExpressions>
   <expressionfields>
-    <field expression="$length" type="6" typeName="" length="0" subType="0" precision="0" comment="" name="lenght_otf"/>
+    <field expression="$length" type="6" typeName="" length="0" subType="0" precision="0" comment="" name="length_otf"/>
   </expressionfields>
   <attributeactions/>
   <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">

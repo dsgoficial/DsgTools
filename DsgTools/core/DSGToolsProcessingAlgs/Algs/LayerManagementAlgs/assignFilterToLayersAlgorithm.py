@@ -129,7 +129,7 @@ class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
             lyr.setSubsetString(filterExpression)
             feedback.setProgress(current * stepSize)
 
-        return {self.OUTPUT: inputLyrList}
+        return {self.OUTPUT: [i.id() for i in inputLyrList]}
 
     def adaptFilter(self, lyr, inputFilter, behavior):
         """
