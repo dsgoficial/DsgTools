@@ -12323,6 +12323,11 @@ Camada</translation>
         <translation>Consertar?</translation>
     </message>
     <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidUUIDsAlgorithm.py" line="61"/>
+        <source>Compare only within same layer?</source>
+        <translation>Comparar somente na mesma camada?</translation>
+    </message>
+    <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidUUIDsAlgorithm.py" line="68"/>
         <source>Flags</source>
         <translation>Flags</translation>
