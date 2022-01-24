@@ -24,6 +24,8 @@ import uuid
 
 from qgis.core import (QgsField, QgsFields, QgsProcessing,
                        QgsProcessingParameterBoolean,
+                       QgsFeature,
+                       QgsGeometry,
                        QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterString, QgsWkbTypes)
@@ -37,6 +39,7 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
     INPUT_LAYERS = 'INPUT_LAYERS'
     ATTRIBUTE_NAME = 'ATTRIBUTE_NAME'
     CORRECT = 'CORRECT'
+    COMPARE_LAYER = 'COMPARE_LAYER'
     OUTPUT = 'OUTPUT'
 
     def __init__(self):
@@ -66,11 +69,52 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
         )
 
         self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.COMPARE_LAYER,
+                self.tr('Compare only within same layer?')
+            )
+        )
+
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT,
                 self.tr('Flags')
             )
         )
+
+    def getAttributeIndex(self, attributeName, layer):
+        for attrName, attrAlias  in list(layer.attributeAliases().items()):
+            if not(attributeName in [attrName, attrAlias]):
+                continue
+            if layer.fields().indexOf(attrName) < 0:
+                return layer.fields().indexOf(attrAlias)
+            return layer.fields().indexOf(attrName) 
+        return -1
+
+    def getFlagGeometry(self, feature):
+        if QgsWkbTypes.geometryType(feature.geometry().wkbType()) == QgsWkbTypes.LineGeometry:
+            multiPoints = feature.geometry().convertToType(0, True)
+            pointList = multiPoints.asMultiPoint()
+            return QgsGeometry.fromPointXY(pointList[int(len(pointList)/2)])
+        else:
+            return feature.geometry().centroid()
+
+    def createFlagLayer(self, parameters, context ,crs):
+        return self.parameterAsSink(
+            parameters,
+            self.OUTPUT,
+            context,
+            self.getFlagFields(),
+            self.getFlagWkbType(),
+            crs
+        )
+
+    def createFlagFeature(self, attributes, geometry):
+        feat = QgsFeature(self.getFlagFields())
+        for attrName in attributes:
+            feat.setAttribute(attrName, attributes[attrName])
+        feat.setGeometry(geometry)
+        return feat
 
     def processAlgorithm(self, parameters, context, feedback):
         inputLyrList = self.parameterAsLayerList(
@@ -88,12 +132,21 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
             self.CORRECT,
             context
         )
+        compare_layer = self.parameterAsBool(
+            parameters,
+            self.COMPARE_LAYER,
+            context
+        )
+
         output_dest_id = ''
-        uuids = []
+        uuids = {}
         errors = []
         listSize = len(inputLyrList)
         progressStep = 100/listSize if listSize else 0
         for step, layer in enumerate(inputLyrList):
+            layer_name = layer.name() if compare_layer else 'single_layer'
+            if not(layer_name in uuids):
+                uuids[layer_name] = []
             attributeIndex = self.getAttributeIndex(attributeName, layer)
             if attributeIndex < 0:
                 continue
@@ -104,9 +157,9 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
                     return {self.OUTPUT: output_dest_id}
                 attributeValue = feature[attributeIndex]
                 isValidUuid = self.isValidUuid(attributeValue)
-                hasDuplicateValues = self.hasDuplicateValues(attributeValue, uuids)
+                hasDuplicateValues = self.hasDuplicateValues(attributeValue, uuids[layer_name])
                 if isValidUuid and not hasDuplicateValues:
-                    uuids.append(attributeValue)
+                    uuids[layer_name].append(attributeValue)
                     continue
                 if correct:
                     feature[attributeIndex] = str(uuid.uuid4())
@@ -115,7 +168,7 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
                 [
                     errors.append({
                         'geometry': self.getFlagGeometry(feature),
-                        'fields' : {'erro': descr, 'classe': layer.name(), 'feature_id': feature['id']}
+                        'fields' : {'erro': descr, 'classe': layer.name(), 'feature_id': feature.id()}
                     })
                     for descr, hasError in [
                         ('uuid inválido', not isValidUuid),
@@ -124,8 +177,10 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
                     if hasError
                 ]
             feedback.setProgress(step*progressStep)
+        
+        crs = inputLyrList[0].sourceCrs()
         if not correct and len(errors) > 0:
-            (output_sink, output_dest_id) = self.createFlagLayer(parameters, context)
+            (output_sink, output_dest_id) = self.createFlagLayer(parameters, context, crs)
             for error in errors:
                 output_sink.addFeature(
                     self.createFlagFeature(error['fields'], error['geometry'])
