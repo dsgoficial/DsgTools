@@ -252,8 +252,6 @@ class UtmGrid(QObject):
         #first run
         if (self.stepsTotal==0):
             self.stepsTotal=self.computeNumberOfSteps(self.getScaleIdFromScale(scale), self.getScaleIdFromScale(stopScale))
-            # fix_print_with_import
-            print("Total:",self.stepsTotal)
             self.stepsDone=0
         if scale == stopScale:
             (x, y) = self.getLLCorner(iNomen)
@@ -264,8 +262,6 @@ class UtmGrid(QObject):
             self.insertFrameIntoQgsLayer(layer, poly, iNomen)
             
             self.stepsDone+=1
-            # fix_print_with_import
-            print(self.stepsDone, '/', self.stepsTotal)
         else:
             scaleId = self.getScaleIdFromiNomen(iNomen)
             matrix = self.scaleText[ scaleId+1 ]
@@ -311,14 +307,16 @@ class UtmGrid(QObject):
     def getINomenFromMI(self,mi):
         mi = self.checkLeftPadding(mi, 4)
         inom = self.getINomen(self.getMIdict(), mi)
-        if inom in self.getMIexceptions():
+        exceptions = self.getMIexceptions()
+        if inom in exceptions or self.checkContainedUpperLevel(inom, exceptions):
             return None
         return inom
 
     def getINomenFromMIR(self,mir):
         mir = self.checkLeftPadding(mir, 3)
         inom = self.getINomen(self.getMIRdict(), mir)
-        if inom in self.getMIexceptions():
+        exceptions = self.getMIexceptions()
+        if inom in exceptions or self.checkContainedUpperLevel(inom, exceptions):
             return None
         return inom
         
@@ -353,7 +351,8 @@ class UtmGrid(QObject):
                 return '-'.join([k]+remains)
     
     def get_MI_MIR_from_inom(self, inom):
-        if inom in self.getMIexceptions():
+        exceptions = self.getMIexceptions()
+        if inom in exceptions or self.checkContainedUpperLevel(inom, exceptions):
             return None
         if len(inom.split('-')) > 4:
             return self.getMIfromInom(inom)
@@ -422,6 +421,12 @@ class UtmGrid(QObject):
         if len(leftPart) < zeroes:
             return f'{"".join("0" for _ in range(zeroes-len(leftPart)))}{mi}'
         return mi
+
+    @staticmethod
+    def checkContainedUpperLevel(inom, exceptions):
+        if isinstance(inom, str):
+            if '-'.join(inom.split('-')[:-1]) in exceptions:
+                return True
 
 if __name__ == "__main__":
     x = UtmGrid()

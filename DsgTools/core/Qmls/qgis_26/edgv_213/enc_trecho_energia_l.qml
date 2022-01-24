@@ -171,7 +171,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="lenght_otf">
+    <field name="length_otf">
       <editWidget type="">
         <config>
           <Option/>
@@ -192,7 +192,7 @@
     <alias field="tensaoeletrica" index="9" name=""/>
     <alias field="numcircuitos" index="10" name=""/>
     <alias field="id_org_comerc_serv" index="11" name=""/>
-    <alias field="lenght_otf" index="12" name=""/>
+    <alias field="length_otf" index="12" name=""/>
   </aliases>
   <excludeAttributesWMS/>
   <excludeAttributesWFS/>
@@ -209,7 +209,7 @@
     <default applyOnUpdate="0" field="tensaoeletrica" expression=""/>
     <default applyOnUpdate="0" field="numcircuitos" expression=""/>
     <default applyOnUpdate="0" field="id_org_comerc_serv" expression=""/>
-    <default applyOnUpdate="0" field="lenght_otf" expression=""/>
+    <default applyOnUpdate="0" field="length_otf" expression=""/>
   </defaults>
   <constraints>
     <constraint unique_strength="1" field="id" constraints="3" exp_strength="0" notnull_strength="1"/>
@@ -224,7 +224,7 @@
     <constraint unique_strength="0" field="tensaoeletrica" constraints="0" exp_strength="0" notnull_strength="0"/>
     <constraint unique_strength="0" field="numcircuitos" constraints="0" exp_strength="0" notnull_strength="0"/>
     <constraint unique_strength="0" field="id_org_comerc_serv" constraints="0" exp_strength="0" notnull_strength="0"/>
-    <constraint unique_strength="0" field="lenght_otf" constraints="0" exp_strength="0" notnull_strength="0"/>
+    <constraint unique_strength="0" field="length_otf" constraints="0" exp_strength="0" notnull_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint exp="" desc="" field="id"/>
@@ -239,10 +239,10 @@
     <constraint exp="" desc="" field="tensaoeletrica"/>
     <constraint exp="" desc="" field="numcircuitos"/>
     <constraint exp="" desc="" field="id_org_comerc_serv"/>
-    <constraint exp="" desc="" field="lenght_otf"/>
+    <constraint exp="" desc="" field="length_otf"/>
   </constraintExpressions>
   <expressionfields>
-    <field precision="0" comment="" length="0" typeName="" expression="$length" type="6" name="lenght_otf" subType="0"/>
+    <field precision="0" comment="" length="0" typeName="" expression="$length" type="6" name="length_otf" subType="0"/>
   </expressionfields>
   <attributeactions/>
   <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">

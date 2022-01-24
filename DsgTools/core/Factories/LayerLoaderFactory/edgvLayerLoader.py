@@ -98,7 +98,7 @@ class EDGVLayerLoader(QObject):
         if layer.geometryType() == QgsWkbTypes.PolygonGeometry:
             layer.addExpressionField('$area', QgsField(self.tr('area_otf'), QVariant.Double))
         elif layer.geometryType() == QgsWkbTypes.LineGeometry:
-            layer.addExpressionField('$length', QgsField(self.tr('lenght_otf'), QVariant.Double))
+            layer.addExpressionField('$length', QgsField(self.tr('length_otf'), QVariant.Double))
         return layer
     
     def getDatabaseGroup(self, rootNode):

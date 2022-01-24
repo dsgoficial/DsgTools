@@ -17,24 +17,44 @@
 <context>
     <name>AboutAndFurtherInfoGuiManager</name>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py" line="51"/>
+        <location filename="../gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py" line="53"/>
         <source>DSGTools&apos; Options</source>
         <translation>Opções do DSGTools</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py" line="63"/>
+        <location filename="../gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py" line="76"/>
         <source>Report bug / Suggest features</source>
         <translation>Reportar bug / Fazer sugestões</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py" line="73"/>
+        <location filename="../gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py" line="86"/>
         <source>Help</source>
         <translation>Ajuda</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py" line="83"/>
+        <location filename="../gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py" line="96"/>
         <source>About DSGTools</source>
         <translation>Sobre o DSGTools</translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py" line="63"/>
+        <source>Download external data</source>
+        <translation>Baixar dados externos</translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py" line="126"/>
+        <source>Everyting up to date</source>
+        <translation>Tudo atualizado</translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py" line="126"/>
+        <source>External files updated</source>
+        <translation>Arquivos externos atualizados</translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py" line="127"/>
+        <source>Info</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -56,16 +76,16 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 1.6&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="obsolete">&amp;lt;!DOCTYPE HTML PUBLIC &amp;quot;-//W3C//DTD HTML 4.0//EN&amp;quot; &amp;quot;http://www.w3.org/TR/REC-html40/strict.dtd&amp;quot;&amp;gt;
+&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;meta name=&amp;quot;qrichtext&amp;quot; content=&amp;quot;1&amp;quot; /&amp;gt;&amp;lt;style type=&amp;quot;text/css&amp;quot;&amp;gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Exército Brasileiro&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Diretoria de Serviço Geográfico&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Versão: 1.6&lt;/span&gt;&lt;/p&gt;
-&lt;/body&gt;&lt;/html&gt;</translation>
+&amp;lt;/style&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body style=&amp;quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&amp;quot;&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Exército Brasileiro&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Diretoria de Serviço Geográfico&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Versão: 1.6&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;</translation>
     </message>
     <message>
         <location filename="ui_about.ui" line="89"/>
@@ -79,16 +99,16 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 1.7&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="obsolete">&amp;lt;!DOCTYPE HTML PUBLIC &amp;quot;-//W3C//DTD HTML 4.0//EN&amp;quot; &amp;quot;http://www.w3.org/TR/REC-html40/strict.dtd&amp;quot;&amp;gt;
+&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;meta name=&amp;quot;qrichtext&amp;quot; content=&amp;quot;1&amp;quot; /&amp;gt;&amp;lt;style type=&amp;quot;text/css&amp;quot;&amp;gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Exército Brasileiro&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Diretoria de Serviço Geográfico&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Versão: 1.7&lt;/span&gt;&lt;/p&gt;
-&lt;/body&gt;&lt;/html&gt;</translation>
+&amp;lt;/style&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body style=&amp;quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&amp;quot;&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Exército Brasileiro&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Diretoria de Serviço Geográfico&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Versão: 1.7&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;</translation>
     </message>
     <message>
         <location filename="ui_about.ui" line="89"/>
@@ -102,16 +122,16 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 2.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="obsolete">&amp;lt;!DOCTYPE HTML PUBLIC &amp;quot;-//W3C//DTD HTML 4.0//EN&amp;quot; &amp;quot;http://www.w3.org/TR/REC-html40/strict.dtd&amp;quot;&amp;gt;
+&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;meta name=&amp;quot;qrichtext&amp;quot; content=&amp;quot;1&amp;quot; /&amp;gt;&amp;lt;style type=&amp;quot;text/css&amp;quot;&amp;gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 2.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&amp;lt;/style&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body style=&amp;quot; font-family:'Ubuntu'; font-size:9pt; font-weight:400; font-style:normal;&amp;quot;&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Brazilian Army&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Geographic Service Bureau&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Versão: 2.0&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;</translation>
     </message>
     <message>
         <location filename="ui_about.ui" line="89"/>
@@ -125,16 +145,16 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 2.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="obsolete">&amp;lt;!DOCTYPE HTML PUBLIC &amp;quot;-//W3C//DTD HTML 4.0//EN&amp;quot; &amp;quot;http://www.w3.org/TR/REC-html40/strict.dtd&amp;quot;&amp;gt;
+&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;meta name=&amp;quot;qrichtext&amp;quot; content=&amp;quot;1&amp;quot; /&amp;gt;&amp;lt;style type=&amp;quot;text/css&amp;quot;&amp;gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 2.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&amp;lt;/style&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body style=&amp;quot; font-family:'Ubuntu'; font-size:9pt; font-weight:400; font-style:normal;&amp;quot;&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Brazilian Army&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Geographic Service Bureau&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Versão: 2.1&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;</translation>
     </message>
     <message>
         <location filename="ui_about.ui" line="89"/>
@@ -148,16 +168,16 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 3.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="obsolete">&amp;lt;!DOCTYPE HTML PUBLIC &amp;quot;-//W3C//DTD HTML 4.0//EN&amp;quot; &amp;quot;http://www.w3.org/TR/REC-html40/strict.dtd&amp;quot;&amp;gt;
+&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;meta name=&amp;quot;qrichtext&amp;quot; content=&amp;quot;1&amp;quot; /&amp;gt;&amp;lt;style type=&amp;quot;text/css&amp;quot;&amp;gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 3.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&amp;lt;/style&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body style=&amp;quot; font-family:'Ubuntu'; font-size:9pt; font-weight:400; font-style:normal;&amp;quot;&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Brazilian Army&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Geographic Service Bureau&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Versão: 3.0&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;</translation>
     </message>
     <message>
         <location filename="../ui_about.ui" line="89"/>
@@ -171,16 +191,16 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;Version: 3.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="obsolete">&amp;lt;!DOCTYPE HTML PUBLIC &amp;quot;-//W3C//DTD HTML 4.0//EN&amp;quot; &amp;quot;http://www.w3.org/TR/REC-html40/strict.dtd&amp;quot;&amp;gt;
+&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;meta name=&amp;quot;qrichtext&amp;quot; content=&amp;quot;1&amp;quot; /&amp;gt;&amp;lt;style type=&amp;quot;text/css&amp;quot;&amp;gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 3.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&amp;lt;/style&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body style=&amp;quot; font-family:'Ubuntu'; font-size:9pt; font-weight:400; font-style:normal;&amp;quot;&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Brazilian Army&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Geographic Service Bureau&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Versão: 3.1&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;</translation>
     </message>
     <message>
         <location filename="../ui_about.ui" line="89"/>
@@ -194,16 +214,16 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;Version: 3.1.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="obsolete">&amp;lt;!DOCTYPE HTML PUBLIC &amp;quot;-//W3C//DTD HTML 4.0//EN&amp;quot; &amp;quot;http://www.w3.org/TR/REC-html40/strict.dtd&amp;quot;&amp;gt;
+&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;meta name=&amp;quot;qrichtext&amp;quot; content=&amp;quot;1&amp;quot; /&amp;gt;&amp;lt;style type=&amp;quot;text/css&amp;quot;&amp;gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Exército Brasileiro&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Diretoria de Serviço Geográfico&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 3.1.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&amp;lt;/style&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body style=&amp;quot; font-family:'Ubuntu'; font-size:9pt; font-weight:400; font-style:normal;&amp;quot;&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Exército Brasileiro&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Diretoria de Serviço Geográfico&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Versão: 3.1.1&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;</translation>
     </message>
     <message>
         <location filename="../ui_about.ui" line="89"/>
@@ -217,16 +237,16 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 3.1.2&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="obsolete">&amp;lt;!DOCTYPE HTML PUBLIC &amp;quot;-//W3C//DTD HTML 4.0//EN&amp;quot; &amp;quot;http://www.w3.org/TR/REC-html40/strict.dtd&amp;quot;&amp;gt;
+&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;meta name=&amp;quot;qrichtext&amp;quot; content=&amp;quot;1&amp;quot; /&amp;gt;&amp;lt;style type=&amp;quot;text/css&amp;quot;&amp;gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 3.1.2&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&amp;lt;/style&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body style=&amp;quot; font-family:'Ubuntu'; font-size:9pt; font-weight:400; font-style:normal;&amp;quot;&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Brazilian Army&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Geographic Service Bureau&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Versão: 3.1.2&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/ui_about.ui" line="89"/>
@@ -240,16 +260,16 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 4.0-dev&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="obsolete">&amp;lt;!DOCTYPE HTML PUBLIC &amp;quot;-//W3C//DTD HTML 4.0//EN&amp;quot; &amp;quot;http://www.w3.org/TR/REC-html40/strict.dtd&amp;quot;&amp;gt;
+&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;meta name=&amp;quot;qrichtext&amp;quot; content=&amp;quot;1&amp;quot; /&amp;gt;&amp;lt;style type=&amp;quot;text/css&amp;quot;&amp;gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.SF NS Text&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Exército Brasileiro&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Diretoria de Serviço Geográfico&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Esse plugin foi desenvolvido de acordo com Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais (INDE).&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 4.0-dev&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&amp;lt;/style&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body style=&amp;quot; font-family:'.SF NS Text'; font-size:13pt; font-weight:400; font-style:normal;&amp;quot;&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Exército Brasileiro&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Diretoria de Serviço Geográfico&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Esse plugin foi desenvolvido de acordo com Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais (INDE).&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Versão: 4.0-dev&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/ui_about.ui" line="89"/>
@@ -263,16 +283,16 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: ${version}&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation>&amp;lt;!DOCTYPE HTML PUBLIC &amp;quot;-//W3C//DTD HTML 4.0//EN&amp;quot; &amp;quot;http://www.w3.org/TR/REC-html40/strict.dtd&amp;quot;&amp;gt;
+&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;meta name=&amp;quot;qrichtext&amp;quot; content=&amp;quot;1&amp;quot; /&amp;gt;&amp;lt;style type=&amp;quot;text/css&amp;quot;&amp;gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.SF NS Text&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Exército Brasileiro&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Diretoria de Serviço Geográfico&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este plugin foi desenvolvido de acordo com o preconizado nas Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais.&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: ${version}&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&amp;lt;/style&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body style=&amp;quot; font-family:'.SF NS Text'; font-size:13pt; font-weight:400; font-style:normal;&amp;quot;&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Exército Brasileiro&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Diretoria de Serviço Geográfico&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Este plugin foi desenvolvido de acordo com o preconizado nas Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais.&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Versão: ${version}&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/ui_about_.ui" line="89"/>
@@ -286,16 +306,16 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 4.1-dev&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="obsolete">&amp;lt;!DOCTYPE HTML PUBLIC &amp;quot;-//W3C//DTD HTML 4.0//EN&amp;quot; &amp;quot;http://www.w3.org/TR/REC-html40/strict.dtd&amp;quot;&amp;gt;
+&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;meta name=&amp;quot;qrichtext&amp;quot; content=&amp;quot;1&amp;quot; /&amp;gt;&amp;lt;style type=&amp;quot;text/css&amp;quot;&amp;gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.SF NS Text&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Exército Brasileiro&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Diretoria de Serviço Geográfico&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Esse plugin foi desenvolvido de acordo com Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais (INDE).&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 4.0-dev&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt; {3C?} {4.0/?} {3.?} {40/?} {1&quot;?} {13p?} {400;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2&apos;?} {10p?} {600;?} {4.1-?}</translation>
+&amp;lt;/style&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body style=&amp;quot; font-family:'.SF NS Text'; font-size:13pt; font-weight:400; font-style:normal;&amp;quot;&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Exército Brasileiro&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Diretoria de Serviço Geográfico&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Esse plugin foi desenvolvido de acordo com Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais (INDE).&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Versão: 4.0-dev&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt; {3C?} {4.0/?} {3.?} {40/?} {1&amp;quot;?} {13p?} {400;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2'?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2'?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2'?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2'?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2'?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2'?} {10p?} {600;?} {4.1-?}</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/ui_about_.ui" line="89"/>
@@ -309,16 +329,16 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 4.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation type="obsolete">&amp;lt;!DOCTYPE HTML PUBLIC &amp;quot;-//W3C//DTD HTML 4.0//EN&amp;quot; &amp;quot;http://www.w3.org/TR/REC-html40/strict.dtd&amp;quot;&amp;gt;
+&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;meta name=&amp;quot;qrichtext&amp;quot; content=&amp;quot;1&amp;quot; /&amp;gt;&amp;lt;style type=&amp;quot;text/css&amp;quot;&amp;gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.SF NS Text&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Exército Brasileiro&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Diretoria do Serviço Geográfico&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais do Brasil.&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 4.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&amp;lt;/style&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body style=&amp;quot; font-family:'.SF NS Text'; font-size:13pt; font-weight:400; font-style:normal;&amp;quot;&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Exército Brasileiro&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Diretoria do Serviço Geográfico&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Este plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais do Brasil.&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Versão: 4.1&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/ui_about_.ui" line="89"/>
@@ -331,8 +351,17 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 4.2_dev_5929378c03c154bf1f9c744fe3a45cc3ff402100&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 4.2.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">&amp;lt;!DOCTYPE HTML PUBLIC &amp;quot;-//W3C//DTD HTML 4.0//EN&amp;quot; &amp;quot;http://www.w3.org/TR/REC-html40/strict.dtd&amp;quot;&amp;gt;
+&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;meta name=&amp;quot;qrichtext&amp;quot; content=&amp;quot;1&amp;quot; /&amp;gt;&amp;lt;style type=&amp;quot;text/css&amp;quot;&amp;gt;
+p, li { white-space: pre-wrap; }
+&amp;lt;/style&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body style=&amp;quot; font-family:'Ubuntu'; font-size:9pt; font-weight:400; font-style:normal;&amp;quot;&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Brazilian Army&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Geographic Service Bureau&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;justify&amp;quot; style=&amp;quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;p align=&amp;quot;center&amp;quot; style=&amp;quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&amp;quot;&amp;gt;&amp;lt;span style=&amp;quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&amp;quot;&amp;gt;Versão: 3.1.2&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt; {3C?} {4.0/?} {3.?} {40/?} {1&amp;quot;?} {13p?} {400;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2'?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2'?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2'?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2'?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2'?} {10p?} {600;?} {0p?} {0p?} {0p?} {0p?} {0;?} {0p?} {2'?} {10p?} {600;?} {4.2.0&amp;lt;?}</translation>
     </message>
 </context>
 <context>
@@ -475,7 +504,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../core/Factories/DbFactory/abstractDb.py" line="132"/>
         <source>Unable to read table {0}. Error message: &apos;{1}&apos;</source>
-        <translation>Incapaz de ler a tabela {0}. Mensagem de erro: &apos;{1}&apos;</translation>
+        <translation>Incapaz de ler a tabela {0}. Mensagem de erro: '{1}'</translation>
     </message>
 </context>
 <context>
@@ -854,14 +883,34 @@ Usuários com erro:</translation>
 <context>
     <name>AssignAliasesToLayersAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignAliasesToLayersAlgorithm.py" line="133"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignAliasesToLayersAlgorithm.py" line="183"/>
         <source>Assign Aliases to Layers</source>
         <translation>Atribuindo apelidos às camadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignAliasesToLayersAlgorithm.py" line="140"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignAliasesToLayersAlgorithm.py" line="190"/>
         <source>Layer Management Algorithms</source>
         <translation>Algoritmos de gestão de camadas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignAliasesToLayersAlgorithm.py" line="74"/>
+        <source>Input Layers</source>
+        <translation>Camadas de entrada</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignAliasesToLayersAlgorithm.py" line="82"/>
+        <source>Input json file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignAliasesToLayersAlgorithm.py" line="90"/>
+        <source>Input json text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignAliasesToLayersAlgorithm.py" line="99"/>
+        <source>Original layers id with aliases</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1115,12 +1164,12 @@ Usuários com erro:</translation>
         <translation>Camada original com valores mapeados</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignValueMapToLayersAlgorithm.py" line="190"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignValueMapToLayersAlgorithm.py" line="143"/>
         <source>Assign Value Map to Layers</source>
         <translation>Atribui mapa de valores às camadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignValueMapToLayersAlgorithm.py" line="197"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignValueMapToLayersAlgorithm.py" line="150"/>
         <source>Layer Management Algorithms</source>
         <translation>Algoritmos de gestão de camadas</translation>
     </message>
@@ -2255,7 +2304,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="357"/>
         <source>&apos;{0}&apos; is an invalid value for field {1}. (Is the layer style generated from the current data model?</source>
-        <translation>&apos;{0}&apos; é um valor inválido para o atributo {1}. (O estilo da camada foi gerado a partir do modelo de dados atual?</translation>
+        <translation>'{0}' é um valor inválido para o atributo {1}. (O estilo da camada foi gerado a partir do modelo de dados atual?</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py" line="361"/>
@@ -2328,7 +2377,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="966"/>
         <source>Setup &quot;{0}&quot; imported from &quot;{1}&quot;</source>
-        <translation>Configuração &quot;{0}&quot; importada de &quot;{1}&quot;</translation>
+        <translation>Configuração &amp;quot;{0}&amp;quot; importada de &amp;quot;{1}&amp;quot;</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="968"/>
@@ -2343,7 +2392,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="995"/>
         <source>Setup &quot;{0}&quot; exported to &quot;{1}&quot;</source>
-        <translation>Configuração &quot;{0}&quot; exportada para &quot;{1}&quot;</translation>
+        <translation>Configuração &amp;quot;{0}&amp;quot; exportada para &amp;quot;{1}&amp;quot;</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonSetupWidget.py" line="997"/>
@@ -3916,7 +3965,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/createNetworkNodesAlgorithm.py" line="120"/>
         <source>Water body layers</source>
-        <translation>Camadas de Corpos D&apos;Água</translation>
+        <translation>Camadas de Corpos D'Água</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/createNetworkNodesAlgorithm.py" line="128"/>
@@ -4353,7 +4402,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="1043"/>
         <source>Custom Button Setup</source>
-        <translation>Configuração de botões customizada</translation>
+        <translation type="obsolete">Configuração de botões customizada</translation>
     </message>
 </context>
 <context>
@@ -4361,132 +4410,132 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="63"/>
         <source>New button</source>
-        <translation>Novo botão</translation>
+        <translation type="obsolete">Novo botão</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="212"/>
         <source>Error while updating &apos;{0}&apos; ({1})</source>
-        <translation>Erro ao atualizar &apos;{0}&apos; ({1})</translation>
+        <translation type="obsolete">Erro ao atualizar '{0}' ({1})</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="708"/>
         <source>DSGTools: Custom Feature Toolbox - button {0}</source>
-        <translation>DSGTools: Caixa de Ferramenta de Classificação de Feições - botão {0}</translation>
+        <translation type="obsolete">DSGTools: Caixa de Ferramenta de Classificação de Feições - botão {0}</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="335"/>
         <source>Policy must be a str ({0}).</source>
-        <translation>Política deverá ser uma string ({0}).</translation>
+        <translation type="obsolete">Política deverá ser uma string ({0}).</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="362"/>
         <source>Policy must be a boolean ({0}).</source>
-        <translation>Política deverá ser um boleano ({0}).</translation>
+        <translation type="obsolete">Política deverá ser um boleano ({0}).</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="461"/>
         <source>Color must be a str or tuple of int ({0}).</source>
-        <translation>Cores deverão ser string ou uma tupla de inteiros ({0}).</translation>
+        <translation type="obsolete">Cores deverão ser string ou uma tupla de inteiros ({0}).</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="491"/>
         <source>Color usage must be a bool ({0}).</source>
-        <translation>Cores deverão ser string ou uma tupla de inteiros ({0}).</translation>
+        <translation type="obsolete">Cores deverão ser string ou uma tupla de inteiros ({0}).</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="521"/>
         <source>Category must be an int ({0}).</source>
-        <translation>Categoria deverá ser um inteiro ({0}).</translation>
+        <translation type="obsolete">Categoria deverá ser um inteiro ({0}).</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="542"/>
         <source>Tool tip must be a str ({0}).</source>
-        <translation>Dica de ferramenta deverá ser uma string ({0}).</translation>
+        <translation type="obsolete">Dica de ferramenta deverá ser uma string ({0}).</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="561"/>
         <source>Category must be a str ({0}).</source>
-        <translation>Categoria deverá ser uma string ({0}).</translation>
+        <translation type="obsolete">Categoria deverá ser uma string ({0}).</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="585"/>
         <source>Action shortcut must be a str ({0}).</source>
-        <translation>Atalho para ação deverá ser uma string ({0}).</translation>
+        <translation type="obsolete">Atalho para ação deverá ser uma string ({0}).</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="613"/>
         <source>Keyword must be a str ({0}).</source>
-        <translation>Palavra chave deverá ser uma string ({0}).</translation>
+        <translation type="obsolete">Palavra chave deverá ser uma string ({0}).</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="644"/>
         <source>Keyword must be a set ({0}).</source>
-        <translation>Palavra chave deverá ser um conjunto ({0}).</translation>
+        <translation type="obsolete">Palavra chave deverá ser um conjunto ({0}).</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="769"/>
         <source>Callback must be a callable object.</source>
-        <translation>Callback deverá ser um objeto exigível.</translation>
+        <translation type="obsolete">Callback deverá ser um objeto exigível.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="788"/>
         <source>Layer name must be a str ({0}).</source>
-        <translation>Nome de camada deverá ser uma string ({0}).</translation>
+        <translation type="obsolete">Nome de camada deverá ser uma string ({0}).</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="855"/>
         <source>{0} is not a valid value for field {1}.</source>
-        <translation>{0} não é um valor válido para o campo {1}.</translation>
+        <translation type="obsolete">{0} não é um valor válido para o campo {1}.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="869"/>
         <source>Attribute map must be a dict ({0}).</source>
-        <translation>Mapa de atributos deverá ser um dicionário ({0}).</translation>
+        <translation type="obsolete">Mapa de atributos deverá ser um dicionário ({0}).</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="888"/>
         <source>QGIS default feature extraction tool</source>
-        <translation>Ferramenta de aquisição padrão do QGIS</translation>
+        <translation type="obsolete">Ferramenta de aquisição padrão do QGIS</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="889"/>
         <source>DSGTools: Free Hand Acquisition</source>
-        <translation>DSGTools: Ferramenta de Aquisição à Mão Livre</translation>
+        <translation type="obsolete">DSGTools: Ferramenta de Aquisição à Mão Livre</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="890"/>
         <source>QGIS Circle extraction tool</source>
-        <translation>Ferramenta de aquisição de círculos do QGIS</translation>
+        <translation type="obsolete">Ferramenta de aquisição de círculos do QGIS</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="891"/>
         <source>DSGTools: Right Degree Angle Digitizing</source>
-        <translation>DSGTools: Ferramenta de aquisição com ângulos retos</translation>
+        <translation type="obsolete">DSGTools: Ferramenta de aquisição com ângulos retos</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="901"/>
         <source>&apos;{0}&apos; not supported.</source>
-        <translation>&apos;{0}&apos; not supported.</translation>
+        <translation type="obsolete">'{0}' not supported.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="904"/>
         <source>Digitizing tool prop must be a str ({0}).</source>
-        <translation>Propriedade da ferramenta de aquisição deverá ser uma string ({0}).</translation>
+        <translation type="obsolete">Propriedade da ferramenta de aquisição deverá ser uma string ({0}).</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="938"/>
         <source>Toggling usage must be a bool ({0}).</source>
-        <translation>A alternância de uso deve ser um booleano ({0}).</translation>
+        <translation type="obsolete">A alternância de uso deve ser um booleano ({0}).</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="968"/>
         <source>Toggling status must be a bool ({0}).</source>
-        <translation>A alternância de estado deve ser um booleano ({0}).</translation>
+        <translation type="obsolete">A alternância de estado deve ser um booleano ({0}).</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customButtonSetup.py" line="1009"/>
         <source>Enabled status must be a bool ({0}).</source>
-        <translation>O estado ativado deverá ser um boleano({0}).</translation>
+        <translation type="obsolete">O estado ativado deverá ser um boleano({0}).</translation>
     </message>
 </context>
 <context>
@@ -4532,77 +4581,77 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="90"/>
         <source>Active layer</source>
-        <translation>Camada ativa</translation>
+        <translation type="obsolete">Camada ativa</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="91"/>
         <source>All layers</source>
-        <translation>Todas as camadas</translation>
+        <translation type="obsolete">Todas as camadas</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="93"/>
         <source>Feature extraction</source>
-        <translation>Extração de feições</translation>
+        <translation type="obsolete">Extração de feições</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="94"/>
         <source>Reclassify</source>
-        <translation>Reclassificação</translation>
+        <translation type="obsolete">Reclassificação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="174"/>
         <source>Select a buttons profile...</source>
-        <translation>Selecione um perfil de botões...</translation>
+        <translation type="obsolete">Selecione um perfil de botões...</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="188"/>
         <source>{0} (1 feature)</source>
-        <translation>{0} (1 feição)</translation>
+        <translation type="obsolete">{0} (1 feição)</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="190"/>
         <source>{0} ({1} features)</source>
-        <translation>{0} ({1} feições)</translation>
+        <translation type="obsolete">{0} ({1} feições)</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="194"/>
         <source>Reclassified features</source>
-        <translation>Feições reclassificadas</translation>
+        <translation type="obsolete">Feições reclassificadas</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="196"/>
         <source>Reclassified feature</source>
-        <translation>Feição reclassificada</translation>
+        <translation type="obsolete">Feição reclassificada</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="325"/>
         <source>No category</source>
-        <translation>Sem categoria</translation>
+        <translation type="obsolete">Sem categoria</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="358"/>
         <source>Searched buttons</source>
-        <translation>Botões encontrados</translation>
+        <translation type="obsolete">Botões encontrados</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="362"/>
         <source>Searched buttons ({0})</source>
-        <translation>Botões encontrados ({0})</translation>
+        <translation type="obsolete">Botões encontrados ({0})</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="589"/>
         <source>DSGTools Custom Feature Tool: confirm removal</source>
-        <translation>DSGTools Ferramenta de feição customizada: confirmação de remoção</translation>
+        <translation type="obsolete">DSGTools Ferramenta de feição customizada: confirmação de remoção</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="590"/>
         <source>Would like to delete setup {0}?</source>
-        <translation>Gostaria de deletar a configuração{0}?</translation>
+        <translation type="obsolete">Gostaria de deletar a configuração{0}?</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="660"/>
         <source>Your redo stack may have been corrupted. Please,avoid &apos;redo&apos; with a button active.</source>
-        <translation type="obsolete">Sua lista de &quot;Refazer&quot; poderá estar corrompida. Por favor, evite &quot;Refazer&quot; com algum botão ativo.</translation>
+        <translation type="obsolete">Sua lista de &amp;quot;Refazer&amp;quot; poderá estar corrompida. Por favor, evite &amp;quot;Refazer&amp;quot; com algum botão ativo.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="662"/>
@@ -4612,22 +4661,22 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="990"/>
         <source>layer &apos;{0}&apos; not loaded. Can&apos;t use button &apos;{1}&apos;.</source>
-        <translation>camada &apos;{0}&apos; não foi carregada. Não poderá usar o botão &apos;{1}&apos;.</translation>
+        <translation type="obsolete">camada '{0}' não foi carregada. Não poderá usar o botão '{1}'.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1013"/>
         <source>DSGTools feature reclassification</source>
-        <translation>DSGTools reclassificação de feições</translation>
+        <translation type="obsolete">DSGTools reclassificação de feições</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1010"/>
         <source>could not reclassify using button {0} (no compatible features selected)</source>
-        <translation>não foi possível reclassificar usando o botão {0} (nenhuma feição compatível selecionada)</translation>
+        <translation type="obsolete">não foi possível reclassificar usando o botão {0} (nenhuma feição compatível selecionada)</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1021"/>
         <source>{0} (receiving layer: {1})</source>
-        <translation>{0} (camada receptora: {1})</translation>
+        <translation type="obsolete">{0} (camada receptora: {1})</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1245"/>
@@ -4642,7 +4691,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1254"/>
         <source>current state imported from &apos;{0}&apos;.</source>
-        <translation type="obsolete">estado atual importado de &apos;{0}&apos;.</translation>
+        <translation type="obsolete">estado atual importado de '{0}'.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1281"/>
@@ -4657,12 +4706,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1275"/>
         <source>current state exported to &apos;{0}&apos;.</source>
-        <translation type="obsolete">estado atual exportado para &apos;{0}&apos;.</translation>
+        <translation type="obsolete">estado atual exportado para '{0}'.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.py" line="1278"/>
         <source>unable to export current state to &apos;{0}&apos;.</source>
-        <translation type="obsolete">incapaz de exportar o estado atual para &apos;{0}&apos;.</translation>
+        <translation type="obsolete">incapaz de exportar o estado atual para '{0}'.</translation>
     </message>
 </context>
 <context>
@@ -4703,7 +4752,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSelector.ui" line="122"/>
         <source>&gt;&gt;</source>
-        <translation>&gt;&gt;</translation>
+        <translation>&amp;gt;&amp;gt;</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSelector.ui" line="141"/>
@@ -4713,7 +4762,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSelector.ui" line="144"/>
         <source>&gt;</source>
-        <translation>&gt;</translation>
+        <translation>&amp;gt;</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSelector.ui" line="163"/>
@@ -4723,7 +4772,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSelector.ui" line="166"/>
         <source>&lt;</source>
-        <translation>&lt;</translation>
+        <translation>&amp;lt;</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSelector.ui" line="185"/>
@@ -4733,7 +4782,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSelector.ui" line="188"/>
         <source>&lt;&lt;</source>
-        <translation>&lt;&lt;</translation>
+        <translation>&amp;lt;&amp;lt;</translation>
     </message>
 </context>
 <context>
@@ -4857,9 +4906,9 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Texto do combo box</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="84"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="83"/>
         <source>Area in mm²</source>
-        <translation type="obsolete">Área em mm²</translation>
+        <translation>Área em mm²</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.ui" line="57"/>
@@ -4898,7 +4947,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="83"/>
         <source>Area in mmÂ²</source>
-        <translation>Área em mm²</translation>
+        <translation type="obsolete">Área em mm²</translation>
     </message>
 </context>
 <context>
@@ -4939,7 +4988,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableSelector.ui" line="96"/>
         <source>&gt;&gt;</source>
-        <translation>&gt;&gt;</translation>
+        <translation>&amp;gt;&amp;gt;</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableSelector.ui" line="115"/>
@@ -4949,7 +4998,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableSelector.ui" line="118"/>
         <source>&gt;</source>
-        <translation>&gt;</translation>
+        <translation>&amp;gt;</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableSelector.ui" line="137"/>
@@ -4959,7 +5008,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableSelector.ui" line="140"/>
         <source>&lt;</source>
-        <translation>&lt;</translation>
+        <translation>&amp;lt;</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableSelector.ui" line="159"/>
@@ -4969,7 +5018,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableSelector.ui" line="162"/>
         <source>&lt;&lt;</source>
-        <translation>&lt;&lt;</translation>
+        <translation>&amp;lt;&amp;lt;</translation>
     </message>
 </context>
 <context>
@@ -5178,13 +5227,13 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="298"/>
         <source>Remove model &apos;{modelName}&apos;?</source>
-        <translation>Remover modelo &apos;{modelName}&apos;?</translation>
+        <translation>Remover modelo '{modelName}'?</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/DataValidationTool/dataValidationTool.py" line="306"/>
         <source>Unable to remove &apos;{model}&apos;:
 {error}.</source>
-        <translation>Impossível de remover &apos;{model}&apos;:
+        <translation>Impossível de remover '{model}':
 {error}.</translation>
     </message>
     <message>
@@ -5320,7 +5369,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="266"/>
         <source>&lt;prefix&gt;_&lt;database name&gt;_&lt;sufix&gt;</source>
-        <translation>&lt;prefixo&gt;_&lt;nome do banco de dados&gt;_&lt;sufixo&gt;</translation>
+        <translation>&amp;lt;prefixo&amp;gt;_&amp;lt;nome do banco de dados&amp;gt;_&amp;lt;sufixo&amp;gt;</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/databaseParameterWidget.ui" line="100"/>
@@ -5667,7 +5716,7 @@ para moldura não for selecionada, a moldura não será criada </translation>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="667"/>
         <source>&lt;span style=&quot;color: #ff0000;&quot;&gt;&lt;br&gt;&lt;p&gt;CONVERSION TASK WAS CANCELLED.&lt;/span&gt;&lt;/p&gt;</source>
-        <translation>&lt;span style=&quot;color: #ff0000;&quot;&gt;&lt;br&gt;&lt;p&gt;TAREFA DE CONVERSÃO FOI CANCELADA.&lt;/span&gt;&lt;/p&gt;</translation>
+        <translation>&amp;lt;span style=&amp;quot;color: #ff0000;&amp;quot;&amp;gt;&amp;lt;br&amp;gt;&amp;lt;p&amp;gt;TAREFA DE CONVERSÃO FOI CANCELADA.&amp;lt;/span&amp;gt;&amp;lt;/p&amp;gt;</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="689"/>
@@ -5692,7 +5741,7 @@ para moldura não for selecionada, a moldura não será criada </translation>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="705"/>
         <source>Dataset conversion has failed: &apos;{0}&apos;</source>
-        <translation>Conversão falhou: &apos;{0}&apos;</translation>
+        <translation>Conversão falhou: '{0}'</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="634"/>
@@ -5843,7 +5892,7 @@ Passo de conversão {0} iniciado...
         <location filename="../core/DbTools/dbConverter.py" line="665"/>
         <source>Dataset creation error ({0}): &apos;{1}&apos;
 </source>
-        <translation>Erro de criação de fonte de dados ({0}): &apos;{1}&apos;
+        <translation>Erro de criação de fonte de dados ({0}): '{1}'
 </translation>
     </message>
     <message>
@@ -6633,22 +6682,22 @@ Camada</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/user_profiles.ui" line="49"/>
         <source>&gt;&gt;</source>
-        <translation>&gt;&gt;</translation>
+        <translation>&amp;gt;&amp;gt;</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/user_profiles.ui" line="56"/>
         <source>&gt;</source>
-        <translation>&gt;</translation>
+        <translation>&amp;gt;</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/user_profiles.ui" line="63"/>
         <source>&lt;</source>
-        <translation>&lt;</translation>
+        <translation>&amp;lt;</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/user_profiles.ui" line="70"/>
         <source>&lt;&lt;</source>
-        <translation>&lt;&lt;</translation>
+        <translation>&amp;lt;&amp;lt;</translation>
     </message>
     <message>
         <location filename="UserTools/user_profiles.ui" line="69"/>
@@ -7343,57 +7392,57 @@ camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="14"/>
         <source>DSGTools: Custom Feature Toolbox</source>
-        <translation>DSGTools Caixa de Ferramenta de Classificação de Feições</translation>
+        <translation type="obsolete">DSGTools Caixa de Ferramenta de Classificação de Feições</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="21"/>
         <source>Tool behaviour</source>
-        <translation>Comportamento da ferramenta</translation>
+        <translation type="obsolete">Comportamento da ferramenta</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="80"/>
         <source>Imports a set of buttons setup (profile) from a file</source>
-        <translation>Importa um conjunto de configurações de botões (perfil) a partir de um arquivo</translation>
+        <translation type="obsolete">Importa um conjunto de configurações de botões (perfil) a partir de um arquivo</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="113"/>
         <source>Exports current set of buttons setup (profile) to a file</source>
-        <translation>Exporta o atual conjunto de configurações de botões (perfil) para um arquivo</translation>
+        <translation type="obsolete">Exporta o atual conjunto de configurações de botões (perfil) para um arquivo</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="137"/>
         <source>Edits current buttons setup (profile) from a file</source>
-        <translation>Edita a atual configuração de botões (perfil) a partir de um arquivo</translation>
+        <translation type="obsolete">Edita a atual configuração de botões (perfil) a partir de um arquivo</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="161"/>
         <source>Adds a buttons setup (profile)</source>
-        <translation>Adiciona uma configuração de botões (perfil)</translation>
+        <translation type="obsolete">Adiciona uma configuração de botões (perfil)</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="188"/>
         <source>Removes current buttons setup (profile)</source>
-        <translation>Remove a atual configuração de botões (perfil)</translation>
+        <translation type="obsolete">Remove a atual configuração de botões (perfil)</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="214"/>
         <source>Words are space separated and case insensitive</source>
-        <translation>Palavras são separadas por espaço e não diferencia maiúsculas de minúsculas</translation>
+        <translation type="obsolete">Palavras são separadas por espaço e não diferencia maiúsculas de minúsculas</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="217"/>
         <source>Type in to filter buttons...</source>
-        <translation>Digite aqui para filtrar os botões...</translation>
+        <translation type="obsolete">Digite aqui para filtrar os botões...</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="241"/>
         <source>Small</source>
-        <translation>Pequeno</translation>
+        <translation type="obsolete">Pequeno</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/CustomFeatureToolBox/customFeatureTool.ui" line="264"/>
         <source>Large</source>
-        <translation>Grande</translation>
+        <translation type="obsolete">Grande</translation>
     </message>
 </context>
 <context>
@@ -7979,7 +8028,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <location filename="../core/DSGToolsProcessingAlgs/Models/dsgToolsProcessingModel.py" line="430"/>
         <source>Model has failed:
 &apos;{error}&apos;</source>
-        <translation>Modelo fracassou: &apos;{error}&apos;</translation>
+        <translation>Modelo fracassou: '{error}'</translation>
     </message>
 </context>
 <context>
@@ -8015,7 +8064,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="101"/>
         <source>lenght_otf</source>
-        <translation>comprimento_otf</translation>
+        <translation type="obsolete">comprimento_otf</translation>
     </message>
     <message>
         <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="200"/>
@@ -8031,6 +8080,11 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="176"/>
         <source>Domains</source>
         <translation>Domínios</translation>
+    </message>
+    <message>
+        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="101"/>
+        <source>length_otf</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8283,119 +8337,119 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Informações sobre a importação de regras</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="316"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="314"/>
         <source>Some rules have not been loaded</source>
         <translation>Algumas regras não foram carregadas</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="317"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="315"/>
         <source>Do you want to ignore and continue or cancel?</source>
         <translation>Gostaria de ignorar e continuar ou cancelar?</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="323"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="321"/>
         <source>The following layers have not been loaded:
 </source>
         <translation>As seguintes camadas não foram carregadas:
 </translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="332"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="330"/>
         <source>Successfully loaded rules!</source>
         <translation>Regras carregadas com sucesso!</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="385"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="383"/>
         <source>Description</source>
         <translation>Descrição</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="385"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="383"/>
         <source>Layer and field</source>
         <translation>Camada e atributo</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Expression</source>
         <translation>Expressão</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Error type</source>
         <translation>Tipo de erro</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Color</source>
         <translation>Cor</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Rule description</source>
         <translation>Descrição da regra</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Layer</source>
         <translation>Camada</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Field</source>
         <translation>Atributo</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="511"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="509"/>
         <source>Set of DSGTools Attribute Rules</source>
         <translation>Conjunto de regras de atributos do DSGTools</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="242"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="240"/>
         <source>Rule number {} : {} - is not a valid color.</source>
         <translation>Regra número {} : {} - não é uma cor válida.</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="246"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="244"/>
         <source>Rule number {} : {} - is not a valid string.</source>
         <translation>Regra número {} : {} - não é uma string válida.</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="250"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="248"/>
         <source>Rule number {} : {} - is not a valid expression.</source>
         <translation>Regra número {} : {} - não é uma expressão válida.</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="254"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="252"/>
         <source>Rule number {} : {} - is not a valid length = 2 list.</source>
         <translation>Regra número {} : {} - não é uma lista válida com comprimento igual a 2.</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="258"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="256"/>
         <source>Rule number {} : {} - is not a valid string description.</source>
         <translation>Regra número {} : {} - não é uma descrição válida.</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="312"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="310"/>
         <source>Information about importing rules</source>
         <translation>Informações sobre importação de regras</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Set a name for this attribute rule...</source>
         <translation>Defina um nome para esta regra de atributo ...</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Type a vector layer name...</source>
         <translation>Digite o nome de uma camada vetorial...</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Type a field layer name...</source>
         <translation>Digite o nome do atributo da camada...</translation>
     </message>
     <message>
-        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="444"/>
+        <location filename="../gui/ProcessingUI/enforceAttributeRulesWrapper.py" line="442"/>
         <source>Type an error type...</source>
         <translation>Digite um tipo de erro...</translation>
     </message>
@@ -8460,7 +8514,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="137"/>
         <source>Type in a DE-9IM as &apos;T*F0*F21*&apos;...</source>
-        <translation>Digite um DE-9IM como &apos;T * F0 * F21 *&apos; ...</translation>
+        <translation>Digite um DE-9IM como 'T * F0 * F21 *' ...</translation>
     </message>
     <message>
         <location filename="../gui/ProcessingUI/enforceSpatialRuleWrapper.py" line="340"/>
@@ -8545,7 +8599,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/enforceSpatialRulesAlgorithm.py" line="140"/>
         <source>Rule &quot;{name}&quot; broken: {{text}}</source>
-        <translation>Regra &quot;{name}&quot; interrompida: {{text}}</translation>
+        <translation>Regra &amp;quot;{name}&amp;quot; interrompida: {{text}}</translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="50"/>
@@ -8759,12 +8813,12 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/exportToMemoryLayer.py" line="55"/>
         <source>Nome da camada de saÃ­da</source>
-        <translation>Nome da camada de saída</translation>
+        <translation type="obsolete">Nome da camada de saída</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/exportToMemoryLayer.py" line="63"/>
         <source>Estilo da camada de saÃ­da</source>
-        <translation>Estilo da camada de saída</translation>
+        <translation type="obsolete">Estilo da camada de saída</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/exportToMemoryLayer.py" line="114"/>
@@ -8775,6 +8829,16 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/exportToMemoryLayer.py" line="121"/>
         <source>Other Algorithms</source>
         <translation>Outros algoritmos</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/exportToMemoryLayer.py" line="55"/>
+        <source>Nome da camada de saída</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/exportToMemoryLayer.py" line="63"/>
+        <source>Estilo da camada de saída</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8820,32 +8884,32 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Usar proxy</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="154"/>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="157"/>
         <source>Connection timed out.</source>
         <translation>Conexão expirou.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="158"/>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="161"/>
         <source>Connection timed out (max attempts).</source>
         <translation>Conexão expirou (tentativas máximas).</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="164"/>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="167"/>
         <source>Missing connection schema (e.g.&apos;http&apos;, etc).</source>
-        <translation>Esquema de conexão ausente (por exemplo &apos;http&apos;, etc).</translation>
+        <translation>Esquema de conexão ausente (por exemplo 'http', etc).</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="170"/>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="173"/>
         <source>Unexpected error while trying to reach server. Check your parameters. Error message: {}</source>
         <translation>Erro inesperado ao tentar acessar o servidor. Verifique seus parâmetros. Mensagem de erro: {}</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="230"/>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="233"/>
         <source>Proxy usage is set but no QGIS proxy settings was found.</source>
         <translation>O uso de proxy está definido, mas nenhuma configuração de proxy QGIS foi encontrada.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="238"/>
+        <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py" line="241"/>
         <source>URL to FME Manager server was not provided.</source>
         <translation>URL para o servidor FME Manager não foi fornecido.</translation>
     </message>
@@ -9670,7 +9734,7 @@ Feição(ões) não invertidas: </translation>
 <context>
     <name>Form</name>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="145"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="154"/>
         <source>Form</source>
         <translation>Formulário</translation>
     </message>
@@ -9725,14 +9789,14 @@ Feição(ões) não invertidas: </translation>
         <translation type="obsolete">Selecione um banco de dados</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="149"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="158"/>
         <source>Inspect Features Tool</source>
         <translation>Ferramenta de inspeção de feições</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="147"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="156"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Back inspect&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inspecionar anterior&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&amp;lt;html&amp;gt;&amp;lt;head/&amp;gt;&amp;lt;body&amp;gt;&amp;lt;p&amp;gt;Inspecionar anterior&amp;lt;/p&amp;gt;&amp;lt;p&amp;gt;&amp;lt;br/&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;</translation>
     </message>
     <message>
         <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="101"/>
@@ -9747,9 +9811,9 @@ aproximação:</translation>
 de feição</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="148"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="157"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Next inspect&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inspecionar próximo&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&amp;lt;html&amp;gt;&amp;lt;head/&amp;gt;&amp;lt;body&amp;gt;&amp;lt;p&amp;gt;Inspecionar próximo&amp;lt;/p&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.ui" line="26"/>
@@ -9812,7 +9876,7 @@ Ativa</translation>
         <translation type="obsolete">Escala</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="146"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="155"/>
         <source>ID: </source>
         <translation>ID: </translation>
     </message>
@@ -11146,6 +11210,59 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     </message>
 </context>
 <context>
+    <name>IdentifyCountourStreamIntersectionAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="42"/>
+        <source>Drainage layer</source>
+        <translation>Layer de trecho de drenagem</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="49"/>
+        <source>Contour levels layer</source>
+        <translation>Layer de curva de nível</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="57"/>
+        <source>Flags</source>
+        <translation>Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="71"/>
+        <source>Verifying inconsistency</source>
+        <translation>Verificando inconsistências</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="75"/>
+        <source>Building intermediary structuces</source>
+        <translation>Construindo estruturas intermediárias</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="89"/>
+        <source>Doing spatial join</source>
+        <translation>Realizando spatial join</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="93"/>
+        <source>Finding flags</source>
+        <translation>Procurando por flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="105"/>
+        <source>No flags found</source>
+        <translation>Sem flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="220"/>
+        <source>Identifies intersections between contour lines and drainage lines</source>
+        <translation>Identifica interseções entre curvas de nível e linhas de drenagem</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyCountourStreamIntersectionAlgorithm.py" line="227"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+</context>
+<context>
     <name>IdentifyDanglesAlgorithm</name>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="60"/>
@@ -12194,6 +12311,44 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>IdentifyInvalidUUIDsAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidUUIDsAlgorithm.py" line="54"/>
+        <source>Attribute name</source>
+        <translation>Nome do atributo</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidUUIDsAlgorithm.py" line="61"/>
+        <source>Fix?</source>
+        <translation>Consertar?</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidUUIDsAlgorithm.py" line="61"/>
+        <source>Compare only within same layer?</source>
+        <translation>Comparar somente na mesma camada?</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidUUIDsAlgorithm.py" line="68"/>
+        <source>Flags</source>
+        <translation>Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidUUIDsAlgorithm.py" line="178"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidUUIDsAlgorithm.py" line="171"/>
+        <source>Verifies features UUIDs</source>
+        <translation>Verifica o UUID das feições</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidUUIDsAlgorithm.py" line="46"/>
+        <source>Input layer(s)</source>
+        <translation>Camada(s) de entrada</translation>
+    </message>
+</context>
+<context>
     <name>IdentifyNotSimpleGeometriesProcess</name>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="35"/>
@@ -12837,6 +12992,44 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>IdentifySmallHolesAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallHolesAlgorithm.py" line="49"/>
+        <source>Input layer(s)</source>
+        <translation>Camada(s) de entrada</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallHolesAlgorithm.py" line="57"/>
+        <source>Tolerance</source>
+        <translation>Tolerância</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallHolesAlgorithm.py" line="64"/>
+        <source>Flags</source>
+        <translation>Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallHolesAlgorithm.py" line="72"/>
+        <source>Searching holes smaller than tolerance</source>
+        <translation>Procurando por buracos menores que a tolerância</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallHolesAlgorithm.py" line="97"/>
+        <source>Holes smaller than {str(maxSize)} were not found</source>
+        <translation>Buracos menores que {str(maxSize)} não foram encontrados</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallHolesAlgorithm.py" line="138"/>
+        <source>Identify Small Holes</source>
+        <translation>Identifica pequenos buracos</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallHolesAlgorithm.py" line="145"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+</context>
+<context>
     <name>IdentifySmallLinesAlgorithm</name>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallLinesAlgorithm.py" line="47"/>
@@ -13435,10 +13628,10 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="261"/>
         <source>&lt;font color=red&gt;There are no features in the current layer:&lt;br&gt;&lt;/font&gt;&lt;font color=blue&gt;Add features and try again!&lt;/font&gt;</source>
-        <translation>&lt;font color=red&gt;Não há feições na camada atual:&lt;br&gt;&lt;/font&gt;&lt;font color=blue&gt;Adicione feições e tente de novo!&lt;/font&gt;</translation>
+        <translation>&amp;lt;font color=red&amp;gt;Não há feições na camada atual:&amp;lt;br&amp;gt;&amp;lt;/font&amp;gt;&amp;lt;font color=blue&amp;gt;Adicione feições e tente de novo!&amp;lt;/font&amp;gt;</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="375"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="379"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
@@ -13488,7 +13681,7 @@ Camada</translation>
         <translation>Definir a camada atual como camada selecionada na ferramenta de inspeção</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="375"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="379"/>
         <source>Active layer is not valid to be used in this tool.</source>
         <translation>Camada ativa não é válida para ser usada com esta ferramenta.</translation>
     </message>
@@ -13625,57 +13818,57 @@ Camada</translation>
         <translation>Unindo linhas</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1024"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1025"/>
         <source>Creating index</source>
         <translation>Criando índice espacial</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1361"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1362"/>
         <source>Building auxiliar search structures</source>
         <translation>Construindo estruturas auxiliares de busca</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1042"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1043"/>
         <source>Getting flags</source>
         <translation>Obtendo lags</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1216"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1217"/>
         <source>Getting lines</source>
         <translation>Obtendo linhas</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1184"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1185"/>
         <source>Building vertex near edge dict</source>
         <translation>Construindo dicionário de vértices próximos à borda</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1225"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1226"/>
         <source>Building intersections</source>
         <translation>Executando interseções</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1233"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1234"/>
         <source>Finding vertexes</source>
         <translation>Encontrando vértices</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1240"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1241"/>
         <source>Finding unshared vertexes</source>
         <translation>Encontrando vértices não compartilhados</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1532"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1533"/>
         <source>Getting constraint lines</source>
         <translation>Obtendo linhas restritas</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1786"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1787"/>
         <source>Polygon without center point.</source>
         <translation>Polígono sem ponto central.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1788"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1789"/>
         <source>Polygon with more than one center point with conflicting attributes.</source>
         <translation>Polígono com mais de um ponto central com atributos contraditórios.</translation>
     </message>
@@ -13685,12 +13878,12 @@ Camada</translation>
         <translation>Nenhuma camada foi fornecida ou estão todas vazias.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1866"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1867"/>
         <source>Input layer is not polygon.</source>
         <translation>A camada de entrada não é de polígono.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="1875"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="1876"/>
         <source>Invalid or empty geometry found!</source>
         <translation>Geometria inválida ou vazia encontrada!</translation>
     </message>
@@ -13846,27 +14039,27 @@ Camada</translation>
         <translation>Camada original com linhas seccionadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="97"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="99"/>
         <source>Identifying dangles on {layer}...</source>
         <translation>Identificando pontas soltas na camada {layer}...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="117"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="119"/>
         <source>Snapping layer {layer} to dangles...</source>
         <translation>Atraindo a camada {layer} às pontas soltas encontradas...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="131"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="133"/>
         <source>Cleanning layer {layer}...</source>
         <translation>Limpando a camada {layer}...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="160"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="162"/>
         <source>Line on line overlayer</source>
         <translation>Seccionar Linhas com Linhas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="167"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="169"/>
         <source>Quality Assurance Tools (Manipulation Processes)</source>
         <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
@@ -13975,7 +14168,7 @@ Camada</translation>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="45"/>
         <source>&gt;&gt;</source>
-        <translation>&gt;&gt;</translation>
+        <translation>&amp;gt;&amp;gt;</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="65"/>
@@ -13985,7 +14178,7 @@ Camada</translation>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="68"/>
         <source>&gt;</source>
-        <translation>&gt;</translation>
+        <translation>&amp;gt;</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="75"/>
@@ -13995,7 +14188,7 @@ Camada</translation>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="78"/>
         <source>&lt;</source>
-        <translation>&lt;</translation>
+        <translation>&amp;lt;</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="85"/>
@@ -14095,7 +14288,7 @@ Camada</translation>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="88"/>
         <source>&lt;&lt;</source>
-        <translation>&lt;&lt;</translation>
+        <translation>&amp;lt;&amp;lt;</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_category.py" line="355"/>
@@ -14269,57 +14462,57 @@ Camada</translation>
 <context>
     <name>LoadLayersFromPostgisAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="66"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="68"/>
         <source>Host</source>
         <translation>Servidor</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="72"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="74"/>
         <source>Port</source>
         <translation>Porta</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="78"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="80"/>
         <source>Database</source>
         <translation>Banco de Dados</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="84"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="86"/>
         <source>User</source>
         <translation>Usuário</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="90"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="92"/>
         <source>Password</source>
         <translation>Senha</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="96"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="98"/>
         <source>Layer List</source>
         <translation>Lista de camadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="102"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="104"/>
         <source>Load layers to canvas</source>
         <translation>Carregar camadas para a área de trabalho</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="109"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="111"/>
         <source>Unique load</source>
         <translation>Carregamento único</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="117"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="119"/>
         <source>Loaded layers</source>
         <translation>Camadas carregadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="207"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="242"/>
         <source>Load Layers From Postgis</source>
         <translation>Carregar camadas a partir do PostGIS</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="214"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadLayersFromPostgisAlgorithm.py" line="249"/>
         <source>Layer Management Algorithms</source>
         <translation>Algoritmos de gestão de camadas</translation>
     </message>
@@ -14507,6 +14700,29 @@ camada</translation>
     </message>
 </context>
 <context>
+    <name>LoadShapefileAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadShapefileAlgorithm.py" line="42"/>
+        <source>Pasta com Shapefiles</source>
+        <translation>Pasta com shapefiles</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadShapefileAlgorithm.py" line="50"/>
+        <source>Loaded layers</source>
+        <translation>Camadas carregadas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadShapefileAlgorithm.py" line="121"/>
+        <source>Loads a shapefile (.shp)</source>
+        <translation>Carrega um shapefile (.shp)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/loadShapefileAlgorithm.py" line="128"/>
+        <source>Layer Management Algorithms</source>
+        <translation>Algoritmos de gestão de camadas</translation>
+    </message>
+</context>
+<context>
     <name>ManageAuxStructDialog</name>
     <message>
         <location filename="../gui/ServerTools/manageDBAuxiliarStructure.ui" line="32"/>
@@ -14584,7 +14800,7 @@ camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="426"/>
         <source>The field: &apos;nome&apos; must be filled in all rows. Please, check and try again.</source>
-        <translation>O campo &apos;nome&apos; precisa ser preenchido em todas as linhas. Por favor, verifique e tente novamente.</translation>
+        <translation>O campo 'nome' precisa ser preenchido em todas as linhas. Por favor, verifique e tente novamente.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="442"/>
@@ -14809,29 +15025,34 @@ Usuários com erro:</translation>
 <context>
     <name>MatchAndApplyQmlStylesToLayersAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py" line="68"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py" line="70"/>
         <source>Input Layers</source>
         <translation>Camadas de entrada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py" line="76"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py" line="78"/>
         <source>Input QML Folder</source>
         <translation>Diretório de entrada com arquivos QML</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py" line="84"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py" line="96"/>
         <source>Original layers with measure column</source>
         <translation>Camada original com coluna para dimensões</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py" line="150"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py" line="190"/>
         <source>Match and Apply QML Styles to Layers</source>
         <translation>Corresponder e aplicar estilos QML às camadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py" line="157"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py" line="197"/>
         <source>Layer Management Algorithms</source>
         <translation>Algoritmos de gestão de camadas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/matchAndApplyQmlStylesToLayersAlgorithm.py" line="87"/>
+        <source>QML json map (e.g., [{&quot;camada&quot;: &quot;...&quot;, &quot;qml&quot;: &quot;...&quot;}])</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -14980,7 +15201,7 @@ Camada</translation>
 <context>
     <name>MessageRaiser</name>
     <message>
-        <location filename="../core/Utils/utils.py" line="441"/>
+        <location filename="../core/Utils/utils.py" line="442"/>
         <source>Confirm action</source>
         <translation>Confirmar a ação</translation>
     </message>
@@ -15038,7 +15259,7 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="139"/>
         <source>&lt;font color=red&gt;Shape value not defined :&lt;/font&gt;&lt;br&gt;&lt;font color=blue&gt;Define all values to activate tool!&lt;/font&gt;</source>
-        <translation>&lt;font color=red&gt;Valor de forma não definido: &lt;/font&gt;&lt;br&gt;&lt;font color=blue&gt;defina todos os valores para ativar a ferramenta!&lt;/font&gt;</translation>
+        <translation>&amp;lt;font color=red&amp;gt;Valor de forma não definido: &amp;lt;/font&amp;gt;&amp;lt;br&amp;gt;&amp;lt;font color=blue&amp;gt;defina todos os valores para ativar a ferramenta!&amp;lt;/font&amp;gt;</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="236"/>
@@ -15190,7 +15411,7 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py" line="147"/>
         <source>Testing {alg}&apos;s...</source>
-        <translation>Testando {alg}&apos;s...</translation>
+        <translation>Testando {alg}'s...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py" line="155"/>
@@ -15263,7 +15484,7 @@ Camada</translation>
     <message>
         <location filename="../core/GeometricTools/networkHandler.py" line="59"/>
         <source>Node Next to Water Body</source>
-        <translation>Nó próximo a corpo d&apos;água</translation>
+        <translation>Nó próximo a corpo d'água</translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/networkHandler.py" line="60"/>
@@ -15348,7 +15569,7 @@ Camada</translation>
     <message>
         <location filename="../core/GeometricTools/networkHandler.py" line="908"/>
         <source>Node is overloaded - 4 or more lines are flowing in (&gt;= 2 lines) and out (&gt;= 2 lines).</source>
-        <translation>Nó está sobrecarregado - 4 ou mais linhas fluem a partir (&gt;= 2 linhas) ou para (&gt;= 2 linhas) o nó.</translation>
+        <translation>Nó está sobrecarregado - 4 ou mais linhas fluem a partir (&amp;gt;= 2 linhas) ou para (&amp;gt;= 2 linhas) o nó.</translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/networkHandler.py" line="932"/>
@@ -15835,17 +16056,17 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <translation type="obsolete">Nome da Camada a ser ignorada (blacklist)</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="61"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="65"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="58"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="62"/>
         <source>Fill in a value before adding!</source>
         <translation>Preencha um valor antes de adicioná-lo!</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="61"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="65"/>
         <source>Value already in black list!</source>
         <translation>Valor já existente na blacklist!</translation>
     </message>
@@ -15915,7 +16136,7 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <translation>Carregar automaticamente as camadas de saída para a área de trabalho</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="253"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="257"/>
         <source>Select a directory for DSGTools Validation Toolbar to look for QGIS Processing models</source>
         <translation>Selecione um diretório para que a bara de ferramentas de validação do DSGTools procure por modelos de processmaneto do QGIS</translation>
     </message>
@@ -17657,12 +17878,12 @@ Camada</translation>
     <message>
         <location filename="../core/Factories/DbFactory/postgisDb.py" line="813"/>
         <source>Unable to load {0}. Error message: &apos;{1}&apos;</source>
-        <translation>Não foi possível carregar {0}. Mensagem de erro: &apos;{1}&apos;</translation>
+        <translation>Não foi possível carregar {0}. Mensagem de erro: '{1}'</translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/postgisDb.py" line="839"/>
         <source>Unable to load &apos;{0}&apos;. User &apos;{1}&apos; has insufficient privileges.</source>
-        <translation>Não foi possível carregar &apos;{0}&apos;. O usuário &apos;{1}&apos; tem privilégios insuficientes.</translation>
+        <translation>Não foi possível carregar '{0}'. O usuário '{1}' tem privilégios insuficientes.</translation>
     </message>
 </context>
 <context>
@@ -18194,7 +18415,7 @@ Versão do modelo: {1}
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="736"/>
         <source>workflow &apos;{path}&apos; was not imported: &apos;{msg}&apos;</source>
-        <translation>fluxo de trbalho &apos;{path}&apos; não foi importado: &apos;{msg}&apos;</translation>
+        <translation>fluxo de trbalho '{path}' não foi importado: '{msg}'</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/qualityAssuranceDockWidget.py" line="758"/>
@@ -18223,7 +18444,7 @@ Versão do modelo: {1}
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Models/qualityAssuranceWorkflow.py" line="78"/>
         <source>Model {model} is invalid: &apos;{reason}&apos;.</source>
-        <translation>Modelo {model} é inválido: &apos;{reason}&apos;.</translation>
+        <translation>Modelo {model} é inválido: '{reason}'.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Models/qualityAssuranceWorkflow.py" line="125"/>
@@ -18989,12 +19210,12 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="83"/>
         <source>Unable to get the routine&apos;s output from FME Manager: &apos;{0}&apos;</source>
-        <translation>Não foi possível obter a saída da rotina do FME Manager: &apos;{0}&apos;</translation>
+        <translation>Não foi possível obter a saída da rotina do FME Manager: '{0}'</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="126"/>
         <source>Unable to send processing request to FME Manager: &apos;{0}&apos;</source>
-        <translation>Não foi possível enviar a solicitação de processamento para o Gerente FME: &apos;{0}&apos;</translation>
+        <translation>Não foi possível enviar a solicitação de processamento para o Gerente FME: '{0}'</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="175"/>
@@ -19178,7 +19399,7 @@ Camada</translation>
     <message>
         <location filename="../gui/ServerTools/serverConfigurator.py" line="88"/>
         <source>Server name cannot contain the character &quot;_&quot;.</source>
-        <translation>O nome do servidor não pode conter o caractere &quot;_&quot;.</translation>
+        <translation>O nome do servidor não pode conter o caractere &amp;quot;_&amp;quot;.</translation>
     </message>
 </context>
 <context>
@@ -19734,17 +19955,17 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation type="obsolete">area</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/shapeTool.py" line="149"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/shapeTool.py" line="159"/>
         <source>Circle</source>
         <translation>Círculo</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/shapeTool.py" line="151"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/shapeTool.py" line="161"/>
         <source>Square</source>
         <translation>Quadrado</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/shapeTool.py" line="161"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/shapeTool.py" line="193"/>
         <source>distance</source>
         <translation>distância</translation>
     </message>
@@ -19779,7 +20000,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../core/Factories/DbFactory/shapefileDb.py" line="455"/>
         <source>Unable to locate file &apos;[SCHEMA]_{}.shp&apos;.</source>
-        <translation>Não foi possível localizar o arquivo &apos;[ESQUEMA]_{}.shp&apos;.</translation>
+        <translation>Não foi possível localizar o arquivo '[ESQUEMA]_{}.shp'.</translation>
     </message>
 </context>
 <context>
@@ -19874,7 +20095,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/singleOutputUnitTestAlgorithm.py" line="164"/>
         <source>Testing {alg}&apos;s...</source>
-        <translation>Testando {alg}&apos;s...</translation>
+        <translation>Testando {alg}'s...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/singleOutputUnitTestAlgorithm.py" line="167"/>
@@ -20711,26 +20932,26 @@ Camada</translation>
     <message>
         <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1213"/>
         <source>Checking rule &quot;{0}&quot;... [{1}/{2}]</source>
-        <translation>Verificando a regra &quot;{0}&quot;... [{1}/{2}]</translation>
+        <translation>Verificando a regra &amp;quot;{0}&amp;quot;... [{1}/{2}]</translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1236"/>
         <source>Rule &quot;{0}&quot; raised flags
 </source>
-        <translation>A regra &quot;{0}&quot; gerou flags
+        <translation>A regra &amp;quot;{0}&amp;quot; gerou flags
 </translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1242"/>
         <source>Rule &quot;{0}&quot; did not raise any flags
 </source>
-        <translation>A regra &quot;{0}&quot; nãp gerou flags
+        <translation>A regra &amp;quot;{0}&amp;quot; nãp gerou flags
 </translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1096"/>
         <source>feature ID {{fid_a}} from {layer_a} has {{size}} occurrences using the DE-9IM mask &apos;{mask}&apos; when compared to layer {layer_b}</source>
-        <translation>o ID da feição {{fid_a}} de {layer_a} tem {{size}} ocorrências usando a máscara DE-9IM &apos;{mask}&apos; em comparação com a camada {layer_b}</translation>
+        <translation>o ID da feição {{fid_a}} de {layer_a} tem {{size}} ocorrências usando a máscara DE-9IM '{mask}' em comparação com a camada {layer_b}</translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1219"/>
@@ -20743,17 +20964,17 @@ Camada</translation>
     <message>
         <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1699"/>
         <source>&apos;{val}&apos; is an invalid value for property &apos;{prop}&apos;</source>
-        <translation>&apos;{val}&apos; é um valor inválido para a propriedade &apos;{prop}&apos;</translation>
+        <translation>'{val}' é um valor inválido para a propriedade '{prop}'</translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1705"/>
         <source>&apos;{0}&apos; is not a valid DE-9IM mask</source>
-        <translation>&apos;{0}&apos; não é um formato DE-9IM válido&quot;</translation>
+        <translation>'{0}' não é um formato DE-9IM válido&amp;quot;</translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="1706"/>
         <source>&apos;{0}&apos; is not a valid predicate</source>
-        <translation>{0}&apos; não é um predicado válido</translation>
+        <translation>{0}' não é um predicado válido</translation>
     </message>
 </context>
 <context>
@@ -21038,6 +21259,44 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>SpellCheckerAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellCheckerAlgorithm.py" line="32"/>
+        <source>Attribute name</source>
+        <translation>Nome do atributo</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellCheckerAlgorithm.py" line="52"/>
+        <source>Flags</source>
+        <translation>Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellCheckerAlgorithm.py" line="145"/>
+        <source>Spell check</source>
+        <translation>Corretor ortográfico</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellCheckerAlgorithm.py" line="148"/>
+        <source>Layer Management Algorithms</source>
+        <translation>Algoritmos de gestão de camadas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellCheckerAlgorithm.py" line="24"/>
+        <source>Layer</source>
+        <translation>Camada</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellCheckerAlgorithm.py" line="42"/>
+        <source>Primary key field</source>
+        <translation>Campo de chave primária</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellCheckerAlgorithm.py" line="79"/>
+        <source>Error loading spellchecker files. Please go to the DSGTools menu and run &quot;Download external data&quot;.</source>
+        <translation>Erro ao carregar os arquivos do corretor ortográfico. Por favor, execute &quot;Baixar dados externos&quot; no menu do DSGTools</translation>
+    </message>
+</context>
+<context>
     <name>StringCsvToLayerListAlgorithm</name>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/stringCsvToLayerListAlgorithm.py" line="48"/>
@@ -21244,27 +21503,27 @@ Camada</translation>
         <translation type="obsolete">Ferramenta de Classificação de Feição</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="55"/>
+        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="70"/>
         <source>Assign Contour Values</source>
         <translation>Linha Cotadora</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="57"/>
+        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="72"/>
         <source>View Code List Codes and Values</source>
         <translation>Visualizar Code List e Valores</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="59"/>
+        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="74"/>
         <source>Build Complex Structures</source>
         <translation>Construir Estruturas Complexas</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="51"/>
+        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="61"/>
         <source>Geospatial Data Quality Assurance Tool</source>
         <translation>Ferramentas de Validação de Dados Geoespaciais</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="53"/>
+        <location filename="../gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py" line="63"/>
         <source>Custom Feature Tool</source>
         <translation>Ferramenta de Classificação de Feições</translation>
     </message>
@@ -22884,6 +23143,69 @@ fluxo de trabalho</translation>
     </message>
 </context>
 <context>
+    <name>VerifyCountourStackingAlgorihtm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="67"/>
+        <source>Attribute information about &quot;depression&quot;</source>
+        <translation>Atributo que informa a depressão</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="76"/>
+        <source>Equidistance value</source>
+        <translation>Equidistância</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="84"/>
+        <source>Flags</source>
+        <translation>Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="113"/>
+        <source>No flags</source>
+        <translation>Sem flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="222"/>
+        <source>Extern and intern are normal, but elevation differences are not greater than one equidistance</source>
+        <translation>Externo e interno são normais, mas as diferenças the elevação não são maiores que uma equidistância</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="223"/>
+        <source>Extern and intern are depressions, but elevation differences are not smaller than one equidistance</source>
+        <translation>Externo e interno são depressões, mas as diferenças the elevação não são maiores que uma equidistância</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="224"/>
+        <source>Extern is normal, intern is depression, but elevations are different</source>
+        <translation>Externo é normal, interno é depressão, mas as elevações são diferentes</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="225"/>
+        <source>Extern is depression, intern is normal, but elevations are different</source>
+        <translation>Externo é depressão, interno é normal, mas as elevações são diferentes</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="253"/>
+        <source>Verifies the stacking of contour lines</source>
+        <translation>Verifica a sobreposição de curvas de nível</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="260"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="50"/>
+        <source>Select</source>
+        <translation>Selecionar</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyCountourStackingAlgorithm.py" line="58"/>
+        <source>Contour levels layer</source>
+        <translation>Campo contendo a cota</translation>
+    </message>
+</context>
+<context>
     <name>VerifyNetworkDirectioningAlgorithm</name>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyNetworkDirectioningAlgorithm.py" line="69"/>
@@ -22928,7 +23250,7 @@ fluxo de trabalho</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyNetworkDirectioningAlgorithm.py" line="131"/>
         <source>Water body layers</source>
-        <translation>Camadas de corpos d&apos;água</translation>
+        <translation>Camadas de corpos d'água</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyNetworkDirectioningAlgorithm.py" line="139"/>
@@ -23240,7 +23562,7 @@ fluxo de trabalho</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="360"/>
         <source>Model &apos;{0}&apos; is already imported would you like to overwrite it?</source>
-        <translation>Modelo &apos;{0}&apos; já foi importado, gostaria de sobrescrevê-lo?</translation>
+        <translation>Modelo '{0}' já foi importado, gostaria de sobrescrevê-lo?</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="388"/>
@@ -23290,7 +23612,7 @@ fluxo de trabalho</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="540"/>
         <source>Unable to export workflow to &apos;{fp}&apos; ({error}).</source>
-        <translation>Impossível exportar o fluxo de trabalho para &apos;{fp}&apos; ({error}).</translation>
+        <translation>Impossível exportar o fluxo de trabalho para '{fp}' ({error}).</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="500"/>
@@ -23300,7 +23622,7 @@ fluxo de trabalho</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="500"/>
         <source>Unable to export workflow to &apos;{fp}&apos;</source>
-        <translation>Impossível exportar o fluxo de trabalho para &apos;{fp}&apos;</translation>
+        <translation>Impossível exportar o fluxo de trabalho para '{fp}'</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="503"/>
@@ -23325,7 +23647,7 @@ fluxo de trabalho</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/QualityAssuranceToolBox/workflowSetupDialog.py" line="549"/>
         <source>Workflow &apos;{fp}&apos; imported!</source>
-        <translation>Fluxo de trabalho &apos;{fp}&apos; importado com sucesso!</translation>
+        <translation>Fluxo de trabalho '{fp}' importado com sucesso!</translation>
     </message>
 </context>
 <context>
@@ -23514,6 +23836,72 @@ Lógico</translation>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.ui" line="26"/>
         <source>Customization Elements</source>
         <translation>Elementos da customização</translation>
+    </message>
+</context>
+<context>
+    <name>identifyZAnglesBetweenFeaturesAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenFeaturesAlgorithm.py" line="43"/>
+        <source>Line features to be verified</source>
+        <translation>Feições do tipo linha a serem verificadas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenFeaturesAlgorithm.py" line="51"/>
+        <source>Area features to be verified</source>
+        <translation>Feições do tipo área a serem verificadas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenFeaturesAlgorithm.py" line="59"/>
+        <source>Minimum angle</source>
+        <translation>Ângulo mínimo</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenFeaturesAlgorithm.py" line="69"/>
+        <source>Flags</source>
+        <translation>Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenFeaturesAlgorithm.py" line="244"/>
+        <source>Identify Z Angles Between Features</source>
+        <translation>Identifica ângulos Z entre feições</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenFeaturesAlgorithm.py" line="251"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+</context>
+<context>
+    <name>identifyZAnglesBetweenLayersAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenLayersAlgorithm.py" line="59"/>
+        <source>Minimum angle</source>
+        <translation type="obsolete">Ângulo mínimo</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenLayersAlgorithm.py" line="69"/>
+        <source>Flags</source>
+        <translation type="obsolete">Flags</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenLayersAlgorithm.py" line="244"/>
+        <source>Identify Z Angles Between Features</source>
+        <translation type="obsolete">Identifica ângulos Z entre feições</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenLayersAlgorithm.py" line="251"/>
+        <source>Quality Assurance Tools (Identification Processes)</source>
+        <translation type="obsolete">Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenLayersAlgorithm.py" line="43"/>
+        <source>Line features to be verified</source>
+        <translation type="obsolete">Feições do tipo linha a serem verificadas</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyZAnglesBetweenLayersAlgorithm.py" line="51"/>
+        <source>Area features to be verified</source>
+        <translation type="obsolete">Feições do tipo área a serem verificadas</translation>
     </message>
 </context>
 <context>

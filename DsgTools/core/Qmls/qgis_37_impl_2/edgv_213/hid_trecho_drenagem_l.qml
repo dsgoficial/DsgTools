@@ -203,7 +203,7 @@
         </config>
       </editWidget>
     </field>
-    <field name="lenght_otf">
+    <field name="length_otf">
       <editWidget type="">
         <config>
           <Option/>
@@ -227,7 +227,7 @@
     <alias field="velocidademedcorrente" name="" index="12"/>
     <alias field="profundidademedia" name="" index="13"/>
     <alias field="id_trecho_curso_dagua" name="" index="14"/>
-    <alias field="lenght_otf" name="" index="15"/>
+    <alias field="length_otf" name="" index="15"/>
   </aliases>
   <excludeAttributesWMS/>
   <excludeAttributesWFS/>
@@ -247,7 +247,7 @@
     <default field="velocidademedcorrente" expression="" applyOnUpdate="0"/>
     <default field="profundidademedia" expression="" applyOnUpdate="0"/>
     <default field="id_trecho_curso_dagua" expression="" applyOnUpdate="0"/>
-    <default field="lenght_otf" expression="" applyOnUpdate="0"/>
+    <default field="length_otf" expression="" applyOnUpdate="0"/>
   </defaults>
   <constraints>
     <constraint field="id" unique_strength="1" exp_strength="0" constraints="3" notnull_strength="1"/>
@@ -265,7 +265,7 @@
     <constraint field="velocidademedcorrente" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
     <constraint field="profundidademedia" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
     <constraint field="id_trecho_curso_dagua" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
-    <constraint field="lenght_otf" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
+    <constraint field="length_otf" unique_strength="0" exp_strength="0" constraints="0" notnull_strength="0"/>
   </constraints>
   <constraintExpressions>
     <constraint field="id" desc="" exp=""/>
@@ -283,10 +283,10 @@
     <constraint field="velocidademedcorrente" desc="" exp=""/>
     <constraint field="profundidademedia" desc="" exp=""/>
     <constraint field="id_trecho_curso_dagua" desc="" exp=""/>
-    <constraint field="lenght_otf" desc="" exp=""/>
+    <constraint field="length_otf" desc="" exp=""/>
   </constraintExpressions>
   <expressionfields>
-    <field expression="$length" type="6" typeName="" length="0" subType="0" precision="0" comment="" name="lenght_otf"/>
+    <field expression="$length" type="6" typeName="" length="0" subType="0" precision="0" comment="" name="length_otf"/>
   </expressionfields>
   <attributeactions/>
   <attributetableconfig sortExpression="" sortOrder="0" actionWidgetStyle="dropDown">
