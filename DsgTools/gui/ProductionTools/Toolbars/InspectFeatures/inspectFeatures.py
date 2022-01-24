@@ -272,7 +272,7 @@ class InspectFeatures(QWidget,Ui_Form):
     def zoomToLayer(self, layer, zoom = None):
         box = layer.boundingBoxOfSelected()
         if zoom is not None:
-            box.grow(100-zoom)
+            box.grow(min(box.width(),box.height())*(100-zoom)/100)
         # Defining the crs from src and destiny
         epsg = self.iface.mapCanvas().mapSettings().destinationCrs().authid()
         crsDest = QgsCoordinateReferenceSystem(epsg)
@@ -352,6 +352,10 @@ class InspectFeatures(QWidget,Ui_Form):
         #     self.selectLayer(id, currentLayer)
         #     self.zoomFeature(zoom)
         # else:
+        if self.usePanCkb.isChecked():
+            currentLayer.select(id)
+            self.iface.mapCanvas().panToFeatureIds( currentLayer, [id] )
+            return
         self.zoomFeature(zoom, idDict = {'id':id, 'lyr':currentLayer})        
 
     @pyqtSlot(bool)

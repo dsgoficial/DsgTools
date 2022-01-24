@@ -21,9 +21,12 @@
 """
 
 from __future__ import absolute_import
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.spellChecker.datasets.ptBR import PalavrasFileConfig, WordDatasetPtBRFileConfig
+from DsgTools.core.NetworkTools.ExternalFilesHandler import ExternalFileDownloadProcessor
 
 from qgis.PyQt.QtCore import QObject
 from qgis.PyQt.QtWidgets import QToolButton, QMenu, QAction
+from qgis.core import Qgis
 from .Options.options import Options
 from .aboutdialog import AboutDialog
 
@@ -47,16 +50,26 @@ class AboutAndFurtherInfoGuiManager(QObject):
         self.options.firstTimeConfig()
     
     def initGui(self):
-        icon_path = self.iconBasePath + 'custom_tools.png'
         action = self.manager.add_action(
-            icon_path,
+            self.iconBasePath + 'custom_tools.png',
             text=self.tr("DSGTools' Options"),
             callback=self.showOptions,
             parent=self.iface.mainWindow(),
             parentMenu = self.parentMenu,
             add_to_menu=False,
             add_to_toolbar=False,
-            withShortcut = True)
+            withShortcut = True
+        )
+        action = self.manager.add_action(
+            self.iconBasePath + 'import.png',
+            text=self.tr("Download external data"),
+            callback=self.checkExternalDownloads,
+            parent=self.iface.mainWindow(),
+            parentMenu = self.parentMenu,
+            add_to_menu=False,
+            add_to_toolbar=False,
+            withShortcut = False
+        )
         # self.parentMenu.addAction(action)
 
         icon_path = self.iconBasePath + 'bug.png'
@@ -98,7 +111,24 @@ class AboutAndFurtherInfoGuiManager(QObject):
         """
         # dlg.show()
         self.options.setInterfaceWithParametersFromConfig()
+        self.options.checkExternalDownloads()
         result = self.options.exec_()
+    
+    def checkExternalDownloads(self):
+        downloadProcessor = ExternalFileDownloadProcessor(parent=self.iface.mainWindow())
+        output = downloadProcessor.process(
+            fileConfigList=[
+                WordDatasetPtBRFileConfig,
+                PalavrasFileConfig,
+            ]
+        )
+        if output:
+            message = self.tr('Everyting up to date') if output==1 else self.tr('External files updated')
+            self.iface.messageBar().pushMessage(
+                self.tr('Info'),
+                message,
+                level=Qgis.Info
+            )
     
     def showHelp(self):
         """
