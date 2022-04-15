@@ -120,8 +120,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>415</width>
-        <height>353</height>
+        <width>409</width>
+        <height>348</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
@@ -168,7 +168,7 @@
       <string>Add Clause</string>
      </property>
      <property name="icon">
-      <iconset resource="../../resources.qrc">
+      <iconset>
        <normaloff>:/plugins/DsgTools/icons/plus.png</normaloff>:/plugins/DsgTools/icons/plus.png</iconset>
      </property>
     </widget>
@@ -179,7 +179,7 @@
       <string>Remove clause</string>
      </property>
      <property name="icon">
-      <iconset resource="../../resources.qrc">
+      <iconset>
        <normaloff>:/plugins/DsgTools/icons/remove.png</normaloff>:/plugins/DsgTools/icons/remove.png</iconset>
      </property>
     </widget>
@@ -190,7 +190,7 @@
   <customwidget>
    <class>QgsCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qgis.gui</header>
+   <header>qgscollapsiblegroupbox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
