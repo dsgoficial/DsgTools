@@ -106,9 +106,9 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def getElementCountFromLayerV2(self, schema, table, useInheritance):
         if useInheritance == False:
-            sql = '''SELECT count(*) FROM ONLY "{0}"."{1}" limit 1'''.format(schema,table)
+            sql = '''SELECT count(a) FROM ( SELECT * FROM ONLY "{0}"."{1}" ) as a'''.format(schema,table)
         else:
-            sql = '''SELECT count(*) FROM "{0}"."{1}" limit 1'''.format(schema,table)
+            sql = '''SELECT count(a) FROM ( SELECT * FROM "{0}"."{1}" ) as a'''.format(schema,table)
         return sql
 
     def getElementCountFromLayerWithInh(self, layer):
