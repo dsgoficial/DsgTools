@@ -218,6 +218,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyCountourStac
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyCountourStreamIntersectionAlgorithm import \
     IdentifyCountourStreamIntersectionAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.spellCheckerAlgorithm import SpellCheckerAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.unicodeFilterAlgorithm import UnicodeFilterAlgorithm 
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -324,7 +325,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             VerifyCountourStackingAlgorihtm(),
             LoadShapefileAlgorithm(),
             IdentifyCountourStreamIntersectionAlgorithm(),
-            SpellCheckerAlgorithm()
+            SpellCheckerAlgorithm(),
+            UnicodeFilterAlgorithm()
 
         ]
         return algList
