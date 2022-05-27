@@ -247,8 +247,18 @@ class FeatureHandler(QObject):
         feat.setGeometry(geom)
         return feat
 
-    def getSystematicGridFeatures(self, featureList, index, stopScale, coordinateTransformer,
-                                  fields, constraintDict=None, feedback=None):
+    def getSystematicGridFeatures(
+        self,
+        featureList,
+        index,
+        stopScale,
+        coordinateTransformer,
+        fields,
+        xSubdivisions=3,
+        ySubdivisions=3,
+        constraintDict=None,
+        feedback=None
+    ):
         if feedback is not None and feedback.isCanceled():
             return
         scale = self.utmGrid.getScale(index)
@@ -256,7 +266,9 @@ class FeatureHandler(QObject):
             frameGeom = self.createGridItem(
                 index,
                 coordinateTransformer,
-                constraintDict
+                constraintDict,
+                xSubdivisions=xSubdivisions,
+                ySubdivisions=ySubdivisions
             )
             if frameGeom is None:
                 return
@@ -284,7 +296,9 @@ class FeatureHandler(QObject):
                         and self.createGridItem(
                             inomen2,
                             coordinateTransformer,
-                            constraintDict
+                            constraintDict,
+                            xSubdivisions=xSubdivisions,
+                            ySubdivisions=ySubdivisions
                         ) is None:
                     continue
                 self.getSystematicGridFeatures(
@@ -293,12 +307,14 @@ class FeatureHandler(QObject):
                     stopScale,
                     coordinateTransformer,
                     fields,
+                    xSubdivisions=xSubdivisions,
+                    ySubdivisions=ySubdivisions,
                     constraintDict=constraintDict,
                     feedback=feedback
                 )
 
-    def createGridItem(self, index, coordinateTransformer, constraintDict):
-        frameGeom = self.utmGrid.getQgsPolygonFrame(index)
+    def createGridItem(self, index, coordinateTransformer, constraintDict, xSubdivisions=3, ySubdivisions=3):
+        frameGeom = self.utmGrid.getQgsPolygonFrame(index, xSubdivisions=xSubdivisions, ySubdivisions=ySubdivisions)
         frameGeom.transform(coordinateTransformer)
         if constraintDict is None:
             return frameGeom
@@ -312,8 +328,18 @@ class FeatureHandler(QObject):
                 return frameGeom
         return None
 
-    def getSystematicGridFeaturesWithConstraint(self, featureList, inputLyr, stopScale,
-                                                coordinateTransformer, fields, feedback=None, predicate=None):
+    def getSystematicGridFeaturesWithConstraint(
+            self,
+            featureList,
+            inputLyr,
+            stopScale,
+            coordinateTransformer,
+            fields,
+            xSubdivisions=3,
+            ySubdivisions=3,
+            feedback=None,
+            predicate=None
+        ):
         """
         TODO: Progress
         """
@@ -354,6 +380,8 @@ class FeatureHandler(QObject):
                 stopScale,
                 coordinateTransformer,
                 fields,
+                xSubdivisions=xSubdivisions,
+                ySubdivisions=ySubdivisions,
                 constraintDict=constraintDict,
                 feedback=gridMultistepFeedback
             )

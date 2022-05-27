@@ -65,6 +65,8 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
     INDEX_TYPE = 'INDEX_TYPE'
     INDEX = 'INDEX'
     CRS = 'CRS'
+    XSUBDIVISIONS = 'XSUBDIVISIONS'
+    YSUBDIVISIONS = 'YSUBDIVISIONS'
     OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
@@ -124,6 +126,22 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
             )
         )
         self.addParameter(
+            QgsProcessingParameterNumber(
+                self.XSUBDIVISIONS,
+                self.tr('Number of subdivisions on x-axis'),
+                defaultValue=3
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.YSUBDIVISIONS,
+                self.tr('Number of subdivisions on y-axis'),
+                defaultValue=3,
+                minValue=0,
+                type=QgsProcessingParameterNumber.Integer,
+            )
+        )
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT,
                 self.tr('Created Frames')
@@ -153,6 +171,8 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
         crs = self.parameterAsCrs(parameters, self.CRS, context)
         if crs is None or not crs.isValid():
             raise QgsProcessingException(self.tr('Invalid CRS.'))
+        xSubdivisions = self.parameterAsInt(parameters, self.XSUBDIVISIONS, context)
+        ySubdivisions = self.parameterAsInt(parameters, self.YSUBDIVISIONS, context)
         fields = QgsFields()
         fields.append(QgsField('inom', QVariant.String))
         fields.append(QgsField('mi', QVariant.String))
@@ -163,8 +183,17 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
             QgsCoordinateReferenceSystem(crs.geographicCrsAuthId()),
             crs,
             QgsProject.instance()
-            )
-        featureHandler.getSystematicGridFeatures(featureList, index, stopScale, coordinateTransformer, fields, feedback=feedback)
+        )
+        featureHandler.getSystematicGridFeatures(
+            featureList,
+            index,
+            stopScale,
+            coordinateTransformer,
+            fields,
+            xSubdivisions=xSubdivisions,
+            ySubdivisions=ySubdivisions,
+            feedback=feedback
+        )
         for feat in featureList:
             output_sink.addFeature(feat, QgsFeatureSink.FastInsert)
 

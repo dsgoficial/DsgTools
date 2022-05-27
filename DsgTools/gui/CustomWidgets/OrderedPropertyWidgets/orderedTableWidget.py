@@ -32,7 +32,8 @@ from qgis.PyQt.QtWidgets import (QWidget,
                                  QHeaderView,
                                  QMessageBox,
                                  QTableWidgetItem,
-                                 QAbstractItemView)
+                                 QAbstractItemView,
+                                 QDoubleSpinBox)
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), 'orderedTableWidget.ui')
@@ -322,6 +323,8 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
                 widget = properties["widget"]()
                 if value is not None:
                     getattr(widget, properties["setter"])(value)
+                if isinstance(widget, QDoubleSpinBox):
+                    widget.setDecimals(16)
                 self.tableWidget.setCellWidget(row, col, widget)
         self.rowAdded.emit(row)
 
