@@ -929,6 +929,10 @@ class LayerHandler(QObject):
         parameterDict = self.getDestinationParameters(inputLyr)
         geometryType = inputLyr.geometryType()
         newFeatSet = set()
+        validate_type_dict = {
+            "GEOS": Qgis.GeometryValidationEngine.Geos,
+            "QGIS": Qgis.GeometryValidationEngine.QgisInternal,
+        }
         if fixInput:
             inputLyr.startEditing()
             inputLyr.beginEditCommand('Fixing geometries')
@@ -939,29 +943,15 @@ class LayerHandler(QObject):
             id = feat.id()
             attrMap = {idx: feat[field.name()] for idx, field in enumerate(
                 feat.fields()) if idx not in inputLyr.primaryKeyAttributes()}
-            for i, validate_type in enumerate(['GEOS', 'QGIS']):
+            for validate_type, method_parameter in validate_type_dict.items():
                 if feedback is not None and feedback.isCanceled():
                     break
-                validateGeometryParameters = [Qgis.GeometryValidationEngine.QgisInternal, Qgis.GeometryValidationEngine.Geos]
-                for error in geom.validateGeometry(validateGeometryParameters[i]):
-                    if feedback is not None and feedback.isCanceled():
-                        break
-
-                    if error.hasWhere():
-                        errorPointXY = error.where()
-                        flagGeom = QgsGeometry.fromPointXY(errorPointXY)
-                        if geom.type() == QgsWkbTypes.LineGeometry and ignoreClosed and\
-                                self.isClosedAndFlagIsAtStartOrEnd(geom, flagGeom):
-                            continue
-                        if errorPointXY not in flagDict:
-                            flagDict[errorPointXY] = {
-                                'geom': flagGeom,
-                                'reason': ''
-                            }
-                        flagDict[errorPointXY]['reason'] += '{type} invalid reason: {text}\n'.format(
-                            type=validate_type,
-                            text=error.what()
-                        )
+                isValid = self.check_validity(ignoreClosed, flagDict, geom, validate_type, method_parameter)
+                if not isValid:
+                    break
+            if isValid and geom.type() == QgsWkbTypes.PolygonGeometry:
+                self.analyze_polygon_boundary_and_holes(flagDict, geom)
+                    
             if fixInput:
                 geom.removeDuplicateNodes(
                     useZValues=parameterDict['hasZValues'])
@@ -980,6 +970,52 @@ class LayerHandler(QObject):
             inputLyr.endEditCommand()
 
         return flagDict
+
+    def analyze_polygon_boundary_and_holes(self, flagDict, geom):
+        flagWktSet = set()
+        for part in geom.asGeometryCollection():
+            if len(part.asPolygon()) <= 1:
+                continue
+            boundary, *holeList = map(lambda x: QgsGeometry.fromPolylineXY(x), part.asPolygon())
+            for intersection in map(
+                        lambda x: x.intersection(boundary),
+                        filter(lambda y: y.intersects(boundary), holeList)
+                    ):
+                flagWktSet = flagWktSet.union(set(vertex.asWkt() for vertex in intersection.vertices()))
+        for flag in flagWktSet:
+            errorPointXY = QgsGeometry.fromWkt(flag).asPoint()
+            flagGeom = QgsGeometry.fromPointXY(errorPointXY)
+            if errorPointXY not in flagDict:
+                flagDict[errorPointXY] = {
+                                            'geom': flagGeom,
+                                            'reason': ''
+                                        }
+            flagDict[errorPointXY]['reason'] += 'OGC invalid reason: {text}\n'.format(
+                        text=self.tr("Self intersection between hole and boundary")
+                    )
+
+    def check_validity(self, ignoreClosed, flagDict, geom, validate_type, method_parameter):
+        for error in geom.validateGeometry(method_parameter):
+            if error.hasWhere():
+                errorPointXY = error.where()
+                flagGeom = QgsGeometry.fromPointXY(errorPointXY)
+                if geom.type() == QgsWkbTypes.LineGeometry and ignoreClosed and\
+                                self.isClosedAndFlagIsAtStartOrEnd(geom, flagGeom):
+                    continue
+                self._add_flag(flagDict, validate_type, error, errorPointXY, flagGeom)
+                return False
+        return True
+
+    def _add_flag(self, flagDict, validate_type, error, errorPointXY, flagGeom):
+        if errorPointXY not in flagDict:
+            flagDict[errorPointXY] = {
+                                'geom': flagGeom,
+                                'reason': ''
+                            }
+        flagDict[errorPointXY]['reason'] += '{type} invalid reason: {text}\n'.format(
+                            type=validate_type,
+                            text=error.what()
+                        )
 
     def isClosedAndFlagIsAtStartOrEnd(self, geom, flagGeom):
         for part in geom.asGeometryCollection():
