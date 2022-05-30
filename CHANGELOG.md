@@ -23,3 +23,17 @@ Correção de bugs:
 - Correção nos processings de geração de MI: remover MI que não existem
 
 Changelog completo: https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.3
+
+## 4.3.1 - 2022-05-30
+
+Novas funcionalidades:
+- Adicionado processo de verificação de caracteres unicode;
+- Adicionados parâmetros de densidade de pontos na criação de molduras;
+- Adicionados novos casos no processo de identificação de geometrias inválidas (buraco intersectando fronteira de polígono);
+
+Correção de bugs:
+- Correção no template da EDGV 3.0;
+- Correção nos endereços do BDGEx;
+- Correção na janela de opções do DSGTools;
+- Ajustado o número de casas decimais no snap hierárquico;
+- Corrigido bug na SQL de filtragem do carregamento de camadas com elementos quando se utiliza o postgres mais novo;
