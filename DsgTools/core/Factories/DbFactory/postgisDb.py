@@ -824,14 +824,15 @@ class PostgisDb(AbstractDb):
                         count = query2.value(0)
                         if count > 0:
                             query3 = QSqlQuery(db)
-                            if query3.exec_(self.gen.getEDGVVersion()):
+                            if query3.exec_(self.gen.getEDGVVersionAndImplementationVersion()):
                                 while query3.next():
                                     version = query3.value(0)
+                                    implVersion = query3.value(1)
                                     if version:
-                                        edvgDbList.append((database, version))
+                                        edvgDbList.append((database, version, implVersion))
                                     else:
                                         edvgDbList.append(
-                                            (database, 'Non_EDGV'))
+                                            (database, 'Non_EDGV', -1))
                             elif "42501" in query3.lastError().databaseText():
                                 # user may have some privileges on database,
                                 # but may not be granted on all schemas of a
@@ -844,7 +845,7 @@ class PostgisDb(AbstractDb):
                                     Qgis.Warning
                                 )
                             else:
-                                edvgDbList.append((database,'Non_EDGV'))
+                                edvgDbList.append((database,'Non_EDGV', -1))
                 if parentWidget:
                     progress.step()
         else:

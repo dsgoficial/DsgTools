@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>836</width>
-    <height>327</height>
+    <width>973</width>
+    <height>406</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -90,28 +90,6 @@
        </widget>
       </item>
       <item row="0" column="1" colspan="2">
-       <widget class="QCheckBox" name="onlyParentsCheckBox">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>DSGTools uses from only as a query filter. If this behaviour is not desired, check this item.</string>
-        </property>
-        <property name="text">
-         <string>Do not use FROM ONLY clause when using inheritance</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
        <widget class="QCheckBox" name="uniqueLoadCheckBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -122,29 +100,12 @@
         <property name="text">
          <string>Unique Load (do not load if layer is already loaded)</string>
         </property>
-       </widget>
-      </item>
-      <item row="1" column="1" colspan="2">
-       <widget class="QCheckBox" name="customFormCheckBox">
-        <property name="enabled">
+        <property name="checked">
          <bool>false</bool>
         </property>
-        <property name="text">
-         <string>Do not use custom form (Pro databases use custom form by default)</string>
-        </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QCheckBox" name="showViewsCheckBox">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string>Show Views</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
+      <item row="1" column="1">
        <widget class="QLabel" name="label">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -157,7 +118,7 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
+      <item row="1" column="2">
        <widget class="QComboBox" name="styleComboBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -192,7 +153,7 @@
   <customwidget>
    <class>QgsCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qgis.gui</header>
+   <header>qgscollapsiblegroupbox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
