@@ -72,6 +72,10 @@ DsgTools/gui/DatabaseTools/ConversionTools/conversion_map.json
 # =========================
 DsgTools/gui/AboutAndFurtherInfo/ui_about_.ui
 
+# DSGTools spell checker files
+DsgTools/core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellChecker/data/palavras.txt
+DsgTools/core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/spellChecker/data/wordDatasetPtBR.pbz2
+
 # Caching formats and other file handling temporary files
 # =========================
 *.xsd
