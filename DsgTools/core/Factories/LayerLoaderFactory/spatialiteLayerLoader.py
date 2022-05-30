@@ -165,7 +165,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
                 ret[fieldName][code_name] = code
         return ret
 
-    def load(self, inputList, useQml=False, uniqueLoad=False, useInheritance=False, stylePath=None, onlyWithElements=False, geomFilterList=[], isEdgv=True, customForm=False, editingDict=None, parent=None):
+    def load(self, inputList, useQml=False, uniqueLoad=False, useInheritance=False, stylePath=None, onlyWithElements=False, geomFilterList=[], customForm=False, editingDict=None, parent=None):
         """
         1. Get loaded layers
         2. Filter layers;
@@ -180,6 +180,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         filteredLayerList = self.filterLayerList(layerList, False, onlyWithElements, geomFilterList)
         filteredDictList = [i for i in inputList if i['tableName'] in filteredLayerList] if isDictList else filteredLayerList
         edgvVersion = self.abstractDb.getDatabaseVersion()
+        isEdgv = not edgvVersion == "Non_EDGV"
         rootNode = QgsProject.instance().layerTreeRoot()
         dbNode = self.getDatabaseGroup(rootNode)
         # #3. Load Domains
