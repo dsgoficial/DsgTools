@@ -37,3 +37,8 @@ Correção de bugs:
 - Correção na janela de opções do DSGTools;
 - Ajustado o número de casas decimais no snap hierárquico;
 - Corrigido bug na SQL de filtragem do carregamento de camadas com elementos quando se utiliza o postgres mais novo;
+
+## 4.4.0
+
+Melhorias:
+- Refatoração da interface de carregamento de camadas (remoção de funcionalidades não utilizadas e melhoria no filtro de camadas);

@@ -97,31 +97,27 @@ class PostGISLayerLoader(EDGVLayerLoader):
         :return:
         """
         filterList = []
-        if onlyWithElements:
-            lyrsWithElements = self.abstractDb.getLayersWithElementsV2(layerList, useInheritance = useInheritance)
-        else:
-            lyrsWithElements = layerList
-        if useInheritance:
-            semifinalList = self.abstractDb.getLayersFilterByInheritance(lyrsWithElements)
-        else:
-            semifinalList = lyrsWithElements
+        lyrsWithElements = self.abstractDb.getLayersWithElementsV2(
+            layerList,
+            useInheritance=useInheritance
+        ) if onlyWithElements else layerList
         if len(geomFilterList) > 0:
             finalSet = set()
             for key in self.correspondenceDict:
                 finalSet = finalSet.union(
                     {
-                        lyr for lyr in semifinalList if self.correspondenceDict[key] in geomFilterList \
+                        lyr for lyr in lyrsWithElements if self.correspondenceDict[key] in geomFilterList \
                             and key in self.geomTypeDict and lyr in self.geomTypeDict[key] 
                     }
                 )
             finalList = list(finalSet)
         else:
-            finalList = semifinalList
+            finalList = lyrsWithElements
         if finalList and isinstance(finalList[0], dict):
             finalList = [i['tableName'] for i in finalList]
         return finalList
 
-    def load(self, inputList, useQml=False, uniqueLoad=False, useInheritance=False, stylePath=None, onlyWithElements=False, geomFilterList=[], isEdgv=True, customForm=False, loadEditingStructure=False, parent=None):
+    def load(self, inputList, useQml=False, uniqueLoad=False, useInheritance=False, stylePath=None, onlyWithElements=False, geomFilterList=[], customForm=False, loadEditingStructure=False, parent=None):
         """
         1. Get loaded layers
         2. Filter layers;
@@ -136,6 +132,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         filteredLayerList = self.filterLayerList(inputList, useInheritance, onlyWithElements, geomFilterList)
         filteredDictList = [i for i in inputList if i['tableName'] in filteredLayerList] if isDictList else filteredLayerList
         edgvVersion = self.abstractDb.getDatabaseVersion()
+        isEdgv = not edgvVersion == "Non_EDGV"
         rootNode = QgsProject.instance().layerTreeRoot()
         dbNode = self.getDatabaseGroup(rootNode)
         #3. Load Domains
@@ -208,38 +205,40 @@ class PostGISLayerLoader(EDGVLayerLoader):
         lyr = self.checkLoaded(tableName)
         if uniqueLoad and lyr is not None:
             return lyr
-        fullName = '''"{0}"."{1}"'''.format(schema, tableName)
-        pkColumn = self.abstractDb.getPrimaryKeyColumn(fullName)
-        sql = ''
-        self.setDataSource(schema, tableName, geomColumn, sql, pkColumn=pkColumn)
+        self.setDataSource(
+            schema=schema,
+            layer=tableName,
+            geomColumn=geomColumn,
+            sql='',
+            pkColumn=self.abstractDb.getPrimaryKeyColumn(f'''"{schema}"."{tableName}"''')
+        )
 
         vlayer = QgsVectorLayer(self.uri.uri(), tableName, self.provider)
         QgsProject.instance().addMapLayer(vlayer, addToLegend = False)
         crs = QgsCoordinateReferenceSystem(int(srid), QgsCoordinateReferenceSystem.EpsgCrsId)
-        if vlayer is not None:
-            vlayer.setCrs(crs)
-            if useQml:
-                vlayer = self.setDomainsAndRestrictionsWithQml(vlayer)
-            else:
-                vlayer = self.setDomainsAndRestrictions(vlayer, tableName, domainDict, multiColumnsDict, domLayerDict)
-            if stylePath:
-                fullPath = self.getStyle(stylePath, tableName)
-                if fullPath:
-                    vlayer.loadNamedStyle(fullPath, True)
-                    # remove qml temporary file
-                    self.utils.deleteQml(fullPath)
-                    # clear fullPath variable
-                    del fullPath
-            if customForm:
-                # vlayer = self.loadFormCustom(vlayer)
-                pass
-            if editingDict is not None:
-                editLyr, joinLyrFieldName = self.loadEditLayer(lyrName, editingDict)
-                self.buildJoin(vlayer, pkColumn, editLyr, joinLyrFieldName)
-            parentNode.addLayer(vlayer)
-            if not vlayer.isValid():
-                QgsMessageLog.logMessage(vlayer.error().summary(), "DSGTools Plugin", Qgis.Critical)
+        if vlayer is None:
+            return vlayer
+        if not vlayer.isValid():
+            QgsMessageLog.logMessage(vlayer.error().summary(), "DSGTools Plugin", Qgis.Critical)
+        vlayer.setCrs(crs)
+        vlayer = self.setDomainsAndRestrictionsWithQml(vlayer) if useQml \
+            else self.setDomainsAndRestrictions(
+                lyr=vlayer,
+                lyrName=tableName,
+                domainDict=domainDict,
+                multiColumnsDict=multiColumnsDict,
+                domLayerDict=domLayerDict
+            )
+        if stylePath is not None:
+            fullPath = self.getStyle(stylePath, tableName)
+            if fullPath:
+                vlayer.loadNamedStyle(fullPath, True)
+                # remove qml temporary file
+                self.utils.deleteQml(fullPath)
+                # clear fullPath variable
+                del fullPath
         vlayer = self.createMeasureColumn(vlayer)
+        parentNode.addLayer(vlayer)
         return vlayer
     
     def loadEditLayer(self, schema, tableName):
