@@ -111,43 +111,33 @@ class UtmGrid(QObject):
                 self.spacingY.append(dy)
         return self.spacingY[scaleId]
     
-    def makeQgsPolygon(self, xmin, ymin, xmax, ymax):
+    def makeQgsPolygon(self, xmin, ymin, xmax, ymax, xSubdivisions=3, ySubdivisions=3):
         """Creating a polygon for the given coordinates
         """
-        dx = (xmax - xmin)/3
-        dy = (ymax - ymin)/3
-        
         polyline = []
-
-        point = QgsPointXY(xmin, ymin)
-        polyline.append(point)
-        point = QgsPointXY(xmin+dx, ymin)
-        polyline.append(point)
-        point = QgsPointXY(xmax-dx, ymin) 
-        polyline.append(point)
-        point = QgsPointXY(xmax, ymin)
-        polyline.append(point)
-        point = QgsPointXY(xmax, ymin+dy)
-        polyline.append(point)
-        point = QgsPointXY(xmax, ymax-dy)
-        polyline.append(point)
-        point = QgsPointXY(xmax, ymax)
-        polyline.append(point)
-        point = QgsPointXY(xmax-dx, ymax)
-        polyline.append(point)
-        point = QgsPointXY(xmin+dx, ymax)
-        polyline.append(point)
-        point = QgsPointXY(xmin, ymax)
-        polyline.append(point)
-        point = QgsPointXY(xmin, ymax-dy)
-        polyline.append(point)
-        point = QgsPointXY(xmin, ymin+dy)
-        polyline.append(point)
-        point = QgsPointXY(xmin, ymin)
-        polyline.append(point)
+        polyline += self.createHorizontalSegment(xmin, xmax, ymin, nSubdivisions=xSubdivisions)
+        polyline += self.createVerticalSegment(xmax, ymin, ymax, nSubdivisions=ySubdivisions)
+        polyline += self.createHorizontalSegment(xmax, xmin, ymax, nSubdivisions=xSubdivisions)
+        polyline += self.createVerticalSegment(xmin, ymax, ymin, nSubdivisions=ySubdivisions)
 
         qgsPolygon = QgsGeometry.fromMultiPolygonXY([[polyline]])
         return qgsPolygon
+    
+    def createHorizontalSegment(self, xmin, xmax, y, nSubdivisions=3):
+        dx = (xmax-xmin)/nSubdivisions
+        segment = [
+            QgsPointXY(xmin + i*dx, y) for i in range(nSubdivisions)
+        ]
+        segment.append(QgsPointXY(xmax,y))
+        return segment
+
+    def createVerticalSegment(self, x, ymin, ymax, nSubdivisions=3):
+        dy = (ymax-ymin)/nSubdivisions
+        segment = [
+            QgsPointXY(x, ymin + i*dy) for i in range(nSubdivisions)
+        ]
+        segment.append(QgsPointXY(x, ymax))
+        return segment
         
     def getHemisphereMultiplier(self,inomen):
         """Check the hemisphere
@@ -233,7 +223,7 @@ class UtmGrid(QObject):
         # Commiting changes        
         layer.commitChanges()
         
-    def getQgsPolygonFrame(self, map_index):
+    def getQgsPolygonFrame(self, map_index, xSubdivisions, ySubdivisions):
         """Particular case used to create frame polygon for the given
         map_index
         """
@@ -241,7 +231,14 @@ class UtmGrid(QObject):
         (x, y) = self.getLLCorner(map_index)
         dx = self.getSpacingX(scale)
         dy = self.getSpacingY(scale)
-        poly = self.makeQgsPolygon(x, y, x + dx, y + dy)
+        poly = self.makeQgsPolygon(
+            x,
+            y,
+            x + dx,
+            y + dy,
+            xSubdivisions=xSubdivisions,
+            ySubdivisions=ySubdivisions
+        )
         return poly
     
     def populateQgsLayer(self, iNomen, stopScale, layer):
