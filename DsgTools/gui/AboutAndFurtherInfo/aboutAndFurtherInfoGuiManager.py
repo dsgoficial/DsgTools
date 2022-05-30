@@ -111,7 +111,7 @@ class AboutAndFurtherInfoGuiManager(QObject):
         """
         # dlg.show()
         self.options.setInterfaceWithParametersFromConfig()
-        self.options.checkExternalDownloads()
+        self.checkExternalDownloads()
         result = self.options.exec_()
     
     def checkExternalDownloads(self):

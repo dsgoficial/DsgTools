@@ -62,6 +62,8 @@ from qgis.core import (QgsProcessing,
 class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
     INPUT = 'INPUT'
     STOP_SCALE = 'STOP_SCALE'
+    XSUBDIVISIONS = 'XSUBDIVISIONS'
+    YSUBDIVISIONS = 'YSUBDIVISIONS'
     OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
@@ -100,6 +102,24 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
+            QgsProcessingParameterNumber(
+                self.XSUBDIVISIONS,
+                self.tr('Number of subdivisions on x-axis'),
+                defaultValue=3
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.YSUBDIVISIONS,
+                self.tr('Number of subdivisions on y-axis'),
+                defaultValue=3,
+                minValue=0,
+                type=QgsProcessingParameterNumber.Integer,
+            )
+        )
+
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT,
                 self.tr('Created Frames')
@@ -133,6 +153,8 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
         fields.append(QgsField('inom', QVariant.String))
         fields.append(QgsField('mi', QVariant.String))
         crs = inputLyr.crs()
+        xSubdivisions = self.parameterAsInt(parameters, self.XSUBDIVISIONS, context)
+        ySubdivisions = self.parameterAsInt(parameters, self.YSUBDIVISIONS, context)
         (output_sink, output_sink_id) = self.parameterAsSink(
             parameters,
             self.OUTPUT,
@@ -153,6 +175,8 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             stopScale,
             coordinateTransformer,
             fields,
+            xSubdivisions=xSubdivisions,
+            ySubdivisions=ySubdivisions,
             feedback=feedback
         )
         list(
