@@ -74,7 +74,6 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         self.styleComboBox.clear()
         #TODO: refresh optional parameters
         self.checkBoxOnlyWithElements.setCheckState(0)
-        self.onlyParentsCheckBox.setCheckState(0)
 
     @pyqtSlot()
     def on_buttonBox_rejected(self):
@@ -144,8 +143,6 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         if self.styleComboBox.currentIndex() != 0:
             selectedStyle = self.customServerConnectionWidget.stylesDict[self.styleComboBox.currentText()]
         uniqueLoad = self.uniqueLoadCheckBox.isChecked()
-        onlyParents = self.onlyParentsCheckBox.isChecked()
-        # customForm = not self.customFormCheckBox.isChecked() if 'Pro' in edgvVersion else False
         customForm = True if 'Pro' in edgvVersion else False
         #3- Build factory dict
         factoryDict = dict()
@@ -158,12 +155,20 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         for dbName in factoryDict:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             try:
-                selectedClasses = []
-                for i in selectedKeys:
-                    if i in self.lyrDict:
-                        if dbName in self.lyrDict[i]:
-                            selectedClasses.append(self.lyrDict[i][dbName])
-                factoryDict[dbName].load(selectedClasses, uniqueLoad=uniqueLoad, onlyWithElements=withElements, stylePath=selectedStyle, useInheritance=onlyParents, isEdgv=isEdgv, customForm = customForm, parent=self)
+                selectedClasses = [
+                    self.lyrDict[key][dbName] for key in selectedKeys \
+                        if key in self.lyrDict and dbName in self.lyrDict[key]
+                ]
+                factoryDict[dbName].load(
+                    selectedClasses,
+                    uniqueLoad=uniqueLoad,
+                    onlyWithElements=withElements,
+                    stylePath=selectedStyle,
+                    useInheritance=False,
+                    isEdgv=isEdgv,
+                    customForm=False,
+                    parent=self
+                )
                 progress.step()
             except Exception as e:
                 exceptionDict[dbName] = ':'.join(e.args)

@@ -106,13 +106,15 @@ class PostGISLayerLoader(EDGVLayerLoader):
         else:
             semifinalList = lyrsWithElements
         if len(geomFilterList) > 0:
-            finalList = []
+            finalSet = set()
             for key in self.correspondenceDict:
-                if self.correspondenceDict[key] in geomFilterList:
-                    if key in list(self.geomTypeDict.keys()):
-                        for lyr in semifinalList:
-                            if lyr in self.geomTypeDict[key] and  lyr not in finalList:
-                                finalList.append(lyr)
+                finalSet = finalSet.union(
+                    {
+                        lyr for lyr in semifinalList if self.correspondenceDict[key] in geomFilterList \
+                            and key in self.geomTypeDict and lyr in self.geomTypeDict[key] 
+                    }
+                )
+            finalList = list(finalSet)
         else:
             finalList = semifinalList
         if finalList and isinstance(finalList[0], dict):
@@ -164,18 +166,26 @@ class PostGISLayerLoader(EDGVLayerLoader):
             for cat in list(lyrDict[prim].keys()):
                 for lyr in lyrDict[prim][cat]:
                     try:
-                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, editingDict=editingDict, customForm = customForm)
-                        if vlayer is not None:
-                            if isinstance(lyr, dict):
-                                key = lyr['lyrName']
-                            else:
-                                key = lyr
-                            loadedDict[key]=vlayer
+                        vlayer = self.loadLayer(
+                            lyr,
+                            parentNode=groupDict[prim][cat],
+                            useInheritance=False,
+                            useQml=useQml,
+                            uniqueLoad=uniqueLoad,
+                            stylePath=stylePath,
+                            domainDict=domainDict,
+                            multiColumnsDict=multiColumnsDict,
+                            domLayerDict=domLayerDict,
+                            edgvVersion=edgvVersion,
+                            editingDict=editingDict,
+                            customForm = customForm
+                        )
+                        if vlayer is None:
+                            continue
+                        key = lyr['lyrName'] if isinstance(lyr, dict) else lyr
+                        loadedDict[key]=vlayer
                     except Exception as e:
-                        if isinstance(lyr, dict):
-                            key = lyr['lyrName']
-                        else:
-                            key = lyr
+                        key = lyr['lyrName'] if isinstance(lyr, dict) else lyr
                         self.logErrorDict[key] = self.tr('Error for layer ')+key+': '+':'.join(e.args)
                         self.logError()
                     if parent:
@@ -200,10 +210,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             return lyr
         fullName = '''"{0}"."{1}"'''.format(schema, tableName)
         pkColumn = self.abstractDb.getPrimaryKeyColumn(fullName)
-        if useInheritance or self.abstractDb.getDatabaseVersion() in ['3.0', 'Non_EDGV','Non_Edgv', '2.1.3 Pro', '3.0 Pro']:
-            sql = ''
-        else:
-            sql = self.abstractDb.gen.loadLayerFromDatabase(fullName, pkColumn=pkColumn)            
+        sql = ''
         self.setDataSource(schema, tableName, geomColumn, sql, pkColumn=pkColumn)
 
         vlayer = QgsVectorLayer(self.uri.uri(), tableName, self.provider)

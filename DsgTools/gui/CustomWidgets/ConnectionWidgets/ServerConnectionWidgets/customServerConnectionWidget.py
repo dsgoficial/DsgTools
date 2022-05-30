@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from collections import defaultdict
 import os
 
 # Qt imports
@@ -59,8 +60,13 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
                          self.tr('Load Database Model EDGV Version FTer_2a_Ed'):'FTer_2a_Ed',
                          self.tr('Load Other Database Models'):'Non_EDGV'}
         self.dbDict = {'2.1.3':[], '2.1.3 Pro':[], 'FTer_2a_Ed':[],'Non_EDGV':[], '3.0':[], '3.0 Pro':[]}
-        self.selectedDbsDict = dict()
-        self.stylesDict = dict()
+        self.selectedDbsDict = defaultdict()
+        self.stylesDict = defaultdict(
+            lambda: {
+                "dbList": [],
+                "style": []
+            }
+        )
         self.postgisCustomSelector.selectionChanged.connect(self.selectedDatabases)
         self.spatialiteCustomSelector.selectionChanged.connect(self.selectedFiles)
         # self.gpkgCustomSelector.selectionChanged.connect(self.selectedGeopackageFiles)
@@ -81,20 +87,19 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         if type == 'added':
             (host, port, user, password) = self.serverWidget.abstractDb.getParamsFromConectedDb()
             for dbName in dbList:
-                if dbName not in list(self.selectedDbsDict.keys()):
-                    if host and port and user:
-                        localDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
-                        localDb.connectDatabaseWithParameters(host, port, dbName, user, password)
-                        self.selectedDbsDict[dbName] = localDb
-                        #do get dicts
-                        localDict = localDb.getStyleDict(localDb.getDatabaseVersion())
-                        for key in list(localDict.keys()):
-                            if key not in list(self.stylesDict.keys()):
-                                self.stylesDict[key] = dict()
-                                self.stylesDict[key]['dbList'] = []
-                            self.stylesDict[key]['style'] = localDict[key]
-                            if dbName not in self.stylesDict[key]['dbList']:
-                                self.stylesDict[key]['dbList'].append(dbName)
+                if dbName in list(self.selectedDbsDict.keys()):
+                    continue
+                if not host or not port or not user:
+                    continue
+                localDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
+                localDb.connectDatabaseWithParameters(host, port, dbName, user, password)
+                self.selectedDbsDict[dbName] = localDb
+                #do get dicts
+                localDict = localDb.getStyleDict(localDb.getDatabaseVersion())
+                for key in list(localDict.keys()):
+                    self.stylesDict[key]['style'] = localDict[key]
+                    if dbName not in self.stylesDict[key]['dbList']:
+                        self.stylesDict[key]['dbList'].append(dbName)
             self.dbDictChanged.emit('added', dbList)
             self.styleChanged.emit(self.stylesDict)
         #2- Iterate over selectedDbsDict and if there is a key not in dbList, close db and pop item
@@ -119,19 +124,17 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         #1- Iterate over dbList and check if all layers on dbList are on dict. If not, add it.
         if type == 'added':
             for dbName in dbList:
-                if dbName not in list(self.selectedDbsDict.keys()):
-                    localDb = self.dbFactory.createDbFactory(DsgEnums.DriverSpatiaLite)
-                    localDb.connectDatabase(conn = self.spatialiteDict[dbName])
-                    self.selectedDbsDict[dbName] = localDb
-                    #do get dicts
-                    localDict = localDb.getStyleDict(localDb.getDatabaseVersion())
-                    for key in list(localDict.keys()):
-                        if key not in list(self.stylesDict.keys()):
-                            self.stylesDict[key] = dict()
-                            self.stylesDict[key]['dbList'] = []
-                        self.stylesDict[key]['style'] = localDict[key]
-                        if dbName not in self.stylesDict[key]['dbList']:
-                            self.stylesDict[key]['dbList'].append(dbName)
+                if dbName in self.selectedDbsDict:
+                    continue
+                localDb = self.dbFactory.createDbFactory(DsgEnums.DriverSpatiaLite)
+                localDb.connectDatabase(conn = self.spatialiteDict[dbName])
+                self.selectedDbsDict[dbName] = localDb
+                #do get dicts
+                localDict = localDb.getStyleDict(localDb.getDatabaseVersion())
+                for key in list(localDict.keys()):
+                    self.stylesDict[key]['style'] = localDict[key]
+                    if dbName not in self.stylesDict[key]['dbList']:
+                        self.stylesDict[key]['dbList'].append(dbName)
             self.dbDictChanged.emit('added', dbList)
             self.styleChanged.emit(self.stylesDict)
         #2- Iterate over selectedDbsDict and if there is a key not in dbList, close db and pop item
@@ -142,9 +145,10 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
             self.dbDictChanged.emit('removed', dbList)
             for key in list(self.stylesDict.keys()):
                 for db in self.stylesDict[key]['dbList']:
-                    if db in dbList:
-                        idx = self.stylesDict[key]['dbList'].index(db)
-                        self.stylesDict[key]['dbList'].pop(idx)
+                    if db not in dbList:
+                        continue
+                    idx = self.stylesDict[key]['dbList'].index(db)
+                    self.stylesDict[key]['dbList'].pop(idx)
                 if len(self.stylesDict[key]['dbList']) == 0:
                     self.stylesDict.pop(key)
             self.styleChanged.emit(self.stylesDict)
@@ -163,9 +167,6 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
                     #do get dicts
                     localDict = localDb.getStyleDict(localDb.getDatabaseVersion())
                     for key in list(localDict.keys()):
-                        if key not in list(self.stylesDict.keys()):
-                            self.stylesDict[key] = dict()
-                            self.stylesDict[key]['dbList'] = []
                         self.stylesDict[key]['style'] = localDict[key]
                         if dbName not in self.stylesDict[key]['dbList']:
                             self.stylesDict[key]['dbList'].append(dbName)
@@ -179,9 +180,10 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
             self.dbDictChanged.emit('removed', dbList)
             for key in list(self.stylesDict.keys()):
                 for db in self.stylesDict[key]['dbList']:
-                    if db in dbList:
-                        idx = self.stylesDict[key]['dbList'].index(db)
-                        self.stylesDict[key]['dbList'].pop(idx)
+                    if db not in dbList:
+                        continue
+                    idx = self.stylesDict[key]['dbList'].index(db)
+                    self.stylesDict[key]['dbList'].pop(idx)
                 if len(self.stylesDict[key]['dbList']) == 0:
                     self.stylesDict.pop(key)
             self.styleChanged.emit(self.stylesDict)
