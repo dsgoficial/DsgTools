@@ -45,6 +45,10 @@ class SqlGenerator(object):
     def getEDGVVersion(self):
         sql = "SELECT edgvversion FROM db_metadata LIMIT 1"
         return sql
+    
+    def getEDGVVersionAndImplementationVersion(self):
+        sql = "SELECT edgvversion, dbimplversion FROM db_metadata LIMIT 1"
+        return sql
 
     def getTablesFromDatabase(self):
         return None

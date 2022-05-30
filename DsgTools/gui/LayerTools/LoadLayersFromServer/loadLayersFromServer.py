@@ -58,11 +58,14 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         self.customServerConnectionWidget.dbDictChanged.connect(self.updateLayersFromDbs)
         self.customServerConnectionWidget.resetAll.connect(self.resetInterface)
         self.customServerConnectionWidget.styleChanged.connect(self.populateStyleCombo)
-        self.headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
+        self.headerList = [
+            self.tr('Category'),
+            self.tr('Layer Name'),
+            self.tr('Geometry\nColumn'),
+            self.tr('Geometry\nType'),
+            self.tr('Layer\nType')
+        ]
         self.layersCustomSelector.setHeaders(self.headerList)
-        self.customServerConnectionWidget.postgisEdgvComboFilter.currentIndexChanged.connect(self.layersCustomSelector.setInitialState)
-        self.customServerConnectionWidget.spatialiteEdgvComboFilter.currentIndexChanged.connect(self.layersCustomSelector.setInitialState)
-        # self.customServerConnectionWidget.gpkgEdgvComboFilter.currentIndexChanged.connect(self.layersCustomSelector.setInitialState)
         self.customServerConnectionWidget.serverConnectionTab.currentChanged.connect(self.layersCustomSelector.setInitialState)
         self.lyrDict = dict()
     
@@ -95,7 +98,7 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
                     QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
                     geomList = self.customServerConnectionWidget.selectedDbsDict[dbName].getGeomColumnTupleList(showViews = showViews)
                     for tableSchema, tableName, geom, geomType, tableType in geomList:
-                        if self.customServerConnectionWidget.edgvType == 'Non_EDGV':
+                        if self.tr("Unknown model") in dbName:
                             lyrName = tableName
                             cat = tableSchema
                         else:
@@ -104,7 +107,15 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
                         key = ','.join([cat, lyrName, geom, geomType, tableType])
                         if key not in list(self.lyrDict.keys()):
                             self.lyrDict[key] = dict()
-                        self.lyrDict[key][dbName] = {'tableSchema':tableSchema, 'tableName':tableName, 'geom':geom, 'geomType':geomType, 'tableType':tableType, 'lyrName':lyrName, 'cat':cat}
+                        self.lyrDict[key][dbName] = {
+                            'tableSchema':tableSchema,
+                            'tableName':tableName,
+                            'geom':geom,
+                            'geomType':geomType,
+                            'tableType':tableType,
+                            'lyrName':lyrName,
+                            'cat':cat
+                        }
                 except Exception as e:
                     errorDict[dbName] = ':'.join(e.args)
                     QApplication.restoreOverrideCursor()
@@ -121,8 +132,19 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         interfaceDictList = []
         for key in list(self.lyrDict.keys()):
             cat, lyrName, geom, geomType, tableType = key.split(',')
-            interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
-        self.layersCustomSelector.setInitialState(interfaceDictList,unique = True)
+            interfaceDictList.append(
+                {
+                    self.tr('Category'):cat,
+                    self.tr('Layer Name'):lyrName,
+                    self.tr('Geometry\nColumn'):geom,
+                    self.tr('Geometry\nType'):geomType,
+                    self.tr('Layer\nType'):tableType
+                }
+            )
+        self.layersCustomSelector.setInitialState(
+            interfaceDictList,
+            unique=True
+        )
             
     @pyqtSlot()
     def on_buttonBox_accepted(self):
@@ -131,24 +153,26 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         """
         #1- filter classes if categories is checked and build list.
         selectedKeys = self.layersCustomSelector.getSelectedNodes()
-        dbVersion = self.customServerConnectionWidget.getDatabaseVersion()
         if len(selectedKeys) == 0:
-            QMessageBox.information(self, self.tr('Error!'), self.tr('Select at least one layer to be loaded!'))
+            QMessageBox.information(
+                self,
+                self.tr('Error!'),
+                self.tr('Select at least one layer to be loaded!')
+            )
             return
         #2- get parameters
         withElements = self.checkBoxOnlyWithElements.isChecked()
-        selectedStyle = None
-        edgvVersion = self.customServerConnectionWidget.getDatabaseVersion()
-        isEdgv = not edgvVersion == 'Non_EDGV'
-        if self.styleComboBox.currentIndex() != 0:
-            selectedStyle = self.customServerConnectionWidget.stylesDict[self.styleComboBox.currentText()]
+        selectedStyle = None if self.styleComboBox.currentIndex() == 0\
+             else self.customServerConnectionWidget.stylesDict[self.styleComboBox.currentText()]
         uniqueLoad = self.uniqueLoadCheckBox.isChecked()
-        customForm = True if 'Pro' in edgvVersion else False
         #3- Build factory dict
-        factoryDict = dict()
         dbList = list(self.customServerConnectionWidget.selectedDbsDict.keys())
-        for dbName in dbList:
-            factoryDict[dbName] = self.layerFactory.makeLoader(self.iface, self.customServerConnectionWidget.selectedDbsDict[dbName])
+        factoryDict = {
+            dbName: self.layerFactory.makeLoader(
+                iface=self.iface,
+                abstractDb=self.customServerConnectionWidget.selectedDbsDict[dbName]
+            ) for dbName in dbList
+        }
         #4- load for each db
         exceptionDict = dict()
         progress = ProgressWidget(1, len(dbList), self.tr('Loading layers from selected databases... '), parent=self)
@@ -165,7 +189,6 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
                     onlyWithElements=withElements,
                     stylePath=selectedStyle,
                     useInheritance=False,
-                    isEdgv=isEdgv,
                     customForm=False,
                     parent=self
                 )
@@ -191,12 +214,17 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         """
         msg = ''
         errorDbList = list(exceptionDict.keys())
-        if len(errorDbList) > 0:
-            msg += self.tr('\nDatabases with error:')
-            msg += ', '.join(errorDbList)
-            msg += self.tr('\nError messages for each database were output in qgis log.')
-            for errorDb in errorDbList:
-                QgsMessageLog.logMessage(self.tr('Error for database ') + errorDb + ': ' +exceptionDict[errorDb], "DSGTools Plugin", Qgis.Critical)
+        if len(errorDbList) == 0:
+            return msg
+        msg += self.tr('\nDatabases with error:')
+        msg += ', '.join(errorDbList)
+        msg += self.tr('\nError messages for each database were output in qgis log.')
+        for errorDb in errorDbList:
+            QgsMessageLog.logMessage(
+                self.tr('Error for database ') + errorDb + ': ' +exceptionDict[errorDb],
+                "DSGTools Plugin",
+                Qgis.Critical
+            )
         return msg 
 
     def populateStyleCombo(self, styleDict):
@@ -204,11 +232,9 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         Loads styles saved in the database
         """
         self.styleComboBox.clear()
-        styleList = list(styleDict.keys())
-        numberOfStyles = len(styleList)
-        if numberOfStyles > 0:
-            self.styleComboBox.addItem(self.tr('Select Style'))
-            for i in range(numberOfStyles):
-                self.styleComboBox.addItem(styleList[i])
-        else:
+        if len(styleDict.keys()) == 0:
             self.styleComboBox.addItem(self.tr('No available styles'))
+            return
+        self.styleComboBox.addItem(self.tr('Select Style'))
+        for i, style in enumerate(styleDict.keys()):
+            self.styleComboBox.addItem(style)
