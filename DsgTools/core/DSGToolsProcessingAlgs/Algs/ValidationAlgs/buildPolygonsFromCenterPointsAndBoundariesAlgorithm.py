@@ -43,11 +43,16 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
     INPUT_CENTER_POINTS = 'INPUT_CENTER_POINTS'
     SELECTED = 'SELECTED'
     ATTRIBUTE_BLACK_LIST = 'ATTRIBUTE_BLACK_LIST'
+    BOUNDARY_LINE_LAYER = 'BOUNDARY_LINE_LAYER'
     CONSTRAINT_LINE_LAYERS = 'CONSTRAINT_LINE_LAYERS'
     CONSTRAINT_POLYGON_LAYERS = 'CONSTRAINT_POLYGON_LAYERS'
     GEOGRAPHIC_BOUNDARY = 'GEOGRAPHIC_BOUNDARY'
+    SUPPRESS_AREA_WITHOUT_CENTROID_FLAG = 'SUPPRESS_AREA_WITHOUT_CENTROID_FLAG'
+    CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS = 'CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS'
     OUTPUT_POLYGONS = 'OUTPUT_POLYGONS'
-    FLAGS = 'FLAGS'
+    POINT_FLAGS = 'POINT_FLAGS'
+    LINE_FLAGS = 'LINE_FLAGS'
+    POLYGON_FLAGS = 'POLYGON_FLAGS'
 
     def initAlgorithm(self, config):
         """
@@ -78,6 +83,14 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.BOUNDARY_LINE_LAYER,
+                self.tr('Line Boundary'),
+                [QgsProcessing.TypeVectorLine],
+                optional=True
+            )
+        )
+        self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.CONSTRAINT_LINE_LAYERS,
                 self.tr('Line Constraint Layers'),
@@ -102,6 +115,13 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS,
+                self.tr('Check output polygons for invalid geometries'),
+                defaultValue=True
+            )
+        )
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT_POLYGONS,
                 self.tr('Output Polygons')
@@ -109,8 +129,20 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.POINT_FLAGS,
+                self.tr('{0} Invalid Polygon Location Flags').format(self.displayName())
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.LINE_FLAGS,
+                self.tr('{0} Unused Boundary Flags').format(self.displayName())
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.POLYGON_FLAGS,
+                self.tr('{0} Polygon Flags').format(self.displayName())
             )
         )
 
@@ -132,6 +164,11 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                     self.INPUT_CENTER_POINTS
                 )
             )
+        boundaryLineLyr = self.parameterAsVectorLayer(
+            parameters,
+            self.BOUNDARY_LINE_LAYER,
+            context
+        )
         constraintLineLyrList = self.parameterAsLayerList(
             parameters,
             self.CONSTRAINT_LINE_LAYERS,
@@ -170,6 +207,16 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             QgsWkbTypes.Polygon,
             inputCenterPointLyr.sourceCrs()
         )
+        raisePolygonWithoutCenterPointFlag = not self.parameterAsBool(
+            parameters,
+            self.SUPPRESS_AREA_WITHOUT_CENTROID_FLAG,
+            context
+        )
+        checkInvalidOnOutput = self.parameterAsBool(
+            parameters,
+            self.CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS,
+            context
+        )
         self.prepareFlagSink(
             parameters,
             inputCenterPointLyr,
@@ -179,9 +226,10 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         polygonFeatList, flagDict = layerHandler.getPolygonsFromCenterPointsAndBoundaries(
             inputCenterPointLyr,
             geographicBoundaryLyr=geographicBoundaryLyr,
-            constraintLineLyrList=constraintLineLyrList,
+            constraintLineLyrList=constraintLineLyrList+[boundaryLineLyr],
             constraintPolygonLyrList=constraintPolygonLyrList,
             onlySelected=onlySelected,
+            raisePolygonWithoutCenterPointFlag=raisePolygonWithoutCenterPointFlag,
             context=context,
             feedback=feedback,
             attributeBlackList=attributeBlackList,
