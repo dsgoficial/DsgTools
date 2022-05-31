@@ -925,24 +925,19 @@ class LayerHandler(QObject):
         iterator, featCount = self.getFeatureList(
             inputLyr, onlySelected=onlySelected)
         stepSize = 100/featCount if featCount else 0
-        flagDict = dict()
         parameterDict = self.getDestinationParameters(inputLyr)
         geometryType = inputLyr.geometryType()
+        flagDict = dict()
         newFeatSet = set()
         validate_type_dict = {
             "GEOS": Qgis.GeometryValidationEngine.Geos,
             "QGIS": Qgis.GeometryValidationEngine.QgisInternal,
         }
-        if fixInput:
-            inputLyr.startEditing()
-            inputLyr.beginEditCommand('Fixing geometries')
         for current, feat in enumerate(iterator):
             if feedback is not None and feedback.isCanceled():
                 break
             geom = feat.geometry()
             id = feat.id()
-            attrMap = {idx: feat[field.name()] for idx, field in enumerate(
-                feat.fields()) if idx not in inputLyr.primaryKeyAttributes()}
             for validate_type, method_parameter in validate_type_dict.items():
                 if feedback is not None and feedback.isCanceled():
                     break
@@ -953,10 +948,15 @@ class LayerHandler(QObject):
                 self.analyze_polygon_boundary_and_holes(flagDict, geom)
                     
             if fixInput:
+                attrMap = {idx: feat[field.name()] for idx, field in enumerate(
+                    feat.fields()) if idx not in inputLyr.primaryKeyAttributes()}
                 geom.removeDuplicateNodes(
                     useZValues=parameterDict['hasZValues'])
                 fixedGeom = geom.makeValid()
-                for idx, newGeom in enumerate(self.geometryHandler.handleGeometryCollection(fixedGeom, geometryType, parameterDict=parameterDict)):
+                for idx, newGeom in enumerate(
+                    self.geometryHandler.handleGeometryCollection(
+                        fixedGeom, geometryType, parameterDict=parameterDict)
+                    ):
                     if idx == 0:
                         inputLyr.changeGeometry(id, newGeom)
                     else:
@@ -966,6 +966,8 @@ class LayerHandler(QObject):
             if feedback is not None:
                 feedback.setProgress(stepSize*current)
         if fixInput:
+            inputLyr.startEditing()
+            inputLyr.beginEditCommand('Fixing geometries')
             inputLyr.addFeatures(newFeatSet)
             inputLyr.endEditCommand()
 
@@ -1520,7 +1522,8 @@ class LayerHandler(QObject):
                                                 constraintPolygonLyrList=None, 
                                                 attributeBlackList=None, 
                                                 geographicBoundaryLyr=None,
-                                                onlySelected=False, 
+                                                onlySelected=False,
+                                                raisePolygonWithoutCenterPointFlag=True,
                                                 context=None, 
                                                 feedback=None, 
                                                 algRunner=None):
@@ -1600,6 +1603,7 @@ class LayerHandler(QObject):
             constraintPolygonList=constraintPolygonList,
             geomBoundary = geographicBoundaryLyr,
             attributeBlackList=attributeBlackList,
+            raisePolygonWithoutCenterPointFlag=raisePolygonWithoutCenterPointFlag,
             context=context,
             feedback=multiStepFeedback
         )
@@ -1608,7 +1612,8 @@ class LayerHandler(QObject):
                                         builtPolygonLyr,context=None,
                                         constraintPolygonList=None, 
                                         attributeBlackList=None,
-                                        geomBoundary = None,
+                                        geomBoundary=None,
+                                        raisePolygonWithoutCenterPointFlag=True,
                                         feedback=None):
         """
         1. Merge constraint polygon list;
@@ -1659,6 +1664,7 @@ class LayerHandler(QObject):
             constraintPolygonLyrSpatialIdx,
             constraintPolygonLyrIdDict,
             geomBoundary = geomBoundary,
+            raisePolygonWithoutCenterPointFlag=raisePolygonWithoutCenterPointFlag,
             feedback=multiStepFeedback
         )
         return polygonList, flagList
@@ -1753,7 +1759,7 @@ class LayerHandler(QObject):
     def getPolygonListAndFlagDictFromBuiltPolygonToCenterPointDict(
             self, builtPolygonToCenterPointDict,
             constraintPolygonLyrSpatialIdx, constraintPolygonLyrIdDict,
-            geomBoundary=False, feedback=None):
+            geomBoundary=False, raisePolygonWithoutCenterPointFlag=True, feedback=None):
         """
         :params builtPolygonToCenterPointDict: (dict) in the following format:
         {
@@ -1819,10 +1825,9 @@ class LayerHandler(QObject):
                     newFeat.setGeometry(geom)
                     polygonList.append(newFeat)
                 else:
-                    if structureLen == 0:
-                        flagText = self.tr("Polygon without center point.")
-                    else:
-                        flagText = self.tr(
+                    flagText = self.tr("Polygon without center point.") \
+                        if structureLen == 0 and raisePolygonWithoutCenterPointFlag \
+                        else self.tr(
                             "Polygon with more than one center point with "
                             "conflicting attributes."
                         )
