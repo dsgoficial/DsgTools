@@ -1076,7 +1076,7 @@ class SpatialRelationsHandler(QObject):
         """
         Applies a DE-9IM mask to compare the features of between and checks
         whether the occurrence limits are respected.
-        :param layerA: (QgsVectorLayer) reference layer.
+        :param layerA: (QgsVectorLayer | iterator) reference layer.
         :param layerB: (QgsVectorLayer) layer to have its features spatially
                     compared to reference layer.
         :param mask: (str) a linearized DE-9IM mask to be used for the spatial
@@ -1102,7 +1102,8 @@ class SpatialRelationsHandler(QObject):
                                         layer_b=layerB.name())
         size = layerA.featureCount()
         stepSize = 100 / size if size else 0
-        for step, featA in enumerate(layerA.getFeatures()):
+        iteratorA = layerA.getFeatures() if isinstance(layerA, QgsVectorLayer) else layerA
+        for step, featA in enumerate(iteratorA):
             if feedback.isCanceled():
                 break
             fidA = featA.id()

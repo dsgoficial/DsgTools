@@ -1523,7 +1523,7 @@ class LayerHandler(QObject):
                                                 attributeBlackList=None, 
                                                 geographicBoundaryLyr=None,
                                                 onlySelected=False,
-                                                raisePolygonWithoutCenterPointFlag=True,
+                                                suppressPolygonWithoutCenterPointFlag=False,
                                                 context=None, 
                                                 feedback=None, 
                                                 algRunner=None):
@@ -1603,7 +1603,7 @@ class LayerHandler(QObject):
             constraintPolygonList=constraintPolygonList,
             geomBoundary = geographicBoundaryLyr,
             attributeBlackList=attributeBlackList,
-            raisePolygonWithoutCenterPointFlag=raisePolygonWithoutCenterPointFlag,
+            suppressPolygonWithoutCenterPointFlag=suppressPolygonWithoutCenterPointFlag,
             context=context,
             feedback=multiStepFeedback
         )
@@ -1613,7 +1613,7 @@ class LayerHandler(QObject):
                                         constraintPolygonList=None, 
                                         attributeBlackList=None,
                                         geomBoundary=None,
-                                        raisePolygonWithoutCenterPointFlag=True,
+                                        suppressPolygonWithoutCenterPointFlag=False,
                                         feedback=None):
         """
         1. Merge constraint polygon list;
@@ -1664,7 +1664,7 @@ class LayerHandler(QObject):
             constraintPolygonLyrSpatialIdx,
             constraintPolygonLyrIdDict,
             geomBoundary = geomBoundary,
-            raisePolygonWithoutCenterPointFlag=raisePolygonWithoutCenterPointFlag,
+            suppressPolygonWithoutCenterPointFlag=suppressPolygonWithoutCenterPointFlag,
             feedback=multiStepFeedback
         )
         return polygonList, flagList
@@ -1759,7 +1759,7 @@ class LayerHandler(QObject):
     def getPolygonListAndFlagDictFromBuiltPolygonToCenterPointDict(
             self, builtPolygonToCenterPointDict,
             constraintPolygonLyrSpatialIdx, constraintPolygonLyrIdDict,
-            geomBoundary=False, raisePolygonWithoutCenterPointFlag=True, feedback=None):
+            geomBoundary=False, suppressPolygonWithoutCenterPointFlag=True, feedback=None):
         """
         :params builtPolygonToCenterPointDict: (dict) in the following format:
         {
@@ -1825,8 +1825,10 @@ class LayerHandler(QObject):
                     newFeat.setGeometry(geom)
                     polygonList.append(newFeat)
                 else:
+                    if structureLen == 0 and suppressPolygonWithoutCenterPointFlag:
+                        continue
                     flagText = self.tr("Polygon without center point.") \
-                        if structureLen == 0 and raisePolygonWithoutCenterPointFlag \
+                        if structureLen == 0 \
                         else self.tr(
                             "Polygon with more than one center point with "
                             "conflicting attributes."
