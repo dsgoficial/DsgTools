@@ -924,52 +924,66 @@ class LayerHandler(QObject):
     def identifyAndFixInvalidGeometries(self, inputLyr, ignoreClosed=False, fixInput=False, onlySelected=False, feedback=None):
         iterator, featCount = self.getFeatureList(
             inputLyr, onlySelected=onlySelected)
-        stepSize = 100/featCount if featCount else 0
-        flagDict = dict()
         parameterDict = self.getDestinationParameters(inputLyr)
         geometryType = inputLyr.geometryType()
-        newFeatSet = set()
-        validate_type_dict = {
-            "GEOS": Qgis.GeometryValidationEngine.Geos,
-            "QGIS": Qgis.GeometryValidationEngine.QgisInternal,
-        }
+        flagDict, newFeatSet = self.identifyInvalidGeometries(iterator, featCount, inputLyr, ignoreClosed, fixInput, parameterDict, geometryType, feedback=feedback)
         if fixInput:
-            inputLyr.startEditing()
-            inputLyr.beginEditCommand('Fixing geometries')
+            self.applyGeometryFixesOnLayer(inputLyr, newFeatSet)
+
+        return flagDict
+
+    def identifyInvalidGeometries(self, iterator, featCount, inputLyr, ignoreClosed, fixInput, parameterDict, geometryType, feedback=None):
+        flagDict = dict()
+        newFeatSet = set()
+        stepSize = 100/featCount if featCount else 0
         for current, feat in enumerate(iterator):
             if feedback is not None and feedback.isCanceled():
                 break
             geom = feat.geometry()
             id = feat.id()
-            attrMap = {idx: feat[field.name()] for idx, field in enumerate(
-                feat.fields()) if idx not in inputLyr.primaryKeyAttributes()}
-            for validate_type, method_parameter in validate_type_dict.items():
-                if feedback is not None and feedback.isCanceled():
-                    break
-                isValid = self.check_validity(ignoreClosed, flagDict, geom, validate_type, method_parameter)
-                if not isValid:
-                    break
-            if isValid and geom.type() == QgsWkbTypes.PolygonGeometry:
-                self.analyze_polygon_boundary_and_holes(flagDict, geom)
+            self.checkGeomIsValid(geom, ignoreClosed, flagDict, feedback)
                     
             if fixInput:
-                geom.removeDuplicateNodes(
-                    useZValues=parameterDict['hasZValues'])
-                fixedGeom = geom.makeValid()
-                for idx, newGeom in enumerate(self.geometryHandler.handleGeometryCollection(fixedGeom, geometryType, parameterDict=parameterDict)):
-                    if idx == 0:
-                        inputLyr.changeGeometry(id, newGeom)
-                    else:
-                        newFeat = QgsVectorLayerUtils.createFeature(
-                            inputLyr, newGeom, attrMap)
-                        newFeatSet.add(newFeat)
+                self.fixGeometryFromInput(inputLyr, parameterDict, geometryType, newFeatSet, feat, geom, id)
             if feedback is not None:
                 feedback.setProgress(stepSize*current)
-        if fixInput:
-            inputLyr.addFeatures(newFeatSet)
-            inputLyr.endEditCommand()
+        return flagDict, newFeatSet
 
-        return flagDict
+    def checkGeomIsValid(self, geom, ignoreClosed, flagDict, feedback=None):
+        for validate_type, method_parameter in {
+            "GEOS": Qgis.GeometryValidationEngine.Geos,
+            "QGIS": Qgis.GeometryValidationEngine.QgisInternal,
+        }.items():
+            if feedback is not None and feedback.isCanceled():
+                break
+            isValid = self.check_validity(ignoreClosed, flagDict, geom, validate_type, method_parameter)
+            if not isValid:
+                break
+        if isValid and geom.type() == QgsWkbTypes.PolygonGeometry:
+            self.analyze_polygon_boundary_and_holes(flagDict, geom)
+
+    def fixGeometryFromInput(self, inputLyr, parameterDict, geometryType, newFeatSet, feat, geom, id):
+        attrMap = {idx: feat[field.name()] for idx, field in enumerate(
+                    feat.fields()) if idx not in inputLyr.primaryKeyAttributes()}
+        geom.removeDuplicateNodes(
+                    useZValues=parameterDict['hasZValues'])
+        fixedGeom = geom.makeValid()
+        for idx, newGeom in enumerate(
+                    self.geometryHandler.handleGeometryCollection(
+                        fixedGeom, geometryType, parameterDict=parameterDict)
+                    ):
+            if idx == 0:
+                inputLyr.changeGeometry(id, newGeom)
+            else:
+                newFeat = QgsVectorLayerUtils.createFeature(
+                            inputLyr, newGeom, attrMap)
+                newFeatSet.add(newFeat)
+
+    def applyGeometryFixesOnLayer(self, inputLyr, newFeatSet):
+        inputLyr.startEditing()
+        inputLyr.beginEditCommand('Fixing geometries')
+        inputLyr.addFeatures(newFeatSet)
+        inputLyr.endEditCommand()
 
     def analyze_polygon_boundary_and_holes(self, flagDict, geom):
         flagWktSet = set()
@@ -1520,7 +1534,8 @@ class LayerHandler(QObject):
                                                 constraintPolygonLyrList=None, 
                                                 attributeBlackList=None, 
                                                 geographicBoundaryLyr=None,
-                                                onlySelected=False, 
+                                                onlySelected=False,
+                                                suppressPolygonWithoutCenterPointFlag=False,
                                                 context=None, 
                                                 feedback=None, 
                                                 algRunner=None):
@@ -1600,6 +1615,7 @@ class LayerHandler(QObject):
             constraintPolygonList=constraintPolygonList,
             geomBoundary = geographicBoundaryLyr,
             attributeBlackList=attributeBlackList,
+            suppressPolygonWithoutCenterPointFlag=suppressPolygonWithoutCenterPointFlag,
             context=context,
             feedback=multiStepFeedback
         )
@@ -1608,7 +1624,8 @@ class LayerHandler(QObject):
                                         builtPolygonLyr,context=None,
                                         constraintPolygonList=None, 
                                         attributeBlackList=None,
-                                        geomBoundary = None,
+                                        geomBoundary=None,
+                                        suppressPolygonWithoutCenterPointFlag=False,
                                         feedback=None):
         """
         1. Merge constraint polygon list;
@@ -1659,6 +1676,7 @@ class LayerHandler(QObject):
             constraintPolygonLyrSpatialIdx,
             constraintPolygonLyrIdDict,
             geomBoundary = geomBoundary,
+            suppressPolygonWithoutCenterPointFlag=suppressPolygonWithoutCenterPointFlag,
             feedback=multiStepFeedback
         )
         return polygonList, flagList
@@ -1753,7 +1771,7 @@ class LayerHandler(QObject):
     def getPolygonListAndFlagDictFromBuiltPolygonToCenterPointDict(
             self, builtPolygonToCenterPointDict,
             constraintPolygonLyrSpatialIdx, constraintPolygonLyrIdDict,
-            geomBoundary=False, feedback=None):
+            geomBoundary=False, suppressPolygonWithoutCenterPointFlag=True, feedback=None):
         """
         :params builtPolygonToCenterPointDict: (dict) in the following format:
         {
@@ -1819,10 +1837,11 @@ class LayerHandler(QObject):
                     newFeat.setGeometry(geom)
                     polygonList.append(newFeat)
                 else:
-                    if structureLen == 0:
-                        flagText = self.tr("Polygon without center point.")
-                    else:
-                        flagText = self.tr(
+                    if structureLen == 0 and suppressPolygonWithoutCenterPointFlag:
+                        continue
+                    flagText = self.tr("Polygon without center point.") \
+                        if structureLen == 0 \
+                        else self.tr(
                             "Polygon with more than one center point with "
                             "conflicting attributes."
                         )
