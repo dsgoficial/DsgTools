@@ -924,54 +924,66 @@ class LayerHandler(QObject):
     def identifyAndFixInvalidGeometries(self, inputLyr, ignoreClosed=False, fixInput=False, onlySelected=False, feedback=None):
         iterator, featCount = self.getFeatureList(
             inputLyr, onlySelected=onlySelected)
-        stepSize = 100/featCount if featCount else 0
         parameterDict = self.getDestinationParameters(inputLyr)
         geometryType = inputLyr.geometryType()
+        flagDict, newFeatSet = self.identifyInvalidGeometries(iterator, featCount, inputLyr, ignoreClosed, fixInput, parameterDict, geometryType, feedback=feedback)
+        if fixInput:
+            self.applyGeometryFixesOnLayer(inputLyr, newFeatSet)
+
+        return flagDict
+
+    def identifyInvalidGeometries(self, iterator, featCount, inputLyr, ignoreClosed, fixInput, parameterDict, geometryType, feedback=None):
         flagDict = dict()
         newFeatSet = set()
-        validate_type_dict = {
-            "GEOS": Qgis.GeometryValidationEngine.Geos,
-            "QGIS": Qgis.GeometryValidationEngine.QgisInternal,
-        }
+        stepSize = 100/featCount if featCount else 0
         for current, feat in enumerate(iterator):
             if feedback is not None and feedback.isCanceled():
                 break
             geom = feat.geometry()
             id = feat.id()
-            for validate_type, method_parameter in validate_type_dict.items():
-                if feedback is not None and feedback.isCanceled():
-                    break
-                isValid = self.check_validity(ignoreClosed, flagDict, geom, validate_type, method_parameter)
-                if not isValid:
-                    break
-            if isValid and geom.type() == QgsWkbTypes.PolygonGeometry:
-                self.analyze_polygon_boundary_and_holes(flagDict, geom)
+            self.checkGeomIsValid(geom, ignoreClosed, flagDict, feedback)
                     
             if fixInput:
-                attrMap = {idx: feat[field.name()] for idx, field in enumerate(
+                self.fixGeometryFromInput(inputLyr, parameterDict, geometryType, newFeatSet, feat, geom, id)
+            if feedback is not None:
+                feedback.setProgress(stepSize*current)
+        return flagDict, newFeatSet
+
+    def checkGeomIsValid(self, geom, ignoreClosed, flagDict, feedback=None):
+        for validate_type, method_parameter in {
+            "GEOS": Qgis.GeometryValidationEngine.Geos,
+            "QGIS": Qgis.GeometryValidationEngine.QgisInternal,
+        }.items():
+            if feedback is not None and feedback.isCanceled():
+                break
+            isValid = self.check_validity(ignoreClosed, flagDict, geom, validate_type, method_parameter)
+            if not isValid:
+                break
+        if isValid and geom.type() == QgsWkbTypes.PolygonGeometry:
+            self.analyze_polygon_boundary_and_holes(flagDict, geom)
+
+    def fixGeometryFromInput(self, inputLyr, parameterDict, geometryType, newFeatSet, feat, geom, id):
+        attrMap = {idx: feat[field.name()] for idx, field in enumerate(
                     feat.fields()) if idx not in inputLyr.primaryKeyAttributes()}
-                geom.removeDuplicateNodes(
+        geom.removeDuplicateNodes(
                     useZValues=parameterDict['hasZValues'])
-                fixedGeom = geom.makeValid()
-                for idx, newGeom in enumerate(
+        fixedGeom = geom.makeValid()
+        for idx, newGeom in enumerate(
                     self.geometryHandler.handleGeometryCollection(
                         fixedGeom, geometryType, parameterDict=parameterDict)
                     ):
-                    if idx == 0:
-                        inputLyr.changeGeometry(id, newGeom)
-                    else:
-                        newFeat = QgsVectorLayerUtils.createFeature(
+            if idx == 0:
+                inputLyr.changeGeometry(id, newGeom)
+            else:
+                newFeat = QgsVectorLayerUtils.createFeature(
                             inputLyr, newGeom, attrMap)
-                        newFeatSet.add(newFeat)
-            if feedback is not None:
-                feedback.setProgress(stepSize*current)
-        if fixInput:
-            inputLyr.startEditing()
-            inputLyr.beginEditCommand('Fixing geometries')
-            inputLyr.addFeatures(newFeatSet)
-            inputLyr.endEditCommand()
+                newFeatSet.add(newFeat)
 
-        return flagDict
+    def applyGeometryFixesOnLayer(self, inputLyr, newFeatSet):
+        inputLyr.startEditing()
+        inputLyr.beginEditCommand('Fixing geometries')
+        inputLyr.addFeatures(newFeatSet)
+        inputLyr.endEditCommand()
 
     def analyze_polygon_boundary_and_holes(self, flagDict, geom):
         flagWktSet = set()
