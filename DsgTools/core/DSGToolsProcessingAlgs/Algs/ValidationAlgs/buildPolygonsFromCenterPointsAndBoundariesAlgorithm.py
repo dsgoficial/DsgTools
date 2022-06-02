@@ -275,11 +275,58 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             parameters,
             self.INVALID_POLYGON_LOCATION,
             context,
-            QgsFields(),
+            self.getFlagFields(),
             QgsWkbTypes.Point,
             inputCenterPointLyr.sourceCrs()
         )
+        if checkInvalidOnOutput:
+
+            multiStepFeedback.pushInfo(self.tr('Checking for invalid geometries on output polygons...'))
+            multiStepFeedback.setCurrentStep(currentStep)
+            invalidGeomFlagDict, _ = layerHandler.identifyInvalidGeometries(
+                polygonFeatList,
+                len(polygonFeatList),
+                inputCenterPointLyr,
+                ignoreClosed=False,
+                fixInput=False,
+                parameterDict=None,
+                geometryType=None,
+                feedback=multiStepFeedback
+            )
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            flagLambda = lambda x: self.flagFeature(
+                flagGeom=x[1]["geom"],
+                flagText=x[1]["reason"],
+                sink=invalid_polygon_sink
+            )
+            list(map(flagLambda, invalidGeomFlagDict.items()))
+            currentStep += 1
+                
+            
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr('Checking unused boundaries...'))
+        flags = self.checkUnusedBoundaries(
+            boundaryLineLyr=boundaryLineLyr,
+            output_polygon_sink_id=output_polygon_sink_id,
+            feedback=multiStepFeedback,
+            context=context
+        )
+        unused_boundary_flag_sink.addFeatures(
+            boundaryLineLyr.getFeatures(list(flags.keys())),
+            QgsFeatureSink.FastInsert
+        )
+        
+        return {
+            self.OUTPUT_POLYGONS : output_polygon_sink_id,
+            self.FLAGS : self.flag_id,
+            self.INVALID_POLYGON_LOCATION: invalid_polygon_sink_id,
+            self.UNUSED_BOUNDARY_LINES: unused_boundary_flag_sink_id,
+        }
+    
+    def checkUnusedBoundaries(self, boundaryLineLyr, output_polygon_sink_id, feedback=None, context=None):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
         lyr = processing.run(
             'native:addautoincrementalfield',
             parameters = {
@@ -295,59 +342,17 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback
         )["OUTPUT"]
-        currentStep += 1
-        if checkInvalidOnOutput:
-            multiStepFeedback.pushInfo(self.tr('Checking for invalid geometries on output polygons...'))
-            multiStepFeedback.setCurrentStep(currentStep)
-            invalidLyr = processing.run(
-                'dsgtools:identifyandfixinvalidgeometries',
-                {
-                    "INPUT": lyr,
-                    "SELECTED": False,
-                    "IGNORE_CLOSED": False,
-                    "TYPE": False,
-                    "OUTPUT": 'memory:',
-                    "FLAGS": "TEMPORARY_OUTPUT"
-                },
-                context=context,
-                feedback=multiStepFeedback
-            )["FLAGS"]
-            currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr('Checking unused boundaries...'))
-        flags = self.checkUnusedBoundaries(
-            boundaryLineLyr=boundaryLineLyr,
-            outputPolygonsLyr=lyr,
-            feedback=multiStepFeedback,
-            context=context
-        )
-        unused_boundary_flag_sink.addFeatures(
-            boundaryLineLyr.getFeatures(list(flags.keys())),
-            QgsFeatureSink.FastInsert
-        )
-        
-        return {
-            self.OUTPUT_POLYGONS : output_polygon_sink_id,
-            self.FLAGS : self.flag_id,
-            self.INVALID_POLYGON_LOCATION: invalidLyr if checkInvalidOnOutput else invalid_polygon_sink_id,
-            self.UNUSED_BOUNDARY_LINES: unused_boundary_flag_sink_id,
-        }
-    
-    def checkUnusedBoundaries(self, boundaryLineLyr, outputPolygonsLyr, feedback=None, context=None):
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        outputPolygonsLyr = outputPolygonsLyr.clone()
         processing.run(
             "native:createspatialindex",
             {
-                'INPUT': outputPolygonsLyr
+                'INPUT': lyr
             },
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(1)
         return SpatialRelationsHandler().checkDE9IM(
             layerA=boundaryLineLyr,
-            layerB=outputPolygonsLyr,
+            layerB=lyr,
             mask="*1*******",
             cardinality="1..*",
             feedback=multiStepFeedback,
