@@ -78,6 +78,9 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         layerHandler = LayerHandler()
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.setProgressText(
+            self.tr("Building duplicated features dictionary...")
+        )
         geomDict = layerHandler.getDuplicatedFeaturesDict(
             inputLyr, onlySelected=onlySelected, feedback=multiStepFeedback)
         multiStepFeedback.setCurrentStep(1)
