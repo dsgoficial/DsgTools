@@ -103,7 +103,11 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
                             cat = tableSchema
                         else:
                             lyrName = '_'.join(tableName.split('_')[1::])
-                            cat = tableName.split('_')[0]
+                            if lyrName == '':
+                                lyrName = tableName
+                                cat = "layers"
+                            else:
+                                cat = tableName.split('_')[0]
                         key = ','.join([cat, lyrName, geom, geomType, tableType])
                         if key not in list(self.lyrDict.keys()):
                             self.lyrDict[key] = dict()
