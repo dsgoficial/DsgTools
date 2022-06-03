@@ -108,7 +108,7 @@ class Options(QDialog, FORM_CLASS):
         if algIterations:
             self.algIterationsQgsSpinBox.setValue(int(algIterations))
         if minSegmentDistance:
-            self.minSegmentDistanceQgsSpinBox.setValue(int(minSegmentDistance))
+            self.minSegmentDistanceQgsSpinBox.setValue(float(minSegmentDistance))
         if valueList:
             self.blackListWidget.clear()
             self.blackListWidget.addItems(valueList)
