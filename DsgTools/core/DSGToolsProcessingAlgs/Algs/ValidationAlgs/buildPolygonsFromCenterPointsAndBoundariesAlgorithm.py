@@ -25,36 +25,46 @@ import processing
 from PyQt5.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink, QgsFields,
-                       QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterDistance,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsFields,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterDistance,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterField,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
-    INPUT_CENTER_POINTS = 'INPUT_CENTER_POINTS'
-    SELECTED = 'SELECTED'
-    ATTRIBUTE_BLACK_LIST = 'ATTRIBUTE_BLACK_LIST'
-    BOUNDARY_LINE_LAYER = 'BOUNDARY_LINE_LAYER'
-    CONSTRAINT_LINE_LAYERS = 'CONSTRAINT_LINE_LAYERS'
-    CONSTRAINT_POLYGON_LAYERS = 'CONSTRAINT_POLYGON_LAYERS'
-    GEOGRAPHIC_BOUNDARY = 'GEOGRAPHIC_BOUNDARY'
-    SUPPRESS_AREA_WITHOUT_CENTROID_FLAG = 'SUPPRESS_AREA_WITHOUT_CENTROID_FLAG'
-    CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS = 'CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS'
-    OUTPUT_POLYGONS = 'OUTPUT_POLYGONS'
-    INVALID_POLYGON_LOCATION = 'INVALID_POLYGON_LOCATION'
-    UNUSED_BOUNDARY_LINES = 'UNUSED_BOUNDARY_LINES'
-    FLAGS = 'FLAGS'
+    INPUT_CENTER_POINTS = "INPUT_CENTER_POINTS"
+    SELECTED = "SELECTED"
+    ATTRIBUTE_BLACK_LIST = "ATTRIBUTE_BLACK_LIST"
+    BOUNDARY_LINE_LAYER = "BOUNDARY_LINE_LAYER"
+    CONSTRAINT_LINE_LAYERS = "CONSTRAINT_LINE_LAYERS"
+    CONSTRAINT_POLYGON_LAYERS = "CONSTRAINT_POLYGON_LAYERS"
+    GEOGRAPHIC_BOUNDARY = "GEOGRAPHIC_BOUNDARY"
+    SUPPRESS_AREA_WITHOUT_CENTROID_FLAG = "SUPPRESS_AREA_WITHOUT_CENTROID_FLAG"
+    CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS = (
+        "CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS"
+    )
+    OUTPUT_POLYGONS = "OUTPUT_POLYGONS"
+    INVALID_POLYGON_LOCATION = "INVALID_POLYGON_LOCATION"
+    UNUSED_BOUNDARY_LINES = "UNUSED_BOUNDARY_LINES"
+    FLAGS = "FLAGS"
 
     def initAlgorithm(self, config):
         """
@@ -63,87 +73,86 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT_CENTER_POINTS,
-                self.tr('Center Point Layer'),
-                [QgsProcessing.TypeVectorPoint]
+                self.tr("Center Point Layer"),
+                [QgsProcessing.TypeVectorPoint],
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
         self.addParameter(
             QgsProcessingParameterField(
                 self.ATTRIBUTE_BLACK_LIST,
-                self.tr('Fields to ignore'),
+                self.tr("Fields to ignore"),
                 None,
-                'INPUT_CENTER_POINTS',
+                "INPUT_CENTER_POINTS",
                 QgsProcessingParameterField.Any,
                 allowMultiple=True,
-                optional = True
+                optional=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.BOUNDARY_LINE_LAYER,
-                self.tr('Line Boundary'),
-                [QgsProcessing.TypeVectorLine]
+                self.tr("Line Boundary"),
+                [QgsProcessing.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.CONSTRAINT_LINE_LAYERS,
-                self.tr('Line Constraint Layers'),
+                self.tr("Line Constraint Layers"),
                 QgsProcessing.TypeVectorLine,
-                optional=True
+                optional=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.CONSTRAINT_POLYGON_LAYERS,
-                self.tr('Polygon Constraint Layers'),
+                self.tr("Polygon Constraint Layers"),
                 QgsProcessing.TypeVectorPolygon,
-                optional=True
+                optional=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
-                self.tr('Geographic Boundary'),
+                self.tr("Geographic Boundary"),
                 [QgsProcessing.TypeVectorPolygon],
-                optional=True
+                optional=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS,
-                self.tr('Check output polygons for invalid geometries'),
-                defaultValue=True
+                self.tr("Check output polygons for invalid geometries"),
+                defaultValue=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT_POLYGONS,
-                self.tr('Output Polygons')
+                self.OUTPUT_POLYGONS, self.tr("Output Polygons")
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.INVALID_POLYGON_LOCATION,
-                self.tr('Invalid Polygon Location Flags from {0}').format(self.displayName())
+                self.tr("Invalid Polygon Location Flags from {0}").format(
+                    self.displayName()
+                ),
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.UNUSED_BOUNDARY_LINES,
-                self.tr('Unused Boundary Flags from {0}').format(self.displayName())
+                self.tr("Unused Boundary Flags from {0}").format(self.displayName()),
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('Polygon Flags from {0}').format(self.displayName())
+                self.FLAGS, self.tr("Polygon Flags from {0}").format(self.displayName())
             )
         )
 
@@ -154,200 +163,247 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         layerHandler = LayerHandler()
         algRunner = AlgRunner()
         inputCenterPointLyr = self.parameterAsVectorLayer(
-            parameters,
-            self.INPUT_CENTER_POINTS,
-            context
+            parameters, self.INPUT_CENTER_POINTS, context
         )
         if inputCenterPointLyr is None:
             raise QgsProcessingException(
-                self.invalidSourceError(
-                    parameters,
-                    self.INPUT_CENTER_POINTS
-                )
+                self.invalidSourceError(parameters, self.INPUT_CENTER_POINTS)
             )
         boundaryLineLyr = self.parameterAsVectorLayer(
-            parameters,
-            self.BOUNDARY_LINE_LAYER,
-            context
+            parameters, self.BOUNDARY_LINE_LAYER, context
         )
         constraintLineLyrList = self.parameterAsLayerList(
-            parameters,
-            self.CONSTRAINT_LINE_LAYERS,
-            context
+            parameters, self.CONSTRAINT_LINE_LAYERS, context
         )
         constraintPolygonLyrList = self.parameterAsLayerList(
-            parameters,
-            self.CONSTRAINT_POLYGON_LAYERS,
-            context
+            parameters, self.CONSTRAINT_POLYGON_LAYERS, context
         )
-        onlySelected = self.parameterAsBool(
-            parameters,
-            self.SELECTED,
-            context
-        )
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         geographicBoundaryLyr = self.parameterAsLayer(
-            parameters,
-            self.GEOGRAPHIC_BOUNDARY,
-            context
+            parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
         attributeBlackList = self.parameterAsFields(
-            parameters,
-            self.ATTRIBUTE_BLACK_LIST,
-            context
+            parameters, self.ATTRIBUTE_BLACK_LIST, context
         )
-        fields = layerHandler.getFieldsFromAttributeBlackList(inputCenterPointLyr,
-                                                        attributeBlackList)
-        (
-            output_polygon_sink,
-            output_polygon_sink_id
-        ) = self.parameterAsSink(
+        fields = layerHandler.getFieldsFromAttributeBlackList(
+            inputCenterPointLyr, attributeBlackList
+        )
+        (output_polygon_sink, output_polygon_sink_id) = self.parameterAsSink(
             parameters,
             self.OUTPUT_POLYGONS,
             context,
             fields,
             QgsWkbTypes.Polygon,
-            inputCenterPointLyr.sourceCrs()
+            inputCenterPointLyr.sourceCrs(),
         )
         suppressPolygonWithoutCenterPointFlag = self.parameterAsBool(
-            parameters,
-            self.SUPPRESS_AREA_WITHOUT_CENTROID_FLAG,
-            context
+            parameters, self.SUPPRESS_AREA_WITHOUT_CENTROID_FLAG, context
         )
         checkInvalidOnOutput = self.parameterAsBool(
-            parameters,
-            self.CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS,
-            context
+            parameters, self.CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS, context
         )
-        
+
         self.prepareFlagSink(
-            parameters,
-            inputCenterPointLyr,
-            QgsWkbTypes.Polygon,
-            context
+            parameters, inputCenterPointLyr, QgsWkbTypes.Polygon, context
         )
         (
             unused_boundary_flag_sink,
-            unused_boundary_flag_sink_id
+            unused_boundary_flag_sink_id,
         ) = self.parameterAsSink(
             parameters,
             self.UNUSED_BOUNDARY_LINES,
             context,
             boundaryLineLyr.fields(),
             QgsWkbTypes.LineString,
-            boundaryLineLyr.sourceCrs()
+            boundaryLineLyr.sourceCrs(),
         )
-        
+
         nSteps = 4 if checkInvalidOnOutput else 3
         currentStep = 0
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr('Starting {0}...').format(self.displayName()))
-        multiStepFeedback.pushInfo(self.tr('Computing polygons from center points and boundaries...'))
-        polygonFeatList, flagDict = layerHandler.getPolygonsFromCenterPointsAndBoundaries(
+        polygonFeatList, flagDict = self.computePolygonsFromCenterPointAndBoundaries(
+            context,
+            layerHandler,
+            algRunner,
             inputCenterPointLyr,
-            geographicBoundaryLyr=geographicBoundaryLyr,
-            constraintLineLyrList=constraintLineLyrList+[boundaryLineLyr],
-            constraintPolygonLyrList=constraintPolygonLyrList,
-            onlySelected=onlySelected,
-            suppressPolygonWithoutCenterPointFlag=suppressPolygonWithoutCenterPointFlag,
-            context=context,
-            feedback=feedback,
-            attributeBlackList=attributeBlackList,
-            algRunner=algRunner
+            boundaryLineLyr,
+            constraintLineLyrList,
+            constraintPolygonLyrList,
+            onlySelected,
+            geographicBoundaryLyr,
+            attributeBlackList,
+            suppressPolygonWithoutCenterPointFlag,
+            multiStepFeedback,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr('Writing output...'))
-        output_polygon_sink.addFeatures(
-            polygonFeatList, QgsFeatureSink.FastInsert
+        self.writeOutputPolygons(
+            output_polygon_sink, multiStepFeedback, polygonFeatList, flagDict
         )
+        invalid_polygon_sink, invalid_polygon_sink_id = self.prepareInvalidPolygonFlags(
+            parameters, context, inputCenterPointLyr
+        )
+        currentStep += 1
+        if checkInvalidOnOutput:
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.checkInvalidOnOutput(
+                layerHandler,
+                inputCenterPointLyr,
+                multiStepFeedback,
+                polygonFeatList,
+                invalid_polygon_sink,
+            )
+            currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.checkUnusedBoundariesAndWriteOutput(
+            context,
+            boundaryLineLyr,
+            output_polygon_sink_id,
+            unused_boundary_flag_sink,
+            multiStepFeedback,
+        )
+
+        return {
+            self.OUTPUT_POLYGONS: output_polygon_sink_id,
+            self.FLAGS: self.flag_id,
+            self.INVALID_POLYGON_LOCATION: invalid_polygon_sink_id,
+            self.UNUSED_BOUNDARY_LINES: unused_boundary_flag_sink_id,
+        }
+
+    def checkUnusedBoundariesAndWriteOutput(
+        self,
+        context,
+        boundaryLineLyr,
+        output_polygon_sink_id,
+        unused_boundary_flag_sink,
+        multiStepFeedback,
+    ):
+        multiStepFeedback.setProgressText(self.tr("Checking unused boundaries..."))
+        flags = self.checkUnusedBoundaries(
+            boundaryLineLyr=boundaryLineLyr,
+            output_polygon_sink_id=output_polygon_sink_id,
+            feedback=multiStepFeedback,
+            context=context,
+        )
+        unused_boundary_flag_sink.addFeatures(
+            boundaryLineLyr.getFeatures(list(flags.keys())), QgsFeatureSink.FastInsert
+        )
+
+    def checkInvalidOnOutput(
+        self,
+        layerHandler,
+        inputCenterPointLyr,
+        feedback,
+        polygonFeatList,
+        invalid_polygon_sink,
+    ):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setProgressText(
+            self.tr("Checking for invalid geometries on output polygons...")
+        )
+        multiStepFeedback.setCurrentStep(0)
+        invalidGeomFlagDict, _ = layerHandler.identifyInvalidGeometries(
+            polygonFeatList,
+            len(polygonFeatList),
+            inputCenterPointLyr,
+            ignoreClosed=False,
+            fixInput=False,
+            parameterDict=None,
+            geometryType=None,
+            feedback=multiStepFeedback,
+        )
+        multiStepFeedback.setCurrentStep(1)
+        flagLambda = lambda x: self.flagFeature(
+            flagGeom=x[1]["geom"], flagText=x[1]["reason"], sink=invalid_polygon_sink
+        )
+        list(map(flagLambda, invalidGeomFlagDict.items()))
+
+    def prepareInvalidPolygonFlags(self, parameters, context, inputCenterPointLyr):
+        (invalid_polygon_sink, invalid_polygon_sink_id) = self.parameterAsSink(
+            parameters,
+            self.INVALID_POLYGON_LOCATION,
+            context,
+            self.getFlagFields(),
+            QgsWkbTypes.Point,
+            inputCenterPointLyr.sourceCrs(),
+        )
+
+        return invalid_polygon_sink, invalid_polygon_sink_id
+
+    def writeOutputPolygons(
+        self, output_polygon_sink, multiStepFeedback, polygonFeatList, flagDict
+    ):
+        multiStepFeedback.setProgressText(self.tr("Writing output..."))
+        output_polygon_sink.addFeatures(polygonFeatList, QgsFeatureSink.FastInsert)
         nItems = len(flagDict)
         for current, (flagGeom, flagText) in enumerate(flagDict.items()):
             if multiStepFeedback.isCanceled():
                 break
             self.flagFeature(flagGeom, flagText, fromWkb=True)
             multiStepFeedback.setProgress(current * 100 / nItems)
-        currentStep += 1
-        (
-            invalid_polygon_sink,
-            invalid_polygon_sink_id
-        ) = self.parameterAsSink(
-            parameters,
-            self.INVALID_POLYGON_LOCATION,
-            context,
-            self.getFlagFields(),
-            QgsWkbTypes.Point,
-            inputCenterPointLyr.sourceCrs()
-        )
-        if checkInvalidOnOutput:
 
-            multiStepFeedback.pushInfo(self.tr('Checking for invalid geometries on output polygons...'))
-            multiStepFeedback.setCurrentStep(currentStep)
-            invalidGeomFlagDict, _ = layerHandler.identifyInvalidGeometries(
-                polygonFeatList,
-                len(polygonFeatList),
-                inputCenterPointLyr,
-                ignoreClosed=False,
-                fixInput=False,
-                parameterDict=None,
-                geometryType=None,
-                feedback=multiStepFeedback
-            )
-            currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
-            flagLambda = lambda x: self.flagFeature(
-                flagGeom=x[1]["geom"],
-                flagText=x[1]["reason"],
-                sink=invalid_polygon_sink
-            )
-            list(map(flagLambda, invalidGeomFlagDict.items()))
-            currentStep += 1
-                
-            
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr('Checking unused boundaries...'))
-        flags = self.checkUnusedBoundaries(
-            boundaryLineLyr=boundaryLineLyr,
-            output_polygon_sink_id=output_polygon_sink_id,
+    def computePolygonsFromCenterPointAndBoundaries(
+        self,
+        context,
+        layerHandler,
+        algRunner,
+        inputCenterPointLyr,
+        boundaryLineLyr,
+        constraintLineLyrList,
+        constraintPolygonLyrList,
+        onlySelected,
+        geographicBoundaryLyr,
+        attributeBlackList,
+        suppressPolygonWithoutCenterPointFlag,
+        multiStepFeedback,
+    ):
+        multiStepFeedback.pushInfo(
+            self.tr("Starting {0}...").format(self.displayName())
+        )
+        multiStepFeedback.setProgressText(
+            self.tr("Computing polygons from center points and boundaries...")
+        )
+        (
+            polygonFeatList,
+            flagDict,
+        ) = layerHandler.getPolygonsFromCenterPointsAndBoundaries(
+            inputCenterPointLyr,
+            geographicBoundaryLyr=geographicBoundaryLyr,
+            constraintLineLyrList=constraintLineLyrList + [boundaryLineLyr],
+            constraintPolygonLyrList=constraintPolygonLyrList,
+            onlySelected=onlySelected,
+            suppressPolygonWithoutCenterPointFlag=suppressPolygonWithoutCenterPointFlag,
+            context=context,
             feedback=multiStepFeedback,
-            context=context
+            attributeBlackList=attributeBlackList,
+            algRunner=algRunner,
         )
-        unused_boundary_flag_sink.addFeatures(
-            boundaryLineLyr.getFeatures(list(flags.keys())),
-            QgsFeatureSink.FastInsert
-        )
-        
-        return {
-            self.OUTPUT_POLYGONS : output_polygon_sink_id,
-            self.FLAGS : self.flag_id,
-            self.INVALID_POLYGON_LOCATION: invalid_polygon_sink_id,
-            self.UNUSED_BOUNDARY_LINES: unused_boundary_flag_sink_id,
-        }
-    
-    def checkUnusedBoundaries(self, boundaryLineLyr, output_polygon_sink_id, feedback=None, context=None):
+
+        return polygonFeatList, flagDict
+
+    def checkUnusedBoundaries(
+        self, boundaryLineLyr, output_polygon_sink_id, feedback=None, context=None
+    ):
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         lyr = processing.run(
-            'native:addautoincrementalfield',
-            parameters = {
-                'INPUT' : output_polygon_sink_id,
-                'FIELD_NAME' : 'featid',
-                'START':1,
-                'GROUP_FIELDS':[],
-                'SORT_EXPRESSION':'',
-                'SORT_ASCENDING':True,
-                'SORT_NULLS_FIRST':False,
-                'OUTPUT':"TEMPORARY_OUTPUT"
+            "native:addautoincrementalfield",
+            parameters={
+                "INPUT": output_polygon_sink_id,
+                "FIELD_NAME": "featid",
+                "START": 1,
+                "GROUP_FIELDS": [],
+                "SORT_EXPRESSION": "",
+                "SORT_ASCENDING": True,
+                "SORT_NULLS_FIRST": False,
+                "OUTPUT": "TEMPORARY_OUTPUT",
             },
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )["OUTPUT"]
         processing.run(
-            "native:createspatialindex",
-            {
-                'INPUT': lyr
-            },
-            feedback=multiStepFeedback
+            "native:createspatialindex", {"INPUT": lyr}, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(1)
         return SpatialRelationsHandler().checkDE9IM(
@@ -356,7 +412,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             mask="*1*******",
             cardinality="1..*",
             feedback=multiStepFeedback,
-            ctx=context
+            ctx=context,
         )
 
     def name(self):
@@ -367,21 +423,21 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'buildpolygonsfromcenterpointsandboundariesalgorithm'
+        return "buildpolygonsfromcenterpointsandboundariesalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Build Polygons From Center Points and Boundaries')
+        return self.tr("Build Polygons From Center Points and Boundaries")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Manipulation Processes)')
+        return self.tr("Quality Assurance Tools (Manipulation Processes)")
 
     def groupId(self):
         """
@@ -391,10 +447,12 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Manipulation Processes)'
+        return "DSGTools: Quality Assurance Tools (Manipulation Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('BuildPolygonsFromCenterPointsAndBoundariesAlgorithm', string)
+        return QCoreApplication.translate(
+            "BuildPolygonsFromCenterPointsAndBoundariesAlgorithm", string
+        )
 
     def createInstance(self):
         return BuildPolygonsFromCenterPointsAndBoundariesAlgorithm()

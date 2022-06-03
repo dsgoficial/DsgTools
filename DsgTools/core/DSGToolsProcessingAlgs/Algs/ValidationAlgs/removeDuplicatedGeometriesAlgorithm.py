@@ -116,14 +116,17 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
     def removeFeatures(self, inputLyr, flagLyr, feedback):
         featureList, total = self.getIteratorAndFeatureCount(flagLyr)
         localTotal = 100/total if total else 0
+        inputLyr.beginEditCommand("Removing duplicates")
         inputLyr.startEditing()
+        removeSet = set()
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
             if feedback.isCanceled():
                 break
-            idRemoveList = [i for i in map(int, feat['reason'].split('(')[-1].split(')')[0].split(','))][1::]
-            inputLyr.deleteFeatures(idRemoveList)
+            removeSet = removeSet.union(set([i for i in map(int, feat['reason'].split('(')[-1].split(')')[0].split(','))][1::]))
             feedback.setProgress(current * localTotal)
+        inputLyr.deleteFeatures(list(removeSet))
+        inputLyr.endEditCommand()
 
     def name(self):
         """
