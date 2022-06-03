@@ -46,3 +46,4 @@ Melhorias:
 - Adicionada a opção de verificar geometrias inválidas nos polígonos montados no algoritmo Construir Polígonos com Delimitadores e Centroides;
 - Adicionada a opção de unir os polígonos com mesmo conjunto de atributos na saída do Construir Polígonos com Delimitadores e Centroides;
 - Adicionado botão de mudar camada da barra de inspeção de raster pela camada ativa;
+

@@ -22,10 +22,14 @@
 """
 
 from collections import defaultdict
+import copy
 from functools import partial
 from itertools import combinations
+import os
 
 from processing.tools import dataobjects
+
+import concurrent.futures
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
@@ -492,7 +496,7 @@ class LayerHandler(QObject):
         geomDict = dict()
         isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
         iterator, featCount = self.getFeatureList(
-            lyr, onlySelected=onlySelected)
+            lyr, onlySelected=onlySelected, returnIterator=True)
         size = 100/featCount if featCount else 0
         columns = self.getAttributesFromBlackList(
             lyr, attributeBlackList=attributeBlackList, ignoreVirtualFields=ignoreVirtualFields, excludePrimaryKeys=excludePrimaryKeys)
@@ -515,6 +519,37 @@ class LayerHandler(QObject):
         return geomDict
 
     def getFeaturesWithSameBoundingBox(self, iterator, isMulti, size, columns=None, feedback=None):
+        # """
+        # Iterates over iterator and gets 
+        # """
+        # bbDict = defaultdict(list)
+        # if feedback is not None:
+        #     feedback.setProgressText(self.tr("Building duplicated search structure..."))
+        # def _buildBBDictEntry(feat, columns):
+        #     if feedback.isCanceled():
+        #         return
+        #     geom = feat.geometry()
+        #     if isMulti and not geom.isMultipart():
+        #         geom.convertToMultiType()
+        #     geomBB_key = geom.boundingBox().asWktPolygon()
+        #     attrKey = ','.join(['{}'.format(feat[column])
+        #                         for column in columns]) if columns is not None else ''
+        #     return (geomBB_key, {'geom': geom, 'feat': feat, 'attrKey': attrKey})
+        # futures = set()
+        # pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count())
+        # func = lambda x: _buildBBDictEntry(x, columns)
+        # for feat in iterator:
+        #     if feedback is not None and feedback.isCanceled():
+        #         break
+        #     futures.add(pool.submit(func, QgsFeature(feat)))
+        # for current, x in enumerate(concurrent.futures.as_completed(futures)):
+        #     if feedback is not None and feedback.isCanceled():
+        #         break
+        #     key, value = x.result()
+        #     bbDict[key].append(value)
+        #     if feedback is not None:
+        #         feedback.setProgress(size * current)
+        # return bbDict
         """
         Iterates over iterator and gets 
         """
@@ -1567,21 +1602,21 @@ class LayerHandler(QObject):
         # Clip Points, Lines and Polygons according to geographicBoundaryLyr
         # Buffer because sometimes the line stops before the boundary itself,
         # making the whole algorithmn not work properly
-        if geographicBoundaryLyr:
-            limit = algRunner.runBuffer(geographicBoundaryLyr,0.00001,context)
-            constraintLineLyrList = [algRunner.runClip(camada, limit, context)
-                                    for camada in constraintLineLyrList]
-            constraintPolygonList = [algRunner.runClip(camada, limit, context)
-                                    for camada in constraintPolygonLyrList]
-            inputCenterPointLyr = algRunner.runClip(inputCenterPointLyr, limit, 
-                                                    context)
+        # if geographicBoundaryLyr:
+        #     limit = algRunner.runBuffer(geographicBoundaryLyr,0.00001,context)
+        #     constraintLineLyrList = [algRunner.runClip(camada, limit, context)
+        #                             for camada in constraintLineLyrList]
+        #     constraintPolygonList = [algRunner.runClip(camada, limit, context)
+        #                             for camada in constraintPolygonLyrList]
+        #     inputCenterPointLyr = algRunner.runClip(inputCenterPointLyr, limit, 
+        #                                             context)
         constraintPolygonListWithGeoBounds = constraintPolygonList + \
             [geographicBoundaryLyr] if geographicBoundaryLyr is not None else \
             constraintPolygonList
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         # 1. Merge Polygon lyrs into one
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Getting constraint lines'))
+        multiStepFeedback.setProgressText(self.tr('Getting constraint lines...'))
         linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
             constraintLineLyrList,
             constraintPolygonListWithGeoBounds,        
@@ -1591,24 +1626,28 @@ class LayerHandler(QObject):
             algRunner=algRunner
         )
         multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.setProgressText(self.tr('Exploding lines...'))
         splitSegmentsLyr = algRunner.runExplodeLines(
             linesLyr,
             context,
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.setProgressText(self.tr('Removing duplicated features...'))
         segmentsWithoutDuplicates = algRunner.runRemoveDuplicatedGeometries(
             splitSegmentsLyr,
             context,
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(3)
+        multiStepFeedback.setProgressText(self.tr('Starting the process of building polygons...'))
         builtPolygonLyr = algRunner.runPolygonize(
             segmentsWithoutDuplicates,
             context,
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(4)
+        multiStepFeedback.setProgressText(self.tr('Relating center points with built polygons...'))
         return self.relateCenterPointsWithPolygons(
             inputCenterPointLyr,
             builtPolygonLyr,
@@ -1642,8 +1681,10 @@ class LayerHandler(QObject):
         :params geomBoundary: (QgsVectorLayer) which delimitates the processing
         :return polygonList, flagList: list of polygons (QgsFeature)
         """
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
-        multiStepFeedback.setCurrentStep(0)
+        nSteps = 4 if constraintPolygonList else 2
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
         
         # If there were no polygon list, it was breaking the method. 
         # tried to solve it with this if else 
@@ -1653,23 +1694,26 @@ class LayerHandler(QObject):
                 context,
                 feedback=multiStepFeedback
             )
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
             constraintPolygonLyrSpatialIdx, constraintPolygonLyrIdDict = \
             self.buildSpatialIndexAndIdDict(
                 constraintPolygonLyr,
                 feedback=multiStepFeedback
             )
+            currentStep += 1
         else: 
             constraintPolygonLyrSpatialIdx, constraintPolygonLyrIdDict = \
                 QgsSpatialIndex(), {}
-            
-        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.setCurrentStep(currentStep)
         builtPolygonToCenterPointDict = self.buildCenterPolygonToCenterPointDict(
             inputCenterPointLyr,
             builtPolygonLyr,
             attributeBlackList,
             feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(2)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         polygonList, flagList = \
         self.getPolygonListAndFlagDictFromBuiltPolygonToCenterPointDict(
             builtPolygonToCenterPointDict,
