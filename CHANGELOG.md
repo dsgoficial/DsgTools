@@ -40,6 +40,10 @@ Correção de bugs:
 
 ## 4.4.0
 
+Novas funcionalidades:
+
+- Nova ferramenta de alternar visibilidade de raster;
+
 Melhorias:
 - Refatoração da interface de carregamento de camadas (remoção de funcionalidades não utilizadas e melhoria no filtro de camadas);
 - Adicionadas flags de delimitador não utilizado no algoritmo Construir Polígonos com Delimitadores e Centroides;
