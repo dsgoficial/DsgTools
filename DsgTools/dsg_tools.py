@@ -38,12 +38,6 @@ sys.path.append(os.path.abspath(currentPath))
 from qgis.utils import showPluginHelp
 from qgis.core import QgsApplication
 
-try:
-    import ptvsd
-    ptvsd.enable_attach(address=("localhost", 5679))
-except Exception as e:
-    pass
-
 from .gui.guiManager import GuiManager
 from .core.DSGToolsProcessingAlgs.dsgtoolsProcessingAlgorithmProvider import DSGToolsProcessingAlgorithmProvider
 from .Modules.acquisitionMenu.controllers.acquisitionMenuCtrl import AcquisitionMenuCtrl
