@@ -102,7 +102,7 @@ class LabelTogglingTool(QgsMapTool):
         """
         Activate tool.
         """
-        mode = AllLayers if mode is None else mode
+        mode = LabelTogglingTool.AllLayers if mode is None else mode
         try:
             self.stackButton.setDefaultAction(self.sender())
         except:
