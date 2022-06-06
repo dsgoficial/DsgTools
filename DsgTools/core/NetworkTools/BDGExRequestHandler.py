@@ -81,7 +81,12 @@ class BDGExRequestHandler(QObject):
                 urllib.request.install_opener(opener)
                 return
         proxyStr = 'http://'+user+':'+password+'@'+host+':'+port
-        proxy = urllib.request.ProxyHandler({'http': proxyStr})
+        proxy = urllib.request.ProxyHandler(
+            {
+                'http': proxyStr,
+                'https': proxyStr
+            }
+        )
         opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
         urllib.request.install_opener(opener)
 
