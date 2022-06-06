@@ -33,13 +33,14 @@ from qgis.core import (
 from DsgTools.gui.ProductionTools.MapTools.Acquisition.toolTip import ToolTip
 
 class DistanceToolTip(ToolTip):
-	def __init__(self, iface, minSegmentDistance):
+	def __init__(self, iface, minSegmentDistance, decimals):
 		super(DistanceToolTip, self).__init__(iface)
 		self.iface = iface
 		self.canvas = iface.mapCanvas()      
 		self.last_distance = 0  
 		self.showing = False
 		self.minSegmentDistance = minSegmentDistance
+		self.decimals = decimals
 
 	def calculateDistance(self, p1, p2):
 		source_crs = self.iface.mapCanvas().mapSettings().destinationCrs()
@@ -54,13 +55,13 @@ class DistanceToolTip(ToolTip):
 		return m
 
 	def canvasMoveEvent(self, last_p, current_p):
-		m =  int(self.calculateDistance(last_p, current_p))
+		m =  float(self.calculateDistance(last_p, current_p))
 		if self.showing:
 			if m != self.last_distance:
 				color = 'red'
 				if m >= self.minSegmentDistance:
 					color = 'green'				
-				txt = "<p style='color:{color}'><b>{distance}</b></p>".format(color=color, distance=str(m))
+				txt = f"<p style='color:{color}'><b>{m:.{self.decimals}f}</b></p>"
 				self.show(txt, current_p)		
 				self.last_distance = m  
 		else:
@@ -68,7 +69,7 @@ class DistanceToolTip(ToolTip):
 				color = 'red'
 				if m >= self.minSegmentDistance:
 					color = 'green'				
-				txt = "<p style='color:{color}'><b>{distance}</b></p>".format(color=color, distance=str(m))
+				txt = f"<p style='color:{color}'><b>{m:.{self.decimals}f}</b></p>"
 				super(DistanceToolTip, self).show(txt, current_p)		  	
 				self.last_distance = m
 				self.showing = True

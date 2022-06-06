@@ -43,7 +43,8 @@ class GeometricaAcquisition(QgsMapTool):
         self.initVariable()
         self.setAction(action)
         self.minSegmentDistance = self.getMinSegmentDistance()
-        self.distanceToolTip = DistanceToolTip(self.iface, self.minSegmentDistance)
+        self.decimals = self.getDecimals()
+        self.distanceToolTip = DistanceToolTip(self.iface, self.minSegmentDistance, self.decimals)
 
     def getSuppressOption(self):
         qgisSettigns = QSettings()
@@ -112,6 +113,7 @@ class GeometricaAcquisition(QgsMapTool):
         settings.beginGroup('PythonPlugins/DsgTools/Options')
         parameters = {
             u'minSegmentDistance' : settings.value('minSegmentDistance'),
+            u'rightAngleDecimals': settings.value('rightAngleDecimals'),
         }
         settings.endGroup()
         return parameters
@@ -129,7 +131,11 @@ class GeometricaAcquisition(QgsMapTool):
 
     def getMinSegmentDistance(self):
         parameters = self.getParametersFromConfig()
-        return int(parameters[u'minSegmentDistance'])
+        return float(parameters[u'minSegmentDistance'])
+    
+    def getDecimals(self):
+        parameters = self.getParametersFromConfig()
+        return int(parameters[u'rightAngleDecimals'])
 
     def completePolygon(self,geom, p4):                
         if (len(geom)>=2) and (len(geom) % 2 == 0):
