@@ -135,7 +135,7 @@ class GeometricaAcquisition(QgsMapTool):
     
     def getDecimals(self):
         parameters = self.getParametersFromConfig()
-        return int(parameters[u'rightAngleDecimals'])
+        return int(parameters[u'rightAngleDecimals']) if parameters[u'rightAngleDecimals'] is not None else 2
 
     def completePolygon(self,geom, p4):                
         if (len(geom)>=2) and (len(geom) % 2 == 0):
