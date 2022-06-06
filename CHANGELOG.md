@@ -37,3 +37,9 @@ Correção de bugs:
 - Correção na janela de opções do DSGTools;
 - Ajustado o número de casas decimais no snap hierárquico;
 - Corrigido bug na SQL de filtragem do carregamento de camadas com elementos quando se utiliza o postgres mais novo;
+
+## 4.3.2 - 2022-05-30
+
+Correção de bugs:
+
+- Correção do proxy para os serviços https do BDGEx
