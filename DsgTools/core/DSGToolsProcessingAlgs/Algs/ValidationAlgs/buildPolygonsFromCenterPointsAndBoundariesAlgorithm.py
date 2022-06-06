@@ -61,6 +61,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
     CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS = (
         "CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS"
     )
+    MERGE_OUTPUT_POLYGONS = "MERGE_OUTPUT_POLYGONS"
     OUTPUT_POLYGONS = "OUTPUT_POLYGONS"
     INVALID_POLYGON_LOCATION = "INVALID_POLYGON_LOCATION"
     UNUSED_BOUNDARY_LINES = "UNUSED_BOUNDARY_LINES"
@@ -122,6 +123,13 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 self.tr("Geographic Boundary"),
                 [QgsProcessing.TypeVectorPolygon],
                 optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.MERGE_OUTPUT_POLYGONS,
+                self.tr("Merge output polygons with same attribute set"),
+                defaultValue=False,
             )
         )
         self.addParameter(
@@ -202,6 +210,9 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         checkInvalidOnOutput = self.parameterAsBool(
             parameters, self.CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS, context
         )
+        mergeOutput = self.parameterAsBool(
+            parameters, self.MERGE_OUTPUT_POLYGONS, context
+        )
 
         self.prepareFlagSink(
             parameters, inputCenterPointLyr, QgsWkbTypes.Polygon, context
@@ -217,8 +228,9 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             QgsWkbTypes.LineString,
             boundaryLineLyr.sourceCrs(),
         )
-
-        nSteps = 4 if checkInvalidOnOutput else 3
+        nSteps = (
+            3 + mergeOutput + checkInvalidOnOutput
+        )  # boolean sum, if true, sums 1 to each term
         currentStep = 0
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         multiStepFeedback.setCurrentStep(currentStep)
@@ -245,6 +257,16 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             parameters, context, inputCenterPointLyr
         )
         currentStep += 1
+        if mergeOutput:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Dissolving output..."))
+            dissolvedLyr = algRunner.runDissolve(
+                output_polygon_sink_id, context, feedback=multiStepFeedback, field=[field.name() for field in fields]
+            )
+            polygonFeatList = [feat for feat in dissolvedLyr.getFeatures()]
+            output_polygon_sink_id = dissolvedLyr.id()
+            output_polygon_sink = dissolvedLyr
+            currentStep += 1
         if checkInvalidOnOutput:
             multiStepFeedback.setCurrentStep(currentStep)
             self.checkInvalidOnOutput(
@@ -259,7 +281,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         self.checkUnusedBoundariesAndWriteOutput(
             context,
             boundaryLineLyr,
-            output_polygon_sink_id,
+            output_polygon_sink_id if not mergeOutput else dissolvedLyr,
             unused_boundary_flag_sink,
             multiStepFeedback,
         )
