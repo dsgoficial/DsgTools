@@ -43,3 +43,17 @@ Correção de bugs:
 Correção de bugs:
 
 - Correção do proxy para os serviços https do BDGEx
+
+## 4.4.0
+
+Novas funcionalidades:
+
+- Nova ferramenta de alternar visibilidade de raster;
+
+Melhorias:
+- Refatoração da interface de carregamento de camadas (remoção de funcionalidades não utilizadas e melhoria no filtro de camadas);
+- Adicionadas flags de delimitador não utilizado no algoritmo Construir Polígonos com Delimitadores e Centroides;
+- Adicionada a opção de verificar geometrias inválidas nos polígonos montados no algoritmo Construir Polígonos com Delimitadores e Centroides;
+- Adicionada a opção de unir os polígonos com mesmo conjunto de atributos na saída do Construir Polígonos com Delimitadores e Centroides;
+- Adicionado botão de mudar camada da barra de inspeção de raster pela camada ativa;
+
