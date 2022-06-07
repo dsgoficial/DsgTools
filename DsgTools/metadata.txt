@@ -10,7 +10,7 @@
 name=DSG Tools
 qgisMinimumVersion=3.22
 description=Brazilian Army Cartographic Production Tools
-version=4.4.0
+version=4.3.2
 author=Brazilian Army Geographic Service
 email=suporte.dsgtools@dsg.eb.mil.br
 about=
@@ -43,7 +43,21 @@ about=
 # Optional items:
 
 # Uncomment the following line and add your changelog:
-changelog=changelog
+changelog=
+	4.3.2:
+		Correção de bugs:
+			- Correção do proxy para os serviços https do BDGEx
+	4.3.1:
+		Novas funcionalidades:
+			- Adicionado processo de verificação de caracteres unicode;
+			- Adicionados parâmetros de densidade de pontos na criação de molduras;
+			- Adicionados novos casos no processo de identificação de geometrias inválidas (buraco intersectando fronteira de polígono);
+		Correção de bugs:
+			- Correção no template da EDGV 3.0;
+			- Correção nos endereços do BDGEx;
+			- Correção na janela de opções do DSGTools;
+			- Ajustado o número de casas decimais no snap hierárquico;
+			- Corrigido bug na SQL de filtragem do carregamento de camadas com elementos quando se utiliza o postgres mais novo;
 
 # Tags are comma separated with spaces allowed
 tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script
