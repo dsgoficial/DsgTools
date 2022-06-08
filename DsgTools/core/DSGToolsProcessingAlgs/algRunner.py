@@ -674,3 +674,16 @@ class AlgRunner:
             feedback=feedback
         )
         return output['OUTPUT']
+    
+    def runDeaggregate(self, inputLyr, context, feedback=None, onlySelected=False):
+        parameters = {
+            'INPUT': inputLyr,
+            'SELECTED': onlySelected
+        }
+        output = processing.run(
+            "dsgtools:deaggregategeometries",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output
