@@ -43,6 +43,7 @@ from qgis.core import (
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
+    QgsProcessingUtils,
 )
 
 from ...algRunner import AlgRunner
@@ -61,6 +62,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
     CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS = (
         "CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS"
     )
+    MERGE_OUTPUT_POLYGONS = "MERGE_OUTPUT_POLYGONS"
     OUTPUT_POLYGONS = "OUTPUT_POLYGONS"
     INVALID_POLYGON_LOCATION = "INVALID_POLYGON_LOCATION"
     UNUSED_BOUNDARY_LINES = "UNUSED_BOUNDARY_LINES"
@@ -122,6 +124,13 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 self.tr("Geographic Boundary"),
                 [QgsProcessing.TypeVectorPolygon],
                 optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.MERGE_OUTPUT_POLYGONS,
+                self.tr("Merge output polygons with same attribute set"),
+                defaultValue=False,
             )
         )
         self.addParameter(
@@ -202,6 +211,9 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         checkInvalidOnOutput = self.parameterAsBool(
             parameters, self.CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS, context
         )
+        mergeOutput = self.parameterAsBool(
+            parameters, self.MERGE_OUTPUT_POLYGONS, context
+        )
 
         self.prepareFlagSink(
             parameters, inputCenterPointLyr, QgsWkbTypes.Polygon, context
@@ -217,8 +229,9 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             QgsWkbTypes.LineString,
             boundaryLineLyr.sourceCrs(),
         )
-
-        nSteps = 4 if checkInvalidOnOutput else 3
+        nSteps = (
+            3 + (mergeOutput + 1) + checkInvalidOnOutput
+        )  # boolean sum, if true, sums 1 to each term
         currentStep = 0
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         multiStepFeedback.setCurrentStep(currentStep)
@@ -238,11 +251,27 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        self.writeOutputPolygons(
-            output_polygon_sink, multiStepFeedback, polygonFeatList, flagDict
-        )
         invalid_polygon_sink, invalid_polygon_sink_id = self.prepareInvalidPolygonFlags(
             parameters, context, inputCenterPointLyr
+        )
+        currentStep += 1
+        sink, sink_id = QgsProcessingUtils.createFeatureSink(
+            'memory:', context, fields, QgsWkbTypes.Polygon, inputCenterPointLyr.sourceCrs())
+        sink.addFeatures(polygonFeatList, QgsFeatureSink.FastInsert)
+
+        if mergeOutput:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Dissolving output..."))
+            dissolvedLyr = algRunner.runDissolve(
+                sink_id, context, feedback=multiStepFeedback, field=[field.name() for field in fields]
+            )
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            algRunner.runDeaggregate(dissolvedLyr, context=context, feedback=multiStepFeedback)
+            polygonFeatList = [feat for feat in dissolvedLyr.getFeatures()]
+            currentStep += 1
+        self.writeOutputPolygons(
+            output_polygon_sink, multiStepFeedback, polygonFeatList, flagDict
         )
         currentStep += 1
         if checkInvalidOnOutput:
