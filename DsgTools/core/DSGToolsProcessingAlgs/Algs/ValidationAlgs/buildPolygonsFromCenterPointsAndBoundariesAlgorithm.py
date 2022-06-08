@@ -43,6 +43,7 @@ from qgis.core import (
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
+    QgsProcessingUtils,
 )
 
 from ...algRunner import AlgRunner
@@ -229,7 +230,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             boundaryLineLyr.sourceCrs(),
         )
         nSteps = (
-            3 + mergeOutput + checkInvalidOnOutput
+            3 + (mergeOutput + 1) + checkInvalidOnOutput
         )  # boolean sum, if true, sums 1 to each term
         currentStep = 0
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
@@ -250,23 +251,29 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        self.writeOutputPolygons(
-            output_polygon_sink, multiStepFeedback, polygonFeatList, flagDict
-        )
         invalid_polygon_sink, invalid_polygon_sink_id = self.prepareInvalidPolygonFlags(
             parameters, context, inputCenterPointLyr
         )
         currentStep += 1
+        sink, sink_id = QgsProcessingUtils.createFeatureSink(
+            'memory:', context, fields, QgsWkbTypes.Polygon, inputCenterPointLyr.sourceCrs())
+        sink.addFeatures(polygonFeatList, QgsFeatureSink.FastInsert)
+
         if mergeOutput:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(self.tr("Dissolving output..."))
             dissolvedLyr = algRunner.runDissolve(
-                output_polygon_sink_id, context, feedback=multiStepFeedback, field=[field.name() for field in fields]
+                sink_id, context, feedback=multiStepFeedback, field=[field.name() for field in fields]
             )
-            polygonFeatList = [feat for feat in dissolvedLyr.getFeatures()]
-            output_polygon_sink_id = dissolvedLyr.id()
-            output_polygon_sink = dissolvedLyr
             currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            algRunner.runDeaggregate(dissolvedLyr, context=context, feedback=multiStepFeedback)
+            polygonFeatList = [feat for feat in dissolvedLyr.getFeatures()]
+            currentStep += 1
+        self.writeOutputPolygons(
+            output_polygon_sink, multiStepFeedback, polygonFeatList, flagDict
+        )
+        currentStep += 1
         if checkInvalidOnOutput:
             multiStepFeedback.setCurrentStep(currentStep)
             self.checkInvalidOnOutput(
@@ -281,7 +288,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         self.checkUnusedBoundariesAndWriteOutput(
             context,
             boundaryLineLyr,
-            output_polygon_sink_id if not mergeOutput else dissolvedLyr,
+            output_polygon_sink_id,
             unused_boundary_flag_sink,
             multiStepFeedback,
         )
