@@ -20,6 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesOnLineCoverageAlgorithm import IdentifyDanglesOnLineCoverageAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallFirstOrderDangle import IdentifySmallFirstOrderDanglesAlgorithm
 from PyQt5.QtCore import QCoreApplication
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildJoinsOnLayersAlgorithm import \
@@ -326,8 +328,9 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             LoadShapefileAlgorithm(),
             IdentifyCountourStreamIntersectionAlgorithm(),
             SpellCheckerAlgorithm(),
-            UnicodeFilterAlgorithm()
-
+            UnicodeFilterAlgorithm(),
+            IdentifyDanglesOnLineCoverageAlgorithm(),
+            IdentifySmallFirstOrderDanglesAlgorithm(),
         ]
         return algList
 
