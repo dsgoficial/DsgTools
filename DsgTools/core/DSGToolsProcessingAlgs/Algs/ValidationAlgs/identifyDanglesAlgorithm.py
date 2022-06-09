@@ -236,13 +236,13 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             lineLyrs += [self.makeBoundaries(polygonLyr, context, feedback)]
         if not lineLyrs:
             return None
-        unifiedLinesLyr = self.layerHandler.createAndPopulateUnifiedVectorLayer(
+        return self.layerHandler.createAndPopulateUnifiedVectorLayer(
             lineLyrs,
             QgsWkbTypes.MultiLineString,
             onlySelected=onlySelected
             )
-        filterLyr = self.cleanLayer(unifiedLinesLyr, [0,6], context)
-        return filterLyr
+        # filterLyr = self.cleanLayer(unifiedLinesLyr, [0,6], context)
+        # return filterLyr
     
     def makeBoundaries(self, lyr, context, feedback):
         parameters = {
