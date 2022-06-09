@@ -1,0 +1,57 @@
+<!DOCTYPE model>
+<Option type="Map">
+  <Option name="children" type="Map">
+    <Option name="FerramentasExperimentaisProvider:Identifica ponta livre entre camadas_1" type="Map">
+      <Option value="true" name="active" type="bool"/>
+      <Option name="alg_config"/>
+      <Option value="FerramentasExperimentaisProvider:Identifica ponta livre entre camadas" name="alg_id" type="QString"/>
+      <Option value="" name="color" type="QString"/>
+      <Option name="comment" type="Map">
+        <Option value="" name="color" type="QString"/>
+        <Option value="" name="component_description" type="QString"/>
+        <Option value="60" name="component_height" type="double"/>
+        <Option value="320" name="component_pos_x" type="double"/>
+        <Option value="115" name="component_pos_y" type="double"/>
+        <Option value="100" name="component_width" type="double"/>
+        <Option value="true" name="outputs_collapsed" type="bool"/>
+        <Option value="true" name="parameters_collapsed" type="bool"/>
+      </Option>
+      <Option value="Identifica ponta livre entre camadas" name="component_description" type="QString"/>
+      <Option value="30" name="component_height" type="double"/>
+      <Option value="201" name="component_pos_x" type="double"/>
+      <Option value="158" name="component_pos_y" type="double"/>
+      <Option value="200" name="component_width" type="double"/>
+      <Option name="dependencies"/>
+      <Option value="FerramentasExperimentaisProvider:Identifica ponta livre entre camadas_1" name="id" type="QString"/>
+      <Option name="outputs"/>
+      <Option value="true" name="outputs_collapsed" type="bool"/>
+      <Option value="true" name="parameters_collapsed" type="bool"/>
+      <Option name="params" type="Map">
+        <Option name="Camadaslinha" type="List">
+          <Option type="Map">
+            <Option value="2" name="source" type="int"/>
+            <Option name="static_value" type="List">
+              <Option value="dbname='florianopolis_25k_4674_edgv30pro' host=10.25.163.12 port=5432 user='borba' password='M@sp2njcv6' key='id' checkPrimaryKeyUnicity='1' table=&quot;edgv&quot;.&quot;aquisicao_limite_massa_dagua_l&quot; (geom)" type="QString"/>
+              <Option value="dbname='florianopolis_25k_4674_edgv30pro' host=10.25.163.12 port=5432 user='borba' password='M@sp2njcv6' key='id' checkPrimaryKeyUnicity='1' table=&quot;edgv&quot;.&quot;infra_barragem_l&quot; (geom)" type="QString"/>
+            </Option>
+          </Option>
+        </Option>
+        <Option name="Raiodebusca" type="List">
+          <Option type="Map">
+            <Option value="2" name="source" type="int"/>
+            <Option value="1e-05" name="static_value" type="double"/>
+          </Option>
+        </Option>
+      </Option>
+    </Option>
+  </Option>
+  <Option name="designerParameterValues"/>
+  <Option name="groupBoxes"/>
+  <Option name="help"/>
+  <Option name="modelVariables"/>
+  <Option value="EDGV 3.0 Pro" name="model_group" type="QString"/>
+  <Option value="Identifica Pontas Livres" name="model_name" type="QString"/>
+  <Option name="parameterDefinitions"/>
+  <Option name="parameterOrder"/>
+  <Option name="parameters"/>
+</Option>
