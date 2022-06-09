@@ -49,7 +49,7 @@ from qgis.core import (
 
 class IdentifyDanglesOnLineCoverageAlgorithm(ValidationAlgorithm):
     INPUT_LINES = "INPUT_LINES"
-    SELECTED = "SELECTED"
+    SELECTED = 'SELECTED'
     TOLERANCE = "TOLERANCE"
     LINEFILTERLAYERS = "LINEFILTERLAYERS"
     POLYGONFILTERLAYERS = "POLYGONFILTERLAYERS"
@@ -63,12 +63,16 @@ class IdentifyDanglesOnLineCoverageAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
-                self.INPUT_LINES, self.tr("Input lines"), [QgsProcessing.TypeVectorLine]
+                self.INPUT_LINES,
+                self.tr("Input lines"),
+                QgsProcessing.TypeVectorLine,
+                optional=False,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED, self.tr("Process only selected features")
+                self.SELECTED,
+                self.tr('Process only selected features')
             )
         )
         self.addParameter(
@@ -118,41 +122,48 @@ class IdentifyDanglesOnLineCoverageAlgorithm(ValidationAlgorithm):
         """
         self.layerHandler = LayerHandler()
         algRunner = AlgRunner()
-        inputLineLayers = self.parameterAsVectorLayer(
+        lineLyrList = self.parameterAsLayerList(
             parameters, self.INPUT_LINES, context
         )
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         searchRadius = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        lineFilterLyrList = self.parameterAsLayerList(
-            parameters, self.LINEFILTERLAYERS, context
-        )
-        polygonFilterLyrList = self.parameterAsLayerList(
-            parameters, self.POLYGONFILTERLAYERS, context
-        )
+        lineFilterLyrList = self.parameterAsLayerList(parameters, self.LINEFILTERLAYERS, context)
+        polygonFilterLyrList = self.parameterAsLayerList(parameters, self.POLYGONFILTERLAYERS, context)
         ignoreNotSplit = self.parameterAsBool(parameters, self.TYPE, context)
         ignoreInner = self.parameterAsBool(parameters, self.IGNOREINNER, context)
-
-        # Compute the number of steps to display within the progress bar and
-        # get features from source
+        self.prepareFlagSink(parameters, lineLyrList[0], QgsWkbTypes.Point, context)
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Building unified lines layer..."))
+        lyrList = [
+            lineLyr if not onlySelected else
+                algRunner.runSaveSelectedFeatures(
+                    lineLyr,
+                    context,
+                    feedback=multiStepFeedback
+                )
+            for lineLyr in lineLyrList
+        ]
         mergedLines = algRunner.runMergeVectorLayers(
-            inputList=inputLineLayers, feedback=multiStepFeedback, context=context
+            inputList=lyrList, feedback=multiStepFeedback, context=context
         )
         multiStepFeedback.setCurrentStep(1)
+        outputLyr = algRunner.runIdentifyDangles(
+            inputLayer=mergedLines,
+            searchRadius=searchRadius,
+            lineFilter=lineFilterLyrList,
+            polygonFilter=polygonFilterLyrList,
+            ignoreInner=ignoreInner,
+            ignoreUnsegmented=ignoreNotSplit,
+            feedback=multiStepFeedback,
+            context=context
+        )
+        self.flagSink.addFeatures(
+            outputLyr.getFeatures(), QgsFeatureSink.FastInsert
+        )
         return {
-            "FLAGS": algRunner.runIdentifyDangles(
-                inputLayer=mergedLines,
-                searchRadius=searchRadius,
-                lineFilter=lineFilterLyrList,
-                polygonFilter=polygonFilterLyrList,
-                ignoreInner=ignoreInner,
-                ignoreUnsegmented=ignoreNotSplit,
-                feedback=multiStepFeedback,
-                context=context
-            )
+            "FLAGS": self.flag_id
         }
-
 
     def name(self):
         """
