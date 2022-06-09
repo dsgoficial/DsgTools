@@ -141,6 +141,13 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.SUPPRESS_AREA_WITHOUT_CENTROID_FLAG,
+                self.tr("Suppress area without center point flag"),
+                defaultValue=False,
+            )
+        )
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT_POLYGONS, self.tr("Output Polygons")
             )

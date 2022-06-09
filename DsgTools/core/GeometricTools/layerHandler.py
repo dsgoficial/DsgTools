@@ -466,14 +466,14 @@ class LayerHandler(QObject):
             inputDict[attrKey] = []
         inputDict[attrKey].append(feat)
 
-    def buildInitialAndEndPointDict(self, lyr, onlySelected=False, feedback=None):
+    def buildInitialAndEndPointDict(self, lyr, onlySelected=False, feedback=None, addFeatureToList=False):
         """
         Calculates initial point and end point from each line from lyr.
         """
         # start and end points dict
         endVerticesDict = dict()
         # iterating over features to store start and end points
-        iterator, size = self.getFeatureList(lyr, onlySelected=onlySelected)
+        iterator, size = self.getFeatureList(lyr, onlySelected=onlySelected, returnIterator=True)
         for current, feat in enumerate(iterator):
             if feedback:
                 if feedback.isCanceled():
@@ -482,7 +482,11 @@ class LayerHandler(QObject):
             lineList = geom.asMultiPolyline() if geom.isMultipart() else [
                 geom.asPolyline()]
             for line in lineList:
-                self.addFeatToDict(endVerticesDict, line, feat.id())
+                self.addFeatToDict(
+                    endVerticesDict=endVerticesDict,
+                    line=line,
+                    item=feat if addFeatureToList else feat.id()
+                )
             if feedback:
                 feedback.setProgress(size*current)
         return endVerticesDict
@@ -605,14 +609,14 @@ class LayerHandler(QObject):
                 duplicatedDict[wkb1] = [feat1, feat2]
         return duplicatedDict
 
-    def addFeatToDict(self, endVerticesDict, line, featid):
-        self.addPointToDict(line[0], endVerticesDict, featid)
-        self.addPointToDict(line[len(line) - 1], endVerticesDict, featid)
+    def addFeatToDict(self, endVerticesDict, line, item):
+        self.addPointToDict(line[0], endVerticesDict, item)
+        self.addPointToDict(line[len(line) - 1], endVerticesDict, item)
 
-    def addPointToDict(self, point, pointDict, featid):
+    def addPointToDict(self, point, pointDict, item):
         if point not in pointDict:
             pointDict[point] = []
-        pointDict[point].append(featid)
+        pointDict[point].append(item)
 
     def addDissolveField(self, layer, tol, feedback=None):
         # add temp field
@@ -703,6 +707,53 @@ class LayerHandler(QObject):
             if feedback:
                 feedback.setProgress(size * current)
         return updateDict
+    
+    def searchDanglesOnPointDict(self, endVerticesDict, feedback):
+        """
+        Counts the number of points on each endVerticesDict's key and returns a list of QgsPoint built from key candidate.
+        """
+        pointList = []
+        nVertexes = len(endVerticesDict)
+        localTotal = 100/nVertexes if nVertexes else 0
+        # actual search for dangles
+        for current, point in enumerate(endVerticesDict):
+            if feedback.isCanceled():
+                break
+            # this means we only have one occurrence of point, therefore it is a dangle
+            if len(endVerticesDict[point]) <= 1:
+                pointList.append(point)
+            feedback.setProgress(localTotal*current)
+        return pointList
+    
+    def getSmallFirstOrderDanglesFromPointDict(self, endVerticesDict, minLength, feedback=None):
+        pointList = []
+        nVertexes = len(endVerticesDict)
+        localTotal = 100/nVertexes if nVertexes else 0
+        for current, (point, featList) in enumerate(endVerticesDict.items()):
+            if feedback is not None and feedback.isCanceled():
+                break
+            if len(featList) == 1 and featList[0].geometry().length() < minLength:
+                pointList.append(featList[0])
+            if feedback is not None:
+                feedback.setProgress(current * localTotal)
+        return pointList
+    
+    def getSmallFirstOrderDangles(self, inputLyr, minLength, onlySelected=False, feedback=None):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setProgressText(self.tr("Building aux structure"))
+        multiStepFeedback.setCurrentStep(0)
+        endVerticesDict = self.buildInitialAndEndPointDict(
+            inputLyr,
+            onlySelected=onlySelected,
+            feedback=multiStepFeedback,
+            addFeatureToList=True
+        )
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.setProgressText(self.tr("Searching small first order dangles"))
+        pointList = self.getSmallFirstOrderDanglesFromPointDict(
+            endVerticesDict=endVerticesDict, minLength=minLength, feedback=multiStepFeedback
+        )
+        return pointList
 
     def filterDangles(self, lyr, searchRadius, feedback=None):
         deleteList = []
