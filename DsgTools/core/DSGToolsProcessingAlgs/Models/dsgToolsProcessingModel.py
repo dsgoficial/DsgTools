@@ -109,8 +109,10 @@ class DsgToolsProcessingModel(QgsTask):
             parameters["flags"] = {
                 "onFlagsRaised" : "halt",
                 "enableLocalFlags" : False,
-                "loadOutput" : False
+                "loadOutput" : False,
             }
+        if "flagLayerNames" not in parameters["flags"]:
+            parameters["flags"]["flagLayerNames"] = []
         if "source" not in parameters or not parameters["source"]:
             return self.tr("Model source is not defined.")
         if "type" not in parameters["source"] or \
@@ -346,7 +348,13 @@ class DsgToolsProcessingModel(QgsTask):
         layer = layer if isinstance(layer, QgsMapLayer) \
             else QgsProcessingUtils.mapLayerFromString(layer)
         QgsProject.instance().addMapLayer(layer, False)
-        root.insertChildNode(-1, QgsLayerTreeLayer(layer))
+        qaGroup = self.createGroup(groupname, root)
+        subGroup = self.createGroup(subgroupname, qaGroup)
+        subGroup.insertChildNode(-1, QgsLayerTreeLayer(layer))
+    
+    def createGroup(self, groupName, rootNode):
+        groupNode = rootNode.findGroup(groupName)
+        return groupNode if groupNode else rootNode.addGroup(groupName)
 
     def runModel(self, feedback=None):
         """
@@ -370,15 +378,17 @@ class DsgToolsProcessingModel(QgsTask):
         # hence the popitems
         out.pop("CHILD_INPUTS", None)
         out.pop("CHILD_RESULTS", None)
-        if self.loadOutput():
-            for name, vl in out.items():
-                if isinstance(vl, QgsMapLayer):
-                    vl.setName(name.split(":", 2)[-1])
-                    self.addLayerToGroup(
-                        vl,
-                        self.tr("DSGTools Quality Assurance Models"),
-                        model.displayName()
-                    )
+        if not self.loadOutput():
+            return out
+        for name, vl in out.items():
+            if not isinstance(vl, QgsMapLayer):
+                continue
+            vl.setName(name.split(":", 2)[-1])
+            self.addLayerToGroup(
+                vl,
+                self.tr("DSGTools Quality Assurance Models"),
+                model.displayName()
+            )
         return out
 
     def export(self, filepath):
