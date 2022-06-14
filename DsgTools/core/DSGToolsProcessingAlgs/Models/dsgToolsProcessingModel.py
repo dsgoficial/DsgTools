@@ -109,8 +109,10 @@ class DsgToolsProcessingModel(QgsTask):
             parameters["flags"] = {
                 "onFlagsRaised" : "halt",
                 "enableLocalFlags" : False,
-                "loadOutput" : False
+                "loadOutput" : False,
             }
+        if "flagLayerNames" not in parameters["flags"]:
+            parameters["flags"]["flagLayerNames"] = []
         if "source" not in parameters or not parameters["source"]:
             return self.tr("Model source is not defined.")
         if "type" not in parameters["source"] or \
@@ -294,6 +296,13 @@ class DsgToolsProcessingModel(QgsTask):
         :return: (str) model behaviour on Workflow.
         """
         return self.flags()["loadOutput"] if self.flags() else False
+    
+    def flagLayerNames(self):
+        """
+        Model behaviour when flags are raised. Tells which layers should be checked as flags.
+        :return: (list) list of layer names
+        """
+        return self.flags()["flagLayerNames"] if self.flags() else []
 
     def enableLocalFlags(self):
         """
@@ -345,8 +354,15 @@ class DsgToolsProcessingModel(QgsTask):
         root = QgsProject.instance().layerTreeRoot()
         layer = layer if isinstance(layer, QgsMapLayer) \
             else QgsProcessingUtils.mapLayerFromString(layer)
-        QgsProject.instance().addMapLayer(layer, False)
-        root.insertChildNode(-1, QgsLayerTreeLayer(layer))
+        qaGroup = self.createGroup(groupname, root)
+        subGroup = self.createGroup(subgroupname, qaGroup)
+        QgsProject.instance().addMapLayer(layer, addToLegend = False)
+        subGroup.addLayer(layer)
+        # root.insertChildNode(-1, QgsLayerTreeLayer(subGroup))
+    
+    def createGroup(self, groupName, rootNode):
+        groupNode = rootNode.findGroup(groupName)
+        return groupNode if groupNode else rootNode.addGroup(groupName)
 
     def runModel(self, feedback=None):
         """
@@ -370,15 +386,20 @@ class DsgToolsProcessingModel(QgsTask):
         # hence the popitems
         out.pop("CHILD_INPUTS", None)
         out.pop("CHILD_RESULTS", None)
-        if self.loadOutput():
-            for name, vl in out.items():
-                if isinstance(vl, QgsMapLayer):
-                    vl.setName(name.split(":", 2)[-1])
-                    self.addLayerToGroup(
-                        vl,
-                        self.tr("DSGTools Quality Assurance Models"),
-                        model.displayName()
-                    )
+        if not self.loadOutput():
+            return out
+        flagLayerNames = self.flagLayerNames()
+        for name, vl in out.items():
+            if not isinstance(vl, QgsMapLayer):
+                continue
+            vl.setName(name.split(":", 2)[-1])
+            if vl.name() in flagLayerNames and vl.featureCount() == 0:
+                continue
+            self.addLayerToGroup(
+                vl,
+                self.tr("DSGTools Quality Assurance Models"),
+                model.displayName()
+            )
         return out
 
     def export(self, filepath):
@@ -419,9 +440,9 @@ class DsgToolsProcessingModel(QgsTask):
                     while name in self.output["result"]:
                         name = "{0} ({1})".format(baseName, idx)
                         idx += 1
-                    print(vl)
+                    # print(vl)
                     vl.setName(name)
-                    print("PASSED")
+                    # print("PASSED")
                     self.output["result"][name] = vl
         except Exception as e:
             self.output = {
@@ -437,8 +458,9 @@ class DsgToolsProcessingModel(QgsTask):
         """
         Iterates over the results and finds if there are flags.
         """
-        for lyr in self.output['result'].values():
-            if isinstance(lyr, QgsMapLayer) and lyr.featureCount() > 0:    
+        for key, lyr in self.output['result'].items():
+            if key in self._param['flags']['flagLayerNames'] \
+                and isinstance(lyr, QgsMapLayer) and lyr.featureCount() > 0:    
                 return True
         return False
 

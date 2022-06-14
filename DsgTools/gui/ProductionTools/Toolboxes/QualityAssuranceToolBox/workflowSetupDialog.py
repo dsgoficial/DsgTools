@@ -59,7 +59,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         ON_FLAGS_WARN : "warn",
         ON_FLAGS_IGNORE : "ignore"
     }
-    MODEL_NAME_HEADER, MODEL_SOURCE_HEADER, ON_FLAGS_HEADER, LOAD_OUT_HEADER = range(4)
+    MODEL_NAME_HEADER, MODEL_SOURCE_HEADER, ON_FLAGS_HEADER, LOAD_OUT_HEADER, FLAG_KEYS_HEADER = range(5)
 
     def __init__(self, parent=None):
         """
@@ -100,7 +100,14 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 "widget" : self.loadOutputWidget,
                 "setter" : "setChecked",
                 "getter" : "isChecked"
-            }
+            },
+            self.FLAG_KEYS_HEADER: {
+                "header" : self.tr("Flag keys"),
+                "type" : "widget",
+                "widget" : self.loadFlagLayers,
+                "setter" : "setText",
+                "getter" : "text"
+            },
         })
         self.orderedTableWidget.setHeaderDoubleClickBehaviour("replicate")
 
@@ -112,8 +119,9 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 self.orderedTableWidget.horizontalHeader().geometry().width()
         onFlagsColSize = self.orderedTableWidget.sectionSize(2)
         loadOutColSize = self.orderedTableWidget.sectionSize(3)
+        flagsOutColSize = self.orderedTableWidget.sectionSize(4)
         missingBarSize = self.geometry().size().width() - dSize\
-                         - onFlagsColSize - loadOutColSize
+                         - onFlagsColSize - loadOutColSize - flagsOutColSize
         # the "-11" is empiric: it makes it fit header to table
         self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(
             0, int(0.4 * missingBarSize) - 11
@@ -240,6 +248,9 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             cb.setChecked(option)
         return cb
 
+    def loadFlagLayers(self):
+        return QLineEdit()
+
     def now(self):
         """
         Gets time and date from the system. Format: "dd/mm/yyyy HH:MM:SS".
@@ -316,6 +327,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         onFlagsIdx = contents[self.ON_FLAGS_HEADER]
         name = contents[self.MODEL_NAME_HEADER].strip()
         loadOutput = contents[self.LOAD_OUT_HEADER]
+        flagLayerNames = contents[self.FLAG_KEYS_HEADER].strip().split(',')
         if not os.path.exists(filepath):
             xml = ""
         else:
@@ -325,7 +337,8 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             "displayName" : name,
             "flags" : {
                 "onFlagsRaised" : self.onFlagsValueMap[onFlagsIdx],
-                "loadOutput" : loadOutput
+                "loadOutput" : loadOutput,
+                "flagLayerNames": flagLayerNames,
             },
             "source" : {
                 "type" : "xml",
@@ -374,7 +387,8 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 "ignore" : self.ON_FLAGS_IGNORE
                 
             }[model.onFlagsRaised()],
-            self.LOAD_OUT_HEADER : model.loadOutput()
+            self.LOAD_OUT_HEADER : model.loadOutput(),
+            self.FLAG_KEYS_HEADER: ",".join(map(lambda x: str(x).strip(), model.flagLayerNames())),
         })
         return True
 

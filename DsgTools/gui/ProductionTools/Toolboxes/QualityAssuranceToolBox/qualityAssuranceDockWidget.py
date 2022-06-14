@@ -577,6 +577,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         Executes current selected workflow.
         """
         workflow = self.currentWorkflow()
+        self.prepareOutputTreeNodes()
         if workflow is not None:
             self.setGuiState(True)
             # these methods are defined locally as they are not supposed to be
@@ -712,6 +713,12 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 Qgis.Warning,
                 duration=3
             )
+
+    def prepareOutputTreeNodes(self):
+        rootNode = QgsProject.instance().layerTreeRoot()
+        groupName = self.tr("DSGTools Quality Assurance Models")
+        groupNode = rootNode.findGroup(groupName)
+        groupNode = groupNode if groupNode else rootNode.addGroup(groupName)
 
     @pyqtSlot(bool, name="on_importPushButton_clicked")
     def importWorkflow(self):
