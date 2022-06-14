@@ -49,6 +49,7 @@ Correção de bugs:
 Novas funcionalidades:
 
 - Nova ferramenta de alternar visibilidade de raster;
+- Novo processo de remover camadas vazias do projeto (portado do Ferramentas Experimentais);
 
 Melhorias:
 - Refatoração da interface de carregamento de camadas (remoção de funcionalidades não utilizadas e melhoria no filtro de camadas);
