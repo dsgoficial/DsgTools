@@ -58,6 +58,7 @@ Melhorias:
 - Adicionado botão de mudar camada da barra de inspeção de raster pela camada ativa;
 - Ferramenta de controle de qualidade agora agrupa as camadas carregadas em grupos;
 - Ferramenta de contole de qualidade agora diferencia camadas carregadas nos processos de flags, por meio de parâmetro de configuração;
+- Adicionada a opção de ignorar feições circulares no processo de identificar ângulos errados em edificações;
 
 Correção de Bug:
 
