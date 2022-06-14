@@ -56,4 +56,9 @@ Melhorias:
 - Adicionada a opção de verificar geometrias inválidas nos polígonos montados no algoritmo Construir Polígonos com Delimitadores e Centroides;
 - Adicionada a opção de unir os polígonos com mesmo conjunto de atributos na saída do Construir Polígonos com Delimitadores e Centroides;
 - Adicionado botão de mudar camada da barra de inspeção de raster pela camada ativa;
+- Ferramenta de controle de qualidade agora agrupa as camadas carregadas em grupos;
+- Ferramenta de contole de qualidade agora diferencia camadas carregadas nos processos de flags, por meio de parâmetro de configuração;
 
+Correção de Bug:
+
+- Filtro de expressão do inspetor de feições agora é limpo quando o botão de trocar para a camada ativa é acionado.
