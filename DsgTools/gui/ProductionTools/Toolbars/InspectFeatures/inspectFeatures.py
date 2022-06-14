@@ -377,6 +377,7 @@ class InspectFeatures(QWidget,Ui_Form):
             self.mMapLayerComboBox.setLayer(activeLayer)
         else:
             self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Active layer is not valid to be used in this tool.'), level=Qgis.Warning, duration=2)
+        self.mFieldExpressionWidget.setExpression('')
     
     def unload(self):
         self.iface.unregisterMainWindowAction(self.activateToolAction)
