@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+import math
 from PyQt5.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
@@ -40,6 +41,7 @@ class IdentifyWrongBuildingAnglesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
     TOLERANCE = 'TOLERANCE'
     SELECTED = 'SELECTED'
+    IGNORE_CIRCLES = 'IGNORE_CIRCLES'
 
     def initAlgorithm(self, config):
         """
@@ -68,6 +70,13 @@ class IdentifyWrongBuildingAnglesAlgorithm(ValidationAlgorithm):
                 type=QgsProcessingParameterNumber.Double
             )
         )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.IGNORE_CIRCLES,
+                self.tr('Ignore circular geometries'),
+                defaultValue = False
+            )
+        )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
@@ -86,6 +95,7 @@ class IdentifyWrongBuildingAnglesAlgorithm(ValidationAlgorithm):
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
+        ignoreCircles = self.parameterAsBool(parameters, self.IGNORE_CIRCLES, context)
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
@@ -95,6 +105,8 @@ class IdentifyWrongBuildingAnglesAlgorithm(ValidationAlgorithm):
             # Stop the algorithm if cancel button has been clicked
             if feedback.isCanceled():
                 break
+            if ignoreCircles and self.isCircle(feat.geometry()):
+                continue
             outOfBoundsList = geometryHandler.getInvalidBuildingAngle(feat, tol)
             if outOfBoundsList:
                 for item in outOfBoundsList:
@@ -108,6 +120,13 @@ class IdentifyWrongBuildingAnglesAlgorithm(ValidationAlgorithm):
             feedback.setProgress(int(current * total))
 
         return {self.FLAGS: self.flag_id}
+
+    def isCircle(self, geom):
+        perimeter = geom.length()
+        area = geom.area()
+        if (perimeter * perimeter / (4 * math.pi)) / area < 1.1:
+            return True
+        return False
 
     def name(self):
         """
