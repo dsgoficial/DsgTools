@@ -63,7 +63,7 @@ class MapToolsGuiManager(QObject):
         self.genericTool.addTool(self.manager, self.activateGenericTool, self.parentMenu, self.iconBasePath)
         #adding select raster
         self.rasterSelectTool = SelectRasterTool(self.iface)
-        self.rasterSelectTool.addTool(self.manager, self.activateRasterSelectTool, self.parentMenu, self.iconBasePath)
+        self.rasterSelectTool.addTool(self.manager, self.rasterSelectTool.run, self.parentMenu, self.iconBasePath)
         #adding flip line tool
         self.flipLineTool = FlipLine(self.iface)
         self.flipLineTool.addTool(self.manager, self.flipLineTool.startFlipLineTool, self.parentMenu, self.iconBasePath)

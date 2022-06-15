@@ -53,25 +53,25 @@ class SelectRasterTool(QgsMapTool):
         self.toolAction = action
         self.toolAction.setCheckable(True)
     
-    def activate(self):
-        """
-        Activate tool.
-        """
-        if self.toolAction:
-            self.toolAction.setChecked(True)
-        QgsMapTool.activate(self)
+    # def activate(self):
+    #     """
+    #     Activate tool.
+    #     """
+    #     if self.toolAction:
+    #         self.toolAction.setChecked(True)
+    #     QgsMapTool.activate(self)
     
-    def deactivate(self):
-        """
-        Deactivate tool.
-        """
-        try:
-            if self.toolAction:
-                self.toolAction.setChecked(False)
-            if self is not None:
-                QgsMapTool.deactivate(self)
-        except:
-            pass
+    # def deactivate(self):
+    #     """
+    #     Deactivate tool.
+    #     """
+    #     try:
+    #         if self.toolAction:
+    #             self.toolAction.setChecked(False)
+    #         if self is not None:
+    #             QgsMapTool.deactivate(self)
+    #     except:
+    #         pass
     
     def canvasPressEvent(self, e):
         self.run()
@@ -120,6 +120,7 @@ class SelectRasterTool(QgsMapTool):
             self.iface.layerTreeView().setLayerVisible(
                 otherRaster, otherRaster.id() == raster.id()
             )
+        self.toolAction.setChecked(False)
 
     def unload(self):
         self.deactivate()
