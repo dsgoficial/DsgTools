@@ -100,6 +100,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 self.BOUNDARY_LINE_LAYER,
                 self.tr("Line Boundary"),
                 [QgsProcessing.TypeVectorLine],
+                optional=True,
             )
         )
         self.addParameter(
@@ -191,6 +192,10 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         constraintLineLyrList = self.parameterAsLayerList(
             parameters, self.CONSTRAINT_LINE_LAYERS, context
         )
+        if boundaryLineLyr is None and constraintLineLyrList == []:
+            raise QgsProcessingException(
+                self.tr('There must be at least one boundary layer or one constraint line list.')
+            )
         constraintPolygonLyrList = self.parameterAsLayerList(
             parameters, self.CONSTRAINT_POLYGON_LAYERS, context
         )
@@ -232,9 +237,9 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             parameters,
             self.UNUSED_BOUNDARY_LINES,
             context,
-            boundaryLineLyr.fields(),
+            boundaryLineLyr.fields() if boundaryLineLyr is not None else QgsFields(),
             QgsWkbTypes.LineString,
-            boundaryLineLyr.sourceCrs(),
+            boundaryLineLyr.sourceCrs() if boundaryLineLyr is not None else inputCenterPointLyr.sourceCrs(),
         )
         nSteps = (
             3 + (mergeOutput + 1) + checkInvalidOnOutput
@@ -315,6 +320,8 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         unused_boundary_flag_sink,
         multiStepFeedback,
     ):
+        if boundaryLineLyr is None:
+            return
         multiStepFeedback.setProgressText(self.tr("Checking unused boundaries..."))
         flags = self.checkUnusedBoundaries(
             boundaryLineLyr=boundaryLineLyr,
@@ -406,7 +413,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         ) = layerHandler.getPolygonsFromCenterPointsAndBoundaries(
             inputCenterPointLyr,
             geographicBoundaryLyr=geographicBoundaryLyr,
-            constraintLineLyrList=constraintLineLyrList + [boundaryLineLyr],
+            constraintLineLyrList=constraintLineLyrList + [boundaryLineLyr] if boundaryLineLyr is not None else constraintLineLyrList,
             constraintPolygonLyrList=constraintPolygonLyrList,
             onlySelected=onlySelected,
             suppressPolygonWithoutCenterPointFlag=suppressPolygonWithoutCenterPointFlag,
