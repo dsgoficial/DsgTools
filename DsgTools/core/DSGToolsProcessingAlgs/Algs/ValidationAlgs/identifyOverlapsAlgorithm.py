@@ -20,9 +20,11 @@
  ***************************************************************************/
 """
 
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from PyQt5.QtCore import QCoreApplication
-
+import os
 import processing
+import concurrent.futures
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
@@ -34,7 +36,7 @@ from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsProject, QgsWkbTypes)
+                       QgsProject, QgsWkbTypes, QgsProcessingFeatureSourceDefinition)
 
 from .validationAlgorithm import ValidationAlgorithm
 
@@ -51,8 +53,11 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input Polygon Layer'),
-                [QgsProcessing.TypeVectorPolygon]
+                self.tr('Input layer'),
+                [
+                    QgsProcessing.TypeVectorLine,
+                    QgsProcessing.TypeVectorPolygon,
+                ]
             )
         )
 
@@ -70,73 +75,113 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
             )
         )
 
-    def overlayCoverage(self, coverage, context, feedback):
-        output = QgsProcessingUtils.generateTempFilename('output.shp')
-        parameters = {
-            'ainput':coverage,
-            'atype':0,
-            'binput':coverage,
-            'btype':0,
-            'operator':0,
-            'snap':0,
-            '-t':False,
-            'output':output,
-            'GRASS_REGION_PARAMETER':None,
-            'GRASS_SNAP_TOLERANCE_PARAMETER':-1,
-            'GRASS_MIN_AREA_PARAMETER':0.0001,
-            'GRASS_OUTPUT_TYPE_PARAMETER':0,
-            'GRASS_VECTOR_DSCO':'',
-            'GRASS_VECTOR_LCO':''
-            }
-        x = processing.run('grass7:v.overlay', parameters, context = context, feedback = feedback)
-        lyr = QgsProcessingUtils.mapLayerFromString(x['output'], context)
-        return lyr
-
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
         geometryHandler = GeometryHandler()
         layerHandler = LayerHandler()
+        algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
-        isMulti = QgsWkbTypes.isMultiType(int(inputLyr.wkbType()))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Polygon, context)
+        self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
-
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
-        lyr = self.overlayCoverage(inputLyr, context, multiStepFeedback)
-        featureList, total = self.getIteratorAndFeatureCount(lyr) #only selected is not applied because we are using an inner layer, not the original ones
-        QgsProject.instance().removeMapLayer(lyr)
-        geomDict = dict()
+        multiStepFeedback.setProgressText(self.tr("Building aux structure..."))
+        joinLyr, idDict = self.prepareAuxStructure(context, multiStepFeedback, algRunner, inputLyr, onlySelected)
         multiStepFeedback.setCurrentStep(1)
-        for current, feat in enumerate(featureList):
-            # Stop the algorithm if cancel button has been clicked
-            if feedback.isCanceled():
+        multiStepFeedback.setProgressText(self.tr("Finding overlaps..."))
+        geometrySet = self.findOverlaps(joinLyr, idDict, feedback)
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.setProgressText(self.tr("Raising flags..."))
+        total = len(geometrySet)
+        for current, geom in enumerate(geometrySet):
+            if multiStepFeedback.isCanceled():
                 break
-            geom = feat.geometry()
-            if isMulti and not geom.isMultipart():
-                geom.convertToMultiType()
-            geomKey = geom.asWkb()
-            if geomKey not in geomDict:
-                geomDict[geomKey] = []
-            geomDict[geomKey].append(feat)
-            # # Update the progress bar
+            self.flagFeature(geom, self.tr('Overlap'))
             multiStepFeedback.setProgress(current * total)
-        multiStepFeedback.setCurrentStep(2)        
-        total = 100/len(geomDict) if len(geomDict) != 0 else 0
-        for k, v in geomDict.items():
-            if feedback.isCanceled():
-                break
-            if len(v) > 1:
-                flagText = self.tr('Features from {0} overlap.').format(inputLyr.name())
-                self.flagFeature(v[0].geometry(), flagText)
-            multiStepFeedback.setProgress(current * total)
+
         return {self.FLAGS: self.flag_id}
+
+    def prepareAuxStructure(self, context, feedback, algRunner, inputLyr, onlySelected):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.setProgressText(self.tr("Building aux structure: creating incremental field layer..."))
+        incrementedLyr = algRunner.runAddAutoIncrementalField(
+            inputLyr=inputLyr if not onlySelected else QgsProcessingFeatureSourceDefinition(
+            inputLyr.id(), True),
+            context=context,
+            feedback=multiStepFeedback,
+            start=0,
+            sortAscending=False,
+            sortNullsFirst=False
+        )
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.setProgressText(self.tr("Building aux structure: spatial index..."))
+        algRunner.runCreateSpatialIndex(
+            inputLyr=incrementedLyr,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.setProgressText(self.tr("Building aux structure: feature dict..."))
+        idDict = {feat['featid']: feat for feat in incrementedLyr.getFeatures()}
+        multiStepFeedback.setCurrentStep(3)
+        multiStepFeedback.setProgressText(self.tr("Building aux structure: Running spatial join..."))
+        joinLyr = algRunner.runJoinAttributesByLocation(
+            inputLyr=incrementedLyr,
+            joinLyr=incrementedLyr,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        
+        
+        return joinLyr, idDict
+
+    def findOverlaps(self, inputLyr, idDict, feedback=None):
+        total = 100.0 / inputLyr.featureCount() if inputLyr.featureCount() else 0
+        geomType = inputLyr.wkbType()
+        if not total:
+            return set()
+        def _processFeature(feat, feedback):
+            outputSet = set()
+            if (feedback is not None and feedback.isCanceled()) or feat["featid_2"] not in idDict or feat['featid_2'] <= feat['featid']:
+                return outputSet
+            geom1 = feat.geometry()
+            geom2 = idDict[feat['featid_2']].geometry()
+            if not geom1.intersects(geom2):
+                return outputSet
+            intersects = geom1.intersection(geom2)
+            return outputSet.union(
+                set(intersects.asGeometryCollection()) if intersects.isMultipart() else {intersects}
+            ) if intersects.type() == geomType else outputSet 
+        
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.setProgressText(self.tr("Finding overlaps: submitting to thread..."))
+        processLambda = lambda x: _processFeature(x, multiStepFeedback)
+        pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count())
+        futures = set()
+        outputSet = set()
+        for current, feat in enumerate(inputLyr.getFeatures()):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+        #     futures.add(pool.submit(processLambda, feat))
+        
+        # multiStepFeedback.setCurrentStep(1)
+        # multiStepFeedback.setProgressText(self.tr("Finding overlaps: processing thread outputs..."))
+        # outputSet = set()
+        # for current, future in enumerate(concurrent.futures.as_completed(futures)):
+        #     if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+        #         break
+        #     outputSet = outputSet.union(future.result())
+            outputSet = outputSet.union(processLambda(feat))
+            multiStepFeedback.setProgress(current * total)
+        return outputSet
 
     def name(self):
         """

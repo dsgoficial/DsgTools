@@ -435,17 +435,18 @@ class AlgRunner:
         output = processing.run('dsgtools:matchandapplyqmlstylestolayersalgorithm', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
-    def runAddAutoIncrementalField(self, inputLyr, context, feedback=None, outputLyr=None):
+    def runAddAutoIncrementalField(self, inputLyr, context, feedback=None, outputLyr=None, fieldName=None, start=1, sortAscending=True, sortNullsFirst=False):
+        fieldName = 'featid' if fieldName is None else fieldName
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
             'INPUT' : inputLyr,
-            'FIELD_NAME' : 'featid',
-            'START':1,
-            'GROUP_FIELDS':[],
-            'SORT_EXPRESSION':'',
-            'SORT_ASCENDING':True,
-            'SORT_NULLS_FIRST':False,
-            'OUTPUT':outputLyr
+            'FIELD_NAME' : fieldName,
+            'START': start,
+            'GROUP_FIELDS': [],
+            'SORT_EXPRESSION': '',
+            'SORT_ASCENDING': sortAscending,
+            'SORT_NULLS_FIRST': sortNullsFirst,
+            'OUTPUT': outputLyr,
         }
         output = processing.run(
             'native:addautoincrementalfield',
