@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFormatRulesToLayersAlgorithm import AssignFormatRulesToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.removeEmptyLayers import RemoveEmptyLayers
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesOnLineCoverageAlgorithm import IdentifyDanglesOnLineCoverageAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGeometriesWithLargeVertexDensityAlgorithm import IdentifyGeometriesWithLargeVertexDensityAlgorithm
@@ -335,6 +336,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifySmallFirstOrderDanglesAlgorithm(),
             RemoveEmptyLayers(),
             IdentifyGeometriesWithLargeVertexDensityAlgorithm(),
+            AssignFormatRulesToLayersAlgorithm(),
         ]
         return algList
 
