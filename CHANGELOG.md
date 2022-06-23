@@ -50,6 +50,8 @@ Novas funcionalidades:
 
 - Nova ferramenta de alternar visibilidade de raster;
 - Novo processo de remover camadas vazias do projeto (portado do Ferramentas Experimentais);
+- Novo processo de identificar vértices duplicados;
+- Novo processo de identificar feições com densidade alta de vértices;
 
 Melhorias:
 - Refatoração da interface de carregamento de camadas (remoção de funcionalidades não utilizadas e melhoria no filtro de camadas);
@@ -60,6 +62,8 @@ Melhorias:
 - Ferramenta de controle de qualidade agora agrupa as camadas carregadas em grupos;
 - Ferramenta de contole de qualidade agora diferencia camadas carregadas nos processos de flags, por meio de parâmetro de configuração;
 - Adicionada a opção de ignorar feições circulares no processo de identificar ângulos errados em edificações;
+- Refatorado o processo de atribuir regras de atributação ao formulário de feições;
+- Refatorado o processo de identificar overlaps. Agora ele também pega overlaps de linhas;
 
 Correção de Bug:
 
