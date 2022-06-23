@@ -144,7 +144,7 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
 
     def findOverlaps(self, inputLyr, idDict, feedback=None):
         total = 100.0 / inputLyr.featureCount() if inputLyr.featureCount() else 0
-        geomType = inputLyr.wkbType()
+        geomType = inputLyr.geometryType()
         if not total:
             return set()
         def _processFeature(feat, feedback):
@@ -170,16 +170,16 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         for current, feat in enumerate(inputLyr.getFeatures()):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
-        #     futures.add(pool.submit(processLambda, feat))
+            futures.add(pool.submit(processLambda, feat))
         
-        # multiStepFeedback.setCurrentStep(1)
-        # multiStepFeedback.setProgressText(self.tr("Finding overlaps: processing thread outputs..."))
-        # outputSet = set()
-        # for current, future in enumerate(concurrent.futures.as_completed(futures)):
-        #     if multiStepFeedback is not None and multiStepFeedback.isCanceled():
-        #         break
-        #     outputSet = outputSet.union(future.result())
-            outputSet = outputSet.union(processLambda(feat))
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.setProgressText(self.tr("Finding overlaps: processing thread outputs..."))
+        outputSet = set()
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+            outputSet = outputSet.union(future.result())
+            # outputSet = outputSet.union(processLambda(feat))
             multiStepFeedback.setProgress(current * total)
         return outputSet
 
