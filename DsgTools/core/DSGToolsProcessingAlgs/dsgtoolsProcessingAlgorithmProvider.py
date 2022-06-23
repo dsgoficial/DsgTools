@@ -23,6 +23,7 @@
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFormatRulesToLayersAlgorithm import AssignFormatRulesToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.removeEmptyLayers import RemoveEmptyLayers
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesOnLineCoverageAlgorithm import IdentifyDanglesOnLineCoverageAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedVertexesAlgorithm import IdentifyDuplicatedVertexesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGeometriesWithLargeVertexDensityAlgorithm import IdentifyGeometriesWithLargeVertexDensityAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallFirstOrderDangle import IdentifySmallFirstOrderDanglesAlgorithm
 from PyQt5.QtCore import QCoreApplication
@@ -337,6 +338,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             RemoveEmptyLayers(),
             IdentifyGeometriesWithLargeVertexDensityAlgorithm(),
             AssignFormatRulesToLayersAlgorithm(),
+            IdentifyDuplicatedVertexesAlgorithm(),
         ]
         return algList
 

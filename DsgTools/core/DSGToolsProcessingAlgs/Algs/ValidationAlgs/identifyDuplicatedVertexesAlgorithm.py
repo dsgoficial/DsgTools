@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2022-06-20
+        begin                : 2022-06-23
         git sha              : $Format:%H$
         copyright            : (C) 2022 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
@@ -36,11 +36,10 @@ from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
-class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
+class IdentifyDuplicatedVertexesAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
-    SEARCH_RADIUS = 'SEARCH_RADIUS'
 
     def initAlgorithm(self, config):
         """
@@ -61,14 +60,6 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterBoolean(
                 self.SELECTED,
                 self.tr('Process only selected features')
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterDistance(
-                self.SEARCH_RADIUS,
-                self.tr('Search Radius'),
-                defaultValue = 1.0
             )
         )
 
@@ -98,16 +89,8 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
             self.SELECTED,
             context
         )
-        searchRadius = self.parameterAsDouble(
-            parameters,
-            self.SEARCH_RADIUS,
-            context
-        )
-        # output flag type is a polygon because the flag will be a circle with 
-        # radius tol and center as the vertex
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
-        # Compute the number of steps to display within the progress bar and
-        # get features from source
+
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.setProgressText(self.tr("Building aux structure..."))
@@ -126,58 +109,56 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.setProgressText(self.tr("Building spatial index on extracted vertexes..."))
-        algRunner.runCreateSpatialIndex(
-            inputLyr=vertexLayer,
-            context=context,
-            feedback=multiStepFeedback
-        )
+        multiStepFeedback.setProgressText(self.tr("Building search structure..."))
+        pointDict = self.buildPointDict(vertexLayer, feedback=multiStepFeedback)
         multiStepFeedback.setCurrentStep(3)
-        multiStepFeedback.setProgressText(self.tr("Searching close vertexes..."))
-        flagDict = self.getCloseVertexes(vertexLayer, searchRadius, feedback=multiStepFeedback)
+        multiStepFeedback.setProgressText(self.tr("Searching duplicated vertexes..."))
+        flagDict = self.getDuplicatedVertexes(pointDict, feedback=multiStepFeedback)
         multiStepFeedback.setCurrentStep(4)
         multiStepFeedback.setProgressText(self.tr("Raising flags (if any)..."))
         self.raiseFlags(flagDict, feedback=multiStepFeedback)
 
         return {self.FLAGS: self.flag_id}
-
-    def raiseFlags(self, flagDict, feedback=None):
-        nFlags = len(flagDict)
-        if nFlags == 0:
-            return
-        size = 100 / nFlags
-        for current, (featId, flagGeomSet) in enumerate(flagDict.items()):
-            if feedback is not None and feedback.isCanceled():
-                break
-            for flagGeom in flagGeomSet:
-                self.flagFeature(
-                    flagGeom=flagGeom,
-                    flagText=f"Vertex from feature {featId} is too close to another vertex.",
-                )
-            if feedback is not None:
-                feedback.setProgress(current * size)
-
-    def getCloseVertexes(self, vertexLayer, searchRadius, feedback=None):
-        flagDict = defaultdict(set) # key: featid, value: set of vertexes
-        featCount = vertexLayer.featureCount()
+    
+    def buildPointDict(self, inputLyr, feedback=None):
+        featCount = inputLyr.featureCount()
         if featCount == 0:
-            return flagDict
-        size = 100 / featCount
-        for current, feat in enumerate(vertexLayer.getFeatures()):
+            return {}
+        total = 100 / featCount
+        pointDict = defaultdict(lambda: defaultdict(list))
+        for current, feat in enumerate(inputLyr.getFeatures()):
             if feedback is not None and feedback.isCanceled():
                 break
             geom = feat.geometry()
-            buffer = geom.buffer(searchRadius, -1)
-            bufferBB = buffer.boundingBox()
-            request = QgsFeatureRequest().setFilterExpression(f"featid = {feat['featid']}").setFilterRect(bufferBB)
-            for candidateFeat in vertexLayer.getFeatures(request):
-                if candidateFeat.id() == feat.id() or candidateFeat.geometry() in flagDict[feat["featid"]]:
-                    continue
-                if candidateFeat.geometry().intersects(buffer):
-                    flagDict[feat["featid"]].add(geom)
+            pointDict[feat['featid']][geom.asWkb()].append(geom)
             if feedback is not None:
-                feedback.setProgress(size * current)
-        return flagDict
+                feedback.setProgress(current * total)
+        return pointDict
+
+    def getDuplicatedVertexes(self, pointDict, feedback=None):
+        flagSet = set()
+        for vertexDict in pointDict.values():
+            for vertex, geomList in vertexDict.items():
+                if len(geomList) > 1:
+                    flagSet.add(vertex)
+        return flagSet
+
+    def raiseFlags(self, flagSet, feedback=None):
+        nFlags = len(flagSet)
+        if nFlags == 0:
+            return
+        size = 100 / nFlags
+        for current, flagGeom in enumerate(flagSet):
+            if feedback is not None and feedback.isCanceled():
+                break
+            self.flagFeature(
+                flagGeom=flagGeom,
+                fromWkb=True,
+                flagText=f"Duplicated vertex.",
+            )
+            if feedback is not None:
+                feedback.setProgress(current * size)
+
 
     def name(self):
         """
@@ -187,14 +168,14 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifygeometrieswithlargevertexdensityalgorithm'
+        return 'identifyduplicatedvertexesalgorithm'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Geometries With Large Vertex Density')
+        return self.tr('Identify Duplicated Vertexes')
 
     def group(self):
         """
@@ -214,7 +195,7 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Quality Assurance Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyGeometriesWithLargeVertexDensityAlgorithm', string)
+        return QCoreApplication.translate('IdentifyDuplicatedVertexesAlgorithm', string)
 
     def createInstance(self):
-        return IdentifyGeometriesWithLargeVertexDensityAlgorithm()
+        return IdentifyDuplicatedVertexesAlgorithm()
