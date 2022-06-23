@@ -102,7 +102,7 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         for current, geom in enumerate(geometrySet):
             if multiStepFeedback.isCanceled():
                 break
-            self.flagFeature(geom, self.tr('Overlap'))
+            self.flagFeature(geom, self.tr('Overlap on layer {0}').format(inputLyr.name()))
             multiStepFeedback.setProgress(current * total)
 
         return {self.FLAGS: self.flag_id}
