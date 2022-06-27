@@ -82,5 +82,6 @@
         <file>icons/on_off.png</file>
         <file>icons/vertex.png</file>
         <file>icons/key.png</file>
+        <file>icons/sort.png</file>
     </qresource>
 </RCC>

@@ -44,10 +44,12 @@ class InspectFeatures(QWidget,Ui_Form):
         self.setupUi(self)
         self.parent = parent
         self.splitter.hide()
+        self.splitter2.hide()
         self.iface = iface
         # self.iface.currentLayerChanged.connect(self.enableScale)
         self.mMapLayerComboBox.layerChanged.connect(self.enableScale)
         self.mMapLayerComboBox.layerChanged.connect(self.mFieldExpressionWidget.setLayer)
+        self.mMapLayerComboBox.layerChanged.connect(self.mFieldComboBox.setLayer)
         if not self.iface.activeLayer():
             self.enableTool(False)
         # self.iface.currentLayerChanged.connect(self.enableTool)
@@ -98,15 +100,13 @@ class InspectFeatures(QWidget,Ui_Form):
 	    return self.mMapLayerComboBox.currentLayer()
 
     def enableTool(self, enabled = True):
-        if enabled == None or not isinstance(enabled, QgsVectorLayer):
-            allowed = False
-        else:
-            allowed = True
+        allowed = False if enabled == None or not isinstance(enabled, QgsVectorLayer) else True
         toggled = self.inspectPushButton.isChecked()
         enabled = allowed and toggled
         self.backInspectButton.setEnabled(enabled)
         self.nextInspectButton.setEnabled(enabled)
         self.idSpinBox.setEnabled(enabled)
+        self.sortPushButton.setEnabled(enabled)
         
     def enableScale(self):
         """
@@ -194,17 +194,28 @@ class InspectFeatures(QWidget,Ui_Form):
 
     def getFeatIdList(self, currentLayer):
         #getting all features ids
-        if self.mFieldExpressionWidget.currentText() == '':
-            featIdList = currentLayer.allFeatureIds()
-        elif not self.mFieldExpressionWidget.isValidExpression():
+        if self.mFieldExpressionWidget.currentText() != '' and not self.mFieldExpressionWidget.isValidExpression():
             self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Invalid attribute filter!'), level=Qgis.Warning, duration=2)
             return []
-        else:
-            request = QgsFeatureRequest().setFilterExpression(self.mFieldExpressionWidget.asExpression())
-            request.setFlags(QgsFeatureRequest.NoGeometry)
-            featIdList = [i.id() for i in currentLayer.getFeatures(request)]
+        request = QgsFeatureRequest()
+        request.setFlags(QgsFeatureRequest.NoGeometry)
+        if self.mFieldExpressionWidget.currentText() != '':
+            request.setFilterExpression(self.mFieldExpressionWidget.asExpression())
+        clauseList = []
+        if self.sortPushButton.isChecked():
+            #order by some attribute                
+            clause = QgsFeatureRequest.OrderByClause(
+                self.mFieldComboBox.currentField(), ascending=self.ascRadioButton.isChecked()
+            )
+            clauseList.append(clause)
+        clauseId = QgsFeatureRequest.OrderByClause(
+            "$id", ascending=self.ascRadioButton.isChecked()
+        )
+        clauseList.append(clauseId)
+        orderby = QgsFeatureRequest.OrderBy(clauseList)
+        request.setOrderBy(orderby)
+        featIdList = [i.id() for i in currentLayer.getFeatures(request)]
         #sort is faster than sorted (but sort is just available for lists)
-        featIdList.sort()
         return featIdList
     
     def iterateFeature(self, method):
@@ -323,7 +334,19 @@ class InspectFeatures(QWidget,Ui_Form):
         else:
             self.splitter.hide()   
             self.enableTool(False)
-            self.setToolTip('') 
+            self.setToolTip('')
+    
+    @pyqtSlot(bool, name='on_sortPushButton_toggled')
+    def toggleSort(self, toggled=None):
+        """
+        Shows/hides the sort options
+        """
+        if toggled is None:
+            toggled = self.sortPushButton.isChecked()
+        if toggled:
+            self.splitter2.show()
+        else:
+            self.splitter2.hide()
 
     def setValues(self, featIdList, currentLayer):
         lyrName = currentLayer.name()
