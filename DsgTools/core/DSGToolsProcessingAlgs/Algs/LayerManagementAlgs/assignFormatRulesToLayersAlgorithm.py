@@ -99,11 +99,9 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
             self.INPUT_LAYERS,
             context
         )
+        inputLyrList = [lyr for lyr in inputLyrList if lyr.dataProvider().name() == 'postgres']
         if not inputLyrList:
             return {}
-        for lyr in inputLyrList:
-            if lyr.dataProvider().name() != 'postgres':
-                raise QgsProcessingException(self.tr('This process only works with postgres data provider.'))
         
         inputData = self.loadRulesFromFile(parameters, context)
         cleanBefore = self.parameterAsBool(
@@ -113,6 +111,7 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
             )
         if cleanBefore:
             self.cleanRules(inputLyrList)
+            self.cleanExpressionField(inputLyrList)
         listSize = len(inputLyrList)
         stepSize = 100/listSize if listSize else 0
         inputLyrNamesWithSchemaList = [
@@ -211,7 +210,10 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
     def createRuleVirtualField(self, lyr):
         expressionString = """CASE\n"""
         key = f"{lyr.dataProvider().uri().schema()}.{lyr.dataProvider().uri().table()}"
+        fieldNameList = [field.name() for field in lyr.fields()]
         for fieldName, dataList in self.ruleDict[key].items():
+            if fieldName not in fieldNameList:
+                continue
             for data in dataList:
                 expressionString += """WHEN {condition} THEN '{result}'\n""".format(
                     condition=data['regra'],
@@ -219,17 +221,27 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
                 )
         expressionString += """ELSE ''\nEND"""
         lyr.addExpressionField(
-                    expressionString,
-                    QgsField(
-                        'attribute_error_description',
-                        QVariant.String
-                    )
-                )
+            expressionString,
+            QgsField(
+                'attribute_error_description',
+                QVariant.String
+            )
+        )
 
     def cleanRules(self, inputLayerList):
         for lyr in inputLayerList:
             for field in lyr.fields():
                 lyr.conditionalStyles().setFieldStyles(field.name(), [])
+    
+    def cleanExpressionField(self, inputLayerList):
+        for lyr in inputLayerList:
+            errorDescriptionIndex = -1
+            for idx, field in enumerate(lyr.fields()):
+                if field.name() == 'attribute_error_description':
+                    errorDescriptionIndex = idx
+                    break
+            if errorDescriptionIndex != -1:
+                lyr.removeExpressionField(errorDescriptionIndex)
 
     def name(self):
         """
