@@ -87,6 +87,8 @@ class InspectFeatures(QWidget,Ui_Form):
         self.refreshPushButtonAction = self.add_action(icon_path, text, self.refreshPushButton.click, parent = self.parent)
         self.iface.registerMainWindowAction(self.refreshPushButtonAction, '')
         self.refreshPushButton.setToolTip(self.tr('Set current layer as selected layer on inspect tool'))
+        self.sortPushButton.setToolTip(self.tr('Sort by attribute'))
+        self.mFieldExpressionWidget.fieldChanged.connect(self.resetCurrentIndex)
     
     def add_action(self, icon_path, text, callback, parent=None):
         icon = QIcon(icon_path)
@@ -113,18 +115,20 @@ class InspectFeatures(QWidget,Ui_Form):
         The scale combo should only be enabled for point layers
         """
         currentLayer = self.getIterateLayer()
-        if QgsMapLayer is not None and currentLayer:
-                if currentLayer.type() == QgsMapLayer.VectorLayer:
-                    if currentLayer.geometryType() == QgsWkbTypes.PointGeometry:
-                        self.mScaleWidget.setEnabled(True)
-                        self.mScaleWidget.show()
-                        self.zoomPercentageSpinBox.setEnabled(False)
-                        self.zoomPercentageSpinBox.hide()
-                    else:
-                        self.mScaleWidget.setEnabled(False)
-                        self.mScaleWidget.hide()
-                        self.zoomPercentageSpinBox.setEnabled(True)
-                        self.zoomPercentageSpinBox.show()
+        if not currentLayer:
+            return
+        if currentLayer.type() != QgsMapLayer.VectorLayer:
+            return
+        if currentLayer.geometryType() == QgsWkbTypes.PointGeometry:
+            self.mScaleWidget.setEnabled(True)
+            self.mScaleWidget.show()
+            self.zoomPercentageSpinBox.setEnabled(False)
+            self.zoomPercentageSpinBox.hide()
+        else:
+            self.mScaleWidget.setEnabled(False)
+            self.mScaleWidget.hide()
+            self.zoomPercentageSpinBox.setEnabled(True)
+            self.zoomPercentageSpinBox.show()
  
     @pyqtSlot(bool)
     def on_nextInspectButton_clicked(self):
@@ -205,7 +209,9 @@ class InspectFeatures(QWidget,Ui_Form):
         if self.sortPushButton.isChecked():
             #order by some attribute                
             clause = QgsFeatureRequest.OrderByClause(
-                self.mFieldComboBox.currentField(), ascending=self.ascRadioButton.isChecked()
+                self.mFieldComboBox.currentField(),
+                self.ascRadioButton.isChecked(),
+                False,
             )
             clauseList.append(clause)
         clauseId = QgsFeatureRequest.OrderByClause(
@@ -229,41 +235,42 @@ class InspectFeatures(QWidget,Ui_Form):
         zoom = self.mScaleWidget.scale() if currentLayer.geometryType() == QgsWkbTypes.PointGeometry else self.zoomPercentageSpinBox.value()
         
         featIdList = self.getFeatIdList(currentLayer)
-        
-        if currentLayer and len(featIdList) > 0:
-            #checking if this is the first time for this layer (currentLayer)
-            first = False
-            if lyrName not in list(self.allLayers.keys()):
-                self.allLayers[lyrName] = 0
-                first = True
 
-            #getting the current index
-            index = self.allLayers[lyrName]
-
-            #getting max and min ids
-            #this was made because the list is already sorted, there's no need to calculate max and min
-            maxIndex = len(featIdList) - 1
-            minIndex = 0
-            
-            self.idSpinBox.setMaximum(featIdList[maxIndex])
-            self.idSpinBox.setMinimum(featIdList[minIndex])
-
-            #getting the new index
-            if not first:
-                index = method(index, maxIndex, minIndex)
-            self.idSpinBox.setSuffix(' ({0}/{1})'.format(index+1,len(featIdList)))
-            self.allLayers[lyrName] = index
-
-            #getting the new feature id
-            id = featIdList[index]
-
-            #adjustin the spin box value
-            self.idxChanged.emit(id)
-
-            self.makeZoom(zoom, currentLayer, id)
-            self.selectLayer(id, currentLayer)
-        else:
+        if not currentLayer or len(featIdList) == 0:
             self.errorMessage()
+            return
+        
+        #checking if this is the first time for this layer (currentLayer)
+        first = False
+        if lyrName not in list(self.allLayers.keys()):
+            self.allLayers[lyrName] = 0
+            first = True
+
+        #getting the current index
+        index = self.allLayers[lyrName]
+
+        #getting max and min ids
+        #this was made because the list is already sorted, there's no need to calculate max and min
+        maxIndex = len(featIdList) - 1
+        minIndex = 0
+        
+        self.idSpinBox.setMaximum(maxIndex)
+        self.idSpinBox.setMinimum(minIndex)
+
+        #getting the new index
+        if not first:
+            index = method(index, maxIndex, minIndex)
+        self.idSpinBox.setSuffix(' ({0}/{1})'.format(index+1,len(featIdList)))
+        self.allLayers[lyrName] = index
+
+        #getting the new feature id
+        id = featIdList[index]
+
+        #adjustin the spin box value
+        self.idxChanged.emit(id)
+
+        self.makeZoom(zoom, currentLayer, id)
+        self.selectLayer(id, currentLayer)
             
     def errorMessage(self):
         """
@@ -345,8 +352,15 @@ class InspectFeatures(QWidget,Ui_Form):
             toggled = self.sortPushButton.isChecked()
         if toggled:
             self.splitter2.show()
+            self.resetCurrentIndex()
         else:
             self.splitter2.hide()
+
+    def resetCurrentIndex(self, indexName=None):
+        lyr = self.mMapLayerComboBox.currentLayer()
+        if lyr is not None:
+            lyrName = lyr.name()
+            self.allLayers[lyrName] = 0
 
     def setValues(self, featIdList, currentLayer):
         lyrName = currentLayer.name()
