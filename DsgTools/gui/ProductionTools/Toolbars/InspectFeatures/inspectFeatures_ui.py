@@ -208,7 +208,7 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
-        self.idSpinBox.setPrefix(_translate("Form", "ID: "))
+        # self.idSpinBox.setPrefix(_translate("Form", "ID: "))
         self.backInspectButton.setToolTip(_translate("Form", "<html><head/><body><p>Back inspect</p><p><br/></p></body></html>"))
         self.nextInspectButton.setToolTip(_translate("Form", "<html><head/><body><p>Next inspect</p></body></html>"))
         self.inspectPushButton.setToolTip(_translate("Form", "Inspect Features Tool"))
