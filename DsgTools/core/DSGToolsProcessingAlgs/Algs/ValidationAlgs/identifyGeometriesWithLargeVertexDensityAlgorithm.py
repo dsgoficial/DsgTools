@@ -149,9 +149,13 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
         for current, (featId, flagGeomSet) in enumerate(flagDict.items()):
             if feedback is not None and feedback.isCanceled():
                 break
+            if len(flagGeomSet) < 2:
+                feedback.setProgress(current * size)
+                continue
             for flagGeom in flagGeomSet:
                 self.flagFeature(
                     flagGeom=flagGeom,
+                    fromWkb=True,
                     flagText=f"Vertex from feature {featId} is too close to another vertex.",
                 )
             if feedback is not None:
@@ -174,7 +178,7 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
                 if candidateFeat.id() == feat.id() or candidateFeat.geometry() in flagDict[feat["featid"]]:
                     continue
                 if candidateFeat.geometry().intersects(buffer):
-                    flagDict[feat["featid"]].add(geom)
+                    flagDict[feat["featid"]].add(geom.asWkb())
             if feedback is not None:
                 feedback.setProgress(size * current)
         return flagDict
