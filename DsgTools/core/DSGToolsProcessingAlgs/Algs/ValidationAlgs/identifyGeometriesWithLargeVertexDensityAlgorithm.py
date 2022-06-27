@@ -174,7 +174,7 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
                 if candidateFeat.id() == feat.id() or candidateFeat.geometry() in flagDict[feat["featid"]]:
                     continue
                 if candidateFeat.geometry().intersects(buffer):
-                    flagDict[feat["featid"]].add(geom)
+                    flagDict[feat["featid"]].add(geom.asWkb())
             if feedback is not None:
                 feedback.setProgress(size * current)
         return flagDict
