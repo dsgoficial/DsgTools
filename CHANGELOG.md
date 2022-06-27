@@ -64,6 +64,7 @@ Melhorias:
 - Adicionada a opção de ignorar feições circulares no processo de identificar ângulos errados em edificações;
 - Refatorado o processo de atribuir regras de atributação ao formulário de feições;
 - Refatorado o processo de identificar overlaps. Agora ele também pega overlaps de linhas;
+- Adicionada a opção de ordenar no inspetor de feições por um atributo;
 
 Correção de Bug:
 
