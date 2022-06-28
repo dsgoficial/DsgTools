@@ -68,4 +68,5 @@ Melhorias:
 
 Correção de Bug:
 
-- Filtro de expressão do inspetor de feições agora é limpo quando o botão de trocar para a camada ativa é acionado.
+- Filtro de expressão do inspetor de feições agora é limpo quando o botão de trocar para a camada ativa é acionado;
+- Corrigido o bug da ferramenta de aliases retirando os mapas de valores;
