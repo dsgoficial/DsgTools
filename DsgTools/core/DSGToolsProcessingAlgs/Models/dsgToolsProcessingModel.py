@@ -32,6 +32,7 @@ from qgis.core import (QgsTask,
                        QgsVectorLayer,
                        QgsProcessingUtils)
 from qgis.PyQt.QtCore import pyqtSignal, QCoreApplication
+from processing.tools import dataobjects
 import processing
 
 class DsgToolsProcessingModel(QgsTask):
@@ -376,10 +377,13 @@ class DsgToolsProcessingModel(QgsTask):
         model = self.model()
         if self.isCanceled():
             return {}
+        context = dataobjects.createContext(
+            feedback=feedback)
         out = processing.run(
             model,
             { param : "memory:" for param in self.modelParameters(model) },
-            feedback=feedback
+            feedback=feedback,
+            context=context
         )
         # not sure exactly when, but on 3.16 LTR output from model runs include
         # new items on it. these new items break our implementation =)
