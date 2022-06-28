@@ -21,44 +21,14 @@
  ***************************************************************************/
 """
 from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtGui import QColor
-from qgis.PyQt.Qt import QVariant
 from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
                        QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
                        QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterFile,
-                       QgsProcessingParameterExpression,
-                       QgsProcessingException,
                        QgsProcessingParameterString,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterType,
-                       QgsProcessingParameterCrs,
-                       QgsCoordinateTransform,
-                       QgsProject,
-                       QgsCoordinateReferenceSystem,
-                       QgsField,
-                       QgsFields,
                        QgsProcessingOutputMultipleLayers,
                        QgsProcessingParameterString,
-                       QgsConditionalStyle)
-from operator import itemgetter
-from collections import defaultdict
+                       QgsEditorWidgetSetup)
 import json, os
 
 class AssignAliasesToLayersAlgorithm(QgsProcessingAlgorithm):
@@ -163,7 +133,10 @@ class AssignAliasesToLayersAlgorithm(QgsProcessingAlgorithm):
                     idx = lyr.fields().indexOf(attr["nome"])
                     if not(idx > 0):
                         continue
+                    oldEditor = QgsEditorWidgetSetup(lyr.editorWidgetSetup(idx)) if lyr.editorWidgetSetup(idx).config() else None
                     lyr.setFieldAlias(idx, attr["alias"])
+                    if oldEditor is not None:
+                        lyr.setEditorWidgetSetup(idx, oldEditor)
 
     def name(self):
         """
