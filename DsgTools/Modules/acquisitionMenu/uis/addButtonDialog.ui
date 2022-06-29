@@ -394,10 +394,15 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>saveBtn</tabstop>
-  <tabstop>cancelBtn</tabstop>
   <tabstop>nameLe</tabstop>
+  <tabstop>cancelBtn</tabstop>
+  <tabstop>saveBtn</tabstop>
   <tabstop>backgroundColorBtn</tabstop>
+  <tabstop>previewBtn</tabstop>
+  <tabstop>keyWordsLe</tabstop>
+  <tabstop>tooltipLe</tabstop>
+  <tabstop>suppressFormCkb</tabstop>
+  <tabstop>textColorBtn</tabstop>
  </tabstops>
  <resources/>
  <connections/>

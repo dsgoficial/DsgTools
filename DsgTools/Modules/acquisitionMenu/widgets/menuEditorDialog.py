@@ -14,6 +14,39 @@ class MenuEditorDialog( QtWidgets.QDialog ):
         uic.loadUi( self.getUiPath(), self )
         self.controller = controller
         self.messageFactory = messageFactory
+        self.previewMenu.setAcceptDrops(True)
+        self.previewMenu.dragEnterEvent = self.previewDragEnterEvent
+        self.previewMenu.dropEvent = self.previewDropEvent
+
+    def previewDragEnterEvent(self, e):
+        e.accept()
+
+    def previewDropEvent(self, e):
+        pos = e.pos()
+        widget = e.source()
+        tabLayout = self.menuWidget.getTabLayout( widget.buttonConfig[ 'buttonTabId' ] )     
+        buttonIndexs = range(tabLayout.count()) 
+        isUpper = widget.y() > pos.y()
+        currentIndex = None
+        nextIndex = None
+        for n in buttonIndexs:
+            w = tabLayout.itemAt(n).widget()
+            if w == widget:
+                currentIndex = n
+                continue
+            if isUpper and pos.y() < w.y():
+                nextIndex = n
+            elif not isUpper and pos.y() > w.y():
+                nextIndex = n
+        if nextIndex is None or currentIndex is None:
+            e.accept()
+            return
+        if (isUpper and currentIndex < nextIndex) or (not isUpper and currentIndex > nextIndex):
+            pass
+        else:
+            tabLayout.insertWidget(nextIndex, widget)
+            self.menuWidget.refreshTabShortcuts(tabLayout)
+        e.accept()
 
     def showError(self, title, message):
         errorMessageBox = self.messageFactory.createMessage('ErrorMessageBox')

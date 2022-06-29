@@ -73,6 +73,7 @@ class MenuWidget( QtWidgets.QTabWidget ):
     def addButton(self, buttonConfig, callback):
         tabLayout = self.getTabLayout( buttonConfig[ 'buttonTabId' ] )
         button = QtWidgets.QPushButton()
+        button.mouseMoveEvent = lambda e, b=button: self.buttonMouseMoveEvent(e, b)
         button.id = buttonConfig['buttonId']
         button.buttonConfig = buttonConfig
         button.setStyleSheet( 
@@ -82,18 +83,30 @@ class MenuWidget( QtWidgets.QTabWidget ):
             ) 
         )
         buttonName = buttonConfig['buttonName']
-        button.setObjectName( buttonName )        
-        count = tabLayout.count()
-        if count >=0 and count <= 8:
-            button.setText("{0}_[{1}]".format(buttonName, count+1 ))
-            button.setShortcut(
-                self.getButtonShortcut(count)
-            )
-        else:
-            button.setText( buttonName )
+        button.setObjectName( buttonName )  
+        button.setText( buttonName )
         button.setToolTip( buttonConfig[ 'buttonTooltip' ] )
         button.clicked.connect(lambda b, button=button: callback( button.buttonConfig ))    
         tabLayout.addWidget(button)
+        self.refreshTabShortcuts(tabLayout)
+
+    def refreshTabShortcuts(self, tabLayout):
+        for n in range(tabLayout.count()):
+            button = tabLayout.itemAt(n).widget()
+            if not(n >=0 and n <= 8):
+                continue
+            buttonName = button.objectName()
+            button.setText("{0}_[{1}]".format(buttonName, n+1 ))
+            button.setShortcut(
+                self.getButtonShortcut(n)
+            )
+
+    def buttonMouseMoveEvent(self, e, button):
+        if e.buttons() == QtCore.Qt.LeftButton:
+            mimeData = QtCore.QMimeData()
+            drag = QtGui.QDrag(button)
+            drag.setMimeData(mimeData)
+            dropAction = drag.exec_(QtCore.Qt.MoveAction)
 
     def getButtonShortcut(self, no):
         shortcuts = {
