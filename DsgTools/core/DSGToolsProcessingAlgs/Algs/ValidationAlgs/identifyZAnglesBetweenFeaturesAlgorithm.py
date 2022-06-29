@@ -117,7 +117,8 @@ class identifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
     def caseInternArea(self, areas, angle):
         featsToAnalyse = []
         for feat in areas.getFeatures():
-            multiPolygons = feat.geometry().asMultiPolygon()[0]
+            geom = feat.geometry()
+            multiPolygons = geom.asMultiPolygon()[0] if geom.isMultiPart() else geom.asPolygon()
             for vertices in multiPolygons:
                 for i in range(len(vertices)-3):
                     v1, v2, v3, v4 = vertices[i:i+4]
@@ -154,7 +155,7 @@ class identifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
                     elif len(list(gfeat1.vertices())) == 2:
                         request2 = QgsFeatureRequest().setFilterRect(gfeat2.boundingBox())
                         for k, feat3 in enumerate(lines.getFeatures(request2)):
-                            if any((k > i), (k > j)):
+                            if any([(k > i), (k > j)]):
                                 continue
                             gfeat3 = feat3.geometry()
                             if not gfeat3.touches(gfeat1):
