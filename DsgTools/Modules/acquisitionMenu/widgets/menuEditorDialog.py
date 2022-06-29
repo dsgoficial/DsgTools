@@ -27,24 +27,29 @@ class MenuEditorDialog( QtWidgets.QDialog ):
         tabLayout = self.menuWidget.getTabLayout( widget.buttonConfig[ 'buttonTabId' ] )     
         buttonIndexs = range(tabLayout.count()) 
         isUpper = widget.y() > pos.y()
-        currentIndex = None
-        nextIndex = None
+        widgetIndex = None
+        selectedIndex = None
+        selectedY = None
         for n in buttonIndexs:
             w = tabLayout.itemAt(n).widget()
             if w == widget:
-                currentIndex = n
+                widgetIndex = n
                 continue
-            if isUpper and pos.y() < w.y():
-                nextIndex = n
-            elif not isUpper and pos.y() > w.y():
-                nextIndex = n
-        if nextIndex is None or currentIndex is None:
+            if selectedY:
+                valid = ( isUpper and pos.y() < w.y() and w.y() < selectedY ) or ( not isUpper and pos.y() > w.y() and w.y() > selectedY )
+            else:
+                valid = ( isUpper and pos.y() < w.y() ) or ( not isUpper and pos.y() > w.y() )
+            if not valid:
+                continue
+            selectedIndex = n
+            selectedY = w.y()
+        if selectedIndex is None or widgetIndex is None:
             e.accept()
             return
-        if (isUpper and currentIndex < nextIndex) or (not isUpper and currentIndex > nextIndex):
+        if (isUpper and widgetIndex < selectedIndex) or (not isUpper and widgetIndex > selectedIndex):
             pass
         else:
-            tabLayout.insertWidget(nextIndex, widget)
+            tabLayout.insertWidget(selectedIndex, widget)
             self.menuWidget.refreshTabShortcuts(tabLayout)
         e.accept()
 
