@@ -111,7 +111,9 @@ class AttributeTableWidget( QtWidgets.QWidget ):
         self.clearAllItems()
         for attributeName in attributesConfig:
             if 'map' in attributesConfig[ attributeName ]:
-                widget = self.createComboBox( attributesConfig[ attributeName ]['map'] )
+                widget = self.createComboBox( 
+                    attributesConfig[ attributeName ]['map'][0] if type(attributesConfig[ attributeName ]['map']) is list else attributesConfig[ attributeName ]['map']
+                )
             else:
                 widget = self.createLineEdit()
             self.addRow( None, attributeName, widget )
