@@ -899,19 +899,7 @@ class PostgisDb(AbstractDb):
             return True
         else:
             return False
-    
-    def getImplementationVersion(self):
-        """
-        Returns implementation version
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.getImplementationVersion()
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr('Problem getting implementation version: ') + query.lastError().text()) 
-        while query.next():
-            return query.value(0)
-    
+
     def dropDatabase(self, candidateName, dropTemplate = False):
         """
         Drops a database from server

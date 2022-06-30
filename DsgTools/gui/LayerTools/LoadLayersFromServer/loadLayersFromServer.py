@@ -96,6 +96,7 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
             for dbName in dbList:
                 try:
                     QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+                    dbName = dbName.split('(')[0].strip()
                     geomList = self.customServerConnectionWidget.selectedDbsDict[dbName].getGeomColumnTupleList(showViews = showViews)
                     for tableSchema, tableName, geom, geomType, tableType in geomList:
                         if self.tr("Unknown model") in dbName:
