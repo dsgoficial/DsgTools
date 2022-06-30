@@ -57,7 +57,8 @@ from qgis.core import (QgsProcessing,
                        QgsFields,
                        QgsProcessingOutputMultipleLayers,
                        QgsProcessingParameterString,
-                       QgsConditionalStyle)
+                       QgsConditionalStyle,
+                       QgsExpression)
 
 from operator import itemgetter
 from collections import defaultdict
@@ -205,6 +206,8 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
                 data['corRgb'][2]
             ) 
         )
+        if not conditionalStyle.isValid():
+            raise Exception(f"Invalid conditional style: \n{data['descricao']}\n{data['regra']}")
         return conditionalStyle
     
     def createRuleVirtualField(self, lyr):
@@ -220,6 +223,11 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
                     result=data['descricao']
                 )
         expressionString += """ELSE ''\nEND"""
+        expression = QgsExpression(expressionString)
+        if expression.hasParserError():
+            raise Exception(f"Invalid expression: \n{expressionString}")
+        if not expression.isValid():
+            raise Exception(f"Invalid expression: \n{expressionString}")
         lyr.addExpressionField(
             expressionString,
             QgsField(
