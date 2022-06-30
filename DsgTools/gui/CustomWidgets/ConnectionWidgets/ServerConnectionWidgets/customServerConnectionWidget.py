@@ -120,6 +120,7 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         #1- Iterate over dbList and check if all layers on dbList are on dict. If not, add it.
         if type == 'added':
             for dbName in dbList:
+                dbName = dbName.split('(')[0].strip()
                 if dbName in self.selectedDbsDict:
                     continue
                 localDb = self.dbFactory.createDbFactory(DsgEnums.DriverSpatiaLite)
@@ -207,7 +208,7 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
                 self.path = os.path.dirname(dbPath)
                 auxAbstractDb.connectDatabase(conn = dbPath)
                 version = auxAbstractDb.getDatabaseVersion()
-                dbimplversion = auxAbstractDb.getImplementation()
+                dbimplversion = auxAbstractDb.getImplementationVersion()
                 dbList.append((dbName,version, dbimplversion))
                 self.spatialiteDict[dbName] = dbPath
         except Exception as e:

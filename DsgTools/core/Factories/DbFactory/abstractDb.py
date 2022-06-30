@@ -806,3 +806,16 @@ class AbstractDb(QObject):
             version = f"EDGV {version}"
         implementation = self.implementationVersion()
         return f"{version} impl. {implementation}"
+
+    def getImplementationVersion(self):
+        """
+        Returns implementation version
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getImplementationVersion()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting implementation version: ') + query.lastError().text()) 
+        while query.next():
+            return query.value(0)
+    

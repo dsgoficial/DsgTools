@@ -244,3 +244,7 @@ class SpatialiteSqlGenerator(SqlGenerator):
         :return: (list-of-str) list of attribute names.
         """
         return """PRAGMA table_info('{0}');""".format(table)
+
+    def getImplementationVersion(self):
+        sql = """select dbimplversion from public_db_metadata limit 1"""
+        return sql
