@@ -19,30 +19,36 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication
+import math
+from itertools import chain, combinations
 
 import processing
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsWkbTypes)
+from PyQt5.QtCore import QCoreApplication
+from qgis.core import (
+    QgsFeatureRequest,
+    QgsGeometryUtils,
+    QgsProcessing,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterNumber,
+    QgsProcessingUtils,
+    QgsWkbTypes,
+)
 
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
-    FLAGS = 'FLAGS'
-    INPUTLAYERS = 'INPUTLAYERS'
-    SELECTED = 'SELECTED'
-    TOLERANCE = 'TOLERANCE'
+    FLAGS = "FLAGS"
+    INPUTLAYERS = "INPUTLAYERS"
+    SELECTED = "SELECTED"
+    TOLERANCE = "TOLERANCE"
 
     def initAlgorithm(self, config):
         """
@@ -50,105 +56,213 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
-                self.INPUTLAYERS,
-                self.tr('Input layer'),
-                QgsProcessing.TypeVectorLine
+                self.INPUTLAYERS, self.tr("Input layer"), QgsProcessing.TypeVectorLine
             )
         )
 
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
 
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.TOLERANCE,
-                self.tr('Minimum angle'),
+                self.tr("Minimum angle (in degrees)"),
                 minValue=0,
-                defaultValue=10
+                defaultValue=10,
+                maxValue=360,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
-    
-    def runIdentifyOutOfBoundsAngles(self, lyr, onlySelected, tol, context):
+
+    def runIdentifyOutOfBoundsAngles(self, lyr, onlySelected, tol, context, feedback):
         parameters = {
-                'INPUT': lyr,
-                'SELECTED' : onlySelected,
-                'TOLERANCE' : tol,
-                'FLAGS' : 'memory:'
-            }
-        output = processing.run('dsgtools:identifyoutofboundsangles', parameters, context = context)
+            "INPUT": lyr,
+            "SELECTED": onlySelected,
+            "TOLERANCE": tol,
+            "FLAGS": "memory:",
+        }
+        output = processing.run(
+            "dsgtools:identifyoutofboundsangles",
+            parameters,
+            context=context,
+            feedback=feedback,
+        )
         self.flagFeaturesFromProcessOutput(output)
-    
-    def cleanCoverage(self, coverage, context):
-        output = QgsProcessingUtils.generateTempFilename('output.shp')
-        error = QgsProcessingUtils.generateTempFilename('error.shp')
+
+    def cleanCoverage(self, coverage, context, feedback=None):
+        output = QgsProcessingUtils.generateTempFilename("output.shp")
+        error = QgsProcessingUtils.generateTempFilename("error.shp")
         parameters = {
-            'input':coverage,
-            'type':[0,1,2,3,4,5,6],
-            'tool':[0,6],
-            'threshold':'-1', 
-            '-b':False, 
-            '-c':True, 
-            'output' : output, 
-            'error': error, 
-            'GRASS_REGION_PARAMETER':None,
-            'GRASS_SNAP_TOLERANCE_PARAMETER': -1,
-            'GRASS_MIN_AREA_PARAMETER': 0.0001,
-            'GRASS_OUTPUT_TYPE_PARAMETER': 0,
-            'GRASS_VECTOR_DSCO':'',
-            'GRASS_VECTOR_LCO':''
-            }
-        x = processing.run('grass7:v.clean', parameters, context = context)
-        lyr = QgsProcessingUtils.mapLayerFromString(x['output'], context)
+            "input": coverage,
+            "type": [0, 1, 2, 3, 4, 5, 6],
+            "tool": [0, 6],
+            "threshold": "-1",
+            "-b": False,
+            "-c": True,
+            "output": output,
+            "error": error,
+            "GRASS_REGION_PARAMETER": None,
+            "GRASS_SNAP_TOLERANCE_PARAMETER": -1,
+            "GRASS_MIN_AREA_PARAMETER": 0.0001,
+            "GRASS_OUTPUT_TYPE_PARAMETER": 0,
+            "GRASS_VECTOR_DSCO": "",
+            "GRASS_VECTOR_LCO": "",
+        }
+        x = processing.run(
+            "grass7:v.clean", parameters, context=context, feedback=feedback
+        )
+        lyr = QgsProcessingUtils.mapLayerFromString(x["output"], context)
         return lyr
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
-        geometryHandler = GeometryHandler()
-        layerHandler = LayerHandler()
+        algRunner = AlgRunner()
         inputLyrList = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
         if inputLyrList == []:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUTLAYERS))
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.INPUTLAYERS)
+            )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.Point, context)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(
+            len(inputLyrList) + 11, feedback
+        )
+        currentStep = 0
         for lyr in inputLyrList:
             if feedback.isCanceled():
                 break
-            self.runIdentifyOutOfBoundsAngles(lyr, onlySelected, tol, context)
-        epsg = inputLyrList[0].crs().authid().split(':')[-1]
-        coverage = layerHandler.createAndPopulateUnifiedVectorLayer(inputLyrList, QgsWkbTypes.Point, epsg, onlySelected = onlySelected)
-        cleanedCoverage = self.cleanCoverage(coverage, context)
-        segmentDict = geometryHandler.getSegmentDict(cleanedCoverage)
-        # Compute the number of steps to display within the progress bar and
-        # get features from source
-        # featureList, total = self.getIteratorAndFeatureCount(inputLyr)           
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.runIdentifyOutOfBoundsAngles(
+                lyr, onlySelected, tol, context, feedback=multiStepFeedback
+            )
+            currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        mergedLayers = algRunner.runMergeVectorLayers(
+            inputList=inputLyrList, context=context, feedback=multiStepFeedback
+        )
+        currentStep += 1
 
-        # for current, feat in enumerate(featureList):
-        #     # Stop the algorithm if cancel button has been clicked
-        #     if feedback.isCanceled():
-        #         break
-        #     outOfBoundsList = geometryHandler.getOutOfBoundsAngle(feat, tol)
-        #     if outOfBoundsList:
-        #         for item in outOfBoundsList:
-        #             flagText = self.tr('Feature from layer {0} with id={1} has angle of value {2} degrees, which is lesser than the tolerance of {3} degrees.').format(inputLyr.name(), item['feat_id'], item['angle'], tol)
-        #             self.flagFeature(item['geom'], flagText)      
-        #     # Update the progress bar
-        #     feedback.setProgress(int(current * total))
+        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(
+            mergedLayers, context=context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+
+        intersectedLyr = algRunner.runLineIntersections(
+            inputLyr=mergedLayers,
+            intersectLyr=mergedLayers,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        nIntersections = intersectedLyr.featureCount()
+        if nIntersections == 0:
+            return {self.FLAGS: self.flag_id}
+        currentStep += 1
+
+        intersectedLyr = algRunner.runDeaggregate(
+            inputLyr=intersectedLyr, context=context, feedback=multiStepFeedback
+        )
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(
+            intersectedLyr, context=context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        splitSegments = algRunner.runExplodeLines(
+            inputLyr=mergedLayers, context=context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(
+            splitSegments, context=context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        joinedLyr = algRunner.runExtractByLocation(
+            inputLyr=splitSegments,
+            intersectLyr=intersectedLyr,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        splitLines = algRunner.runSplitLinesWithLines(
+            inputLyr=joinedLyr,
+            linesLyr=joinedLyr,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(
+            splitLines, context=context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.computeSmallAnglesInCoverage(
+            intersectedLyr, splitLines, nIntersections, tol, feedback=multiStepFeedback
+        )
 
         return {self.FLAGS: self.flag_id}
+
+    def computeSmallAnglesInCoverage(
+        self, intersectedLyr, joinedLyr, nIntersections, tol, feedback=None
+    ):
+        flagWkbSet = set()
+        total = 100 / nIntersections
+        radTol = tol * math.pi / 180
+        for current, pointFeat in enumerate(intersectedLyr.getFeatures()):
+            if feedback is not None and feedback.isCanceled():
+                break
+            geom = pointFeat.geometry()
+            p2 = geom.asPoint()
+            geomWkb = geom.asWkb()
+            if geomWkb in flagWkbSet:
+                continue
+            bbox = geom.boundingBox()
+            request = QgsFeatureRequest().setFilterRect(bbox)
+            for f1, f2 in combinations(joinedLyr.getFeatures(request), 2):
+                geom1 = f1.geometry()
+                geom2 = f2.geometry()
+                if not geom.intersects(geom1) or not geom.intersects(geom2):
+                    continue
+
+                p1, p3 = set(
+                    i
+                    for i in chain.from_iterable(
+                        [geom1.asPolyline(), geom2.asPolyline()]
+                    )
+                    if i != p2
+                )
+                angle = QgsGeometryUtils.angleBetweenThreePoints(
+                    p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y()
+                )
+                # angle in radians
+                if angle < radTol:
+                    flagWkbSet.add(geom.asWkb())
+                    break
+            if feedback is not None:
+                feedback.setProgress(current * total)
+        flagLambda = lambda x: self.flagFeature(
+            x, flagText=self.tr("Small angle in coverage"), fromWkb=True
+        )
+        list(map(flagLambda, flagWkbSet))
 
     def name(self):
         """
@@ -158,21 +272,21 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifyoutofboundsanglesincoverage'
+        return "identifyoutofboundsanglesincoverage"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Out Of Bounds Angles in Coverage')
+        return self.tr("Identify Out Of Bounds Angles in Coverage")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -182,10 +296,12 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyOutOfBoundsAnglesInCoverageAlgorithm', string)
+        return QCoreApplication.translate(
+            "IdentifyOutOfBoundsAnglesInCoverageAlgorithm", string
+        )
 
     def createInstance(self):
         return IdentifyOutOfBoundsAnglesInCoverageAlgorithm()

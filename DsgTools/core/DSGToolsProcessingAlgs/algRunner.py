@@ -697,3 +697,19 @@ class AlgRunner:
             context=context
         )
         return None
+    
+    def runExtractByLocation(self, inputLyr, intersectLyr, context, predicate=None, feedback=None, outputLyr=None):
+        predicate = [0] if predicate is None else predicate
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:extractbylocation",
+            {
+                'INPUT': inputLyr,
+                'INTERSECT': intersectLyr,
+                'PREDICATE': predicate,
+                'OUTPUT': outputLyr
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
