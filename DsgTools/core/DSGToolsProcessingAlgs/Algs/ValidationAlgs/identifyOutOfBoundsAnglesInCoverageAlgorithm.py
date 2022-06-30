@@ -161,6 +161,12 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         if nIntersections == 0:
             return {self.FLAGS: self.flag_id} 
         currentStep += 1
+        
+        intersectedLyr = algRunner.runDeaggregate(
+            inputLyr=intersectedLyr,
+            context=context,
+            feedback=multiStepFeedback
+        )
 
         multiStepFeedback.setCurrentStep(currentStep)
         algRunner.runCreateSpatialIndex(intersectedLyr, context=context, feedback=multiStepFeedback)
