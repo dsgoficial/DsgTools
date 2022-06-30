@@ -2027,7 +2027,7 @@ class LayerHandler(QObject):
                         self.tr("Invalid or empty geometry found!"))
                 feedback.setProgress((step + 1) * stepSize)
                 continue
-            if geom.area() / geom.length() < ratio:
+            if geom.area() / (geom.length())**2 < ratio:
                 slivers.append(f)
             if feedback is not None:
                 if feedback.isCanceled():
