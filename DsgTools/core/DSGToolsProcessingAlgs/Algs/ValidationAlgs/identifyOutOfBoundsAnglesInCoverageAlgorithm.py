@@ -23,6 +23,8 @@ from collections import defaultdict
 import math
 from itertools import chain, combinations
 
+import concurrent.futures
+import os
 import processing
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
@@ -104,10 +106,10 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         parameters = {
             "input": coverage,
             "type": [0, 1, 2, 3, 4, 5, 6],
-            "tool": [0, 6],
+            "tool": [0],
             "threshold": "-1",
             "-b": False,
-            "-c": True,
+            "-c": False,
             "output": output,
             "error": error,
             "GRASS_REGION_PARAMETER": None,
@@ -137,33 +139,55 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.Point, context)
         multiStepFeedback = QgsProcessingMultiStepFeedback(
-            len(inputLyrList) + 11, feedback
+            6, feedback
         )
         currentStep = 0
         #merge all layers into one
+        multiStepFeedback.setProgressText(self.tr('Building unified layer'))
         multiStepFeedback.setCurrentStep(currentStep)
         mergedLayers = algRunner.runMergeVectorLayers(
             inputList=inputLyrList, context=context, feedback=multiStepFeedback
         )
         currentStep += 1
-        #split segments with clean
-        multiStepFeedback.setCurrentStep(currentStep)
-        cleanedLyr = self.cleanCoverage(mergedLayers, context, multiStepFeedback)
-        currentStep += 1
 
         
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr('Exploding lines'))
         splitSegments = algRunner.runExplodeLines(
-            inputLyr=cleanedLyr, context=context, feedback=multiStepFeedback
+            inputLyr=mergedLayers, context=context, feedback=multiStepFeedback
         )
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
-        nodeAngleDict = self.buildNodeAngleDict(splitSegments, feedback=multiStepFeedback)
+        multiStepFeedback.setProgressText(self.tr('Building spatial index'))
+        algRunner.runCreateSpatialIndex(
+            inputLyr=splitSegments,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        
+
+        #split segments with clean
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr('Splitting lines'))
+        cleanedLyr = algRunner.runSplitLinesWithLines(
+            inputLyr=splitSegments,
+            linesLyr=splitSegments,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr('Building node angle dict'))
+        nodeAngleDict = self.buildNodeAngleDict(cleanedLyr, feedback=multiStepFeedback)
 
         
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr('Evaluating flags'))
         self.computeSmallAnglesInCoverage(
             nodeAngleDict, tol, feedback=multiStepFeedback
         )
@@ -171,23 +195,56 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         return {self.FLAGS: self.flag_id}
     
     def buildNodeAngleDict(self, splitSegments, feedback=None):
-        nodeAngleDict = defaultdict(set)
+        # nodeAngleDict = defaultdict(set)
+        nodeAngleDict = dict()
         nFeats = splitSegments.featureCount()
         if nFeats == 0:
             return nodeAngleDict
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
-        for current, feat in enumerate(splitSegments.getFeatures()):
+        multiStepFeedback.setProgressText(self.tr('Building node angle dict: building dict'))
+        multiStepFeedback.pushInfo(self.tr(f'Iterating over {nFeats} segments...'))
+        def buildDict(feat):
+            if feedback is not None and feedback.isCanceled():
+                return
+            geom = feat.geometry()
+            return geom.asPolyline() if not geom.isMultipart() else geom.asMultiPolyline()[0]
+        pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count())
+        futures = set()
+        multiStepFeedback.pushInfo(self.tr('Submitting to thread'))
+        
+        for feat in splitSegments.getFeatures():
             if feedback is not None and feedback.isCanceled():
                 break
-            geom = feat.geometry()
-            p1, p2 = geom.asPolyline()
+            futures.add(pool.submit(buildDict, feat))
+        
+        multiStepFeedback.pushInfo(self.tr('Evaluating results'))
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if feedback is not None and feedback.isCanceled():
+                break
+            p1, p2 = future.result()
+            if p1 not in nodeAngleDict:
+                nodeAngleDict[p1] = set()
+            if p2 not in nodeAngleDict:
+                nodeAngleDict[p2] = set()
             nodeAngleDict[p1].add(p2)
             nodeAngleDict[p2].add(p1)
             if feedback is not None:
                 multiStepFeedback.setProgress(current * 100 / nFeats)
+            
         multiStepFeedback.setCurrentStep(1)
-        keysToPop = set(point for point, pointSet in nodeAngleDict.items() if len(pointSet) < 2)
+        multiStepFeedback.setProgressText(self.tr('Building node angle dict: identifying nodes to pop'))
+        keysToPop = set()
+        nNodes = len(nodeAngleDict)
+        for current, (point, pointSet) in enumerate(nodeAngleDict.items()):
+            if feedback is not None and feedback.isCanceled():
+                break
+            if len(pointSet) < 2:
+                keysToPop.add(point)
+            if feedback is not None:
+                multiStepFeedback.setProgress(current * 100 / nNodes)
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.setProgressText(self.tr('Building node angle dict: removing single nodes'))
         nItems = len(keysToPop)
         for current, point in enumerate(keysToPop):
             if feedback is not None and feedback.isCanceled():
