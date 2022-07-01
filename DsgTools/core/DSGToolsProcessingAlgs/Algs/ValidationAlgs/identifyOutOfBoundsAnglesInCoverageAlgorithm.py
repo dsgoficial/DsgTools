@@ -195,8 +195,8 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         return {self.FLAGS: self.flag_id}
     
     def buildNodeAngleDict(self, splitSegments, feedback=None):
-        # nodeAngleDict = defaultdict(set)
-        nodeAngleDict = dict()
+        nodeAngleDict = defaultdict(set)
+        # nodeAngleDict = dict()
         nFeats = splitSegments.featureCount()
         if nFeats == 0:
             return nodeAngleDict
@@ -204,31 +204,17 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.setProgressText(self.tr('Building node angle dict: building dict'))
         multiStepFeedback.pushInfo(self.tr(f'Iterating over {nFeats} segments...'))
-        def buildDict(feat):
+        for current, feat in enumerate(splitSegments.getFeatures()):
             if feedback is not None and feedback.isCanceled():
-                return
+                break
             geom = feat.geometry()
-            return geom.asPolyline() if not geom.isMultipart() else geom.asMultiPolyline()[0]
-        pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count())
-        futures = set()
-        multiStepFeedback.pushInfo(self.tr('Submitting to thread'))
-        
-        for feat in splitSegments.getFeatures():
-            if feedback is not None and feedback.isCanceled():
-                break
-            futures.add(pool.submit(buildDict, feat))
-        
-        multiStepFeedback.pushInfo(self.tr('Evaluating results'))
-        for current, future in enumerate(concurrent.futures.as_completed(futures)):
-            if feedback is not None and feedback.isCanceled():
-                break
-            p1, p2 = future.result()
-            if p1 not in nodeAngleDict:
-                nodeAngleDict[p1] = set()
-            if p2 not in nodeAngleDict:
-                nodeAngleDict[p2] = set()
-            nodeAngleDict[p1].add(p2)
-            nodeAngleDict[p2].add(p1)
+            p1, p2 =  geom.asPolyline() if not geom.isMultipart() else geom.asMultiPolyline()[0]
+            geom1 = QgsGeometry.fromPointXY(p1)
+            wkb1 = geom1.asWkb()
+            geom2 = QgsGeometry.fromPointXY(p2)
+            wkb2 = geom2.asWkb()
+            nodeAngleDict[wkb1].add(wkb2)
+            nodeAngleDict[wkb2].add(wkb1)
             if feedback is not None:
                 multiStepFeedback.setProgress(current * 100 / nFeats)
             
@@ -254,8 +240,6 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
                 multiStepFeedback.setProgress(current * 100 / nItems)
         return nodeAngleDict
 
-
-
     def computeSmallAnglesInCoverage(
         self, nodeAngleDict, tol, feedback=None
     ):
@@ -264,23 +248,22 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         if nIntersections == 0:
             return flagWkbSet
         total = 100 / nIntersections
-        for current, (p2, pointSet) in enumerate(nodeAngleDict.items()):
+        for current, (wkb2, pointSet) in enumerate(nodeAngleDict.items()):
             if feedback is not None and feedback.isCanceled():
                 break
-            geom = QgsGeometry.fromPointXY(p2)
-            geomWkb = geom.asWkb()
-            if geomWkb in flagWkbSet:
+            if wkb2 in flagWkbSet:
                 continue
-            for p1, p3 in combinations(pointSet, 2):
+            p2 = self.getPointXYFromWkb(wkb2)
+            for wkb1, wkb3 in combinations(pointSet, 2):
+                p1 = self.getPointXYFromWkb(wkb1)
+                p3 = self.getPointXYFromWkb(wkb3)
                 angle = QgsGeometryUtils.angleBetweenThreePoints(
                     p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y()
                 )
-                vertexAngle = math.degrees(angle) + 360
-                vertexAngle = math.fmod(vertexAngle, 360)
-                if vertexAngle > 180:
-                    vertexAngle = 360 - vertexAngle
+                vertexAngle = abs(math.degrees(angle))
+                # vertexAngle = vertexAngle if vertexAngle < 180 else 360 - vertexAngle
                 if vertexAngle < tol:
-                    flagWkbSet.add(geomWkb)
+                    flagWkbSet.add(wkb2)
                     break
             if feedback is not None:
                 feedback.setProgress(current * total)
@@ -288,6 +271,11 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
             x, flagText=self.tr("Small angle in coverage"), fromWkb=True
         )
         list(map(flagLambda, flagWkbSet))
+
+    def getPointXYFromWkb(self, wkb):
+        geom = QgsGeometry()
+        geom.fromWkb(wkb)
+        return geom.asPoint()
 
     def name(self):
         """
