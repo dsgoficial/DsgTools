@@ -241,7 +241,7 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
         )
     
     def expressionHasParseError(self, expressionString):
-        expr = expressionString if """ELSE ''\nEND""" not in expressionString else expressionString
+        expr = expressionString if """ELSE ''\nEND""" in expressionString else expressionString + """ELSE ''\nEND"""
         expression = QgsExpression(expr)
         return expression.isValid()
 
