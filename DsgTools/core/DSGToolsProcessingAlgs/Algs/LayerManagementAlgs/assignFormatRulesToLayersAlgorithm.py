@@ -222,10 +222,16 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
                     condition=data['regra'],
                     result=data['descricao']
                 )
+                if not self.expressionIsValid(expressionString):
+                    raise Exception(f"Error while trying to apply rule:\n {data}\ncurrent field: {fieldName}\ncurrent layer name: {key}")
         expressionString += """ELSE ''\nEND"""
+        if expressionString == "CASE\nELSE ''\nEND": ## did not apply any rule
+            return
         expression = QgsExpression(expressionString)
         if expression.hasParserError():
-            raise Exception(f"Invalid expression: \n{expressionString}")
+            raise Exception(
+                f"Invalid expression: \n{expressionString}"
+            )
         if not expression.isValid():
             raise Exception(f"Invalid expression: \n{expressionString}")
         lyr.addExpressionField(
@@ -235,6 +241,11 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
                 QVariant.String
             )
         )
+    
+    def expressionIsValid(self, expressionString):
+        expr = expressionString if """ELSE ''\nEND""" not in expressionString else expressionString
+        expression = QgsExpression(expr)
+        return False if expression.hasParserError() or not expression.isValid() else True
 
     def cleanRules(self, inputLayerList):
         for lyr in inputLayerList:
