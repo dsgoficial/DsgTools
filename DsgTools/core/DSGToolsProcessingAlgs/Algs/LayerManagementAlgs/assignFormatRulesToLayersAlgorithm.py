@@ -232,8 +232,6 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
             raise Exception(
                 f"Invalid expression: \n{expressionString}"
             )
-        if not expression.isValid():
-            raise Exception(f"Invalid expression: \n{expressionString}")
         lyr.addExpressionField(
             expressionString,
             QgsField(
@@ -245,7 +243,7 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
     def expressionHasParseError(self, expressionString):
         expr = expressionString if """ELSE ''\nEND""" not in expressionString else expressionString
         expression = QgsExpression(expr)
-        return False if expression.hasParserError() else True
+        return expression.isValid()
 
     def cleanRules(self, inputLayerList):
         for lyr in inputLayerList:
