@@ -19,6 +19,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from collections import defaultdict
 import math
 from itertools import chain, combinations
 
@@ -28,7 +29,7 @@ from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
-    QgsFeatureRequest,
+    QgsGeometry,
     QgsGeometryUtils,
     QgsProcessing,
     QgsProcessingException,
@@ -110,7 +111,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
             "output": output,
             "error": error,
             "GRASS_REGION_PARAMETER": None,
-            "GRASS_SNAP_TOLERANCE_PARAMETER": -1,
+            "GRASS_SNAP_TOLERANCE_PARAMETER": 1e-10,
             "GRASS_MIN_AREA_PARAMETER": 0.0001,
             "GRASS_OUTPUT_TYPE_PARAMETER": 0,
             "GRASS_VECTOR_DSCO": "",
@@ -139,123 +140,90 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
             len(inputLyrList) + 11, feedback
         )
         currentStep = 0
-        for lyr in inputLyrList:
-            if feedback.isCanceled():
-                break
-            multiStepFeedback.setCurrentStep(currentStep)
-            self.runIdentifyOutOfBoundsAngles(
-                lyr, onlySelected, tol, context, feedback=multiStepFeedback
-            )
-            currentStep += 1
+        #merge all layers into one
         multiStepFeedback.setCurrentStep(currentStep)
         mergedLayers = algRunner.runMergeVectorLayers(
             inputList=inputLyrList, context=context, feedback=multiStepFeedback
         )
         currentStep += 1
-
+        #split segments with clean
         multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(
-            mergedLayers, context=context, feedback=multiStepFeedback
-        )
+        cleanedLyr = self.cleanCoverage(mergedLayers, context, multiStepFeedback)
         currentStep += 1
 
-        intersectedLyr = algRunner.runLineIntersections(
-            inputLyr=mergedLayers,
-            intersectLyr=mergedLayers,
-            context=context,
-            feedback=multiStepFeedback,
-        )
-        nIntersections = intersectedLyr.featureCount()
-        if nIntersections == 0:
-            return {self.FLAGS: self.flag_id}
-        currentStep += 1
-
-        intersectedLyr = algRunner.runDeaggregate(
-            inputLyr=intersectedLyr, context=context, feedback=multiStepFeedback
-        )
-
-        multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(
-            intersectedLyr, context=context, feedback=multiStepFeedback
-        )
-        currentStep += 1
-
+        
         multiStepFeedback.setCurrentStep(currentStep)
         splitSegments = algRunner.runExplodeLines(
-            inputLyr=mergedLayers, context=context, feedback=multiStepFeedback
+            inputLyr=cleanedLyr, context=context, feedback=multiStepFeedback
         )
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(
-            splitSegments, context=context, feedback=multiStepFeedback
-        )
-        currentStep += 1
+        nodeAngleDict = self.buildNodeAngleDict(splitSegments, feedback=multiStepFeedback)
 
-        multiStepFeedback.setCurrentStep(currentStep)
-        joinedLyr = algRunner.runExtractByLocation(
-            inputLyr=splitSegments,
-            intersectLyr=intersectedLyr,
-            context=context,
-            feedback=multiStepFeedback,
-        )
-        currentStep += 1
-
-        multiStepFeedback.setCurrentStep(currentStep)
-        splitLines = algRunner.runSplitLinesWithLines(
-            inputLyr=joinedLyr,
-            linesLyr=joinedLyr,
-            context=context,
-            feedback=multiStepFeedback,
-        )
-
-        multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(
-            splitLines, context=context, feedback=multiStepFeedback
-        )
+        
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         self.computeSmallAnglesInCoverage(
-            intersectedLyr, splitLines, nIntersections, tol, feedback=multiStepFeedback
+            nodeAngleDict, tol, feedback=multiStepFeedback
         )
 
         return {self.FLAGS: self.flag_id}
-
-    def computeSmallAnglesInCoverage(
-        self, intersectedLyr, joinedLyr, nIntersections, tol, feedback=None
-    ):
-        flagWkbSet = set()
-        total = 100 / nIntersections
-        radTol = tol * math.pi / 180
-        for current, pointFeat in enumerate(intersectedLyr.getFeatures()):
+    
+    def buildNodeAngleDict(self, splitSegments, feedback=None):
+        nodeAngleDict = defaultdict(set)
+        nFeats = splitSegments.featureCount()
+        if nFeats == 0:
+            return nodeAngleDict
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        for current, feat in enumerate(splitSegments.getFeatures()):
             if feedback is not None and feedback.isCanceled():
                 break
-            geom = pointFeat.geometry()
-            p2 = geom.asPoint()
+            geom = feat.geometry()
+            p1, p2 = geom.asPolyline()
+            nodeAngleDict[p1].add(p2)
+            nodeAngleDict[p2].add(p1)
+            if feedback is not None:
+                multiStepFeedback.setProgress(current * 100 / nFeats)
+        multiStepFeedback.setCurrentStep(1)
+        keysToPop = set(point for point, pointSet in nodeAngleDict.items() if len(pointSet) < 2)
+        nItems = len(keysToPop)
+        for current, point in enumerate(keysToPop):
+            if feedback is not None and feedback.isCanceled():
+                break
+            nodeAngleDict.pop(point)
+            if feedback is not None:
+                multiStepFeedback.setProgress(current * 100 / nItems)
+        return nodeAngleDict
+
+
+
+    def computeSmallAnglesInCoverage(
+        self, nodeAngleDict, tol, feedback=None
+    ):
+        flagWkbSet = set()
+        nIntersections = len(nodeAngleDict)
+        if nIntersections == 0:
+            return flagWkbSet
+        total = 100 / nIntersections
+        for current, (p2, pointSet) in enumerate(nodeAngleDict.items()):
+            if feedback is not None and feedback.isCanceled():
+                break
+            geom = QgsGeometry.fromPointXY(p2)
             geomWkb = geom.asWkb()
             if geomWkb in flagWkbSet:
                 continue
-            bbox = geom.boundingBox()
-            request = QgsFeatureRequest().setFilterRect(bbox)
-            for f1, f2 in combinations(joinedLyr.getFeatures(request), 2):
-                geom1 = f1.geometry()
-                geom2 = f2.geometry()
-                if not geom.intersects(geom1) or not geom.intersects(geom2):
-                    continue
-
-                p1, p3 = set(
-                    i
-                    for i in chain.from_iterable(
-                        [geom1.asPolyline(), geom2.asPolyline()]
-                    )
-                    if i != p2
-                )
+            for p1, p3 in combinations(pointSet, 2):
                 angle = QgsGeometryUtils.angleBetweenThreePoints(
                     p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y()
                 )
-                # angle in radians
-                if angle < radTol:
-                    flagWkbSet.add(geom.asWkb())
+                vertexAngle = math.degrees(angle) + 360
+                vertexAngle = math.fmod(vertexAngle, 360)
+                if vertexAngle > 180:
+                    vertexAngle = 360 - vertexAngle
+                if vertexAngle < tol:
+                    flagWkbSet.add(geomWkb)
                     break
             if feedback is not None:
                 feedback.setProgress(current * total)
