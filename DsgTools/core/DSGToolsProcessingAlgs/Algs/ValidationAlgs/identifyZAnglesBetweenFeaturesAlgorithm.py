@@ -146,7 +146,7 @@ class identifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
             if feedback is not None and feedback.isCanceled():
                 break
             geom = feat.geometry()
-            multiPolygons = geom.asMultiPolygon()[0] if geom.isMultiPart() else geom.asPolygon()
+            multiPolygons = geom.asMultiPolygon()[0] if geom.isMultipart() else geom.asPolygon()
             for vertices in multiPolygons:
                 for i in range(len(vertices)-3):
                     v1, v2, v3, v4 = vertices[i:i+4]
