@@ -84,7 +84,7 @@ class identifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
         self.fields = QgsFields()
         self.fields.append(QgsField('source', QVariant.String))
 
-        sink, _ = self.parameterAsSink(parameters, self.OUTPUT, context, self.fields,
+        sink, dest_id = self.parameterAsSink(parameters, self.OUTPUT, context, self.fields,
             QgsWkbTypes.LineString, crs)
         
         nSteps = 2* (lines is not None and len(lines) > 0) + (areas is not None and len(areas) > 0)
@@ -110,7 +110,7 @@ class identifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
         sink.addFeatures(featsToAnalyse)
 
         return {
-            self.OUTPUT: sink
+            self.OUTPUT: dest_id
             }
 
     def caseInternLine(self, lines, angle, feedback=None):
