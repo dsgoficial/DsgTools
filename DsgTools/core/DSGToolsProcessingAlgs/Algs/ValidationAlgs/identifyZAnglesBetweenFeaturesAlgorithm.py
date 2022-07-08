@@ -35,26 +35,19 @@ from .validationAlgorithm import ValidationAlgorithm
 
 class identifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
 
-    INPUT_LINES = 'INPUT_LINES'
-    INPUT_AREAS = 'INPUT_AREAS'
+    INPUT = 'INPUT'
     ANGLE = 'ANGLE'
     OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
-                self.INPUT_LINES,
-                self.tr('Line features to be verified'),
-                [QgsProcessing.TypeVectorLine],
-                optional=True
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterFeatureSource(
-                self.INPUT_AREAS,
-                self.tr('Area features to be verified'),
-                [QgsProcessing.TypeVectorPolygon],
-                optional=True
+                self.INPUT,
+                self.tr('Input'),
+                [
+                    QgsProcessing.TypeVectorLine,
+                    QgsProcessing.TypeVectorPolygon,
+                ]
             )
         )
         self.addParameter(
@@ -75,8 +68,7 @@ class identifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
         )
 
     def processAlgorithm(self, parameters, context, feedback):
-        lines = self.parameterAsSource(parameters, self.INPUT_LINES, context)
-        areas = self.parameterAsSource(parameters, self.INPUT_AREAS, context)
+        inputSource = self.parameterAsSource(parameters, self.INPUT, context)
         angle = self.parameterAsDouble(parameters, self.ANGLE, context)
         featsToAnalyse = list()
 
@@ -87,25 +79,22 @@ class identifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
         sink, dest_id = self.parameterAsSink(parameters, self.OUTPUT, context, self.fields,
             QgsWkbTypes.LineString, crs)
         
-        nSteps = 2* (lines is not None and len(lines) > 0) + (areas is not None and len(areas) > 0)
+        nSteps = 2 if QgsWkbTypes.geometryType(inputSource.wkbType()) == QgsWkbTypes.LineGeometry else 1
         multiStepFeedback = feedback if nSteps == 1 else QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
 
-        if lines:
+        if  QgsWkbTypes.geometryType(inputSource.wkbType()) == QgsWkbTypes.LineGeometry:
             multiStepFeedback.setProgressText(self.tr("Evaluating z within lines"))
             multiStepFeedback.setCurrentStep(currentStep)
-            featsToAnalyse.extend(self.caseBetweenLines(lines, angle, feedback=multiStepFeedback))
+            featsToAnalyse.extend(self.caseBetweenLines(inputSource, angle, feedback=multiStepFeedback))
             currentStep += 1
             multiStepFeedback.setProgressText(self.tr("Evaluating z within features geometries"))
             multiStepFeedback.setCurrentStep(currentStep)
-            featsToAnalyse.extend(self.caseInternLine(lines, angle, feedback=multiStepFeedback))
+            featsToAnalyse.extend(self.caseInternLine(inputSource, angle, feedback=multiStepFeedback))
             currentStep += 1
-
-        if areas:
-            if currentStep > 0:
-                multiStepFeedback.setProgressText(self.tr("Evaluating z within polygons"))
-                multiStepFeedback.setCurrentStep(currentStep)
-            featsToAnalyse.extend(self.caseInternArea(areas, angle, feedback=multiStepFeedback))
+        else:
+            multiStepFeedback.setProgressText(self.tr("Evaluating z within polygons"))
+            featsToAnalyse.extend(self.caseInternArea(inputSource, angle, feedback=multiStepFeedback))
 
         sink.addFeatures(featsToAnalyse)
 
