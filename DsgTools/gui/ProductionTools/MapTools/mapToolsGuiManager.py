@@ -24,6 +24,7 @@ from __future__ import absolute_import
 from builtins import object
 import os.path
 import sys
+from DsgTools.gui.ProductionTools.MapTools.SelectRasterTool.selectRaster import SelectRasterTool
 
 from qgis.PyQt.QtCore import pyqtSignal
 from qgis.core import QgsVectorLayer
@@ -60,6 +61,9 @@ class MapToolsGuiManager(QObject):
         #adding generic selection tool
         self.genericTool = GenericSelectionTool(self.iface)
         self.genericTool.addTool(self.manager, self.activateGenericTool, self.parentMenu, self.iconBasePath)
+        #adding select raster
+        self.rasterSelectTool = SelectRasterTool(self.iface)
+        self.rasterSelectTool.addTool(self.manager, self.rasterSelectTool.run, self.parentMenu, self.iconBasePath)
         #adding flip line tool
         self.flipLineTool = FlipLine(self.iface)
         self.flipLineTool.addTool(self.manager, self.flipLineTool.startFlipLineTool, self.parentMenu, self.iconBasePath)
@@ -130,6 +134,10 @@ class MapToolsGuiManager(QObject):
 
     def activateGenericTool(self):
         self.iface.mapCanvas().setMapTool(self.genericTool)
+    
+    def activateRasterSelectTool(self):
+        self.iface.mapCanvas().setMapTool(self.rasterSelectTool)
 
     def unload(self):
         self.genericTool.unload()
+        self.rasterSelectTool.unload()

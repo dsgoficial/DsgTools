@@ -2031,7 +2031,7 @@ ALTER TABLE edgv.elemnat_elemento_hidrografico_p ALTER COLUMN tipo_insumo SET DE
 
 CREATE TABLE edgv.elemnat_ponto_cotado_p(
 	 id serial NOT NULL,
-	 cota varchar(255) NOT NULL,
+	 cota real NOT NULL,
 	 cota_comprovada smallint NOT NULL,
 	 tipo_comprovacao smallint NOT NULL,
 	 tipo_insumo smallint NOT NULL,

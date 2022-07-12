@@ -21,6 +21,14 @@
  ***************************************************************************/
 """
 from PyQt5.QtCore import QCoreApplication
+from qgis.core import (QgsProcessing,
+                       QgsProcessingAlgorithm,
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingParameterFile,
+                       QgsProcessingParameterString,
+                       QgsProcessingOutputMultipleLayers,
+                       QgsProcessingParameterString,
+                       QgsEditorWidgetSetup)
 from PyQt5.QtGui import QColor
 from qgis.PyQt.Qt import QVariant
 from qgis.core import (QgsProcessing,
@@ -163,7 +171,10 @@ class AssignAliasesToLayersAlgorithm(QgsProcessingAlgorithm):
                     idx = lyr.fields().indexOf(attr["nome"])
                     if not(idx > 0):
                         continue
+                    oldEditor = QgsEditorWidgetSetup(lyr.editorWidgetSetup(idx)) if lyr.editorWidgetSetup(idx).config() else None
                     lyr.setFieldAlias(idx, attr["alias"])
+                    if oldEditor is not None:
+                        lyr.setEditorWidgetSetup(idx, oldEditor)
 
     def name(self):
         """

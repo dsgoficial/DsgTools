@@ -797,3 +797,25 @@ class AbstractDb(QObject):
             version = query.value(0)
             break
         return version if version is not None else -1
+    
+    def getVersionString(self):
+        version = self.getDatabaseVersion()
+        if version == 'Non_EDGV':
+            return self.tr("Unknown DB model")
+        if version in ['2.1.3', '3.0']:
+            version = f"EDGV {version}"
+        implementation = self.implementationVersion()
+        return f"{version} impl. {implementation}"
+
+    def getImplementationVersion(self):
+        """
+        Returns implementation version
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getImplementationVersion()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting implementation version: ') + query.lastError().text()) 
+        while query.next():
+            return query.value(0)
+    

@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from collections import defaultdict
 import os
 
 from qgis.core import (Qgis,
@@ -111,37 +112,27 @@ class EDGVLayerLoader(QObject):
         lyrList: list of layers to be loaded
         isEdgv: optional parameter to indicate when db is not edgv. If db is not edgv, layers will be grouped by schema.
         """
-        lyrDict = dict()
-        if isinstance(inputList, list):
-            if len(inputList) > 0:
-                if isinstance(inputList[0],dict):
-                    for elem in inputList:
-                        if elem['geomType'] == 'GEOMETRY':
+        lyrDict = defaultdict(lambda: defaultdict(list))
+        if isinstance(inputList, list) and len(inputList) > 0:
+            if isinstance(inputList[0],dict):
+                for elem in inputList:
+                    if elem['geomType'] == 'GEOMETRY':
+                        continue
+                    lyrDict[self.correspondenceDict[elem['geomType']]][elem['cat']].append(elem)
+            else:
+                for type in list(self.geomTypeDict.keys()):
+                    # some tables are only registered as GEOMETRY and should not be considered
+                    if type == 'GEOMETRY':
+                        continue
+                    for lyr in self.geomTypeDict[type]:
+                        if lyr not in inputList:
                             continue
-                        if self.correspondenceDict[elem['geomType']] not in list(lyrDict.keys()):
-                            lyrDict[self.correspondenceDict[elem['geomType']]] = dict()
-                        if elem['cat'] not in list(lyrDict[self.correspondenceDict[elem['geomType']]].keys()):
-                            lyrDict[self.correspondenceDict[elem['geomType']]][elem['cat']] = []
-                        lyrDict[self.correspondenceDict[elem['geomType']]][elem['cat']].append(elem)
-                else:
-                    for type in list(self.geomTypeDict.keys()):
-                        # some tables are only registered as GEOMETRY and should not be considered
-                        if type == 'GEOMETRY':
-                            continue
-                        if self.correspondenceDict[type] not in list(lyrDict.keys()):
-                            lyrDict[self.correspondenceDict[type]] = dict()
-                        for lyr in self.geomTypeDict[type]:
-                            if lyr in inputList:
-                                if isEdgv:
-                                    cat = lyr.split('_')[0]
-                                else:
-                                    cat = self.abstractDb.getTableSchemaFromDb(lyr)
-                                if cat not in list(lyrDict[self.correspondenceDict[type]].keys()):
-                                    lyrDict[self.correspondenceDict[type]][cat] = []
-                                lyrDict[self.correspondenceDict[type]][cat].append(lyr)
-                    for type in list(lyrDict.keys()):
-                        if lyrDict[type] == dict():
-                            lyrDict.pop(type)
+                        cat = lyr.split('_')[0] if isEdgv \
+                            else self.abstractDb.getTableSchemaFromDb(lyr)
+                        lyrDict[self.correspondenceDict[type]][cat].append(lyr)
+                for type in list(lyrDict.keys()):
+                    if lyrDict[type] == dict():
+                        lyrDict.pop(type)
         return lyrDict
 
     def prepareGroups(self, rootNode, lyrDict):

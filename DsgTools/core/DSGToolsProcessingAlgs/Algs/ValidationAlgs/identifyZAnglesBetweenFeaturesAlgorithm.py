@@ -27,33 +27,27 @@ from qgis.core import (QgsFeature, QgsFeatureRequest, QgsField, QgsFields,
                        QgsGeometry, QgsGeometryUtils, QgsPoint, QgsPointXY,
                        QgsProcessing, QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterNumber, QgsProject, QgsWkbTypes)
+                       QgsProcessingParameterNumber, QgsProject, QgsWkbTypes, 
+                       QgsProcessingMultiStepFeedback)
 
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class identifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
 
-    INPUT_LINES = 'INPUT_LINES'
-    INPUT_AREAS = 'INPUT_AREAS'
+    INPUT = 'INPUT'
     ANGLE = 'ANGLE'
     OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
-                self.INPUT_LINES,
-                self.tr('Line features to be verified'),
-                [QgsProcessing.TypeVectorLine],
-                optional=True
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterFeatureSource(
-                self.INPUT_AREAS,
-                self.tr('Area features to be verified'),
-                [QgsProcessing.TypeVectorPolygon],
-                optional=True
+                self.INPUT,
+                self.tr('Input'),
+                [
+                    QgsProcessing.TypeVectorLine,
+                    QgsProcessing.TypeVectorPolygon,
+                ]
             )
         )
         self.addParameter(
@@ -74,8 +68,7 @@ class identifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
         )
 
     def processAlgorithm(self, parameters, context, feedback):
-        lines = self.parameterAsSource(parameters, self.INPUT_LINES, context)
-        areas = self.parameterAsSource(parameters, self.INPUT_AREAS, context)
+        inputSource = self.parameterAsSource(parameters, self.INPUT, context)
         angle = self.parameterAsDouble(parameters, self.ANGLE, context)
         featsToAnalyse = list()
 
@@ -83,25 +76,41 @@ class identifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
         self.fields = QgsFields()
         self.fields.append(QgsField('source', QVariant.String))
 
-        sink, _ = self.parameterAsSink(parameters, self.OUTPUT, context, self.fields,
+        sink, dest_id = self.parameterAsSink(parameters, self.OUTPUT, context, self.fields,
             QgsWkbTypes.LineString, crs)
+        
+        nSteps = 2 if QgsWkbTypes.geometryType(inputSource.wkbType()) == QgsWkbTypes.LineGeometry else 1
+        multiStepFeedback = feedback if nSteps == 1 else QgsProcessingMultiStepFeedback(nSteps, feedback)
+        currentStep = 0
 
-        if lines:
-            featsToAnalyse.extend(self.caseBetweenLines(lines, angle))
-            featsToAnalyse.extend(self.caseInternLine(lines, angle))
-
-        if areas:
-            featsToAnalyse.extend(self.caseInternArea(areas, angle))
+        if  QgsWkbTypes.geometryType(inputSource.wkbType()) == QgsWkbTypes.LineGeometry:
+            multiStepFeedback.setProgressText(self.tr("Evaluating z within lines"))
+            multiStepFeedback.setCurrentStep(currentStep)
+            featsToAnalyse.extend(self.caseBetweenLines(inputSource, angle, feedback=multiStepFeedback))
+            currentStep += 1
+            multiStepFeedback.setProgressText(self.tr("Evaluating z within features geometries"))
+            multiStepFeedback.setCurrentStep(currentStep)
+            featsToAnalyse.extend(self.caseInternLine(inputSource, angle, feedback=multiStepFeedback))
+            currentStep += 1
+        else:
+            multiStepFeedback.setProgressText(self.tr("Evaluating z within polygons"))
+            featsToAnalyse.extend(self.caseInternArea(inputSource, angle, feedback=multiStepFeedback))
 
         sink.addFeatures(featsToAnalyse)
 
         return {
-            self.OUTPUT: sink
+            self.OUTPUT: dest_id
             }
 
-    def caseInternLine(self, lines, angle):
+    def caseInternLine(self, lines, angle, feedback=None):
         featsToAnalyse = []
-        for feat in lines.getFeatures():
+        lineCount = lines.featureCount()
+        if lineCount == 0:
+            return featsToAnalyse
+        total = 100 / lineCount
+        for current, feat in enumerate(lines.getFeatures()):
+            if feedback is not None and feedback.isCanceled():
+                break
             vertices = feat.geometry().vertices()
             v1 = next(vertices) if vertices.hasNext() else None
             v2 = next(vertices) if vertices.hasNext() else None
@@ -112,12 +121,21 @@ class identifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
                     newFeat.setAttribute('source',lines.sourceName())
                     featsToAnalyse.append(newFeat)
                 v1,v2,v3 = v2,v3,v4
+            if feedback is not None:
+                feedback.setProgress(current * total)
         return featsToAnalyse
 
-    def caseInternArea(self, areas, angle):
+    def caseInternArea(self, areas, angle, feedback=None):
         featsToAnalyse = []
-        for feat in areas.getFeatures():
-            multiPolygons = feat.geometry().asMultiPolygon()[0]
+        areaCount = areas.featureCount()
+        if areaCount == 0:
+            return featsToAnalyse
+        total = 100/areaCount
+        for current, feat in enumerate(areas.getFeatures()):
+            if feedback is not None and feedback.isCanceled():
+                break
+            geom = feat.geometry()
+            multiPolygons = geom.asMultiPolygon()[0] if geom.isMultipart() else geom.asPolygon()
             for vertices in multiPolygons:
                 for i in range(len(vertices)-3):
                     v1, v2, v3, v4 = vertices[i:i+4]
@@ -128,11 +146,19 @@ class identifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
                 newFeat = self.checkIntersectionAndCreateFeature4p(vertices[-3], vertices[-2],vertices[-1], vertices[1], angle)
                 if newFeat:
                     featsToAnalyse.append(newFeat)
+            if feedback is not None:
+                feedback.setProgress(current * total)
         return featsToAnalyse
 
-    def caseBetweenLines(self, lines, angle):
+    def caseBetweenLines(self, lines, angle, feedback=None):
         featsToAnalyse = []
+        lineCount = lines.featureCount()
+        if lineCount == 0:
+            return featsToAnalyse
+        total = 100 / lineCount
         for i, feat1 in enumerate(lines.getFeatures()):
+            if feedback is not None and feedback.isCanceled():
+                break
             gfeat1 = feat1.geometry()
             request = QgsFeatureRequest().setFilterRect(gfeat1.boundingBox())
             for j, feat2 in enumerate(lines.getFeatures(request)):
@@ -154,7 +180,7 @@ class identifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
                     elif len(list(gfeat1.vertices())) == 2:
                         request2 = QgsFeatureRequest().setFilterRect(gfeat2.boundingBox())
                         for k, feat3 in enumerate(lines.getFeatures(request2)):
-                            if any((k > i), (k > j)):
+                            if any([(k > i), (k > j)]):
                                 continue
                             gfeat3 = feat3.geometry()
                             if not gfeat3.touches(gfeat1):
@@ -167,6 +193,8 @@ class identifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
                                 elif toAnalyse:
                                     toAnalyse.setAttribute('source',lines.sourceName())
                                     featsToAnalyse.append(toAnalyse)
+            if feedback is not None:
+                feedback.setProgress(i * total)
         return featsToAnalyse
 
     def checkIntersectionAndCreateFeature4p(self, v1, v2, v3, v4, angle):

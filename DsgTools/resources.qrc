@@ -70,6 +70,7 @@
         <file>icons/add_databases.png</file>
         <file>icons/CRS_qgis.svg</file>
         <file>icons/save.png</file>
+        <file>icons/selectRaster.png</file>
         <file>icons/toggleAllLabels.png</file>
         <file>icons/toggleSelectedLayersLabel.png</file>
         <file>icons/toggleActiveLayerLabel.png</file>
@@ -81,5 +82,6 @@
         <file>icons/on_off.png</file>
         <file>icons/vertex.png</file>
         <file>icons/key.png</file>
+        <file>icons/sort.png</file>
     </qresource>
 </RCC>

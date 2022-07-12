@@ -111,12 +111,22 @@ class AttributeTableWidget( QtWidgets.QWidget ):
         self.clearAllItems()
         for attributeName in attributesConfig:
             if 'map' in attributesConfig[ attributeName ]:
-                widget = self.createComboBox( attributesConfig[ attributeName ]['map'] )
+                widget = self.createComboBox(
+                    self.formatMapValues(attributesConfig[ attributeName ]['map'])
+                )
             else:
                 widget = self.createLineEdit()
             self.addRow( None, attributeName, widget )
         self.adjustColumns()
         self.adjustRows()
+
+    def formatMapValues(self, mapValues):
+        if not(type(mapValues) is list):
+            return mapValues
+        newMapValues = {}
+        for field in mapValues:
+            newMapValues.update(field)
+        return newMapValues
     
     def setAttributesValues(self, attributesValues):
         attributeNames = [ key for key in attributesValues ]

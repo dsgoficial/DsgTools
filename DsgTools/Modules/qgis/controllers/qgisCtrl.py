@@ -129,7 +129,7 @@ class QgisCtrl:
             configField = layer.defaultValueDefinition( fieldIndex )
             isMapValue = ( 'map' in layer.editorWidgetSetup( fieldIndex ).config() )
             if isMapValue:
-                valueMap = layer.editorWidgetSetup( fieldIndex ).config()['map']
+                valueMap = self.formatMapValues( layer.editorWidgetSetup( fieldIndex ).config()['map'] )
                 if not( attributeValue is None ) and attributeValue in valueMap:
                     configField.setExpression("{0}".format( valueMap[ attributeValue ] ) )
                 elif reset:
@@ -140,6 +140,14 @@ class QgisCtrl:
                 elif reset:
                     configField.setExpression("")
             layer.setDefaultValueDefinition( fieldIndex, configField )
+
+    def formatMapValues(self, mapValues):
+        if not(type(mapValues) is list):
+            return mapValues
+        newMapValues = {}
+        for field in mapValues:
+            newMapValues.update(field)
+        return newMapValues
 
     def getDefaultFields(self, layer):
         attributesValues = {}
@@ -184,7 +192,7 @@ class QgisCtrl:
             isMapValue = ('map' in config)
             attributeValue  = attributes[ fieldName ]
             if isMapValue:
-                valueMap = config['map']
+                valueMap = self.formatMapValues( config['map'] )
                 if attributeValue in valueMap:
                     feature.setAttribute( indx, valueMap[ attributeValue ] )
             elif attributeValue and not( attributeValue in ['NULL', 'IGNORAR'] ):

@@ -289,7 +289,7 @@ class AlgRunner:
         output = processing.run('dsgtools:snaplayeronlayer', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
 
-    def runIdentifyDangles(self, inputLayer, searchRadius, context, feedback=None, onlySelected=False, lineFilter = None, polygonFilter = None, ignoreUnsegmented = False, ignoreInner = False, flagLyr=None):
+    def runIdentifyDangles(self, inputLayer, searchRadius, context, feedback=None, onlySelected=False, lineFilter = None, polygonFilter = None, ignoreUnsegmented = False, ignoreInner = False, flagLyr=None, returnProcessingDict=False):
         flagLyr = 'memory:' if flagLyr is None else flagLyr
         lineFilter = [] if lineFilter is None else lineFilter
         polygonFilter = [] if polygonFilter is None else polygonFilter
@@ -304,7 +304,7 @@ class AlgRunner:
             'FLAGS' : flagLyr
         }
         output = processing.run('dsgtools:identifydangles', parameters, context=context, feedback=feedback)
-        return output['FLAGS']
+        return output if returnProcessingDict else output['FLAGS']
     
     def runSnapToGrid(self, inputLayer, tol, context, feedback=None, outputLyr=None):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
@@ -435,17 +435,18 @@ class AlgRunner:
         output = processing.run('dsgtools:matchandapplyqmlstylestolayersalgorithm', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
-    def runAddAutoIncrementalField(self, inputLyr, context, feedback=None, outputLyr=None):
+    def runAddAutoIncrementalField(self, inputLyr, context, feedback=None, outputLyr=None, fieldName=None, start=1, sortAscending=True, sortNullsFirst=False):
+        fieldName = 'featid' if fieldName is None else fieldName
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
             'INPUT' : inputLyr,
-            'FIELD_NAME' : 'featid',
-            'START':1,
-            'GROUP_FIELDS':[],
-            'SORT_EXPRESSION':'',
-            'SORT_ASCENDING':True,
-            'SORT_NULLS_FIRST':False,
-            'OUTPUT':outputLyr
+            'FIELD_NAME' : fieldName,
+            'START': start,
+            'GROUP_FIELDS': [],
+            'SORT_EXPRESSION': '',
+            'SORT_ASCENDING': sortAscending,
+            'SORT_NULLS_FIRST': sortNullsFirst,
+            'OUTPUT': outputLyr,
         }
         output = processing.run(
             'native:addautoincrementalfield',
@@ -670,6 +671,44 @@ class AlgRunner:
         output = processing.run(
             "qgis:aggregate",
             parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runDeaggregate(self, inputLyr, context, feedback=None, onlySelected=False):
+        parameters = {
+            'INPUT': inputLyr,
+            'SELECTED': onlySelected
+        }
+        output = processing.run(
+            "dsgtools:deaggregategeometries",
+            parameters,
+            context=context,
+            feedback=feedback
+        )
+        return output
+
+    def runCreateSpatialIndex(self, inputLyr, context, feedback=None):
+        processing.run(
+            "native:createspatialindex",
+            {'INPUT':inputLyr},
+            feedback=feedback,
+            context=context
+        )
+        return None
+    
+    def runExtractByLocation(self, inputLyr, intersectLyr, context, predicate=None, feedback=None, outputLyr=None):
+        predicate = [0] if predicate is None else predicate
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:extractbylocation",
+            {
+                'INPUT': inputLyr,
+                'INTERSECT': intersectLyr,
+                'PREDICATE': predicate,
+                'OUTPUT': outputLyr
+            },
             context=context,
             feedback=feedback
         )

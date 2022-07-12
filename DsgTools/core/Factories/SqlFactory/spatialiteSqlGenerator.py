@@ -171,6 +171,10 @@ class SpatialiteSqlGenerator(SqlGenerator):
         sql = "SELECT edgvversion FROM public_db_metadata LIMIT 1"
         return sql
     
+    def getEDGVVersionAndImplementationVersion(self):
+        sql = "SELECT edgvversion, dbimplversion FROM public_db_metadata LIMIT 1"
+        return sql
+    
     def getStylesFromDb(self, dbVersion):
         return None
 
@@ -240,3 +244,7 @@ class SpatialiteSqlGenerator(SqlGenerator):
         :return: (list-of-str) list of attribute names.
         """
         return """PRAGMA table_info('{0}');""".format(table)
+
+    def getImplementationVersion(self):
+        sql = """select dbimplversion from public_db_metadata limit 1"""
+        return sql

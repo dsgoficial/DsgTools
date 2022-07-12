@@ -41,7 +41,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingUtils,
                        QgsSpatialIndex,
                        QgsGeometry,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingMultiStepFeedback,
+                       QgsFeatureRequest)
 
 class IdentifyDanglesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
@@ -149,9 +150,6 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         multiStep.pushInfo(self.tr('Looking for dangles...'))
         pointList = self.searchDanglesOnPointDict(endVerticesDict, multiStep)
         #build filter layer
-        currentStep += 1
-        multiStep.setCurrentStep(currentStep)
-        multiStep.pushInfo(self.tr('Filtering dangles candidates...'))
         filterLayer = self.buildFilterLayer(
             lineFilterLyrList,
             polygonFilterLyrList,
@@ -164,7 +162,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         if filterLayer:
             currentStep += 1
             multiStep.setCurrentStep(currentStep)
-            multiStep.pushInfo(self.tr('Filtering dangles candidates with filter...'))
+            multiStep.pushInfo(self.tr('Filtering dangles candidates with filter layer features...'))
             filteredPointList = self.filterPointListWithFilterLayer(
                 pointList,
                 filterLayer,
@@ -186,6 +184,14 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
                 isRefLyr=True,
                 ignoreNotSplit=ignoreNotSplit
                 )
+        currentStep += 1
+        multiStep.setCurrentStep(currentStep)
+        multiStep.pushInfo(self.tr('Filtering dangles candidates with input layer features...'))
+        filteredPointList = self.filterPointListWithInputLayer(
+            pointList=filteredPointList,
+            inputLyr=inputLyr,
+            feedback=multiStep
+        )
         #build flag list with filtered points
         currentStep += 1
         multiStep.setCurrentStep(currentStep)
@@ -236,13 +242,11 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             lineLyrs += [self.makeBoundaries(polygonLyr, context, feedback)]
         if not lineLyrs:
             return None
-        unifiedLinesLyr = self.layerHandler.createAndPopulateUnifiedVectorLayer(
+        return self.layerHandler.createAndPopulateUnifiedVectorLayer(
             lineLyrs,
             QgsWkbTypes.MultiLineString,
             onlySelected=onlySelected
             )
-        filterLyr = self.cleanLayer(unifiedLinesLyr, [0,6], context)
-        return filterLyr
     
     def makeBoundaries(self, lyr, context, feedback):
         parameters = {
@@ -251,30 +255,25 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         }
         output = processing.run("native:boundary", parameters, context = context)
         return output['OUTPUT']
+    
+    def filterPointListWithInputLayer(self, pointList, inputLyr, feedback=None):
+        nPoints = len(pointList)
+        localTotal = 100/nPoints if nPoints else 0
+        filteredDangles = set()
+        for current, point in enumerate(pointList):
+            if feedback is not None and feedback.isCanceled():
+                break
+            qgisPoint = QgsGeometry.fromPointXY(point)
+            #search radius to narrow down candidates
+            request = QgsFeatureRequest().setFilterRect(qgisPoint.boundingBox())
+            featList = [feat for feat in inputLyr.getFeatures(request) if feat.geometry().intersects(qgisPoint)]
+            if len(featList) == 1:
+                filteredDangles.add(point)
+            if feedback is not None:
+                feedback.setProgress(current * localTotal)
+        return list(filteredDangles)
 
-    def cleanLayer(self, inputLyr, toolList, context, typeList=[0,1,2,3,4,5,6]): 
-        #TODO write one class that runs all processing stuff (model that tomorrow)
-        output = QgsProcessingUtils.generateTempFilename('output.shp')
-        error = QgsProcessingUtils.generateTempFilename('error.shp')
-        parameters = {
-            'input':inputLyr,
-            'type':typeList,
-            'tool':toolList,
-            'threshold':'-1', 
-            '-b':False, 
-            '-c':True, 
-            'output' : output, 
-            'error': error, 
-            'GRASS_REGION_PARAMETER':None,
-            'GRASS_SNAP_TOLERANCE_PARAMETER': -1,
-            'GRASS_MIN_AREA_PARAMETER': 0.0001,
-            'GRASS_OUTPUT_TYPE_PARAMETER': 0,
-            'GRASS_VECTOR_DSCO':'',
-            'GRASS_VECTOR_LCO':''
-            }
-        x = processing.run('grass7:v.clean', parameters, context = context)
-        lyr = QgsProcessingUtils.mapLayerFromString(x['output'], context)
-        return lyr
+
 
     def filterPointListWithFilterLayer(self, pointList, filterLayer, searchRadius, feedback, isRefLyr=False, ignoreNotSplit=False):
         """

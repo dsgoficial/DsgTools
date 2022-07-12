@@ -14,6 +14,44 @@ class MenuEditorDialog( QtWidgets.QDialog ):
         uic.loadUi( self.getUiPath(), self )
         self.controller = controller
         self.messageFactory = messageFactory
+        self.previewMenu.setAcceptDrops(True)
+        self.previewMenu.dragEnterEvent = self.previewDragEnterEvent
+        self.previewMenu.dropEvent = self.previewDropEvent
+
+    def previewDragEnterEvent(self, e):
+        e.accept()
+
+    def previewDropEvent(self, e):
+        pos = e.pos()
+        widget = e.source()
+        tabLayout = self.menuWidget.getTabLayout( widget.buttonConfig[ 'buttonTabId' ] )     
+        buttonIndexs = range(tabLayout.count()) 
+        isUpper = widget.y() > pos.y()
+        widgetIndex = None
+        selectedIndex = None
+        selectedY = None
+        for n in buttonIndexs:
+            w = tabLayout.itemAt(n).widget()
+            if w == widget:
+                widgetIndex = n
+                continue
+            if selectedY:
+                valid = ( isUpper and pos.y() < w.y() and w.y() < selectedY ) or ( not isUpper and pos.y() > w.y() and w.y() > selectedY )
+            else:
+                valid = ( isUpper and pos.y() < w.y() ) or ( not isUpper and pos.y() > w.y() )
+            if not valid:
+                continue
+            selectedIndex = n
+            selectedY = w.y()
+        if selectedIndex is None or widgetIndex is None:
+            e.accept()
+            return
+        if (isUpper and widgetIndex < selectedIndex) or (not isUpper and widgetIndex > selectedIndex):
+            pass
+        else:
+            tabLayout.insertWidget(selectedIndex, widget)
+            self.menuWidget.refreshTabShortcuts(tabLayout)
+        e.accept()
 
     def showError(self, title, message):
         errorMessageBox = self.messageFactory.createMessage('ErrorMessageBox')
