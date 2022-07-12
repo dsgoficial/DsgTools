@@ -133,26 +133,24 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         # 1- Iterate over dbList and check if all layers on dbList are on dict. If not, add it.
         if type == "added":
             for dbName in dbList:
-                dbNameAlias = dbName.split("(")[0].strip()
-                if dbNameAlias in self.selectedDbsDict:
+                if dbName in self.selectedDbsDict:
                     continue
                 localDb = self.dbFactory.createDbFactory(DsgEnums.DriverSpatiaLite)
                 localDb.connectDatabase(conn=self.spatialiteDict[dbName])
-                self.selectedDbsDict[dbNameAlias] = localDb
+                self.selectedDbsDict[dbName] = localDb
                 # do get dicts
                 localDict = localDb.getStyleDict(localDb.getDatabaseVersion())
                 for key in list(localDict.keys()):
                     self.stylesDict[key]["style"] = localDict[key]
-                    if dbNameAlias not in self.stylesDict[key]["dbList"]:
-                        self.stylesDict[key]["dbList"].append(dbNameAlias)
+                    if dbName not in self.stylesDict[key]["dbList"]:
+                        self.stylesDict[key]["dbList"].append(dbName)
             self.dbDictChanged.emit("added", dbList)
             self.styleChanged.emit(self.stylesDict)
         # 2- Iterate over selectedDbsDict and if there is a key not in dbList, close db and pop item
         if type == "removed":
             for dbName in list(self.selectedDbsDict.keys()):
-                dbNameAlias = dbName.split("(")[0].strip()
-                if dbNameAlias in dbList:
-                    self.selectedDbsDict.pop(dbNameAlias)
+                if dbName in dbList:
+                    self.selectedDbsDict.pop(dbName)
             self.dbDictChanged.emit("removed", dbList)
             for key in list(self.stylesDict.keys()):
                 for db in self.stylesDict[key]["dbList"]:
@@ -234,7 +232,7 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
                 version = auxAbstractDb.getDatabaseVersion()
                 dbimplversion = auxAbstractDb.getImplementationVersion()
                 dbList.append((dbName, version, dbimplversion))
-                self.spatialiteDict[dbName] = dbPath
+                self.spatialiteDict[self.getDisplayString(dbName, version, dbimplversion)] = dbPath
         except Exception as e:
             QMessageBox.critical(self, self.tr("Critical!"), ":".join(e.args))
             self.clearSpatialiteTab()
