@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 4.5.0
+
+Melhorias:
+- Melhoria de desempenho no identificar Z;
+
 ## 4.4.0
 
 Novas funcionalidades:
