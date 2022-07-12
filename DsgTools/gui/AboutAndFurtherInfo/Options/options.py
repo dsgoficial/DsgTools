@@ -74,19 +74,12 @@ class Options(QDialog, FORM_CLASS):
         freeHandSmoothOffset = self.smoothOffsetQgsDoubleSpinBox.value()
         algIterations = self.algIterationsQgsSpinBox.value()
         minSegmentDistance = self.minSegmentDistanceQgsSpinBox.value()
-<<<<<<< HEAD
         rightAngleDecimals = self.rightAngleDecimalsQgsSpinBox.value()
-=======
->>>>>>> master
         valueList = [self.blackListWidget.item(i).text() for i in range(self.blackListWidget.count())]
         undoPoints = self.undoQgsSpinBox.value()
         decimals = self.decimalQgsSpinBox.value()
         freeHandFinalSimplifyTolerance = self.finalToleranceQgsDoubleSpinBox.value()
-<<<<<<< HEAD
         return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, rightAngleDecimals, valueList, undoPoints, decimals, freeHandFinalSimplifyTolerance)
-=======
-        return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, valueList, undoPoints, decimals, freeHandFinalSimplifyTolerance)
->>>>>>> master
 
     def loadParametersFromConfig(self):
         settings = QSettings()
@@ -96,10 +89,7 @@ class Options(QDialog, FORM_CLASS):
         freeHandSmoothOffset = settings.value('freeHandSmoothOffset')
         algIterations = settings.value('algIterations')
         minSegmentDistance = settings.value('minSegmentDistance')
-<<<<<<< HEAD
         rightAngleDecimals = settings.value('rightAngleDecimals')
-=======
->>>>>>> master
         valueList = settings.value('valueList')
         undoPoints = settings.value('undoPoints')
         decimals = settings.value('decimals')
@@ -107,17 +97,10 @@ class Options(QDialog, FORM_CLASS):
         if valueList:
             valueList = valueList.split(';')
         settings.endGroup()
-<<<<<<< HEAD
         return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, rightAngleDecimals, valueList, undoPoints, decimals, freeHandFinalSimplifyTolerance)
     
     def setInterfaceWithParametersFromConfig(self):
         (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, rightAngleDecimals, valueList, undoPoints, decimals, freeHandFinalSimplifyTolerance) = self.loadParametersFromConfig()
-=======
-        return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, valueList, undoPoints, decimals, freeHandFinalSimplifyTolerance)
-    
-    def setInterfaceWithParametersFromConfig(self):
-        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, valueList, undoPoints, decimals, freeHandFinalSimplifyTolerance) = self.loadParametersFromConfig()
->>>>>>> master
         if freeHandTolerance:
             self.toleranceQgsDoubleSpinBox.setValue(float(freeHandTolerance))
         if freeHandSmoothIterations:
@@ -127,13 +110,9 @@ class Options(QDialog, FORM_CLASS):
         if algIterations:
             self.algIterationsQgsSpinBox.setValue(int(algIterations))
         if minSegmentDistance:
-<<<<<<< HEAD
             self.minSegmentDistanceQgsSpinBox.setValue(float(minSegmentDistance))
         if rightAngleDecimals:
             self.rightAngleDecimalsQgsSpinBox.setValue(int(rightAngleDecimals))
-=======
-            self.minSegmentDistanceQgsSpinBox.setValue(int(minSegmentDistance))
->>>>>>> master
         if valueList:
             self.blackListWidget.clear()
             self.blackListWidget.addItems(valueList)
@@ -146,11 +125,7 @@ class Options(QDialog, FORM_CLASS):
             self.finalToleranceQgsDoubleSpinBox.setValue(float(freeHandFinalSimplifyTolerance))
     
     def storeParametersInConfig(self):
-<<<<<<< HEAD
         (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, rightAngleDecimals, valueList, undoPoints, decimals, freeHandFinalSimplifyTolerance) = self.getParameters()
-=======
-        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, valueList, undoPoints, decimals, freeHandFinalSimplifyTolerance) = self.getParameters()
->>>>>>> master
         settings = QSettings()
         settings.beginGroup('PythonPlugins/DsgTools/Options')
         settings.setValue('freeHandTolerance', freeHandTolerance)
@@ -158,10 +133,7 @@ class Options(QDialog, FORM_CLASS):
         settings.setValue('freeHandSmoothOffset', freeHandSmoothOffset)
         settings.setValue('algIterations', algIterations)
         settings.setValue('minSegmentDistance', minSegmentDistance)
-<<<<<<< HEAD
         settings.setValue('rightAngleDecimals', rightAngleDecimals)
-=======
->>>>>>> master
         settings.setValue('valueList', ';'.join(valueList))
         settings.setValue('undoPoints', undoPoints)
         settings.setValue('decimals', decimals)
@@ -186,11 +158,7 @@ class Options(QDialog, FORM_CLASS):
             self.blackListWidget.takeItem(i)
     
     def firstTimeConfig(self):
-<<<<<<< HEAD
         (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, rightAngleDecimals, valueList, undoPoints, decimals, freeHandFinalSimplifyTolerance) = self.loadParametersFromConfig()
-=======
-        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, valueList, undoPoints, decimals, freeHandFinalSimplifyTolerance) = self.loadParametersFromConfig()
->>>>>>> master
         if not (freeHandTolerance and freeHandSmoothIterations and freeHandSmoothOffset and algIterations and valueList and undoPoints and decimals is not None and freeHandFinalSimplifyTolerance is not None):
             self.storeParametersInConfig()
 
