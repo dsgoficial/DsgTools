@@ -254,7 +254,6 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.edgvType = None
         self.selectedDbsDict = dict()
         self.resetAll.emit()
-
     def clearPostgisTab(self):
         """
         Clears the spatialite tab, returning it to the original state

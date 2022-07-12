@@ -899,7 +899,6 @@ class PostgisDb(AbstractDb):
             return True
         else:
             return False
-
     def dropDatabase(self, candidateName, dropTemplate = False):
         """
         Drops a database from server

@@ -239,7 +239,6 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         QApplication.restoreOverrideCursor()
         self.logInternalError(exceptionDict)
         self.close()
-
     def logInternalError(self, exceptionDict):
         """
         Logs internal errors during the load process in QGIS' log

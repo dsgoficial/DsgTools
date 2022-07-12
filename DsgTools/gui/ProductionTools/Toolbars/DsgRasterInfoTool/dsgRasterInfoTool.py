@@ -49,7 +49,6 @@ from DsgTools.gui.ProductionTools.Toolbars.DsgRasterInfoTool.assignBandValueTool
 # FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'dsgRasterInfoTool.ui'))
 from .dsgRasterInfoTool_ui import Ui_DsgRasterInfoTool
 
-
 class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
     """
     This class is supposed to help revision operators. It shows, on mouse hovering
