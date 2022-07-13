@@ -1022,20 +1022,47 @@ class LayerHandler(QObject):
         flagDict = dict()
         newFeatSet = set()
         stepSize = 100/featCount if featCount else 0
+        futures = set()
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback is not None else None
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+            multiStepFeedback.pushInfo(self.tr("Submitting tasks to thread..."))
+        def evaluate(feat):
+            _newFeatSet = set()
+            geom = feat.geometry()
+            id = feat.id()
+            flagDict = self.checkGeomIsValid(geom, ignoreClosed, feedback)
+            if fixInput:
+                self.fixGeometryFromInput(inputLyr, parameterDict, geometryType, _newFeatSet, feat, geom, id)
+            return flagDict, _newFeatSet
         for current, feat in enumerate(iterator):
             if feedback is not None and feedback.isCanceled():
                 break
-            geom = feat.geometry()
-            id = feat.id()
-            self.checkGeomIsValid(geom, ignoreClosed, flagDict, feedback)
-                    
-            if fixInput:
-                self.fixGeometryFromInput(inputLyr, parameterDict, geometryType, newFeatSet, feat, geom, id)
+            futures.add(pool.submit(evaluate, feat))
+            if feedback is not None:
+                feedback.setProgress(stepSize*current)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+            multiStepFeedback.pushInfo(self.tr("Evaluating results..."))
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if feedback is not None and feedback.isCanceled():
+                break
+            output, _newFeatSet = future.result()
+            if output:
+                for point, errorDict in output.items():
+                    if point in flagDict:
+                        flagDict[point]["reason"] += errorDict["reason"]
+                    else:
+                        flagDict[point] = errorDict
+            if _newFeatSet:
+                newFeatSet = newFeatSet.union(_newFeatSet)
             if feedback is not None:
                 feedback.setProgress(stepSize*current)
         return flagDict, newFeatSet
 
-    def checkGeomIsValid(self, geom, ignoreClosed, flagDict, feedback=None):
+    def checkGeomIsValid(self, geom, ignoreClosed, feedback=None):
+        flagDict = dict()
         for validate_type, method_parameter in {
             "GEOS": Qgis.GeometryValidationEngine.Geos,
             "QGIS": Qgis.GeometryValidationEngine.QgisInternal,
@@ -1047,6 +1074,7 @@ class LayerHandler(QObject):
                 break
         if isValid and geom.type() == QgsWkbTypes.PolygonGeometry:
             self.analyze_polygon_boundary_and_holes(flagDict, geom)
+        return flagDict
 
     def fixGeometryFromInput(self, inputLyr, parameterDict, geometryType, newFeatSet, feat, geom, id):
         attrMap = {idx: feat[field.name()] for idx, field in enumerate(
@@ -1071,8 +1099,9 @@ class LayerHandler(QObject):
         inputLyr.addFeatures(newFeatSet)
         inputLyr.endEditCommand()
 
-    def analyze_polygon_boundary_and_holes(self, flagDict, geom):
+    def analyze_polygon_boundary_and_holes(self, geom):
         flagWktSet = set()
+        flagDict = dict()
         for part in geom.asGeometryCollection():
             if len(part.asPolygon()) <= 1:
                 continue
@@ -1093,6 +1122,7 @@ class LayerHandler(QObject):
             flagDict[errorPointXY]['reason'] += 'OGC invalid reason: {text}\n'.format(
                         text=self.tr("Self intersection between hole and boundary")
                     )
+        return flagDict
 
     def check_validity(self, ignoreClosed, flagDict, geom, validate_type, method_parameter):
         for error in geom.validateGeometry(method_parameter):

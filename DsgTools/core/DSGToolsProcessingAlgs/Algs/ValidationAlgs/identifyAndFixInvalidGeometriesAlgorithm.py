@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from .validationAlgorithm import ValidationAlgorithm
 import processing
@@ -41,7 +42,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingUtils,
                        QgsSpatialIndex,
                        QgsGeometry,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingMultiStepFeedback,
+                       QgsProcessingException)
 
 class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
@@ -107,7 +109,9 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setCurrentStep(0)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Identifying invalid geometries"))
         flagDict = layerHandler.identifyAndFixInvalidGeometries(
             inputLyr=inputLyr,
             ignoreClosed=ignoreClosed,
@@ -115,7 +119,9 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
             feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(1)
+        currentStep += 1
+        multiStepFeedback.setProgressText(self.tr("Raising Flags"))
+        multiStepFeedback.setCurrentStep(currentStep)
         itemSize = len(flagDict)
         progressSize = 100/itemSize if itemSize else 0
         for current, (key, outDict) in enumerate(flagDict.items()):
