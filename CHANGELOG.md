@@ -4,6 +4,7 @@
 
 Melhorias:
 - Melhoria de desempenho no identificar Z;
+- Melhoria de desempenho no identificar geometrias inválidas;
 
 ## 4.4.0
 
