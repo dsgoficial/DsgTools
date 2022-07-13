@@ -523,56 +523,61 @@ class LayerHandler(QObject):
         return geomDict
 
     def getFeaturesWithSameBoundingBox(self, iterator, isMulti, size, columns=None, feedback=None):
-        # """
-        # Iterates over iterator and gets 
-        # """
-        # bbDict = defaultdict(list)
-        # if feedback is not None:
-        #     feedback.setProgressText(self.tr("Building duplicated search structure..."))
-        # def _buildBBDictEntry(feat, columns):
-        #     if feedback.isCanceled():
-        #         return
-        #     geom = feat.geometry()
-        #     if isMulti and not geom.isMultipart():
-        #         geom.convertToMultiType()
-        #     geomBB_key = geom.boundingBox().asWktPolygon()
-        #     attrKey = ','.join(['{}'.format(feat[column])
-        #                         for column in columns]) if columns is not None else ''
-        #     return (geomBB_key, {'geom': geom, 'feat': feat, 'attrKey': attrKey})
-        # futures = set()
-        # pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count())
-        # func = lambda x: _buildBBDictEntry(x, columns)
-        # for feat in iterator:
-        #     if feedback is not None and feedback.isCanceled():
-        #         break
-        #     futures.add(pool.submit(func, QgsFeature(feat)))
-        # for current, x in enumerate(concurrent.futures.as_completed(futures)):
-        #     if feedback is not None and feedback.isCanceled():
-        #         break
-        #     key, value = x.result()
-        #     bbDict[key].append(value)
-        #     if feedback is not None:
-        #         feedback.setProgress(size * current)
-        # return bbDict
         """
         Iterates over iterator and gets 
         """
         bbDict = defaultdict(list)
-        for current, feat in enumerate(iterator):
-            if feedback is not None and feedback.isCanceled():
-                break
+        if feedback is not None:
+            feedback.setProgressText(self.tr("Building duplicated search structure..."))
+        def _buildBBDictEntry(feat, columns):
+            if feedback.isCanceled():
+                return
             geom = feat.geometry()
             if isMulti and not geom.isMultipart():
                 geom.convertToMultiType()
-            geomKey = geom.asWkb()
             geomBB_key = geom.boundingBox().asWktPolygon()
             attrKey = ','.join(['{}'.format(feat[column])
                                 for column in columns]) if columns is not None else ''
-            bbDict[geomBB_key].append(
-                {'geom': geom, 'feat': feat, 'attrKey': attrKey})
-            if feedback is not None:
-                feedback.setProgress(size * current)
+            return (geomBB_key, {'geom': geom, 'feat': feat, 'attrKey': attrKey})
+        futures = set()
+        pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count()-1)
+        func = lambda x: _buildBBDictEntry(x, columns)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback is not None else None
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr("Submitting tasks to thread"))
+        for feat in iterator:
+            if feedback is not None and feedback.isCanceled():
+                break
+            futures.add(pool.submit(func, QgsFeature(feat)))
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr("Evaluating results"))
+        for current, x in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+            key, value = x.result()
+            bbDict[key].append(value)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(size * current)
         return bbDict
+        # """
+        # Iterates over iterator and gets 
+        # """
+        # bbDict = defaultdict(list)
+        # for current, feat in enumerate(iterator):
+        #     if feedback is not None and feedback.isCanceled():
+        #         break
+        #     geom = feat.geometry()
+        #     if isMulti and not geom.isMultipart():
+        #         geom.convertToMultiType()
+        #     geomKey = geom.asWkb()
+        #     geomBB_key = geom.boundingBox().asWktPolygon()
+        #     attrKey = ','.join(['{}'.format(feat[column])
+        #                         for column in columns]) if columns is not None else ''
+        #     bbDict[geomBB_key].append(
+        #         {'geom': geom, 'feat': feat, 'attrKey': attrKey})
+        #     if feedback is not None:
+        #         feedback.setProgress(size * current)
+        # return bbDict
 
     def searchDuplicatedFeatures(self, featList, columns, useAttributes=False):
         """
