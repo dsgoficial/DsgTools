@@ -466,18 +466,22 @@ class LayerHandler(QObject):
             inputDict[attrKey] = []
         inputDict[attrKey].append(feat)
 
-    def buildInitialAndEndPointDict(self, lyr, onlySelected=False, feedback=None, addFeatureToList=False):
+    def buildInitialAndEndPointDict(self, lyr, onlySelected=False, feedback=None, addFeatureToList=False, recordStepProgress=True):
         """
         Calculates initial point and end point from each line from lyr.
         """
         # start and end points dict
         endVerticesDict = dict()
         # iterating over features to store start and end points
-        iterator, size = self.getFeatureList(lyr, onlySelected=onlySelected, returnIterator=True)
+        iterator = lyr.getFeatures() if not onlySelected else lyr.getSelectedFeatures()
+        if recordStepProgress:
+            featCount = lyr.featureCount() if not onlySelected else lyr.selectedFeatureCount()
+            if featCount == 0:
+                return endVerticesDict
+            size = 100 / featCount
         for current, feat in enumerate(iterator):
-            if feedback:
-                if feedback.isCanceled():
-                    break
+            if feedback is not None and feedback.isCanceled():
+                break
             geom = feat.geometry()
             lineList = geom.asMultiPolyline() if geom.isMultipart() else [
                 geom.asPolyline()]
@@ -487,7 +491,7 @@ class LayerHandler(QObject):
                     line=line,
                     item=feat if addFeatureToList else feat.id()
                 )
-            if feedback:
+            if feedback is not None and recordStepProgress:
                 feedback.setProgress(size*current)
         return endVerticesDict
 

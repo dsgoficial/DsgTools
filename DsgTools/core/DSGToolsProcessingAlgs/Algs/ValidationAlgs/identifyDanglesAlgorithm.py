@@ -20,9 +20,13 @@
  *                                                                         *
  ***************************************************************************/
 """
+from collections import defaultdict
+import os
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from .validationAlgorithm import ValidationAlgorithm
 import processing
+import concurrent.futures
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
@@ -42,7 +46,8 @@ from qgis.core import (QgsProcessing,
                        QgsSpatialIndex,
                        QgsGeometry,
                        QgsProcessingMultiStepFeedback,
-                       QgsFeatureRequest)
+                       QgsFeatureRequest,
+                       QgsProcessingFeatureSourceDefinition)
 
 class IdentifyDanglesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
@@ -52,6 +57,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
     POLYGONFILTERLAYERS = 'POLYGONFILTERLAYERS'
     TYPE = 'TYPE'
     IGNOREINNER = 'IGNOREINNER'
+    # CACHE_INPUT = 'CACHE_INPUT'
     FLAGS = 'FLAGS'
 
     def initAlgorithm(self, config):
@@ -108,6 +114,13 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
                 self.tr('Ignore search radius on inner layer search')
             )
         )
+        # self.addParameter(
+        #     QgsProcessingParameterBoolean(
+        #         self.CACHE_INPUT,
+        #         self.tr('Build local cache with input features (may process faster when working with database layers)'),
+        #         defaultValue=False,
+        #     )
+        # )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS,
@@ -120,6 +133,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         Here is where the processing itself takes place.
         """
         self.layerHandler = LayerHandler()
+        algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         searchRadius = self.parameterAsDouble(parameters, self.TOLERANCE, context)
@@ -127,6 +141,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         polygonFilterLyrList = self.parameterAsLayerList(parameters, self.POLYGONFILTERLAYERS, context)
         ignoreNotSplit = self.parameterAsBool(parameters, self.TYPE, context)
         ignoreInner = self.parameterAsBool(parameters, self.IGNOREINNER, context)
+        # cacheInput = self.parameterAsBool(parameters, self.CACHE_INPUT, context)
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
 
         # Compute the number of steps to display within the progress bar and
@@ -134,81 +149,131 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         feedbackTotal = 3
         feedbackTotal += 1 if lineFilterLyrList or polygonFilterLyrList else 0
         feedbackTotal += 1 if not ignoreInner else 0
-        multiStep = QgsProcessingMultiStepFeedback(feedbackTotal, feedback)
+        # feedbackTotal += 2 if cacheInput else 0
+        multiStepFeedback = QgsProcessingMultiStepFeedback(feedbackTotal, feedback)
         currentStep = 0
-        multiStep.setCurrentStep(currentStep)
-        multiStep.pushInfo(self.tr('Building search structure...'))
-        endVerticesDict = self.layerHandler.buildInitialAndEndPointDict(
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr('Building local cache...'))
+        inputLyr = algRunner.runAddAutoIncrementalField(
+            inputLyr=inputLyr if not onlySelected else QgsProcessingFeatureSourceDefinition(
+                inputLyr.id(), True
+            ),
+            context=context,
+            feedback=multiStepFeedback,
+            fieldName='AUTO'
+        )
+        onlySelected = False
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(
+            inputLyr=inputLyr,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr('Building search structure...'))
+        endVerticesDict = self.buildInitialAndEndPointDict(
             inputLyr,
-            onlySelected=onlySelected,
-            feedback=multiStep
-            )
+            context=context,
+            feedback=multiStepFeedback
+        )
 
         #search for dangles candidates
         currentStep += 1
-        multiStep.setCurrentStep(currentStep)
-        multiStep.pushInfo(self.tr('Looking for dangles...'))
-        pointList = self.searchDanglesOnPointDict(endVerticesDict, multiStep)
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr('Looking for dangles...'))
+        pointList = self.searchDanglesOnPointDict(endVerticesDict, multiStepFeedback)
         #build filter layer
         filterLayer = self.buildFilterLayer(
             lineFilterLyrList,
             polygonFilterLyrList,
             context,
-            multiStep,
+            multiStepFeedback,
             onlySelected=onlySelected
             )
         #filter pointList with filterLayer
         
         if filterLayer:
             currentStep += 1
-            multiStep.setCurrentStep(currentStep)
-            multiStep.pushInfo(self.tr('Filtering dangles candidates with filter layer features...'))
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr('Filtering dangles candidates with filter layer features...'))
             filteredPointList = self.filterPointListWithFilterLayer(
                 pointList,
                 filterLayer,
                 searchRadius,
-                multiStep
+                multiStepFeedback
                 )
         else:
             filteredPointList = pointList
         #filter with own layer
         if not ignoreInner: #True when looking for dangles on contour lines
             currentStep += 1
-            multiStep.setCurrentStep(currentStep)
-            multiStep.pushInfo(self.tr('Filtering inner dangles...'))
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr('Filtering inner dangles...'))
             filteredPointList = self.filterPointListWithFilterLayer(
                 filteredPointList,
                 inputLyr,
                 searchRadius,
-                multiStep,
+                multiStepFeedback,
                 isRefLyr=True,
                 ignoreNotSplit=ignoreNotSplit
                 )
         currentStep += 1
-        multiStep.setCurrentStep(currentStep)
-        multiStep.pushInfo(self.tr('Filtering dangles candidates with input layer features...'))
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr('Filtering dangles candidates with input layer features...'))
         filteredPointList = self.filterPointListWithInputLayer(
             pointList=filteredPointList,
             inputLyr=inputLyr,
-            feedback=multiStep
+            feedback=multiStepFeedback
         )
         #build flag list with filtered points
         currentStep += 1
-        multiStep.setCurrentStep(currentStep)
-        multiStep.pushInfo(self.tr('Raising flags...'))
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr('Raising flags...'))
         if filteredPointList:
             # currentValue = feedback.progress()
             currentTotal = 100/len(filteredPointList)
             for current, point in enumerate(filteredPointList):
-                if multiStep.isCanceled():
+                if multiStepFeedback.isCanceled():
                     break
                 self.flagFeature(
                     QgsGeometry.fromPointXY(point),
                     self.tr('Dangle on {0}').format(inputLyr.name())
                     )
-                multiStep.setProgress(current*currentTotal)      
+                multiStepFeedback.setProgress(current*currentTotal)      
         # feedback.setProgress(100)
         return {self.FLAGS: self.flag_id}
+    
+    def buildInitialAndEndPointDict(self, lyr, context, feedback):
+        pointDict = defaultdict(set)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        boundaryLyr = AlgRunner().runBoundary(
+            inputLayer=lyr,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(1)
+        featCount = boundaryLyr.featureCount()
+        if featCount == 0:
+            return pointDict
+        step = 100/featCount
+        for current, feat in enumerate(boundaryLyr.getFeatures()):
+            if multiStepFeedback.isCanceled():
+                break
+            geom = feat.geometry()
+            if geom is None or not geom.isGeosValid():
+                continue
+            id = feat["AUTO"]
+            pointList = geom.asMultiPoint() if geom.isMultipart() else [
+                geom.asPoint()]
+            for point in pointList:
+                pointDict[point].add(id)
+            multiStepFeedback.setProgress(current * step)
+        return pointDict
     
     def searchDanglesOnPointDict(self, endVerticesDict, feedback):
         """
@@ -257,20 +322,36 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         return output['OUTPUT']
     
     def filterPointListWithInputLayer(self, pointList, inputLyr, feedback=None):
-        nPoints = len(pointList)
-        localTotal = 100/nPoints if nPoints else 0
         filteredDangles = set()
-        for current, point in enumerate(pointList):
-            if feedback is not None and feedback.isCanceled():
-                break
+        nPoints = len(pointList)
+        if nPoints == 0:
+            return filteredDangles
+        localTotal = 100/nPoints
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
+        futures = set()
+        def evaluate(point):
             qgisPoint = QgsGeometry.fromPointXY(point)
             #search radius to narrow down candidates
             request = QgsFeatureRequest().setFilterRect(qgisPoint.boundingBox())
             featList = [feat for feat in inputLyr.getFeatures(request) if feat.geometry().intersects(qgisPoint)]
-            if len(featList) == 1:
-                filteredDangles.add(point)
-            if feedback is not None:
-                feedback.setProgress(current * localTotal)
+            return point if len(featList) == 1 else None
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback is not None else None
+        multiStepFeedback.setCurrentStep(0)
+        for current, point in enumerate(pointList):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+            futures.add(pool.submit(evaluate, point))
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * localTotal)
+        multiStepFeedback.setCurrentStep(1)
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+            output = future.result()
+            if output is not None:
+                filteredDangles.add(output)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * localTotal)
         return list(filteredDangles)
 
 
@@ -281,11 +362,12 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         """
         nPoints = len(pointList)
         localTotal = 100/nPoints if nPoints else 0
-        spatialIdx, allFeatureDict = self.buildSpatialIndexAndIdDict(filterLayer)
-        notDangleList = []
-        for current, point in enumerate(pointList):
-            if feedback.isCanceled():
-                break
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        spatialIdx, allFeatureDict = self.buildSpatialIndexAndIdDict(filterLayer, feedback=multiStepFeedback)
+        multiStepFeedback.setCurrentStep(1)
+        notDangleSet = set()
+        def evaluate(point):
             candidateCount = 0
             qgisPoint = QgsGeometry.fromPointXY(point)
             #search radius to narrow down candidates
@@ -296,11 +378,12 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             #if there is only one feat in candidateIds, that means that it is not a dangle
             bufferCount = len([id for id in candidateIds if buffer.intersects(allFeatureDict[id].geometry())])
             for id in candidateIds:
+                if multiStepFeedback.isCanceled():
+                    return None
                 if not isRefLyr:
                     if buffer.intersects(allFeatureDict[id].geometry()) and \
                     qgisPoint.distance(allFeatureDict[id].geometry()) < 10**-9: #float problem, tried with intersects and touches and did not get results
-                        notDangleList.append(point)
-                        break
+                        return point
                 else:
                     if ignoreNotSplit:
                         if buffer.intersects(allFeatureDict[id].geometry()) and \
@@ -312,18 +395,37 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
                         (qgisPoint.touches(allFeatureDict[id].geometry())): #float problem, tried with intersects and touches and did not get results
                             candidateCount += 1
                     if candidateCount == bufferCount:
-                        notDangleList.append(point)
-            feedback.setProgress(localTotal*current)
-        filteredDangleList = [point for point in pointList if point not in notDangleList]
-        return filteredDangleList
+                        return point
+            return None
+        futures = set()
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
+        multiStepFeedback.setCurrentStep(2)
+        for current, point in enumerate(pointList):
+            if multiStepFeedback.isCanceled():
+                break
+            futures.add(pool.submit(evaluate, point))
+            multiStepFeedback.setProgress(localTotal*current)
+        multiStepFeedback.setCurrentStep(3)
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback.isCanceled():
+                break
+            result = future.result()
+            if result is not None:
+                notDangleSet.add(result)
+            multiStepFeedback.setProgress(localTotal*current)
+
+        filteredDangleSet = set(pointList).difference(notDangleSet)
+        return list(filteredDangleSet)
     
-    def buildSpatialIndexAndIdDict(self, inputLyr):
+    def buildSpatialIndexAndIdDict(self, inputLyr, feedback=None):
         """
         creates a spatial index for the centroid layer
         """
         spatialIdx = QgsSpatialIndex()
         idDict = {}
         for feat in inputLyr.getFeatures():
+            if feedback is not None and feedback.isCanceled():
+                break
             spatialIdx.addFeature(feat)
             idDict[feat.id()] = feat
         return spatialIdx, idDict
