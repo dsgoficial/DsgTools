@@ -1099,9 +1099,8 @@ class LayerHandler(QObject):
         inputLyr.addFeatures(newFeatSet)
         inputLyr.endEditCommand()
 
-    def analyze_polygon_boundary_and_holes(self, geom):
+    def analyze_polygon_boundary_and_holes(self, flagDict, geom):
         flagWktSet = set()
-        flagDict = dict()
         for part in geom.asGeometryCollection():
             if len(part.asPolygon()) <= 1:
                 continue
@@ -1122,7 +1121,6 @@ class LayerHandler(QObject):
             flagDict[errorPointXY]['reason'] += 'OGC invalid reason: {text}\n'.format(
                         text=self.tr("Self intersection between hole and boundary")
                     )
-        return flagDict
 
     def check_validity(self, ignoreClosed, flagDict, geom, validate_type, method_parameter):
         for error in geom.validateGeometry(method_parameter):
@@ -1694,9 +1692,10 @@ class LayerHandler(QObject):
         constraintPolygonListWithGeoBounds = constraintPolygonList + \
             [geographicBoundaryLyr] if geographicBoundaryLyr is not None else \
             constraintPolygonList
-        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(7, feedback)
         # 1. Merge Polygon lyrs into one
-        multiStepFeedback.setCurrentStep(0)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr('Getting constraint lines...'))
         linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
             constraintLineLyrList,
@@ -1706,28 +1705,46 @@ class LayerHandler(QObject):
             context=context,
             algRunner=algRunner
         )
-        multiStepFeedback.setCurrentStep(1)
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr('Exploding lines...'))
+        algRunner.runCreateSpatialIndex(linesLyr, context, feedback=multiStepFeedback)
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        linesLyr = algRunner.runSplitLinesWithLines(
+            inputLyr=linesLyr,
+            linesLyr=linesLyr,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
         splitSegmentsLyr = algRunner.runExplodeLines(
             linesLyr,
             context,
             feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(2)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr('Removing duplicated features...'))
         segmentsWithoutDuplicates = algRunner.runRemoveDuplicatedGeometries(
             splitSegmentsLyr,
             context,
             feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(3)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr('Starting the process of building polygons...'))
         builtPolygonLyr = algRunner.runPolygonize(
             segmentsWithoutDuplicates,
             context,
             feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(4)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr('Relating center points with built polygons...'))
         return self.relateCenterPointsWithPolygons(
             inputCenterPointLyr,
