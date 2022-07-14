@@ -421,7 +421,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         danglesWithFilterLayers = set()
         relatedDict = dict()
         if nPoints == 0:
-            return danglesWithFilterLayers
+            return danglesWithFilterLayers, relatedDict
         localTotal = 100/nPoints
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
         multiStepFeedback.setCurrentStep(0)
