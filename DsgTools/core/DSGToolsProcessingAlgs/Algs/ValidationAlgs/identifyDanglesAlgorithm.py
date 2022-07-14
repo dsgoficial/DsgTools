@@ -20,34 +20,27 @@
  *                                                                         *
  ***************************************************************************/
 """
-from collections import defaultdict
+import concurrent.futures
 import os
+from collections import defaultdict
+from typing import DefaultDict, Dict, Tuple, Union
+
+import processing
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from .validationAlgorithm import ValidationAlgorithm
-import processing
-import concurrent.futures
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
+from qgis.core import (QgsFeatureRequest, QgsGeometry, QgsPointXY,
+                       QgsProcessing, QgsProcessingFeatureSourceDefinition,
+                       QgsProcessingFeedback, QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingMultiStepFeedback,
-                       QgsFeatureRequest,
-                       QgsProcessingFeatureSourceDefinition)
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterVectorLayer, QgsSpatialIndex,
+                       QgsVectorLayer, QgsWkbTypes)
+
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class IdentifyDanglesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
@@ -55,9 +48,9 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
     TOLERANCE = 'TOLERANCE'
     LINEFILTERLAYERS = 'LINEFILTERLAYERS'
     POLYGONFILTERLAYERS = 'POLYGONFILTERLAYERS'
-    TYPE = 'TYPE'
-    IGNOREINNER = 'IGNOREINNER'
-    # CACHE_INPUT = 'CACHE_INPUT'
+    IGNORE_DANGLES_ON_UNSEGMENTED_LINES = 'IGNORE_DANGLES_ON_UNSEGMENTED_LINES'
+    INPUT_IS_BOUDARY_LAYER = 'INPUT_IS_BOUDARY_LAYER'
+    GEOGRAPHIC_BOUNDARY = 'GEOGRAPHIC_BOUNDARY'
     FLAGS = 'FLAGS'
 
     def initAlgorithm(self, config):
@@ -68,7 +61,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr('Input layer'),
-                [QgsProcessing.TypeVectorLine ]
+                [QgsProcessing.TypeVectorLine]
             )
         )
         self.addParameter(
@@ -78,12 +71,21 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.INPUT_IS_BOUDARY_LAYER,
+                self.tr(
+                    'Input is a boundary layer (every line must be connected '
+                    'to an element of either the input layer or the filters)'
+                )
+            )
+        )
+        self.addParameter(
             QgsProcessingParameterNumber(
                 self.TOLERANCE,
                 self.tr('Search radius'),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Double,
-                defaultValue=2
+                defaultValue=0.0001
             )
         )
         self.addParameter(
@@ -91,7 +93,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
                 self.LINEFILTERLAYERS,
                 self.tr('Linestring Filter Layers'),
                 QgsProcessing.TypeVectorLine,
-                optional = True
+                optional=True
             )
         )
         self.addParameter(
@@ -99,28 +101,23 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
                 self.POLYGONFILTERLAYERS,
                 self.tr('Polygon Filter Layers'),
                 QgsProcessing.TypeVectorPolygon,
-                optional = True
+                optional=True
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.TYPE,
+                self.IGNORE_DANGLES_ON_UNSEGMENTED_LINES,
                 self.tr('Ignore dangle on unsegmented lines')
             )
         )
         self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.IGNOREINNER,
-                self.tr('Ignore search radius on inner layer search')
+            QgsProcessingParameterVectorLayer(
+                self.GEOGRAPHIC_BOUNDARY,
+                self.tr('Geographic Boundary (this layer only filters the output dangles)'),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True
             )
         )
-        # self.addParameter(
-        #     QgsProcessingParameterBoolean(
-        #         self.CACHE_INPUT,
-        #         self.tr('Build local cache with input features (may process faster when working with database layers)'),
-        #         defaultValue=False,
-        #     )
-        # )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS,
@@ -136,11 +133,17 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        searchRadius = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        lineFilterLyrList = self.parameterAsLayerList(parameters, self.LINEFILTERLAYERS, context)
-        polygonFilterLyrList = self.parameterAsLayerList(parameters, self.POLYGONFILTERLAYERS, context)
-        ignoreNotSplit = self.parameterAsBool(parameters, self.TYPE, context)
-        ignoreInner = self.parameterAsBool(parameters, self.IGNOREINNER, context)
+        searchRadius = self.parameterAsDouble(
+            parameters, self.TOLERANCE, context)
+        lineFilterLyrList = self.parameterAsLayerList(
+            parameters, self.LINEFILTERLAYERS, context)
+        polygonFilterLyrList = self.parameterAsLayerList(
+            parameters, self.POLYGONFILTERLAYERS, context)
+        ignoreDanglesOnUnsegmentedLines = self.parameterAsBool(
+            parameters, self.IGNORE_DANGLES_ON_UNSEGMENTED_LINES, context)
+        inputIsBoundaryLayer = self.parameterAsBool(
+            parameters, self.INPUT_IS_BOUDARY_LAYER, context)
+        geographicBoundsLyr = self.parameterAsVectorLayer(parameters, self.GEOGRAPHIC_BOUNDARY, context)
         # cacheInput = self.parameterAsBool(parameters, self.CACHE_INPUT, context)
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
 
@@ -148,9 +151,10 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         # get features from source
         feedbackTotal = 3
         feedbackTotal += 1 if lineFilterLyrList or polygonFilterLyrList else 0
-        feedbackTotal += 1 if not ignoreInner else 0
+        feedbackTotal += 1 if not inputIsBoundaryLayer else 0
         # feedbackTotal += 2 if cacheInput else 0
-        multiStepFeedback = QgsProcessingMultiStepFeedback(feedbackTotal, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(
+            feedbackTotal, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr('Building local cache...'))
@@ -177,86 +181,106 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.pushInfo(self.tr('Building search structure...'))
         endVerticesDict = self.buildInitialAndEndPointDict(
             inputLyr,
+            algRunner,
             context=context,
+            geographicBoundsLyr=geographicBoundsLyr,
             feedback=multiStepFeedback
         )
 
-        #search for dangles candidates
+        # search for dangles candidates
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr('Looking for dangles...'))
-        pointList = self.searchDanglesOnPointDict(endVerticesDict, multiStepFeedback)
-        #build filter layer
+        multiStepFeedback.pushInfo(self.tr('Looking for dangle candidates...'))
+        pointSet = self.searchDanglesOnPointDict(
+            endVerticesDict, multiStepFeedback)
+        # build filter layer
         filterLayer = self.buildFilterLayer(
             lineFilterLyrList,
             polygonFilterLyrList,
             context,
             multiStepFeedback,
             onlySelected=onlySelected
-            )
-        #filter pointList with filterLayer
-        
+        )
+        # filter pointList with filterLayer
+        dangleSet = set()
+        relatedDict = dict()
+
         if filterLayer:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr('Filtering dangles candidates with filter layer features...'))
-            filteredPointList = self.filterPointListWithFilterLayer(
-                pointList,
+            multiStepFeedback.pushInfo(
+                self.tr('Filtering dangles candidates with filter layer features...'))
+            danglesWithFilterLayersSet, relatedDict = self.getDanglesWithFilterLayers(
+                pointSet,
                 filterLayer,
                 searchRadius,
-                multiStepFeedback
-                )
-        else:
-            filteredPointList = pointList
-        #filter with own layer
-        if not ignoreInner: #True when looking for dangles on contour lines
-            currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr('Filtering inner dangles...'))
-            filteredPointList = self.filterPointListWithFilterLayer(
-                filteredPointList,
-                inputLyr,
-                searchRadius,
                 multiStepFeedback,
-                isRefLyr=True,
-                ignoreNotSplit=ignoreNotSplit
-                )
+            )
+            dangleSet = dangleSet.union(danglesWithFilterLayersSet)
+            pointSet = pointSet.difference(dangleSet)
+        # filter with own layer
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr('Filtering dangles candidates with input layer features...'))
-        filteredPointList = self.filterPointListWithInputLayer(
-            pointList=filteredPointList,
+        multiStepFeedback.pushInfo(
+            self.tr('Filtering dangles candidates with input layer features...'))
+        danglesOnInputLayerSet = self.getDanglesOnInputLayerFeatures(
+            pointSet=pointSet,
             inputLyr=inputLyr,
-            feedback=multiStepFeedback
+            ignoreDanglesOnUnsegmentedLines=ignoreDanglesOnUnsegmentedLines,
+            inputIsBoundaryLayer=inputIsBoundaryLayer,
+            relatedDict=relatedDict,
+            searchRadius=searchRadius,
+            feedback=multiStepFeedback,
         )
-        #build flag list with filtered points
+        dangleSet = dangleSet.union(danglesOnInputLayerSet)
+        # build flag list with filtered points
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr('Raising flags...'))
-        if filteredPointList:
+        if dangleSet:
             # currentValue = feedback.progress()
-            currentTotal = 100/len(filteredPointList)
-            for current, point in enumerate(filteredPointList):
+            currentTotal = 100/len(dangleSet)
+            for current, point in enumerate(dangleSet):
                 if multiStepFeedback.isCanceled():
                     break
                 self.flagFeature(
                     QgsGeometry.fromPointXY(point),
                     self.tr('Dangle on {0}').format(inputLyr.name())
-                    )
-                multiStepFeedback.setProgress(current*currentTotal)      
+                )
+                multiStepFeedback.setProgress(current*currentTotal)
         # feedback.setProgress(100)
         return {self.FLAGS: self.flag_id}
-    
-    def buildInitialAndEndPointDict(self, lyr, context, feedback):
+
+    def buildInitialAndEndPointDict(self, lyr, algRunner, context, feedback, geographicBoundsLyr=None):
         pointDict = defaultdict(set)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        boundaryLyr = AlgRunner().runBoundary(
+        nSteps = 4 if geographicBoundsLyr is not None else 3
+        currentStep = 0
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        multiStepFeedback.setCurrentStep(currentStep)
+        boundaryLyr = algRunner.runBoundary(
             inputLayer=lyr,
             context=context,
             feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(1)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        boundaryLyr = algRunner.runMultipartToSingleParts(
+            inputLayer=boundaryLyr,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        if geographicBoundsLyr is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            boundaryLyr = algRunner.runExtractByLocation(
+                inputLyr=boundaryLyr,
+                intersectLyr=geographicBoundsLyr,
+                context=context,
+                feedback=multiStepFeedback
+            )
+            currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
         featCount = boundaryLyr.featureCount()
         if featCount == 0:
             return pointDict
@@ -274,13 +298,15 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
                 pointDict[point].add(id)
             multiStepFeedback.setProgress(current * step)
         return pointDict
-    
-    def searchDanglesOnPointDict(self, endVerticesDict, feedback):
+
+    def searchDanglesOnPointDict(self, endVerticesDict: Dict, feedback: QgsProcessingFeedback) -> set:
         """
-        Counts the number of points on each endVerticesDict's key and returns a list of QgsPoint built from key candidate.
+        Counts the number of points on each endVerticesDict's key and returns a set of QgsPoint built from key candidate.
         """
-        pointList = []
+        pointSet = set()
         nVertexes = len(endVerticesDict)
+        if nVertexes == 0:
+            return pointSet
         localTotal = 100/nVertexes if nVertexes else 0
         # actual search for dangles
         for current, point in enumerate(endVerticesDict):
@@ -288,11 +314,11 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
                 break
             # this means we only have one occurrence of point, therefore it is a dangle
             if len(endVerticesDict[point]) <= 1:
-                pointList.append(point)
+                pointSet.add(point)
             feedback.setProgress(localTotal*current)
-        return pointList
+        return pointSet
 
-    def buildFilterLayer(self, lineLyrList, polygonLyrList, context, feedback, onlySelected = False):
+    def buildFilterLayer(self, lineLyrList, polygonLyrList, context, feedback, onlySelected=False):
         """
         Buils one layer of filter lines.
         Build unified layer is not used because we do not care for attributes here, only geometry.
@@ -311,33 +337,59 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             lineLyrs,
             QgsWkbTypes.MultiLineString,
             onlySelected=onlySelected
-            )
-    
+        )
+
     def makeBoundaries(self, lyr, context, feedback):
         parameters = {
-            'INPUT' : lyr,
-            'OUTPUT' : 'memory:'
+            'INPUT': lyr,
+            'OUTPUT': 'memory:'
         }
-        output = processing.run("native:boundary", parameters, context = context)
+        output = processing.run("native:boundary", parameters, context=context)
         return output['OUTPUT']
-    
-    def filterPointListWithInputLayer(self, pointList, inputLyr, feedback=None):
-        filteredDangles = set()
-        nPoints = len(pointList)
+
+    def getDanglesOnInputLayerFeatures(
+        self, pointSet: set, inputLyr: QgsVectorLayer, searchRadius: float, ignoreDanglesOnUnsegmentedLines: bool = False,\
+        inputIsBoundaryLayer: bool = False, relatedDict: dict = None, feedback: QgsProcessingMultiStepFeedback = None
+    ) -> set:
+        inputLayerDangles = set()
+        nPoints = len(pointSet)
+        relatedDict = dict() if relatedDict is None else relatedDict
         if nPoints == 0:
-            return filteredDangles
+            return inputLayerDangles
         localTotal = 100/nPoints
-        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
+        pool = concurrent.futures.ThreadPoolExecutor(
+            max_workers=os.cpu_count()-1)
         futures = set()
-        def evaluate(point):
+
+        def evaluate(point) -> Union[QgsPointXY, None]:
             qgisPoint = QgsGeometry.fromPointXY(point)
-            #search radius to narrow down candidates
-            request = QgsFeatureRequest().setFilterRect(qgisPoint.boundingBox())
-            featList = [feat for feat in inputLyr.getFeatures(request) if feat.geometry().intersects(qgisPoint)]
-            return point if len(featList) == 1 else None
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback is not None else None
+            buffer = qgisPoint.buffer(searchRadius, -1)
+            bufferBB = buffer.boundingBox()
+            # search radius to narrow down candidates
+            request = QgsFeatureRequest().setFilterRect(bufferBB)
+            bufferCount, intersectCount = 0, 0
+            point_relationship_lambda = lambda x: qgisPoint.intersects(x) \
+                if ignoreDanglesOnUnsegmentedLines else qgisPoint.touches(x)
+            for feat in inputLyr.getFeatures(request):
+                geom = feat.geometry()
+                if feedback is not None and feedback.isCanceled():
+                    return None
+                if geom.intersects(buffer):
+                    bufferCount += 1
+                    if point_relationship_lambda(geom):
+                        intersectCount += 1
+            if inputIsBoundaryLayer and intersectCount == 1 and bufferCount == 1:
+                if relatedDict == dict():
+                    return point
+                if point in relatedDict and relatedDict[point]["candidateCount"] == relatedDict[point]["bufferCount"] and relatedDict[point]["candidateCount"] > 0:
+                    return None
+                return point
+            return point if bufferCount != intersectCount else None
+
+        multiStepFeedback = QgsProcessingMultiStepFeedback(
+            2, feedback) if feedback is not None else None
         multiStepFeedback.setCurrentStep(0)
-        for current, point in enumerate(pointList):
+        for current, point in enumerate(pointSet):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
             futures.add(pool.submit(evaluate, point))
@@ -349,58 +401,56 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
                 break
             output = future.result()
             if output is not None:
-                filteredDangles.add(output)
+                inputLayerDangles.add(output)
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(current * localTotal)
-        return list(filteredDangles)
+        return inputLayerDangles
 
-
-
-    def filterPointListWithFilterLayer(self, pointList, filterLayer, searchRadius, feedback, isRefLyr=False, ignoreNotSplit=False):
+    def getDanglesWithFilterLayers(
+            self, pointSet: set, filterLayer: QgsVectorLayer, searchRadius: float,\
+            feedback: QgsProcessingMultiStepFeedback, ignoreNotSplit: bool = False
+        ) -> Tuple[set, Dict[QgsPointXY, dict]]:
         """
-        Builds buffer areas from each point and evaluates the intersecting lines. If there are more than two intersections, it is a dangle.
+        Builds buffer areas from each point and evaluates the intersecting lines.
+        If the number of candidates that intersect the buffer is different than the 
+        number of intersections of the point with the neighbors, it is a dangle.
+
+        Returns the set containing the dangles.
         """
-        nPoints = len(pointList)
-        localTotal = 100/nPoints if nPoints else 0
+        nPoints = len(pointSet)
+        danglesWithFilterLayers = set()
+        relatedDict = dict()
+        if nPoints == 0:
+            return danglesWithFilterLayers
+        localTotal = 100/nPoints
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
         multiStepFeedback.setCurrentStep(0)
-        spatialIdx, allFeatureDict = self.buildSpatialIndexAndIdDict(filterLayer, feedback=multiStepFeedback)
+        spatialIdx, allFeatureDict = self.buildSpatialIndexAndIdDict(
+            filterLayer, feedback=multiStepFeedback)
         multiStepFeedback.setCurrentStep(1)
-        notDangleSet = set()
-        def evaluate(point):
-            candidateCount = 0
+
+        def evaluate(point: QgsPointXY) -> dict:
+            candidateCount, bufferCount = 0, 0
             qgisPoint = QgsGeometry.fromPointXY(point)
-            #search radius to narrow down candidates
+            # search radius to narrow down candidates
             buffer = qgisPoint.buffer(searchRadius, -1)
             bufferBB = buffer.boundingBox()
-            #gets candidates from spatial index
-            candidateIds = spatialIdx.intersects(bufferBB)
-            #if there is only one feat in candidateIds, that means that it is not a dangle
-            bufferCount = len([id for id in candidateIds if buffer.intersects(allFeatureDict[id].geometry())])
-            for id in candidateIds:
+            # if there is only one feat in candidateIds, that means that it is not a dangle
+            for id in spatialIdx.intersects(bufferBB):
+                candidateGeom = allFeatureDict[id].geometry()
                 if multiStepFeedback.isCanceled():
                     return None
-                if not isRefLyr:
-                    if buffer.intersects(allFeatureDict[id].geometry()) and \
-                    qgisPoint.distance(allFeatureDict[id].geometry()) < 10**-9: #float problem, tried with intersects and touches and did not get results
-                        return point
-                else:
-                    if ignoreNotSplit:
-                        if buffer.intersects(allFeatureDict[id].geometry()) and \
-                        (qgisPoint.distance(allFeatureDict[id].geometry()) < 10**-9 or \
-                        qgisPoint.intersects(allFeatureDict[id].geometry())): #float problem, tried with intersects and touches and did not get results
-                            candidateCount += 1
-                    else:
-                        if buffer.intersects(allFeatureDict[id].geometry()) and \
-                        (qgisPoint.touches(allFeatureDict[id].geometry())): #float problem, tried with intersects and touches and did not get results
-                            candidateCount += 1
-                    if candidateCount == bufferCount:
-                        return point
-            return None
+                if buffer.intersects(candidateGeom):
+                    bufferCount += 1
+                    if (qgisPoint.intersects(candidateGeom)):
+                        candidateCount += 1
+            return point, {"candidateCount": candidateCount, "bufferCount": bufferCount}
+
         futures = set()
-        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
+        pool = concurrent.futures.ThreadPoolExecutor(
+            max_workers=os.cpu_count()-1)
         multiStepFeedback.setCurrentStep(2)
-        for current, point in enumerate(pointList):
+        for current, point in enumerate(pointSet):
             if multiStepFeedback.isCanceled():
                 break
             futures.add(pool.submit(evaluate, point))
@@ -409,14 +459,14 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         for current, future in enumerate(concurrent.futures.as_completed(futures)):
             if multiStepFeedback.isCanceled():
                 break
-            result = future.result()
-            if result is not None:
-                notDangleSet.add(result)
+            dangle, dangleDict = future.result()
+            relatedDict[dangle] = dangleDict
+            if dangleDict["candidateCount"] != dangleDict["bufferCount"]:
+                danglesWithFilterLayers.add(dangle)
             multiStepFeedback.setProgress(localTotal*current)
 
-        filteredDangleSet = set(pointList).difference(notDangleSet)
-        return list(filteredDangleSet)
-    
+        return danglesWithFilterLayers, relatedDict
+
     def buildSpatialIndexAndIdDict(self, inputLyr, feedback=None):
         """
         creates a spatial index for the centroid layer
