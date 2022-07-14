@@ -466,18 +466,22 @@ class LayerHandler(QObject):
             inputDict[attrKey] = []
         inputDict[attrKey].append(feat)
 
-    def buildInitialAndEndPointDict(self, lyr, onlySelected=False, feedback=None, addFeatureToList=False):
+    def buildInitialAndEndPointDict(self, lyr, onlySelected=False, feedback=None, addFeatureToList=False, recordStepProgress=True):
         """
         Calculates initial point and end point from each line from lyr.
         """
         # start and end points dict
         endVerticesDict = dict()
         # iterating over features to store start and end points
-        iterator, size = self.getFeatureList(lyr, onlySelected=onlySelected, returnIterator=True)
+        iterator = lyr.getFeatures() if not onlySelected else lyr.getSelectedFeatures()
+        if recordStepProgress:
+            featCount = lyr.featureCount() if not onlySelected else lyr.selectedFeatureCount()
+            if featCount == 0:
+                return endVerticesDict
+            size = 100 / featCount
         for current, feat in enumerate(iterator):
-            if feedback:
-                if feedback.isCanceled():
-                    break
+            if feedback is not None and feedback.isCanceled():
+                break
             geom = feat.geometry()
             lineList = geom.asMultiPolyline() if geom.isMultipart() else [
                 geom.asPolyline()]
@@ -487,7 +491,7 @@ class LayerHandler(QObject):
                     line=line,
                     item=feat if addFeatureToList else feat.id()
                 )
-            if feedback:
+            if feedback is not None and recordStepProgress:
                 feedback.setProgress(size*current)
         return endVerticesDict
 
@@ -523,56 +527,61 @@ class LayerHandler(QObject):
         return geomDict
 
     def getFeaturesWithSameBoundingBox(self, iterator, isMulti, size, columns=None, feedback=None):
-        # """
-        # Iterates over iterator and gets 
-        # """
-        # bbDict = defaultdict(list)
-        # if feedback is not None:
-        #     feedback.setProgressText(self.tr("Building duplicated search structure..."))
-        # def _buildBBDictEntry(feat, columns):
-        #     if feedback.isCanceled():
-        #         return
-        #     geom = feat.geometry()
-        #     if isMulti and not geom.isMultipart():
-        #         geom.convertToMultiType()
-        #     geomBB_key = geom.boundingBox().asWktPolygon()
-        #     attrKey = ','.join(['{}'.format(feat[column])
-        #                         for column in columns]) if columns is not None else ''
-        #     return (geomBB_key, {'geom': geom, 'feat': feat, 'attrKey': attrKey})
-        # futures = set()
-        # pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count())
-        # func = lambda x: _buildBBDictEntry(x, columns)
-        # for feat in iterator:
-        #     if feedback is not None and feedback.isCanceled():
-        #         break
-        #     futures.add(pool.submit(func, QgsFeature(feat)))
-        # for current, x in enumerate(concurrent.futures.as_completed(futures)):
-        #     if feedback is not None and feedback.isCanceled():
-        #         break
-        #     key, value = x.result()
-        #     bbDict[key].append(value)
-        #     if feedback is not None:
-        #         feedback.setProgress(size * current)
-        # return bbDict
         """
         Iterates over iterator and gets 
         """
         bbDict = defaultdict(list)
-        for current, feat in enumerate(iterator):
-            if feedback is not None and feedback.isCanceled():
-                break
+        if feedback is not None:
+            feedback.setProgressText(self.tr("Building duplicated search structure..."))
+        def _buildBBDictEntry(feat, columns):
+            if feedback.isCanceled():
+                return
             geom = feat.geometry()
             if isMulti and not geom.isMultipart():
                 geom.convertToMultiType()
-            geomKey = geom.asWkb()
             geomBB_key = geom.boundingBox().asWktPolygon()
             attrKey = ','.join(['{}'.format(feat[column])
                                 for column in columns]) if columns is not None else ''
-            bbDict[geomBB_key].append(
-                {'geom': geom, 'feat': feat, 'attrKey': attrKey})
-            if feedback is not None:
-                feedback.setProgress(size * current)
+            return (geomBB_key, {'geom': geom, 'feat': feat, 'attrKey': attrKey})
+        futures = set()
+        pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count()-1)
+        func = lambda x: _buildBBDictEntry(x, columns)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback is not None else None
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr("Submitting tasks to thread"))
+        for feat in iterator:
+            if feedback is not None and feedback.isCanceled():
+                break
+            futures.add(pool.submit(func, QgsFeature(feat)))
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr("Evaluating results"))
+        for current, x in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+            key, value = x.result()
+            bbDict[key].append(value)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(size * current)
         return bbDict
+        # """
+        # Iterates over iterator and gets 
+        # """
+        # bbDict = defaultdict(list)
+        # for current, feat in enumerate(iterator):
+        #     if feedback is not None and feedback.isCanceled():
+        #         break
+        #     geom = feat.geometry()
+        #     if isMulti and not geom.isMultipart():
+        #         geom.convertToMultiType()
+        #     geomKey = geom.asWkb()
+        #     geomBB_key = geom.boundingBox().asWktPolygon()
+        #     attrKey = ','.join(['{}'.format(feat[column])
+        #                         for column in columns]) if columns is not None else ''
+        #     bbDict[geomBB_key].append(
+        #         {'geom': geom, 'feat': feat, 'attrKey': attrKey})
+        #     if feedback is not None:
+        #         feedback.setProgress(size * current)
+        # return bbDict
 
     def searchDuplicatedFeatures(self, featList, columns, useAttributes=False):
         """
@@ -1099,9 +1108,8 @@ class LayerHandler(QObject):
         inputLyr.addFeatures(newFeatSet)
         inputLyr.endEditCommand()
 
-    def analyze_polygon_boundary_and_holes(self, geom):
+    def analyze_polygon_boundary_and_holes(self, flagDict, geom):
         flagWktSet = set()
-        flagDict = dict()
         for part in geom.asGeometryCollection():
             if len(part.asPolygon()) <= 1:
                 continue
@@ -1122,7 +1130,6 @@ class LayerHandler(QObject):
             flagDict[errorPointXY]['reason'] += 'OGC invalid reason: {text}\n'.format(
                         text=self.tr("Self intersection between hole and boundary")
                     )
-        return flagDict
 
     def check_validity(self, ignoreClosed, flagDict, geom, validate_type, method_parameter):
         for error in geom.validateGeometry(method_parameter):
@@ -1694,9 +1701,10 @@ class LayerHandler(QObject):
         constraintPolygonListWithGeoBounds = constraintPolygonList + \
             [geographicBoundaryLyr] if geographicBoundaryLyr is not None else \
             constraintPolygonList
-        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(7, feedback)
         # 1. Merge Polygon lyrs into one
-        multiStepFeedback.setCurrentStep(0)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr('Getting constraint lines...'))
         linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
             constraintLineLyrList,
@@ -1706,28 +1714,46 @@ class LayerHandler(QObject):
             context=context,
             algRunner=algRunner
         )
-        multiStepFeedback.setCurrentStep(1)
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr('Exploding lines...'))
+        algRunner.runCreateSpatialIndex(linesLyr, context, feedback=multiStepFeedback)
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        linesLyr = algRunner.runSplitLinesWithLines(
+            inputLyr=linesLyr,
+            linesLyr=linesLyr,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
         splitSegmentsLyr = algRunner.runExplodeLines(
             linesLyr,
             context,
             feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(2)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr('Removing duplicated features...'))
         segmentsWithoutDuplicates = algRunner.runRemoveDuplicatedGeometries(
             splitSegmentsLyr,
             context,
             feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(3)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr('Starting the process of building polygons...'))
         builtPolygonLyr = algRunner.runPolygonize(
             segmentsWithoutDuplicates,
             context,
             feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(4)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr('Relating center points with built polygons...'))
         return self.relateCenterPointsWithPolygons(
             inputCenterPointLyr,

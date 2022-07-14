@@ -348,12 +348,22 @@ class AlgRunner:
         output = processing.run("native:symmetricaldifference", parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
-    def runBoundary(self, inputLayer, context, feedback=None, outputLyr='memory:'):
+    def runBoundary(self, inputLayer, context, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
             'INPUT' : inputLayer,
             'OUTPUT' : outputLyr
         }
         output = processing.run("native:boundary", parameters, context=context, feedback=feedback)
+        return output['OUTPUT']
+    
+    def runMultipartToSingleParts(self, inputLayer, context, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLayer,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run("native:multiparttosingleparts", parameters, context=context, feedback=feedback)
         return output['OUTPUT']
 
     def runBuffer(self, inputLayer, distance, context, dissolve=False, endCapStyle=None, joinStyle=None,\
