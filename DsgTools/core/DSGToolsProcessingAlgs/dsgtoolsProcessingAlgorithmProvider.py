@@ -27,6 +27,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicated
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGeometriesWithLargeVertexDensityAlgorithm import IdentifyGeometriesWithLargeVertexDensityAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyMultiPartGeometriesAlgorithm import IdentifyMultiPartGeometriesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallFirstOrderDangle import IdentifySmallFirstOrderDanglesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUndershoots import IdentifyUndershootsAlgorithm
 from PyQt5.QtCore import QCoreApplication
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildJoinsOnLayersAlgorithm import \
@@ -341,6 +342,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             AssignFormatRulesToLayersAlgorithm(),
             IdentifyDuplicatedVertexesAlgorithm(),
             IdentifyMultiPartGeometriesAlgorithm(),
+            IdentifyUndershootsAlgorithm(),
         ]
         return algList
 
