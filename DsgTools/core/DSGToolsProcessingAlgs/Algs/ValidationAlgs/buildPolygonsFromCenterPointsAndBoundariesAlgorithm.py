@@ -279,7 +279,9 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             )
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            algRunner.runDeaggregate(dissolvedLyr, context=context, feedback=multiStepFeedback)
+            dissolvedLyr = algRunner.runMultipartToSingleParts(
+                dissolvedLyr, context=context, feedback=multiStepFeedback
+            )
             polygonFeatList = [feat for feat in dissolvedLyr.getFeatures()]
             currentStep += 1
         self.writeOutputPolygons(
