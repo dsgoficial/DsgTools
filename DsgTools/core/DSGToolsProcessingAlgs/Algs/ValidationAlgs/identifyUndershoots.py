@@ -29,25 +29,34 @@ import processing
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsFeatureRequest, QgsGeometry, QgsPointXY,
-                       QgsProcessing, QgsProcessingFeatureSourceDefinition,
-                       QgsProcessingFeedback, QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsSpatialIndex,
-                       QgsVectorLayer, QgsWkbTypes, QgsProcessingParameterFeatureSource)
+from qgis.core import (
+    QgsFeatureRequest,
+    QgsGeometry,
+    QgsPointXY,
+    QgsProcessing,
+    QgsProcessingFeatureSourceDefinition,
+    QgsProcessingFeedback,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterVectorLayer,
+    QgsSpatialIndex,
+    QgsVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingParameterFeatureSource,
+)
 
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class IdentifyUndershootsAlgorithm(ValidationAlgorithm):
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
-    TOLERANCE = 'TOLERANCE'
-    REFERENCE = 'REFERENCE'
-    FLAGS = 'FLAGS'
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
+    TOLERANCE = "TOLERANCE"
+    REFERENCE = "REFERENCE"
+    FLAGS = "FLAGS"
 
     def initAlgorithm(self, config):
         """
@@ -56,35 +65,34 @@ class IdentifyUndershootsAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input'),
+                self.tr("Input"),
                 [
                     QgsProcessing.TypeVectorLine,
                     QgsProcessing.TypeVectorPolygon,
-                ]
+                ],
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.REFERENCE,
-                self.tr('Reference polygons'),
+                self.tr("Reference polygons"),
                 [
                     QgsProcessing.TypeVectorPolygon,
-                ]
+                ],
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.TOLERANCE,
-                self.tr('Search radius'),
+                self.tr("Search radius"),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Double,
-                defaultValue=0.0001
+                defaultValue=0.0001,
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
 
@@ -95,69 +103,127 @@ class IdentifyUndershootsAlgorithm(ValidationAlgorithm):
         self.layerHandler = LayerHandler()
         algRunner = AlgRunner()
         inputSource = self.parameterAsSource(parameters, self.INPUT, context)
-        searchRadius = self.parameterAsDouble(
-            parameters, self.TOLERANCE, context)
+        searchRadius = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         referenceSource = self.parameterAsSource(parameters, self.REFERENCE, context)
         nSteps = 8
-        flagSinkType = QgsWkbTypes.Point \
-            if QgsWkbTypes.geometryType(inputSource.wkbType()) == QgsWkbTypes.LineGeometry \
-            else QgsWkbTypes.Linestring
+        flagSinkType = (
+            QgsWkbTypes.Point
+            if QgsWkbTypes.geometryType(inputSource.wkbType()) == QgsWkbTypes.LineGeometry
+            else QgsWkbTypes.LineString
+        )
         self.prepareFlagSink(parameters, inputSource, flagSinkType, context)
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
 
         multiStepFeedback.setCurrentStep(currentStep)
         boundaryLyr = self.prepareInputFeatures(
-            context, algRunner, parameters[self.INPUT], multiStepFeedback)
+            context, algRunner, parameters[self.INPUT], multiStepFeedback
+        )
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
-        undershootSet = self.getUndershoots(boundaryLyr, referenceSource, multiStepFeedback)
+        filteredBoundaryLyr = algRunner.runClip(
+            inputLayer=boundaryLyr,
+            overlayLayer=parameters[self.REFERENCE],
+            context=context,
+            feedback=multiStepFeedback,
+        )
         currentStep += 1
 
-        nFeats = len(undershootSet)
-        if nFeats == 0:
-            return {"FLAGS": self.flag_id}
+        multiStepFeedback.setCurrentStep(currentStep)
+        filteredBoundaryLyr = algRunner.runMultipartToSingleParts(
+            inputLayer=filteredBoundaryLyr, context=context, feedback=multiStepFeedback
+        )
 
         multiStepFeedback.setCurrentStep(currentStep)
-        self.flagFeatures(undershootSet, multiStepFeedback, nFeats)
+        referenceBoundary = algRunner.runBoundary(
+            inputLayer=parameters[self.REFERENCE],
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        referenceSegments = algRunner.runExplodeLines(
+            referenceBoundary, context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(
+            referenceSegments, context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        undershootSet = self.getUndershoots(
+            filteredBoundaryLyr,
+            referenceSegments,
+            searchRadius=searchRadius,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.flagFeatures(undershootSet, multiStepFeedback)
         return {"FLAGS": self.flag_id}
-    
-    def getUndershoots(self, boundaryLyr, referenceSource, searchRadius, feedback):
+
+    def getUndershoots(self, boundaryLyr, referenceSegmentsLyr, searchRadius, feedback):
+        undershootSet = set()
+        nFeats = boundaryLyr.featureCount()
+        if nFeats == 0:
+            return undershootSet
 
         def evaluate(feat):
             geom = feat.geometry()
-            bbox = geom.boundingBox()
-            for boundFeat in referenceSource.getFeatures(bbox):
+            geomBuffer = geom.buffer(searchRadius, -1)
+            bbox = geomBuffer.boundingBox()
+            for boundFeat in referenceSegmentsLyr.getFeatures(bbox):
                 if feedback.isCanceled():
                     return None
                 boundGeom = boundFeat.geometry()
-                if not boundGeom.intersects(geom):
-                    continue
                 buffer = boundGeom.buffer(searchRadius, -1)
-                if geom.intersects(buffer):
-
+                if not geom.intersects(buffer):
+                    continue
+                if geom.distance(boundGeom) > 10**-9:
+                    return geom
             return None
-
-        for boundaryFeature in boundaryLyr.getFeatures():
-            
-
-    def flagFeatures(self, undershootSet, multiStepFeedback, nFeats):
-        size = 100/nFeats
-        for current, feat in enumerate(undershootLyr.getFeatures()):
+        
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
+        futures = set()
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        for current, boundaryFeature in enumerate(boundaryLyr.getFeatures()):
+            if feedback.isCanceled():
+                break
+            futures.add(pool.submit(evaluate, boundaryFeature))
+            feedback.setProgress(current * 100 / nFeats)
+        multiStepFeedback.setCurrentStep(1)
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
             if multiStepFeedback.isCanceled():
                 break
-            if feat.geometry() in notUndershootSet:
-                continue
+            result = future.result()
+            if result is not None:
+                undershootSet.add(result)
+            feedback.setProgress(current * 100 / nFeats)
+        return undershootSet
+
+    def flagFeatures(self, undershootSet, multiStepFeedback):
+        nPoints = len(undershootSet)
+        if nPoints == 0:
+            return
+        size = 100 / nPoints
+        for current, geom in enumerate(undershootSet):
+            if multiStepFeedback.isCanceled():
+                break
             self.flagFeature(
-                flagGeom=feat.geometry(),
+                flagGeom=geom,
                 flagText=self.tr("Undershoot with the reference layer."),
             )
             multiStepFeedback.setProgress(current * size)
 
-
     def prepareInputFeatures(self, context, algRunner, inputSource, multiStepFeedback):
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, multiStepFeedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, multiStepFeedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Finding boundaries..."))
@@ -165,17 +231,26 @@ class IdentifyUndershootsAlgorithm(ValidationAlgorithm):
             inputSource, context, feedback=multiStepFeedback
         )
         currentStep += 1
+        
+        multiStepFeedback.setCurrentStep(currentStep)
+        if boundaryLyr.geometryType() == QgsWkbTypes.LineGeometry:
+            boundaryLyr = algRunner.runExplodeLines(
+                boundaryLyr, context, feedback=multiStepFeedback
+            )
+        currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
         boundaryLyr = algRunner.runMultipartToSingleParts(
-            inputLayer=boundaryLyr,
-            context=context,
-            feedback=multiStepFeedback
+            inputLayer=boundaryLyr, context=context, feedback=multiStepFeedback
         )
 
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Creating Spatial Indexes on boundaries"))
-        algRunner.runCreateSpatialIndex(boundaryLyr, context, feedback=multiStepFeedback)
+        multiStepFeedback.setProgressText(
+            self.tr("Creating Spatial Indexes on boundaries")
+        )
+        algRunner.runCreateSpatialIndex(
+            boundaryLyr, context, feedback=multiStepFeedback
+        )
         currentStep += 1
         return boundaryLyr
 
@@ -187,21 +262,21 @@ class IdentifyUndershootsAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifyundershoots'
+        return "identifyundershoots"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Undershoots')
+        return self.tr("Identify Undershoots")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -211,10 +286,10 @@ class IdentifyUndershootsAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyUndershootsAlgorithm', string)
+        return QCoreApplication.translate("IdentifyUndershootsAlgorithm", string)
 
     def createInstance(self):
         return IdentifyUndershootsAlgorithm()
