@@ -104,7 +104,7 @@ class SpatialRelationsHandler(QObject):
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(2)
-        geoBoundsGeomEngine = None if geoBoundsLyr is None\
+        geoBoundsGeomEngine, geoBoundsPolygonEngine = (None, None) if geoBoundsLyr is None\
             else self.getGeoBoundsGeomEngine(
                 geoBoundsLyr,
                 context=context,
@@ -115,7 +115,8 @@ class SpatialRelationsHandler(QObject):
         contourFlags = self.validateContourRelations(
             contourNodeDict,
             heightFieldName,
-            geoBoundsGeomEngine=geoBoundsGeomEngine
+            geoBoundsGeomEngine=geoBoundsGeomEngine,
+            geoBoundsPolygonEngine=geoBoundsPolygonEngine
         )
         invalidDict.update(contourFlags)
         multiStepFeedback.setCurrentStep(4)
@@ -156,7 +157,7 @@ class SpatialRelationsHandler(QObject):
         returns an initiated QgsGeometryEngine from the merged polygon boundary of geoBoundsLyr
         """
         if geoBoundsLyr is None:
-            return None
+            return None, None
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         mergedPolygonLyr = self.algRunner.runAggregate(
@@ -165,6 +166,10 @@ class SpatialRelationsHandler(QObject):
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(1)
+        mergedPolygonGeom = [i for i in mergedPolygonLyr.getFeatures()][0].geometry() \
+            if mergedPolygonLyr.featureCount() != 0 else None
+        if mergedPolygonGeom is None:
+            return None, None
         polygonBoundary = self.algRunner.runBoundary(
             mergedPolygonLyr,
             context=context,
@@ -173,10 +178,12 @@ class SpatialRelationsHandler(QObject):
         mergedGeom = [i for i in polygonBoundary.getFeatures()][0].geometry()\
             if polygonBoundary.featureCount() != 0 else None
         if mergedGeom is None:
-            return None
+            return None, None
+        polygonEngine = QgsGeometry.createGeometryEngine(mergedPolygonGeom.constGet())
+        polygonEngine.prepareGeometry()
         engine = QgsGeometry.createGeometryEngine(mergedGeom.constGet())
         engine.prepareGeometry()
-        return engine
+        return engine, polygonEngine
 
     def buildContourAreaDict(self, inputLyr, geoBoundsLyr, attributeName,\
             contourSpatialIdx, contourIdDict, depressionExpression=None,\
@@ -500,7 +507,7 @@ class SpatialRelationsHandler(QObject):
         )
     
     def validateContourRelations(self, contourNodeDict, heightFieldName,\
-        geoBoundsGeomEngine=None, feedback=None):
+        geoBoundsGeomEngine=None, geoBoundsPolygonEngine=None, feedback=None):
         """
         param: contourNodeDict: (dict) dictionary with contour nodes
         Invalid contours:
@@ -516,6 +523,9 @@ class SpatialRelationsHandler(QObject):
             nodeWkb = nodeGeom.asWkb()
             if feedback is not None and feedback.isCanceled():
                 break
+            if geoBoundsPolygonEngine is not None and \
+                not geoBoundsPolygonEngine.intersects(nodeGeom.constGet()):
+                continue
             if len(contourList) == 1 and \
                 (geoBoundsGeomEngine is not None and not (
                     geoBoundsGeomEngine.intersects(nodeGeom.constGet()) or \
