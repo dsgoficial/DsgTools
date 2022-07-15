@@ -22,36 +22,19 @@
 """
 import concurrent.futures
 import os
-from collections import defaultdict
-from typing import DefaultDict, Dict, Tuple, Union
 
-import processing
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (
-    QgsFeatureRequest,
-    QgsGeometry,
-    QgsPointXY,
-    QgsProcessing,
-    QgsProcessingFeatureSourceDefinition,
-    QgsProcessingFeedback,
-    QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterVectorLayer,
-    QgsSpatialIndex,
-    QgsVectorLayer,
-    QgsWkbTypes,
-    QgsProcessingParameterFeatureSource,
-)
+from qgis.core import (QgsProcessing, QgsProcessingMultiStepFeedback,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterNumber, QgsWkbTypes)
 
 from .validationAlgorithm import ValidationAlgorithm
 
 
-class IdentifyUndershootsAlgorithm(ValidationAlgorithm):
+class IdentifyPolygonUndershootsAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     SELECTED = "SELECTED"
     TOLERANCE = "TOLERANCE"
@@ -67,7 +50,6 @@ class IdentifyUndershootsAlgorithm(ValidationAlgorithm):
                 self.INPUT,
                 self.tr("Input"),
                 [
-                    QgsProcessing.TypeVectorLine,
                     QgsProcessing.TypeVectorPolygon,
                 ],
             )
@@ -106,12 +88,7 @@ class IdentifyUndershootsAlgorithm(ValidationAlgorithm):
         searchRadius = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         referenceSource = self.parameterAsSource(parameters, self.REFERENCE, context)
         nSteps = 8
-        flagSinkType = (
-            QgsWkbTypes.Point
-            if QgsWkbTypes.geometryType(inputSource.wkbType()) == QgsWkbTypes.LineGeometry
-            else QgsWkbTypes.LineString
-        )
-        self.prepareFlagSink(parameters, inputSource, flagSinkType, context)
+        self.prepareFlagSink(parameters, inputSource, QgsWkbTypes.LineString, context)
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
 
@@ -262,14 +239,14 @@ class IdentifyUndershootsAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "identifyundershoots"
+        return "identifypolygonundershoots"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Identify Undershoots")
+        return self.tr("Identify Polygon Undershoots")
 
     def group(self):
         """
@@ -289,7 +266,7 @@ class IdentifyUndershootsAlgorithm(ValidationAlgorithm):
         return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate("IdentifyUndershootsAlgorithm", string)
+        return QCoreApplication.translate("IdentifyPolygonUndershootsAlgorithm", string)
 
     def createInstance(self):
-        return IdentifyUndershootsAlgorithm()
+        return IdentifyPolygonUndershootsAlgorithm()

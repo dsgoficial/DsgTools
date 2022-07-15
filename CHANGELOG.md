@@ -2,6 +2,9 @@
 
 ## 4.5.0
 
+Novas funcionalidades:
+- Novo processo de identificar undershoot de polígonos;
+
 Melhorias:
 - Melhoria de desempenho no identificar Z;
 - Melhoria de desempenho no identificar geometrias inválidas;
