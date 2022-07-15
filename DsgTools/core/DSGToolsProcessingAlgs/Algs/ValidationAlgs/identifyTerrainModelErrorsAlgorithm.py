@@ -20,21 +20,12 @@
  *                                                                         *
  ***************************************************************************/
 """
-import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
+from qgis.core import (QgsGeometry, QgsProcessing, QgsProcessingException, QgsProcessingParameterBoolean,
                        QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterField,
-                       QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsSpatialIndex, QgsVectorLayerUtils, QgsWkbTypes)
+                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
@@ -60,7 +51,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input layer'),
+                self.tr('Input contour layer'),
                 [QgsProcessing.TypeVectorLine]
             )
         )

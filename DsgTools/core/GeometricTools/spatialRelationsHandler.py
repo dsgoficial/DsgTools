@@ -87,6 +87,7 @@ class SpatialRelationsHandler(QObject):
         invalidDict = OrderedDict()
         multiStepFeedback = QgsProcessingMultiStepFeedback(7, feedback) #ajustar depois
         multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.setProgressText(self.tr("Splitting lines..."))
         splitLinesLyr = self.algRunner.runSplitLinesWithLines(
             contourLyr,
             contourLyr,
@@ -94,6 +95,7 @@ class SpatialRelationsHandler(QObject):
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.setProgressText(self.tr("Building aux structure..."))
         (
             contourSpatialIdx, contourIdDict, contourNodeDict, heightsDict
         ) = self.buildSpatialIndexAndIdDictRelateNodesAndAttributeGroupDict(
@@ -109,6 +111,7 @@ class SpatialRelationsHandler(QObject):
                 feedback=multiStepFeedback
             )
         multiStepFeedback.setCurrentStep(3)
+        multiStepFeedback.setProgressText(self.tr("Validating contour relations..."))
         contourFlags = self.validateContourRelations(
             contourNodeDict,
             heightFieldName,
@@ -116,6 +119,7 @@ class SpatialRelationsHandler(QObject):
         )
         invalidDict.update(contourFlags)
         multiStepFeedback.setCurrentStep(4)
+        multiStepFeedback.setProgressText(self.tr("Finding contour out of threshold..."))
         contourOutOfThresholdDict = self.findContourOutOfThreshold(
             heightsDict,
             threshold,
@@ -125,6 +129,7 @@ class SpatialRelationsHandler(QObject):
         if len(invalidDict) > 0:
             return invalidDict
         multiStepFeedback.setCurrentStep(5)
+        multiStepFeedback.setProgressText(self.tr("Building contour area dict.."))
         contourAreaDict = self.buildContourAreaDict(
             inputLyr=splitLinesLyr,
             geoBoundsLyr=geoBoundsLyr,
@@ -136,6 +141,7 @@ class SpatialRelationsHandler(QObject):
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(6)
+        multiStepFeedback.setProgressText(self.tr("Finding missing contours..."))
         misingContourDict = self.findMissingContours(
             contourAreaDict,
             threshold,
@@ -147,17 +153,25 @@ class SpatialRelationsHandler(QObject):
 
     def getGeoBoundsGeomEngine(self, geoBoundsLyr, context=None, feedback=None):
         """
-        returns an initiated QgsGeometryEngine from the merged polygon of geoBoundsLyr
+        returns an initiated QgsGeometryEngine from the merged polygon boundary of geoBoundsLyr
         """
         if geoBoundsLyr is None:
             return None
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
         mergedPolygonLyr = self.algRunner.runAggregate(
             geoBoundsLyr,
             context=context,
-            feedback=feedback
+            feedback=multiStepFeedback
         )
-        mergedGeom = [i for i in mergedPolygonLyr.getFeatures()][0].geometry()\
-            if mergedPolygonLyr.featureCount() != 0 else None
+        multiStepFeedback.setCurrentStep(1)
+        polygonBoundary = self.algRunner.runBoundary(
+            mergedPolygonLyr,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        mergedGeom = [i for i in polygonBoundary.getFeatures()][0].geometry()\
+            if polygonBoundary.featureCount() != 0 else None
         if mergedGeom is None:
             return None
         engine = QgsGeometry.createGeometryEngine(mergedGeom.constGet())
@@ -503,7 +517,10 @@ class SpatialRelationsHandler(QObject):
             if feedback is not None and feedback.isCanceled():
                 break
             if len(contourList) == 1 and \
-                (geoBoundsGeomEngine is not None and geoBoundsGeomEngine.intersects(nodeGeom.constGet())):
+                (geoBoundsGeomEngine is not None and not (
+                    geoBoundsGeomEngine.intersects(nodeGeom.constGet()) or \
+                        geoBoundsGeomEngine.distance(nodeGeom.constGet()) < 10**-9
+                )):
                 invalidDict[nodeWkb] = self.tr(
                     'Contour lines must be closed or intersect the geographic boundary.'
                     )
