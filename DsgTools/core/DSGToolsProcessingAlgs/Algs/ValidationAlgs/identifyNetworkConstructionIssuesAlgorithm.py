@@ -237,7 +237,7 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
                 if geom.equals(candidateGeom): #same geom
                     continue
                 intersection = engine.intersection(candidateConstGetGeom)
-                intersectionPoints = [intersection] if isinstance(intersection, QgsPoint) else intersection.parts()
+                intersectionPoints = [intersection] if isinstance(intersection, QgsPoint) else intersection.vertices()
                 for i in intersectionPoints:
                     wkb = i.asWkb()
                     if not engine.touches(i) and wkb not in flagSet and wkb not in outputSet:
