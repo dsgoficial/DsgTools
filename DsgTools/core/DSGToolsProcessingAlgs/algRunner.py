@@ -289,7 +289,11 @@ class AlgRunner:
         output = processing.run('dsgtools:snaplayeronlayer', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
 
-    def runIdentifyDangles(self, inputLayer, searchRadius, context, feedback=None, onlySelected=False, lineFilter = None, polygonFilter = None, ignoreUnsegmented = False, ignoreInner = False, flagLyr=None, returnProcessingDict=False):
+    def runIdentifyDangles(
+            self, inputLayer, searchRadius, context, feedback=None, onlySelected=False,\
+            lineFilter = None, polygonFilter = None, ignoreDanglesOnUnsegmentedLines = False,\
+            inputIsBoundaryLayer = False, geographicBoundsLyr = None, flagLyr=None, returnProcessingDict=False
+        ):
         flagLyr = 'memory:' if flagLyr is None else flagLyr
         lineFilter = [] if lineFilter is None else lineFilter
         polygonFilter = [] if polygonFilter is None else polygonFilter
@@ -299,9 +303,10 @@ class AlgRunner:
             'TOLERANCE' : searchRadius,
             'LINEFILTERLAYERS' : lineFilter,
             'POLYGONFILTERLAYERS' : polygonFilter,
-            'TYPE' : ignoreUnsegmented,
-            'IGNOREINNER' : ignoreInner,
-            'FLAGS' : flagLyr
+            'IGNORE_DANGLES_ON_UNSEGMENTED_LINES' : ignoreDanglesOnUnsegmentedLines,
+            'INPUT_IS_BOUDARY_LAYER' : inputIsBoundaryLayer,
+            'GEOGRAPHIC_BOUNDARY': geographicBoundsLyr,
+            'FLAGS' : flagLyr,
         }
         output = processing.run('dsgtools:identifydangles', parameters, context=context, feedback=feedback)
         return output if returnProcessingDict else output['FLAGS']
