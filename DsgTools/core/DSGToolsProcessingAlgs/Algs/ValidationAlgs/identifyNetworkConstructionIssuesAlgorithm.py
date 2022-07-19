@@ -47,15 +47,16 @@ from qgis.core import (
 )
 
 
-class IdentifyDanglesOnLineCoverageAlgorithm(ValidationAlgorithm):
+class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
     INPUT_LINES = "INPUT_LINES"
     SELECTED = 'SELECTED'
     TOLERANCE = "TOLERANCE"
     LINEFILTERLAYERS = "LINEFILTERLAYERS"
     POLYGONFILTERLAYERS = "POLYGONFILTERLAYERS"
-    TYPE = "TYPE"
-    IGNOREINNER = "IGNOREINNER"
-    FLAGS = "FLAGS"
+    IGNORE_DANGLES_ON_UNSEGMENTED_LINES = 'IGNORE_DANGLES_ON_UNSEGMENTED_LINES'
+    INPUT_IS_BOUDARY_LAYER = 'INPUT_IS_BOUDARY_LAYER'
+    GEOGRAPHIC_BOUNDARY = 'GEOGRAPHIC_BOUNDARY'
+    FLAGS = 'FLAGS'
 
     def initAlgorithm(self, config):
         """
@@ -76,12 +77,21 @@ class IdentifyDanglesOnLineCoverageAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.INPUT_IS_BOUDARY_LAYER,
+                self.tr(
+                    'Input is a boundary layer (every line must be connected '
+                    'to an element of either the input layer or the filters)'
+                )
+            )
+        )
+        self.addParameter(
             QgsProcessingParameterNumber(
                 self.TOLERANCE,
                 self.tr("Search radius"),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Double,
-                defaultValue=2,
+                defaultValue=0.0001,
             )
         )
         self.addParameter(
@@ -102,12 +112,16 @@ class IdentifyDanglesOnLineCoverageAlgorithm(ValidationAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.TYPE, self.tr("Ignore dangle on unsegmented lines")
+                self.IGNORE_DANGLES_ON_UNSEGMENTED_LINES,
+                self.tr('Ignore dangle on unsegmented lines')
             )
         )
         self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.IGNOREINNER, self.tr("Ignore search radius on inner layer search")
+            QgsProcessingParameterVectorLayer(
+                self.GEOGRAPHIC_BOUNDARY,
+                self.tr('Geographic Boundary (this layer only filters the output dangles)'),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True
             )
         )
         self.addParameter(
@@ -129,41 +143,55 @@ class IdentifyDanglesOnLineCoverageAlgorithm(ValidationAlgorithm):
         searchRadius = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         lineFilterLyrList = self.parameterAsLayerList(parameters, self.LINEFILTERLAYERS, context)
         polygonFilterLyrList = self.parameterAsLayerList(parameters, self.POLYGONFILTERLAYERS, context)
-        ignoreNotSplit = self.parameterAsBool(parameters, self.TYPE, context)
-        ignoreInner = self.parameterAsBool(parameters, self.IGNOREINNER, context)
+        ignoreDanglesOnUnsegmentedLines = self.parameterAsBool(
+            parameters, self.IGNORE_DANGLES_ON_UNSEGMENTED_LINES, context)
+        inputIsBoundaryLayer = self.parameterAsBool(
+            parameters, self.INPUT_IS_BOUDARY_LAYER, context)
+        geographicBoundsLyr = self.parameterAsVectorLayer(parameters, self.GEOGRAPHIC_BOUNDARY, context)
         self.prepareFlagSink(parameters, lineLyrList[0], QgsWkbTypes.Point, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Building unified lines layer..."))
-        lyrList = [
-            lineLyr if not onlySelected else
-                algRunner.runSaveSelectedFeatures(
-                    lineLyr,
-                    context,
-                    feedback=multiStepFeedback
-                )
-            for lineLyr in lineLyrList
-        ]
-        mergedLines = algRunner.runMergeVectorLayers(
-            inputList=lyrList, feedback=multiStepFeedback, context=context
-        )
+        mergedLines = self.getInputLineLayers(context, algRunner, lineLyrList, onlySelected, multiStepFeedback)
         multiStepFeedback.setCurrentStep(1)
         outputLyr = algRunner.runIdentifyDangles(
             inputLayer=mergedLines,
             searchRadius=searchRadius,
             lineFilter=lineFilterLyrList,
             polygonFilter=polygonFilterLyrList,
-            ignoreInner=ignoreInner,
-            ignoreUnsegmented=ignoreNotSplit,
+            ignoreDanglesOnUnsegmentedLines=ignoreDanglesOnUnsegmentedLines,
+            inputIsBoundaryLayer=inputIsBoundaryLayer,
+            geographicBoundsLyr=geographicBoundsLyr,
             feedback=multiStepFeedback,
-            context=context
+            context=context,
         )
-        self.flagSink.addFeatures(
-            outputLyr.getFeatures(), QgsFeatureSink.FastInsert
-        )
+        multiStepFeedback.setCurrentStep(2)
+        self.flagSink.addFeatures(outputLyr.getFeatures(), QgsFeatureSink.FastInsert)
         return {
             "FLAGS": self.flag_id
         }
+
+    def getInputLineLayers(self, context, algRunner, lineLyrList, onlySelected, feedback):
+        nSteps = 2 if not onlySelected else 2 + len(lyrList)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        def getLineLayer(currentStep, lineLyr):
+            multiStepFeedback.setCurrentStep(currentStep)
+            return lineLyr if not onlySelected \
+                else algRunner.runSaveSelectedFeatures(
+                    lineLyr,
+                    context,
+                    feedback=multiStepFeedback
+                )
+            
+        lyrList = [
+            getLineLayer(currentStep, lineLyr)
+            for currentStep, lineLyr in enumerate(lineLyrList)
+        ]
+        multiStepFeedback.setCurrentStep(nSteps-1)
+        mergedLines = algRunner.runMergeVectorLayers(
+            inputList=lyrList, feedback=multiStepFeedback, context=context
+        )
+        return mergedLines
 
     def name(self):
         """
@@ -173,14 +201,14 @@ class IdentifyDanglesOnLineCoverageAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "identifydanglesonlinecoverage"
+        return "identifynetworkconstructionissues"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Identify Dangles on Line Coverage")
+        return self.tr("Identify Network Construction Issues")
 
     def group(self):
         """
@@ -201,8 +229,8 @@ class IdentifyDanglesOnLineCoverageAlgorithm(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate(
-            "IdentifyDanglesOnLineCoverageAlgorithm", string
+            "IdentifyNetworkConstructionIssuesAlgorithm", string
         )
 
     def createInstance(self):
-        return IdentifyDanglesOnLineCoverageAlgorithm()
+        return IdentifyNetworkConstructionIssuesAlgorithm()

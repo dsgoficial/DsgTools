@@ -122,8 +122,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyCountourSt
     IdentifyCountourStreamIntersectionAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesAlgorithm import \
     IdentifyDanglesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesOnLineCoverageAlgorithm import \
-    IdentifyDanglesOnLineCoverageAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyNetworkConstructionIssuesAlgorithm import \
+    IdentifyNetworkConstructionIssuesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedFeaturesAlgorithm import \
     IdentifyDuplicatedFeaturesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedGeometriesAlgorithm import \
@@ -323,7 +323,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyCountourStreamIntersectionAlgorithm(),
             SpellCheckerAlgorithm(),
             UnicodeFilterAlgorithm(),
-            IdentifyDanglesOnLineCoverageAlgorithm(),
+            IdentifyNetworkConstructionIssuesAlgorithm(),
             IdentifySmallFirstOrderDanglesAlgorithm(),
             RemoveEmptyLayers(),
             IdentifyGeometriesWithLargeVertexDensityAlgorithm(),
