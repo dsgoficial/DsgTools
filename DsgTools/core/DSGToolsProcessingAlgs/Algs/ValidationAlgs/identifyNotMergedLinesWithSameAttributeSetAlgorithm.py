@@ -21,24 +21,23 @@
  ***************************************************************************/
 """
 
+import concurrent.futures
 from collections import defaultdict
+import os
+
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from .validationAlgorithm import ValidationAlgorithm
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (
-    QgsProcessing,
-    QgsProcessingParameterFeatureSink,
-    QgsWkbTypes,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterField,
-    QgsProcessingParameterVectorLayer,
-    QgsFeatureRequest,
-    QgsProcessingFeatureSourceDefinition,
-    QgsGeometry
-)
+from qgis.core import (QgsFeatureRequest, QgsGeometry, QgsProcessing,
+                       QgsProcessingFeatureSourceDefinition,
+                       QgsProcessingMultiStepFeedback,
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterField,
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+
+from .validationAlgorithm import ValidationAlgorithm
 
 
 class IdentifyNotMergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
@@ -48,6 +47,7 @@ class IdentifyNotMergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
     IGNORE_VIRTUAL_FIELDS = 'IGNORE_VIRTUAL_FIELDS'
     IGNORE_PK_FIELDS = 'IGNORE_PK_FIELDS'
     POINT_FILTER_LAYERS = 'POINT_FILTER_LAYERS'
+    LINE_FILTER_LAYERS = 'LINE_FILTER_LAYERS'
     FLAGS = 'FLAGS'
 
     def initAlgorithm(self, config):
@@ -103,6 +103,14 @@ class IdentifyNotMergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.LINE_FILTER_LAYERS,
+                self.tr('Line Filter Layers'),
+                QgsProcessing.TypeVectorLine,
+                optional=True
+            )
+        )
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
@@ -118,6 +126,8 @@ class IdentifyNotMergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
         onlySelected = self.parameterAsBoolean(parameters, self.SELECTED, context)
         pointFilterLyrList = self.parameterAsLayerList(
             parameters, self.POINT_FILTER_LAYERS, context)
+        lineFilterLyrList = self.parameterAsLayerList(
+            parameters, self.LINE_FILTER_LAYERS, context)
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
         attributeBlackList = self.parameterAsFields(parameters, self.ATTRIBUTE_BLACK_LIST, context)
         fieldList = self.layerHandler.getAttributesFromBlackList(
@@ -127,7 +137,7 @@ class IdentifyNotMergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
             excludePrimaryKeys=self.parameterAsBoolean(parameters, self.IGNORE_PK_FIELDS, context)
         )
         fieldIdList = [i for i, field in enumerate(inputLyr.fields()) if field.name() in fieldList]
-        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.setProgressText(self.tr("Building local cache..."))
         localLyr = algRunner.runAddAutoIncrementalField(
@@ -145,39 +155,70 @@ class IdentifyNotMergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setProgressText(self.tr("Building aux structure..."))
         multiStepFeedback.setCurrentStep(2)
         mergedPointLyr = algRunner.runMergeVectorLayers(pointFilterLyrList, context, multiStepFeedback) if pointFilterLyrList else None
+        multiStepFeedback.setCurrentStep(3)
+        mergedLineLyr = algRunner.runMergeVectorLayers(lineFilterLyrList, context, multiStepFeedback) if lineFilterLyrList else None
+        multiStepFeedback.setCurrentStep(4)
+        if mergedLineLyr is not None:
+            algRunner.runCreateSpatialIndex(mergedLineLyr, context, multiStepFeedback)
         dictSize = len(initialAndEndPointDict)
         if dictSize == 0:
             return {"FLAGS": self.flag_id}
         filterPointSet = set(i.geometry().asWkb() for i in mergedPointLyr.getFeatures()) if mergedPointLyr is not None else set()
-        multiStepFeedback.setCurrentStep(3)
+        multiStepFeedback.setCurrentStep(5)
+        multiStepFeedback.setProgressText(self.tr("Evaluating candidates"))
+        self.evaluateFlagCandidates(
+            fieldList, fieldIdList, multiStepFeedback, localLyr, \
+            initialAndEndPointDict, mergedLineLyr, dictSize, filterPointSet)
+        return {
+            "FLAGS": self.flag_id
+        }
+
+    def evaluateFlagCandidates(self, fieldList, fieldIdList, multiStepFeedback, localLyr, initialAndEndPointDict, mergedLineLyr, dictSize, filterPointSet):
         stepSize = 100 / dictSize
-        for current, (pointXY, idSet) in enumerate(initialAndEndPointDict.items()):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, multiStepFeedback)
+        multiStepFeedback.setCurrentStep(0)
+        def evaluate(pointXY, idSet):
             if multiStepFeedback.isCanceled():
-                break
+                return None
             geom = QgsGeometry.fromPointXY(pointXY)
             geomWkb = geom.asWkb()
             if geomWkb in filterPointSet:
-                continue
+                return None
             if len(idSet) != 2:
-                continue
+                return None
+            if mergedLineLyr is not None:
+                bbox = geom.boundingBox()
+                nIntersects = len([i for i in mergedLineLyr.getFeatures(bbox) if i.geometry().intersects(geom)])
+                if nIntersects > 0:
+                    return None
             request = QgsFeatureRequest()\
                 .setFilterExpression(f"AUTO in {tuple(idSet)}")\
                 .setFlags(QgsFeatureRequest.NoGeometry)\
                 .setSubsetOfAttributes(fieldIdList)
             f1, f2 = [i for i in localLyr.getFeatures(request)]
             differentFeats = any(f1[k] != f2[k] for k in fieldList)
-            if not differentFeats:
+            return geomWkb if not differentFeats else None
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
+        futures = set()
+
+        for current, (pointXY, idSet) in enumerate(initialAndEndPointDict.items()):
+            if multiStepFeedback.isCanceled():
+                break
+            futures.add(pool.submit(evaluate, pointXY, idSet))
+            multiStepFeedback.setProgress(current * stepSize)
+        
+        multiStepFeedback.setCurrentStep(1)
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback.isCanceled():
+                break
+            geomWkb = future.result()
+            if geomWkb is not None:
                 self.flagFeature(
                     flagGeom=geomWkb,
                     flagText=self.tr("Not merged lines with same attribute set"),
                     fromWkb=True
                 )
             multiStepFeedback.setProgress(current * stepSize)
-            
-        
-        return {
-            "FLAGS": self.flag_id
-        }
     
     def buildInitialAndEndPointDict(self, lyr, algRunner, context, feedback):
         pointDict = defaultdict(set)
