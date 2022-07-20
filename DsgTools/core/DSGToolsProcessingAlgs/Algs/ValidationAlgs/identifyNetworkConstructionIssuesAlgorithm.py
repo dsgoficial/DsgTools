@@ -5,9 +5,9 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2018-08-13
+        begin                : 2022-07-19
         git sha              : $Format:%H$
-        copyright            : (C) 2018 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        copyright            : (C) 2022 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
@@ -20,30 +20,27 @@
  *                                                                         *
  ***************************************************************************/
 """
+
+import itertools
+import concurrent.futures
+import os
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from .validationAlgorithm import ValidationAlgorithm
-import processing
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
     QgsFeatureSink,
-    QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterFeatureSink,
-    QgsFeature,
-    QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
     QgsProcessingParameterBoolean,
-    QgsProcessingParameterEnum,
     QgsProcessingParameterNumber,
     QgsProcessingParameterMultipleLayers,
-    QgsProcessingUtils,
-    QgsSpatialIndex,
-    QgsGeometry,
     QgsProcessingMultiStepFeedback,
+    QgsFeatureRequest,
+    QgsGeometry,
+    QgsPoint
 )
 
 
@@ -149,7 +146,7 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
             parameters, self.INPUT_IS_BOUDARY_LAYER, context)
         geographicBoundsLyr = self.parameterAsVectorLayer(parameters, self.GEOGRAPHIC_BOUNDARY, context)
         self.prepareFlagSink(parameters, lineLyrList[0], QgsWkbTypes.Point, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Building unified lines layer..."))
         mergedLines = self.getInputLineLayers(context, algRunner, lineLyrList, onlySelected, multiStepFeedback)
@@ -167,6 +164,13 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
         )
         multiStepFeedback.setCurrentStep(2)
         self.flagSink.addFeatures(outputLyr.getFeatures(), QgsFeatureSink.FastInsert)
+        multiStepFeedback.setCurrentStep(3)
+        self.getUnsegmentedErrors(
+            mergedLines, 
+            lineFilter=lineFilterLyrList,
+            polygonFilter=polygonFilterLyrList,
+            flagSet=set(i.geometry().asWkb() for i in outputLyr.getFeatures()),
+            algRunner=algRunner, context=context, feedback=multiStepFeedback)
         return {
             "FLAGS": self.flag_id
         }
@@ -192,6 +196,96 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
             inputList=lyrList, feedback=multiStepFeedback, context=context
         )
         return mergedLines
+    
+    def getUnsegmentedErrors(self, mergedLines, lineFilter, polygonFilter, flagSet, algRunner, context, feedback):
+        # build spatial index on mergedLines
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        algRunner.runCreateSpatialIndex(
+            mergedLines,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        multiStepFeedback.setCurrentStep(1)
+        # run intersect
+        # merge and build spatial index on line filters and polygon filters
+        filterLayer = self.getFilterLayers(lineFilter, polygonFilter, algRunner, multiStepFeedback, context)
+        multiStepFeedback.setCurrentStep(2)
+        nFeats = mergedLines.featureCount()
+        if nFeats == 0:
+            return
+        stepSize = 100 / nFeats
+        errorSet = set()
+        def evaluate(feat):
+            outputSet = set()
+            if multiStepFeedback.isCanceled():
+                return outputSet
+            geom = feat.geometry()
+            bbox = geom.boundingBox()
+            engine = QgsGeometry.createGeometryEngine(geom.constGet())
+            engine.prepareGeometry()
+            request = QgsFeatureRequest().setFilterRect(bbox)
+            # inner search
+            for candidateFeat in itertools.chain.from_iterable(
+                [mergedLines.getFeatures(request), filterLayer.getFeatures(request)]):
+                if multiStepFeedback.isCanceled():
+                    return outputSet
+                candidateGeom = candidateFeat.geometry()
+                candidateConstGetGeom = candidateGeom.constGet()
+                if not engine.intersects(candidateConstGetGeom):
+                    continue
+                if geom.equals(candidateGeom): #same geom
+                    continue
+                intersection = engine.intersection(candidateConstGetGeom)
+                intersectionPoints = [intersection] if isinstance(intersection, QgsPoint) else intersection.vertices()
+                for i in intersectionPoints:
+                    wkb = i.asWkb()
+                    if not engine.touches(i) and wkb not in flagSet and wkb not in outputSet:
+                        outputSet.add(wkb)
+            return outputSet
+        
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
+        futures = set()
+        for current, feat in enumerate(mergedLines.getFeatures()):
+            if multiStepFeedback.isCanceled():
+                break
+            #put this into a thread after it is working
+            futures.add(pool.submit(evaluate, feat))
+            multiStepFeedback.setProgress(current * stepSize)
+        concurrent.futures.wait(futures, timeout=None, return_when=concurrent.futures.ALL_COMPLETED)
+        multiStepFeedback.setCurrentStep(3)
+        stepSize = 100/len(futures)
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback.isCanceled():
+                break
+            outputSet = future.result()
+            errorSet = errorSet.union(outputSet)
+            multiStepFeedback.setProgress(current * stepSize)
+        flagLambda = lambda x: self.flagFeature(x, self.tr("Line from input not split on intersection."), fromWkb=True)
+        list(map(flagLambda, errorSet))
+    
+    def getFilterLayers(self, lineFilter, polygonFilter, algRunner, feedback, context):
+        nSteps = len(polygonFilter) + 2
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        def makeBoundary(currentStep, layer):
+            multiStepFeedback.setCurrentStep(currentStep)
+            return algRunner.runBoundary(layer, feedback=multiStepFeedback, context=context)
+        
+        lineFilterList = lineFilter + [makeBoundary(currentStep, layer) for currentStep, layer in enumerate(polygonFilter)]
+        currentStep = len(polygonFilter) + 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        mergedFilters = algRunner.runMergeVectorLayers(lineFilterList, context=context, feedback=multiStepFeedback)
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(
+            mergedFilters,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        return mergedFilters
+
+
 
     def name(self):
         """
@@ -208,7 +302,7 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Identify Network Construction Issues")
+        return self.tr("Identify Network's Geometry Construction Issues")
 
     def group(self):
         """
