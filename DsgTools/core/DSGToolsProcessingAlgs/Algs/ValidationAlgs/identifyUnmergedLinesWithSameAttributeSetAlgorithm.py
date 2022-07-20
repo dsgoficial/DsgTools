@@ -40,7 +40,7 @@ from qgis.core import (QgsFeatureRequest, QgsGeometry, QgsProcessing,
 from .validationAlgorithm import ValidationAlgorithm
 
 
-class IdentifyNotMergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
+class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     SELECTED = "SELECTED"
     ATTRIBUTE_BLACK_LIST = 'ATTRIBUTE_BLACK_LIST'
@@ -267,14 +267,14 @@ class IdentifyNotMergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "identifynotmergedlineswithsameattributeset"
+        return "identifyunmergedlineswithsameattributeset"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Identify Not Merged Lines With Same Attribute Set")
+        return self.tr("Identify Unmerged Lines With Same Attribute Set")
 
     def group(self):
         """
@@ -295,8 +295,8 @@ class IdentifyNotMergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate(
-            "IdentifyNotMergedLinesWithSameAttributeSetAlgorithm", string
+            "IdentifyUnmergedLinesWithSameAttributeSetAlgorithm", string
         )
 
     def createInstance(self):
-        return IdentifyNotMergedLinesWithSameAttributeSetAlgorithm()
+        return IdentifyUnmergedLinesWithSameAttributeSetAlgorithm()

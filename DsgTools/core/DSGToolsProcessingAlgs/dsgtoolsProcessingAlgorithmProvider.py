@@ -147,8 +147,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyInvalidUUI
     IdentifyInvalidUUIDsAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyMultiPartGeometriesAlgorithm import \
     IdentifyMultiPartGeometriesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyNotMergedLinesWithSameAttributeSetAlgorithm import \
-    IdentifyNotMergedLinesWithSameAttributeSetAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUnmergedLinesWithSameAttributeSetAlgorithm import \
+    IdentifyUnmergedLinesWithSameAttributeSetAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyOutOfBoundsAnglesAlgorithm import \
     IdentifyOutOfBoundsAnglesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyOutOfBoundsAnglesInCoverageAlgorithm import \
@@ -334,7 +334,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyDuplicatedVertexesAlgorithm(),
             IdentifyMultiPartGeometriesAlgorithm(),
             IdentifyPolygonUndershootsAlgorithm(),
-            IdentifyNotMergedLinesWithSameAttributeSetAlgorithm(),
+            IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(),
             StringCsvToFirstLayerWithElementsAlgorithm(),
         ]
         return algList
