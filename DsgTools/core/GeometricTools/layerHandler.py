@@ -1366,7 +1366,7 @@ class LayerHandler(QObject):
             ignoreErrorsOnSameFeat=True
         )
 
-    def getUnsharedVertexOnIntersections(self, inputLineLyrList, inputPolygonLyrList,
+    def getUnsharedVertexOnIntersections(self, pointLineLyrList, inputLineLyrList, inputPolygonLyrList,
                                          onlySelected=False, feedback=None, context=None, algRunner=None):
         """
         returns a dict in the following format:
@@ -1381,11 +1381,10 @@ class LayerHandler(QObject):
         :param searchRadius: (float) search radius
         :param feedback (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
         """
-        inputList = inputLineLyrList
         algRunner = AlgRunner() if algRunner is None else algRunner
         context = dataobjects.createContext(
             feedback=feedback) if context is None else context
-        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Getting lines'))
         linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
@@ -1396,6 +1395,9 @@ class LayerHandler(QObject):
             context=context
         )
         multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Building point merged layer'))
+        pointsLyr = algRunner.runMergeVectorLayers(pointLineLyrList, context, feedback=multiStepFeedback)
+        multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Building intersections'))
         intersectionLyr = algRunner.runLineIntersections(
             linesLyr,
@@ -1403,22 +1405,23 @@ class LayerHandler(QObject):
             feedback=multiStepFeedback,
             context=context
         )
-        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.setCurrentStep(3)
         multiStepFeedback.pushInfo(self.tr('Finding vertexes'))
         vertexLyr = algRunner.runExtractVertices(
             linesLyr,
             feedback=multiStepFeedback,
             context=context
         )
-        multiStepFeedback.setCurrentStep(3)
+        multiStepFeedback.setCurrentStep(4)
         multiStepFeedback.pushInfo(self.tr('Finding unshared vertexes'))
         intersectionDict = {
             feat.geometry().asWkb(): feat for feat in intersectionLyr.getFeatures()
         }
+        inputVertexSet = set(feat.geometry().asWkb() for feat in pointsLyr.getFeatures())
         vertexSet = set(
             feat.geometry().asWkb() for feat in vertexLyr.getFeatures()
         )
-        return set(intersectionDict.keys()).difference(vertexSet)
+        return set(intersectionDict.keys()).difference(vertexSet) | inputVertexSet.difference(vertexSet)
 
     def getLinesLayerFromPolygonsAndLinesLayers(self, inputLineLyrList, inputPolygonLyrList, algRunner=None, onlySelected=False, feedback=None, context=None):
         """

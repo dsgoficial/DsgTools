@@ -41,6 +41,7 @@ from .validationAlgorithm import ValidationAlgorithm
 
 class IdentifyUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
+    INPUT_POINTS = 'INPUT_POINTS'
     INPUT_LINES = 'INPUT_LINES'
     INPUT_POLYGONS = 'INPUT_POLYGONS'
     SELECTED = 'SELECTED'
@@ -49,6 +50,14 @@ class IdentifyUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         """
         Parameter setting.
         """
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.INPUT_POINTS,
+                self.tr('Point Layers'),
+                QgsProcessing.TypeVectorPoint,
+                optional=True
+            )
+        )
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LINES,
@@ -85,6 +94,11 @@ class IdentifyUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         Here is where the processing itself takes place.
         """
         layerHandler = LayerHandler()
+        inputPointLyrList = self.parameterAsLayerList(
+            parameters,
+            self.INPUT_POINTS,
+            context
+        )
         inputLineLyrList = self.parameterAsLayerList(
             parameters,
             self.INPUT_LINES,
@@ -95,7 +109,7 @@ class IdentifyUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             self.INPUT_POLYGONS,
             context
         )
-        if inputLineLyrList + inputPolygonLyrList == []:
+        if inputPointLyrList + inputLineLyrList + inputPolygonLyrList == []:
             raise QgsProcessingException(
                 self.tr('Select at least one layer')
             )
@@ -106,7 +120,7 @@ class IdentifyUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         )
         self.prepareFlagSink(
             parameters,
-            (inputLineLyrList + inputPolygonLyrList)[0],
+            (inputPointLyrList + inputLineLyrList + inputPolygonLyrList)[0],
             QgsWkbTypes.Point,
             context
         )
@@ -115,6 +129,7 @@ class IdentifyUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         usharedIntersectionSet = layerHandler.getUnsharedVertexOnIntersections(
+            inputPointLyrList,
             inputLineLyrList,
             inputPolygonLyrList,
             onlySelected=onlySelected,
