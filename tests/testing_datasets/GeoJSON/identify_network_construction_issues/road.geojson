@@ -1,0 +1,17 @@
+{
+"type": "FeatureCollection",
+"name": "road",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { }, "geometry": { "type": "LineString", "coordinates": [ [ -48.425616373379654, -27.440629217064906 ], [ -48.425369064539602, -27.440210165974825 ] ] } },
+{ "type": "Feature", "properties": { }, "geometry": { "type": "LineString", "coordinates": [ [ -48.425616373379654, -27.440629217064906 ], [ -48.425410282679614, -27.440608607994903 ], [ -48.425300367639586, -27.440526171714886 ], [ -48.425241975274581, -27.440271993184837 ] ] } },
+{ "type": "Feature", "properties": { }, "geometry": { "type": "LineString", "coordinates": [ [ -48.425454935664618, -27.440199861439826 ], [ -48.425300367639586, -27.440526171714886 ], [ -48.425372499384601, -27.440794089624944 ] ] } },
+{ "type": "Feature", "properties": { }, "geometry": { "type": "LineString", "coordinates": [ [ -48.425372499384601, -27.440794089624944 ], [ -48.425623243069644, -27.440842177454954 ] ] } },
+{ "type": "Feature", "properties": { }, "geometry": { "type": "LineString", "coordinates": [ [ -48.425641866367613, -27.440753076100094 ], [ -48.425372499384601, -27.440794089624944 ] ] } },
+{ "type": "Feature", "properties": { }, "geometry": { "type": "LineString", "coordinates": [ [ -48.425623243069644, -27.440842177454954 ], [ -48.425750063984793, -27.440983210714403 ] ] } },
+{ "type": "Feature", "properties": { }, "geometry": { "type": "LineString", "coordinates": [ [ -48.425543973285421, -27.440687814045294 ], [ -48.425482146075609, -27.440945427419521 ] ] } },
+{ "type": "Feature", "properties": { }, "geometry": { "type": "LineString", "coordinates": [ [ -48.425008137467032, -27.440701553425253 ], [ -48.425034596507672, -27.440789796068685 ] ] } },
+{ "type": "Feature", "properties": { }, "geometry": { "type": "LineString", "coordinates": [ [ -48.425034596507672, -27.440789796068685 ], [ -48.425162705491573, -27.440811468464922 ] ] } },
+{ "type": "Feature", "properties": { }, "geometry": { "type": "LineString", "coordinates": [ [ -48.424096186122263, -27.440502332415843 ], [ -48.424062106016848, -27.441087768872499 ], [ -48.424171752712034, -27.441385087578194 ] ] } }
+]
+}
