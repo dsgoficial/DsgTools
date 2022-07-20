@@ -1396,7 +1396,7 @@ class LayerHandler(QObject):
         )
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr('Building point merged layer'))
-        pointsLyr = algRunner.runMergeVectorLayers(pointLineLyrList, context, feedback=multiStepFeedback)
+        pointsLyr = algRunner.runMergeVectorLayers(pointLineLyrList, context, feedback=multiStepFeedback) if pointLineLyrList else None
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Building intersections'))
         intersectionLyr = algRunner.runLineIntersections(
@@ -1417,7 +1417,7 @@ class LayerHandler(QObject):
         intersectionDict = {
             feat.geometry().asWkb(): feat for feat in intersectionLyr.getFeatures()
         }
-        inputVertexSet = set(feat.geometry().asWkb() for feat in pointsLyr.getFeatures())
+        inputVertexSet = set(feat.geometry().asWkb() for feat in pointsLyr.getFeatures()) if pointsLyr is not None else set()
         vertexSet = set(
             feat.geometry().asWkb() for feat in vertexLyr.getFeatures()
         )
