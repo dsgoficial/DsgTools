@@ -88,6 +88,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runFMESAPAlgorithm impo
     RunFMESAPAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runRemoteFMEAlgorithm import (
     ParameterFMEManagerType, RunRemoteFMEAlgorithm)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.stringCsvToFirstLayerWithElementsAlgorithm import StringCsvToFirstLayerWithElementsAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.stringCsvToLayerListAlgorithm import \
     StringCsvToLayerListAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.unicodeFilterAlgorithm import \
@@ -334,6 +335,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyMultiPartGeometriesAlgorithm(),
             IdentifyPolygonUndershootsAlgorithm(),
             IdentifyNotMergedLinesWithSameAttributeSetAlgorithm(),
+            StringCsvToFirstLayerWithElementsAlgorithm(),
         ]
         return algList
 
