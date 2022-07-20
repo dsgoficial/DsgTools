@@ -139,7 +139,15 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
         layerNameList = layerCsv.split(',')
         nSteps = len(layerNameList)
         if not nSteps:
-            return {self.OUTPUT : None}
+            _, flag_id = self.parameterAsSink(
+            parameters,
+                self.OUTPUT,
+                context,
+                self.flagFields,
+                QgsWkbTypes.Point,
+                QgsProject.instance().crs()
+            )
+            return {"OUTPUT": flag_id}
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         for idx, layerName in enumerate(layerNameList):
             multiStepFeedback.setCurrentStep(idx)
@@ -180,7 +188,15 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
                     context
                 )
             self.flagFeatures(outputLyr, algName, layerName, context)
-
+        if self.flag_id is None:
+            _, self.flag_id = self.parameterAsSink(
+            parameters,
+                self.OUTPUT,
+                context,
+                self.flagFields,
+                QgsWkbTypes.Point,
+                QgsProject.instance().crs()
+            )
         return { self.OUTPUT : self.flag_id}
     
     def loadAlgorithmParametersDict(self, parameters, context, feedback):

@@ -394,6 +394,8 @@ class DsgToolsProcessingModel(QgsTask):
             return out
         flagLayerNames = self.flagLayerNames()
         for name, vl in out.items():
+            if vl is None:
+                continue
             if not isinstance(vl, QgsMapLayer):
                 continue
             vl.setName(name.split(":", 2)[-1])
