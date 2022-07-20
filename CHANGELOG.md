@@ -4,8 +4,9 @@
 
 Novas funcionalidades:
 - Novo processo de identificar undershoot de polígonos;
-- Novo processo de identificar erros de construção de redes (linhas que compartilha vértices não segmentadas dentro da camada, linhas não segmentadas com as camadas de filtro);
+- Novo processo de identificar erros de construção de redes (linhas que compartilham vértices não segmentadas dentro da camada, linhas não segmentadas com as camadas de filtro);
 - Novo processo de identificar linhas com mesmo conjunto de atributos não unidas;
+- Novo processo de carregamento de primeira camada com elemento de um csv (utilizado na construção de modelos);
 
 Melhorias:
 - Melhoria de desempenho no identificar Z;
