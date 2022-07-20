@@ -20,34 +20,26 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools import layerHandler
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
-import processing
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
                        QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
                        QgsProcessingParameterNumber,
                        QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingMultiStepFeedback,
+                       QgsFeatureRequest)
 
 class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
-    TOLERANCE = 'TOLERANCE'
+    SEARCH_RADIUS = 'SEARCH_RADIUS'
+    MIN_LENGTH = 'MIN_LENGTH'
+    LINEFILTERLAYERS = 'LINEFILTERLAYERS'
+    POLYGONFILTERLAYERS = 'POLYGONFILTERLAYERS'
+    GEOGRAPHIC_BOUNDARY = 'GEOGRAPHIC_BOUNDARY'
     FLAGS = 'FLAGS'
 
     def initAlgorithm(self, config):
@@ -69,11 +61,44 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.TOLERANCE,
+                self.MIN_LENGTH,
                 self.tr('Minimum size'),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Double,
-                defaultValue=2
+                defaultValue=0.001
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.SEARCH_RADIUS,
+                self.tr('Search radius'),
+                minValue=0,
+                type=QgsProcessingParameterNumber.Double,
+                defaultValue=0.0001
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.LINEFILTERLAYERS,
+                self.tr('Linestring Filter Layers'),
+                QgsProcessing.TypeVectorLine,
+                optional=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.POLYGONFILTERLAYERS,
+                self.tr('Polygon Filter Layers'),
+                QgsProcessing.TypeVectorPolygon,
+                optional=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.GEOGRAPHIC_BOUNDARY,
+                self.tr('Geographic Boundary (this layer only filters the output dangles)'),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True
             )
         )
         self.addParameter(
@@ -87,35 +112,55 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        layerHandler = LayerHandler()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        minLength = self.parameterAsDouble(parameters, self.TOLERANCE, context)
+        minLength = self.parameterAsDouble(parameters, self.MIN_LENGTH, context)
+        searchRadius = self.parameterAsDouble(
+            parameters, self.SEARCH_RADIUS, context)
+        lineFilterLyrList = self.parameterAsLayerList(
+            parameters, self.LINEFILTERLAYERS, context)
+        polygonFilterLyrList = self.parameterAsLayerList(
+            parameters, self.POLYGONFILTERLAYERS, context)
+        geographicBoundsLyr = self.parameterAsVectorLayer(parameters, self.GEOGRAPHIC_BOUNDARY, context)
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
-
         # Compute the number of steps to display within the progress bar and
         # get features from source
         feedbackTotal = 2
         multiStepFeedback = QgsProcessingMultiStepFeedback(feedbackTotal, feedback)
         multiStepFeedback.setCurrentStep(0)
-        pointList = layerHandler.getSmallFirstOrderDangles(
-            inputLyr=inputLyr,
-            minLength=minLength,
+        multiStepFeedback.setProgressText(self.tr('Getting Dangles...'))
+        dangleLyr = AlgRunner().runIdentifyDangles(
+            inputLayer=inputLyr,
+            searchRadius=searchRadius,
+            context=context,
             onlySelected=onlySelected,
+            lineFilter=lineFilterLyrList,
+            polygonFilter=polygonFilterLyrList,
+            ignoreDanglesOnUnsegmentedLines=True,
+            inputIsBoundaryLayer=True,
+            geographicBoundsLyr=geographicBoundsLyr,
             feedback=multiStepFeedback
         )
+        
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.setProgressText(self.tr('Raising flags...'))
-        if len(pointList) == 0:
+        nDangles = dangleLyr.featureCount()
+        if nDangles == 0:
             return {self.FLAGS: self.flag_id}
         # currentValue = feedback.progress()
-        currentTotal = 100/len(pointList)
-        for current, feat in enumerate(pointList):
+        currentTotal = 100/nDangles
+        for current, feat in enumerate(dangleLyr.getFeatures()):
             if multiStepFeedback.isCanceled():
                 break
+            dangleGeom = feat.geometry()
+            dangleBB = dangleGeom.boundingBox()
+            request = QgsFeatureRequest().setNoAttributes().setFilterRect(dangleBB)
+            lineGeometry = [i.geometry() for i in inputLyr.getFeatures(request) if i.geometry().intersects(dangleGeom)][0]
+            if lineGeometry.length() > minLength:
+                continue
             self.flagFeature(
-                feat.geometry(),
-                self.tr('Dangle on {0}').format(inputLyr.name())
+                lineGeometry,
+                self.tr(f'First order dangle on {inputLyr.name()} smaller than {minLength}')
                 )
             multiStepFeedback.setProgress(current*currentTotal)      
         return {self.FLAGS: self.flag_id}
