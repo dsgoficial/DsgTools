@@ -72,7 +72,7 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
         
         multiStepFeedback = QgsProcessingMultiStepFeedback(7, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Building intermediary structuces'))
+        multiStepFeedback.pushInfo(self.tr('Building intermediary structures'))
 
         auxStreamLayerInput = self.runAddCount(streamLayerInput, feedback=multiStepFeedback)
         multiStepFeedback.setCurrentStep(1)
