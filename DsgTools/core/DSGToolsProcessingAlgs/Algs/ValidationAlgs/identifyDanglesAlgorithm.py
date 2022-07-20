@@ -253,14 +253,15 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
 
     def buildInitialAndEndPointDict(self, lyr, algRunner, context, feedback, geographicBoundsLyr=None):
         pointDict = defaultdict(set)
-        nSteps = 4 if geographicBoundsLyr is not None else 3
+        nSteps = 5 if geographicBoundsLyr is not None else 3
         currentStep = 0
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         multiStepFeedback.setCurrentStep(currentStep)
+        # this process of extracting the boundary is intentionally without the feedback
+        # to avoid the excessive amount of error messages that are generated due to closed lines.
         boundaryLyr = algRunner.runBoundary(
             inputLayer=lyr,
-            context=context,
-            feedback=multiStepFeedback
+            context=context
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -270,7 +271,14 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback
         )
         currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         if geographicBoundsLyr is not None:
+            algRunner.runCreateSpatialIndex(
+                inputLyr=boundaryLyr,
+                context=context,
+                feedback=multiStepFeedback
+            )
+            currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             boundaryLyr = algRunner.runExtractByLocation(
                 inputLyr=boundaryLyr,
