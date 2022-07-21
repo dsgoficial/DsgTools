@@ -403,13 +403,12 @@ class LayerHandler(QObject):
                 feedback.setProgress(localTotal*current)
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr("Evaluating results..."))
+        changeGeometryLambda = lambda x: lyr.changeGeometry(x[0], x[1], skipDefaultValue=True)
         for current, future in enumerate(concurrent.futures.as_completed(futures)):
             if feedback is not None and feedback.isCanceled():
                 return
             deletedIds, addedFeatures, geometriesToChange = future.result()
-            for id_, geomToUpdate in geometriesToChange:
-                # faster according to the api
-                lyr.changeGeometry(id_, geomToUpdate)
+            list(map(changeGeometryLambda, geometriesToChange))
             featuresToAdd = featuresToAdd.union(addedFeatures)
             idsToRemove = idsToRemove.union(deletedIds)
             if feedback is not None:
@@ -790,7 +789,7 @@ class LayerHandler(QObject):
         return pointList
 
     def filterDangles(self, lyr, searchRadius, feedback=None):
-        deleteList = []
+        deleteSet = set()
         if feedback is not None:
             multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
             multiStepFeedback.setCurrentStep(0)
@@ -805,20 +804,20 @@ class LayerHandler(QObject):
         for current, (id, feat) in enumerate(idDict.items()):
             if feedback is not None and feedback.isCanceled():
                 break
-            if id not in deleteList:
+            if id not in deleteSet:
                 buffer = feat.geometry().buffer(searchRadius, -1)
                 bufferBB = buffer.boundingBox()
                 # gets candidates from spatial index
                 candidateIds = spatialIdx.intersects(bufferBB)
                 for fid in candidateIds:
-                    if fid != id and fid not in deleteList and buffer.intersects(feat.geometry()):
-                        deleteList.append(fid)
+                    if fid != id and fid not in deleteSet and buffer.intersects(feat.geometry()):
+                        deleteSet.add(fid)
             if feedback is not None:
                 multiStepFeedback.setProgress(size * current)
 
         lyr.startEditing()
         lyr.beginEditCommand('Filter dangles')
-        lyr.deleteFeatures(deleteList)
+        lyr.deleteFeatures(list(deleteSet))
         lyr.commitChanges()
 
     def buildSpatialIndexAndIdDict(self, inputLyr, feedback=None, featureRequest=None):

@@ -102,7 +102,15 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
 
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Snapping layer {layer} to dangles...').format(layer=inputLyr.name()))
-        algRunner.runSnapLayerOnLayer(inputLyr, dangleLyr, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected, behavior=0)
+        algRunner.runSnapLayerOnLayer(
+            inputLayer=inputLyr,
+            referenceLayer=dangleLyr,
+            tol=tol,
+            context=context,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected,
+            behavior=0
+        )
         QgsProject.instance().removeMapLayer(dangleLyr.id())
         return {self.OUTPUT: inputLyr}
 
