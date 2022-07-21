@@ -260,20 +260,22 @@ class LayerHandler(QObject):
         inputDict = dict()
         if onlySelected:
             iterator = inputLyr.getSelectedFeatures()
-            localTotal = 100/inputLyr.selectedFeatureCount() if inputLyr.selectedFeatureCount() else 0
+            if feedback is not None:
+                localTotal = 100/inputLyr.selectedFeatureCount() if inputLyr.selectedFeatureCount() else 0
         else:
-            request = QgsFeatureRequest().setFlags(QgsFeatureRequest.NoGeometry)
+            request = QgsFeatureRequest()
             iterator = inputLyr.getFeatures(request)
-            localTotal = 100/inputLyr.featureCount() if inputLyr.featureCount() else 0
+            if feedback is not None:
+                localTotal = 100/inputLyr.featureCount() if inputLyr.featureCount() else 0
         for current, feature in enumerate(iterator):
-            if feedback:
-                if feedback.isCanceled():
-                    break
+            if feedback and feedback.isCanceled():
+                break
             key = feature[pk] if pk else feature.id()
-            inputDict[key] = dict()
-            inputDict[key]['featList'] = []
-            inputDict[key]['featWithoutGeom'] = feature
-            if feedback:
+            inputDict[key] = {
+                'featList': [],
+                'originalFeat': feature,
+            }
+            if feedback is not None:
                 feedback.setProgress(localTotal*current)
         return inputDict
 
@@ -320,33 +322,30 @@ class LayerHandler(QObject):
         lenList = len(lyrList)
         parameterDict = self.getDestinationParameters(unifiedLyr)
         multiStepFeedback = QgsProcessingMultiStepFeedback(
-            lenList, feedback) if feedback else None
+            3*lenList, feedback) if feedback else None
         for i, lyr in enumerate(lyrList):
-            if feedback:
-                if multiStepFeedback.isCanceled():
-                    break
-                multiStepFeedback.setCurrentStep(i)
-            innerFeedback = QgsProcessingMultiStepFeedback(
-                3, multiStepFeedback) if multiStepFeedback else None
-            innerFeedback.setCurrentStep(0)
+            if feedback is not None and multiStepFeedback.isCanceled():
+                break
+            multiStepFeedback.setCurrentStep(3*i)
+            multiStepFeedback.pushInfo(self.tr(f"Building {lyr.name()} input dict"))
             inputDict = self.buildInputDict(
-                lyr, onlySelected=onlySelected, feedback=innerFeedback)
-            if innerFeedback:
-                if innerFeedback.isCanceled():
-                    break
+                lyr, onlySelected=onlySelected, feedback=multiStepFeedback)
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
             request = QgsFeatureRequest(QgsExpression(
                 "layer = '{0}'".format(lyr.name())))
-            innerFeedback.setCurrentStep(1)
+            multiStepFeedback.setCurrentStep(3*i+1)
+            multiStepFeedback.pushInfo(self.tr(f"Populating {lyr.name()} input dict"))
             self.populateInputDictFeatList(
-                unifiedLyr, inputDict, pk='featid', request=request, feedback=innerFeedback)
-            if innerFeedback:
-                if innerFeedback.isCanceled():
-                    break
+                unifiedLyr, inputDict, pk='featid', request=request, feedback=multiStepFeedback)
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
             coordinateTransformer = self.getCoordinateTransformer(
                 unifiedLyr, lyr)
-            innerFeedback.setCurrentStep(2)
+            multiStepFeedback.setCurrentStep(3*i+2)
+            multiStepFeedback.pushInfo(self.tr(f"Updating {lyr.name()} features"))
             self.updateOriginalLayerFeatures(lyr, inputDict, parameterDict=parameterDict,
-                                             coordinateTransformer=coordinateTransformer, feedback=innerFeedback)
+                                             coordinateTransformer=coordinateTransformer, feedback=multiStepFeedback)
 
     def updateOriginalLayerFeatures(self, lyr, inputDict,
                                     parameterDict=None,
@@ -356,7 +355,7 @@ class LayerHandler(QObject):
         """
         Updates the layer list using the given inputDict
         :param lyr: (QgsVectorLayer) layer container of features from featList.
-        :param inputDict: (dict) a with featList and featWithoutGeom.
+        :param inputDict: (dict) a with featList and originalFeat.
         :param parameterDict: (dict) a dict with features parameters.
         :param coordinateTransformer: (QgsCoordinateTransform) a coordinate
             transformer.
@@ -365,33 +364,59 @@ class LayerHandler(QObject):
         :param feedback: (QgsProcessingMultiStepFeedback) feedback.
         """
         parameterDict = {} if parameterDict is None else parameterDict
-        idsToRemove, featuresToAdd = [], []
+        idsToRemove, featuresToAdd = set(), set()
         lyr.startEditing()
         lyr.beginEditCommand('Updating layer {0}'.format(lyr.name()))
         localTotal = 100/len(inputDict) if inputDict else 0
-        for current, id_ in enumerate(inputDict):
-            if feedback:
-                if feedback.isCanceled():
-                    break
-            outFeats = inputDict[id_]['featList']
-            if len(outFeats) == 0 and id_ not in idsToRemove:  # no output, must delete feature
-                idsToRemove.append(id_)
-                continue
-            geomToUpdate, addedFeatures, deleteId = self.featureHandler.handleFeature(outFeats,
-                                                                                      inputDict[id_]['featWithoutGeom'],
-                                                                                      lyr,
-                                                                                      parameterDict=parameterDict,
-                                                                                      coordinateTransformer=coordinateTransformer)
-            if geomToUpdate is not None:
+        futures = set()
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        def evaluate(id_, featDict):
+            idsToRemove, featuresToAdd, geometriesToChange = set(), set(), set()
+            if multiStepFeedback.isCanceled():
+                return idsToRemove, featuresToAdd, geometriesToChange
+            outFeats = featDict['featList']
+            if len(outFeats) == 0:
+                idsToRemove.add(id_)
+                return idsToRemove, featuresToAdd, geometriesToChange
+            geomToUpdate, addedFeatures, deleteId = self.featureHandler.handleFeature(
+                outFeats,
+                featDict['originalFeat'],
+                lyr,
+                parameterDict=parameterDict,
+                coordinateTransformer=coordinateTransformer
+            )
+            if geomToUpdate is not None and not geomToUpdate.equals(inputDict[id_]['originalFeat'].geometry()):
+                geometriesToChange.add((id_, geomToUpdate))
+            if deleteId:
+                idsToRemove.add(id_)
+            featuresToAdd = set(addedFeatures)
+            return idsToRemove, featuresToAdd, geometriesToChange
+
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr("Submitting tasks to thread..."))
+        for current, (id_, featDict) in enumerate(inputDict.items()):
+            if feedback is not None and feedback.isCanceled():
+                return
+            futures.add(pool.submit(evaluate, id_, featDict))
+            if feedback is not None:
+                feedback.setProgress(localTotal*current)
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr("Evaluating results..."))
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if feedback is not None and feedback.isCanceled():
+                return
+            deletedIds, addedFeatures, geometriesToChange = future.result()
+            for id_, geomToUpdate in geometriesToChange:
                 # faster according to the api
                 lyr.changeGeometry(id_, geomToUpdate)
-            featuresToAdd += addedFeatures
-            idsToRemove += [id_] if deleteId else []
-            if feedback:
+            featuresToAdd = featuresToAdd.union(addedFeatures)
+            idsToRemove = idsToRemove.union(deletedIds)
+            if feedback is not None:
                 feedback.setProgress(localTotal*current)
-        lyr.addFeatures(featuresToAdd)
+        lyr.addFeatures(list(featuresToAdd))
         if not keepFeatures:
-            lyr.deleteFeatures(idsToRemove)
+            lyr.deleteFeatures(list(idsToRemove))
         lyr.endEditCommand()
 
     def mergeLinesOnLayer(self, lyr, onlySelected=False, feedback=None, ignoreVirtualFields=True, attributeBlackList=None, excludePrimaryKeys=True):
@@ -922,33 +947,54 @@ class LayerHandler(QObject):
             refLyr) if inputLyr != refLyr and behavior != 7 else QgsInternalGeometrySnapper(tol, behavior)
         iterator, featCount = self.getFeatureList(
             inputLyr, onlySelected=onlySelected)
-        size = 100/featCount if featCount else 0
-        deleteList = []
+        if featCount == 0:
+            return
+        size = 100/featCount
+        deleteSet = set()
         inputLyr.startEditing()
         inputLyr.beginEditCommand('Snapping Features')
-        for current, feat in enumerate(iterator):
+        def evaluate(feat):
+            if feedback is not None and feedback.isCanceled():
+                return None
             featid = feat.id()
             geom = feat.geometry()
-            if feedback is not None and feedback.isCanceled():
+            if not feat.hasGeometry() or geom.isNull() or geom.isEmpty():
+                return featid
+            if geom.type() == QgsWkbTypes.LineGeometry and geom.length() < tol:
+                return featid
+            geom.removeDuplicateNodes()
+            fixedGeom = geom.makeValid()
+            if fixedGeom.isNull():
+                return None
+            outputGeom = snapper.snapGeometry(fixedGeom, tol, behavior) \
+                if inputLyr != refLyr and behavior != 7 else snapper.snapFeature(feat)
+            if geom is None:
+                return featid
+            return featid, outputGeom
+        futures = set()
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        for current, feat in enumerate(iterator):
+            if multiStepFeedback.isCanceled():
                 break
-            elif not feat.hasGeometry() or geom.isNull() or geom.isEmpty():
-                deleteList.append(featid)
-            elif geom.type() == QgsWkbTypes.LineGeometry and geom.length() < tol:
-                deleteList.append(featid)
-            else:
-                # remove duplicate nodes to avoid problem in snapping
-                geom.removeDuplicateNodes()
-                fixedGeom = geom.makeValid()
-                if not fixedGeom.isNull():
-                    outputGeom = snapper.snapGeometry(
-                        fixedGeom, tol, behavior) if inputLyr != refLyr and behavior != 7 else snapper.snapFeature(feat)
-                    if geom is None:
-                        deleteList.append(featid)
-                    else:
-                        inputLyr.changeGeometry(featid, outputGeom)
-            if feedback is not None:
-                feedback.setProgress(size * current)
-        inputLyr.deleteFeatures(deleteList)
+            futures.add(pool.submit(evaluate, feat))
+            multiStepFeedback.setProgress(current * size)
+        multiStepFeedback.setCurrentStep(1)
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback.isCanceled():
+                break
+            result = future.result()
+            if result is None:
+                continue
+            if isinstance(result, int):
+                deleteSet.add(result)
+                continue
+            featid, outputGeom = result
+            inputLyr.changeGeometry(featid, outputGeom)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(size * current)
+        inputLyr.deleteFeatures(list(deleteSet))
         inputLyr.endEditCommand()
 
     def getContourLineOutOfThreshold(self, contourLyr, terrainPolygonLyr, threshold, refLyr=None, feedback=None):
