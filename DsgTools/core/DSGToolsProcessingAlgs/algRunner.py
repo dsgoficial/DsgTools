@@ -277,14 +277,15 @@ class AlgRunner:
         output = processing.run('qgis:snapgeometries', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
 
-    def runSnapLayerOnLayer(self, inputLayer, referenceLayer, tol, context, onlySelected=False, feedback=None, behavior=None):
+    def runSnapLayerOnLayer(self, inputLayer, referenceLayer, tol, context, onlySelected=False, feedback=None, behavior=None, buildCache=False):
         behavior = 0 if behavior is None else behavior
         parameters = {
             'INPUT' : inputLayer,
             'SELECTED' : onlySelected,
             'REFERENCE_LAYER' : referenceLayer,
             'TOLERANCE' : tol,
-            'BEHAVIOR' : behavior
+            'BEHAVIOR' : behavior,
+            'BUILD_CACHE': False,
         }
         output = processing.run('dsgtools:snaplayeronlayer', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
@@ -723,6 +724,23 @@ class AlgRunner:
                 'INTERSECT': intersectLyr,
                 'PREDICATE': predicate,
                 'OUTPUT': outputLyr
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+
+    def runCreateFieldWithExpression(self, inputLyr, expression, fieldName, context, fieldType=0, fieldLength=1000, fieldPrecision=0, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:fieldcalculator",
+            {
+                'INPUT': inputLyr,
+                'FIELD_NAME': fieldName,
+                'FIELD_TYPE': fieldType,
+                'FIELD_LENGTH': fieldLength,
+                'FORMULA': expression,
+                'OUTPUT': outputLyr,
             },
             context=context,
             feedback=feedback
