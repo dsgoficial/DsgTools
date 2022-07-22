@@ -217,8 +217,7 @@ class VerifyCountourStackingAlgorihtm(ValidationAlgorithm):
                         outputPolygons.append([feature1, 4])
         return False
     def outLayer(self, parameters, context, polygons, streamLayer):
-        newFields = polygons[0][0].fields()
-        newFields.append(QgsField('erro', QVariant.String))
+        newFields = self.getFlagFields()
         
         (sink, newLayer) = self.parameterAsSink(
             parameters,
@@ -240,7 +239,7 @@ class VerifyCountourStackingAlgorihtm(ValidationAlgorithm):
             newFeat.setFields(newFields)
             for field in  range(len(polygon[0].fields())):
                 newFeat.setAttribute((field), polygon[0].attribute((field)))
-            newFeat['erro'] = dicterro[polygon[1]]
+            newFeat['reason'] = dicterro[polygon[1]]
             sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
         
         return newLayer
