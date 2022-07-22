@@ -132,6 +132,9 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         self.layerHandler = LayerHandler()
         algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
+        if inputLyr is None:
+            return {self.FLAGS: self.flag_id}
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         searchRadius = self.parameterAsDouble(
             parameters, self.TOLERANCE, context)
@@ -145,7 +148,6 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             parameters, self.INPUT_IS_BOUDARY_LAYER, context)
         geographicBoundsLyr = self.parameterAsVectorLayer(parameters, self.GEOGRAPHIC_BOUNDARY, context)
         # cacheInput = self.parameterAsBool(parameters, self.CACHE_INPUT, context)
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
 
         # Compute the number of steps to display within the progress bar and
         # get features from source

@@ -85,10 +85,12 @@ class IdentifyPolygonUndershootsAlgorithm(ValidationAlgorithm):
         self.layerHandler = LayerHandler()
         algRunner = AlgRunner()
         inputSource = self.parameterAsSource(parameters, self.INPUT, context)
+        self.prepareFlagSink(parameters, inputSource, QgsWkbTypes.LineString, context)
+        if inputSource is None:
+            return {"FLAGS": self.flag_id}
         searchRadius = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         referenceSource = self.parameterAsSource(parameters, self.REFERENCE, context)
         nSteps = 8
-        self.prepareFlagSink(parameters, inputSource, QgsWkbTypes.LineString, context)
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
 
