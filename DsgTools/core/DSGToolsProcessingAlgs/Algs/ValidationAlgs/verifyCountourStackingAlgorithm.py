@@ -31,7 +31,8 @@ from qgis.core import (QgsProcessing,
                        QgsFeature,
                        QgsField,
                        QgsProcessingFeatureSourceDefinition,
-                       QgsFeatureRequest
+                       QgsFeatureRequest,
+                       QgsProcessingParameterBoolean
                        )
 from qgis import processing
 
@@ -46,6 +47,7 @@ class VerifyCountourStackingAlgorihtm(ValidationAlgorithm):
     INPUT_LEVEL_GAP = 'INPUT_LEVEL_GAP'
     OUTPUT = 'OUTPUT'
     OUTPUT_NEW_LAYER = 'OUTPUT_NEW_LAYER'
+    RUNNING_INSIDE_MODEL = 'RUNNING_INSIDE_MODEL'
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
@@ -80,6 +82,13 @@ class VerifyCountourStackingAlgorihtm(ValidationAlgorithm):
                 type=QgsProcessingParameterNumber.Double, 
                 minValue=0)
             )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.RUNNING_INSIDE_MODEL,
+                self.tr('Process is running inside model'),
+                defaultValue=False,
+            )
+        )
         
         self.addParameter(
             QgsProcessingParameterFeatureSink(
@@ -93,6 +102,7 @@ class VerifyCountourStackingAlgorihtm(ValidationAlgorithm):
         levelsField = self.parameterAsFields( parameters,'INPUT_LEVES_FIELD', context )[0]
         levelGap = self.parameterAsDouble (parameters,'INPUT_LEVEL_GAP', context)
         isDepressionField = self.parameterAsFields (parameters,'INPUT_IS_DEPRESSION_FIELD', context)[0]
+        runningInsideModel = self.parameterAsBool(parameters, self.RUNNING_INSIDE_MODEL, context)
         feedback.setProgressText('Verificando inconsistencias ')
         step =1
         progressStep = 100/4
@@ -107,7 +117,7 @@ class VerifyCountourStackingAlgorihtm(ValidationAlgorithm):
         step +=1
         feedback.setProgress( step * progressStep )
         self.compareLevel(levelsField, levelGap, isDepressionField, countourLayerPoly, outputPolygons, feedback, step, progressStep)
-        if outputPolygons:
+        if outputPolygons or runningInsideModel:
             newLayer = self.outLayer(parameters, context, outputPolygons, countourLayer)
         else: 
             newLayer = self.tr('No flags')
