@@ -30,7 +30,7 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterNumber,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingMultiStepFeedback,
-                       QgsFeatureRequest)
+                       QgsFeatureRequest, QgsWkbTypes)
 
 class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
@@ -122,7 +122,9 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
         polygonFilterLyrList = self.parameterAsLayerList(
             parameters, self.POLYGONFILTERLAYERS, context)
         geographicBoundsLyr = self.parameterAsVectorLayer(parameters, self.GEOGRAPHIC_BOUNDARY, context)
-        self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.LineString, context)
+        if inputLyr is None:
+            return {self.FLAGS: self.flag_id}
         # Compute the number of steps to display within the progress bar and
         # get features from source
         feedbackTotal = 2

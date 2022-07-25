@@ -129,6 +129,10 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
         lineFilterLyrList = self.parameterAsLayerList(
             parameters, self.LINE_FILTER_LAYERS, context)
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
+        if inputLyr is None:
+            return {
+                "FLAGS": self.flag_id
+            }
         attributeBlackList = self.parameterAsFields(parameters, self.ATTRIBUTE_BLACK_LIST, context)
         fieldList = self.layerHandler.getAttributesFromBlackList(
             inputLyr,
