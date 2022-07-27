@@ -63,14 +63,8 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
         layerNameList = layerCsv.split(',')
         if not len(layerNameList):
             return {self.OUTPUT : None}
-            
         layerSet = set()
-        loadedLayerNamesSet = set(l.name() for l in QgsProject.instance().mapLayers().values() if l.type() == QgsMapLayer.VectorLayer)
-        wildCardFilterList = [filterItem for filterItem in layerNameList if "*" in filterItem]
-        wildCardLayersSet = set()
-        for wildCardFilter in wildCardFilterList:
-            wildCardLayersSet = wildCardLayersSet.union(set(fnmatch.filter(loadedLayerNamesSet, wildCardFilter)))
-        layerNamesToLoadSet = set(layerNameList) - set(wildCardFilterList) | wildCardLayersSet
+        layerNamesToLoadSet = self.getLayerNameSetToLoad(layerNameList)
         progressStep = 100/len(layerNamesToLoadSet)
         for idx, layerName in enumerate(layerNamesToLoadSet):
             if feedback.isCanceled():
@@ -82,6 +76,20 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
             feedback.setProgress(idx * progressStep)
 
         return { self.OUTPUT : layerSet}
+
+    def getLayerNameSetToLoad(self, layerNameList):
+        loadedLayerNamesSet = set(
+            l.name() for l in QgsProject.instance().mapLayers().values() \
+            if l.type() == QgsMapLayer.VectorLayer
+        )
+        wildCardFilterList = [fi for fi in layerNameList if "*" in fi]
+        wildCardLayersSet = set()
+        for wildCardFilter in wildCardFilterList:
+            wildCardLayersSet = wildCardLayersSet.union(
+                set(fnmatch.filter(loadedLayerNamesSet, wildCardFilter))
+            )
+        layerNamesToLoadSet = set(layerNameList) - set(wildCardFilterList) | wildCardLayersSet
+        return layerNamesToLoadSet
 
     def name(self):
         """
