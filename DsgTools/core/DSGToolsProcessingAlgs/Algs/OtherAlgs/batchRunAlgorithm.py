@@ -21,6 +21,7 @@
 """
 
 from PyQt5.QtCore import QCoreApplication
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from qgis.PyQt.QtCore import QVariant
 import json, processing
 from qgis.core import (QgsProcessing,
@@ -148,8 +149,12 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
                 QgsProject.instance().crs()
             )
             return {"OUTPUT": flag_id}
+        layerList = AlgRunner().runStringCsvToLayerList(layerCsv, context)
+        nSteps = len(layerList)
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
-        for idx, layerName in enumerate(layerNameList):
+        for idx, layer_id in enumerate(layerList):
+            layer = QgsProcessingUtils.mapLayerFromString(layer_id, context)
+            layerName = layer.name()
             multiStepFeedback.setCurrentStep(idx)
             multiStepFeedback.pushInfo(
                 self.tr(
@@ -161,7 +166,7 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
                         layerName=layerName
                     )
             )
-            if QgsProcessingUtils.mapLayerFromString(layerName, context) is None:
+            if layer is None:
                 multiStepFeedback.pushInfo(
                     self.tr(
                         'Layer {layerName} not found. Skipping step.'

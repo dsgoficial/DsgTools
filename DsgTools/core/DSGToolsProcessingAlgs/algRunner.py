@@ -746,3 +746,15 @@ class AlgRunner:
             feedback=feedback
         )
         return output['OUTPUT']
+
+    def runStringCsvToLayerList(self, stringCSV, context, feedback=None):
+        output = processing.run(
+            "dsgtools:stringcsvtolayerlistalgorithm",
+            {
+                'INPUTLAYERS': stringCSV,
+                'OUTPUT': 'memory:'
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
