@@ -103,13 +103,13 @@ class AlgRunner:
         output = processing.run('native:deleteholes', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
-    def runOverlay(self, lyrA, lyrB, context, feedback=None, snap=0, operator=0, minArea=0.0001):
-        output = QgsProcessingUtils.generateTempFilename('output.shp')
+    def runOverlay(self, lyrA, lyrB, context, atype=0, btype=0, feedback=None, snap=0, operator=0, minArea=1e-8):
+        output, _ = self.generateGrassOutputAndError()
         parameters = {
             'ainput':lyrA,
-            'atype':0,
+            'atype':atype,
             'binput':lyrB,
-            'btype':0,
+            'btype':btype,
             'operator':operator,
             'snap':snap,
             '-t':False,
