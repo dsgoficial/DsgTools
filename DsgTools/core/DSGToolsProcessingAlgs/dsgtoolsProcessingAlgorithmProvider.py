@@ -218,6 +218,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyCountourStac
     VerifyCountourStackingAlgorihtm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import \
     VerifyNetworkDirectioningAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDrainageFlowIssues import \
+    IdentifyDrainageFlowIssues
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -336,6 +338,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyPolygonUndershootsAlgorithm(),
             IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(),
             StringCsvToFirstLayerWithElementsAlgorithm(),
+            IdentifyDrainageFlowIssues(),
         ]
         return algList
 
