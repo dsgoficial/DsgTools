@@ -428,7 +428,10 @@ class PostGISLayerLoader(EDGVLayerLoader):
         If uniqueLoad=True, checks if layer is already loaded and if it is,
         returns it.
         """
-        lyrName, schema, geomColumn, tableName, srid = self.getParams(inputParam=inputParam)
+        try:
+            lyrName, schema, geomColumn, tableName, srid = self.getParams(inputParam=inputParam)
+        except:
+            return None
         lyr = self.checkLoaded(tableName)
         if uniqueLoad and lyr is not None:
             return lyr
@@ -473,7 +476,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
                 addToCanvas=addToCanvas,
                 nonSpatial=nonSpatial
             )
-            outputLayers.append(lyr)
+            if lyr is not None:
+                outputLayers.append(lyr)
             if feedback is not None:
                 feedback.setProgress(current*progressStep)
         return outputLayers
