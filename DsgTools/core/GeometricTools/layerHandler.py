@@ -1479,7 +1479,7 @@ class LayerHandler(QObject):
         algRunner = AlgRunner() if algRunner is None else algRunner
         context = dataobjects.createContext(
             feedback=feedback) if context is None else context
-        nSteps = len(inputLineLyrList) + len(inputPolygonLyrList) + 1
+        nSteps = len(inputLineLyrList) + 2*len(inputPolygonLyrList) + 1
         multiStepFeedback = QgsProcessingMultiStepFeedback(
             nSteps, feedback)  # set number of steps
         currentStep = 0
@@ -1498,14 +1498,16 @@ class LayerHandler(QObject):
             multiStepFeedback.setCurrentStep(currentStep)
             usedInput = polygonLyr if not onlySelected else \
                 QgsProcessingFeatureSourceDefinition(polygonLyr.id(), True)
-            lineList.append(
-                algRunner.runPolygonsToLines(
-                    usedInput,
-                    context,
-                    feedback=multiStepFeedback
-                )
+            convertedPolygons = algRunner.runPolygonsToLines(
+                usedInput,
+                context,
+                feedback=multiStepFeedback
             )
             currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            explodedLines = algRunner.runExplodeLines(convertedPolygons, context, feedback=multiStepFeedback)
+            currentStep += 1
+            lineList.append(explodedLines)
         # merge layers
         multiStepFeedback.setCurrentStep(currentStep)
         mergedLayer = algRunner.runMergeVectorLayers(
