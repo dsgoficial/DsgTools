@@ -270,6 +270,17 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         sink, sink_id = QgsProcessingUtils.createFeatureSink(
             'memory:', context, fields, QgsWkbTypes.Polygon, inputCenterPointLyr.sourceCrs())
         sink.addFeatures(polygonFeatList, QgsFeatureSink.FastInsert)
+        
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.checkUnusedBoundariesAndWriteOutput(
+            context,
+            boundaryLineLyr,
+            geographicBoundaryLyr,
+            sink_id,
+            unused_boundary_flag_sink,
+            multiStepFeedback,
+        )
+        currentStep += 1
 
         if mergeOutput:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -298,15 +309,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 invalid_polygon_sink,
             )
             currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        self.checkUnusedBoundariesAndWriteOutput(
-            context,
-            boundaryLineLyr,
-            geographicBoundaryLyr,
-            output_polygon_sink_id,
-            unused_boundary_flag_sink,
-            multiStepFeedback,
-        )
+        
 
         return {
             self.OUTPUT_POLYGONS: output_polygon_sink_id,
