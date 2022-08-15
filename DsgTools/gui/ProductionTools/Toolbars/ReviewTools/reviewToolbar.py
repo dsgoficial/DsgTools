@@ -21,10 +21,12 @@
  ***************************************************************************/
 """
 import os
+from qgis.PyQt.QtXml import QDomDocument
 from qgis.PyQt.QtWidgets import QMessageBox, QSpinBox, QAction, QWidget
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt
 from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.Qt import QVariant
 from qgis.PyQt.Qt import QObject
 
 from qgis.core import QgsMapLayer, Qgis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsFeatureRequest, QgsWkbTypes, QgsProject
@@ -53,7 +55,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         self.applyPushButtonAction = self.add_action(icon_path, text, self.applyPushButton.click, parent = self.parent)
         self.iface.registerMainWindowAction(self.applyPushButtonAction, '')
         self.mMapLayerComboBox.setAllowEmptyLayer(True)
-        # self.mMapLayerComboBox.
+        self.mMapLayerComboBox.setCurrentIndex(0)
     
     def add_action(self, icon_path, text, callback, parent=None):
         icon = QIcon(icon_path)
@@ -68,6 +70,48 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         toggled = self.reviewPushButton.isChecked()
         enabled = allowed and toggled
         self.applyPushButton.setEnabled(enabled)
+    
+    def on_preparePushButton_clicked(self):
+        overviewWidget = self.getOverviewWidget()
+        if overviewWidget is not None:
+            overviewWidget.show()
+        currentLayer = self.mMapLayerComboBox.currentLayer()
+        if currentLayer is None:
+            return
+        currentLayerFromTreeRoot = QgsProject.instance().layerTreeRoot().findLayer( currentLayer.id() )
+        currentLayerFromTreeRoot.setCustomProperty( "overview", 1 )
+        fieldList = [field for field in self.mFieldComboBox.fields() if field.name() == self.mFieldComboBox.currentField()]
+        if len(fieldList) == 0 or fieldList[0].type() != QVariant.Bool:
+            self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Invalid attribute filter!'), level=Qgis.Warning, duration=2)
+            return
+        currentField = fieldList[0]
+        self.applyStyle(currentLayer, currentField.name())
+        
+    
+    def getOverviewWidget(self):
+        itemList = [i for i in self.iface.mainWindow().children() if i.objectName() == 'Overview']
+        return None if len(itemList) == 0 \
+            else itemList[0]
+    
+    def applyStyle(self, lyr, fieldName):
+        stylePath = self.createTempStyle(fieldName)
+        lyr.loadNamedStyle(stylePath, True)
+        lyr.triggerRepaint()
+        self.deleteTempStyle(stylePath)
+    
+    def createTempStyle(self, fieldName):
+        currentPath = os.path.dirname(os.path.abspath(__file__))
+        templatePath = os.path.join(currentPath, 'grid_style.qml')
+        tempOutputPath = os.path.join(currentPath, 'grid_style_temp.qml')
+        with open(templatePath) as f:
+            templateFile = f.read()
+        templateFile = templateFile.replace('attr="visited"', f'attr="{fieldName}"')
+        with open(tempOutputPath, 'w') as f:
+            f.write(templateFile)
+        return tempOutputPath
+    
+    def deleteTempStyle(self, tempStylePath):
+        os.remove(tempStylePath)
         
     @pyqtSlot(bool, name = 'on_reviewPushButton_toggled')
     def toggleBar(self, toggled=None):
