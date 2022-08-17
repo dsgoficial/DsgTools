@@ -8,6 +8,7 @@ Novas funcionalidades:
 - Novo processo de identificar linhas com mesmo conjunto de atributos não unidas;
 - Novo processo de carregamento de primeira camada com elemento de um csv (utilizado na construção de modelos);
 - Novo processo de identificação de problemas no fluxo de drenagens;
+- Novo processo de construir fatiamento do terreno segundo as regras do MTM;
 
 Melhorias:
 - Melhoria de desempenho no identificar Z;

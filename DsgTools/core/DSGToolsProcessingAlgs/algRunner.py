@@ -758,3 +758,162 @@ class AlgRunner:
             feedback=feedback
         )
         return output['OUTPUT']
+
+    def runClipRasterLayer(self, inputRaster, mask, context, feedback=None, outputRaster=None):
+        outputRaster = 'TEMPORARY_OUTPUT' if outputRaster is None else outputRaster
+        output = processing.run(
+            "gdal:cliprasterbymasklayer",
+            {
+                'INPUT': inputRaster,
+                'MASK': mask,
+                'SOURCE_CRS': None,
+                'TARGET_CRS': None,
+                'TARGET_EXTENT': None,
+                'NODATA': None,
+                'ALPHA_BAND': False,
+                'CROP_TO_CUTLINE': True,
+                'KEEP_RESOLUTION': False,
+                'SET_RESOLUTION': False,
+                'X_RESOLUTION': None,
+                'Y_RESOLUTION': None,
+                'MULTITHREADING': True,
+                'OPTIONS': '',
+                'DATA_TYPE': 0,
+                'EXTRA': '',
+                'OUTPUT': outputRaster
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+
+    def runGrassMapCalcSimple(self, inputA, expression, context, feedback=None, inputB=None, inputC=None, inputD=None, inputE=None, inputF=None, outputRaster=None):
+        outputRaster = 'TEMPORARY_OUTPUT' if outputRaster is None else outputRaster
+        output = processing.run(
+            "grass7:r.mapcalc.simple",
+            {
+                'a': inputA,
+                'b': inputB,
+                'c': inputC,
+                'd': inputD,
+                'e': inputE,
+                'f': inputF,
+                'expression': expression,
+                'output': outputRaster,
+                'GRASS_REGION_PARAMETER': None,
+                'GRASS_REGION_CELLSIZE_PARAMETER': 0,
+                'GRASS_RASTER_FORMAT_OPT': '',
+                'GRASS_RASTER_FORMAT_META': ''
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['output']
+
+    def runGrassReclass(self, inputRaster, expression, context, feedback=None, outputRaster=None):
+        outputRaster = 'TEMPORARY_OUTPUT' if outputRaster is None else outputRaster
+        output = processing.run(
+            "grass7:r.reclass",
+            {
+                'input': inputRaster,
+                'rules': '',
+                'txtrules': expression,
+                'output': outputRaster,
+                'GRASS_REGION_PARAMETER': None,
+                'GRASS_REGION_CELLSIZE_PARAMETER': 0,
+                'GRASS_RASTER_FORMAT_OPT': '',
+                'GRASS_RASTER_FORMAT_META': ''
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['output']
+
+    def runSieve(self, inputRaster, threshold, context, eightConectedness=False, feedback=None, outputRaster=None):
+        outputRaster = 'TEMPORARY_OUTPUT' if outputRaster is None else outputRaster
+        output = processing.run(
+            "gdal:sieve",
+            {
+                'INPUT': inputRaster,
+                'THRESHOLD': threshold,
+                'EIGHT_CONNECTEDNESS': eightConectedness,
+                'NO_MASK': False,
+                'MASK_LAYER': None,
+                'EXTRA': '',
+                'OUTPUT': outputRaster
+            }
+        )
+        return output['OUTPUT']
+
+
+    def runChaikenSmoothing(self, inputLyr, threshold, context,
+                                 feedback=None, snap=None, minArea=None,
+                                 iterations=None, type=None, returnError=False,
+                                 flags=None):
+        """
+        Runs simplify GRASS algorithm
+        :param inputLyr: (QgsVectorLayer) layer, or layers, to be dissolved.
+        :param method: (QgsProcessingParameterEnum) which algorithm would be
+            used to simplify lines, in this case, Douglas-Peucker Algorithm.
+        :param threshold: (QgsProcessingParameterNumber) give in map units.
+            For latitude-longitude locations give in decimal degree.
+        :param context: (QgsProcessingContext) processing context.
+        :param feedback: (QgsProcessingFeedback) QGIS object to keep track of
+            progress/cancelling option.
+        :param onlySelected: (QgsProcessingParameterBoolean) process only
+            selected features.
+        :param outputLyr: (str) URI to output layer.
+        :return: (QgsVectorLayer) simplified output layer or layers.
+        """
+        snap = -1 if snap is None else snap
+        minArea = 0.0001 if minArea is None else minArea
+        iterations = 1 if iterations is None else iterations
+        flags = 'memory:' if flags is None else flags
+        algType = [0, 1, 2] if type is None else type
+        output, error = self.generateGrassOutputAndError()
+        parameters = {
+            'input': inputLyr,
+            'type':algType,
+            'cats':'',
+            'where':'',
+            'method':8,
+            'threshold':threshold,
+            'look_ahead':7,
+            'reduction':50,
+            'slide':0.5,
+            'angle_thresh':3,
+            'degree_thresh':0,
+            'closeness_thresh':0,
+            'betweeness_thresh':0,
+            'alpha':1,
+            'beta':1,
+            'iterations':iterations,
+            '-t':False,
+            '-l':True,
+            'output':output,
+            'error':error,
+            'GRASS_REGION_PARAMETER':None,
+            'GRASS_SNAP_TOLERANCE_PARAMETER':snap,
+            'GRASS_MIN_AREA_PARAMETER':minArea,
+            'GRASS_OUTPUT_TYPE_PARAMETER':0,
+            'GRASS_VECTOR_DSCO':'',
+            'GRASS_VECTOR_LCO':''}
+        outputDict = processing.run("grass7:v.generalize", parameters,
+                                    context=context, feedback=feedback)
+        return self.getGrassReturn(outputDict, context, returnError=returnError)
+
+    def runGdalPolygonize(self, inputRaster, context, band=1, field=None, eightConectedness=False, feedback=None, outputLyr=None):
+        outputLyr = 'TEMPORARY_OUTPUT' if outputLyr is None else outputLyr
+        field = 'DN' if field is None else field
+        output = processing.run(
+            "gdal:polygonize",
+            {
+                'INPUT': inputRaster,
+                'BAND': band,
+                'FIELD': field,
+                'EIGHT_CONNECTEDNESS': eightConectedness,
+                'EXTRA': '',
+                'OUTPUT': outputLyr
+            }
+        )
+        return output['OUTPUT']
