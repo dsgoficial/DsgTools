@@ -126,18 +126,12 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(11, feedback) #ajustar depois
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
-        bufferedGeographicBounds = algRunner.runBuffer(
-            parameters[self.GEOGRAPHIC_BOUNDARY],
-            distance=10*smoothingThreshold,
-            context=context,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
+        
 
         multiStepFeedback.setCurrentStep(currentStep)
         clippedRaster = algRunner.runClipRasterLayer(
             inputRaster,
-            mask=bufferedGeographicBounds,
+            mask=parameters[self.GEOGRAPHIC_BOUNDARY],
             context=context,
             feedback=multiStepFeedback
         )
@@ -162,13 +156,29 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
-        classifiedRaster = algRunner.runGrassReclass(
-            slicedDEM, expression, context=context, feedback=multiStepFeedback
+        bufferedGeographicBounds = algRunner.runBuffer(
+            parameters[self.GEOGRAPHIC_BOUNDARY],
+            distance=10*smoothingThreshold,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+        clippedRaster = algRunner.runClipRasterLayer(
+            inputRaster,
+            mask=bufferedGeographicBounds,
+            context=context,
+            feedback=multiStepFeedback
         )
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
-        siverOutput = algRunner.runSieve(
+        classifiedRaster = algRunner.runGrassReclass(
+            clippedRaster, expression, context=context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        sieveOutput = algRunner.runSieve(
             classifiedRaster,
             threshold=minPixelGroupSize,
             context=context,
@@ -178,7 +188,7 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
         
         multiStepFeedback.setCurrentStep(currentStep)
         finalRaster = algRunner.runClipRasterLayer(
-            siverOutput,
+            sieveOutput,
             mask=parameters[self.GEOGRAPHIC_BOUNDARY],
             context=context,
             feedback=multiStepFeedback,
@@ -188,7 +198,7 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
 
         multiStepFeedback.setCurrentStep(currentStep)
         polygonLayer = algRunner.runGdalPolygonize(
-            siverOutput,
+            sieveOutput,
             context=context,
             feedback=multiStepFeedback
         )
