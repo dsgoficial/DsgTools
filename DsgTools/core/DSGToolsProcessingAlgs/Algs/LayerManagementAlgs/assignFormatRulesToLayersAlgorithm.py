@@ -222,7 +222,7 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
         sortedRuleList = sorted(
             ruleList,
             key=itemgetter('rank', 'atributo'),
-            reverse=True
+            reverse=False
         )
         for data in sortedRuleList:
             fieldName = data['atributo']
