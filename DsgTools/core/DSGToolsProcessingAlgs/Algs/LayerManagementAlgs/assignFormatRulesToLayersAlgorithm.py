@@ -158,7 +158,7 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
                     ruleDict[lyr][attribute] = sorted(
                         ruleDict[lyr][attribute],
                         key=itemgetter('rank'),
-                        reverse=True
+                        reverse=False
                     ) #reverses the list so that it is already in the right order
         return ruleDict
     
@@ -214,16 +214,24 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
         expressionString = """CASE\n"""
         key = f"{lyr.dataProvider().uri().schema()}.{lyr.dataProvider().uri().table()}"
         fieldNameList = [field.name() for field in lyr.fields()]
+        ruleList = []
         for fieldName, dataList in self.ruleDict[key].items():
             if fieldName not in fieldNameList:
                 continue
-            for data in dataList:
-                expressionString += """WHEN {condition} THEN '{result}'\n""".format(
-                    condition=data['regra'],
-                    result=data['descricao']
-                )
-                if not self.expressionHasParseError(expressionString):
-                    raise Exception(f"Error while trying to apply rule:\n {data}\ncurrent field: {fieldName}\ncurrent layer name: {key}")
+            ruleList += dataList
+        sortedRuleList = sorted(
+            ruleList,
+            key=itemgetter('rank', 'atributo'),
+            reverse=True
+        )
+        for data in sortedRuleList:
+            fieldName = data['atributo']
+            expressionString += """WHEN {condition} THEN '{result}'\n""".format(
+                condition=data['regra'],
+                result=data['descricao']
+            )
+            if not self.expressionHasParseError(expressionString):
+                raise Exception(f"Error while trying to apply rule:\n {data}\ncurrent field: {fieldName}\ncurrent layer name: {key}")
         expressionString += """ELSE ''\nEND"""
         if expressionString == "CASE\nELSE ''\nEND": ## did not apply any rule
             return
