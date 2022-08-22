@@ -1462,11 +1462,37 @@ class LayerHandler(QObject):
         intersectionDict = {
             feat.geometry().asWkb(): feat for feat in intersectionLyr.getFeatures()
         }
-        inputVertexSet = set(feat.geometry().asWkb() for feat in pointsLyr.getFeatures()) if pointsLyr is not None else set()
+        inputVertexSet = self.getInputVertexSet(algRunner, pointsLyr, linesLyr, context, multiStepFeedback)
         vertexSet = set(
             feat.geometry().asWkb() for feat in vertexLyr.getFeatures()
         )
         return set(intersectionDict.keys()).difference(vertexSet) | inputVertexSet.difference(vertexSet)
+    
+    def getInputVertexSet(self, algRunner, pointsLyr, linesLyr, context, feedback):
+        if pointsLyr is None or pointsLyr.featureCount() == 0:
+            return set()
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        algRunner.runCreateSpatialIndex(linesLyr, context, feedback=multiStepFeedback)
+        multiStepFeedback.setCurrentStep(1)
+        def compute(feat):
+            geom = feat.geometry()
+            buffer = geom.buffer(1e-8, -1)
+            geomEngine = QgsGeometry.createGeometryEngine(buffer.constGet())
+            for lineFeat in linesLyr.getFeatures(geom.boundingBox()):
+                if geomEngine.intersects(lineFeat.geometry().constGet()):
+                    return geom.asWkb()
+            return None
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
+        futures = set()
+        for feat in pointsLyr.getFeatures():
+            futures.add(pool.submit(compute, feat))
+        vertexSet = set(
+            future.result() for future in concurrent.futures.as_completed(
+                futures
+            ) if future.result() is not None
+        )
+        return vertexSet
 
     def getLinesLayerFromPolygonsAndLinesLayers(self, inputLineLyrList, inputPolygonLyrList, algRunner=None, onlySelected=False, feedback=None, context=None):
         """
