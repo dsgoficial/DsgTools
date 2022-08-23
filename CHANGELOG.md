@@ -9,6 +9,7 @@ Novas funcionalidades:
 - Novo processo de carregamento de primeira camada com elemento de um csv (utilizado na construção de modelos);
 - Novo processo de identificação de problemas no fluxo de drenagens;
 - Novo processo de construir fatiamento do terreno segundo as regras do MTM;
+- Novo processo de ativar a remoção automática de vértices nas camadas;
 
 Melhorias:
 - Melhoria de desempenho no identificar Z;

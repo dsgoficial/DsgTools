@@ -221,6 +221,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirec
     VerifyNetworkDirectioningAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDrainageFlowIssues import \
     IdentifyDrainageFlowIssues
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.setRemoveDuplicateNodePropertyOnLayers import \
+    SetRemoveDuplicateNodePropertyOnLayers
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -341,6 +343,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             StringCsvToFirstLayerWithElementsAlgorithm(),
             IdentifyDrainageFlowIssues(),
             BuildTerrainSlicingFromContoursAlgorihtm(),
+            SetRemoveDuplicateNodePropertyOnLayers(),
         ]
         return algList
 
