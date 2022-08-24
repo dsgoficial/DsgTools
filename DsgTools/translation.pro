@@ -27,6 +27,7 @@
                     core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignCustomFormAndFormatRulesToLayersAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignFilterToLayersAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignMeasureColumnToLayersAlgorithm.py \
+                    core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/lockAttributeEditingAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/assignValueMapToLayersAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/buildJoinsOnLayersAlgorithm.py \
                     core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/groupLayersAlgorithm.py \
