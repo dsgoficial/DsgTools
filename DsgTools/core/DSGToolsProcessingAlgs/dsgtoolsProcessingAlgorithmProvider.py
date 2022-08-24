@@ -51,6 +51,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignCustomF
     AssignCustomFormAndFormatRulesToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignMeasureColumnToLayersAlgorithm import \
     AssignMeasureColumnToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.lockAttributeEditingAlgorithm import \
+    LockAttributeEditingAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignValueMapToLayersAlgorithm import \
     AssignValueMapToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignExpressionFieldToLayersAlgorithm import \
@@ -294,6 +296,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             AssignConditionalStyleToLayersAlgorithm(),
             AssignBoundingBoxFilterToLayersAlgorithm(),
             AssignMeasureColumnToLayersAlgorithm(),
+            LockAttributeEditingAlgorithm(),
             GroupLayersAlgorithm(),
             TopologicalLineConnectivityAdjustment(),
             PecCalculatorAlgorithm(),
