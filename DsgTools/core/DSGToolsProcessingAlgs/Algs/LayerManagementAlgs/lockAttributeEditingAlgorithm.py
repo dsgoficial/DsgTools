@@ -107,7 +107,7 @@ class LockAttributeEditingAlgorithm(QgsProcessingAlgorithm):
         listSize = len(inputLyrList)
         stepSize = 100/listSize if listSize else 0
 
-        self.COLUMNS_TO_LOCK = list(map(str.strip, inputColumnNames.split(',')))
+        self.COLUMNS_TO_LOCK = list(map(str.strip, inputColumnNames.upper().split(',')))
         
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
@@ -119,9 +119,11 @@ class LockAttributeEditingAlgorithm(QgsProcessingAlgorithm):
 
     def tryLockAttributeEditing(self, layer : QgsVectorLayer):
         layerFields = layer.fields()
+        layerFieldNames = list(map(str.upper, layerFields.names()))
         for columnToLockName in self.COLUMNS_TO_LOCK:
-            idxOnLayer = layerFields.indexOf(columnToLockName)
-            if idxOnLayer < 0:
+            try:
+                idxOnLayer = layerFieldNames.index(columnToLockName)
+            except ValueError:
                 # In case the column is not present on the layer:
                 continue
             formConfig = layer.editFormConfig()

@@ -1065,12 +1065,12 @@ Usuários com erro:</translation>
         <translation>Camada original com atributos com edição desabilitada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/lockAttributeEditingAlgorithm.py" line="148"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/lockAttributeEditingAlgorithm.py" line="150"/>
         <source>Lock Attribute Editing</source>
         <translation>Desabilita a edição de certos atributos</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/lockAttributeEditingAlgorithm.py" line="155"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/lockAttributeEditingAlgorithm.py" line="157"/>
         <source>Layer Management Algorithms</source>
         <translation>Algoritmos de gestão de camadas</translation>
     </message>
