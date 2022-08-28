@@ -126,6 +126,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyCountourSt
     IdentifyCountourStreamIntersectionAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesAlgorithm import \
     IdentifyDanglesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDrainageLoops import IdentifyDrainageLoops
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyNetworkConstructionIssuesAlgorithm import \
     IdentifyNetworkConstructionIssuesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedFeaturesAlgorithm import \
@@ -347,6 +348,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyDrainageFlowIssues(),
             BuildTerrainSlicingFromContoursAlgorihtm(),
             SetRemoveDuplicateNodePropertyOnLayers(),
+            IdentifyDrainageLoops(),
         ]
         return algList
 

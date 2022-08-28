@@ -46,7 +46,6 @@ class IdentifyDrainageFlowIssues(ValidationAlgorithm):
                 self.tr('Input'),
                 [
                     QgsProcessing.TypeVectorLine,
-                    QgsProcessing.TypeVectorPolygon,
                 ]
             )
         )
@@ -162,10 +161,10 @@ class IdentifyDrainageFlowIssues(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
+        return self.tr('DSGTools: Quality Assurance Tools (Identification Processes)')
 
     def tr(self, string):
-        return QCoreApplication.translate('identifyDrainageFlowIssues', string)
+        return QCoreApplication.translate('IdentifyDrainageFlowIssues', string)
 
     def createInstance(self):
         return IdentifyDrainageFlowIssues()
