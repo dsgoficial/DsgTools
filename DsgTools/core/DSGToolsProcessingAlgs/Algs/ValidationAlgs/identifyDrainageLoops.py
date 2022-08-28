@@ -21,6 +21,9 @@
  ***************************************************************************/
 """
 
+from asyncio import as_completed
+import os
+import concurrent.futures
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing, QgsProcessingException,
                        QgsProcessingMultiStepFeedback,
@@ -84,7 +87,7 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.LineString, context)
 
         # Iterate over lines setting the dictionary counters:
-        nSteps = 7 if buildCache else 5
+        nSteps = 6 if buildCache else 4
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
         if buildCache:
@@ -124,6 +127,12 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
             return {self.FLAGS: self.flag_id}
 
         multiStepFeedback.setCurrentStep(currentStep)
+        self.searchLoops(nx, geometryHandler, inputLyr, multiStepFeedback, polygonLoops, polygonCount)
+
+        return {self.FLAGS: self.flag_id}
+
+    def searchLoops(self, nx, geometryHandler, inputLyr, feedback, polygonLoops, polygonCount):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         stepSize = 100 / polygonCount
         flagFeatLambda = lambda x: self.flagFeature(
             flagGeom=x, flagText=self.tr('Loop on input drainages')
@@ -131,7 +140,9 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
         firstAndLastNode = lambda x: geometryHandler.getFirstAndLastNode(
             inputLyr, x
         )
-        for current, polygonFeature in enumerate(polygonLoops.getFeatures()):
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.setProgressText(self.tr('Submitting tasks to thread'))
+        def evaluate(polygonFeature):
             geom = polygonFeature.geometry()
             geomEngine = QgsGeometry.createGeometryEngine(geom.constGet())
             graph = nx.DiGraph()
@@ -146,13 +157,26 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
                 vertexList = list(feat.geometry().vertices())
                 for v1, v2 in zip(vertexList, vertexList[1:]):
                     graph.add_edge(v1.asWkt(), v2.asWkt())
-                
             loopSet = self.findLoopsOnEdgeSet(nx, graph, feedback=multiStepFeedback)
+            return loopSet
+        pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count()-1)
+        futures = set()
+        for current, polygonFeature in enumerate(polygonLoops.getFeatures()):
+            if multiStepFeedback.isCanceled():
+                break
+            futures.add(pool.submit(evaluate, polygonFeature))
+            multiStepFeedback.setCurrentStep(current * stepSize)
+
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.setProgressText(self.tr('Evaluating results'))
+        
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback.isCanceled():
+                break
+            loopSet = future.result()
             if loopSet != set():
                 list(map(flagFeatLambda, loopSet))
             multiStepFeedback.setCurrentStep(current * stepSize)
-
-        return {self.FLAGS: self.flag_id}
 
     def findLoopsOnEdgeSet(self, nx, graph, feedback):
         # loops = nx.strongly_connected_components(graph)
