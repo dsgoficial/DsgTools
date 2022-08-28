@@ -11,6 +11,7 @@ Novas funcionalidades:
 - Novo processo de construir fatiamento do terreno segundo as regras do MTM;
 - Novo processo de ativar a remoção automática de vértices nas camadas;
 - Novo processo de bloquear a edição de atributos;
+- Novo processo de identificar loops em drenagens;
 
 Melhorias:
 - Melhoria de desempenho no identificar Z;
