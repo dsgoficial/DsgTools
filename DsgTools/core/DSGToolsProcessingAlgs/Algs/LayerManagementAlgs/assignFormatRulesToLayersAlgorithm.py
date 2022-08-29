@@ -66,7 +66,8 @@ import fnmatch
 
 class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
     INPUT_LAYERS = 'INPUT_LAYERS'
-    RULES_FILE = 'RULES_FILE'
+    FILE = 'FILE'
+    TEXT = 'TEXT'
     CLEAN_BEFORE_ASSIGN = 'CLEAN_BEFORE_ASSIGN'
 
     def initAlgorithm(self, config=None):
@@ -77,11 +78,21 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
             )
         )
         self.addParameter(
+            QgsProcessingParameterString(
+                self.TEXT,
+                description =  self.tr('Input json text'),
+                multiLine = True,
+                defaultValue = '{}',
+                optional=True,
+            )
+        )
+        self.addParameter(
             QgsProcessingParameterFile(
-                self.RULES_FILE,
+                self.FILE,
                 description = self.tr('JSON File with rules'),
                 behavior=QgsProcessingParameterFile.File,
-                fileFilter='JSON (*.json)'
+                fileFilter='JSON (*.json)',
+                optional=True,
             )
         )
         self.addParameter(
@@ -130,11 +141,21 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
 
 
     def loadRulesFromFile(self, parameters, context):
+        inputText = json.loads(
+            self.parameterAsString(
+                parameters,
+                self.TEXT,
+                context
+            )
+        )
+        if inputText != {}:
+            return inputText
         inputFile = self.parameterAsFile(
             parameters,
-            self.RULES_FILE,
+            self.FILE,
             context,
         )
+        
         with open(inputFile, 'r') as f:
             rulesData = json.load(f)
         return rulesData
@@ -276,7 +297,7 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'AssignFormatRulesToLayersAlgorithm'
+        return 'assignformatrulestolayersalgorithm'
 
     def displayName(self):
         """
