@@ -81,6 +81,8 @@ class IdentifyDrainageFlowIssues(ValidationAlgorithm):
             if multiStepFeedback.isCanceled():
                 break
             geom = list(line.geometry().vertices())
+            if len(geom) == 0:
+                continue
             first_vertex = geom[0]
             last_vertex = geom[-1]
 
