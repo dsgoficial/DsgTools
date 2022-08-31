@@ -19,6 +19,9 @@ Melhorias:
 - Melhoria de desempenho no identificar dangles;
 - Melhoria no processo de validação do terreno (removidos os falso-positivos com a moldura);
 
+Correção de bug:
+- Tratamento de geometria nula no Identify Out Of Bounds Angles in Coverage;
+
 ## 4.4.0
 
 Novas funcionalidades:
