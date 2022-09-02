@@ -12,6 +12,7 @@ Novas funcionalidades:
 - Novo processo de ativar a remoção automática de vértices nas camadas;
 - Novo processo de bloquear a edição de atributos;
 - Novo processo de identificar loops em drenagens;
+- Novo processo de identificar problemas de direcionamento com elementos da rede (massas d'água com e sem fluxo, oceano, vala, sumidouro e vertedouro);
 
 Melhorias:
 - Melhoria de desempenho no identificar Z;

@@ -297,7 +297,12 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         self.validateDrainagesEndPoints(
             endPointDict,
             elementList=[
-                startPointsLyr, waterSinkLayer, waterBodyWithFlowLyr, waterBodyWithoutFlowLyr, oceanLyr, ditchLyr
+                startPointsLyr,
+                waterSinkLayer,
+                waterBodyWithFlowLyr,
+                waterBodyWithoutFlowLyr,
+                oceanLyr,
+                ditchLyr,
             ],
             feedback=multiStepFeedback
         )
