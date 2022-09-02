@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 
-from asyncio import as_completed
 import os
 import concurrent.futures
 from PyQt5.QtCore import QCoreApplication

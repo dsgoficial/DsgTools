@@ -841,7 +841,9 @@ class AlgRunner:
                 'MASK_LAYER': None,
                 'EXTRA': '',
                 'OUTPUT': outputRaster
-            }
+            },
+            context=context,
+            feedback=feedback
         )
         return output['OUTPUT']
 
@@ -914,6 +916,22 @@ class AlgRunner:
                 'EIGHT_CONNECTEDNESS': eightConectedness,
                 'EXTRA': '',
                 'OUTPUT': outputLyr
-            }
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runExtractSpecificVertices(self, inputLyr, vertices, context, feedback=None, outputLyr=None):
+        outputLyr = 'TEMPORARY_OUTPUT' if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:extractspecificvertices",
+            {
+                'INPUT': inputLyr,
+                'VERTICES': vertices,
+                'OUTPUT': outputLyr
+            },
+            context=context,
+            feedback=feedback
         )
         return output['OUTPUT']
