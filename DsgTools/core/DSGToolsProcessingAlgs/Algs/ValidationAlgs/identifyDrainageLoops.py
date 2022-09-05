@@ -108,6 +108,9 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
             inputLyr=inputLyr, context=context, feedback=multiStepFeedback
         )
         currentStep += 1
+
+        if polygonLyr.featureCount() == 0:
+            return {self.FLAGS: self.flag_id}
         
         multiStepFeedback.setCurrentStep(currentStep)
         mergedPolygons = algRunner.runDissolve(
