@@ -40,6 +40,9 @@ from qgis.core import (QgsProcessing,
                        QgsProject,
                        QgsProcessingParameterEnum,
                        QgsProcessingParameterFile)
+from operator import itemgetter
+from collections import defaultdict
+import fnmatch
 
 class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
     INPUTLAYERS = 'INPUTLAYERS'
@@ -81,14 +84,54 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         layers_list = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
+        inputLyrNamesWithSchemaList = [
+            f"{lyr.dataProvider().uri().schema()}.{lyr.dataProvider().uri().table()}" for lyr in layers_list
+        ]
         input_data = self.load_rules_from_parameters(parameters)
-        for i, rules in enumerate(input_data):
-            log  = self.get_statistic_rules(layers_list, rules)
-            self.print_log(i, log, feedback)
+        rows = self.buildRuleDict(input_data[0], inputLyrNamesWithSchemaList)
+
+        result = {}
+        for i, row in enumerate(rows):
+            if not row['type'] in result:
+                result[row['type']] = []
+            failed  = self.check_rules_on_layers(
+                row['rule'],
+                [
+                    lyr for lyr in layers_list
+                    if f"{lyr.dataProvider().uri().schema()}.{lyr.dataProvider().uri().table()}" in row['layers']
+                ]
+            )
+            result[row['type']].append(failed)
         if not input_data:
             self.print_log('Carregue um arquivos com as Regras ou insira as Regras!', feedback)
             return {}
-        return { self.OUTPUT : log}
+        return { self.OUTPUT : self.format_output_result(result) }
+
+    def buildRuleDict(self, inputData, inputLyrNamesWithSchemaList):
+        ruleDict = []
+        styleDict = {
+            style["tipo_estilo"]: {
+                "corRgb": list(map(int, style["cor_rgb"].split(","))),
+                "rank": idx
+            } for idx, style in enumerate(inputData["grupo_estilo"])
+        }
+        for rule in inputData["regras"]:
+            lyrSet = self.getLayerNames(rule["camadas"], inputLyrNamesWithSchemaList)
+            ruleDict.append({
+                'type': rule['tipo_estilo'],
+                'name': rule['descricao'],
+                'rule': rule['regra'],
+                'layers': list(lyrSet)
+            })
+        return ruleDict
+    
+    def getLayerNames(self, filterList, nameList):
+        outputSet = set()
+        wildCardFilterList = [filterItem for filterItem in filterList if "*" in filterItem]
+        for wildCardFilter in wildCardFilterList:
+            outputSet = outputSet.union(set(fnmatch.filter(nameList, wildCardFilter)))
+        outputSet = outputSet.union(set(name for name in nameList if name in filterList))
+        return outputSet
 
     def print_log(self, number, text, feedback):
         feedback.pushInfo("{0}{1}LOG START - {2}{1}{0}\n\n".format('*'*10, ' '*3, number+1))
@@ -109,57 +152,34 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
                 json.loads(rules_text)
             )
         return rules_input
-
-    def get_statistic_rules(self, layers, rules_data): 
-        rules_layers = self.get_rules_by_layers(layers, rules_data)
-        self.check_rules_on_layers(rules_layers, layers)
-        return self.format_output_result(rules_layers)
-
-    def get_rules_by_layers(self, layers, rules_data):
-        rules_layers = {}
-        layers_name = [ l.name() for l in layers ]
-        for i in rules_data:
-            layer_name = rules_data[i]['camada']
-            if layer_name in layers_name:
-                rule_name_type = rules_data[i]['tipo_estilo']
-                if not( rule_name_type in rules_layers ):
-                    rules_layers[rule_name_type] = {}
-                if not(layer_name in rules_layers[rule_name_type]):
-                    rules_layers[rule_name_type][layer_name] = {
-                        'all_rules' : [],
-                        'failed' : 0
-                    }
-                rules_layers[rule_name_type][layer_name]['all_rules'].append(
-                    rules_data[i]['regra']
-                )
-        return rules_layers
     
-    def check_rules_on_layers(self, rules_layers, layers):
-        for rule_name_type in rules_layers:
-            for lyr in layers:
-                layer_name = lyr.name()
-                if layer_name in rules_layers[rule_name_type]:
-                    rules = rules_layers[rule_name_type][layer_name]['all_rules']
-                    for rule in rules:
-                        lyr.selectByExpression(rule)
-                        count = lyr.selectedFeatureCount()
-                        lyr.removeSelection()
-                        if count != 0:
-                            rules_layers[rule_name_type][layer_name]['failed']+=1
+    def check_rules_on_layers(self, rule, layers):
+        failed = {}
+        for lyr in layers:
+            lyr.selectByExpression(rule)
+            count = lyr.selectedFeatureCount()
+            lyr.removeSelection()
+            failed[lyr.name()] = True if count != 0 else False
+        return failed
 
-    def format_output_result(self, rules_layers):
+    def format_output_result(self, result):
         html=""
-        for rule_name_type in sorted(rules_layers):
-            row = "[REGRAS] : {0}\n\n".format(rule_name_type)
+        for ruleName in sorted(result.keys()):
+            row = "[REGRAS] : {0}\n\n".format(ruleName)
             html += row
-            layers_failed = []
-            for layer_name in sorted(rules_layers[rule_name_type]):
-                    failed = rules_layers[rule_name_type][layer_name]['failed']
-                    layers_failed.append(layer_name) if failed != 0 else ''
+            failedLayers = []
+            for layers in result[ruleName]:
+                for layerName in layers:
+                    failed = layers[layerName]
+                    if not failed:
+                        continue
+                    if layerName in failedLayers:
+                        continue
+                    failedLayers.append(layerName)
             rows = ""
-            if len(layers_failed) != 0:
-                for layer_name in layers_failed:
-                    rows += "{0}\n\n".format(layer_name)
+            if failedLayers:
+                for layerName in sorted(failedLayers):
+                    rows += "{0}\n\n".format(layerName)
             else:
                 rows = "As camadas passaram em todas as regras.\n\n"
             html += rows
