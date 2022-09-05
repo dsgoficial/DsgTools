@@ -68,7 +68,7 @@ class InspectFeatures(QWidget,Ui_Form):
         self.enableScale()
         self.canvas = self.iface.mapCanvas()
         self.allLayers={}
-        self.idxChanged.connect(self.setNewId)
+        # self.idxChanged.connect(self.setNewId)
         self.setToolTip('')
         icon_path = ':/plugins/DsgTools/icons/inspectFeatures.png'
         text = self.tr('DSGTools: Inspect Features')
