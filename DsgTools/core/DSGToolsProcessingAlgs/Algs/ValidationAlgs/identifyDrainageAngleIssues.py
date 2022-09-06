@@ -33,6 +33,7 @@ from qgis.core import (QgsFeature, QgsFeatureRequest, QgsField, QgsFields,
                        QgsProcessingMultiStepFeedback)
 
 from .validationAlgorithm import ValidationAlgorithm
+from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 
 class IdentifyDrainageAngleIssues(ValidationAlgorithm):
@@ -88,8 +89,8 @@ class IdentifyDrainageAngleIssues(ValidationAlgorithm):
             semilast_vertex = geom[-2]
             last_vertex = geom[-1]
 
-            outgoing_azimuth = first_vertex.azimuth(second_vertex)
-            incoming_azimuth = semilast_vertex.azimuth(last_vertex)
+            outgoing_azimuth = GeometryHandler.calcAzimuth(first_vertex, second_vertex)
+            incoming_azimuth = GeometryHandler.calcAzimuth(semilast_vertex, last_vertex)
 
             if first_vertex.asWkt() not in pointInAndOutDictionary:
                 pointInAndOutDictionary[first_vertex.asWkt()] = { "incoming": [], "outgoing": []}
@@ -169,14 +170,14 @@ class IdentifyDrainageAngleIssues(ValidationAlgorithm):
 
     def createInstance(self):
         return IdentifyDrainageAngleIssues()
-    
+
     @staticmethod
     def deltaBetweenAzimuths(az1: float, az2: float) -> float:
         delta_1 = az1 - az2
         delta_2 = az2 - az1
 
         if(delta_1 < 0):
-            delta_2 += 360
+            delta_1 += 360
         if(delta_2 < 0):
             delta_2 += 360
 
