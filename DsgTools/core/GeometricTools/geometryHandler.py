@@ -28,7 +28,7 @@ from math import pi
 from functools import partial
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, \
                       QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, \
-                      QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, \
+                      QgsFeature, QgsPoint, QgsSpatialIndex, Qgis, QgsCoordinateTransform, \
                       QgsWkbTypes, QgsProject, QgsVertexId, Qgis, QgsCoordinateReferenceSystem
 from qgis.PyQt.Qt import QObject
 
@@ -703,3 +703,24 @@ class GeometryHandler(QObject):
         :return: (list-of-QgsGeometry) list of single part geometries found.
         """
         return [part for part in geom.asGeometryCollection()]
+    
+    @staticmethod
+    def calcAzimuth(p1: QgsPoint, p2: QgsPoint) -> float:
+        dx = p2.x() - p1.x()
+        dy = p2.y() - p1.y()
+
+        if dx == 0:
+            if dy > 0:
+                return 0.0
+            else:
+                return 180.0
+
+        theta = math.atan(dy/dx)
+        if dx < 0:
+            theta += math.pi
+        
+        azimuth = 90.0 - math.degrees(theta)
+        if azimuth < 0:
+            azimuth += 360.0
+        return azimuth
+        
