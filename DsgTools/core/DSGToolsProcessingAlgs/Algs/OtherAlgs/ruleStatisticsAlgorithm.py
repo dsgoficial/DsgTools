@@ -95,6 +95,7 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
             if not row['type'] in result:
                 result[row['type']] = []
             failed  = self.check_rules_on_layers(
+                row['attribute'],
                 row['rule'],
                 [
                     lyr for lyr in layers_list
@@ -121,6 +122,7 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
                 'type': rule['tipo_estilo'],
                 'name': rule['descricao'],
                 'rule': rule['regra'],
+                'attribute': rule['atributo'],
                 'layers': list(lyrSet)
             })
         return ruleDict
@@ -152,10 +154,16 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
                 json.loads(rules_text)
             )
         return rules_input
+
+    def hasAttribute(self, attribute, lyr):
+        return len([ c for c in lyr.attributeTableConfig().columns() if c.name == attribute ]) != 0
     
-    def check_rules_on_layers(self, rule, layers):
+    def check_rules_on_layers(self, attribute, rule, layers):
         failed = {}
         for lyr in layers:
+            hasAttribute = self.hasAttribute(attribute, lyr)
+            if not hasAttribute:
+                continue
             lyr.selectByExpression(rule)
             count = lyr.selectedFeatureCount()
             lyr.removeSelection()
