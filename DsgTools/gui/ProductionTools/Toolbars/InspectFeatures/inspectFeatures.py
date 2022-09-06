@@ -35,7 +35,7 @@ from .inspectFeatures_ui import Ui_Form
 #     os.path.dirname(__file__), 'inspectFeatures.ui'))
 
 class InspectFeatures(QWidget,Ui_Form):
-    idxChanged = pyqtSignal(int)
+    # idxChanged = pyqtSignal(int)
     def __init__(self, iface, parent = None):
         """
         Constructor
@@ -267,7 +267,7 @@ class InspectFeatures(QWidget,Ui_Form):
         id = featIdList[index]
 
         #adjustin the spin box value
-        self.idxChanged.emit(id)
+        # self.idxChanged.emit(id)
 
         self.makeZoom(zoom, currentLayer, id)
         self.selectLayer(id, currentLayer)
@@ -377,7 +377,7 @@ class InspectFeatures(QWidget,Ui_Form):
         id = featIdList[0]
 
         #adjustin the spin box value
-        self.idxChanged.emit(id)
+        # self.idxChanged.emit(id)
         #self.idSpinBox.setValue(id)
 
         zoom = self.mScaleWidget.scale()
