@@ -5,10 +5,10 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2022-07-28
+        begin                : 2022-09-05
         git sha              : $Format:%H$
-        copyright            : (C) 2022 by Sereno, Alves Silva, Samuel, Ferreira - Cartographic Engineers @ Brazilian Army
-        email                : mateus.sereno@ime.eb.br - matheus.silva@ime.eb.br - samuel.melo@ime.eb.br - matheus.ferreira@ime.eb.br
+        copyright            : (C) 2022 by Mateus Sereno - Cartographic Engineer @ Brazilian Army
+        email                : mateus.sereno@ime.eb.br
  ***************************************************************************/
 /***************************************************************************
  *                                                                         *
@@ -33,9 +33,10 @@ from qgis.core import (QgsFeature, QgsFeatureRequest, QgsField, QgsFields,
                        QgsProcessingMultiStepFeedback)
 
 from .validationAlgorithm import ValidationAlgorithm
+from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 
-class IdentifyDrainageFlowIssues(ValidationAlgorithm):
+class IdentifyDrainageAngleIssues(ValidationAlgorithm):
     FLAGS = 'FLAGS'
     INPUT = 'INPUT'
 
@@ -64,11 +65,11 @@ class IdentifyDrainageFlowIssues(ValidationAlgorithm):
         )
         self.prepareFlagSink(parameters, lines, QgsWkbTypes.Point, context)
 
-        # Dictionary that indicates how many lines enter and how many lines exit a given point:
+        # Dictionary that stores azimuths entering and exiting the point
         pointInAndOutDictionary = {}
 
 
-        # Iterate over lines setting the dictionary counters:
+        # Iterate over lines setting the dictionary content:
         lineCount = lines.featureCount()
         if lineCount == 0:
             return {self.FLAGS: self.flag_id}
@@ -84,26 +85,31 @@ class IdentifyDrainageFlowIssues(ValidationAlgorithm):
             if len(geom) == 0:
                 continue
             first_vertex = geom[0]
+            second_vertex = geom[1]
+            semilast_vertex = geom[-2]
             last_vertex = geom[-1]
 
+            outgoing_azimuth = GeometryHandler.calcAzimuth(first_vertex, second_vertex)
+            incoming_azimuth = GeometryHandler.calcAzimuth(semilast_vertex, last_vertex)
+
             if first_vertex.asWkt() not in pointInAndOutDictionary:
-                pointInAndOutDictionary[first_vertex.asWkt()] = { "incoming": 0, "outgoing": 0}
+                pointInAndOutDictionary[first_vertex.asWkt()] = { "incoming": [], "outgoing": []}
 
             if last_vertex.asWkt() not in pointInAndOutDictionary:
-                pointInAndOutDictionary[last_vertex.asWkt()] = { "incoming": 0, "outgoing": 0}
+                pointInAndOutDictionary[last_vertex.asWkt()] = { "incoming": [], "outgoing": []}
             
-            pointInAndOutDictionary[first_vertex.asWkt()]["outgoing"] += 1
-            pointInAndOutDictionary[last_vertex.asWkt()]["incoming"] += 1
+            pointInAndOutDictionary[first_vertex.asWkt()]["outgoing"].append(outgoing_azimuth)
+            pointInAndOutDictionary[last_vertex.asWkt()]["incoming"].append(incoming_azimuth)
             multiStepFeedback.setProgress(current * stepSize)
         
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.setProgressText(self.tr("Raising flags..."))
         stepSize = 100/len(pointInAndOutDictionary)
         # Iterate over dictionary:
-        for current, (pointStr, inAndOutCounters) in enumerate(pointInAndOutDictionary.items()):
+        for current, (pointStr, inAndOutLists) in enumerate(pointInAndOutDictionary.items()):
             if multiStepFeedback.isCanceled():
                 break
-            errorMsg = self.errorWhenCheckingInAndOut(inAndOutCounters)
+            errorMsg = self.errorWhenCheckingInAndOut(inAndOutLists)
             if errorMsg != '':
                 self.flagFeature(
                     flagGeom= QgsGeometry.fromWkt(pointStr),
@@ -113,21 +119,15 @@ class IdentifyDrainageFlowIssues(ValidationAlgorithm):
 
         return {self.FLAGS: self.flag_id}
 
-    def errorWhenCheckingInAndOut(self, inAndOutCounters):
-        incoming = inAndOutCounters["incoming"]
-        outgoing = inAndOutCounters["outgoing"]
-        total = incoming + outgoing
+    def errorWhenCheckingInAndOut(self, inAndOutLists):
+        azimuths_in = inAndOutLists["incoming"]
+        azimuths_out = inAndOutLists["outgoing"]
 
-        if total == 1:
-            return ''
-        if total >= 4:
-            return '4 or more lines conected to this point.'
-        
-        if (incoming == 0):
-            return 'There are lines coming from this point, but not lines going in.'
-
-        if (outgoing == 0):
-            return 'There are lines going into this point, but not lines coming from it.'
+        for azi_in in azimuths_in:
+            for azi_out in azimuths_out:
+                directionChange = self.deltaBetweenAzimuths(azi_in, azi_out)
+                if(directionChange > 90):
+                    return 'There is an unexpected sharp turn here.'
 
         return ''
 
@@ -139,14 +139,14 @@ class IdentifyDrainageFlowIssues(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifydrainageflowissues'
+        return 'identifydrainageangleissues'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Drainage Flow Issues')
+        return self.tr('Identify Drainage Angle Issues')
 
     def group(self):
         """
@@ -166,7 +166,19 @@ class IdentifyDrainageFlowIssues(ValidationAlgorithm):
         return self.tr('DSGTools: Quality Assurance Tools (Identification Processes)')
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyDrainageFlowIssues', string)
+        return QCoreApplication.translate('IdentifyDrainageAngleIssues', string)
 
     def createInstance(self):
-        return IdentifyDrainageFlowIssues()
+        return IdentifyDrainageAngleIssues()
+
+    @staticmethod
+    def deltaBetweenAzimuths(az1: float, az2: float) -> float:
+        delta_1 = az1 - az2
+        delta_2 = az2 - az1
+
+        if(delta_1 < 0):
+            delta_1 += 360
+        if(delta_2 < 0):
+            delta_2 += 360
+
+        return min(delta_1, delta_2)

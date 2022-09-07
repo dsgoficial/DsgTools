@@ -24,6 +24,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.EditingAlgs.createEditingGridAlgo
     CreateEditingGridAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.setFreeHandToolParametersAlgorithm import \
     SetFreeHandToolParametersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.buildTerrainSlicingFromContoursAlgorihtm import BuildTerrainSlicingFromContoursAlgorihtm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.donutHoleExtractorAlgorithm import \
     DonutHoleExtractorAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.applyStylesFromDatabaseToLayersAlgorithm import \
@@ -48,6 +49,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFormatR
     AssignFormatRulesToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignMeasureColumnToLayersAlgorithm import \
     AssignMeasureColumnToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.lockAttributeEditingAlgorithm import \
+    LockAttributeEditingAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignValueMapToLayersAlgorithm import \
     AssignValueMapToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildJoinsOnLayersAlgorithm import \
@@ -124,6 +127,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyCountourSt
     IdentifyCountourStreamIntersectionAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesAlgorithm import \
     IdentifyDanglesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDrainageFlowIssuesWithOtherHydrographicClassesAlgorithm import IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDrainageLoops import IdentifyDrainageLoops
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyNetworkConstructionIssuesAlgorithm import \
     IdentifyNetworkConstructionIssuesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedFeaturesAlgorithm import \
@@ -221,6 +226,10 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirec
     VerifyNetworkDirectioningAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDrainageFlowIssues import \
     IdentifyDrainageFlowIssues
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDrainageAngleIssues import \
+    IdentifyDrainageAngleIssues
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.setRemoveDuplicateNodePropertyOnLayers import \
+    SetRemoveDuplicateNodePropertyOnLayers
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -289,6 +298,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             AssignConditionalStyleToLayersAlgorithm(),
             AssignBoundingBoxFilterToLayersAlgorithm(),
             AssignMeasureColumnToLayersAlgorithm(),
+            LockAttributeEditingAlgorithm(),
             GroupLayersAlgorithm(),
             TopologicalLineConnectivityAdjustment(),
             PecCalculatorAlgorithm(),
@@ -340,6 +350,11 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(),
             StringCsvToFirstLayerWithElementsAlgorithm(),
             IdentifyDrainageFlowIssues(),
+            IdentifyDrainageAngleIssues(),
+            BuildTerrainSlicingFromContoursAlgorihtm(),
+            SetRemoveDuplicateNodePropertyOnLayers(),
+            IdentifyDrainageLoops(),
+            IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(),
             CreateReviewGridAlgorithm(),
         ]
         return algList

@@ -25,8 +25,9 @@ import os
 import processing
 from qgis.core import (QgsFeature, QgsFeatureSink, QgsField, QgsFields,
                        QgsProcessing, QgsProcessingMultiStepFeedback,
+                       QgsProcessingParameterBoolean,
                        QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterVectorLayer)
+                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
 from qgis.PyQt.QtCore import QCoreApplication, QVariant
 from qgis.utils import iface
 
@@ -38,6 +39,8 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
     INPUT_STREAM = 'INPUT_STREAM'
     INPUT_CONTOUR_LINES = 'INPUT_CONTOUR_LINES'
     OUTPUT = 'OUTPUT'
+    RUNNING_INSIDE_MODEL = 'RUNNING_INSIDE_MODEL'
+
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
@@ -51,6 +54,14 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
                 'INPUT_COUNTOUR_LINES',
                 self.tr('Contour levels layer'),
                 types=[QgsProcessing.TypeVectorLine]
+            )
+        )
+        
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.RUNNING_INSIDE_MODEL,
+                self.tr('Process is running inside model'),
+                defaultValue=False,
             )
         )
 
@@ -67,6 +78,7 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
         
         outputLinesSet, outputPointsSet = set(), set()
         countourLayer = self.parameterAsVectorLayer( parameters,'INPUT_COUNTOUR_LINES', context )
+        runningInsideModel = self.parameterAsBool(parameters, self.RUNNING_INSIDE_MODEL, context)
 
         feedback.setProgressText(self.tr('Verifying inconsistency'))
         
@@ -93,17 +105,27 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
         multiStepFeedback.pushInfo(self.tr('Finding flags'))
         
         self.findProblems(multiStepFeedback, outputPointsSet, outputLinesSet, spatialJoinOutput, idDict)
+
+        if outputPointsSet == set() and outputLinesSet == set():
+            if runningInsideModel:
+                (sink, sink_id) = self.parameterAsSink(
+                    parameters,
+                    self.OUTPUT,
+                    context,
+                    streamLayerInput.fields(),
+                    QgsWkbTypes.Point,
+                    streamLayerInput.sourceCrs()
+                )
+            else:
+                sink_id = self.tr('No flags found')
                 
-        AllOK = True
+            return {self.OUTPUT: sink_id}  
+            
         if outputPointsSet != set() :
-            newLayer = self.outLayer(parameters, context, outputPointsSet, streamLayerInput, 1)
-            AllOK = False
+            sink_id = self.outLayer(parameters, context, outputPointsSet, streamLayerInput, 1)
         if outputLinesSet != set():
-            newLayer = self.outLayer(parameters, context, outputLinesSet, streamLayerInput, 2)
-            AllOK = False
-        if AllOK: 
-            newLayer = self.tr('No flags found')
-        return {self.OUTPUT: newLayer}
+            sink_id = self.outLayer(parameters, context, outputLinesSet, streamLayerInput, 2)
+        return {self.OUTPUT: sink_id}
 
     def runSpatialJoin(self, streamLayerInput, countourLayer, feedback):
         output = processing.run(
@@ -184,7 +206,7 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
         newFields = QgsFields()
         newFields.append(QgsField('id', QVariant.Int))
 
-        (sink, newLayer) = self.parameterAsSink(
+        (sink, sink_id) = self.parameterAsSink(
             parameters,
             self.OUTPUT,
             context,
@@ -192,15 +214,13 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
             geomtype,
             streamLayer.sourceCrs()
         )
-        idcounter = 1
-        for geom in geometry:
+        for idcounter, geom in enumerate(geometry):
             newFeat = QgsFeature()
             newFeat.setGeometry(geom)
             newFeat.setFields(newFields)
             newFeat['id'] = idcounter
             sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
-            idcounter +=1
-        return newLayer
+        return sink_id
 
     def name(self):
         """
