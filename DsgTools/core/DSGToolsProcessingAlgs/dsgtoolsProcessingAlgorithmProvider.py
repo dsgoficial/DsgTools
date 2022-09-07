@@ -77,6 +77,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm im
     CreateFrameAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFramesWithConstraintAlgorithm import \
     CreateFramesWithConstraintAlgorithm
+from .Algs.OtherAlgs.createReviewGridAlgorithm import CreateReviewGridAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.exportToMemoryLayer import \
     ExportToMemoryLayer
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.fileInventoryAlgorithm import \
@@ -354,6 +355,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             SetRemoveDuplicateNodePropertyOnLayers(),
             IdentifyDrainageLoops(),
             IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(),
+            CreateReviewGridAlgorithm(),
         ]
         return algList
 

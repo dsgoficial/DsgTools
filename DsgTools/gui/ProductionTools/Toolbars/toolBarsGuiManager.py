@@ -25,6 +25,8 @@ from builtins import object
 import os.path
 import sys
 
+from .ReviewTools.reviewToolbar import ReviewToolbar
+
 from .MinimumAreaTool.minimumAreaTool import MinimumAreaTool
 from .InspectFeatures.inspectFeatures import InspectFeatures
 from .StyleManagerTool.styleManagerTool import StyleManagerTool
@@ -51,6 +53,9 @@ class ToolbarsGuiManager(QObject):
         #adding inspect feature tool
         self.inspectFeaturesTool = InspectFeatures(self.iface, parent = self.parentMenu)
         self.toolbar.addWidget(self.inspectFeaturesTool)
+        #adding review tool
+        self.reviewTool = ReviewToolbar(self.iface, parent = self.parentMenu)
+        self.toolbar.addWidget(self.reviewTool)
         #adding style tools
         self.styleManagerTool = StyleManagerTool(self.iface, parent = self.parentMenu)
         self.toolbar.addWidget(self.styleManagerTool)
@@ -64,5 +69,6 @@ class ToolbarsGuiManager(QObject):
     def unload(self):
         self.minimumAreaTool.unload()
         self.inspectFeaturesTool.unload()
+        self.reviewTool.unload()
         self.rasterInfoTool.unload()
         self.dataValidationTool.unload()

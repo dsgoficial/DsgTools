@@ -929,6 +929,19 @@ class AlgRunner:
             {
                 'INPUT': inputLyr,
                 'VERTICES': vertices,
+    
+    def runCreateGrid(self, extent, crs, hSpacing, vSpacing, context, type=2, feedback=None, outputLyr=None, hOverlay=0, vOverlay=0):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:creategrid",
+            {
+                'TYPE': type,
+                'EXTENT': extent,
+                'HSPACING': hSpacing,
+                'VSPACING': vSpacing,
+                'HOVERLAY': hOverlay,
+                'VOVERLAY': vOverlay,
+                'CRS': crs,
                 'OUTPUT': outputLyr
             },
             context=context,
