@@ -21,6 +21,8 @@
 """
 
 import math
+import concurrent.futures
+import os
 
 from PyQt5.QtCore import QCoreApplication, QVariant
 from qgis.core import (QgsFeature, QgsFeatureRequest, QgsField, QgsFields,
@@ -156,9 +158,10 @@ class identifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
         if lineCount == 0:
             return featsToAnalyse
         total = 100 / lineCount
-        for i, feat1 in enumerate(lines.getFeatures()):
+        def evaluateLine(feat1):
+            featsToAnalyse = []
             if feedback is not None and feedback.isCanceled():
-                break
+                return []
             gfeat1 = feat1.geometry()
             request = QgsFeatureRequest().setFilterRect(gfeat1.boundingBox())
             for j, feat2 in enumerate(lines.getFeatures(request)):
@@ -193,8 +196,24 @@ class identifyZAnglesBetweenFeaturesAlgorithm(ValidationAlgorithm):
                                 elif toAnalyse:
                                     toAnalyse.setAttribute('source',lines.sourceName())
                                     featsToAnalyse.append(toAnalyse)
-            if feedback is not None:
-                feedback.setProgress(i * total)
+            return featsToAnalyse
+        
+        futures = set()
+        pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count()-1)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr("Submitting tasks to thread"))
+        for i, feat1 in enumerate(lines.getFeatures()):
+            futures.add(pool.submit(evaluateLine, feat1))
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr("Evaluating tasks"))
+        concurrent.futures.wait(futures, timeout=None, return_when=concurrent.futures.ALL_COMPLETED)
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if feedback is not None and feedback.isCanceled():
+                break
+            featsToAnalyse += future.result()
+            multiStepFeedback.setProgress(total * current)
+
         return featsToAnalyse
 
     def checkIntersectionAndCreateFeature4p(self, v1, v2, v3, v4, angle):

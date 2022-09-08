@@ -270,6 +270,17 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         sink, sink_id = QgsProcessingUtils.createFeatureSink(
             'memory:', context, fields, QgsWkbTypes.Polygon, inputCenterPointLyr.sourceCrs())
         sink.addFeatures(polygonFeatList, QgsFeatureSink.FastInsert)
+        
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.checkUnusedBoundariesAndWriteOutput(
+            context,
+            boundaryLineLyr,
+            geographicBoundaryLyr,
+            sink_id,
+            unused_boundary_flag_sink,
+            multiStepFeedback,
+        )
+        currentStep += 1
 
         if mergeOutput:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -279,7 +290,9 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             )
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            algRunner.runDeaggregate(dissolvedLyr, context=context, feedback=multiStepFeedback)
+            dissolvedLyr = algRunner.runMultipartToSingleParts(
+                dissolvedLyr, context=context, feedback=multiStepFeedback
+            )
             polygonFeatList = [feat for feat in dissolvedLyr.getFeatures()]
             currentStep += 1
         self.writeOutputPolygons(
@@ -296,14 +309,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 invalid_polygon_sink,
             )
             currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        self.checkUnusedBoundariesAndWriteOutput(
-            context,
-            boundaryLineLyr,
-            output_polygon_sink_id,
-            unused_boundary_flag_sink,
-            multiStepFeedback,
-        )
+        
 
         return {
             self.OUTPUT_POLYGONS: output_polygon_sink_id,
@@ -316,21 +322,122 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         self,
         context,
         boundaryLineLyr,
+        geographicBoundaryLyr,
         output_polygon_sink_id,
         unused_boundary_flag_sink,
-        multiStepFeedback,
+        feedback,
     ):
         if boundaryLineLyr is None:
             return
+        nSteps = 9 if geographicBoundaryLyr is None else 11
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         multiStepFeedback.setProgressText(self.tr("Checking unused boundaries..."))
-        flags = self.checkUnusedBoundaries(
-            boundaryLineLyr=boundaryLineLyr,
-            output_polygon_sink_id=output_polygon_sink_id,
-            feedback=multiStepFeedback,
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        lyr = processing.run(
+            "native:addautoincrementalfield",
+            parameters={
+                "INPUT": output_polygon_sink_id,
+                "FIELD_NAME": "featid",
+                "START": 1,
+                "GROUP_FIELDS": [],
+                "SORT_EXPRESSION": "",
+                "SORT_ASCENDING": True,
+                "SORT_NULLS_FIRST": False,
+                "OUTPUT": "TEMPORARY_OUTPUT",
+            },
             context=context,
+            feedback=multiStepFeedback,
+        )["OUTPUT"]
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        processing.run(
+            "native:createspatialindex", {"INPUT": lyr}, feedback=multiStepFeedback
         )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        segments = AlgRunner().runExplodeLines(boundaryLineLyr, context, feedback=multiStepFeedback)
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        segments = processing.run(
+            "native:addautoincrementalfield",
+            parameters={
+                "INPUT": segments,
+                "FIELD_NAME": "featid",
+                "START": 1,
+                "GROUP_FIELDS": [],
+                "SORT_EXPRESSION": "",
+                "SORT_ASCENDING": True,
+                "SORT_NULLS_FIRST": False,
+                "OUTPUT": "TEMPORARY_OUTPUT",
+            },
+            context=context,
+            feedback=multiStepFeedback,
+        )["OUTPUT"]
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        processing.run(
+            "native:createspatialindex", {"INPUT": segments}, feedback=multiStepFeedback
+        )
+        currentStep += 1
+
+        if geographicBoundaryLyr is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            segments = AlgRunner().runClip(segments, geographicBoundaryLyr, context=context, feedback=multiStepFeedback)
+            currentStep += 1
+
+            multiStepFeedback.setCurrentStep(currentStep)
+            processing.run(
+                "native:createspatialindex", {"INPUT": segments}, feedback=multiStepFeedback
+            )
+            currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        flags = SpatialRelationsHandler().checkDE9IM(
+            layerA=segments,
+            layerB=lyr,
+            mask="*1*******",
+            cardinality="1..*",
+            feedback=multiStepFeedback,
+            ctx=context,
+        )
+        currentStep += 1
+
+        featidList = list(set(i['featid'] for i in segments.getFeatures(list(flags.keys()))))
+        if len(featidList) == 0:
+            multiStepFeedback.setCurrentStep(8 if geographicBoundaryLyr is None else 10)
+            return
+        expressionStr = f"featid in {tuple(featidList)}"
+        if ',)' in expressionStr:
+            expressionStr = expressionStr.replace(',)',')')
+        multiStepFeedback.setCurrentStep(currentStep)
+        segmentedFlags = AlgRunner().runFilterExpression(
+            segments,
+            expression=expressionStr,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        mergedSegments = processing.run(
+            "native:dissolve",
+            {
+                "INPUT": segmentedFlags,
+                "OUTPUT": "TEMPORARY_OUTPUT"
+            },
+            context=context,
+            feedback=multiStepFeedback
+        )["OUTPUT"]
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        flagLyr = AlgRunner().runMultipartToSingleParts(mergedSegments, context, feedback=multiStepFeedback)
         unused_boundary_flag_sink.addFeatures(
-            boundaryLineLyr.getFeatures(list(flags.keys())), QgsFeatureSink.FastInsert
+            flagLyr.getFeatures(), QgsFeatureSink.FastInsert
         )
 
     def checkInvalidOnOutput(
@@ -449,7 +556,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             "native:createspatialindex", {"INPUT": lyr}, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(1)
-        return SpatialRelationsHandler().checkDE9IM(
+        flags = SpatialRelationsHandler().checkDE9IM(
             layerA=boundaryLineLyr,
             layerB=lyr,
             mask="*1*******",

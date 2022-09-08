@@ -31,7 +31,8 @@ from qgis.core import (QgsProcessing,
                        QgsFeature,
                        QgsField,
                        QgsProcessingFeatureSourceDefinition,
-                       QgsFeatureRequest
+                       QgsFeatureRequest,
+                       QgsProcessingParameterBoolean
                        )
 from qgis import processing
 
@@ -46,6 +47,7 @@ class VerifyCountourStackingAlgorihtm(ValidationAlgorithm):
     INPUT_LEVEL_GAP = 'INPUT_LEVEL_GAP'
     OUTPUT = 'OUTPUT'
     OUTPUT_NEW_LAYER = 'OUTPUT_NEW_LAYER'
+    RUNNING_INSIDE_MODEL = 'RUNNING_INSIDE_MODEL'
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
@@ -80,6 +82,13 @@ class VerifyCountourStackingAlgorihtm(ValidationAlgorithm):
                 type=QgsProcessingParameterNumber.Double, 
                 minValue=0)
             )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.RUNNING_INSIDE_MODEL,
+                self.tr('Process is running inside model'),
+                defaultValue=False,
+            )
+        )
         
         self.addParameter(
             QgsProcessingParameterFeatureSink(
@@ -93,6 +102,7 @@ class VerifyCountourStackingAlgorihtm(ValidationAlgorithm):
         levelsField = self.parameterAsFields( parameters,'INPUT_LEVES_FIELD', context )[0]
         levelGap = self.parameterAsDouble (parameters,'INPUT_LEVEL_GAP', context)
         isDepressionField = self.parameterAsFields (parameters,'INPUT_IS_DEPRESSION_FIELD', context)[0]
+        runningInsideModel = self.parameterAsBool(parameters, self.RUNNING_INSIDE_MODEL, context)
         feedback.setProgressText('Verificando inconsistencias ')
         step =1
         progressStep = 100/4
@@ -107,7 +117,7 @@ class VerifyCountourStackingAlgorihtm(ValidationAlgorithm):
         step +=1
         feedback.setProgress( step * progressStep )
         self.compareLevel(levelsField, levelGap, isDepressionField, countourLayerPoly, outputPolygons, feedback, step, progressStep)
-        if outputPolygons:
+        if outputPolygons or runningInsideModel:
             newLayer = self.outLayer(parameters, context, outputPolygons, countourLayer)
         else: 
             newLayer = self.tr('No flags')
@@ -207,8 +217,7 @@ class VerifyCountourStackingAlgorihtm(ValidationAlgorithm):
                         outputPolygons.append([feature1, 4])
         return False
     def outLayer(self, parameters, context, polygons, streamLayer):
-        newFields = polygons[0][0].fields()
-        newFields.append(QgsField('erro', QVariant.String))
+        newFields = self.getFlagFields()
         
         (sink, newLayer) = self.parameterAsSink(
             parameters,
@@ -230,7 +239,7 @@ class VerifyCountourStackingAlgorihtm(ValidationAlgorithm):
             newFeat.setFields(newFields)
             for field in  range(len(polygon[0].fields())):
                 newFeat.setAttribute((field), polygon[0].attribute((field)))
-            newFeat['erro'] = dicterro[polygon[1]]
+            newFeat['reason'] = dicterro[polygon[1]]
             sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
         
         return newLayer

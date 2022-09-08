@@ -1048,6 +1048,34 @@ Usuários com erro:</translation>
     </message>
 </context>
 <context>
+    <name>LockAttributeEditingAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/lockAttributeEditingAlgorithm.py" line="68"/>
+        <source>Input Layers</source>
+        <translation>Camadas de entrada</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/lockAttributeEditingAlgorithm.py" line="76"/>
+        <source>Attributes to lock (separated by comma)</source>
+        <translation>Nomes dos atributos a terem a edição desabilitada</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/lockAttributeEditingAlgorithm.py" line="85"/>
+        <source>Original layers with locked column edit</source>
+        <translation>Camada original com atributos com edição desabilitada</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/lockAttributeEditingAlgorithm.py" line="150"/>
+        <source>Lock Attribute Editing</source>
+        <translation>Desabilita a edição de certos atributos</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/LayerManagementAlgs/lockAttributeEditingAlgorithm.py" line="157"/>
+        <source>Layer Management Algorithms</source>
+        <translation>Algoritmos de gestão de camadas</translation>
+    </message>
+</context>
+<context>
     <name>AssignProfiles</name>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/assign_profiles.py" line="202"/>

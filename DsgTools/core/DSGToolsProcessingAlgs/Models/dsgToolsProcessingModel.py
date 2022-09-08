@@ -394,7 +394,9 @@ class DsgToolsProcessingModel(QgsTask):
             return out
         flagLayerNames = self.flagLayerNames()
         for name, vl in out.items():
-            if not isinstance(vl, QgsMapLayer):
+            if vl is None:
+                continue
+            if not isinstance(vl, QgsMapLayer) or not vl.isValid():
                 continue
             vl.setName(name.split(":", 2)[-1])
             if vl.name() in flagLayerNames and vl.featureCount() == 0:

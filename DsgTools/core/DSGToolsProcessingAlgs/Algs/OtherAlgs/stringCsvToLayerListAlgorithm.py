@@ -20,21 +20,13 @@
  ***************************************************************************/
 """
 
+import fnmatch
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink, QgsField,
-                       QgsFields, QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingMultiStepFeedback,
+from qgis.core import (QgsMapLayer, QgsProcessingAlgorithm,
                        QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterString,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsProject, QgsVectorLayerUtils, QgsWkbTypes)
-from qgis.PyQt.QtCore import QVariant
+                       QgsProcessingUtils,
+                       QgsProject)
 
 
 class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
@@ -69,22 +61,35 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
             context
         )
         layerNameList = layerCsv.split(',')
-        nSteps = len(layerNameList)
-        if not nSteps:
+        if not len(layerNameList):
             return {self.OUTPUT : None}
-        else:
-            progressStep = 100/nSteps
-        layerList = []
-        for idx, layerName in enumerate(layerNameList):
+        layerSet = set()
+        layerNamesToLoadSet = self.getLayerNameSetToLoad(layerNameList)
+        progressStep = 100/len(layerNamesToLoadSet)
+        for idx, layerName in enumerate(layerNamesToLoadSet):
             if feedback.isCanceled():
                 break
             lyr = QgsProcessingUtils.mapLayerFromString(layerName, context)
             if lyr is None:
                 continue
-            layerList.append(lyr.id())
+            layerSet.add(lyr.id())
             feedback.setProgress(idx * progressStep)
 
-        return { self.OUTPUT : layerList}
+        return { self.OUTPUT : list(layerSet)}
+
+    def getLayerNameSetToLoad(self, layerNameList):
+        loadedLayerNamesSet = set(
+            l.name() for l in QgsProject.instance().mapLayers().values() \
+            if l.type() == QgsMapLayer.VectorLayer
+        )
+        wildCardFilterList = [fi for fi in layerNameList if "*" in fi]
+        wildCardLayersSet = set()
+        for wildCardFilter in wildCardFilterList:
+            wildCardLayersSet = wildCardLayersSet.union(
+                set(fnmatch.filter(loadedLayerNamesSet, wildCardFilter))
+            )
+        layerNamesToLoadSet = set(layerNameList) - set(wildCardFilterList) | wildCardLayersSet
+        return layerNamesToLoadSet
 
     def name(self):
         """

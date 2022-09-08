@@ -35,7 +35,7 @@ from .inspectFeatures_ui import Ui_Form
 #     os.path.dirname(__file__), 'inspectFeatures.ui'))
 
 class InspectFeatures(QWidget,Ui_Form):
-    idxChanged = pyqtSignal(int)
+    # idxChanged = pyqtSignal(int)
     def __init__(self, iface, parent = None):
         """
         Constructor
@@ -68,7 +68,7 @@ class InspectFeatures(QWidget,Ui_Form):
         self.enableScale()
         self.canvas = self.iface.mapCanvas()
         self.allLayers={}
-        self.idxChanged.connect(self.setNewId)
+        # self.idxChanged.connect(self.setNewId)
         self.setToolTip('')
         icon_path = ':/plugins/DsgTools/icons/inspectFeatures.png'
         text = self.tr('DSGTools: Inspect Features')
@@ -267,7 +267,7 @@ class InspectFeatures(QWidget,Ui_Form):
         id = featIdList[index]
 
         #adjustin the spin box value
-        self.idxChanged.emit(id)
+        # self.idxChanged.emit(id)
 
         self.makeZoom(zoom, currentLayer, id)
         self.selectLayer(id, currentLayer)
@@ -377,7 +377,7 @@ class InspectFeatures(QWidget,Ui_Form):
         id = featIdList[0]
 
         #adjustin the spin box value
-        self.idxChanged.emit(id)
+        # self.idxChanged.emit(id)
         #self.idSpinBox.setValue(id)
 
         zoom = self.mScaleWidget.scale()

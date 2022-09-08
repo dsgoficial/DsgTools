@@ -66,7 +66,8 @@ import fnmatch
 
 class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
     INPUT_LAYERS = 'INPUT_LAYERS'
-    RULES_FILE = 'RULES_FILE'
+    FILE = 'FILE'
+    TEXT = 'TEXT'
     CLEAN_BEFORE_ASSIGN = 'CLEAN_BEFORE_ASSIGN'
 
     def initAlgorithm(self, config=None):
@@ -77,11 +78,21 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
             )
         )
         self.addParameter(
+            QgsProcessingParameterString(
+                self.TEXT,
+                description =  self.tr('Input json text'),
+                multiLine = True,
+                defaultValue = '{}',
+                optional=True,
+            )
+        )
+        self.addParameter(
             QgsProcessingParameterFile(
-                self.RULES_FILE,
+                self.FILE,
                 description = self.tr('JSON File with rules'),
                 behavior=QgsProcessingParameterFile.File,
-                fileFilter='JSON (*.json)'
+                fileFilter='JSON (*.json)',
+                optional=True,
             )
         )
         self.addParameter(
@@ -130,11 +141,21 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
 
 
     def loadRulesFromFile(self, parameters, context):
+        inputText = json.loads(
+            self.parameterAsString(
+                parameters,
+                self.TEXT,
+                context
+            )
+        )
+        if inputText != {}:
+            return inputText
         inputFile = self.parameterAsFile(
             parameters,
-            self.RULES_FILE,
+            self.FILE,
             context,
         )
+        
         with open(inputFile, 'r') as f:
             rulesData = json.load(f)
         return rulesData
@@ -158,7 +179,7 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
                     ruleDict[lyr][attribute] = sorted(
                         ruleDict[lyr][attribute],
                         key=itemgetter('rank'),
-                        reverse=True
+                        reverse=False
                     ) #reverses the list so that it is already in the right order
         return ruleDict
     
@@ -214,16 +235,24 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
         expressionString = """CASE\n"""
         key = f"{lyr.dataProvider().uri().schema()}.{lyr.dataProvider().uri().table()}"
         fieldNameList = [field.name() for field in lyr.fields()]
+        ruleList = []
         for fieldName, dataList in self.ruleDict[key].items():
             if fieldName not in fieldNameList:
                 continue
-            for data in dataList:
-                expressionString += """WHEN {condition} THEN '{result}'\n""".format(
-                    condition=data['regra'],
-                    result=data['descricao']
-                )
-                if not self.expressionHasParseError(expressionString):
-                    raise Exception(f"Error while trying to apply rule:\n {data}\ncurrent field: {fieldName}\ncurrent layer name: {key}")
+            ruleList += dataList
+        sortedRuleList = sorted(
+            ruleList,
+            key=itemgetter('rank', 'atributo'),
+            reverse=False
+        )
+        for data in sortedRuleList:
+            fieldName = data['atributo']
+            expressionString += """WHEN {condition} THEN '{result}'\n""".format(
+                condition=data['regra'],
+                result=data['descricao']
+            )
+            if not self.expressionHasParseError(expressionString):
+                raise Exception(f"Error while trying to apply rule:\n {data}\ncurrent field: {fieldName}\ncurrent layer name: {key}")
         expressionString += """ELSE ''\nEND"""
         if expressionString == "CASE\nELSE ''\nEND": ## did not apply any rule
             return
@@ -268,7 +297,7 @@ class AssignFormatRulesToLayersAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'AssignFormatRulesToLayersAlgorithm'
+        return 'assignformatrulestolayersalgorithm'
 
     def displayName(self):
         """

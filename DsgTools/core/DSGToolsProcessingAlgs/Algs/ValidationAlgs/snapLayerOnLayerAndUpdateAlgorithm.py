@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from DsgTools.core.GeometricTools import layerHandler
 from PyQt5.QtCore import QCoreApplication
 
 import processing
@@ -47,6 +48,7 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
     REFERENCE_LAYER = 'REFERENCE_LAYER'
+    BUILD_CACHE = 'BUILD_CACHE'
     TOLERANCE = 'TOLERANCE'
     BEHAVIOR = 'BEHAVIOR'
     OUTPUT = 'OUTPUT'
@@ -101,6 +103,12 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 defaultValue=0
             )
         )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.BUILD_CACHE,
+                self.tr('Build local cache of the reference layer')
+            )
+        )
         self.addOutput(
             QgsProcessingOutputVectorLayer(
                 self.OUTPUT,
@@ -112,6 +120,7 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
+        algRunner = AlgRunner()
         layerHandler = LayerHandler()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
@@ -148,15 +157,49 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             self.BEHAVIOR,
             context
             )
-        layerHandler.snapToLayer(
-            inputLyr,
-            refLyr,
-            tol,
-            behavior,
-            onlySelected=onlySelected,
-            feedback=feedback
-            )
+        buildLocalCache = self.parameterAsBool(
+            parameters, self.BUILD_CACHE, context
+        )
+        nSteps = 6 if buildLocalCache else 4
+        currentStep = 0
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Creating aux structure..."))
+        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], geomType=inputLyr.wkbType(), onlySelected = onlySelected, feedback=multiStepFeedback)
+        currentStep += 1
 
+        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(auxLyr, context, multiStepFeedback)
+        currentStep += 1
+
+        if buildLocalCache:
+            multiStepFeedback.setProgressText(self.tr("Building local cache..."))
+            multiStepFeedback.setCurrentStep(currentStep)
+            refLyr = algRunner.runAddAutoIncrementalField(refLyr, context, multiStepFeedback)
+            currentStep += 1
+
+            multiStepFeedback.setCurrentStep(currentStep)
+            algRunner.runCreateSpatialIndex(refLyr, context, multiStepFeedback)
+            currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Running snap..."))
+        snapped = algRunner.runSnapGeometriesToLayer(
+            inputLayer=auxLyr,
+            referenceLayer=refLyr,
+            tol=tol,
+            behavior=behavior,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+
+        if multiStepFeedback.isCanceled():
+            return {self.OUTPUT: inputLyr}
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Updating original layer..."))
+        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], snapped, feedback=multiStepFeedback, onlySelected=onlySelected)
         return {self.OUTPUT: inputLyr}
 
     def name(self):

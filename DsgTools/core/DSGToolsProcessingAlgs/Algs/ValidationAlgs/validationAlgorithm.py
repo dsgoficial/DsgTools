@@ -22,24 +22,14 @@
 """
 from qgis.PyQt.QtCore import QVariant
 
-from qgis.core import Qgis, QgsVectorLayer, QgsCoordinateReferenceSystem, \
-                      QgsGeometry, QgsFeature, QgsDataSourceUri, QgsFeatureRequest, \
-                      QgsMessageLog, QgsExpression, QgsField, QgsWkbTypes, \
-                      QgsTask, QgsProcessingAlgorithm
+from qgis.core import QgsGeometry, QgsFeature, QgsField, QgsProcessingAlgorithm
 
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
+from qgis.core import (QgsFeatureSink,
                        QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
                        QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
                        QgsFields,
-                       QgsProcessingException)
+                       QgsProcessingException,
+                       QgsProject)
 
 class ValidationAlgorithm(QgsProcessingAlgorithm):
     """
@@ -71,8 +61,14 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
     
     def prepareAndReturnFlagSink(self, parameters, source, wkbType, context, UI_FIELD):
         flagFields = self.getFlagFields()
-        (flagSink, flag_id) = self.parameterAsSink(parameters, UI_FIELD,
-                context, flagFields, wkbType, source.sourceCrs())
+        (flagSink, flag_id) = self.parameterAsSink(
+            parameters,
+            UI_FIELD,
+            context,
+            flagFields,
+            wkbType,
+            source.sourceCrs() if source is not None else QgsProject.instance().crs()
+        )
         if flagSink is None:
             raise QgsProcessingException(self.invalidSinkError(parameters, UI_FIELD))
         return (flagSink, flag_id)

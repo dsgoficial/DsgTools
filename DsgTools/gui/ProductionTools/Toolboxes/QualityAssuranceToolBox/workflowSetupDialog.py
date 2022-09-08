@@ -110,6 +110,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             },
         })
         self.orderedTableWidget.setHeaderDoubleClickBehaviour("replicate")
+        self.promptToAll = None
 
     def resizeTable(self):
         """
@@ -145,23 +146,40 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         )
         self.resizeTable()
 
-    def confirmAction(self, msg, showCancel=True):
+    def confirmAction(self, msg, showCancel=True, addPromptToAll=False):
         """
         Raises a message box for confirmation before executing an action.
         :param msg: (str) message to be exposed.
         :param showCancel: (bool) whether Cancel button should be exposed.
         :return: (bool) whether action was confirmed.
         """
+        if not addPromptToAll: #comportamento antigo
+            if showCancel:
+                return QMessageBox.question(
+                        self, self.tr('Confirm Action'), msg,
+                        QMessageBox.Ok|QMessageBox.Cancel
+                    ) == QMessageBox.Ok
+            else:
+                return QMessageBox.question(
+                    self, self.tr('Confirm Action'), msg,
+                    QMessageBox.Ok
+                ) == QMessageBox.Ok
+        # prompt to all == true daqui para frente
+        if self.promptToAll is not None:
+            return self.promptToAll
+        # prompt to all == true daqui para frente e self.promptToAll is None 
+        # (o usuario nao mandou algum sim ou nao para todos)
+        buttonPromptList = QMessageBox.Ok | QMessageBox.YesAll | QMessageBox.NoAll
         if showCancel:
-            return QMessageBox.question(
-                self, self.tr('Confirm Action'), msg,
-                QMessageBox.Ok|QMessageBox.Cancel
-            ) == QMessageBox.Ok
-        else:
-            return QMessageBox.question(
-                self, self.tr('Confirm Action'), msg,
-                QMessageBox.Ok
-            ) == QMessageBox.Ok
+            buttonPromptList = buttonPromptList | QMessageBox.Cancel
+        answer = QMessageBox.question(
+            self, self.tr('Confirm Action'), msg,
+            buttonPromptList
+        )
+        if answer in [QMessageBox.YesAll, QMessageBox.NoAll]:
+            self.promptToAll = answer == QMessageBox.YesAll
+            return self.promptToAll
+        return answer == QMessageBox.Ok
 
     def clear(self):
         """
@@ -171,6 +189,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         self.nameLineEdit.setText("")
         self.versionLineEdit.setText("")
         self.orderedTableWidget.clear()
+        self.promptToAll = None
 
     def modelNameWidget(self, name=None):
         """
@@ -342,10 +361,12 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             },
             "source" : {
                 "type" : "xml",
-                "data" : xml
+                "data" : xml,
             },
             "metadata" : {
-                "originalName" : os.path.basename(filepath)
+                "originalName" : os.path.relpath(
+                    os.path.realpath(filepath),
+                    os.path.realpath(self.__qgisModelPath__)),
             }
         }
 
@@ -373,7 +394,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         msg = self.tr(
             "Model '{0}' is already imported would you like to overwrite it?"
         ).format(path)
-        if os.path.exists(path) and self.confirmAction(msg):
+        if os.path.exists(path) and self.confirmAction(msg, addPromptToAll=True):
             os.remove(path)
         if not os.path.exists(path):
             with open(path, "w") as f:

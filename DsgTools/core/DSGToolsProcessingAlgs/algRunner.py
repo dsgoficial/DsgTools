@@ -103,13 +103,13 @@ class AlgRunner:
         output = processing.run('native:deleteholes', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
-    def runOverlay(self, lyrA, lyrB, context, feedback=None, snap=0, operator=0, minArea=0.0001):
-        output = QgsProcessingUtils.generateTempFilename('output.shp')
+    def runOverlay(self, lyrA, lyrB, context, atype=0, btype=0, feedback=None, snap=0, operator=0, minArea=1e-8):
+        output, _ = self.generateGrassOutputAndError()
         parameters = {
             'ainput':lyrA,
-            'atype':0,
+            'atype':atype,
             'binput':lyrB,
-            'btype':0,
+            'btype':btype,
             'operator':operator,
             'snap':snap,
             '-t':False,
@@ -277,19 +277,24 @@ class AlgRunner:
         output = processing.run('qgis:snapgeometries', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
 
-    def runSnapLayerOnLayer(self, inputLayer, referenceLayer, tol, context, onlySelected=False, feedback=None, behavior=None):
+    def runSnapLayerOnLayer(self, inputLayer, referenceLayer, tol, context, onlySelected=False, feedback=None, behavior=None, buildCache=False):
         behavior = 0 if behavior is None else behavior
         parameters = {
             'INPUT' : inputLayer,
             'SELECTED' : onlySelected,
             'REFERENCE_LAYER' : referenceLayer,
             'TOLERANCE' : tol,
-            'BEHAVIOR' : behavior
+            'BEHAVIOR' : behavior,
+            'BUILD_CACHE': False,
         }
         output = processing.run('dsgtools:snaplayeronlayer', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
 
-    def runIdentifyDangles(self, inputLayer, searchRadius, context, feedback=None, onlySelected=False, lineFilter = None, polygonFilter = None, ignoreUnsegmented = False, ignoreInner = False, flagLyr=None, returnProcessingDict=False):
+    def runIdentifyDangles(
+            self, inputLayer, searchRadius, context, feedback=None, onlySelected=False,\
+            lineFilter = None, polygonFilter = None, ignoreDanglesOnUnsegmentedLines = False,\
+            inputIsBoundaryLayer = False, geographicBoundsLyr = None, flagLyr=None, returnProcessingDict=False
+        ):
         flagLyr = 'memory:' if flagLyr is None else flagLyr
         lineFilter = [] if lineFilter is None else lineFilter
         polygonFilter = [] if polygonFilter is None else polygonFilter
@@ -299,9 +304,10 @@ class AlgRunner:
             'TOLERANCE' : searchRadius,
             'LINEFILTERLAYERS' : lineFilter,
             'POLYGONFILTERLAYERS' : polygonFilter,
-            'TYPE' : ignoreUnsegmented,
-            'IGNOREINNER' : ignoreInner,
-            'FLAGS' : flagLyr
+            'IGNORE_DANGLES_ON_UNSEGMENTED_LINES' : ignoreDanglesOnUnsegmentedLines,
+            'INPUT_IS_BOUDARY_LAYER' : inputIsBoundaryLayer,
+            'GEOGRAPHIC_BOUNDARY': geographicBoundsLyr,
+            'FLAGS' : flagLyr,
         }
         output = processing.run('dsgtools:identifydangles', parameters, context=context, feedback=feedback)
         return output if returnProcessingDict else output['FLAGS']
@@ -348,12 +354,22 @@ class AlgRunner:
         output = processing.run("native:symmetricaldifference", parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
-    def runBoundary(self, inputLayer, context, feedback=None, outputLyr='memory:'):
+    def runBoundary(self, inputLayer, context, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
             'INPUT' : inputLayer,
             'OUTPUT' : outputLyr
         }
         output = processing.run("native:boundary", parameters, context=context, feedback=feedback)
+        return output['OUTPUT']
+    
+    def runMultipartToSingleParts(self, inputLayer, context, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT' : inputLayer,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run("native:multiparttosingleparts", parameters, context=context, feedback=feedback)
         return output['OUTPUT']
 
     def runBuffer(self, inputLayer, distance, context, dissolve=False, endCapStyle=None, joinStyle=None,\
@@ -707,6 +723,231 @@ class AlgRunner:
                 'INPUT': inputLyr,
                 'INTERSECT': intersectLyr,
                 'PREDICATE': predicate,
+                'OUTPUT': outputLyr
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+
+    def runCreateFieldWithExpression(self, inputLyr, expression, fieldName, context, fieldType=0, fieldLength=1000, fieldPrecision=0, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:fieldcalculator",
+            {
+                'INPUT': inputLyr,
+                'FIELD_NAME': fieldName,
+                'FIELD_TYPE': fieldType,
+                'FIELD_LENGTH': fieldLength,
+                'FORMULA': expression,
+                'OUTPUT': outputLyr,
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+
+    def runStringCsvToLayerList(self, stringCSV, context, feedback=None):
+        output = processing.run(
+            "dsgtools:stringcsvtolayerlistalgorithm",
+            {
+                'INPUTLAYERS': stringCSV,
+                'OUTPUT': 'memory:'
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+
+    def runClipRasterLayer(self, inputRaster, mask, context, feedback=None, outputRaster=None):
+        outputRaster = 'TEMPORARY_OUTPUT' if outputRaster is None else outputRaster
+        output = processing.run(
+            "gdal:cliprasterbymasklayer",
+            {
+                'INPUT': inputRaster,
+                'MASK': mask,
+                'SOURCE_CRS': None,
+                'TARGET_CRS': None,
+                'TARGET_EXTENT': None,
+                'NODATA': None,
+                'ALPHA_BAND': False,
+                'CROP_TO_CUTLINE': True,
+                'KEEP_RESOLUTION': False,
+                'SET_RESOLUTION': False,
+                'X_RESOLUTION': None,
+                'Y_RESOLUTION': None,
+                'MULTITHREADING': True,
+                'OPTIONS': '',
+                'DATA_TYPE': 0,
+                'EXTRA': '',
+                'OUTPUT': outputRaster
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+
+    def runGrassMapCalcSimple(self, inputA, expression, context, feedback=None, inputB=None, inputC=None, inputD=None, inputE=None, inputF=None, outputRaster=None):
+        outputRaster = 'TEMPORARY_OUTPUT' if outputRaster is None else outputRaster
+        output = processing.run(
+            "grass7:r.mapcalc.simple",
+            {
+                'a': inputA,
+                'b': inputB,
+                'c': inputC,
+                'd': inputD,
+                'e': inputE,
+                'f': inputF,
+                'expression': expression,
+                'output': outputRaster,
+                'GRASS_REGION_PARAMETER': None,
+                'GRASS_REGION_CELLSIZE_PARAMETER': 0,
+                'GRASS_RASTER_FORMAT_OPT': '',
+                'GRASS_RASTER_FORMAT_META': ''
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['output']
+
+    def runGrassReclass(self, inputRaster, expression, context, feedback=None, outputRaster=None):
+        outputRaster = 'TEMPORARY_OUTPUT' if outputRaster is None else outputRaster
+        output = processing.run(
+            "grass7:r.reclass",
+            {
+                'input': inputRaster,
+                'rules': '',
+                'txtrules': expression,
+                'output': outputRaster,
+                'GRASS_REGION_PARAMETER': None,
+                'GRASS_REGION_CELLSIZE_PARAMETER': 0,
+                'GRASS_RASTER_FORMAT_OPT': '',
+                'GRASS_RASTER_FORMAT_META': ''
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['output']
+
+    def runSieve(self, inputRaster, threshold, context, eightConectedness=False, feedback=None, outputRaster=None):
+        outputRaster = 'TEMPORARY_OUTPUT' if outputRaster is None else outputRaster
+        output = processing.run(
+            "gdal:sieve",
+            {
+                'INPUT': inputRaster,
+                'THRESHOLD': threshold,
+                'EIGHT_CONNECTEDNESS': eightConectedness,
+                'NO_MASK': False,
+                'MASK_LAYER': None,
+                'EXTRA': '',
+                'OUTPUT': outputRaster
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+
+
+    def runChaikenSmoothing(self, inputLyr, threshold, context,
+                                 feedback=None, snap=None, minArea=None,
+                                 iterations=None, type=None, returnError=False,
+                                 flags=None):
+        """
+        Runs simplify GRASS algorithm
+        :param inputLyr: (QgsVectorLayer) layer, or layers, to be dissolved.
+        :param method: (QgsProcessingParameterEnum) which algorithm would be
+            used to simplify lines, in this case, Douglas-Peucker Algorithm.
+        :param threshold: (QgsProcessingParameterNumber) give in map units.
+            For latitude-longitude locations give in decimal degree.
+        :param context: (QgsProcessingContext) processing context.
+        :param feedback: (QgsProcessingFeedback) QGIS object to keep track of
+            progress/cancelling option.
+        :param onlySelected: (QgsProcessingParameterBoolean) process only
+            selected features.
+        :param outputLyr: (str) URI to output layer.
+        :return: (QgsVectorLayer) simplified output layer or layers.
+        """
+        snap = -1 if snap is None else snap
+        minArea = 0.0001 if minArea is None else minArea
+        iterations = 1 if iterations is None else iterations
+        flags = 'memory:' if flags is None else flags
+        algType = [0, 1, 2] if type is None else type
+        output, error = self.generateGrassOutputAndError()
+        parameters = {
+            'input': inputLyr,
+            'type':algType,
+            'cats':'',
+            'where':'',
+            'method':8,
+            'threshold':threshold,
+            'look_ahead':7,
+            'reduction':50,
+            'slide':0.5,
+            'angle_thresh':3,
+            'degree_thresh':0,
+            'closeness_thresh':0,
+            'betweeness_thresh':0,
+            'alpha':1,
+            'beta':1,
+            'iterations':iterations,
+            '-t':False,
+            '-l':True,
+            'output':output,
+            'error':error,
+            'GRASS_REGION_PARAMETER':None,
+            'GRASS_SNAP_TOLERANCE_PARAMETER':snap,
+            'GRASS_MIN_AREA_PARAMETER':minArea,
+            'GRASS_OUTPUT_TYPE_PARAMETER':0,
+            'GRASS_VECTOR_DSCO':'',
+            'GRASS_VECTOR_LCO':''}
+        outputDict = processing.run("grass7:v.generalize", parameters,
+                                    context=context, feedback=feedback)
+        return self.getGrassReturn(outputDict, context, returnError=returnError)
+
+    def runGdalPolygonize(self, inputRaster, context, band=1, field=None, eightConectedness=False, feedback=None, outputLyr=None):
+        outputLyr = 'TEMPORARY_OUTPUT' if outputLyr is None else outputLyr
+        field = 'DN' if field is None else field
+        output = processing.run(
+            "gdal:polygonize",
+            {
+                'INPUT': inputRaster,
+                'BAND': band,
+                'FIELD': field,
+                'EIGHT_CONNECTEDNESS': eightConectedness,
+                'EXTRA': '',
+                'OUTPUT': outputLyr
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runExtractSpecificVertices(self, inputLyr, vertices, context, feedback=None, outputLyr=None):
+        outputLyr = 'TEMPORARY_OUTPUT' if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:extractspecificvertices",
+            {
+                'INPUT': inputLyr,
+                'VERTICES': vertices,
+                'OUTPUT': outputLyr,
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+    
+    def runCreateGrid(self, extent, crs, hSpacing, vSpacing, context, type=2, feedback=None, outputLyr=None, hOverlay=0, vOverlay=0):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:creategrid",
+            {
+                'TYPE': type,
+                'EXTENT': extent,
+                'HSPACING': hSpacing,
+                'VSPACING': vSpacing,
+                'HOVERLAY': hOverlay,
+                'VOVERLAY': vOverlay,
+                'CRS': crs,
                 'OUTPUT': outputLyr
             },
             context=context,
