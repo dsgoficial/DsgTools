@@ -929,6 +929,12 @@ class AlgRunner:
             {
                 'INPUT': inputLyr,
                 'VERTICES': vertices,
+                'OUTPUT': outputLyr,
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
     
     def runCreateGrid(self, extent, crs, hSpacing, vSpacing, context, type=2, feedback=None, outputLyr=None, hOverlay=0, vOverlay=0):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
