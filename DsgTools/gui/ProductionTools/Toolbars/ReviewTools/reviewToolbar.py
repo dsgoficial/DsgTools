@@ -396,7 +396,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         if layer is None:
             return
         bbox = feat.geometry().boundingBox()
-        bbox.grow(min(bbox.width(),bbox.height())*0.2)
+        bbox.grow(min(bbox.width(),bbox.height())*0.4)
         epsg = self.iface.mapCanvas().mapSettings().destinationCrs().authid()
         crsDest = QgsCoordinateReferenceSystem(epsg)
         srid = layer.crs().authid()
