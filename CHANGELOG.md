@@ -15,6 +15,7 @@ Novas funcionalidades:
 - Novo processo de identificar problemas de direcionamento com elementos da rede (massas d'água com e sem fluxo, oceano, vala, sumidouro e vertedouro);
 - Novo processo de identificar problemas nos ângulos entre os trechos de drenagem (verificar deltas);
 - Nova barra de ferramentas de revisão;
+- Novo processo de construir grid de revisão;
 
 Melhorias:
 - Melhoria de desempenho no identificar Z;
