@@ -20,11 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
-from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 from ...algRunner import AlgRunner
-import processing, os, requests
-from time import sleep
 from qgis.PyQt.Qt import QVariant
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing,
@@ -33,29 +29,10 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterFeatureSink,
                        QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
                        QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
                        QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
                        QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterExpression,
                        QgsProcessingException,
-                       QgsProcessingParameterString,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterType,
-                       QgsProcessingParameterCrs,
-                       QgsCoordinateTransform,
-                       QgsProject,
-                       QgsCoordinateReferenceSystem,
                        QgsField,
                        QgsFields)
 
@@ -72,10 +49,11 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
         """
 
         self.addParameter(
-            QgsProcessingParameterVectorLayer(
+            QgsProcessingParameterFeatureSource(
                 self.INPUT,
                 self.tr('Input Polygon Layer'),
-                [QgsProcessing.TypeVectorPolygon]
+                [QgsProcessing.TypeVectorPolygon],
+                optional=False
             )
         )
 
@@ -111,22 +89,17 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         algRunner = AlgRunner()
-        inputLyr = self.parameterAsVectorLayer(
+        inputSource = self.parameterAsSource(
             parameters,
             self.INPUT,
             context
         )
-        if inputLyr is None:
+        if inputSource is None:
             raise QgsProcessingException(
                 self.invalidSourceError(
                     parameters, self.INPUT
                 )
             )
-        stopScaleIdx = self.parameterAsEnum(
-            parameters,
-            self.STOP_SCALE,
-            context
-        )
         fields = self.getOutputFields()
 
         xGridSize = self.parameterAsDouble(parameters, self.X_GRID_SIZE, context)
@@ -137,13 +110,13 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
             context,
             fields,
             QgsWkbTypes.Polygon,
-            inputLyr.crs()
+            inputSource.sourceCrs()
         )
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         multiStepFeedback.setCurrentStep(0)
         grid = algRunner.runCreateGrid(
-            extent=inputLyr.extent(),
-            crs=inputLyr.crs(),
+            extent=inputSource.sourceExtent(),
+            crs=inputSource.sourceCrs(),
             hSpacing=xGridSize,
             vSpacing=yGridSize,
             feedback=multiStepFeedback,
@@ -156,7 +129,7 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(2)
         filteredGrid = algRunner.runExtractByLocation(
             inputLyr=grid,
-            intersectLyr=inputLyr,
+            intersectLyr=parameters[self.INPUT],
             context=context,
             feedback=multiStepFeedback
         )

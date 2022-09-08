@@ -56,7 +56,9 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         self.mMapLayerComboBox.layerChanged.connect(self.rankFieldComboBox.setLayer)
         self.setToolTip('')
         self.visitedFieldComboBox.setToolTip(self.tr('Set visited field'))
+        self.visitedFieldComboBox.setAllowEmptyFieldName(True)
         self.rankFieldComboBox.setToolTip(self.tr('Set rank field'))
+        self.rankFieldComboBox.setAllowEmptyFieldName(True)
         self.zoomToNextCheckBox.setChecked(True)
         icon_path = ':/plugins/DsgTools/icons/attributeSelector.png'
         text = self.tr('DSGTools: Mark tile as done')
@@ -84,6 +86,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         self.mMapLayerComboBox.setAllowEmptyLayer(True)
         self.mMapLayerComboBox.setCurrentIndex(0)
         self.currentTile = None
+        self.originalValueList = self.getValueListFromQsettings()
     
     def add_action(self, icon_path: str, text: str, callback: QAction, parent: Optional[QWidget]=None) -> QAction:
         icon = QIcon(icon_path)
@@ -99,13 +102,77 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         enabled = allowed and toggled
         self.applyPushButton.setEnabled(enabled)
     
+    @pyqtSlot(int, name='on_rankFieldComboBox_currentIndexChanged')
+    def validateRankField(self, idx: int) -> bool:
+        if idx == 0:
+            return False
+        fieldName = self.rankFieldComboBox.itemText(idx)
+        fieldList = [field for field in self.rankFieldComboBox.fields() if field.name() == fieldName]
+        if len(fieldList) == 0 or fieldList[0].type() != QVariant.Int:
+            self.iface.messageBar().pushMessage(
+                title=self.tr('Warning!'),
+                text=self.tr('Invalid rank field! Select an integer field with unique ordered items.'),
+                level=Qgis.Warning,
+                duration=2
+            )
+            self.rankFieldComboBox.setCurrentIndex(0)
+            return False
+        return True
+    
+    @pyqtSlot(int, name='on_visitedFieldComboBox_currentIndexChanged')
+    def validateVisitedField(self, idx: int) -> bool:
+        if idx == 0:
+            return False
+        fieldName = self.visitedFieldComboBox.itemText(idx)
+        fieldList = [
+            field for field in self.visitedFieldComboBox.fields() \
+                if field.name() == fieldName
+        ]
+        if len(fieldList) == 0 or fieldList[0].type() != QVariant.Bool:
+            self.iface.messageBar().pushMessage(
+                title=self.tr('Warning!'),
+                text=self.tr('Invalid attribute filter! Select a boolean field.'),
+                level=Qgis.Warning,
+                duration=2
+            )
+            self.visitedFieldComboBox.setCurrentIndex(0)
+            return False
+        return True
+    
     def on_preparePushButton_clicked(self) -> None:
+        currentLayer = self.mMapLayerComboBox.currentLayer()
+        if currentLayer is None:
+            self.iface.messageBar().pushMessage(
+                title=self.tr('Warning!'),
+                text=self.tr('Select a layer to prepare the environment!'),
+                level=Qgis.Warning,
+                duration=2
+            )
+            return
+        if self.visitedFieldComboBox.currentIndex() == 0:
+            self.iface.messageBar().pushMessage(
+                title=self.tr('Warning!'),
+                text=self.tr('Invalid attribute filter! Select a boolean field.'),
+                level=Qgis.Warning,
+                duration=2
+            )
+            return
+        if not self.validateVisitedField(self.visitedFieldComboBox.currentIndex()):
+            return
+        if self.rankFieldComboBox.currentIndex() == 0:
+            self.iface.messageBar().pushMessage(
+                title=self.tr('Warning!'),
+                text=self.tr('Invalid rank field! Select an integer field with unique ordered items.'),
+                level=Qgis.Warning,
+                duration=2
+            )
+            return
+        if not self.validateRankField(self.rankFieldComboBox.currentIndex()):
+            return
+
         overviewWidget = self.getOverviewWidget()
         if overviewWidget is not None:
             overviewWidget.show()
-        currentLayer = self.mMapLayerComboBox.currentLayer()
-        if currentLayer is None:
-            return
         currentLayerFromTreeRoot = QgsProject.instance().layerTreeRoot().findLayer( currentLayer.id() )
         currentLayerFromTreeRoot.setCustomProperty( "overview", 1 )
         fieldList = [
@@ -122,6 +189,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
             return
         currentField = fieldList[0]
         self.applyStyle(currentLayer, currentField.name())
+        self.addCurrentLayerToGenericSelectionBlackList()
         
     
     def getOverviewWidget(self) -> None:
@@ -328,6 +396,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         if layer is None:
             return
         bbox = feat.geometry().boundingBox()
+        bbox.grow(min(bbox.width(),bbox.height())*0.8)
         epsg = self.iface.mapCanvas().mapSettings().destinationCrs().authid()
         crsDest = QgsCoordinateReferenceSystem(epsg)
         srid = layer.crs().authid()
@@ -337,6 +406,56 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         newBox = coordinateTransformer.transform(bbox)
         self.iface.mapCanvas().setExtent(newBox)
         self.iface.mapCanvas().refresh()
+    
+    def addCurrentLayerToGenericSelectionBlackList(self, layer=None):
+        layer = self.mMapLayerComboBox.currentLayer() if layer is None else layer
+        if layer is None:
+            return
+        self.addLayerNameToGenericSelectionBlackList(layer.name())
+
+    @pyqtSlot(QgsVectorLayer, name='on_mMapLayerComboBox_layerChanged')
+    def removeLayerFromGenericSelectionBlackList(self, layer=None):
+        layer = self.mMapLayerComboBox.currentLayer() if layer is None else layer
+        if layer is None:
+            return
+        if self.mMapLayerComboBox.currentIndex() == 0:
+            return
+        self.removeLayerNameToGenericSelectionBlackList(layer.name())
+
+    def addLayerNameToGenericSelectionBlackList(self, layerName: str):
+        settings = QSettings()
+        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        valueList = settings.value('valueList').split(';')
+        if layerName in valueList:
+            return
+        valueList.append(layerName)
+        settings.setValue('valueList', ';'.join(valueList))
+        settings.endGroup()
+
+    def removeLayerNameToGenericSelectionBlackList(self, layerName):
+        settings = QSettings()
+        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        valueList = settings.value('valueList').split(';')
+        if layerName not in valueList or layerName in self.originalValueList:
+            return
+        valueList.pop(layerName)
+        settings.setValue('valueList', ';'.join(valueList))
+        settings.endGroup()
+    
+    def getValueListFromQsettings(self):
+        settings = QSettings()
+        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        valueList = settings.value('valueList').split(';')
+        settings.endGroup()
+        return valueList
+    
+    def restoreOriginalValueList(self):
+        settings = QSettings()
+        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        valueList = self.originalValueList
+        settings.setValue('valueList', ';'.join(valueList))
+        settings.endGroup()
 
     def unload(self) -> None:
+        self.restoreOriginalValueList()
         self.iface.unregisterMainWindowAction(self.applyPushButtonAction)      
