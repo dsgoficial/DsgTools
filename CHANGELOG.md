@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.5.0
+## 4.5.0 - 2022-09-08
 
 Novas funcionalidades:
 - Novo processo de identificar undershoot de polígonos;
@@ -26,7 +26,7 @@ Melhorias:
 Correção de bug:
 - Tratamento de geometria nula no Identify Out Of Bounds Angles in Coverage;
 
-## 4.4.0
+## 4.4.0 - 2022-07-12
 
 Novas funcionalidades:
 
