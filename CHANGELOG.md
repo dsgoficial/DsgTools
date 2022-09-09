@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 4.6.0
+
+
+
 ## 4.5.0 - 2022-09-08
 
 Novas funcionalidades:
