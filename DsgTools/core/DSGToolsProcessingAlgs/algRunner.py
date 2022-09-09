@@ -954,3 +954,18 @@ class AlgRunner:
             feedback=feedback
         )
         return output['OUTPUT']
+
+    def runExtendLines(self, inputLyr, startDistance, endDistance, context, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:extendlines",
+            {
+                'INPUT': inputLyr,
+                'START_DISTANCE': startDistance,
+                'END_DISTANCE': endDistance,
+                'OUTPUT': outputLyr,
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
