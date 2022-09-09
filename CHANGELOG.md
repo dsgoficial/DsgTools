@@ -2,6 +2,9 @@
 
 ## 4.6.0
 
+Novas funcionalidades:
+- Novo processo de estender linhas próximas da moldura;
+
 Melhorias:
 - Adicionada a opção de atribuir um id de atividade para o grid de revisão criado no processo de criar grid de edição;
 - Melhorado o estilo do grid utilizado pela barra de ferramentas de revisão;
