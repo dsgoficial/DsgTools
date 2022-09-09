@@ -252,6 +252,10 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         originalFeaturesToUpdateDict = {
             feat['featid']: feat for feat in inputLyr.getFeatures(expression)
         }
+        inputLyr.startEditing()
+        editText = 'Extending lines from start points.' if startPoint \
+            else 'Extending lines from end points.'
+        inputLyr.beginEditCommand(editText)
         for current, feat in enumerate(extendedLines.getFeatures()):
             if multiStepFeedback.isCanceled():
                 return
@@ -262,6 +266,7 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
                 skipDefaultValue=True,
             )
             multiStepFeedback.setProgress(stepSize * current)
+        inputLyr.endEditCommand()
 
     def name(self):
         """
