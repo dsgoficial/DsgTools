@@ -20,25 +20,22 @@
  *                                                                         *
  ***************************************************************************/
 """
-from ...algRunner import AlgRunner
-from qgis.PyQt.Qt import QVariant
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
+from qgis.core import (QgsFeature, QgsFeatureSink, QgsField, QgsFields,
+                       QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsWkbTypes,
+                       QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterNumber,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingException,
-                       QgsField,
-                       QgsFields)
+                       QgsProcessingParameterString, QgsWkbTypes)
+from qgis.PyQt.Qt import QVariant
+
+from ...algRunner import AlgRunner
+
 
 class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
     INPUT = 'INPUT'
-    STOP_SCALE = 'STOP_SCALE'
+    RELATED_TASK_ID = 'RELATED_TASK_ID'
     X_GRID_SIZE = 'X_GRID_SIZE'
     Y_GRID_SIZE = 'Y_GRID_SIZE'
     OUTPUT = 'OUTPUT'
@@ -74,6 +71,14 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=0.005,
                 minValue=0,
                 type=QgsProcessingParameterNumber.Double,
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.RELATED_TASK_ID,
+                self.tr('Related task id'),
+                optional=True,
             )
         )
 
@@ -134,7 +139,9 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(3)
-        sortedFeatures = self.sortGrid(filteredGrid, fields, feedback=multiStepFeedback)
+        sortedFeatures = self.sortGridAndCreateOutputFetures(
+            filteredGrid, fields, parameters, context, feedback=multiStepFeedback
+        )
         multiStepFeedback.setCurrentStep(4)
         list(
             map(
@@ -153,6 +160,7 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
         fields = QgsFields()
         fields.append(QgsField('rank', QVariant.Int))
         fields.append(QgsField('visited', QVariant.Bool))
+        fields.append(QgsField('atividade_id', QVariant.String))
         return fields
     
     def buildSortCriteria(self, feat):
@@ -161,9 +169,12 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
         return (firstVertex.x(), firstVertex.y())
 
     
-    def sortGrid(self, grid, fields, feedback):
+    def sortGridAndCreateOutputFetures(self, grid, fields, parameters, context, feedback):
         featList = [feat for feat in grid.getFeatures()]
         criteria = lambda feat: self.buildSortCriteria(feat)
+        relatedTaskId = self.parameterAsString(
+            parameters, self.RELATED_TASK_ID, context
+        )
         outputFeatList = []
         nSteps = len(featList)
         if nSteps == 0:
@@ -181,6 +192,7 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
             newFeat = QgsFeature(fields)
             newFeat['visited'] = False
             newFeat['rank'] = current
+            newFeat['atividade_id'] = relatedTaskId
             newFeat.setGeometry(feat.geometry())
             outputFeatList.append(newFeat)
             feedback.setProgress(current * stepSize)

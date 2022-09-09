@@ -2,7 +2,9 @@
 
 ## 4.6.0
 
-
+Melhorias:
+- Adicionada a opção de atribuir um id de atividade para o grid de revisão criado no processo de criar grid de edição;
+- Melhorado o estilo do grid utilizado pela barra de ferramentas de revisão;
 
 ## 4.5.0 - 2022-09-08
 
