@@ -26,8 +26,7 @@ from qgis.core import (QgsFeature, QgsFeatureSink, QgsField, QgsFields,
                        QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterString, QgsWkbTypes)
+                       QgsProcessingParameterNumber, QgsWkbTypes)
 from qgis.PyQt.Qt import QVariant
 
 from ...algRunner import AlgRunner
@@ -75,10 +74,11 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterString(
+            QgsProcessingParameterNumber(
                 self.RELATED_TASK_ID,
                 self.tr('Related task id'),
                 optional=True,
+                type=QgsProcessingParameterNumber.Integer,
             )
         )
 
@@ -160,19 +160,12 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
         fields = QgsFields()
         fields.append(QgsField('rank', QVariant.Int))
         fields.append(QgsField('visited', QVariant.Bool))
-        fields.append(QgsField('atividade_id', QVariant.String))
+        fields.append(QgsField('atividade_id', QVariant.Int))
         return fields
-    
-    def buildSortCriteria(self, feat):
-        geom = feat.geometry()
-        firstVertex = geom.vertexAt(0)
-        return (firstVertex.x(), firstVertex.y())
-
     
     def sortGridAndCreateOutputFetures(self, grid, fields, parameters, context, feedback):
         featList = [feat for feat in grid.getFeatures()]
-        criteria = lambda feat: self.buildSortCriteria(feat)
-        relatedTaskId = self.parameterAsString(
+        relatedTaskId = self.parameterAsInt(
             parameters, self.RELATED_TASK_ID, context
         )
         outputFeatList = []
