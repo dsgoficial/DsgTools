@@ -9,6 +9,9 @@ Melhorias:
 - Adicionada a opção de atribuir um id de atividade para o grid de revisão criado no processo de criar grid de edição;
 - Melhorado o estilo do grid utilizado pela barra de ferramentas de revisão;
 
+Correção de bug:
+- Correção de bug no identificar pontas soltas (o algoritmo estava levantando flag em vértice ocupado dentro do raio de busca);
+
 ## 4.5.0 - 2022-09-08
 
 Novas funcionalidades:

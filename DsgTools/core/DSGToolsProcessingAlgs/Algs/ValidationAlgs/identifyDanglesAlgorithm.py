@@ -378,7 +378,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             # search radius to narrow down candidates
             request = QgsFeatureRequest().setFilterRect(bufferBB)
             bufferCount, intersectCount = 0, 0
-            point_relationship_lambda = lambda x: qgisPoint.intersects(x) \
+            point_relationship_lambda = lambda x: qgisPoint.intersects(x) or qgisPoint.distance(x) < 1e-8 \
                 if ignoreDanglesOnUnsegmentedLines else qgisPoint.touches(x)
             for feat in inputLyr.getFeatures(request):
                 geom = feat.geometry()
@@ -388,6 +388,8 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
                     bufferCount += 1
                     if point_relationship_lambda(geom):
                         intersectCount += 1
+            if intersectCount > 1:
+                return None
             if inputIsBoundaryLayer and intersectCount == 1 and bufferCount == 1:
                 if relatedDict == dict():
                     return point
