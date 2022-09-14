@@ -319,7 +319,7 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
     
     def getOutputFields(self):
         fields = QgsFields()
-        fields.append(QgsField('class', QVariant.String))
+        fields.append(QgsField('class', QVariant.Int))
         fields.append(QgsField('class_min', QVariant.Int))
         fields.append(QgsField('class_max', QVariant.Int))
 
