@@ -235,7 +235,7 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
             if multiStepFeedback.isCanceled():
                 break
             newFeat = QgsFeature(outputFields)
-            newFeat['class'] = feat['a_DN']
+            newFeat['class'] = int(feat['a_DN'])
             newFeat['class_min'], newFeat['class_max'] = slicingThresholdDict[feat['a_DN']]
             newFeat.setGeometry(feat.geometry())
             output_sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
