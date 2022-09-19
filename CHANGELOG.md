@@ -4,6 +4,7 @@
 
 Novas funcionalidades:
 - Novo processo de estender linhas próximas da moldura;
+- Novo algoritmo de detecção de geometrias nulas;
 
 Melhorias:
 - Adicionada a opção de atribuir um id de atividade para o grid de revisão criado no processo de criar grid de edição;
