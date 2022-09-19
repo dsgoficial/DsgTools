@@ -81,8 +81,15 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
             parent = self.parent
         )
         self.iface.registerMainWindowAction(self.nextTileAction, '')
-
-        self.iface.registerMainWindowAction(self.applyPushButtonAction, '')
+        
+        self.resetPushButtonAction = self.add_action(
+            icon_path=":/plugins/DsgTools/icons/reset.png",
+            text=self.tr('DSGTools: Reset visited tiles on review toolbar'),
+            callback=self.resetPushButton.click,
+            parent = self.parent
+        )
+        self.iface.registerMainWindowAction(self.resetPushButtonAction, '')
+        
         self.mMapLayerComboBox.setAllowEmptyLayer(True)
         self.mMapLayerComboBox.setCurrentIndex(0)
         self.currentTile = None
@@ -104,7 +111,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
     
     @pyqtSlot(int, name='on_rankFieldComboBox_currentIndexChanged')
     def validateRankField(self, idx: int) -> bool:
-        if idx == 0:
+        if idx in (-1, 0):
             return False
         fieldName = self.rankFieldComboBox.itemText(idx)
         fieldList = [field for field in self.rankFieldComboBox.fields() if field.name() == fieldName]
@@ -121,7 +128,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
     
     @pyqtSlot(int, name='on_visitedFieldComboBox_currentIndexChanged')
     def validateVisitedField(self, idx: int) -> bool:
-        if idx == 0:
+        if idx in (-1, 0):
             return False
         fieldName = self.visitedFieldComboBox.itemText(idx)
         fieldList = [
@@ -190,6 +197,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         currentField = fieldList[0]
         self.applyStyle(currentLayer, currentField.name())
         self.addCurrentLayerToGenericSelectionBlackList()
+        currentLayer.setReadOnly(True)
         
     
     def getOverviewWidget(self) -> None:
@@ -287,6 +295,30 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         self.currentTile = nextFeature.id()
     
     @pyqtSlot(bool)
+    def on_resetPushButton_clicked(self) -> None:
+        layer = self.mMapLayerComboBox.currentLayer()
+        if layer is None:
+            return
+        visitedField = self.visitedFieldComboBox.currentField()
+        if visitedField is None:
+            return
+        if not QMessageBox.question(
+            self, self.tr('DSGTools Review Toolbar: Confirm action'), self.tr('Would you like to set all features from grid as unvisited?'),
+            QMessageBox.Ok|QMessageBox.Cancel
+        ) == QMessageBox.Ok:
+            return
+        layer.setReadOnly(False)
+        layer.startEditing()
+        layer.beginEditCommand('DSGTools review tool')
+        for feat in layer.getFeatures():
+            feat[visitedField] = False
+            layer.updateFeature(feat)
+        layer.endEditCommand()
+        layer.commitChanges()
+        layer.setReadOnly(True)
+
+    
+    @pyqtSlot(bool)
     def on_applyPushButton_clicked(self) -> None:
         selectedFeatures = self.getSelectedFeatures()
         featList = selectedFeatures if selectedFeatures != [] \
@@ -336,6 +368,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         if layer is None:
             return
         visitedField = self.visitedFieldComboBox.currentField()
+        layer.setReadOnly(False)
         layer.startEditing()
         layer.beginEditCommand('DSGTools review tool')
         for feat in featureList:
@@ -343,6 +376,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
             layer.updateFeature(feat)
         layer.endEditCommand()
         layer.commitChanges()
+        layer.setReadOnly(True)
         
     
     def getNextFeature(self, currentFeature, forward=True) -> QgsFeature:

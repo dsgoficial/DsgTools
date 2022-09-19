@@ -84,5 +84,6 @@
         <file>icons/key.png</file>
         <file>icons/sort.png</file>
         <file>icons/review.png</file>
+        <file>icons/reset.png</file>
     </qresource>
 </RCC>
