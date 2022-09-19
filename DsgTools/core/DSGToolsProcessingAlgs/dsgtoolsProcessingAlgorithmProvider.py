@@ -47,6 +47,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFilterT
     AssignFilterToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFormatRulesToLayersAlgorithm import \
     AssignFormatRulesToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.detectNullGeometriesAlgorithm import \
+    DetectNullGeometriesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignMeasureColumnToLayersAlgorithm import \
     AssignMeasureColumnToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.lockAttributeEditingAlgorithm import \
@@ -345,6 +347,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             RemoveEmptyLayers(),
             IdentifyGeometriesWithLargeVertexDensityAlgorithm(),
             AssignFormatRulesToLayersAlgorithm(),
+            DetectNullGeometriesAlgorithm(),
             IdentifyDuplicatedVertexesAlgorithm(),
             IdentifyMultiPartGeometriesAlgorithm(),
             IdentifyPolygonUndershootsAlgorithm(),
