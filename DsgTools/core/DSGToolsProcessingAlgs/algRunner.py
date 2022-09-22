@@ -759,7 +759,7 @@ class AlgRunner:
         )
         return output['OUTPUT']
 
-    def runClipRasterLayer(self, inputRaster, mask, context, feedback=None, outputRaster=None):
+    def runClipRasterLayer(self, inputRaster, mask, context, feedback=None, outputRaster=None, noData=None):
         outputRaster = 'TEMPORARY_OUTPUT' if outputRaster is None else outputRaster
         output = processing.run(
             "gdal:cliprasterbymasklayer",
@@ -769,20 +769,20 @@ class AlgRunner:
                 'SOURCE_CRS': None,
                 'TARGET_CRS': None,
                 'TARGET_EXTENT': None,
-                'NODATA': None,
+                'NODATA': noData,
                 'ALPHA_BAND': False,
                 'CROP_TO_CUTLINE': True,
                 'KEEP_RESOLUTION': False,
                 'SET_RESOLUTION': False,
                 'X_RESOLUTION': None,
                 'Y_RESOLUTION': None,
-                'MULTITHREADING': True,
+                'MULTITHREADING': False,
                 'OPTIONS': '',
                 'DATA_TYPE': 0,
                 'EXTRA': '',
                 'OUTPUT': outputRaster
             },
-            context=context,
+            # context=context,
             feedback=feedback
         )
         return output['OUTPUT']
