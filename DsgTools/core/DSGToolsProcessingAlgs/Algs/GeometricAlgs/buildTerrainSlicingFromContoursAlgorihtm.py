@@ -137,7 +137,7 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
         outputFields = self.getOutputFields()
         (output_sink, output_sink_id) = self.getOutputSink(inputRaster, outputFields, parameters, context)
 
-        multiStepFeedback = QgsProcessingMultiStepFeedback(11, feedback) #ajustar depois
+        multiStepFeedback = QgsProcessingMultiStepFeedback(14, feedback) #ajustar depois
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
 
@@ -148,7 +148,8 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
             operator=2
-        ) if areaWithoutInformationSource is not None else parameters[self.GEOGRAPHIC_BOUNDARY]
+        ) if areaWithoutInformationSource is not None and \
+            areaWithoutInformationSource.featureCount() > 0 else parameters[self.GEOGRAPHIC_BOUNDARY]
         
         currentStep += 1
 
@@ -188,6 +189,7 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
             feedback=multiStepFeedback
         )
         currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         clippedRaster = algRunner.runClipRasterLayer(
             inputRaster,
             mask=bufferedGeographicBounds,
@@ -247,6 +249,9 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
             feedback=multiStepFeedback
         )
         currentStep += 1
+        # multiStepFeedback.setCurrentStep(currentStep)
+        # cleanedPolygons = self.cleanPolyonLayer()
+        # currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         algRunner.runCreateSpatialIndex(overlayedPolygons, context, feedback=multiStepFeedback)
         currentStep += 1
@@ -288,28 +293,30 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
         geom = feat.geometry()
         _, donutholes = self.geometryHandler.getOuterShellAndHoles(geom, False)
         filteredHoles = []
+        holesIdsToDelete = set()
         if donutholes == []:
             return geom
         def holeWithValue(centerPoint):
             centerPointBB = centerPoint.boundingBox()
             for polygonFeat in overlayerPolygons.getFeatures(centerPointBB):
                 polygonGeom = polygonFeat.geometry()
+                if polygonGeom.equals(geom):
+                    continue
                 if polygonGeom.intersects(centerPoint):
                     return True
             return False
-        for hole in donutholes:
+        for idx, hole in enumerate(donutholes):
             centerPoint = hole.pointOnSurface()
             hasValue = holeWithValue(centerPoint)
             if not hasValue:
+                holesIdsToDelete.add(idx)
                 continue
             filteredHoles.append(hole)
         if donutholes == filteredHoles:
             return geom
-        outerShell = geom.removeInteriorRings()
-        newGeom = outerShell.addRing(filteredHoles[0])
-        for ring in filteredHoles[1::]:
-            newGeom = newGeom.addRing(ring)
-        return newGeom
+        for idx in holesIdsToDelete:
+            geom.deleteRing(idx)
+        return geom
 
     def overlayPolygonLayer(self, inputLyr, polygonLyr, crs, context, feedback, operator=0):
         parameters = {
