@@ -222,7 +222,7 @@ class SpatialRelationsHandler(QObject):
         multiStepFeedback.setCurrentStep(3)
         self.populateContourAreaDict(
             polygonLyr,
-            boundsLineLyr,
+            geoBoundsLyr,
             attributeName,
             contourAreaDict,
             contourSpatialIdx,
@@ -231,9 +231,9 @@ class SpatialRelationsHandler(QObject):
         )
         return contourAreaDict
     
-    def populateContourAreaDict(self, polygonLyr, boundsLineLyr, attributeName,
+    def populateContourAreaDict(self, polygonLyr, geoBoundsLyr, attributeName,
         contourAreaDict, contourSpatialIdx, contourIdDict, feedback=None):
-        boundsGeom = [i for i in boundsLineLyr.getFeatures()][0].geometry() if boundsLineLyr is not None else None
+        boundsGeom = [i for i in geoBoundsLyr.getFeatures()][0].geometry() if geoBoundsLyr is not None else None
         nPolygons = polygonLyr.featureCount()
         size = 100/nPolygons if nPolygons else 0
         for current, feat in enumerate(polygonLyr.getFeatures()):
@@ -254,7 +254,7 @@ class SpatialRelationsHandler(QObject):
                     contourValue = candidateContourFeat[attributeName]
                     candidateContourGeom = candidateContourFeat.geometry()\
                         if boundsGeom is not None and\
-                            candidateContourFeat.geometry().intersects(boundsGeom)\
+                            not candidateContourFeat.geometry().intersects(boundsGeom)\
                         else candidateContourFeat.geometry().intersection(boundsGeom)
                     contourAreaDict['areaContourRelations'][featId][contourValue].append(candidateContourGeom)
             if feedback is not None:

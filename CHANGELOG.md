@@ -13,6 +13,7 @@ Melhorias:
 
 Correção de bug:
 - Correção de bug no identificar pontas soltas (o algoritmo estava levantando flag em vértice ocupado dentro do raio de busca);
+- Correção de bug no identificar erros no terreno (o algoritmo estava levantando a geometria da flag confusa);
 
 ## 4.5.0 - 2022-09-08
 
