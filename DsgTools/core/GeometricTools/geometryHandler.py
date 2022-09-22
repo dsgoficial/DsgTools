@@ -22,7 +22,7 @@
 """
 from __future__ import absolute_import
 from builtins import range
-from itertools import combinations
+from itertools import combinations, product
 import math
 from math import pi
 from functools import partial
@@ -723,4 +723,3 @@ class GeometryHandler(QObject):
         if azimuth < 0:
             azimuth += 360.0
         return azimuth
-        

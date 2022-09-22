@@ -254,7 +254,7 @@ class SpatialRelationsHandler(QObject):
                     contourValue = candidateContourFeat[attributeName]
                     candidateContourGeom = candidateContourFeat.geometry()\
                         if boundsGeom is not None and\
-                            not candidateContourFeat.geometry().intersects(boundsGeom)\
+                            candidateContourFeat.geometry().intersects(boundsGeom)\
                         else candidateContourFeat.geometry().intersection(boundsGeom)
                     contourAreaDict['areaContourRelations'][featId][contourValue].append(candidateContourGeom)
             if feedback is not None:
@@ -296,11 +296,12 @@ class SpatialRelationsHandler(QObject):
                     if feedback is not None and feedback.isCanceled():
                         break
                     shortestLineGeomList = [geom.shortestLine(i) for i in heightDict[h2]]
+                    shortestLine = min(shortestLineGeomList, key=lambda x: x.length())
                     missingContourFlagDict.update(
                         {
-                            i.asWkb() : self.tr(
-                                    'Missing contour between contour lines of values {v1} and {v2}'
-                                ).format(v1=min_h12, v2=max_h12) for i in shortestLineGeomList
+                            shortestLine.asWkb() : self.tr(
+                                'Missing contour between contour lines of values {v1} and {v2}'
+                            ).format(v1=min_h12, v2=max_h12)
                         }
                     )
             if feedback is not None:
