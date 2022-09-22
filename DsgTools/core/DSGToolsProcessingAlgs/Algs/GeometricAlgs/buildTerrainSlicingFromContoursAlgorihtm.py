@@ -156,7 +156,7 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         clippedRaster = algRunner.runClipRasterLayer(
             inputRaster,
-            mask=parameters[self.GEOGRAPHIC_BOUNDARY],
+            mask=geographicBounds,
             context=context,
             feedback=multiStepFeedback,
             noData=-9999
