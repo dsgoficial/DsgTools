@@ -24,7 +24,6 @@ from builtins import str
 from builtins import range
 import os
 from os.path import expanduser
-from sys import implementation
 
 from qgis.core import QgsMessageLog, Qgis
 
@@ -120,7 +119,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
             else:
                 QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection refused. Connect with a super user to inspect server.'))
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), '---'+':'.join(e.args))
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
 
     def getSelectedDbList(self):
         return self.dbsCustomSelector.toLs
