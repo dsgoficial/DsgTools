@@ -23,6 +23,7 @@
 import os, json
 from time import time
 from functools import partial
+from typing import Dict, List
 
 from qgis.PyQt import uic
 from qgis.core import (Qgis,
@@ -748,26 +749,44 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                     duration=3
                 )
                 continue
-            name = workflow.displayName()
-            idx = self.comboBox.findText(name)
-            if idx < 0:
-                self.comboBox.addItem(name)
-                self.comboBox.setCurrentText(name)
-                self.workflows[name] = workflow
-                self.setCurrentWorkflow()
-            else:
-                self.comboBox.setCurrentIndex(idx)
+            self.addWorkflowItem(workflow)
+
+    def addWorkflowItem(self, workflow: QualityAssuranceWorkflow):
+        name = workflow.displayName()
+        idx = self.comboBox.findText(name)
+        if idx < 0:
+            self.comboBox.addItem(name)
+            self.comboBox.setCurrentText(name)
+            self.workflows[name] = workflow
+            self.setCurrentWorkflow()
+        else:
+            self.comboBox.setCurrentIndex(idx)
                 # what should we do? check version/last modified? replace model?
-            self.setWorkflowTooltip(
+        self.setWorkflowTooltip(
                 self.comboBox.currentIndex(), workflow.metadata()
             )
-            self.saveState()
-            QgsMessageLog.logMessage(
+        self.saveState()
+        QgsMessageLog.logMessage(
                 self.tr("Model {model} imported.")\
                     .format(model=name),
                 "DSGTools Plugin",
                 Qgis.Info
             )
+    
+    def importWorkflowFromJsonPayload(self, data: List[Dict]):
+        for workflow_dict in data:
+            try:
+                workflow = QualityAssuranceWorkflow(workflow_dict)
+            except Exception as e:
+                self.iface.messageBar().pushMessage(
+                    self.tr("DSGTools Q&A Tool Box"),
+                    self.tr("Error importing workflow. Error message: {msg}'")
+                        .format(msg=str(e)),
+                    Qgis.Critical,
+                    duration=3
+                )
+                continue
+            self.addWorkflowItem(workflow)
 
     def unload(self):
         """
