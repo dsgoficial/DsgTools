@@ -93,13 +93,16 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
             dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer(parentWidget = self)
         except Exception as e:
             QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
-
         dbList.sort()
-        for (dbname, dbversion) in dbList:
-            if dbversion not in list(self.dbDict.keys()):
-                dbversion = 'Non_EDGV'
-            if dbname not in self.dbDict[dbversion]:
-                self.dbDict[dbversion].append(dbname)
+        try:
+            for (dbname, dbversion, impl_dummy) in dbList:
+                dbversion = dbversion.replace("EDGV ","")
+                if dbversion not in list(self.dbDict.keys()):
+                    dbversion = 'Non_EDGV'
+                if dbname not in self.dbDict[dbversion]:
+                    self.dbDict[dbversion].append(dbname)
+        except Exception as e:
+            QMessageBox.critical(self, self.tr('Critical!'), str(dbList))
 
     def setDatabases(self):
         self.populateListWithDatabasesFromServer()
