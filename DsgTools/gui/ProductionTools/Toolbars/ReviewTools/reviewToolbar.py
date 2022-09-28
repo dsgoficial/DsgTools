@@ -493,3 +493,10 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
     def unload(self) -> None:
         self.restoreOriginalValueList()
         self.iface.unregisterMainWindowAction(self.applyPushButtonAction)      
+    
+    def setState(self, layer: QgsVectorLayer, rankFieldName: str, visitedFieldName: str, zoomEnabled: bool = True):
+        self.mMapLayerComboBox.setLayer(layer)
+        self.rankFieldComboBox.setField(rankFieldName)
+        self.visitedFieldComboBox.setField(visitedFieldName)
+        self.zoomToNextCheckBox.setChecked(zoomEnabled)
+        self.preparePushButton.click()
