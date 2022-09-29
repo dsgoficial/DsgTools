@@ -55,7 +55,7 @@ class DsgToolsProcessingModel(QgsTask):
         QgsTask.Complete,
         QgsTask.Terminated
     ])
-    WarningFlags, HaltedOnFlags = range(n + 1, n + 3)
+    WarningFlags, HaltedOnFlags, HaltedOnPossibleFalsePositiveFlags = range(n + 1, n + 4)
     del n
 
     def __init__(self, parameters, name, taskName=None, flags=None, feedback=None):
@@ -403,7 +403,7 @@ class DsgToolsProcessingModel(QgsTask):
                 continue
             self.addLayerToGroup(
                 vl,
-                self.tr("DSGTools Quality Assurance Models"),
+                "DSGTools_QA_Toolbox",
                 model.displayName()
             )
         return out
