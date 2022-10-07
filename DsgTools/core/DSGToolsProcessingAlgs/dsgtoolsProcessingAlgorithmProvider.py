@@ -80,6 +80,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm im
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFramesWithConstraintAlgorithm import \
     CreateFramesWithConstraintAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnIntersectionsAlgorithm import AddUnsharedVertexOnIntersectionsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnSharedEdgesAlgorithm import AddUnsharedVertexOnSharedEdgesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.extendLinesToGeographicBoundsAlgorithm import ExtendLinesToGeographicBoundsAlgorithm
 from .Algs.OtherAlgs.createReviewGridAlgorithm import CreateReviewGridAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.exportToMemoryLayer import \
@@ -363,6 +364,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             CreateReviewGridAlgorithm(),
             ExtendLinesToGeographicBoundsAlgorithm(),
             AddUnsharedVertexOnIntersectionsAlgorithm(),
+            AddUnsharedVertexOnSharedEdgesAlgorithm(),
         ]
         return algList
 

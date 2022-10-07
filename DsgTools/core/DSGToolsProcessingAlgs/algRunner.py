@@ -985,3 +985,19 @@ class AlgRunner:
             feedback=feedback
         )
         return output['FLAGS']
+    
+    def runIdentifyUnsharedVertexOnSharedEdgesAlgorithm(self, lineLayerList, polygonLayerList, searchRadius, context, onlySelected=False, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        output = processing.run(
+            "dsgtools:identifyunsharedvertexonsharededgesalgorithm",
+            {
+                'INPUT_LINES': lineLayerList,
+                'INPUT_POLYGONS': polygonLayerList,
+                'SELECTED': onlySelected,
+                'SEARCH_RADIUS': searchRadius,
+                'FLAGS': outputLyr,
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['FLAGS']

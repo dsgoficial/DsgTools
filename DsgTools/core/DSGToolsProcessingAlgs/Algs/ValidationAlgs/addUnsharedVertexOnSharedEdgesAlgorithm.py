@@ -40,24 +40,16 @@ from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
-class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
-    INPUT_POINTS = 'INPUT_POINTS'
+class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
     INPUT_LINES = 'INPUT_LINES'
     INPUT_POLYGONS = 'INPUT_POLYGONS'
     SELECTED = 'SELECTED'
+    SEARCH_RADIUS = 'SEARCH_RADIUS'
 
     def initAlgorithm(self, config):
         """
         Parameter setting.
         """
-        self.addParameter(
-            QgsProcessingParameterMultipleLayers(
-                self.INPUT_POINTS,
-                self.tr('Point Layers'),
-                QgsProcessing.TypeVectorPoint,
-                optional=True
-            )
-        )
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LINES,
@@ -81,6 +73,14 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
                 self.tr('Process only selected features')
             )
         )
+        
+        self.addParameter(
+            QgsProcessingParameterDistance(
+                self.SEARCH_RADIUS,
+                self.tr('Search Radius'),
+                defaultValue=1.0
+            )
+        )
 
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -88,11 +88,6 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         Here is where the processing itself takes place.
         """
         algRunner = AlgRunner()
-        inputPointLyrList = self.parameterAsLayerList(
-            parameters,
-            self.INPUT_POINTS,
-            context
-        )
         inputLineLyrList = self.parameterAsLayerList(
             parameters,
             self.INPUT_LINES,
@@ -103,7 +98,7 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             self.INPUT_POLYGONS,
             context
         )
-        if inputPointLyrList + inputLineLyrList + inputPolygonLyrList == []:
+        if inputLineLyrList + inputPolygonLyrList == []:
             raise QgsProcessingException(
                 self.tr('Select at least one layer')
             )
@@ -112,15 +107,20 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             self.SELECTED,
             context
         )
-        lyrList = list(chain(inputPointLyrList, inputLineLyrList, inputPolygonLyrList))
+        searchRadius = self.parameterAsDouble(
+            parameters,
+            self.SEARCH_RADIUS,
+            context
+        )
+        lyrList = list(chain(inputLineLyrList, inputPolygonLyrList))
         nLyrs = len(lyrList)
         multiStepFeedback = QgsProcessingMultiStepFeedback(nLyrs + 1, feedback)
         multiStepFeedback.setCurrentStep(0)
-        flagsLyr = algRunner.runIdentifyUnsharedVertexOnIntersectionsAlgorithm(
-            pointLayerList=inputPointLyrList,
+        flagsLyr = algRunner.runIdentifyUnsharedVertexOnSharedEdgesAlgorithm(
             lineLayerList=inputLineLyrList,
             polygonLayerList=inputPolygonLyrList,
             onlySelected=onlySelected,
+            searchRadius=searchRadius,
             context=context,
             feedback=multiStepFeedback
         )
@@ -131,7 +131,7 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             algRunner.runSnapLayerOnLayer(
                 inputLayer=lyr,
                 referenceLayer=flagsLyr,
-                tol=1e-5,
+                tol=searchRadius,
                 context=context,
                 onlySelected=onlySelected,
                 feedback=multiStepFeedback,
@@ -149,14 +149,14 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'addunsharedvertexonintersectionsalgorithm'
+        return 'addunsharedvertexonsharededgesalgorithm'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Add Unshared Vertex on Intersections')
+        return self.tr('Add Unshared Vertex on Shared Edges')
 
     def group(self):
         """
@@ -176,7 +176,7 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         return 'Quality Assurance Tools (Correction Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('AddUnsharedVertexOnIntersectionsAlgorithm', string)
+        return QCoreApplication.translate('AddUnsharedVertexOnSharedEdgesAlgorithm', string)
 
     def createInstance(self):
-        return AddUnsharedVertexOnIntersectionsAlgorithm()
+        return AddUnsharedVertexOnSharedEdgesAlgorithm()
