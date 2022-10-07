@@ -79,6 +79,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm im
     CreateFrameAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFramesWithConstraintAlgorithm import \
     CreateFramesWithConstraintAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnIntersectionsAlgorithm import AddUnsharedVertexOnIntersectionsAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.extendLinesToGeographicBoundsAlgorithm import ExtendLinesToGeographicBoundsAlgorithm
 from .Algs.OtherAlgs.createReviewGridAlgorithm import CreateReviewGridAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.exportToMemoryLayer import \
@@ -361,6 +362,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(),
             CreateReviewGridAlgorithm(),
             ExtendLinesToGeographicBoundsAlgorithm(),
+            AddUnsharedVertexOnIntersectionsAlgorithm(),
         ]
         return algList
 
