@@ -21,11 +21,13 @@
  ***************************************************************************/
 """
 
+from asyncio import as_completed
 from collections import defaultdict
 import copy
 from functools import partial
 from itertools import combinations
 import os
+from typing import List
 
 from processing.tools import dataobjects
 
@@ -2204,3 +2206,74 @@ class LayerHandler(QObject):
                     return slivers
                 feedback.setProgress((step + 1) * stepSize)
         return slivers
+
+    def addVertexesToLayers(self, vertexLyr: QgsVectorLayer, layerList: List[QgsVectorLayer], searchRadius, feedback=None) -> None:
+        nLayers = len(layerList)
+        if nLayers == 0:
+            return
+        if vertexLyr.featureCount() == 0:
+            return
+        vertexLyrExtent = vertexLyr.extent()
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nLayers, feedback)
+        for current, lyr in enumerate(layerList):
+            if multiStepFeedback.isCanceled():
+                return
+            multiStepFeedback.setCurrentStep(current)
+            if not vertexLyrExtent.intersects(lyr.extent()):
+                continue
+            self.addVertexesToLayer(vertexLyr, lyr, searchRadius, feedback=multiStepFeedback)
+        return
+
+    def addVertexesToLayer(self, vertexLyr: QgsVectorLayer, layer: QgsVectorLayer, searchRadius, feedback=None) -> None:
+        geomLambda = lambda x: self.geometryHandler.addVertexesToGeometry(vertexSet=x[0], geom=x[1])
+        changeGeometryLambda = lambda x: layer.changeGeometry(x.id(), x.geometry())
+        def evaluateAddVertex(feat):
+            if feedback.isCanceled():
+                return None
+            vertexSet = set()
+            geom = feat.geometry()
+            featBB = geom.boundingBox()
+            for vertexFeat in vertexLyr.getFeatures(featBB):
+                vertexGeom = vertexFeat.geometry()
+                vertexBuffer = vertexGeom.buffer(searchRadius, -1)
+                if not vertexBuffer.intersects(geom):
+                    continue
+                vertexSet.add(vertexGeom)
+            if vertexSet == set():
+                return None
+            newGeom = geomLambda([vertexSet, geom])
+            feat.setGeometry(newGeom)
+            return feat
+        featCount = layer.featureCount()
+        if featCount == 0:
+            return
+        stepSize = 100/featCount
+        futures = set()
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.setCurrentStep(1)
+        updateSet = set()
+        for current, feat in enumerate(layer.getFeatures()):
+            if multiStepFeedback.isCanceled():
+                return
+        #     futures.add(pool.submit(evaluateAddVertex, feat))
+        #     multiStepFeedback.setProgress(current * stepSize)
+        # multiStepFeedback.setCurrentStep(1)
+
+        # updateSet = set()
+        # for current, future in enumerate(concurrent.futures.as_completed(futures)):
+        #     if multiStepFeedback.isCanceled():
+        #         return
+        #     outputFeat = future.result()
+            outputFeat = evaluateAddVertex(feat)
+            if outputFeat is not None:
+                updateSet.add(outputFeat)
+            multiStepFeedback.setProgress(current * stepSize)
+
+        if updateSet == set():
+            return
+        layer.startEditing()
+        layer.beginEditCommand(self.tr('DsgTools adding missing vertexes'))
+        list(map(changeGeometryLambda, updateSet))
+        layer.endEditCommand()

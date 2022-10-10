@@ -264,7 +264,7 @@ class AlgRunner:
         output = processing.run('dsgtools:identifysmallpolygons', parameters, context=context, feedback=feedback)
         return output['FLAGS']
 
-    def runSnapGeometriesToLayer(self, inputLayer, referenceLayer, tol, context, feedback=None, behavior=None, outputLyr=None):
+    def runSnapGeometriesToLayer(self, inputLayer, referenceLayer, tol, context, feedback=None, behavior=None, outputLyr=None, is_child_algorithm=False):
         behavior = 0 if behavior is None else behavior
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
@@ -274,10 +274,10 @@ class AlgRunner:
             'BEHAVIOR' : behavior,
             'OUTPUT' : outputLyr
         }
-        output = processing.run('qgis:snapgeometries', parameters, context=context, feedback=feedback)
+        output = processing.run('qgis:snapgeometries', parameters, context=context, feedback=feedback, is_child_algorithm=is_child_algorithm)
         return output['OUTPUT']
 
-    def runSnapLayerOnLayer(self, inputLayer, referenceLayer, tol, context, onlySelected=False, feedback=None, behavior=None, buildCache=False):
+    def runSnapLayerOnLayer(self, inputLayer, referenceLayer, tol, context, onlySelected=False, feedback=None, behavior=None, buildCache=False, is_child_algorithm=False):
         behavior = 0 if behavior is None else behavior
         parameters = {
             'INPUT' : inputLayer,
@@ -285,9 +285,9 @@ class AlgRunner:
             'REFERENCE_LAYER' : referenceLayer,
             'TOLERANCE' : tol,
             'BEHAVIOR' : behavior,
-            'BUILD_CACHE': False,
+            'BUILD_CACHE': buildCache,
         }
-        output = processing.run('dsgtools:snaplayeronlayer', parameters, context=context, feedback=feedback)
+        output = processing.run('dsgtools:snaplayeronlayer', parameters, context=context, feedback=feedback, is_child_algorithm=is_child_algorithm)
         return output['OUTPUT']
 
     def runIdentifyDangles(
@@ -451,7 +451,7 @@ class AlgRunner:
         output = processing.run('dsgtools:matchandapplyqmlstylestolayersalgorithm', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
-    def runAddAutoIncrementalField(self, inputLyr, context, feedback=None, outputLyr=None, fieldName=None, start=1, sortAscending=True, sortNullsFirst=False):
+    def runAddAutoIncrementalField(self, inputLyr, context, feedback=None, outputLyr=None, fieldName=None, start=1, sortAscending=True, sortNullsFirst=False, is_child_algorithm=False):
         fieldName = 'featid' if fieldName is None else fieldName
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
@@ -468,7 +468,8 @@ class AlgRunner:
             'native:addautoincrementalfield',
             parameters,
             context=context,
-            feedback=feedback
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
         )
         return output['OUTPUT']
     
@@ -970,7 +971,7 @@ class AlgRunner:
         )
         return output['OUTPUT']
 
-    def runIdentifyUnsharedVertexOnIntersectionsAlgorithm(self, pointLayerList, lineLayerList, polygonLayerList, context, onlySelected=False, feedback=None, outputLyr=None):
+    def runIdentifyUnsharedVertexOnIntersectionsAlgorithm(self, pointLayerList, lineLayerList, polygonLayerList, context, onlySelected=False, feedback=None, outputLyr=None, is_child_algorithm=False):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         output = processing.run(
             "dsgtools:identifyunsharedvertexonintersectionsalgorithm",
@@ -982,11 +983,12 @@ class AlgRunner:
                 'FLAGS': outputLyr,
             },
             context=context,
-            feedback=feedback
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
         )
         return output['FLAGS']
     
-    def runIdentifyUnsharedVertexOnSharedEdgesAlgorithm(self, lineLayerList, polygonLayerList, searchRadius, context, onlySelected=False, feedback=None, outputLyr=None):
+    def runIdentifyUnsharedVertexOnSharedEdgesAlgorithm(self, lineLayerList, polygonLayerList, searchRadius, context, onlySelected=False, feedback=None, outputLyr=None, is_child_algorithm=False):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         output = processing.run(
             "dsgtools:identifyunsharedvertexonsharededgesalgorithm",
@@ -998,6 +1000,7 @@ class AlgRunner:
                 'FLAGS': outputLyr,
             },
             context=context,
-            feedback=feedback
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
         )
         return output['FLAGS']
