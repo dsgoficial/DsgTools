@@ -1450,9 +1450,12 @@ class LayerHandler(QObject):
         if pointsLyr is not None:
             multiStepFeedback.setCurrentStep(currentStep)
             pointsLyr = algRunner.runMultipartToSingleParts(
-                inputLayer=pointsLyr, context=context, feedback=multiStepFeedback
+                inputLayer=pointsLyr, context=context, feedback=multiStepFeedback, outputLyr='TEMPORARY_OUTPUT'
             )
+            pointsSet = set([i for i in pointsLyr.getFeatures()])
             currentStep += 1
+        else:
+            pointsSet = set()
 
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr('Building intersections'))
@@ -1478,14 +1481,15 @@ class LayerHandler(QObject):
         intersectionDict = {
             feat.geometry().asWkb(): feat for feat in intersectionLyr.getFeatures()
         }
-        unsharedPointsSet = self.getUnsharedPointsSetFromPointsLyr(algRunner, pointsLyr, linesLyr, context, multiStepFeedback)
+        unsharedPointsSet = self.getUnsharedPointsSetFromPointsLyr(
+            algRunner, pointsSet, linesLyr, context, multiStepFeedback)
         vertexSet = set(
             feat.geometry().asWkb() for feat in vertexLyr.getFeatures()
         )
         return set(intersectionDict.keys()).difference(vertexSet) | unsharedPointsSet.difference(vertexSet)
     
-    def getUnsharedPointsSetFromPointsLyr(self, algRunner, pointsLyr, linesLyr, context, feedback):
-        if pointsLyr is None or pointsLyr.featureCount() == 0:
+    def getUnsharedPointsSetFromPointsLyr(self, algRunner, pointsSet, linesLyr, context, feedback):
+        if pointsSet == set():
             return set()
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
@@ -1497,24 +1501,27 @@ class LayerHandler(QObject):
             buffer = geom.buffer(1e-8, -1)
             geomEngine = QgsGeometry.createGeometryEngine(buffer.constGet())
             for lineFeat in linesLyr.getFeatures(geom.boundingBox()):
-                if geomEngine.intersects(lineFeat.geometry().constGet()):
-                    hasVertex = any(geom.equals(QgsGeometry(i)) for i in lineFeat.geometry().vertices())
-                    if not hasVertex:
+                lineGeom = lineFeat.geometry()
+                if not geomEngine.intersects(lineGeom.constGet()):
+                    continue
+                for i in lineFeat.geometry().vertices():
+                    v = QgsGeometry(i)
+                    if geom.equals(v):
                         return geomWkb
             return None
         pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
         futures = set()
         vertexSet = set()
-        for feat in pointsLyr.getFeatures():
-            # futures.add(pool.submit(compute, feat))
-            result = compute(feat)
-            if result is not None:
-                vertexSet.add(result)
-        # vertexSet = set(
-        #     future.result() for future in concurrent.futures.as_completed(
-        #         futures
-        #     ) if future.result() is not None
-        # )
+        for feat in pointsSet:
+            futures.add(pool.submit(compute, feat))
+            # result = compute(feat)
+            # if result is not None:
+            #     vertexSet.add(result)
+        vertexSet = set(
+            future.result() for future in concurrent.futures.as_completed(
+                futures
+            ) if future.result() is not None
+        )
         return vertexSet
 
     def getLinesLayerFromPolygonsAndLinesLayers(self, inputLineLyrList, inputPolygonLyrList, algRunner=None, onlySelected=False, feedback=None, context=None):
@@ -1528,25 +1535,33 @@ class LayerHandler(QObject):
         algRunner = AlgRunner() if algRunner is None else algRunner
         context = dataobjects.createContext(
             feedback=feedback) if context is None else context
-        nSteps = len(inputLineLyrList) + 2*len(inputPolygonLyrList) + 1
+        nSteps = 2*len(inputLineLyrList) + 3*len(inputPolygonLyrList) + 1
         multiStepFeedback = QgsProcessingMultiStepFeedback(
             nSteps, feedback)  # set number of steps
         currentStep = 0
         for lineLyr in inputLineLyrList:
             multiStepFeedback.setCurrentStep(currentStep)
+            singlePartLyr = algRunner.runMultipartToSingleParts(
+                inputLayer=lineLyr if not onlySelected \
+                else QgsProcessingFeatureSourceDefinition(lineLyr.id(), True),
+                context=context,
+                feedback=multiStepFeedback
+            )
+            currentStep += 1
+            explodedLines = algRunner.runExplodeLines(singlePartLyr, context, feedback=multiStepFeedback)
             lineList.append(
-                lineLyr if not onlySelected else
-                algRunner.runSaveSelectedFeatures(
-                    lineLyr,
-                    context,
-                    feedback=multiStepFeedback
-                )
+                explodedLines
             )
             currentStep += 1
         for polygonLyr in inputPolygonLyrList:
             multiStepFeedback.setCurrentStep(currentStep)
-            usedInput = polygonLyr if not onlySelected else \
-                QgsProcessingFeatureSourceDefinition(polygonLyr.id(), True)
+            usedInput = algRunner.runMultipartToSingleParts(
+                inputLayer=polygonLyr if not onlySelected \
+                else QgsProcessingFeatureSourceDefinition(polygonLyr.id(), True),
+                context=context,
+                feedback=multiStepFeedback
+            )
+            currentStep += 1
             convertedPolygons = algRunner.runPolygonsToLines(
                 usedInput,
                 context,

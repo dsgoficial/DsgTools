@@ -114,7 +114,7 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         )
         lyrList = list(chain(inputPointLyrList, inputLineLyrList, inputPolygonLyrList))
         nLyrs = len(lyrList)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(nLyrs + 1, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nLyrs + 2, feedback)
         multiStepFeedback.setCurrentStep(0)
         flagsLyr = algRunner.runIdentifyUnsharedVertexOnIntersectionsAlgorithm(
             pointLayerList=inputPointLyrList,
@@ -124,18 +124,25 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback
         )
+        snapToGridLyr = algRunner.runSnapToGrid(
+            inputLayer=flagsLyr,
+            tol=1e-6,
+            feedback=multiStepFeedback,
+            context=context
+        )
+        multiStepFeedback.setCurrentStep(1)
         for current, lyr in enumerate(lyrList):
             if feedback.isCanceled():
                 break
             multiStepFeedback.setCurrentStep(current + 1)
             algRunner.runSnapLayerOnLayer(
                 inputLayer=lyr,
-                referenceLayer=flagsLyr,
+                referenceLayer=snapToGridLyr,
                 tol=1e-5,
                 context=context,
                 onlySelected=onlySelected,
                 feedback=multiStepFeedback,
-                behavior=0,
+                behavior=1,
                 buildCache=False
             )
 
