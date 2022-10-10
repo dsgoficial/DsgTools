@@ -114,7 +114,7 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
         )
         lyrList = list(chain(inputLineLyrList, inputPolygonLyrList))
         nLyrs = len(lyrList)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(nLyrs + 1, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nLyrs + 4, feedback)
         multiStepFeedback.setCurrentStep(0)
         flagsLyr = algRunner.runIdentifyUnsharedVertexOnSharedEdgesAlgorithm(
             lineLayerList=inputLineLyrList,
@@ -122,7 +122,9 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
             searchRadius=searchRadius,
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
+            outputLyr='TEMPORARY_LAYER',
+            is_child_algorithm=True
         )
         for current, lyr in enumerate(lyrList):
             if feedback.isCanceled():
@@ -136,8 +138,27 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
                 onlySelected=onlySelected,
                 feedback=multiStepFeedback,
                 behavior=0,
-                buildCache=False
+                is_child_algorithm=True
             )
+        
+        multiStepFeedback.setCurrentStep(current + 1)
+        newFlagsLyr = algRunner.runIdentifyUnsharedVertexOnSharedEdgesAlgorithm(
+            lineLayerList=inputLineLyrList,
+            polygonLayerList=inputPolygonLyrList,
+            onlySelected=onlySelected,
+            searchRadius=searchRadius,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(current + 2)
+        algRunner.runCreateSpatialIndex(newFlagsLyr, context, multiStepFeedback)
+        multiStepFeedback.setCurrentStep(current + 3)
+        LayerHandler().addVertexesToLayers(
+            vertexLyr=newFlagsLyr,
+            layerList=list(chain(inputLineLyrList, inputPolygonLyrList)),
+            searchRadius=searchRadius,
+            feedback=multiStepFeedback
+        )
 
         return {}
 

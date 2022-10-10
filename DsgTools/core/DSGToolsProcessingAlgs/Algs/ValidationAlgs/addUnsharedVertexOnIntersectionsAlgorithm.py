@@ -114,7 +114,7 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         )
         lyrList = list(chain(inputPointLyrList, inputLineLyrList, inputPolygonLyrList))
         nLyrs = len(lyrList)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(nLyrs + 2, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nLyrs + 4, feedback)
         multiStepFeedback.setCurrentStep(0)
         flagsLyr = algRunner.runIdentifyUnsharedVertexOnIntersectionsAlgorithm(
             pointLayerList=inputPointLyrList,
@@ -122,29 +122,44 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             polygonLayerList=inputPolygonLyrList,
             onlySelected=onlySelected,
             context=context,
-            feedback=multiStepFeedback
-        )
-        snapToGridLyr = algRunner.runSnapToGrid(
-            inputLayer=flagsLyr,
-            tol=1e-6,
             feedback=multiStepFeedback,
-            context=context
+            outputLyr='TEMPORARY_LAYER',
+            is_child_algorithm=True
         )
-        multiStepFeedback.setCurrentStep(1)
         for current, lyr in enumerate(lyrList):
             if feedback.isCanceled():
                 break
             multiStepFeedback.setCurrentStep(current + 1)
             algRunner.runSnapLayerOnLayer(
                 inputLayer=lyr,
-                referenceLayer=snapToGridLyr,
+                referenceLayer=flagsLyr,
                 tol=1e-5,
                 context=context,
                 onlySelected=onlySelected,
                 feedback=multiStepFeedback,
                 behavior=1,
-                buildCache=False
+                buildCache=False,
+                is_child_algorithm=True
             )
+        
+        multiStepFeedback.setCurrentStep(current + 1)
+        newFlagsLyr = algRunner.runIdentifyUnsharedVertexOnIntersectionsAlgorithm(
+            pointLayerList=[],
+            lineLayerList=inputLineLyrList,
+            polygonLayerList=inputPolygonLyrList,
+            onlySelected=onlySelected,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(current + 2)
+        algRunner.runCreateSpatialIndex(newFlagsLyr, context, multiStepFeedback)
+        multiStepFeedback.setCurrentStep(current + 3)
+        LayerHandler().addVertexesToLayers(
+            vertexLyr=newFlagsLyr,
+            layerList=list(chain(inputLineLyrList, inputPolygonLyrList)),
+            searchRadius=1e-5,
+            feedback=multiStepFeedback
+        )
 
         return {}
 
