@@ -38,7 +38,7 @@ from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterNumber,
                        QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsSpatialIndex, QgsWkbTypes)
+                       QgsSpatialIndex, QgsWkbTypes, QgsProject)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
@@ -200,6 +200,7 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Updating original layer..."))
         layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], snapped, feedback=multiStepFeedback, onlySelected=onlySelected)
+        QgsProject.instance().removeMapLayer(auxLyr.id())
         return {self.OUTPUT: inputLyr}
 
     def name(self):
