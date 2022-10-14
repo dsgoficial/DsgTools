@@ -138,16 +138,17 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
             searchRadius=searchRadius,
             context=context,
             feedback=multiStepFeedback,
-            outputLyr='TEMPORARY_LAYER',
             is_child_algorithm=True
         )
         if geographicBoundary is not None:
             multiStepFeedback.setCurrentStep(1)
             flagsLyr = algRunner.runExtractByLocation(
-                flagsLyr, geographicBoundary, context, feedback=multiStepFeedback
+                flagsLyr,
+                geographicBoundary,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True
             )
-        if flagsLyr.featureCount() == 0:
-            return {}
         for current, lyr in enumerate(lyrList):
             if feedback.isCanceled():
                 break

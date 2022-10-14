@@ -715,7 +715,7 @@ class AlgRunner:
         )
         return None
     
-    def runExtractByLocation(self, inputLyr, intersectLyr, context, predicate=None, feedback=None, outputLyr=None):
+    def runExtractByLocation(self, inputLyr, intersectLyr, context, predicate=None, feedback=None, outputLyr=None, is_child_algorithm=False):
         predicate = [0] if predicate is None else predicate
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         output = processing.run(
@@ -727,7 +727,8 @@ class AlgRunner:
                 'OUTPUT': outputLyr
             },
             context=context,
-            feedback=feedback
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
         )
         return output['OUTPUT']
 
