@@ -87,7 +87,7 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
                 self.tr('Geographic Boundary'),
-                QgsProcessing.TypeVectorPolygon,
+                [QgsProcessing.TypeVectorPolygon],
                 optional=True
             )
         )
