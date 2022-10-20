@@ -20,6 +20,7 @@
  ***************************************************************************/
 """
 
+from copy import deepcopy
 import os, json
 from time import sleep, time
 from functools import partial
@@ -58,8 +59,11 @@ class QualityAssuranceWorkflow(QObject):
             )
         self._param = parameters
         self._modelOrderMap = dict()
-        self.output = dict()
+        self.output = self._param.get("output", {})
         self.feedback = feedback or QgsProcessingFeedback()
+        self._executionOrder = {
+            idx: model for idx, model in enumerate(self.validModels().values())
+        }
 
     def validateParameters(self, parameters):
         """
@@ -234,13 +238,22 @@ class QualityAssuranceWorkflow(QObject):
             fp.write(json.dumps(self._param, indent=4))
         return os.path.exists(filepath)
 
-    def asDict(self):
+    def asDict(self, withOutputDict=False):
         """
         Dumps model parameters as a JSON file.
         :param filepath: (str) path to JSON file.
         :return: (dict) DSGTools processing model definitions.
         """
-        return dict(self._param)
+        outputDict = dict(self._param)
+        if withOutputDict:
+            outputCopy = dict(self.output)
+            for key, value in outputCopy.items():
+                if 'result' in value:
+                    outputCopy[key].pop('result')
+            outputDict.update(
+                {"output": outputCopy}
+            )
+        return outputDict
 
     def finished(self):
         """
@@ -412,3 +425,9 @@ class QualityAssuranceWorkflow(QObject):
                 return modelName
         else:
             return None
+    
+    def getOutputStatusDict(self):
+        return self.output
+    
+    def setOutputStatusDict(self, statusDict):
+        self.output = statusDict

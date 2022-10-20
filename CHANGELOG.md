@@ -7,6 +7,7 @@ Novas funcionalidades:
 - Novo algoritmo de detecção de geometrias nulas;
 - Novo processo de adicionar vértices não compartilhados nas intersecções (processo de correção associado ao processo de Identificar vértices não compartilhados na intersecção);
 - Novo processo de adicionar vértices não compartilhados nos segmentos compartilhados (processo de correção associado ao processo de Identificar vértices não compartilhados nos segmentos compartilhados);
+- Adicionada integração da Ferramenta de Controle de Qualidade (QA Toolbox) com o Ferramentas de Produção. Dessa forma, a QA Toolbox pode ser integrada à produção utilizando o Sistema de Apoio à Produção;
 
 Melhorias:
 - Adicionada a opção de atribuir um id de atividade para o grid de revisão criado no processo de criar grid de edição;
