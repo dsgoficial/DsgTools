@@ -45,6 +45,7 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
     INPUT_LINES = 'INPUT_LINES'
     INPUT_POLYGONS = 'INPUT_POLYGONS'
     SELECTED = 'SELECTED'
+    GEOGRAPHIC_BOUNDARY = 'GEOGRAPHIC_BOUNDARY'
 
     def initAlgorithm(self, config):
         """
@@ -81,6 +82,15 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
                 self.tr('Process only selected features')
             )
         )
+        
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.GEOGRAPHIC_BOUNDARY,
+                self.tr('Geographic Boundary'),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True
+            )
+        )
 
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -103,6 +113,11 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             self.INPUT_POLYGONS,
             context
         )
+        geographicBoundary = self.parameterAsVectorLayer(
+            parameters,
+            self.GEOGRAPHIC_BOUNDARY,
+            context
+        )
         if inputPointLyrList + inputLineLyrList + inputPolygonLyrList == []:
             raise QgsProcessingException(
                 self.tr('Select at least one layer')
@@ -114,7 +129,7 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         )
         lyrList = list(chain(inputPointLyrList, inputLineLyrList, inputPolygonLyrList))
         nLyrs = len(lyrList)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(nLyrs + 4, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nLyrs + 4 + 2 * (geographicBoundary is not None), feedback)
         multiStepFeedback.setCurrentStep(0)
         flagsLyr = algRunner.runIdentifyUnsharedVertexOnIntersectionsAlgorithm(
             pointLayerList=inputPointLyrList,
@@ -123,13 +138,21 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
             context=context,
             feedback=multiStepFeedback,
-            outputLyr='TEMPORARY_LAYER',
             is_child_algorithm=True
         )
+        if geographicBoundary is not None:
+            multiStepFeedback.setCurrentStep(1)
+            flagsLyr = algRunner.runExtractByLocation(
+                flagsLyr,
+                geographicBoundary,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True
+            )
         for current, lyr in enumerate(lyrList):
             if feedback.isCanceled():
                 break
-            multiStepFeedback.setCurrentStep(current + 1)
+            multiStepFeedback.setCurrentStep(current + 1 + (geographicBoundary is not None))
             algRunner.runSnapLayerOnLayer(
                 inputLayer=lyr,
                 referenceLayer=flagsLyr,
@@ -141,8 +164,8 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
                 buildCache=False,
                 is_child_algorithm=True
             )
-        
-        multiStepFeedback.setCurrentStep(current + 1)
+        currentStep = current + 1 + (geographicBoundary is not None)
+        multiStepFeedback.setCurrentStep(currentStep)
         newFlagsLyr = algRunner.runIdentifyUnsharedVertexOnIntersectionsAlgorithm(
             pointLayerList=[],
             lineLayerList=inputLineLyrList,
@@ -151,9 +174,20 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(current + 2)
+        currentStep += 1
+        if geographicBoundary is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            newFlagsLyr = algRunner.runExtractByLocation(
+                newFlagsLyr, geographicBoundary, context, feedback=multiStepFeedback
+            )
+            currentStep += 1
+        if newFlagsLyr.featureCount() == 0:
+            return {}
+        
+        multiStepFeedback.setCurrentStep(currentStep)
         algRunner.runCreateSpatialIndex(newFlagsLyr, context, multiStepFeedback)
-        multiStepFeedback.setCurrentStep(current + 3)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         LayerHandler().addVertexesToLayers(
             vertexLyr=newFlagsLyr,
             layerList=list(chain(inputLineLyrList, inputPolygonLyrList)),

@@ -459,7 +459,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
     def addLayerNameToGenericSelectionBlackList(self, layerName: str):
         settings = QSettings()
         settings.beginGroup('PythonPlugins/DsgTools/Options')
-        valueList = settings.value('valueList').split(';')
+        valueList = [i for i in settings.value('valueList').split(';') if i != '']
         if layerName in valueList:
             return
         valueList.append(layerName)
@@ -469,8 +469,8 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
     def removeLayerNameToGenericSelectionBlackList(self, layerName):
         settings = QSettings()
         settings.beginGroup('PythonPlugins/DsgTools/Options')
-        valueList = settings.value('valueList').split(';')
-        if layerName not in valueList or layerName in self.originalValueList:
+        valueList = [i for i in settings.value('valueList').split(';') if i != '']
+        if valueList != [] and (layerName not in valueList or layerName in self.originalValueList):
             return
         valueList.pop(layerName)
         settings.setValue('valueList', ';'.join(valueList))
@@ -479,7 +479,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
     def getValueListFromQsettings(self):
         settings = QSettings()
         settings.beginGroup('PythonPlugins/DsgTools/Options')
-        valueList = settings.value('valueList').split(';')
+        valueList = [i for i in settings.value('valueList').split(';') if i != '']
         settings.endGroup()
         return valueList
     
