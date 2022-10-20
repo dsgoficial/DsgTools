@@ -31,7 +31,8 @@ from qgis.core import (Qgis,
                        QgsProject,
                        QgsMessageLog,
                        QgsProcessingFeedback,
-                       QgsExpressionContextUtils)
+                       QgsExpressionContextUtils,
+                       QgsVectorLayer)
 from qgis.PyQt.QtGui import QBrush, QColor
 from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtWidgets import (QLineEdit,
@@ -80,6 +81,38 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.FINISHED : self.tr("Completed"),
             self.FINISHED_WITH_FLAGS : self.tr("Completed (raised flags)")
         }
+        self.colorForeground = {
+            self.INITIAL : (0, 0, 0),
+            self.RUNNING : (0, 0, 125),
+            self.PAUSED : (187, 201, 25),
+            self.HALTED : (187, 201, 25),
+            self.CANCELED : (200, 0, 0),
+            self.FAILED : (169, 18, 28),
+            self.FINISHED : (0, 125, 0),
+            self.FINISHED_WITH_FLAGS : (100, 150, 20),
+            self.FINISHED_WITH_POSSIBLE_FALSE_POSITIVE_FLAGS: (0, 0, 0),
+        }
+        self.colorBackground = {
+            self.INITIAL : (255, 255, 255, 75),
+            self.RUNNING : (0, 0, 125, 90),
+            self.PAUSED : (187, 201, 25, 20),
+            self.HALTED : (200, 215, 40, 20),
+            self.CANCELED : (200, 0, 0, 85),
+            self.FAILED : (169, 18, 28, 85),
+            self.FINISHED : (0, 125, 0, 90),
+            self.FINISHED_WITH_FLAGS : (100, 150, 20, 45),
+            self.FINISHED_WITH_POSSIBLE_FALSE_POSITIVE_FLAGS: (255, 230, 1),
+        }
+        self.qgisStatusDict = {   
+            self.RUNNING : Qgis.Info,
+            self.PAUSED : Qgis.Info,
+            self.HALTED : Qgis.Critical,
+            self.CANCELED : Qgis.Warning,
+            self.FAILED : Qgis.Critical,
+            self.FINISHED : Qgis.Info,
+            self.FINISHED_WITH_FLAGS : Qgis.Warning,
+            self.FINISHED_WITH_POSSIBLE_FALSE_POSITIVE_FLAGS: Qgis.Warning,
+        }
         self.workflowStatusDict = defaultdict(OrderedDict)
         self.setGuiState()
         self.continuePushButton.hide()
@@ -90,8 +123,8 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.prepareProgressBar()
         # make sure workflows are loaded as per project instances
         QgsProject.instance().projectSaved.connect(self.saveState)
-        self.iface.newProjectCreated.connect(self.saveState)
-        self.iface.newProjectCreated.connect(self.loadState)
+        # self.iface.newProjectCreated.connect(self.saveState)
+        # self.iface.newProjectCreated.connect(self.loadState)
         self.iface.projectRead.connect(self.loadState)
 
     def confirmAction(self, msg, showCancel=True):
@@ -355,13 +388,13 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         )
         self.saveState()
 
-    def progressWidget(self):
+    def progressWidget(self, value=0):
         """
         Retrieves a progress widget bar.
         """
         bar = QProgressBar()
         bar.setTextVisible(True)
-        bar.setValue(0)
+        bar.setValue(value)
         return bar
 
     def currentWorkflow(self):
@@ -395,34 +428,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                           to avoid polluting QGIS main window.
         """
         status = self.statusMap[code]
-        colorForeground = {
-            self.INITIAL : (0, 0, 0),
-            self.RUNNING : (0, 0, 125),
-            self.PAUSED : (187, 201, 25),
-            self.HALTED : (187, 201, 25),
-            self.CANCELED : (200, 0, 0),
-            self.FAILED : (169, 18, 28),
-            self.FINISHED : (0, 125, 0),
-            self.FINISHED_WITH_FLAGS : (100, 150, 20),
-            self.FINISHED_WITH_POSSIBLE_FALSE_POSITIVE_FLAGS: (0, 0, 0),
-        }[code]
-        colorBackground = {
-            self.INITIAL : (255, 255, 255, 75),
-            self.RUNNING : (0, 0, 125, 90),
-            self.PAUSED : (187, 201, 25, 20),
-            self.HALTED : (200, 215, 40, 20),
-            self.CANCELED : (200, 0, 0, 85),
-            self.FAILED : (169, 18, 28, 85),
-            self.FINISHED : (0, 125, 0, 90),
-            self.FINISHED_WITH_FLAGS : (100, 150, 20, 45),
-            self.FINISHED_WITH_POSSIBLE_FALSE_POSITIVE_FLAGS: (255, 230, 1),
-        }[code]
-        if code == self.INITIAL:
-            # dark mode does not look good with this color pallete...
-            self.tableWidget.cellWidget(row, 0).setStyleSheet("")
-            self.tableWidget.cellWidget(row, 1).setStyleSheet("")
-        else:
-            self.setRowColor(row, colorBackground, colorForeground)
+        self.setRowStatus(row, code)
         self.tableWidget.cellWidget(row, 1).setText(status)
         if raiseMessage or code in [self.HALTED, self.FAILED, self.FINISHED_WITH_FLAGS]:
             # advise user a model status has changed only if it came from a 
@@ -431,16 +437,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 self.tr("DSGTools Q&A Toolbox"),
                 self.tr("model {0} status changed to {1}.")\
                     .format(modelName, status),
-                {   
-                    self.RUNNING : Qgis.Info,
-                    self.PAUSED : Qgis.Info,
-                    self.HALTED : Qgis.Critical,
-                    self.CANCELED : Qgis.Warning,
-                    self.FAILED : Qgis.Critical,
-                    self.FINISHED : Qgis.Info,
-                    self.FINISHED_WITH_FLAGS : Qgis.Warning,
-                    self.FINISHED_WITH_POSSIBLE_FALSE_POSITIVE_FLAGS: Qgis.Warning,
-                }[code],
+                self.qgisStatusDict[code],
                 duration=3
             )
         if code != self.INITIAL:
@@ -448,18 +445,21 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 self.tr("Model {0} status changed to {1}.")\
                     .format(modelName, status),
                 "DSGTools Plugin",
-                {   
-                    self.RUNNING : Qgis.Info,
-                    self.PAUSED : Qgis.Info,
-                    self.HALTED : Qgis.Critical,
-                    self.CANCELED : Qgis.Warning,
-                    self.FAILED : Qgis.Critical,
-                    self.FINISHED : Qgis.Info,
-                    self.FINISHED_WITH_FLAGS : Qgis.Warning,
-                    self.FINISHED_WITH_POSSIBLE_FALSE_POSITIVE_FLAGS: Qgis.Warning,
-                }[code]
+                self.qgisStatusDict[code]
             )
+        if modelName in self.workflowStatusDict[self.comboBox.currentText()] and code == self.workflowStatusDict[self.comboBox.currentText()][modelName]:
+            return
         self.workflowStatusDict[self.comboBox.currentText()][modelName] = code
+
+    def setRowStatus(self, row, code):
+        colorForeground = self.colorForeground[code]
+        colorBackground = self.colorBackground[code]
+        if code == self.INITIAL:
+            # dark mode does not look good with this color pallete...
+            self.tableWidget.cellWidget(row, 0).setStyleSheet("")
+            self.tableWidget.cellWidget(row, 1).setStyleSheet("")
+        else:
+            self.setRowColor(row, colorBackground, colorForeground)
 
     def customLineWidget(self, text, tooltip=None):
         """
@@ -488,6 +488,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.tableWidget.setRowCount(len(models))
         def progressInt(pb, x):
             pb.setValue(int(x))
+        currentStatusDict = self.workflowStatusDict.get(workflow.name(), {})
         for row, (modelName, model) in enumerate(models.items()):
             tooltip = self.tr(
                 "Model author: {0}\n"
@@ -502,8 +503,14 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.tableWidget.setCellWidget(row, 0, nameWidget)
             statusWidget = self.customLineWidget("", tooltip)
             self.tableWidget.setCellWidget(row, 1, statusWidget)
-            self.setModelStatus(row, self.INITIAL, modelName)
-            pb = self.progressWidget()
+            code = currentStatusDict.get(modelName, self.INITIAL)
+            self.setModelStatus(
+                row,
+                code,
+                modelName
+            )
+            pb = self.progressWidget(
+                value=100 if code in [self.FINISHED, self.FINISHED_WITH_FLAGS, self.FINISHED_WITH_POSSIBLE_FALSE_POSITIVE_FLAGS] else 0)
             self.tableWidget.setCellWidget(row, 2, pb)
 
     def preProcessing(self, firstModel=None):
@@ -529,7 +536,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         """
         # workflow objects cannot be serialized, so they must be passed as dict
         workflows = {
-            w.displayName(): w.asDict() for w in self.workflows.values()
+            w.displayName(): w.asDict(withOutputDict=True) for w in self.workflows.values()
         }
 
         QgsExpressionContextUtils.setProjectVariable(
@@ -538,7 +545,8 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             json.dumps({
                 "workflows" : workflows,
                 "current_workflow" : self.comboBox.currentIndex(),
-                "show_buttons" : self._showButtons
+                "show_buttons" : self._showButtons,
+                "workflow_status_dict": self.workflowStatusDict,
             })
         )
 
@@ -556,11 +564,15 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             "{}"
         )
         workflows = state["workflows"] if "workflows" in state else {}
+        workflow_status_dict = state.get("workflow_status_dict", {})
         self.resetComboBox()
         for idx, (name, workflowMap) in enumerate(workflows.items()):
             self.workflows[name] = QualityAssuranceWorkflow(workflowMap)
             self.comboBox.addItem(name)
             self.setWorkflowTooltip(idx + 1, self.workflows[name].metadata())
+            self.workflowStatusDict[name] = OrderedDict(
+                workflow_status_dict.get(name, {})
+            )
         currentIdx = state["current_workflow"] if "current_workflow" in state \
                         else 0
         self.comboBox.setCurrentIndex(currentIdx)
@@ -587,7 +599,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         Executes current selected workflow.
         """
         workflow = self.currentWorkflow()
-        self.prepareOutputTreeNodes()
+        self.prepareOutputTreeNodes(clearBeforeRunning=True)
         if workflow is None:
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTools Q&A Tool Box"),
@@ -724,13 +736,24 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         )
         workflow.run(
             firstModelName = None if isFirstModel else workflow.lastModelName()
-        )   
+        )
 
-    def prepareOutputTreeNodes(self):
+    def prepareOutputTreeNodes(self, clearBeforeRunning=False):
         rootNode = QgsProject.instance().layerTreeRoot()
-        groupName = self.tr("DSGTools Quality Assurance Models")
+        groupName = 'DSGTools_QA_Toolbox'
         groupNode = rootNode.findGroup(groupName)
         groupNode = groupNode if groupNode else rootNode.addGroup(groupName)
+        if clearBeforeRunning:
+            for lyrGroup in groupNode.findLayers():
+                lyr = lyrGroup.layer()
+                if isinstance(lyr, QgsVectorLayer):
+                    lyr.rollBack()
+            groupNode.removeAllChildren()
+        return groupName
+    
+    def removeEmptyNodes(self):
+        qaNode = self.prepareOutputTreeNodes()
+        qaNode.removeChildrenGroupWithoutLayers()
 
     @pyqtSlot(bool, name="on_importPushButton_clicked")
     def importWorkflow(self):
