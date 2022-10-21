@@ -363,13 +363,19 @@ class AlgRunner:
         output = processing.run("native:boundary", parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
-    def runMultipartToSingleParts(self, inputLayer, context, feedback=None, outputLyr=None):
+    def runMultipartToSingleParts(self, inputLayer, context, feedback=None, outputLyr=None, is_child_algorithm=False):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
             'INPUT' : inputLayer,
             'OUTPUT' : outputLyr
         }
-        output = processing.run("native:multiparttosingleparts", parameters, context=context, feedback=feedback)
+        output = processing.run(
+            "native:multiparttosingleparts",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
+        )
         return output['OUTPUT']
 
     def runBuffer(self, inputLayer, distance, context, dissolve=False, endCapStyle=None, joinStyle=None,\
@@ -473,7 +479,7 @@ class AlgRunner:
         )
         return output['OUTPUT']
     
-    def runPolygonsToLines(self, inputLyr, context, feedback=None, outputLyr=None):
+    def runPolygonsToLines(self, inputLyr, context, feedback=None, outputLyr=None, is_child_algorithm=False):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
             'INPUT':inputLyr,
@@ -484,7 +490,8 @@ class AlgRunner:
                 else 'qgis:polygonstolines',
             parameters,
             context=context,
-            feedback=feedback
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
         )
         return output['OUTPUT']
 
@@ -502,7 +509,7 @@ class AlgRunner:
         )
         return output['OUTPUT']
     
-    def runExplodeLines(self, inputLyr, context, feedback=None, outputLyr=None):
+    def runExplodeLines(self, inputLyr, context, feedback=None, outputLyr=None, is_child_algorithm=False):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
             'INPUT' : inputLyr,
@@ -512,7 +519,8 @@ class AlgRunner:
             'native:explodelines',
             parameters,
             context=context,
-            feedback=feedback
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
         )
         return output['OUTPUT']
     

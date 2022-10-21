@@ -1541,41 +1541,57 @@ class LayerHandler(QObject):
         multiStepFeedback = QgsProcessingMultiStepFeedback(
             nSteps, feedback)  # set number of steps
         currentStep = 0
+        multiStepFeedback.pushInfo(self.tr('Converting lines to single part and exploding lines'))
         for lineLyr in inputLineLyrList:
             multiStepFeedback.setCurrentStep(currentStep)
             singlePartLyr = algRunner.runMultipartToSingleParts(
                 inputLayer=lineLyr if not onlySelected \
                 else QgsProcessingFeatureSourceDefinition(lineLyr.id(), True),
                 context=context,
-                feedback=multiStepFeedback
+                feedback=multiStepFeedback,
+                is_child_algorithm=True
             )
             currentStep += 1
-            explodedLines = algRunner.runExplodeLines(singlePartLyr, context, feedback=multiStepFeedback)
+            explodedLines = algRunner.runExplodeLines(
+                singlePartLyr,
+                context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True
+            )
             lineList.append(
                 explodedLines
             )
             currentStep += 1
+        multiStepFeedback.pushInfo(self.tr('Converting polygons to single part and exploding lines'))
         for polygonLyr in inputPolygonLyrList:
             multiStepFeedback.setCurrentStep(currentStep)
             usedInput = algRunner.runMultipartToSingleParts(
                 inputLayer=polygonLyr if not onlySelected \
                 else QgsProcessingFeatureSourceDefinition(polygonLyr.id(), True),
                 context=context,
-                feedback=multiStepFeedback
+                feedback=multiStepFeedback,
+                is_child_algorithm=True
             )
             currentStep += 1
             convertedPolygons = algRunner.runPolygonsToLines(
                 usedInput,
                 context,
-                feedback=multiStepFeedback
+                feedback=multiStepFeedback,
+                is_child_algorithm=True
             )
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            explodedLines = algRunner.runExplodeLines(convertedPolygons, context, feedback=multiStepFeedback)
+            explodedLines = algRunner.runExplodeLines(
+                convertedPolygons,
+                context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True
+            )
             currentStep += 1
             lineList.append(explodedLines)
         # merge layers
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr('Adding exploded lines to one single layer.'))
         mergedLayer = algRunner.runMergeVectorLayers(
             lineList,
             context,
