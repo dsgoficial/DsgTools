@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 import json
+from weakref import ref
 
 from PyQt5.QtCore import QCoreApplication
 
@@ -34,7 +35,8 @@ from qgis.core import (QgsProject,
                        QgsProcessingParameterEnum,
                        QgsProcessingParameterBoolean,
                        QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterDefinition)
+                       QgsProcessingParameterDefinition,
+                       QgsVectorLayer)
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from ...algRunner import AlgRunner
@@ -100,42 +102,152 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        layerHandler = LayerHandler()
-        snapDict = self.parameterAsSnapHierarchy(parameters, self.SNAP_HIERARCHY, context)
+        self.layerHandler = LayerHandler()
+        self.algRunner = AlgRunner()
+        snapDictList = self.parameterAsSnapHierarchy(parameters, self.SNAP_HIERARCHY, context)
 
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
 
         behavior = self.parameterAsEnum(parameters, self.BEHAVIOR, context)
         nSteps = 0
-        for item in snapDict:
+        for item in snapDictList:
             nSteps += len(item['snapLayerList'])
-        currStep = 0
-        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
-        for current, item in enumerate(snapDict):
-            refLyr = self.layerFromProject(item['referenceLayer'])
-            for i, lyr in enumerate(item['snapLayerList']):
-                lyr = self.layerFromProject(lyr)
-                if multiStepFeedback.isCanceled():
-                    break
-                multiStepFeedback.setCurrentStep(currStep)
-                multiStepFeedback.pushInfo(
-                    self.tr('Snapping geometries from layer {input} to {reference} with snap {snap}...').format(
-                        input=lyr.name(),
-                        reference=refLyr.name(),
-                        snap=item['snap']
-                        )
-                    )
-                layerHandler.snapToLayer(
-                    lyr,
-                    refLyr,
-                    item['snap'],
-                    behavior,
-                    onlySelected=onlySelected,
-                    feedback=multiStepFeedback
-                    )
-                currStep += 1
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2*nSteps + 2, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        snapStructure = self.buildSnapStructure(snapDictList, onlySelected, context, multiStepFeedback)
+        currentStep += 1
+        for item in snapDictList:
+            multiStepFeedback.setCurrentStep(currentStep)
+            referenceLayerName = item['referenceLayer'] 
+            if referenceLayerName not in snapStructure:
+                currentStep += 2
+                continue
+            multiStepFeedback.pushInfo(
+                self.tr(f"Performing snap internally on {referenceLayerName}.")
+            )
+            snapStructure[referenceLayerName]['tempLayer'] = self.snapToReferenceAndUpdateSpatialIndex(
+                inputLayer=snapStructure[referenceLayerName]['tempLayer'],
+                referenceLayer=snapStructure[referenceLayerName]['tempLayer'],
+                tol=item['snap'],
+                behavior=item['mode'],
+                context=context,
+                feedback=multiStepFeedback
+            )
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            lyrList = [i for i in item['snapLayerList'] if i in snapStructure]
+            multiStepFeedback.pushInfo(
+                self.tr(f"Starting snapping with reference layer {referenceLayerName}.")
+            )
+            self.snapLayersToReference(
+                refLyrName=referenceLayerName,
+                snapStructure=snapStructure,
+                lyrList=lyrList,
+                tol=item['snap'],
+                behavior=item['mode'],
+                context=context,
+                feedback=multiStepFeedback
+            )
+            currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.updateOriginalLayers(snapStructure, onlySelected=onlySelected, context=context, feedback=multiStepFeedback)
+
         return {}
 
+    def snapLayersToReference(self, refLyrName, snapStructure, lyrList, tol, behavior, context, feedback):
+        nSteps = len(lyrList)
+        if nSteps == 0:
+            return
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        refLyr = snapStructure[refLyrName]['tempLayer']
+        for current, lyrName in enumerate(lyrList):
+            multiStepFeedback.setCurrentStep(current)
+            if multiStepFeedback.isCanceled():
+                return
+            lyr = snapStructure[lyrName]['tempLayer']
+            multiStepFeedback.pushInfo(
+                self.tr(
+                    'Snapping geometries from layer {input} to {reference} with snap {snap}...'
+                ).format(
+                    input=refLyrName,
+                    reference=lyrName,
+                    snap=tol
+                )
+            )
+            snappedLyr = self.snapToReferenceAndUpdateSpatialIndex(
+                inputLayer=lyr,
+                referenceLayer=refLyr,
+                tol=tol,
+                behavior=behavior,
+                context=context,
+                feedback=multiStepFeedback
+            )
+            snapStructure[lyrName]['tempLayer'] = snappedLyr   
+
+    def buildSnapStructure(self, snapDictList, onlySelected, context, feedback):
+        snapStructure = dict()
+        nItems = len(snapDictList)
+        if nItems == 0:
+            return snapStructure
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2*nItems, feedback)
+        currentStep = 0
+        for item in snapDictList:
+            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback.isCanceled():
+                break
+            lyr = self.layerFromProject(item['referenceLayer'])
+            featCount = lyr.featureCount() if not onlySelected else lyr.selectedFeatureCount()
+            if featCount == 0:
+                continue
+            auxLyr = self.layerHandler.createAndPopulateUnifiedVectorLayer(
+                [lyr],
+                geomType=lyr.wkbType(),
+                onlySelected=onlySelected,
+                feedback=multiStepFeedback
+            )
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.algRunner.runCreateSpatialIndex(
+                auxLyr, context, multiStepFeedback
+            )
+            currentStep += 1
+            snapStructure[item['referenceLayer']] = {
+                'originalLayer': lyr,
+                'tempLayer': auxLyr
+            }
+        return snapStructure
+
+    def snapToReferenceAndUpdateSpatialIndex(self, inputLayer, referenceLayer, tol, behavior, context, feedback):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        snappedLyr = self.algRunner.runSnapGeometriesToLayer(
+            inputLayer=inputLayer,
+            referenceLayer=referenceLayer,
+            tol=tol,
+            behavior=behavior,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True
+        )
+        multiStepFeedback.setCurrentStep(1)
+        self.algRunner.runCreateSpatialIndex(snappedLyr, context, multiStepFeedback, is_child_algorithm=True)
+        return snappedLyr
+    
+    def updateOriginalLayers(self, snapStructure, onlySelected, context, feedback):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(len(snapStructure), feedback)
+        for current, (lyrName, auxDict) in enumerate(snapStructure.items()):
+            multiStepFeedback.setCurrentStep(current)
+            multiStepFeedback.pushInfo(self.tr(f'Updating changes on {lyrName}'))
+            tempLyr = QgsProcessingUtils.mapLayerFromString(auxDict['tempLayer'], context)
+            self.layerHandler.updateOriginalLayersFromUnifiedLayer(
+                [auxDict['originalLayer']],
+                tempLyr,
+                feedback=multiStepFeedback,
+                onlySelected=onlySelected
+            )
+            QgsProject.instance().removeMapLayer(tempLyr.id())
+    
     def name(self):
         """
         Returns the algorithm name, used for identifying the algorithm. This
