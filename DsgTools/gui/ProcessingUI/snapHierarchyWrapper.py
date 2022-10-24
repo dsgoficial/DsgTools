@@ -43,6 +43,15 @@ class SnapHierarchyWrapper(WidgetWrapper):
         """
         cb = QgsMapLayerComboBox()
         return cb
+    
+    def doubleSpinBox(self):
+        """
+        Retrieves the configured map layer selection combo box.
+        :return: (QgsMapLayerComboBox) configured layer selection widget. 
+        """
+        sb = QDoubleSpinBox()
+        sb.setDecimals(10)
+        return sb
 
     def mapLayerModelDialog(self):
         """
@@ -87,7 +96,7 @@ class SnapHierarchyWrapper(WidgetWrapper):
             1 : {
                 "header" : self.tr("Snap"),
                 "type" : "widget",
-                "widget" : QDoubleSpinBox,
+                "widget" : self.doubleSpinBox,
                 "setter" : "setValue",
                 "getter" : "value"
             },
@@ -125,7 +134,7 @@ class SnapHierarchyWrapper(WidgetWrapper):
             1 : {
                 "header" : self.tr("Snap"),
                 "type" : "widget",
-                "widget" : QDoubleSpinBox,
+                "widget" : self.doubleSpinBox,
                 "setter" : "setValue",
                 "getter" : "value"
             },
