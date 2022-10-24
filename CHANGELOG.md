@@ -13,10 +13,12 @@ Melhorias:
 - Adicionada a opção de atribuir um id de atividade para o grid de revisão criado no processo de criar grid de edição;
 - Melhorado o estilo do grid utilizado pela barra de ferramentas de revisão;
 - Adicionada a funcionalidade de resetar o grid na barra ferramentas de revisão;
+- Adicionado o caso de snap dentro da camada no snap hierárquico. Agora para cada camada de entrada, primeiramente é feito o snap dentro da camada de referência antes de atrair os elementos com hierarquia menor;
 
 Correção de bug:
 - Correção de bug no identificar pontas soltas (o algoritmo estava levantando flag em vértice ocupado dentro do raio de busca);
 - Correção de bug no identificar erros no terreno (o algoritmo estava levantando a geometria da flag confusa);
+- Correção de crash ao rodar o snap hierárquico (o algoritmo agora só transmite as mudanças para o banco ao final do processo, mantendo os cálculos intermediários em camada de cache gravadas em camada temporária do processing do QGIS, ativado por meio da flag is_child_algorithm=True ao rodar o processo);
 
 ## 4.5.0 - 2022-09-08
 
