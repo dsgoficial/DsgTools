@@ -21,22 +21,17 @@
  ***************************************************************************/
 """
 import json
-from weakref import ref
 
 from PyQt5.QtCore import QCoreApplication
 
-import processing
 from qgis.core import (QgsProject,
-                       QgsFeature,
-                       QgsProcessing,
                        QgsProcessingUtils,
                        QgsProcessingContext,
                        QgsProcessingParameterType,
                        QgsProcessingParameterEnum,
                        QgsProcessingParameterBoolean,
                        QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterDefinition,
-                       QgsVectorLayer)
+                       QgsProcessingParameterDefinition)
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from ...algRunner import AlgRunner
