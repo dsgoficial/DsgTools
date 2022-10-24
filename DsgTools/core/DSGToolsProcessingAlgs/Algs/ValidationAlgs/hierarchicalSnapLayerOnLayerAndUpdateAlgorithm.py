@@ -71,14 +71,6 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                       self.tr('Move end points only, prefer closest point'),
                       self.tr('Snap end points to end points only')]
 
-        self.addParameter(
-            QgsProcessingParameterEnum(
-                self.BEHAVIOR,
-                self.tr('Behavior'),
-                options=self.modes,
-                defaultValue=0
-            )
-        )
     
     def parameterAsSnapHierarchy(self, parameters, name, context):
         return parameters[name]
@@ -103,7 +95,6 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
 
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
 
-        behavior = self.parameterAsEnum(parameters, self.BEHAVIOR, context)
         nSteps = 0
         for item in snapDictList:
             nSteps += len(item['snapLayerList'])
