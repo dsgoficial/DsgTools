@@ -116,6 +116,7 @@ class ToolBoxesGuiManager(QObject):
             self.iface.removeDockWidget(self.qaToolBox)
             del self.qaToolBox
         self.qaToolBox = QualityAssuranceDockWidget(self.iface)
+        return self.qaToolBox
 
     def showQaToolBox(self):
         """
