@@ -110,6 +110,12 @@ class ToolBoxesGuiManager(QObject):
             self.cfToolbox = CustomFeatureTool()
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.cfToolbox) """ 
         pass
+    
+    def refreshQaToolBoxObject(self):
+        if self.qaToolBox is not None:
+            self.iface.removeDockWidget(self.qaToolBox)
+            del self.qaToolBox
+        self.qaToolBox = QualityAssuranceDockWidget(self.iface)
 
     def showQaToolBox(self):
         """
