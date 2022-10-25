@@ -842,10 +842,10 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         if modelName not in self.workflowStatusDict:
             return False
         return all(
-            code in (
+            value in (
                 self.FINISHED,
                 self.FINISHED_WITH_POSSIBLE_FALSE_POSITIVE_FLAGS
-            ) for code in self.workflowStatusDict[modelName]
+            ) for _, value in self.workflowStatusDict[modelName].items()
         )
     
     def allWorkflowsAreFinishedWithoutFlags(self) -> bool:
