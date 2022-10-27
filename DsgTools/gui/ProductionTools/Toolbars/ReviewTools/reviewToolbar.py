@@ -372,7 +372,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         layer.startEditing()
         layer.beginEditCommand('DSGTools review tool')
         for feat in featureList:
-            feat[visitedField] = not visitedField
+            feat[visitedField] = not feat[visitedField]
             layer.updateFeature(feat)
         layer.endEditCommand()
         layer.commitChanges()
