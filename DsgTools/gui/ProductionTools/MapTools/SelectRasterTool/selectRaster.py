@@ -33,7 +33,7 @@ class SelectRasterTool(QgsMapTool):
         self.canvas = self.iface.mapCanvas()
         super(SelectRasterTool, self).__init__(self.canvas)
     
-    def addTool(self, manager, callback, parentMenu, iconBasePath):
+    def addTool(self, manager, callback, parentToolbar, iconBasePath):
         icon_path = iconBasePath + '/selectRaster.png'
         toolTip = self.tr("DSGTools: Select Raster")
         action = manager.add_action(
@@ -41,10 +41,10 @@ class SelectRasterTool(QgsMapTool):
             text=self.tr('DSGTools: Select Raster'),
             callback=callback,
             add_to_menu=False,
-            add_to_toolbar=True,
+            add_to_toolbar=False,
             withShortcut = True,
             tooltip = toolTip,
-            parentToolbar =parentMenu,
+            parentToolbar=parentToolbar,
             isCheckable = True
         )
         self.setAction(action)
