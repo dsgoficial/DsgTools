@@ -227,7 +227,8 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
         polygonLayer = algRunner.runGdalPolygonize(
             sieveOutput,
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
+            is_child_algorithm=True
         )
         currentStep += 1
 
@@ -236,7 +237,8 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
             polygonLayer,
             threshold=smoothingThreshold,
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         ) if smoothingThreshold > 0 else polygonLayer
         currentStep += 1
 
@@ -279,7 +281,7 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
             newFeat = QgsFeature(outputFields)
             newFeat['class'] = classLambda(feat['a_DN'])
             newFeat['class_min'], newFeat['class_max'] = slicingThresholdDict[feat['a_DN']]
-            geom = self.validatePolygon(feat, overlayedPolygons, slicedDEM, slicingThresholdDict)
+            geom = self.validatePolygon(feat, overlayedPolygons)
             newFeat.setGeometry(geom)
             output_sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
             multiStepFeedback.setProgress(current * stepSize)
@@ -289,7 +291,7 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
             "OUTPUT_RASTER": finalRaster,
         }
     
-    def validatePolygon(self, feat, overlayerPolygons, slicedDEM, slicingThresholdDict):
+    def validatePolygon(self, feat, overlayerPolygons):
         geom = feat.geometry()
         _, donutholes = self.geometryHandler.getOuterShellAndHoles(geom, False)
         filteredHoles = []
@@ -309,11 +311,12 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
             centerPoint = hole.pointOnSurface()
             hasValue = holeWithValue(centerPoint)
             if not hasValue:
-                holesIdsToDelete.add(idx)
+                holesIdsToDelete.add(idx+1)
                 continue
             filteredHoles.append(hole)
         if donutholes == filteredHoles:
             return geom
+        geom = QgsGeometry(geom)
         for idx in holesIdsToDelete:
             geom.deleteRing(idx)
         return geom

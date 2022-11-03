@@ -862,7 +862,7 @@ class AlgRunner:
     def runChaikenSmoothing(self, inputLyr, threshold, context,
                                  feedback=None, snap=None, minArea=None,
                                  iterations=None, type=None, returnError=False,
-                                 flags=None):
+                                 flags=None, is_child_algorithm=False):
         """
         Runs simplify GRASS algorithm
         :param inputLyr: (QgsVectorLayer) layer, or layers, to be dissolved.
@@ -912,10 +912,10 @@ class AlgRunner:
             'GRASS_VECTOR_DSCO':'',
             'GRASS_VECTOR_LCO':''}
         outputDict = processing.run("grass7:v.generalize", parameters,
-                                    context=context, feedback=feedback)
+                                    context=context, feedback=feedback, is_child_algorithm=is_child_algorithm)
         return self.getGrassReturn(outputDict, context, returnError=returnError)
 
-    def runGdalPolygonize(self, inputRaster, context, band=1, field=None, eightConectedness=False, feedback=None, outputLyr=None):
+    def runGdalPolygonize(self, inputRaster, context, band=1, field=None, eightConectedness=False, feedback=None, outputLyr=None, is_child_algorithm=False):
         outputLyr = 'TEMPORARY_OUTPUT' if outputLyr is None else outputLyr
         field = 'DN' if field is None else field
         output = processing.run(
@@ -929,7 +929,8 @@ class AlgRunner:
                 'OUTPUT': outputLyr
             },
             context=context,
-            feedback=feedback
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
         )
         return output['OUTPUT']
     
