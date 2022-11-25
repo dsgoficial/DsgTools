@@ -21,20 +21,22 @@
  ***************************************************************************/
 """
 
-from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
-import processing
-
-from PyQt5.QtCore import QCoreApplication, QVariant
-from qgis.core import (QgsGeometry, QgsProcessing, QgsProcessingException, QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink, QgsProcessingParameterFeatureSource, QgsProcessingParameterRasterLayer,
-                       QgsProcessingParameterField, QgsProject, QgsField, QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterNumber, QgsFeatureSink, QgsProcessingParameterRasterDestination,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes, QgsProcessingAlgorithm, QgsFeature,
-                       QgsFields, QgsProcessingUtils, QgsRaster)
 import numpy as np
+import processing
 from osgeo import gdal
+from PyQt5.QtCore import QCoreApplication, QVariant
+from qgis.core import (QgsFeature, QgsFeatureSink, QgsField, QgsFields,
+                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingMultiStepFeedback,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterRasterDestination,
+                       QgsProcessingParameterRasterLayer, QgsProcessingUtils,
+                       QgsProject, QgsVectorLayer, QgsWkbTypes)
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 
 class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
@@ -339,7 +341,12 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
             'GRASS_VECTOR_LCO': '',
             'GRASS_VECTOR_EXPORT_NOCAT': False
             }
-        x = processing.run('grass7:v.overlay', parameters, context=context, feedback=feedback)
+        x = processing.run(
+            'grass7:v.overlay',
+            parameters,
+            context=context,
+            feedback=feedback
+        )
         lyr = QgsProcessingUtils.mapLayerFromString(x['output'], context)
         lyr.setCrs(crs)
         return lyr
@@ -375,6 +382,12 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
                 return {
                     0: (int(uniqueValues[0]), int(uniqueValues[idx])),
                     1: (int(uniqueValues[idx]), int(uniqueValues[idx+1])),
+                }
+        
+        if numberOfElevationBands == 2 and np.argmax(areaPercentageValues >= 0.5) == 0:
+            return {
+                    0: (int(uniqueValues[0]), int(uniqueValues[1])),
+                    1: (int(uniqueValues[1]), int(uniqueValues[-1])),
                 }
 
         classThresholds = list(uniqueValues[
