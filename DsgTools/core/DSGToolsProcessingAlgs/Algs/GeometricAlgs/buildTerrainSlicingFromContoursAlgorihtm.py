@@ -45,6 +45,7 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
     CONTOUR_INTERVAL = 'CONTOUR_INTERVAL'
     GEOGRAPHIC_BOUNDARY = 'GEOGRAPHIC_BOUNDARY'
     AREA_WITHOUT_INFORMATION_POLYGONS = 'AREA_WITHOUT_INFORMATION_POLYGONS'
+    WATER_BODIES_POLYGONS = 'WATER_BODIES_POLYGONS'
     MIN_PIXEL_GROUP_SIZE = 'MIN_PIXEL_GROUP_SIZE'
     SMOOTHING_PARAMETER = 'SMOOTHING_PARAMETER'
     OUTPUT_POLYGONS = 'OUTPUT_POLYGONS'
@@ -80,6 +81,15 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSource(
                 self.AREA_WITHOUT_INFORMATION_POLYGONS,
                 self.tr('Area without information layer'),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.WATER_BODIES_POLYGONS,
+                self.tr('Water bodies layer'),
                 [QgsProcessing.TypeVectorPolygon],
                 optional=True
             )
@@ -129,6 +139,8 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
             parameters, self.GEOGRAPHIC_BOUNDARY, context)
         areaWithoutInformationSource = self.parameterAsSource(
             parameters, self.AREA_WITHOUT_INFORMATION_POLYGONS, context)
+        waterBodiesSource = self.parameterAsSource(
+            parameters, self.WATER_BODIES_POLYGONS, context)
         minPixelGroupSize = self.parameterAsInt(
             parameters, self.MIN_PIXEL_GROUP_SIZE, context
         )
@@ -139,7 +151,7 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
         outputFields = self.getOutputFields()
         (output_sink, output_sink_id) = self.getOutputSink(inputRaster, outputFields, parameters, context)
 
-        multiStepFeedback = QgsProcessingMultiStepFeedback(14, feedback) #ajustar depois
+        multiStepFeedback = QgsProcessingMultiStepFeedback(15, feedback) #ajustar depois
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
 
@@ -153,6 +165,18 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
         ) if areaWithoutInformationSource is not None and \
             areaWithoutInformationSource.featureCount() > 0 else parameters[self.GEOGRAPHIC_BOUNDARY]
         
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        geographicBounds = self.overlayPolygonLayer(
+            inputLyr=geographicBounds,
+            polygonLyr=parameters[self.WATER_BODIES_POLYGONS],
+            crs=inputRaster.crs() if inputRaster is not None else QgsProject.instance().crs(),
+            context=context,
+            feedback=multiStepFeedback,
+            operator=2
+        ) if waterBodiesSource is not None and \
+            waterBodiesSource.featureCount() > 0 else geographicBounds
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
