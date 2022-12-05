@@ -76,10 +76,15 @@ class FilterTools(QObject):
         pass
 
     def cleanAllFilters(self):
-        loadedLayers = core.QgsProject.instance().mapLayers().values()    
+        loadedLayers = core.QgsProject.instance().mapLayers().values()   
+        showMessage = False
         for layer in loadedLayers:
+            if layer.isEditable():
+                showMessage = True
             layer.setSubsetString('')
         iface.mapCanvas().refresh()
+        if showMessage:
+            iface.messageBar().pushMessage("Attention", "Enabled layers for edition have not been unfiltered.", level=core.Qgis.Info, duration=3)
 
     def filterBySelectedGeometries(self):
         layer = iface.activeLayer()
