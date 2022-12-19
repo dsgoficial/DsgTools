@@ -24,6 +24,7 @@ from __future__ import absolute_import
 from builtins import object
 import os.path
 import sys
+from DsgTools.gui.ProductionTools.MapTools.AuxTools.spatialFilter import SpatialFilter
 from DsgTools.gui.ProductionTools.MapTools.SelectRasterTool.selectRaster import SelectRasterTool
 
 from qgis.PyQt.QtCore import pyqtSignal
@@ -36,6 +37,8 @@ from .FreeHandTool.freeHandMain import FreeHandMain
 from .FreeHandTool.freeHandReshape import FreeHandReshape
 from .LabelTogglingTool.labelTogglingTool import LabelTogglingTool
 from .ShortcutTool.shortcutTool import ShortcutTool
+from .AuxTools.filterTools import FilterTools
+from .AuxTools.otherTools import OtherTools
 from qgis.PyQt.QtCore import QObject
 
 class MapToolsGuiManager(QObject):
@@ -51,6 +54,8 @@ class MapToolsGuiManager(QObject):
         self.iface = iface
         self.parentMenu = parentMenu
         self.toolbar = toolbar
+        self.toolbar_extra = self.iface.addToolBar(u'DsgTools_ExtraTools')
+        self.toolbar_extra.setObjectName(u'DsgTools_ExtraTools')
         self.iconBasePath = ':/plugins/DsgTools/icons/'
         # initiate current layer and make sure signals are connected
         self.currentLayer = None
@@ -61,9 +66,6 @@ class MapToolsGuiManager(QObject):
         #adding generic selection tool
         self.genericTool = GenericSelectionTool(self.iface)
         self.genericTool.addTool(self.manager, self.activateGenericTool, self.parentMenu, self.iconBasePath)
-        #adding select raster
-        self.rasterSelectTool = SelectRasterTool(self.iface)
-        self.rasterSelectTool.addTool(self.manager, self.rasterSelectTool.run, self.parentMenu, self.iconBasePath)
         #adding flip line tool
         self.flipLineTool = FlipLine(self.iface)
         self.flipLineTool.addTool(self.manager, self.flipLineTool.startFlipLineTool, self.parentMenu, self.iconBasePath)
@@ -82,16 +84,40 @@ class MapToolsGuiManager(QObject):
         self.freeHandReshape = FreeHandReshape(self.iface)
         self.freeHandReshape.addTool(self.manager, None, self.parentMenu, self.iconBasePath, parentButton=self.freeHandStackButton)
         self.freeHandReshape.acquisitionFreeController.setToolEnabled()
+        #adding select raster
+        self.labelStackButton = self.manager.createToolButton(self.toolbar_extra, u'LabelTools')
+        self.rasterSelectTool = SelectRasterTool(self.iface)
+        self.rasterSelectTool.addTool(self.manager, self.rasterSelectTool.run, self.labelStackButton, self.iconBasePath)
         #adding label toggling tool
-        self.labelStackButton = self.manager.createToolButton(self.toolbar, u'LabelTools')
         self.labelTool = LabelTogglingTool(self.iface)
-        self.labelTool.addTool(self.manager, None, self.toolbar, self.labelStackButton, self.iconBasePath)
+        self.labelTool.addTool(self.manager, None, self.toolbar_extra, self.labelStackButton, self.iconBasePath)
         #adding shortcuts tools
         self.shortcutsTool = ShortcutTool(self.iface)
-        self.shortcutsTool.addTool(self.manager, None, self.toolbar, self.labelStackButton, self.iconBasePath)
+        self.shortcutsTool.addTool(self.manager, None, self.toolbar_extra, self.labelStackButton, self.iconBasePath)
+
+        self.filterStackButton = self.manager.createToolButton(self.toolbar_extra, u'FilterTools')
+        self.spatialFilterTool = SpatialFilter()
+        action = self.manager.add_action(
+            icon_path=self.iconBasePath + 'spatialFilter.png',
+            text=self.tr("DSGTools: Spatial Filter"),
+            callback=self.spatialFilterTool.start,
+            add_to_toolbar=False,
+            parentButton=self.filterStackButton,
+            withShortcut=True
+        )
+        self.filterStackButton.setDefaultAction(action)
+
+        self.filterTool = FilterTools(self.iface)
+        self.filterTool.addTool(self.manager, None, self.toolbar_extra, self.filterStackButton, self.iconBasePath)
+
+        self.otherToolsStackButton = self.manager.createToolButton(self.toolbar_extra, u'OtherTools')
+        self.otherTools = OtherTools(self.iface)
+        self.otherTools.addTool(self.manager, None, self.toolbar_extra, self.otherToolsStackButton, self.iconBasePath)
+
 
         #initiate tools signals
         self.initiateToolsSignals()
+    
 
     def resetCurrentLayerSignals(self):
         """
@@ -141,3 +167,6 @@ class MapToolsGuiManager(QObject):
     def unload(self):
         self.genericTool.unload()
         self.rasterSelectTool.unload()
+        self.iface.mainWindow().removeToolBar(self.toolbar_extra)
+        del self.toolbar_extra
+

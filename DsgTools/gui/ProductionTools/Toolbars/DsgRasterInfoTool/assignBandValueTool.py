@@ -160,7 +160,7 @@ class AssignBandValueTool(QgsMapTool):
                 self.rubberBand.hide()
                 #select all stuff
                 layer.selectByIds([]) #portar para o feature handler
-                layer.selectByRect(bbRect, True)
+                layer.selectByRect(bbRect)
                 #mudar depois para o dsgmothafucka
                 featDict = dict()
                 pointDict = dict()
@@ -179,6 +179,7 @@ class AssignBandValueTool(QgsMapTool):
             #create context menu to select attribute
             if self.auxList:
                 self.createContextMenuOnPosition(e, layer)
+            self.iface.mapCanvas().currentLayer().triggerRepaint()
 
     def createContextMenuOnPosition(self, e, layer):
         menu = QMenu()

@@ -81,8 +81,15 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
             parent = self.parent
         )
         self.iface.registerMainWindowAction(self.nextTileAction, '')
-
-        self.iface.registerMainWindowAction(self.applyPushButtonAction, '')
+        
+        self.resetPushButtonAction = self.add_action(
+            icon_path=":/plugins/DsgTools/icons/reset.png",
+            text=self.tr('DSGTools: Reset visited tiles on review toolbar'),
+            callback=self.resetPushButton.click,
+            parent = self.parent
+        )
+        self.iface.registerMainWindowAction(self.resetPushButtonAction, '')
+        
         self.mMapLayerComboBox.setAllowEmptyLayer(True)
         self.mMapLayerComboBox.setCurrentIndex(0)
         self.currentTile = None
@@ -104,7 +111,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
     
     @pyqtSlot(int, name='on_rankFieldComboBox_currentIndexChanged')
     def validateRankField(self, idx: int) -> bool:
-        if idx == 0:
+        if idx in (-1, 0):
             return False
         fieldName = self.rankFieldComboBox.itemText(idx)
         fieldList = [field for field in self.rankFieldComboBox.fields() if field.name() == fieldName]
@@ -121,7 +128,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
     
     @pyqtSlot(int, name='on_visitedFieldComboBox_currentIndexChanged')
     def validateVisitedField(self, idx: int) -> bool:
-        if idx == 0:
+        if idx in (-1, 0):
             return False
         fieldName = self.visitedFieldComboBox.itemText(idx)
         fieldList = [
@@ -190,6 +197,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         currentField = fieldList[0]
         self.applyStyle(currentLayer, currentField.name())
         self.addCurrentLayerToGenericSelectionBlackList()
+        currentLayer.setReadOnly(True)
         
     
     def getOverviewWidget(self) -> None:
@@ -287,6 +295,30 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         self.currentTile = nextFeature.id()
     
     @pyqtSlot(bool)
+    def on_resetPushButton_clicked(self) -> None:
+        layer = self.mMapLayerComboBox.currentLayer()
+        if layer is None:
+            return
+        visitedField = self.visitedFieldComboBox.currentField()
+        if visitedField is None:
+            return
+        if not QMessageBox.question(
+            self, self.tr('DSGTools Review Toolbar: Confirm action'), self.tr('Would you like to set all features from grid as unvisited?'),
+            QMessageBox.Ok|QMessageBox.Cancel
+        ) == QMessageBox.Ok:
+            return
+        layer.setReadOnly(False)
+        layer.startEditing()
+        layer.beginEditCommand('DSGTools review tool')
+        for feat in layer.getFeatures():
+            feat[visitedField] = False
+            layer.updateFeature(feat)
+        layer.endEditCommand()
+        layer.commitChanges()
+        layer.setReadOnly(True)
+
+    
+    @pyqtSlot(bool)
     def on_applyPushButton_clicked(self) -> None:
         selectedFeatures = self.getSelectedFeatures()
         featList = selectedFeatures if selectedFeatures != [] \
@@ -336,13 +368,15 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         if layer is None:
             return
         visitedField = self.visitedFieldComboBox.currentField()
+        layer.setReadOnly(False)
         layer.startEditing()
         layer.beginEditCommand('DSGTools review tool')
         for feat in featureList:
-            feat[visitedField] = True
+            feat[visitedField] = not feat[visitedField]
             layer.updateFeature(feat)
         layer.endEditCommand()
         layer.commitChanges()
+        layer.setReadOnly(True)
         
     
     def getNextFeature(self, currentFeature, forward=True) -> QgsFeature:
@@ -425,7 +459,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
     def addLayerNameToGenericSelectionBlackList(self, layerName: str):
         settings = QSettings()
         settings.beginGroup('PythonPlugins/DsgTools/Options')
-        valueList = settings.value('valueList').split(';')
+        valueList = [i for i in settings.value('valueList').split(';') if i != '']
         if layerName in valueList:
             return
         valueList.append(layerName)
@@ -435,8 +469,8 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
     def removeLayerNameToGenericSelectionBlackList(self, layerName):
         settings = QSettings()
         settings.beginGroup('PythonPlugins/DsgTools/Options')
-        valueList = settings.value('valueList').split(';')
-        if layerName not in valueList or layerName in self.originalValueList:
+        valueList = [i for i in settings.value('valueList').split(';') if i != '']
+        if valueList != [] and (layerName not in valueList or layerName in self.originalValueList):
             return
         valueList.pop(layerName)
         settings.setValue('valueList', ';'.join(valueList))
@@ -445,7 +479,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
     def getValueListFromQsettings(self):
         settings = QSettings()
         settings.beginGroup('PythonPlugins/DsgTools/Options')
-        valueList = settings.value('valueList').split(';')
+        valueList = [i for i in settings.value('valueList').split(';') if i != '']
         settings.endGroup()
         return valueList
     
@@ -459,3 +493,10 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
     def unload(self) -> None:
         self.restoreOriginalValueList()
         self.iface.unregisterMainWindowAction(self.applyPushButtonAction)      
+    
+    def setState(self, layer: QgsVectorLayer, rankFieldName: str, visitedFieldName: str, zoomEnabled: bool = True):
+        self.mMapLayerComboBox.setLayer(layer)
+        self.rankFieldComboBox.setField(rankFieldName)
+        self.visitedFieldComboBox.setField(visitedFieldName)
+        self.zoomToNextCheckBox.setChecked(zoomEnabled)
+        self.preparePushButton.click()

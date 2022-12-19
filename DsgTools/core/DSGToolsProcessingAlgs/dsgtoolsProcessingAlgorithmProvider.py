@@ -47,6 +47,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFilterT
     AssignFilterToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFormatRulesToLayersAlgorithm import \
     AssignFormatRulesToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.detectNullGeometriesAlgorithm import \
+    DetectNullGeometriesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignMeasureColumnToLayersAlgorithm import \
     AssignMeasureColumnToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.lockAttributeEditingAlgorithm import \
@@ -77,6 +79,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm im
     CreateFrameAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFramesWithConstraintAlgorithm import \
     CreateFramesWithConstraintAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnIntersectionsAlgorithm import AddUnsharedVertexOnIntersectionsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnSharedEdgesAlgorithm import AddUnsharedVertexOnSharedEdgesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.extendLinesToGeographicBoundsAlgorithm import ExtendLinesToGeographicBoundsAlgorithm
 from .Algs.OtherAlgs.createReviewGridAlgorithm import CreateReviewGridAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.exportToMemoryLayer import \
     ExportToMemoryLayer
@@ -344,6 +349,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             RemoveEmptyLayers(),
             IdentifyGeometriesWithLargeVertexDensityAlgorithm(),
             AssignFormatRulesToLayersAlgorithm(),
+            DetectNullGeometriesAlgorithm(),
             IdentifyDuplicatedVertexesAlgorithm(),
             IdentifyMultiPartGeometriesAlgorithm(),
             IdentifyPolygonUndershootsAlgorithm(),
@@ -356,6 +362,9 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyDrainageLoops(),
             IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(),
             CreateReviewGridAlgorithm(),
+            ExtendLinesToGeographicBoundsAlgorithm(),
+            AddUnsharedVertexOnIntersectionsAlgorithm(),
+            AddUnsharedVertexOnSharedEdgesAlgorithm(),
         ]
         return algList
 

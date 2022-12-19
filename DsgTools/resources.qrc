@@ -84,5 +84,12 @@
         <file>icons/key.png</file>
         <file>icons/sort.png</file>
         <file>icons/review.png</file>
+        <file>icons/reset.png</file>
+        <file>icons/filter.svg</file>
+        <file>icons/filterByGeomtries.png</file>
+        <file>icons/removeSpatialFilter.png</file>
+        <file>icons/tempLayer.png</file>
+        <file>icons/copywkt.png</file>
+        <file>icons/spatialFilter.png</file>
     </qresource>
 </RCC>

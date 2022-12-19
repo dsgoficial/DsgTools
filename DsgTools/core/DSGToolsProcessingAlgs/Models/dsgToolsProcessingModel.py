@@ -55,7 +55,7 @@ class DsgToolsProcessingModel(QgsTask):
         QgsTask.Complete,
         QgsTask.Terminated
     ])
-    WarningFlags, HaltedOnFlags = range(n + 1, n + 3)
+    WarningFlags, HaltedOnFlags, HaltedOnPossibleFalsePositiveFlags = range(n + 1, n + 4)
     del n
 
     def __init__(self, parameters, name, taskName=None, flags=None, feedback=None):
@@ -345,25 +345,44 @@ class DsgToolsProcessingModel(QgsTask):
                 for param in model.parameterDefinitions()
         ]
 
-    def addLayerToGroup(self, layer, groupname, subgroupname=None):
+    def addLayerToGroup(self, layer, groupname, subgroupname=None, clearGroupBeforeAdding=False):
         """
         Adds a layer to a group into layer panel.
         :param layer: (QgsMapLayer) layer to be added to canvas.
         :param groupname: (str) name for group to nest the layer.
         :param subgroupname: (str) name for the subgroup to be added.
         """
-        root = QgsProject.instance().layerTreeRoot()
+        subGroup = self.createGroups(groupname, subgroupname)
+        if clearGroupBeforeAdding:
+            self.clearGroup(subGroup)
         layer = layer if isinstance(layer, QgsMapLayer) \
             else QgsProcessingUtils.mapLayerFromString(layer)
-        qaGroup = self.createGroup(groupname, root)
-        subGroup = self.createGroup(subgroupname, qaGroup)
         QgsProject.instance().addMapLayer(layer, addToLegend = False)
         subGroup.addLayer(layer)
-        # root.insertChildNode(-1, QgsLayerTreeLayer(subGroup))
+
+    def createGroups(self, groupname, subgroupname):
+        root = QgsProject.instance().layerTreeRoot()
+        qaGroup = self.createGroup(groupname, root)
+        subGroup = self.createGroup(subgroupname, qaGroup)
+        return subGroup
     
     def createGroup(self, groupName, rootNode):
         groupNode = rootNode.findGroup(groupName)
         return groupNode if groupNode else rootNode.addGroup(groupName)
+    
+    def prepareGroup(self, model):
+        subGroup = self.createGroups(
+            "DSGTools_QA_Toolbox",
+            self.model().model.displayName()
+        )
+        self.clearGroup(subGroup)
+
+    def clearGroup(self, group):
+        for lyrGroup in group.findLayers():
+            lyr = lyrGroup.layer()
+            if isinstance(lyr, QgsVectorLayer):
+                lyr.rollBack()
+        group.removeAllChildren()
 
     def runModel(self, feedback=None):
         """
@@ -403,10 +422,16 @@ class DsgToolsProcessingModel(QgsTask):
                 continue
             self.addLayerToGroup(
                 vl,
-                self.tr("DSGTools Quality Assurance Models"),
+                "DSGTools_QA_Toolbox",
                 model.displayName()
             )
+            self.enableFeatureCount(vl)
         return out
+    
+    def enableFeatureCount(self, lyr):
+        root = QgsProject.instance().layerTreeRoot()
+        lyrNode = root.findLayer(lyr.id())
+        lyrNode.setCustomProperty("showFeatureCount", True)
 
     def export(self, filepath):
         """

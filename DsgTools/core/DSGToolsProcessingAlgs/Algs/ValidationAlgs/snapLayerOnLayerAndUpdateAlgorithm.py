@@ -38,7 +38,7 @@ from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterNumber,
                        QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsSpatialIndex, QgsWkbTypes)
+                       QgsSpatialIndex, QgsWkbTypes, QgsProject)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm

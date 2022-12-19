@@ -21,16 +21,17 @@
  ***************************************************************************/
 """
 from __future__ import absolute_import
-from builtins import range
-from itertools import combinations
+
 import math
-from math import pi
+from builtins import range
 from functools import partial
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, \
-                      QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, \
-                      QgsFeature, QgsPoint, QgsSpatialIndex, Qgis, QgsCoordinateTransform, \
-                      QgsWkbTypes, QgsProject, QgsVertexId, Qgis, QgsCoordinateReferenceSystem
+from itertools import combinations
+
+from qgis.core import (Qgis, QgsCoordinateReferenceSystem,
+                       QgsCoordinateTransform, QgsGeometry, QgsPoint,
+                       QgsPointXY, QgsProject, QgsVectorLayer, QgsWkbTypes)
 from qgis.PyQt.Qt import QObject
+
 
 class GeometryHandler(QObject):
     def __init__(self, iface=None, parent=None):
@@ -723,4 +724,23 @@ class GeometryHandler(QObject):
         if azimuth < 0:
             azimuth += 360.0
         return azimuth
-        
+    
+    @staticmethod
+    def addVertex(vertex: QgsPoint, geom: QgsGeometry) -> QgsGeometry:
+        distance, p, after, orient = geom.closestSegmentWithContext(QgsPointXY(vertex))
+        geom.insertVertex(vertex, after)
+        return geom
+
+    def addVertexesToGeometry(self, vertexSet: set, geom: QgsGeometry) -> QgsGeometry:
+        geomVertexSet = set(QgsGeometry(i) for i in geom.vertices())
+        changedGeom = QgsGeometry(geom) # deep copy
+        for vertex in vertexSet:
+            vertexPoint = QgsPoint(vertex.asPoint())
+            closestVertexes = geom.closestVertex(vertex.asPoint())
+            closestVertexGeom = QgsGeometry.fromPointXY(closestVertexes[0])
+            if vertex in geomVertexSet or closestVertexGeom.intersects(vertex):
+                continue
+            changedGeom = self.addVertex(vertexPoint, changedGeom)
+        changedGeom.removeDuplicateNodes()
+        return changedGeom
+

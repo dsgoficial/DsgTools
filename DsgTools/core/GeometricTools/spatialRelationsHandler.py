@@ -222,7 +222,7 @@ class SpatialRelationsHandler(QObject):
         multiStepFeedback.setCurrentStep(3)
         self.populateContourAreaDict(
             polygonLyr,
-            boundsLineLyr,
+            geoBoundsLyr,
             attributeName,
             contourAreaDict,
             contourSpatialIdx,
@@ -231,9 +231,9 @@ class SpatialRelationsHandler(QObject):
         )
         return contourAreaDict
     
-    def populateContourAreaDict(self, polygonLyr, boundsLineLyr, attributeName,
+    def populateContourAreaDict(self, polygonLyr, geoBoundsLyr, attributeName,
         contourAreaDict, contourSpatialIdx, contourIdDict, feedback=None):
-        boundsGeom = [i for i in boundsLineLyr.getFeatures()][0].geometry() if boundsLineLyr is not None else None
+        boundsGeom = [i for i in geoBoundsLyr.getFeatures()][0].geometry() if geoBoundsLyr is not None else None
         nPolygons = polygonLyr.featureCount()
         size = 100/nPolygons if nPolygons else 0
         for current, feat in enumerate(polygonLyr.getFeatures()):
@@ -296,11 +296,12 @@ class SpatialRelationsHandler(QObject):
                     if feedback is not None and feedback.isCanceled():
                         break
                     shortestLineGeomList = [geom.shortestLine(i) for i in heightDict[h2]]
+                    shortestLine = min(shortestLineGeomList, key=lambda x: x.length())
                     missingContourFlagDict.update(
                         {
-                            i.asWkb() : self.tr(
-                                    'Missing contour between contour lines of values {v1} and {v2}'
-                                ).format(v1=min_h12, v2=max_h12) for i in shortestLineGeomList
+                            shortestLine.asWkb() : self.tr(
+                                'Missing contour between contour lines of values {v1} and {v2}'
+                            ).format(v1=min_h12, v2=max_h12)
                         }
                     )
             if feedback is not None:

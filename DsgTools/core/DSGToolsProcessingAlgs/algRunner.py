@@ -264,7 +264,7 @@ class AlgRunner:
         output = processing.run('dsgtools:identifysmallpolygons', parameters, context=context, feedback=feedback)
         return output['FLAGS']
 
-    def runSnapGeometriesToLayer(self, inputLayer, referenceLayer, tol, context, feedback=None, behavior=None, outputLyr=None):
+    def runSnapGeometriesToLayer(self, inputLayer, referenceLayer, tol, context, feedback=None, behavior=None, outputLyr=None, is_child_algorithm=False):
         behavior = 0 if behavior is None else behavior
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
@@ -274,10 +274,10 @@ class AlgRunner:
             'BEHAVIOR' : behavior,
             'OUTPUT' : outputLyr
         }
-        output = processing.run('qgis:snapgeometries', parameters, context=context, feedback=feedback)
+        output = processing.run('qgis:snapgeometries', parameters, context=context, feedback=feedback, is_child_algorithm=is_child_algorithm)
         return output['OUTPUT']
 
-    def runSnapLayerOnLayer(self, inputLayer, referenceLayer, tol, context, onlySelected=False, feedback=None, behavior=None, buildCache=False):
+    def runSnapLayerOnLayer(self, inputLayer, referenceLayer, tol, context, onlySelected=False, feedback=None, behavior=None, buildCache=False, is_child_algorithm=False):
         behavior = 0 if behavior is None else behavior
         parameters = {
             'INPUT' : inputLayer,
@@ -285,9 +285,9 @@ class AlgRunner:
             'REFERENCE_LAYER' : referenceLayer,
             'TOLERANCE' : tol,
             'BEHAVIOR' : behavior,
-            'BUILD_CACHE': False,
+            'BUILD_CACHE': buildCache,
         }
-        output = processing.run('dsgtools:snaplayeronlayer', parameters, context=context, feedback=feedback)
+        output = processing.run('dsgtools:snaplayeronlayer', parameters, context=context, feedback=feedback, is_child_algorithm=is_child_algorithm)
         return output['OUTPUT']
 
     def runIdentifyDangles(
@@ -363,13 +363,19 @@ class AlgRunner:
         output = processing.run("native:boundary", parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
-    def runMultipartToSingleParts(self, inputLayer, context, feedback=None, outputLyr=None):
+    def runMultipartToSingleParts(self, inputLayer, context, feedback=None, outputLyr=None, is_child_algorithm=False):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
             'INPUT' : inputLayer,
             'OUTPUT' : outputLyr
         }
-        output = processing.run("native:multiparttosingleparts", parameters, context=context, feedback=feedback)
+        output = processing.run(
+            "native:multiparttosingleparts",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
+        )
         return output['OUTPUT']
 
     def runBuffer(self, inputLayer, distance, context, dissolve=False, endCapStyle=None, joinStyle=None,\
@@ -451,7 +457,7 @@ class AlgRunner:
         output = processing.run('dsgtools:matchandapplyqmlstylestolayersalgorithm', parameters, context=context, feedback=feedback)
         return output['OUTPUT']
     
-    def runAddAutoIncrementalField(self, inputLyr, context, feedback=None, outputLyr=None, fieldName=None, start=1, sortAscending=True, sortNullsFirst=False):
+    def runAddAutoIncrementalField(self, inputLyr, context, feedback=None, outputLyr=None, fieldName=None, start=1, sortAscending=True, sortNullsFirst=False, is_child_algorithm=False):
         fieldName = 'featid' if fieldName is None else fieldName
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
@@ -468,11 +474,12 @@ class AlgRunner:
             'native:addautoincrementalfield',
             parameters,
             context=context,
-            feedback=feedback
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
         )
         return output['OUTPUT']
     
-    def runPolygonsToLines(self, inputLyr, context, feedback=None, outputLyr=None):
+    def runPolygonsToLines(self, inputLyr, context, feedback=None, outputLyr=None, is_child_algorithm=False):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
             'INPUT':inputLyr,
@@ -483,7 +490,8 @@ class AlgRunner:
                 else 'qgis:polygonstolines',
             parameters,
             context=context,
-            feedback=feedback
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
         )
         return output['OUTPUT']
 
@@ -501,7 +509,7 @@ class AlgRunner:
         )
         return output['OUTPUT']
     
-    def runExplodeLines(self, inputLyr, context, feedback=None, outputLyr=None):
+    def runExplodeLines(self, inputLyr, context, feedback=None, outputLyr=None, is_child_algorithm=False):
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         parameters = {
             'INPUT' : inputLyr,
@@ -511,7 +519,8 @@ class AlgRunner:
             'native:explodelines',
             parameters,
             context=context,
-            feedback=feedback
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
         )
         return output['OUTPUT']
     
@@ -705,16 +714,17 @@ class AlgRunner:
         )
         return output
 
-    def runCreateSpatialIndex(self, inputLyr, context, feedback=None):
+    def runCreateSpatialIndex(self, inputLyr, context, feedback=None, is_child_algorithm=False):
         processing.run(
             "native:createspatialindex",
             {'INPUT':inputLyr},
             feedback=feedback,
-            context=context
+            context=context,
+            is_child_algorithm=is_child_algorithm
         )
         return None
     
-    def runExtractByLocation(self, inputLyr, intersectLyr, context, predicate=None, feedback=None, outputLyr=None):
+    def runExtractByLocation(self, inputLyr, intersectLyr, context, predicate=None, feedback=None, outputLyr=None, is_child_algorithm=False):
         predicate = [0] if predicate is None else predicate
         outputLyr = 'memory:' if outputLyr is None else outputLyr
         output = processing.run(
@@ -726,7 +736,8 @@ class AlgRunner:
                 'OUTPUT': outputLyr
             },
             context=context,
-            feedback=feedback
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
         )
         return output['OUTPUT']
 
@@ -759,7 +770,7 @@ class AlgRunner:
         )
         return output['OUTPUT']
 
-    def runClipRasterLayer(self, inputRaster, mask, context, feedback=None, outputRaster=None):
+    def runClipRasterLayer(self, inputRaster, mask, context, feedback=None, outputRaster=None, noData=None):
         outputRaster = 'TEMPORARY_OUTPUT' if outputRaster is None else outputRaster
         output = processing.run(
             "gdal:cliprasterbymasklayer",
@@ -769,20 +780,20 @@ class AlgRunner:
                 'SOURCE_CRS': None,
                 'TARGET_CRS': None,
                 'TARGET_EXTENT': None,
-                'NODATA': None,
+                'NODATA': noData,
                 'ALPHA_BAND': False,
                 'CROP_TO_CUTLINE': True,
                 'KEEP_RESOLUTION': False,
                 'SET_RESOLUTION': False,
                 'X_RESOLUTION': None,
                 'Y_RESOLUTION': None,
-                'MULTITHREADING': True,
+                'MULTITHREADING': False,
                 'OPTIONS': '',
                 'DATA_TYPE': 0,
                 'EXTRA': '',
                 'OUTPUT': outputRaster
             },
-            context=context,
+            # context=context,
             feedback=feedback
         )
         return output['OUTPUT']
@@ -851,7 +862,7 @@ class AlgRunner:
     def runChaikenSmoothing(self, inputLyr, threshold, context,
                                  feedback=None, snap=None, minArea=None,
                                  iterations=None, type=None, returnError=False,
-                                 flags=None):
+                                 flags=None, is_child_algorithm=False):
         """
         Runs simplify GRASS algorithm
         :param inputLyr: (QgsVectorLayer) layer, or layers, to be dissolved.
@@ -901,10 +912,10 @@ class AlgRunner:
             'GRASS_VECTOR_DSCO':'',
             'GRASS_VECTOR_LCO':''}
         outputDict = processing.run("grass7:v.generalize", parameters,
-                                    context=context, feedback=feedback)
+                                    context=context, feedback=feedback, is_child_algorithm=is_child_algorithm)
         return self.getGrassReturn(outputDict, context, returnError=returnError)
 
-    def runGdalPolygonize(self, inputRaster, context, band=1, field=None, eightConectedness=False, feedback=None, outputLyr=None):
+    def runGdalPolygonize(self, inputRaster, context, band=1, field=None, eightConectedness=False, feedback=None, outputLyr=None, is_child_algorithm=False):
         outputLyr = 'TEMPORARY_OUTPUT' if outputLyr is None else outputLyr
         field = 'DN' if field is None else field
         output = processing.run(
@@ -918,7 +929,8 @@ class AlgRunner:
                 'OUTPUT': outputLyr
             },
             context=context,
-            feedback=feedback
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
         )
         return output['OUTPUT']
     
@@ -954,3 +966,52 @@ class AlgRunner:
             feedback=feedback
         )
         return output['OUTPUT']
+
+    def runExtendLines(self, inputLyr, startDistance, endDistance, context, feedback=None, outputLyr=None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:extendlines",
+            {
+                'INPUT': inputLyr,
+                'START_DISTANCE': startDistance,
+                'END_DISTANCE': endDistance,
+                'OUTPUT': outputLyr,
+            },
+            context=context,
+            feedback=feedback
+        )
+        return output['OUTPUT']
+
+    def runIdentifyUnsharedVertexOnIntersectionsAlgorithm(self, pointLayerList, lineLayerList, polygonLayerList, context, onlySelected=False, feedback=None, outputLyr=None, is_child_algorithm=False):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        output = processing.run(
+            "dsgtools:identifyunsharedvertexonintersectionsalgorithm",
+            {
+                'INPUT_POINTS': pointLayerList,
+                'INPUT_LINES': lineLayerList,
+                'INPUT_POLYGONS': polygonLayerList,
+                'SELECTED': onlySelected,
+                'FLAGS': outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
+        )
+        return output['FLAGS']
+    
+    def runIdentifyUnsharedVertexOnSharedEdgesAlgorithm(self, lineLayerList, polygonLayerList, searchRadius, context, onlySelected=False, feedback=None, outputLyr=None, is_child_algorithm=False):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        output = processing.run(
+            "dsgtools:identifyunsharedvertexonsharededgesalgorithm",
+            {
+                'INPUT_LINES': lineLayerList,
+                'INPUT_POLYGONS': polygonLayerList,
+                'SELECTED': onlySelected,
+                'SEARCH_RADIUS': searchRadius,
+                'FLAGS': outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
+        )
+        return output['FLAGS']

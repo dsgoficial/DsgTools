@@ -21,19 +21,22 @@
  ***************************************************************************/
 """
 
-import processing
-
-from PyQt5.QtCore import QCoreApplication, QVariant
-from qgis.core import (QgsGeometry, QgsProcessing, QgsProcessingException, QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink, QgsProcessingParameterFeatureSource, QgsProcessingParameterRasterLayer,
-                       QgsProcessingParameterField, QgsProject, QgsField, QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterNumber, QgsFeatureSink, QgsProcessingParameterRasterDestination,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes, QgsProcessingAlgorithm, QgsFeature,
-                       QgsFields, QgsProcessingUtils)
 import numpy as np
+import processing
 from osgeo import gdal
+from PyQt5.QtCore import QCoreApplication, QVariant
+from qgis.core import (QgsFeature, QgsFeatureSink, QgsField, QgsFields,
+                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingMultiStepFeedback,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterRasterDestination,
+                       QgsProcessingParameterRasterLayer, QgsProcessingUtils,
+                       QgsProject, QgsVectorLayer, QgsWkbTypes)
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 
 class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
@@ -41,6 +44,8 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
     INPUT = 'INPUT'
     CONTOUR_INTERVAL = 'CONTOUR_INTERVAL'
     GEOGRAPHIC_BOUNDARY = 'GEOGRAPHIC_BOUNDARY'
+    AREA_WITHOUT_INFORMATION_POLYGONS = 'AREA_WITHOUT_INFORMATION_POLYGONS'
+    WATER_BODIES_POLYGONS = 'WATER_BODIES_POLYGONS'
     MIN_PIXEL_GROUP_SIZE = 'MIN_PIXEL_GROUP_SIZE'
     SMOOTHING_PARAMETER = 'SMOOTHING_PARAMETER'
     OUTPUT_POLYGONS = 'OUTPUT_POLYGONS'
@@ -69,6 +74,24 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
                 self.tr('Geographic bounds layer'),
                 [QgsProcessing.TypeVectorPolygon],
                 optional=False
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.AREA_WITHOUT_INFORMATION_POLYGONS,
+                self.tr('Area without information layer'),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.WATER_BODIES_POLYGONS,
+                self.tr('Water bodies layer'),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True
             )
         )
 
@@ -108,11 +131,16 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
     
     def processAlgorithm(self, parameters, context, feedback):
         algRunner = AlgRunner()
+        self.geometryHandler = GeometryHandler()
         inputRaster = self.parameterAsRasterLayer(parameters, self.INPUT, context)
         threshold = self.parameterAsInt(
             parameters, self.CONTOUR_INTERVAL, context)
         geoBoundsSource = self.parameterAsSource(
             parameters, self.GEOGRAPHIC_BOUNDARY, context)
+        areaWithoutInformationSource = self.parameterAsSource(
+            parameters, self.AREA_WITHOUT_INFORMATION_POLYGONS, context)
+        waterBodiesSource = self.parameterAsSource(
+            parameters, self.WATER_BODIES_POLYGONS, context)
         minPixelGroupSize = self.parameterAsInt(
             parameters, self.MIN_PIXEL_GROUP_SIZE, context
         )
@@ -123,17 +151,41 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
         outputFields = self.getOutputFields()
         (output_sink, output_sink_id) = self.getOutputSink(inputRaster, outputFields, parameters, context)
 
-        multiStepFeedback = QgsProcessingMultiStepFeedback(11, feedback) #ajustar depois
+        multiStepFeedback = QgsProcessingMultiStepFeedback(15, feedback) #ajustar depois
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
+
+        geographicBounds = self.overlayPolygonLayer(
+            inputLyr=parameters[self.GEOGRAPHIC_BOUNDARY],
+            polygonLyr=parameters[self.AREA_WITHOUT_INFORMATION_POLYGONS],
+            crs=inputRaster.crs() if inputRaster is not None else QgsProject.instance().crs(),
+            context=context,
+            feedback=multiStepFeedback,
+            operator=2
+        ) if areaWithoutInformationSource is not None and \
+            areaWithoutInformationSource.featureCount() > 0 else parameters[self.GEOGRAPHIC_BOUNDARY]
         
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        geographicBounds = self.overlayPolygonLayer(
+            inputLyr=geographicBounds,
+            polygonLyr=parameters[self.WATER_BODIES_POLYGONS],
+            crs=inputRaster.crs() if inputRaster is not None else QgsProject.instance().crs(),
+            context=context,
+            feedback=multiStepFeedback,
+            operator=2
+        ) if waterBodiesSource is not None and \
+            waterBodiesSource.featureCount() > 0 else geographicBounds
+        currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
         clippedRaster = algRunner.runClipRasterLayer(
             inputRaster,
-            mask=parameters[self.GEOGRAPHIC_BOUNDARY],
+            mask=geographicBounds,
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
+            noData=-9999
         )
         currentStep += 1
 
@@ -163,6 +215,7 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
             feedback=multiStepFeedback
         )
         currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         clippedRaster = algRunner.runClipRasterLayer(
             inputRaster,
             mask=bufferedGeographicBounds,
@@ -189,7 +242,7 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         finalRaster = algRunner.runClipRasterLayer(
             sieveOutput,
-            mask=parameters[self.GEOGRAPHIC_BOUNDARY],
+            mask=geographicBounds,
             context=context,
             feedback=multiStepFeedback,
             outputRaster=outputRaster
@@ -200,7 +253,8 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
         polygonLayer = algRunner.runGdalPolygonize(
             sieveOutput,
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
+            is_child_algorithm=True
         )
         currentStep += 1
 
@@ -209,17 +263,25 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
             polygonLayer,
             threshold=smoothingThreshold,
             context=context,
-            feedback=multiStepFeedback
-        )
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        ) if smoothingThreshold > 0 else polygonLayer
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
-        overlayedPolygons = self.overlayGeographicBounds(
+        overlayedPolygons = self.overlayPolygonLayer(
             inputLyr=smoothPolygons,
-            geoBounds=parameters[self.GEOGRAPHIC_BOUNDARY],
+            polygonLyr=geographicBounds,
+            crs=inputRaster.crs() if inputRaster is not None else QgsProject.instance().crs(),
             context=context,
             feedback=multiStepFeedback
         )
+        currentStep += 1
+        # multiStepFeedback.setCurrentStep(currentStep)
+        # cleanedPolygons = self.cleanPolyonLayer()
+        # currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(overlayedPolygons, context, feedback=multiStepFeedback)
         currentStep += 1
 
         featCount = overlayedPolygons.featureCount()
@@ -231,13 +293,22 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
 
         multiStepFeedback.setCurrentStep(currentStep)
         stepSize = 100/featCount
+        valueSet = set(int(feat['a_DN']) for feat in overlayedPolygons.getFeatures())
+        diff = valueSet.difference(set(range(len(valueSet))))
+        def classLambda(x):
+            x = int(x)
+            if x == 0:
+                return x
+            return x - 1 if diff != set() else x
+
         for current, feat in enumerate(overlayedPolygons.getFeatures()):
             if multiStepFeedback.isCanceled():
                 break
             newFeat = QgsFeature(outputFields)
-            newFeat['class'] = feat['a_DN']
+            newFeat['class'] = classLambda(feat['a_DN'])
             newFeat['class_min'], newFeat['class_max'] = slicingThresholdDict[feat['a_DN']]
-            newFeat.setGeometry(feat.geometry())
+            geom = self.validatePolygon(feat, overlayedPolygons)
+            newFeat.setGeometry(geom)
             output_sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
             multiStepFeedback.setProgress(current * stepSize)
 
@@ -245,39 +316,104 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
             "OUTPUT_POLYGONS": output_sink_id,
             "OUTPUT_RASTER": finalRaster,
         }
+    
+    def validatePolygon(self, feat, overlayerPolygons):
+        geom = feat.geometry()
+        _, donutholes = self.geometryHandler.getOuterShellAndHoles(geom, False)
+        filteredHoles = []
+        holesIdsToDelete = set()
+        if donutholes == []:
+            return geom
+        def holeWithValue(centerPoint):
+            centerPointBB = centerPoint.boundingBox()
+            for polygonFeat in overlayerPolygons.getFeatures(centerPointBB):
+                polygonGeom = polygonFeat.geometry()
+                if polygonGeom.equals(geom):
+                    continue
+                if polygonGeom.intersects(centerPoint):
+                    return True
+            return False
+        for idx, hole in enumerate(donutholes):
+            centerPoint = hole.pointOnSurface()
+            hasValue = holeWithValue(centerPoint)
+            if not hasValue:
+                holesIdsToDelete.add(idx+1)
+                continue
+            filteredHoles.append(hole)
+        if donutholes == filteredHoles:
+            return geom
+        geom = QgsGeometry(geom)
+        for idx in holesIdsToDelete:
+            geom.deleteRing(idx)
+        return geom
 
-    def overlayGeographicBounds(self, inputLyr, geoBounds, context, feedback):
+    def overlayPolygonLayer(self, inputLyr, polygonLyr, crs, context, feedback, operator=0):
         parameters = {
             'ainput': inputLyr,
             'atype': 0,
-            'binput': geoBounds,
+            'binput': polygonLyr,
             'btype': 0,
-            'operator': 0,
+            'operator': operator,
             'snap': 0,
             '-t': False,
-            'output':'TEMPORARY_OUTPUT',
+            'output': 'TEMPORARY_OUTPUT',
             'GRASS_REGION_PARAMETER': None,
-            'GRASS_SNAP_TOLERANCE_PARAMETER':-1,
+            'GRASS_SNAP_TOLERANCE_PARAMETER': -1,
             'GRASS_MIN_AREA_PARAMETER': 1e-15,
-            'GRASS_OUTPUT_TYPE_PARAMETER':0,
-            'GRASS_VECTOR_DSCO':'',
-            'GRASS_VECTOR_LCO':'',
+            'GRASS_OUTPUT_TYPE_PARAMETER': 3,
+            'GRASS_VECTOR_DSCO': '',
+            'GRASS_VECTOR_LCO': '',
             'GRASS_VECTOR_EXPORT_NOCAT': False
             }
-        x = processing.run('grass7:v.overlay', parameters, context=context, feedback=feedback)
+        x = processing.run(
+            'grass7:v.overlay',
+            parameters,
+            context=context,
+            feedback=feedback
+        )
         lyr = QgsProcessingUtils.mapLayerFromString(x['output'], context)
-        lyr.setCrs(inputLyr.crs())
+        lyr.setCrs(crs)
         return lyr
     
     def findSlicingThresholdDict(self, inputRaster):
         ds = gdal.Open(inputRaster)
         npRaster = np.array(ds.GetRasterBand(1).ReadAsArray())
+        npRaster = npRaster[~np.isnan(npRaster)] # removes nodata values
         minValue = np.amin(npRaster)
         maxValue = np.amax(npRaster)
         numberOfElevationBands = self.getNumberOfElevationBands(maxValue - minValue)
         areaRatioList = self.getAreaRatioList(numberOfElevationBands)
         uniqueValues, uniqueCount = np.unique(npRaster, return_counts=True)
         cumulativePercentage = np.cumsum(uniqueCount) / np.prod(npRaster.shape)
+        areaPercentageValues = uniqueCount / np.prod(npRaster.shape)
+        if any(areaPercentageValues >= 0.48) and numberOfElevationBands > 2:
+            """
+            The MTM spec states that if there is an elevation slice that covers more than
+            50% of the map, there must only be 2 elevation bands.
+            """
+            idx = np.argmax(areaPercentageValues >= 0.5)
+            if idx == 0:
+                return {
+                    0: (int(uniqueValues[0]), int(uniqueValues[1])),
+                    1: (int(uniqueValues[1]), int(uniqueValues[-1])),
+                }
+            elif idx == len(areaPercentageValues):
+                return {
+                    0: (int(uniqueValues[0]), int(uniqueValues[-2])),
+                    1: (int(uniqueValues[-2]), int(uniqueValues[-1])),
+                }
+            else:
+                return {
+                    0: (int(uniqueValues[0]), int(uniqueValues[idx])),
+                    1: (int(uniqueValues[idx]), int(uniqueValues[idx+1])),
+                }
+        
+        if numberOfElevationBands == 2 and np.argmax(areaPercentageValues >= 0.5) == 0:
+            return {
+                    0: (int(uniqueValues[0]), int(uniqueValues[1])),
+                    1: (int(uniqueValues[1]), int(uniqueValues[-1])),
+                }
+
         classThresholds = list(uniqueValues[
                 np.searchsorted(
                     cumulativePercentage,
@@ -286,7 +422,8 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
             ]
         )
         classDict = dict()
-        for i, (a, b) in enumerate(zip([minValue]+classThresholds, classThresholds)):
+        lowerBounds = [minValue]+classThresholds if minValue not in classThresholds else classThresholds
+        for i, (a, b) in enumerate(zip(lowerBounds, classThresholds)):
             classDict[i] = (int(a), int(b))
         return classDict
 
@@ -319,7 +456,7 @@ class BuildTerrainSlicingFromContoursAlgorihtm(QgsProcessingAlgorithm):
     
     def getOutputFields(self):
         fields = QgsFields()
-        fields.append(QgsField('class', QVariant.String))
+        fields.append(QgsField('class', QVariant.Int))
         fields.append(QgsField('class_min', QVariant.Int))
         fields.append(QgsField('class_max', QVariant.Int))
 

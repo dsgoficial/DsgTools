@@ -135,6 +135,23 @@ class Ui_ReviewToolbar(object):
         self.applyPushButton.setIcon(icon2)
         self.applyPushButton.setIconSize(QtCore.QSize(16, 16))
         self.applyPushButton.setObjectName("applyPushButton")
+        
+        self.resetPushButton = QtWidgets.QPushButton(self.splitter)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.resetPushButton.sizePolicy().hasHeightForWidth())
+        self.resetPushButton.setSizePolicy(sizePolicy)
+        self.resetPushButton.setMinimumSize(QtCore.QSize(0, 24))
+        self.resetPushButton.setMaximumSize(QtCore.QSize(24, 24))
+        self.resetPushButton.setText("")
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/plugins/DsgTools/icons/reset.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.resetPushButton.setIcon(icon2)
+        self.resetPushButton.setIconSize(QtCore.QSize(16, 16))
+        self.resetPushButton.setObjectName("resetPushButton")
+        
+        
         self.gridLayout.addWidget(self.splitter, 0, 1, 1, 1)
 
         self.retranslateUi(ReviewToolbar)

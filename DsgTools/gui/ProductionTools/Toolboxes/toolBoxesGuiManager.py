@@ -58,12 +58,19 @@ class ToolBoxesGuiManager(QObject):
     
     def initGui(self):
         self.qaToolBox = None
-        self.addTool(self.showQaToolBox, 'validationtools.png', self.tr("Geospatial Data Quality Assurance Tool"), setDefaultAction=True)
+        self.addTool(
+            self.showQaToolBox,
+            'validationtools.png',
+            self.tr("Geospatial Data Quality Assurance Tool"),
+            parentButton=self.stackButton,
+            setDefaultAction=True
+        )
         
         self.addTool(
             self.acquisitionMenuCtrl.openMenuEditor, 
             'customFeatureToolBox.png', 
-            self.tr('Custom Feature Tool')
+            self.tr('Custom Feature Tool'),
+            parentButton=self.stackButton,
         )
         
         self.calcContour = None
@@ -73,7 +80,7 @@ class ToolBoxesGuiManager(QObject):
         self.complexWindow = None
         self.addTool(self.showComplexDock, 'complex.png', self.tr('Build Complex Structures'))
 
-    def addTool(self, callback, iconBaseName, text, setDefaultAction=False):
+    def addTool(self, callback, iconBaseName, text, setDefaultAction=False, parentButton=None):
         action = self.manager.add_action(
             os.path.join(self.iconBasePath, iconBaseName),
             text=text,
@@ -81,7 +88,7 @@ class ToolBoxesGuiManager(QObject):
             add_to_menu=False,
             add_to_toolbar=False,
             parentMenu=self.parentMenu,
-            parentButton=self.stackButton
+            parentButton=parentButton
         )
         if setDefaultAction:
             self.stackButton.setDefaultAction(action)
@@ -110,6 +117,13 @@ class ToolBoxesGuiManager(QObject):
             self.cfToolbox = CustomFeatureTool()
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.cfToolbox) """ 
         pass
+    
+    def refreshQaToolBoxObject(self):
+        if self.qaToolBox is not None:
+            self.iface.removeDockWidget(self.qaToolBox)
+            del self.qaToolBox
+        self.qaToolBox = QualityAssuranceDockWidget(self.iface)
+        return self.qaToolBox
 
     def showQaToolBox(self):
         """
