@@ -266,7 +266,10 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
             return
         currentIdx = featIdList.index(self.currentTile) if self.currentTile in featIdList else 0
         nextFeature = featDict[featIdList[(currentIdx - 1)]]
-        self.zoomToFeature(nextFeature)
+        if self.zoomComboBox.currentIndex() == ReviewToolbar.ZoomToNext:
+            self.zoomToFeature(nextFeature)
+        else:
+            self.panToFeature(nextFeature)
         self.currentTile = nextFeature.id()
     
     @pyqtSlot(bool)
