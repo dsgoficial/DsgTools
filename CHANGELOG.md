@@ -5,6 +5,8 @@
 Melhorias:
 - Adicionada a opção de dar pan na barra de ferramentas de revisão;
 
+Correção de bug:
+- Corrigido o bug de sempre apontar flags quando a geometria tem buraco do processo de identificar geometrias com densidade incorreta de vértices;
 
 ## 4.6.0
 
