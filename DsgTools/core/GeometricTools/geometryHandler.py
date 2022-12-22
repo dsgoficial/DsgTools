@@ -75,23 +75,24 @@ class GeometryHandler(QObject):
                 geomList.append(geom)
         return geomList
  
-    def reprojectFeature(self, geom, referenceCrs, destinationCrs=None, coordinateTransformer=None, debugging=False):
+    def reprojectFeature(self, geom, referenceCrs, destinationCrs=None, coordinateTransformer=None):
         """
         Reprojects geom from the canvas crs to the reference crs.
         :param geom: geometry to be reprojected
         :param referenceCrs: reference CRS (coordinate reference system). 
         :param canvasCrs: canvas CRS. If not given, it'll be evaluated on runtime execution.
         :param coordinateTransformer: the coordinate transformer for canvas to reference CRS
-        :param debbuging: if True, method returns the the list [geometry, canvasCrs, referenceCrs, coordinateTransformer]
         """
         if not destinationCrs:
             destinationCrs = QgsProject.instance().crs()
-        if destinationCrs.authid() != referenceCrs.authid():
-            if not coordinateTransformer:
-                coordinateTransformer = QgsCoordinateTransform(destinationCrs, referenceCrs, QgsProject.instance())
-            geom.transform(coordinateTransformer)
-        if debugging:
-            return [geom, canvasCrs, referenceCrs, coordinateTransformer]
+        if destinationCrs.authid() == referenceCrs.authid():
+            return
+        coordinateTransformer = QgsCoordinateTransform(
+            QgsCoordinateReferenceSystem(destinationCrs),
+            QgsCoordinateReferenceSystem(referenceCrs),
+            QgsProject.instance()
+        ) if not coordinateTransformer else coordinateTransformer
+        geom.transform(coordinateTransformer)
 
     def reprojectSearchArea(self, layer, geom):
         """

@@ -278,7 +278,11 @@ class AssignBandValueTool(QgsMapTool):
         #     self.geometryHandler.reprojectFeature(mousePosGeom, rasterCrs, QgsProject.instance().crs())
         # else:
         mousePosGeom = QgsGeometry(mousePosGeom)
-        self.geometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvas.currentLayer().crs())
+        self.geometryHandler.reprojectFeature(
+            geom=mousePosGeom,
+            destinationCrs=self.canvas.currentLayer().crs(),
+            referenceCrs=rasterCrs,
+        )
         mousePos = mousePosGeom.asMultiPoint()[0] if mousePosGeom.isMultipart() else mousePosGeom.asPoint()
         # identify pixel(s) information
         i = rasterLayer.dataProvider().identify( mousePos, QgsRaster.IdentifyFormatValue )
