@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 4.7.0
+
+Melhorias:
+- Adicionada a opção de dar pan na barra de ferramentas de revisão;
+
+
 ## 4.6.0
 
 Novas funcionalidades:

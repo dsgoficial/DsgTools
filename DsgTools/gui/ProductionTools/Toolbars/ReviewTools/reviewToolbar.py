@@ -36,10 +36,11 @@ from qgis.PyQt.QtXml import QDomDocument
 from qgis.core.additions.edit import edit
 
 from .review_ui import Ui_ReviewToolbar
-
+from enum import Enum
 
 class ReviewToolbar(QWidget, Ui_ReviewToolbar):
     idxChanged = pyqtSignal(int)
+    ZoomToNext, PanToNext, DoNothing = range(3)
     def __init__(self, iface: QgisInterface, parent: Optional[QWidget]  = None):
         """
         Constructor
@@ -59,7 +60,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         self.visitedFieldComboBox.setAllowEmptyFieldName(True)
         self.rankFieldComboBox.setToolTip(self.tr('Set rank field'))
         self.rankFieldComboBox.setAllowEmptyFieldName(True)
-        self.zoomToNextCheckBox.setChecked(True)
+        self.zoomComboBox.setCurrentIndex(ReviewToolbar.ZoomToNext)
         icon_path = ':/plugins/DsgTools/icons/attributeSelector.png'
         text = self.tr('DSGTools: Mark tile as done')
         self.applyPushButtonAction = self.add_action(icon_path, text, self.applyPushButton.click, parent = self.parent)
@@ -291,7 +292,10 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
             return
         currentIdx = featIdList.index(self.currentTile) if self.currentTile in featIdList else -1
         nextFeature = featDict[featIdList[(currentIdx + 1) % nFeats]]
-        self.zoomToFeature(nextFeature)
+        if self.zoomComboBox.currentIndex() == ReviewToolbar.ZoomToNext:
+            self.zoomToFeature(nextFeature)
+        else:
+            self.panToFeature(nextFeature)
         self.currentTile = nextFeature.id()
     
     @pyqtSlot(bool)
@@ -329,8 +333,10 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         nextFeat = self.getNextFeature(featList[0])
         if nextFeat is None:
             return
-        if self.zoomToNextCheckBox.isChecked():
+        if self.zoomComboBox.currentIndex() == ReviewToolbar.ZoomToNext:
             self.zoomToFeature(nextFeat)
+        elif self.zoomComboBox.currentIndex() == ReviewToolbar.PanToNext:
+            self.panToFeature(nextFeat)
         currentField = self.rankFieldComboBox.currentField()
         if currentField is None:
             return
@@ -441,6 +447,12 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         self.iface.mapCanvas().setExtent(newBox)
         self.iface.mapCanvas().refresh()
     
+    def panToFeature(self, feat: QgsFeature) -> None:
+        layer = self.mMapLayerComboBox.currentLayer()
+        if layer is None:
+            return
+        self.iface.mapCanvas().panToFeatureIds( layer, [feat.id()] )
+    
     def addCurrentLayerToGenericSelectionBlackList(self, layer=None):
         layer = self.mMapLayerComboBox.currentLayer() if layer is None else layer
         if layer is None:
@@ -494,9 +506,9 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         self.restoreOriginalValueList()
         self.iface.unregisterMainWindowAction(self.applyPushButtonAction)      
     
-    def setState(self, layer: QgsVectorLayer, rankFieldName: str, visitedFieldName: str, zoomEnabled: bool = True):
+    def setState(self, layer: QgsVectorLayer, rankFieldName: str, visitedFieldName: str, zoomType: int = 0):
         self.mMapLayerComboBox.setLayer(layer)
         self.rankFieldComboBox.setField(rankFieldName)
         self.visitedFieldComboBox.setField(visitedFieldName)
-        self.zoomToNextCheckBox.setChecked(zoomEnabled)
+        self.zoomComboBox.setCurrentIndex(int(zoomType))
         self.preparePushButton.click()
