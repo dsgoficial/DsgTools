@@ -263,6 +263,12 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         featIdList = sorted(featDict.keys(), reverse=False)
         nFeats = len(featDict)
         if nFeats == 0:
+            self.iface.messageBar().pushMessage(
+                title=self.tr('Info!'),
+                text=self.tr('All tiles already visited!'),
+                level=Qgis.Info,
+                duration=2
+            )
             return
         currentIdx = featIdList.index(self.currentTile) if self.currentTile in featIdList else 0
         nextFeature = featDict[featIdList[(currentIdx - 1)]]
@@ -292,6 +298,12 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         featIdList = sorted(featDict.keys(), reverse=False)
         nFeats = len(featDict)
         if nFeats == 0:
+            self.iface.messageBar().pushMessage(
+                title=self.tr('Info!'),
+                text=self.tr('All tiles already visited!'),
+                level=Qgis.Info,
+                duration=2
+            )
             return
         currentIdx = featIdList.index(self.currentTile) if self.currentTile in featIdList else -1
         nextFeature = featDict[featIdList[(currentIdx + 1) % nFeats]]
@@ -335,6 +347,12 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         self.setFeaturesAsVisited(featList)
         nextFeat = self.getNextFeature(featList[0])
         if nextFeat is None:
+            self.iface.messageBar().pushMessage(
+                title=self.tr('Info!'),
+                text=self.tr('All tiles already visited!'),
+                level=Qgis.Info,
+                duration=2
+            )
             return
         if self.zoomComboBox.currentIndex() == ReviewToolbar.ZoomToNext:
             self.zoomToFeature(nextFeat)

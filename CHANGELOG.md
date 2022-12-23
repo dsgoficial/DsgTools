@@ -7,6 +7,7 @@ Melhorias:
 
 Correção de bug:
 - Corrigido o bug de sempre apontar flags quando a geometria tem buraco do processo de identificar geometrias com densidade incorreta de vértices;
+- Correção de bug no processo de adicionar vértice em segmento compartilhado;
 
 ## 4.6.0
 
