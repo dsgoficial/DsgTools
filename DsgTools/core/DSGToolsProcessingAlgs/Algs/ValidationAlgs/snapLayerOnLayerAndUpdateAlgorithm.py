@@ -78,15 +78,16 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 [QgsProcessing.TypeVectorAnyGeometry ]
             )
         )
-        self.addParameter(
-            QgsProcessingParameterDistance(
-                self.TOLERANCE, 
-                self.tr('Snap radius'), 
-                parentParameterName=self.INPUT,                                         
-                minValue=0, 
-                defaultValue=1.0
-            )
+        param = QgsProcessingParameterDistance(
+            self.TOLERANCE,
+            self.tr('Search Radius'),
+            parentParameterName=self.INPUT,
+            defaultValue=1.0
         )
+        param.setMetadata( {'widget_wrapper':
+            { 'decimals': 8 }
+        })
+        self.addParameter(param)
         self.modes = [self.tr('Prefer aligning nodes, insert extra vertices where required'),
                       self.tr('Prefer closest point, insert extra vertices where required'),
                       self.tr('Prefer aligning nodes, don\'t insert new vertices'),

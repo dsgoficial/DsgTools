@@ -74,14 +74,15 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
                 self.tr('Process only selected features')
             )
         )
-        
-        self.addParameter(
-            QgsProcessingParameterDistance(
-                self.SEARCH_RADIUS,
-                self.tr('Search Radius'),
-                defaultValue=1.0
-            )
+        param = QgsProcessingParameterDistance(
+            self.SEARCH_RADIUS,
+            self.tr('Search Radius'),
+            defaultValue=1.0
         )
+        param.setMetadata( {'widget_wrapper':
+            { 'decimals': 8 }
+        })
+        self.addParameter(param)
         
         self.addParameter(
             QgsProcessingParameterVectorLayer(
@@ -160,39 +161,39 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
                 context=context,
                 onlySelected=onlySelected,
                 feedback=multiStepFeedback,
-                behavior=0,
+                behavior=1,
                 is_child_algorithm=True
             )
-        currentStep = current + 1 + (geographicBoundary is not None)
-        multiStepFeedback.setCurrentStep(currentStep)
-        newFlagsLyr = algRunner.runIdentifyUnsharedVertexOnSharedEdgesAlgorithm(
-            lineLayerList=inputLineLyrList,
-            polygonLayerList=inputPolygonLyrList,
-            onlySelected=onlySelected,
-            searchRadius=searchRadius,
-            context=context,
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-        if geographicBoundary is not None:
-            multiStepFeedback.setCurrentStep(currentStep)
-            newFlagsLyr = algRunner.runExtractByLocation(
-                newFlagsLyr, geographicBoundary, context, feedback=multiStepFeedback
-            )
-            currentStep += 1
-        if newFlagsLyr.featureCount() == 0:
-            return {}
-        multiStepFeedback.setCurrentStep(currentStep)
-        currentStep += 1
-        algRunner.runCreateSpatialIndex(newFlagsLyr, context, multiStepFeedback)
-        multiStepFeedback.setCurrentStep(currentStep)
-        currentStep += 1
-        LayerHandler().addVertexesToLayers(
-            vertexLyr=newFlagsLyr,
-            layerList=list(chain(inputLineLyrList, inputPolygonLyrList)),
-            searchRadius=searchRadius,
-            feedback=multiStepFeedback
-        )
+        # currentStep = current + 1 + (geographicBoundary is not None)
+        # multiStepFeedback.setCurrentStep(currentStep)
+        # newFlagsLyr = algRunner.runIdentifyUnsharedVertexOnSharedEdgesAlgorithm(
+        #     lineLayerList=inputLineLyrList,
+        #     polygonLayerList=inputPolygonLyrList,
+        #     onlySelected=onlySelected,
+        #     searchRadius=searchRadius,
+        #     context=context,
+        #     feedback=multiStepFeedback
+        # )
+        # currentStep += 1
+        # if geographicBoundary is not None:
+        #     multiStepFeedback.setCurrentStep(currentStep)
+        #     newFlagsLyr = algRunner.runExtractByLocation(
+        #         newFlagsLyr, geographicBoundary, context, feedback=multiStepFeedback
+        #     )
+        #     currentStep += 1
+        # if newFlagsLyr.featureCount() == 0:
+        #     return {}
+        # multiStepFeedback.setCurrentStep(currentStep)
+        # currentStep += 1
+        # algRunner.runCreateSpatialIndex(newFlagsLyr, context, multiStepFeedback)
+        # multiStepFeedback.setCurrentStep(currentStep)
+        # currentStep += 1
+        # LayerHandler().addVertexesToLayers(
+        #     vertexLyr=newFlagsLyr,
+        #     layerList=list(chain(inputLineLyrList, inputPolygonLyrList)),
+        #     searchRadius=searchRadius,
+        #     feedback=multiStepFeedback
+        # )
 
         return {}
 
