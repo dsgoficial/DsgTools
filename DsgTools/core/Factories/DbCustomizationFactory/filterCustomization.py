@@ -20,36 +20,59 @@
  *                                                                         *
  ***************************************************************************/
 """
-#DsgTools Imports
+# DsgTools Imports
 from builtins import map
-from DsgTools.core.Factories.DbCustomizationFactory.dbCustomization import DbCustomization
+from DsgTools.core.Factories.DbCustomizationFactory.dbCustomization import (
+    DbCustomization,
+)
+
 
 class FilterCustomization(DbCustomization):
     def __init__(self, customJson):
         super(FilterCustomization, self).__init__(customJson)
-    
+
     def buildSql(self):
-        '''
+        """
         {'schema':schema, 'tableName':tableName, 'attrName':attrName, 'filterName':filterName,'originalFilterList':originalFilterList, 'valueList':valueList, 'operation':operation, 'isMulti':isMulti}
-        '''
-        #Abstract method. Must be reimplemented in each child.
-        sql = ''
-        for modItem in self.customJson['FilterValue']:
-            filterList = modItem['originalFilterList']
-            if modItem['code'] not in filterList:
-                filterList.append(modItem['code'])
-            sql += ''''ALTER TABLE "{0}"."{1}" DROP CONSTRAINT IF EXISTS {2};\n'''.format(modItem['schema'], modItem['tableName'], modItem['filterName'])
-            sql += '''ALTER TABLE "{0}"."{1}" ADD CONSTRAINT {2} CHECK ({3} = ANY(ARRAY[{4}]);\n'''.format(modItem['schema'], modItem['tableName'], modItem['filterName'], modItem['attrName'], '::SMALLINT,'.join(map(str,filterList))+'::SMALLINT')
+        """
+        # Abstract method. Must be reimplemented in each child.
+        sql = ""
+        for modItem in self.customJson["FilterValue"]:
+            filterList = modItem["originalFilterList"]
+            if modItem["code"] not in filterList:
+                filterList.append(modItem["code"])
+            sql += (
+                """'ALTER TABLE "{0}"."{1}" DROP CONSTRAINT IF EXISTS {2};\n""".format(
+                    modItem["schema"], modItem["tableName"], modItem["filterName"]
+                )
+            )
+            sql += """ALTER TABLE "{0}"."{1}" ADD CONSTRAINT {2} CHECK ({3} = ANY(ARRAY[{4}]);\n""".format(
+                modItem["schema"],
+                modItem["tableName"],
+                modItem["filterName"],
+                modItem["attrName"],
+                "::SMALLINT,".join(map(str, filterList)) + "::SMALLINT",
+            )
         return sql
-    
+
     def buildUndoSql(self):
-        '''
+        """
         {'domainName':domainName, 'valueDict': valueDict}
-        '''
-        #Abstract method. Must be reimplemented in each child.
-        sql = ''
-        for modItem in self.customJson['FilterValue']:
-            filterList = modItem['originalFilterList']
-            sql += '''ALTER TABLE "{0}"."{1}" DROP CONSTRAINT IF EXISTS "{2}";\n'''.format(modItem['schema'], modItem['tableName'], modItem['filterName'])
-            sql += '''ALTER TABLE "{0}"."{1}" ADD CONSTRAINT "{2}" CHECK ({3} = ANY(ARRAY[{4}]);\n'''.format(modItem['schema'], modItem['tableName'], modItem['filterName'], modItem['attrName'], '::SMALLINT,'.join(map(str,filterList))+'::SMALLINT')
+        """
+        # Abstract method. Must be reimplemented in each child.
+        sql = ""
+        for modItem in self.customJson["FilterValue"]:
+            filterList = modItem["originalFilterList"]
+            sql += (
+                """ALTER TABLE "{0}"."{1}" DROP CONSTRAINT IF EXISTS "{2}";\n""".format(
+                    modItem["schema"], modItem["tableName"], modItem["filterName"]
+                )
+            )
+            sql += """ALTER TABLE "{0}"."{1}" ADD CONSTRAINT "{2}" CHECK ({3} = ANY(ARRAY[{4}]);\n""".format(
+                modItem["schema"],
+                modItem["tableName"],
+                modItem["filterName"],
+                modItem["attrName"],
+                "::SMALLINT,".join(map(str, filterList)) + "::SMALLINT",
+            )
         return sql

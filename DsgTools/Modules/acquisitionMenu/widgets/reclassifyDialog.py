@@ -2,6 +2,7 @@
 from PyQt5 import QtCore, uic, QtWidgets, QtGui
 import os, sys
 
+
 class ReclassifyDialog(QtWidgets.QDialog):
 
     success = QtCore.pyqtSignal(dict)
@@ -17,10 +18,10 @@ class ReclassifyDialog(QtWidgets.QDialog):
 
     def getUiPath(self):
         return os.path.join(
-            os.path.abspath(os.path.dirname(__file__)), 
-            '..',
-            'uis',
-            'reclassifyDialog.ui'
+            os.path.abspath(os.path.dirname(__file__)),
+            "..",
+            "uis",
+            "reclassifyDialog.ui",
         )
 
     def getController(self):
@@ -28,29 +29,29 @@ class ReclassifyDialog(QtWidgets.QDialog):
 
     def setAttributeTableWidget(self, attributeTableWidget):
         self.attributeTable = attributeTableWidget
-        self.attributeLayout.addWidget( attributeTableWidget )
+        self.attributeLayout.addWidget(attributeTableWidget)
 
     def getAttributeTableWidget(self):
         return self.attributeTable
 
     def loadLayersStatus(self, layers):
         self.layers = layers
-        for l in layers: 
-            checkBox = self.addLayerCheckBox( l )
+        for l in layers:
+            checkBox = self.addLayerCheckBox(l)
             checkBox.setChecked(True)
-            self.layersCheckbox.append( checkBox )
+            self.layersCheckbox.append(checkBox)
 
     def loadAttributes(self, attributesConfig):
-        self.getAttributeTableWidget().loadAttributes( attributesConfig )
+        self.getAttributeTableWidget().loadAttributes(attributesConfig)
 
     def setAttributesValues(self, attributesValues):
-        self.getAttributeTableWidget().setAttributesValues( attributesValues )
-    
+        self.getAttributeTableWidget().setAttributesValues(attributesValues)
+
     def addLayerCheckBox(self, layer):
-        checkBox = QtWidgets.QCheckBox( 
-            'Camada : {0} >>> Quantidade de selecionados : {1}'.format(
+        checkBox = QtWidgets.QCheckBox(
+            "Camada : {0} >>> Quantidade de selecionados : {1}".format(
                 layer.name(), layer.selectedFeatureCount()
-            ) 
+            )
         )
         checkBox.layerId = layer.id()
         self.layersFrame.layout().addWidget(checkBox)
@@ -61,21 +62,17 @@ class ReclassifyDialog(QtWidgets.QDialog):
         for checkBox in self.layersCheckbox:
             if not checkBox.isChecked():
                 continue
-            selectedLayerIds.append( checkBox.layerId )
-        return [
-            l
-            for l in self.layers
-            if l.id() in selectedLayerIds
-        ]
+            selectedLayerIds.append(checkBox.layerId)
+        return [l for l in self.layers if l.id() in selectedLayerIds]
 
     def getData(self):
         return {
-            'layers': self.getSelectedLayers(),
-            'attributes': self.getAttributeTableWidget().getAttributes()
+            "layers": self.getSelectedLayers(),
+            "attributes": self.getAttributeTableWidget().getAttributes(),
         }
 
     def showTopLevel(self):
-        return self.exec_() == QtWidgets.QDialog.Accepted 
+        return self.exec_() == QtWidgets.QDialog.Accepted
 
     @QtCore.pyqtSlot(bool)
     def on_saveBtn_clicked(self):
@@ -83,7 +80,7 @@ class ReclassifyDialog(QtWidgets.QDialog):
             self.reject()
         else:
             self.accept()
-            self.success.emit( self.getData() )
+            self.success.emit(self.getData())
 
     @QtCore.pyqtSlot(bool)
     def on_cancelBtn_clicked(self):

@@ -26,8 +26,9 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtCore import QSize
 from qgis.PyQt.QtWidgets import QWidget
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), "layerAndFieldSelectorWidget.ui"))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "layerAndFieldSelectorWidget.ui")
+)
 
 
 class LayerAndFieldSelectorWidget(QWidget, FORM_CLASS):
@@ -148,6 +149,5 @@ class LayerAndFieldSelectorWidget(QWidget, FORM_CLASS):
         mMapLayerComboBoxSize = self.mMapLayerComboBox.size()
         mFieldComboBoxSize = self.mFieldComboBox.size()
         minW = mMapLayerComboBoxSize.width() + mFieldComboBoxSize.width() + 5
-        minH = (mMapLayerComboBoxSize.height() +
-                mFieldComboBoxSize.height()) // 2
+        minH = (mMapLayerComboBoxSize.height() + mFieldComboBoxSize.height()) // 2
         self.setMinimumSize(QSize(minW, minH))

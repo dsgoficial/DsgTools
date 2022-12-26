@@ -22,25 +22,28 @@
 """
 
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean)
+from qgis.core import (
+    QgsProcessing,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFeatureSink,
+    QgsFeature,
+    QgsDataSourceUri,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingParameterBoolean,
+)
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 
+
 class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
-    OUTPUT = 'OUTPUT'
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
+    OUTPUT = "OUTPUT"
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
 
     def initAlgorithm(self, config):
         """
@@ -49,21 +52,20 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry]
+                self.tr("Input layer"),
+                [QgsProcessing.TypeVectorAnyGeometry],
             )
         )
 
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
 
-        self.addOutput(QgsProcessingOutputVectorLayer(
-            self.INPUT,
-            self.tr('Original layer updated')
+        self.addOutput(
+            QgsProcessingOutputVectorLayer(
+                self.INPUT, self.tr("Original layer updated")
             )
         )
 
@@ -76,17 +78,21 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
         target = self.parameterAsVectorLayer(parameters, self.INPUT, context)
 
         target.startEditing()
-        target.beginEditCommand('Updating layer')
+        target.beginEditCommand("Updating layer")
         fields = target.fields()
         paramDict = LayerHandler().getDestinationParameters(target)
         featHandler = FeatureHandler()
         featuresToAdd = []
         if onlySelected:
-            total = 100.0 / target.selectedFeatureCount() if target.selectedFeatureCount() else 0
+            total = (
+                100.0 / target.selectedFeatureCount()
+                if target.selectedFeatureCount()
+                else 0
+            )
             features = target.getSelectedFeatures()
         else:
             total = 100.0 / target.featureCount() if target.featureCount() else 0
-            features = target.getFeatures()            
+            features = target.getFeatures()
 
         for current, feature in enumerate(features):
             if feedback.isCanceled():
@@ -95,7 +101,9 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
                 target.deleteFeature(feature.id())
                 feedback.setProgress(int(current * total))
                 continue
-            updtGeom, newFeatList, update = featHandler.handleFeature([feature], feature, target, paramDict)
+            updtGeom, newFeatList, update = featHandler.handleFeature(
+                [feature], feature, target, paramDict
+            )
             if not update:
                 feature.setGeometry(updtGeom)
                 target.updateFeature(feature)
@@ -120,21 +128,21 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'deaggregategeometries'
+        return "deaggregategeometries"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Deaggregate Geometries')
+        return self.tr("Deaggregate Geometries")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Manipulation Processes)')
+        return self.tr("Quality Assurance Tools (Manipulation Processes)")
 
     def groupId(self):
         """
@@ -144,10 +152,10 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Manipulation Processes)'
+        return "DSGTools: Quality Assurance Tools (Manipulation Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('DeaggregatorAlgorithm', string)
+        return QCoreApplication.translate("DeaggregatorAlgorithm", string)
 
     def createInstance(self):
         return DeaggregatorAlgorithm()

@@ -25,11 +25,13 @@ from qgis.PyQt.QtCore import QObject, pyqtSignal, QRunnable
 
 from uuid import uuid4
 
+
 class ProcessSignals(QObject):
     rangeCalculated = pyqtSignal(int, str)
     stepProcessed = pyqtSignal(str)
     processingFinished = pyqtSignal(int, str, str)
     loadFile = pyqtSignal(str, bool)
+
 
 class GenericThread(QRunnable):
     def __init__(self):
@@ -39,7 +41,7 @@ class GenericThread(QRunnable):
         super(GenericThread, self).__init__()
 
         self.id = str(uuid4())
-        
+
         self.signals = ProcessSignals()
 
     def run(self):

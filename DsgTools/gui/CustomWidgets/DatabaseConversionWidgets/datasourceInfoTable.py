@@ -26,8 +26,10 @@ from qgis.PyQt.QtCore import pyqtSlot, Qt
 
 import os
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'datasourceInfoTable.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "datasourceInfoTable.ui")
+)
+
 
 class DatasourceInfoTable(QtWidgets.QDialog, FORM_CLASS):
     # create enum to manipulate headers order
@@ -54,14 +56,14 @@ class DatasourceInfoTable(QtWidgets.QDialog, FORM_CLASS):
         """
         # TO DO
         headers = {
-            self.Schema : self.tr("Schema"),
-            self.Layer : self.tr("Layer"),
-            self.GeomCol : self.tr("Geometry Column"),
-            self.GeomType : self.tr("Geometry Type"),
-            self.Srid : self.tr("SRID")
+            self.Schema: self.tr("Schema"),
+            self.Layer: self.tr("Layer"),
+            self.GeomCol: self.tr("Geometry Column"),
+            self.GeomType: self.tr("Geometry Type"),
+            self.Srid: self.tr("SRID"),
         }
         if col in headers:
-            print('Just consider it ordered by {0}, ok?'.format(headers[col]))
+            print("Just consider it ordered by {0}, ok?".format(headers[col]))
 
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
@@ -79,19 +81,24 @@ class DatasourceInfoTable(QtWidgets.QDialog, FORM_CLASS):
             self.tableWidget.removeRow(row)
         self.tableWidget.setRowCount(0)
         headers = {
-            self.Schema : self.tr("Schema"),
-            self.Layer : self.tr("Layer"),
-            self.GeomCol : self.tr("Geometry Column"),
-            self.GeomType : self.tr("Geometry Type"),
-            self.Srid : self.tr("SRID")
+            self.Schema: self.tr("Schema"),
+            self.Layer: self.tr("Layer"),
+            self.GeomCol: self.tr("Geometry Column"),
+            self.GeomType: self.tr("Geometry Type"),
+            self.Srid: self.tr("SRID"),
         }
         # set column count
         self.tableWidget.setColumnCount(self.COLUMN_COUNT)
         header = self.tableWidget.horizontalHeader()
         # set column names - makes sure the order is defined by enum's order
-        self.tableWidget.setHorizontalHeaderLabels([headers[i] for i in range(self.COLUMN_COUNT)])
+        self.tableWidget.setHorizontalHeaderLabels(
+            [headers[i] for i in range(self.COLUMN_COUNT)]
+        )
         # set resize policy for each column
-        [header.setSectionResizeMode(i, QtWidgets.QHeaderView.ResizeToContents) for i in range(self.COLUMN_COUNT)]
+        [
+            header.setSectionResizeMode(i, QtWidgets.QHeaderView.ResizeToContents)
+            for i in range(self.COLUMN_COUNT)
+        ]
         # connect header double click signal to order by that column
         header.sectionDoubleClicked.connect(self.orderByColumn)
 
@@ -105,7 +112,7 @@ class DatasourceInfoTable(QtWidgets.QDialog, FORM_CLASS):
         """
         item = QtWidgets.QTableWidgetItem()
         item.setText(text)
-        item.setFlags(Qt.ItemIsEditable) # not editable
+        item.setFlags(Qt.ItemIsEditable)  # not editable
         self.tableWidget.setItem(row, col, item)
         return item
 
@@ -115,11 +122,11 @@ class DatasourceInfoTable(QtWidgets.QDialog, FORM_CLASS):
         :param row: (int) row index to be added.
         :param content: (dict) contents to be displayed in the selected row.
         """
-        self.addItem(row=row, col=self.Schema, text=content['schema'])
-        self.addItem(row=row, col=self.Layer, text=content['layer'])
-        self.addItem(row=row, col=self.GeomCol, text=content['geomCol'])
-        self.addItem(row=row, col=self.GeomType, text=content['geomType'])
-        self.addItem(row=row, col=self.Srid, text=content['srid'])
+        self.addItem(row=row, col=self.Schema, text=content["schema"])
+        self.addItem(row=row, col=self.Layer, text=content["layer"])
+        self.addItem(row=row, col=self.GeomCol, text=content["geomCol"])
+        self.addItem(row=row, col=self.GeomType, text=content["geomType"])
+        self.addItem(row=row, col=self.Srid, text=content["srid"])
 
     def setTable(self, contents):
         """

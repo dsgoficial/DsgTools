@@ -22,21 +22,28 @@
 """
 
 from qgis.PyQt.QtCore import QCoreApplication
-from qgis.core import (QgsProject,
-                       QgsFeature,
-                       QgsWkbTypes,
-                       QgsFeatureSink,
-                       QgsProcessingContext,
-                       QgsProcessingException,
-                       QgsProcessingParameterType,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterFeatureSink)
+from qgis.core import (
+    QgsProject,
+    QgsFeature,
+    QgsWkbTypes,
+    QgsFeatureSink,
+    QgsProcessingContext,
+    QgsProcessingException,
+    QgsProcessingParameterType,
+    QgsProcessingParameterDefinition,
+    QgsProcessingParameterFeatureSink,
+)
 
-from DsgTools.core.GeometricTools\
-        .spatialRelationsHandler import SpatialRule, SpatialRelationsHandler
+from DsgTools.core.GeometricTools.spatialRelationsHandler import (
+    SpatialRule,
+    SpatialRelationsHandler,
+)
 from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import ValidationAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
+    ValidationAlgorithm,
+)
+
 
 class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
     RULES_SET = "RULES_SET"
@@ -49,32 +56,28 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         Parameter setting.
         """
         spatialRulesSetter = ParameterSpatialRulesSet(
-            self.RULES_SET,
-            description=self.tr('Spatial rules set')
+            self.RULES_SET, description=self.tr("Spatial rules set")
         )
-        spatialRulesSetter.setMetadata({
-            'widget_wrapper' : 'DsgTools.gui.ProcessingUI.enforceSpatialRuleWrapper.EnforceSpatialRuleWrapper'
-        })
+        spatialRulesSetter.setMetadata(
+            {
+                "widget_wrapper": "DsgTools.gui.ProcessingUI.enforceSpatialRuleWrapper.EnforceSpatialRuleWrapper"
+            }
+        )
         self.addParameter(spatialRulesSetter)
 
         self.addParameter(
+            QgsProcessingParameterFeatureSink(self.POINT_FLAGS, self.tr("Point flags"))
+        )
+
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.POINT_FLAGS,
-                self.tr('Point flags')
+                self.LINE_FLAGS, self.tr("Linestring flags")
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.LINE_FLAGS,
-                self.tr('Linestring flags')
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.POLYGON_FLAGS,
-                self.tr('Polygon flags')
+                self.POLYGON_FLAGS, self.tr("Polygon flags")
             )
         )
 
@@ -89,21 +92,21 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'enforcespatialrules'
+        return "enforcespatialrules"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Enforce spatial rules')
+        return self.tr("Enforce spatial rules")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -113,10 +116,10 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('EnforceSpatialRulesAlgorithm', string)
+        return QCoreApplication.translate("EnforceSpatialRulesAlgorithm", string)
 
     def createInstance(self):
         return EnforceSpatialRulesAlgorithm()
@@ -134,12 +137,10 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         layerMap = {
             QgsWkbTypes.PointGeometry: ptLayer,
             QgsWkbTypes.LineGeometry: lLayer,
-            QgsWkbTypes.PolygonGeometry: polLayer
+            QgsWkbTypes.PolygonGeometry: polLayer,
         }
         for ruleName, flags in flagDict.items():
-            flagText = self.tr('Rule "{name}" broken: {{text}}').format(
-                name=ruleName
-            )
+            flagText = self.tr('Rule "{name}" broken: {{text}}').format(name=ruleName)
             for flagList in flags.values():
                 for flag in flagList:
                     geom = flag["geom"]
@@ -165,9 +166,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        rules = self.parameterAsSpatialRulesSet(
-            parameters, self.RULES_SET, context
-        )
+        rules = self.parameterAsSpatialRulesSet(parameters, self.RULES_SET, context)
         # GUI was crashing when the SpatialRule was passed...
         rules = [SpatialRule(**r, checkLoadedLayer=False) for r in rules]
         if not rules or not self.validateRuleSet(rules):
@@ -177,24 +176,31 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         flagFields = self.getFlagFields()
         crs = QgsProject.instance().crs()
         pointFlags, ptId = self.parameterAsSink(
-                parameters, self.POINT_FLAGS, context,
-                flagFields, QgsWkbTypes.Point, crs
+            parameters, self.POINT_FLAGS, context, flagFields, QgsWkbTypes.Point, crs
         )
         if not pointFlags:
             raise QgsProcessingException(
                 self.invalidSinkError(parameters, self.POINT_FLAGS)
             )
         lineFlags, lId = self.parameterAsSink(
-                parameters, self.LINE_FLAGS, context,
-                flagFields, QgsWkbTypes.LineString, crs
+            parameters,
+            self.LINE_FLAGS,
+            context,
+            flagFields,
+            QgsWkbTypes.LineString,
+            crs,
         )
         if not lineFlags:
             raise QgsProcessingException(
                 self.invalidSinkError(parameters, self.LINE_FLAGS)
             )
         polygonFlags, polId = self.parameterAsSink(
-                parameters, self.POLYGON_FLAGS, context,
-                flagFields, QgsWkbTypes.Polygon, crs
+            parameters,
+            self.POLYGON_FLAGS,
+            context,
+            flagFields,
+            QgsWkbTypes.Polygon,
+            crs,
         )
         if not polygonFlags:
             raise QgsProcessingException(
@@ -202,17 +208,12 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
             )
         # marked as 5 steps because I *arbitrarily* set the rule enforcing
         # steps to be 4:1 to the flag layers creation
-        flagsDict = SpatialRelationsHandler().enforceRules(
-            rules, context, feedback)
+        flagsDict = SpatialRelationsHandler().enforceRules(rules, context, feedback)
         self.setFlags(flagsDict, pointFlags, lineFlags, polygonFlags)
-        return {
-            self.POINT_FLAGS: ptId,
-            self.LINE_FLAGS: lId,
-            self.POLYGON_FLAGS: polId
-        }
+        return {self.POINT_FLAGS: ptId, self.LINE_FLAGS: lId, self.POLYGON_FLAGS: polId}
+
 
 class ParameterSpatialRulesSetType(QgsProcessingParameterType):
-
     def __init__(self):
         super().__init__()
 
@@ -220,20 +221,24 @@ class ParameterSpatialRulesSetType(QgsProcessingParameterType):
         return ParameterSpatialRulesSet(name)
 
     def metadata(self):
-        return {'widget_wrapper': 'DsgTools.gui.ProcessingUI.enforceSpatialRuleWrapper.EnforceSpatialRuleWrapper'}
+        return {
+            "widget_wrapper": "DsgTools.gui.ProcessingUI.enforceSpatialRuleWrapper.EnforceSpatialRuleWrapper"
+        }
 
     def name(self):
-        return QCoreApplication.translate('Processing', 'Spatial Rules Set')
+        return QCoreApplication.translate("Processing", "Spatial Rules Set")
 
     def id(self):
-        return 'spatial_rules_set_type'
+        return "spatial_rules_set_type"
 
     def description(self):
-        return QCoreApplication.translate('Processing', 'Set of spatial rules. Used on Spatial Rules Checker.')
+        return QCoreApplication.translate(
+            "Processing", "Set of spatial rules. Used on Spatial Rules Checker."
+        )
+
 
 class ParameterSpatialRulesSet(QgsProcessingParameterDefinition):
-
-    def __init__(self, name, description=''):
+    def __init__(self, name, description=""):
         super().__init__(name, description)
 
     def clone(self):
@@ -245,7 +250,7 @@ class ParameterSpatialRulesSet(QgsProcessingParameterDefinition):
 
     @staticmethod
     def typeName():
-        return 'spatial_rules_set'
+        return "spatial_rules_set"
 
     def checkValueIsAcceptable(self, value, context=None):
         return value is not None

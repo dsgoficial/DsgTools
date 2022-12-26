@@ -21,26 +21,29 @@
  ***************************************************************************/
 """
 import json
-#Qt Imports
+
+# Qt Imports
 from qgis.PyQt.Qt import QObject
-#DsgTools Imports
+
+# DsgTools Imports
+
 
 class CustomJSONValidator(QObject):
     def __init__(self, jsonFile):
-        super(CustomJSONValidator,self).__init__()
+        super(CustomJSONValidator, self).__init__()
         self.jsonFile = jsonFile
-    
+
     def parseJson(self):
         pass
-    
+
     def validateTags(self):
         pass
-    
+
     def validateDsgToolsClassNames(self):
         pass
-    
+
     def validateGeometricPrimitives(self):
         pass
-    
+
     def validate(self):
         pass

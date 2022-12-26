@@ -20,14 +20,17 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
+    LayerLoaderFactory,
+)
 from qgis.core import QgsProject
+
 
 class EnviromentSetter:
     def __init__(self, iface):
         self.layerFactory = LayerLoaderFactory()
         self.iface = iface
-    
+
     def setEnviroment(self, parameterDict):
         """
         :param parameterDict (dict): dictionary with parameters
@@ -39,22 +42,20 @@ class EnviromentSetter:
             'framePolygon' : polygon of the working area
         }
         """
-        #Step 1: Load layers
+        # Step 1: Load layers
         layerLoader = self.layerFactory.makeLoader(
-            iface=self.iface,
-            abstractDb=parameterDict['abstractDb']
+            iface=self.iface, abstractDb=parameterDict["abstractDb"]
         )
         loadedLayerDict = layerLoader.loadedLayers(
-            inputList=parameterDict['layerList'],
-            stylePath=parameterDict['stylePath'],
-            loadEditingStructure=True
+            inputList=parameterDict["layerList"],
+            stylePath=parameterDict["stylePath"],
+            loadEditingStructure=True,
         )
         self.setLayerOrdering(
-            vectorLayerDict=loadedLayerDict,
-            layerOrder=parameterDict['layerList']
+            vectorLayerDict=loadedLayerDict, layerOrder=parameterDict["layerList"]
         )
-        self.createGrid(parameterDict['workingAreaPolygon'])
-        self.setWorkArea(parameterDict['workingAreaPolygon'])
+        self.createGrid(parameterDict["workingAreaPolygon"])
+        self.setWorkArea(parameterDict["workingAreaPolygon"])
 
     def createGrid(self, workingAreaPolygon):
         """

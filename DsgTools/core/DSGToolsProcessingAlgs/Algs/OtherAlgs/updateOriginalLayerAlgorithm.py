@@ -20,31 +20,36 @@
  ***************************************************************************/
 """
 
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import ValidationAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
+    ValidationAlgorithm,
+)
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
 from PyQt5.QtCore import QCoreApplication
 import processing
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterBoolean,
-                       QgsWkbTypes,
-                       QgsProcessingUtils,
-                       QgsProject)
+from qgis.core import (
+    QgsProcessing,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFeatureSink,
+    QgsFeature,
+    QgsDataSourceUri,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingParameterField,
+    QgsProcessingParameterBoolean,
+    QgsWkbTypes,
+    QgsProcessingUtils,
+    QgsProject,
+)
+
 
 class UpdateOriginalLayerAlgorithm(ValidationAlgorithm):
-    ORIGINALLAYER = 'ORIGINALLAYER'
-    PROCESSOUTPUTLAYER = 'PROCESSOUTPUTLAYER'
-    CONTROLID = 'CONTROLID'
-    KEEPFEATURES = 'KEEPFEATURES'
+    ORIGINALLAYER = "ORIGINALLAYER"
+    PROCESSOUTPUTLAYER = "PROCESSOUTPUTLAYER"
+    CONTROLID = "CONTROLID"
+    KEEPFEATURES = "KEEPFEATURES"
 
     def initAlgorithm(self, config):
         """
@@ -53,53 +58,66 @@ class UpdateOriginalLayerAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.ORIGINALLAYER,
-                self.tr('Original Layer'),
-                [QgsProcessing.TypeVectorAnyGeometry]
+                self.tr("Original Layer"),
+                [QgsProcessing.TypeVectorAnyGeometry],
             )
         )
 
         self.addParameter(
             QgsProcessingParameterField(
                 self.CONTROLID,
-                self.tr('Control ID'),
-                parentLayerParameterName=self.ORIGINALLAYER
+                self.tr("Control ID"),
+                parentLayerParameterName=self.ORIGINALLAYER,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.PROCESSOUTPUTLAYER,
-                self.tr('Control Layer'),
-                [QgsProcessing.TypeVectorAnyGeometry]
+                self.tr("Control Layer"),
+                [QgsProcessing.TypeVectorAnyGeometry],
             )
         )
 
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.KEEPFEATURES,
-                self.tr('Keep features from input that are not in update layer')
+                self.tr("Keep features from input that are not in update layer"),
             )
         )
-
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
         layerHandler = LayerHandler()
-        originalLyr = self.parameterAsVectorLayer(parameters, self.ORIGINALLAYER, context)
+        originalLyr = self.parameterAsVectorLayer(
+            parameters, self.ORIGINALLAYER, context
+        )
         if originalLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.ORIGINALLAYER))
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.ORIGINALLAYER)
+            )
 
-        processOutputLyr = self.parameterAsVectorLayer(parameters, self.PROCESSOUTPUTLAYER, context)
+        processOutputLyr = self.parameterAsVectorLayer(
+            parameters, self.PROCESSOUTPUTLAYER, context
+        )
         if processOutputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.PROCESSOUTPUTLAYER))
-        
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.PROCESSOUTPUTLAYER)
+            )
+
         controlId = self.parameterAsFields(parameters, self.CONTROLID, context)
         keepFeatures = self.parameterAsBool(parameters, self.KEEPFEATURES, context)
 
-        layerHandler.updateOriginalLayer(originalLyr, processOutputLyr, field=str(controlId[0]), feedback=feedback, keepFeatures = keepFeatures)
-        return {self.ORIGINALLAYER:originalLyr}
+        layerHandler.updateOriginalLayer(
+            originalLyr,
+            processOutputLyr,
+            field=str(controlId[0]),
+            feedback=feedback,
+            keepFeatures=keepFeatures,
+        )
+        return {self.ORIGINALLAYER: originalLyr}
 
     def name(self):
         """
@@ -109,21 +127,21 @@ class UpdateOriginalLayerAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'updatelayer'
+        return "updatelayer"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Update Layer')
+        return self.tr("Update Layer")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Other Algorithms')
+        return self.tr("Other Algorithms")
 
     def groupId(self):
         """
@@ -133,10 +151,10 @@ class UpdateOriginalLayerAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Other Algorithms'
+        return "DSGTools: Other Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate('UpdateOriginalLayerAlgorithm', string)
+        return QCoreApplication.translate("UpdateOriginalLayerAlgorithm", string)
 
     def createInstance(self):
         return UpdateOriginalLayerAlgorithm()

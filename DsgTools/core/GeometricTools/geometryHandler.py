@@ -27,9 +27,17 @@ from builtins import range
 from functools import partial
 from itertools import combinations
 
-from qgis.core import (Qgis, QgsCoordinateReferenceSystem,
-                       QgsCoordinateTransform, QgsGeometry, QgsPoint,
-                       QgsPointXY, QgsProject, QgsVectorLayer, QgsWkbTypes)
+from qgis.core import (
+    Qgis,
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
+    QgsGeometry,
+    QgsPoint,
+    QgsPointXY,
+    QgsProject,
+    QgsVectorLayer,
+    QgsWkbTypes,
+)
 from qgis.PyQt.Qt import QObject
 
 
@@ -40,46 +48,50 @@ class GeometryHandler(QObject):
         self.iface = iface
         if self.iface:
             self.canvas = iface.mapCanvas()
-    
+
     def getClockWiseList(self, pointList):
         pointSum = 0
         for i in range(len(pointList) - 1):
-            pointSum += (pointList[i+1].x() - pointList[i].x())*(pointList[i+1].y() + pointList[i].y())
+            pointSum += (pointList[i + 1].x() - pointList[i].x()) * (
+                pointList[i + 1].y() + pointList[i].y()
+            )
         if pointSum > 0:
             return pointList
         else:
             return pointList[::-1]
-    
+
     def reprojectWithCoordinateTransformer(self, geom, coordinateTransformer):
         if coordinateTransformer:
             geom.transform(coordinateTransformer)
         return geom
-    
+
     def adjustGeometry(self, geom, parameterDict):
         geomList = []
         if geom is not None:
-            if 'geometry' in dir(geom):
-                if not parameterDict['hasMValues']:
+            if "geometry" in dir(geom):
+                if not parameterDict["hasMValues"]:
                     geom.geometry().dropMValue()
-                if not parameterDict['hasZValues']:
+                if not parameterDict["hasZValues"]:
                     geom.geometry().dropZValue()
             if geom.isMultipart():
                 parts = geom.asGeometryCollection()
                 for part in parts:
-                    if parameterDict['isMulti']:
+                    if parameterDict["isMulti"]:
                         part.convertToMultiType()
                     geomList.append(part)
             else:
-                if parameterDict['isMulti']:
+                if parameterDict["isMulti"]:
                     geom.convertToMultiType()
                 geomList.append(geom)
         return geomList
- 
-    def reprojectFeature(self, geom, referenceCrs, destinationCrs=None, coordinateTransformer=None):
+
+    def reprojectFeature(
+        self, geom, referenceCrs, destinationCrs=None, coordinateTransformer=None
+    ):
         """
         Reprojects geom from the canvas crs to the reference crs.
         :param geom: geometry to be reprojected
-        :param referenceCrs: reference CRS (coordinate reference system). 
+        :param referenceCrs: reference CRS (coordinate reference system).
         :param canvasCrs: canvas CRS. If not given, it'll be evaluated on runtime execution.
         :param coordinateTransformer: the coordinate transformer for canvas to reference CRS
         """
@@ -87,11 +99,15 @@ class GeometryHandler(QObject):
             destinationCrs = QgsProject.instance().crs()
         if destinationCrs.authid() == referenceCrs.authid():
             return
-        coordinateTransformer = QgsCoordinateTransform(
-            QgsCoordinateReferenceSystem(destinationCrs),
-            QgsCoordinateReferenceSystem(referenceCrs),
-            QgsProject.instance()
-        ) if not coordinateTransformer else coordinateTransformer
+        coordinateTransformer = (
+            QgsCoordinateTransform(
+                QgsCoordinateReferenceSystem(destinationCrs),
+                QgsCoordinateReferenceSystem(referenceCrs),
+                QgsProject.instance(),
+            )
+            if not coordinateTransformer
+            else coordinateTransformer
+        )
         geom.transform(coordinateTransformer)
 
     def reprojectSearchArea(self, layer, geom):
@@ -101,16 +117,18 @@ class GeometryHandler(QObject):
         :param geom: (QgsRectangle) rectangle representing search area.
         :return: (QgsRectangle) rectangle representing reprojected search area.
         """
-        #geom always have canvas coordinates
+        # geom always have canvas coordinates
         epsg = self.canvas.mapSettings().destinationCrs().authid()
-        #getting srid from something like 'EPSG:31983'
+        # getting srid from something like 'EPSG:31983'
         srid = layer.crs().authid()
         if epsg == srid:
             return geom
         crsSrc = QgsCoordinateReferenceSystem(epsg)
         crsDest = QgsCoordinateReferenceSystem(srid)
         # Creating a transformer
-        coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance()) # here we have to put authid, not srid
+        coordinateTransformer = QgsCoordinateTransform(
+            crsSrc, crsDest, QgsProject.instance()
+        )  # here we have to put authid, not srid
         auxGeom = QgsGeometry.fromRect(geom)
         auxGeom.transform(coordinateTransformer)
         return auxGeom.boundingBox()
@@ -138,12 +156,12 @@ class GeometryHandler(QObject):
                 for idx, part in enumerate(nodes):
                     nodes[idx] = part[::-1]
                 # setting flipped geometry
-                flippedFeatureGeom = QgsGeometry.fromMultiPointXY(nodes)                
+                flippedFeatureGeom = QgsGeometry.fromMultiPointXY(nodes)
             else:
                 # inverting the point list
                 nodes = geom.asPoint()
                 nodes = nodes[::-1]
-                flippedFeatureGeom = QgsGeometry.fromPoint(nodes)                
+                flippedFeatureGeom = QgsGeometry.fromPoint(nodes)
         elif geomType == 1:
             if isMulti:
                 nodes = geom.asMultiPolyline()
@@ -156,10 +174,10 @@ class GeometryHandler(QObject):
                 flippedFeatureGeom = QgsGeometry.fromPolylineXY(nodes)
         elif geomType == 2:
             if isMulti:
-                nodes = geom.asMultiPolygon()                
+                nodes = geom.asMultiPolygon()
                 for idx, part in enumerate(nodes):
                     nodes[idx] = part[::-1]
-                flippedFeatureGeom = QgsGeometry.fromMultiPolygonXY(nodes)                
+                flippedFeatureGeom = QgsGeometry.fromMultiPolygonXY(nodes)
             else:
                 nodes = geom.asPolygon()
                 nodes = nodes[::-1]
@@ -171,14 +189,14 @@ class GeometryHandler(QObject):
         if refreshCanvas:
             self.iface.mapCanvas().refresh()
         return [layer, feature, geomType]
-    
+
     # MISSING REPROJECTION
     def flipFeatureList(self, featureList, debugging=False, refreshCanvas=True):
         """
         Inverts the flow from all features of a given list. ALL GIVEN FEATURES ARE ALTERED.
         :param featureList: list of features to be flipped ([layer, feature[, geometry_type]).
         :param debugging: optional parameter to indicate whether or not a list of features that failed
-                          to be reversed should be returner. 
+                          to be reversed should be returner.
         :returns: list of flipped features.
         """
         reversedFeatureList = []
@@ -216,57 +234,105 @@ class GeometryHandler(QObject):
         rel_tol = 1e-09 if rel_tol is None else rel_tol
         abs_tol = 0.0 if abs_tol is None else abs_tol
         return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
-    
-    def getOutOfBoundsAngleInPolygon(self, feat, part, angle, outOfBoundsList, exactAngleMatch=False, angTol=None, invalidRange=None):
+
+    def getOutOfBoundsAngleInPolygon(
+        self,
+        feat,
+        part,
+        angle,
+        outOfBoundsList,
+        exactAngleMatch=False,
+        angTol=None,
+        invalidRange=None,
+    ):
         angTol = 0.1 if angTol is None else angTol
         if invalidRange is not None:
             minAngle, maxAngle = invalidRange
         for linearRing in part.asPolygon():
             linearRing = self.getClockWiseList(linearRing)
-            nVertex = len(linearRing)-1
+            nVertex = len(linearRing) - 1
+
             def clause(x):
-                return x < angle if not exactAngleMatch \
+                return (
+                    x < angle
+                    if not exactAngleMatch
                     else not self.isclose(x, angle, abs_tol=angTol)
+                )
+
             clauseLambda = partial(clause)
             for i in range(nVertex):
                 if i == 0:
-                    vertexAngle = (linearRing[i].azimuth(linearRing[-2]) - linearRing[i].azimuth(linearRing[i+1]) + 360)
+                    vertexAngle = (
+                        linearRing[i].azimuth(linearRing[-2])
+                        - linearRing[i].azimuth(linearRing[i + 1])
+                        + 360
+                    )
                 else:
-                    vertexAngle = (linearRing[i].azimuth(linearRing[i-1]) - linearRing[i].azimuth(linearRing[i+1]) + 360)
+                    vertexAngle = (
+                        linearRing[i].azimuth(linearRing[i - 1])
+                        - linearRing[i].azimuth(linearRing[i + 1])
+                        + 360
+                    )
                 vertexAngle = math.fmod(vertexAngle, 360)
                 if vertexAngle > 180:
                     # if angle calculated is the outter one
                     vertexAngle = 360 - vertexAngle
-                if invalidRange is not None and (vertexAngle >= minAngle and vertexAngle <= maxAngle):
-                    geomDict = {'angle':vertexAngle, 'feat_id':feat.id(), 'geom':QgsGeometry.fromPointXY(linearRing[i])}
+                if invalidRange is not None and (
+                    vertexAngle >= minAngle and vertexAngle <= maxAngle
+                ):
+                    geomDict = {
+                        "angle": vertexAngle,
+                        "feat_id": feat.id(),
+                        "geom": QgsGeometry.fromPointXY(linearRing[i]),
+                    }
                     outOfBoundsList.append(geomDict)
                     continue
                 if clauseLambda(vertexAngle):
-                    geomDict = {'angle':vertexAngle, 'feat_id':feat.id(), 'geom':QgsGeometry.fromPointXY(linearRing[i])}
+                    geomDict = {
+                        "angle": vertexAngle,
+                        "feat_id": feat.id(),
+                        "geom": QgsGeometry.fromPointXY(linearRing[i]),
+                    }
                     outOfBoundsList.append(geomDict)
-    
-    def getOutOfBoundsAngleInLine(self, feat, part, angle, outOfBoundsList, invalidRange=None):
+
+    def getOutOfBoundsAngleInLine(
+        self, feat, part, angle, outOfBoundsList, invalidRange=None
+    ):
         if invalidRange is not None:
             minAngle, maxAngle = invalidRange
         line = part.asPolyline()
-        nVertex = len(line)-1
-        for i in range(1,nVertex):
-            vertexAngle = (line[i].azimuth(line[i-1]) - line[i].azimuth(line[i+1]) + 360)
+        nVertex = len(line) - 1
+        for i in range(1, nVertex):
+            vertexAngle = (
+                line[i].azimuth(line[i - 1]) - line[i].azimuth(line[i + 1]) + 360
+            )
             vertexAngle = math.fmod(vertexAngle, 360)
             if vertexAngle > 180:
                 vertexAngle = 360 - vertexAngle
-            if invalidRange is not None and (vertexAngle >= minAngle and vertexAngle <= maxAngle):
-                geomDict = {'angle':vertexAngle, 'feat_id':feat.id(), 'geom':QgsGeometry.fromPointXY(line[i])}
+            if invalidRange is not None and (
+                vertexAngle >= minAngle and vertexAngle <= maxAngle
+            ):
+                geomDict = {
+                    "angle": vertexAngle,
+                    "feat_id": feat.id(),
+                    "geom": QgsGeometry.fromPointXY(line[i]),
+                }
                 outOfBoundsList.append(geomDict)
                 continue
             if vertexAngle < angle:
-                geomDict = {'angle':vertexAngle, 'feat_id':feat.id(), 'geom':QgsGeometry.fromPointXY(line[i])}
+                geomDict = {
+                    "angle": vertexAngle,
+                    "feat_id": feat.id(),
+                    "geom": QgsGeometry.fromPointXY(line[i]),
+                }
                 outOfBoundsList.append(geomDict)
-    
+
     def getInvalidBuildingAngle(self, feat, angTol):
         return self.getOutOfBoundsAngle(feat, 90, exactAngleMatch=True, angTol=angTol)
-    
-    def getOutOfBoundsAngle(self, feat, angle, exactAngleMatch=False, angTol=0.1, invalidRange=None):
+
+    def getOutOfBoundsAngle(
+        self, feat, angle, exactAngleMatch=False, angTol=0.1, invalidRange=None
+    ):
         outOfBoundsList = []
         geom = feat.geometry()
         for part in geom.asGeometryCollection():
@@ -278,20 +344,17 @@ class GeometryHandler(QObject):
                     outOfBoundsList,
                     exactAngleMatch=exactAngleMatch,
                     angTol=angTol,
-                    invalidRange=invalidRange
+                    invalidRange=invalidRange,
                 )
             if part.type() == QgsWkbTypes.LineGeometry:
-                self.getOutOfBoundsAngleInLine(feat,
-                    part,
-                    angle,
-                    outOfBoundsList,
-                    invalidRange=invalidRange
-                )            
+                self.getOutOfBoundsAngleInLine(
+                    feat, part, angle, outOfBoundsList, invalidRange=invalidRange
+                )
         return outOfBoundsList
 
     def getAngleBetweenSegments(self, part):
         line = part.asPolyline()
-        vertexAngle = (line[1].azimuth(line[0]) - line[1].azimuth(line[2]) + 360)
+        vertexAngle = line[1].azimuth(line[0]) - line[1].azimuth(line[2]) + 360
         vertexAngle = math.fmod(vertexAngle, 360)
         if vertexAngle > 180:
             vertexAngle = 360 - vertexAngle
@@ -311,10 +374,16 @@ class GeometryHandler(QObject):
         segmentDict = dict()
         geomList = []
         if lineLyr.featureCount() > 0:
-            toLineAlias = lambda geom : geom.asMultiPolyline()[0] if next(lineLyr.getFeatures()).geometry().isMultipart() \
-                            else geom.asPolyline()
-            fromLineAlias = lambda x : QgsGeometry.fromMultiPolylineXY([x]) if next(lineLyr.getFeatures()).geometry().isMultipart() \
-                            else QgsGeometry.fromPolyline(x[0], x[1])
+            toLineAlias = (
+                lambda geom: geom.asMultiPolyline()[0]
+                if next(lineLyr.getFeatures()).geometry().isMultipart()
+                else geom.asPolyline()
+            )
+            fromLineAlias = (
+                lambda x: QgsGeometry.fromMultiPolylineXY([x])
+                if next(lineLyr.getFeatures()).geometry().isMultipart()
+                else QgsGeometry.fromPolyline(x[0], x[1])
+            )
         for feat in lineLyr.getFeatures():
             geom = feat.geometry()
             if geom not in geomList:
@@ -322,18 +391,24 @@ class GeometryHandler(QObject):
                 lineList = toLineAlias(geom)
                 if lineList[0] not in segmentDict:
                     segmentDict[lineList[0]] = []
-                segmentDict[lineList[0]].append(fromLineAlias([lineList[0], lineList[1]]))
+                segmentDict[lineList[0]].append(
+                    fromLineAlias([lineList[0], lineList[1]])
+                )
                 if lineList[-1] not in segmentDict:
                     segmentDict[lineList[-1]] = []
-                segmentDict[lineList[-1]].append(fromLineAlias([lineList[-1], lineList[-2]]))
+                segmentDict[lineList[-1]].append(
+                    fromLineAlias([lineList[-1], lineList[-2]])
+                )
         return segmentDict
-    
-    def handleGeometry(self, geom, parameterDict = {}, coordinateTransformer = None):
+
+    def handleGeometry(self, geom, parameterDict={}, coordinateTransformer=None):
         outputList = []
         for geom in self.adjustGeometry(geom, parameterDict):
-            outputList += [self.reprojectWithCoordinateTransformer(geom, coordinateTransformer)]
+            outputList += [
+                self.reprojectWithCoordinateTransformer(geom, coordinateTransformer)
+            ]
         return outputList
-    
+
     def getOuterShellAndHoles(self, geom, isMulti):
         outershells, donutholes = [], []
         for part in geom.asGeometryCollection():
@@ -346,11 +421,11 @@ class GeometryHandler(QObject):
                 else:
                     donutholes.append(newGeom)
         return outershells, donutholes
-    
+
     def getStartAndEndPointOnLine(self, geom):
         lineList = geom.asMultiPolyline() if geom.isMultipart() else [geom.asPolyline()]
         return lineList[0], lineList[len(lineList) - 1]
-    
+
     def deaggregateGeometry(self, multiGeom):
         """
         Deaggregates a multi-part geometry into a its parts and returns all found parts. If no part is found,
@@ -365,7 +440,7 @@ class GeometryHandler(QObject):
         parts = multiGeom.asGeometryCollection()
         for part in parts:
             if part:
-                # asGeometryCollection() reads every part as single-part type geometry 
+                # asGeometryCollection() reads every part as single-part type geometry
                 part.convertToMultiType()
                 geomList.append(part)
         return geomList
@@ -385,25 +460,25 @@ class GeometryHandler(QObject):
         isMulti = QgsWkbTypes.isMultiType(int(layer.wkbType()))
         geom = feature.geometry()
         return self.getGeomNodes(geom, geomType, isMulti)
-    
+
     def getGeomNodes(self, geom, geomType, isMulti):
         if geomType == 0:
             if isMulti:
-                nodes = geom.asMultiPoint()       
+                nodes = geom.asMultiPoint()
             else:
-                nodes = geom.asPoint()              
+                nodes = geom.asPoint()
         elif geomType == 1:
             if isMulti:
                 nodes = geom.asMultiPolyline()
             else:
-                nodes = geom.asPolyline()     
+                nodes = geom.asPolyline()
         elif geomType == 2:
             if isMulti:
-                nodes = geom.asMultiPolygon()           
+                nodes = geom.asMultiPolygon()
             else:
                 nodes = geom.asPolygon()
         return nodes
-    
+
     def getFirstNode(self, lyr, feat, geomType=None):
         """
         Returns the starting node of a line.
@@ -492,15 +567,17 @@ class GeometryHandler(QObject):
 
     def calculateAngleDifferences(self, startNode, endNode):
         """
-        Calculates the angle in degrees formed between line direction ('startNode' -> 'endNode') and vertical passing over 
+        Calculates the angle in degrees formed between line direction ('startNode' -> 'endNode') and vertical passing over
         starting node.
         :param startNode: node (QgsPoint) reference for line and angle calculation.
         :param endNode: ending node (QgsPoint) for (segment of) line of which angle is required.
         :return: (float) angle in degrees formed between line direction ('startNode' -> 'endNode') and vertical passing over 'startNode'
         """
         # the returned angle is measured regarding 'y-axis', with + counter clockwise and -, clockwise.
-        # Then angle is ALWAYS 180 - ang 
-        return 180 - math.degrees(math.atan2(endNode.x() - startNode.x(), endNode.y() - startNode.y()))
+        # Then angle is ALWAYS 180 - ang
+        return 180 - math.degrees(
+            math.atan2(endNode.x() - startNode.x(), endNode.y() - startNode.y())
+        )
 
     def calculateAzimuthFromNode(self, node, networkLayer, geomType=None):
         """
@@ -514,17 +591,19 @@ class GeometryHandler(QObject):
             geomType = networkLayer.geometryType()
         nodePointDict = self.nodeDict[node]
         azimuthDict = dict()
-        for line in nodePointDict['start']:
+        for line in nodePointDict["start"]:
             # if line starts at node, then angle calculate is already azimuth
             endNode = self.getSecondNode(lyr=networkLayer, feat=line, geomType=geomType)
             azimuthDict[line] = node.azimuth(endNode)
-        for line in nodePointDict['end']:
+        for line in nodePointDict["end"]:
             # if line ends at node, angle must be adapted in order to get azimuth
             endNode = self.getPenultNode(lyr=networkLayer, feat=line, geomType=geomType)
             azimuthDict[line] = node.azimuth(endNode)
         return azimuthDict
 
-    def checkLineDirectionConcordance(self, line_a, line_b, networkLayer, geomType=None):
+    def checkLineDirectionConcordance(
+        self, line_a, line_b, networkLayer, geomType=None
+    ):
         """
         Given two lines, this method checks whether lines flow to/from the same node or not.
         If they do not have a common node, method returns false.
@@ -541,9 +620,11 @@ class GeometryHandler(QObject):
         fn_b = self.getFirstNode(lyr=networkLayer, feat=line_b, geomType=geomType)
         ln_b = self.getLastNode(lyr=networkLayer, feat=line_b, geomType=geomType)
         # if lines are flowing to/from the same node (they are flowing the same way)
-        return (fn_a == fn_b or ln_a == ln_b)
+        return fn_a == fn_b or ln_a == ln_b
 
-    def validateDeltaLinesAngV2(self, node, networkLayer, connectedValidLines, geomType=None):
+    def validateDeltaLinesAngV2(
+        self, node, networkLayer, connectedValidLines, geomType=None
+    ):
         """
         Validates a set of lines connected to a node as for the angle formed between them.
         :param node: (QgsPoint) hidrography node to be validated.
@@ -556,7 +637,9 @@ class GeometryHandler(QObject):
         val, inval, reason = dict(), dict(), ""
         if not geomType:
             geomType = networkLayer.geometryType()
-        azimuthDict = self.calculateAzimuthFromNode(node=node, networkLayer=networkLayer, geomType=None)
+        azimuthDict = self.calculateAzimuthFromNode(
+            node=node, networkLayer=networkLayer, geomType=None
+        )
         lines = azimuthDict.keys()
         for idx1, key1 in enumerate(lines):
             if idx1 == len(lines):
@@ -566,14 +649,23 @@ class GeometryHandler(QObject):
                 if idx1 >= idx2:
                     # in order to calculate only f1 - f2, f1 - f3, f2 - f3 (for 3 features, for instance)
                     continue
-                absAzimuthDifference = math.fmod((azimuthDict[key1] - azimuthDict[key2] + 360), 360)
+                absAzimuthDifference = math.fmod(
+                    (azimuthDict[key1] - azimuthDict[key2] + 360), 360
+                )
                 if absAzimuthDifference > 180:
                     # the lesser angle should always be the one to be analyzed
-                    absAzimuthDifference = (360 - absAzimuthDifference)
+                    absAzimuthDifference = 360 - absAzimuthDifference
                 if absAzimuthDifference < 90:
                     # if it's a 'beak', lines cannot have opposing directions (e.g. cannot flow to/from the same node)
-                    if not self.checkLineDirectionConcordance(line_a=key1, line_b=key2, networkLayer=networkLayer, geomType=geomType):
-                        reason = self.tr('Lines id={0} and id={1} have conflicting directions ({2:.2f} deg).').format(key1.id(), key2.id(), absAzimuthDifference)
+                    if not self.checkLineDirectionConcordance(
+                        line_a=key1,
+                        line_b=key2,
+                        networkLayer=networkLayer,
+                        geomType=geomType,
+                    ):
+                        reason = self.tr(
+                            "Lines id={0} and id={1} have conflicting directions ({2:.2f} deg)."
+                        ).format(key1.id(), key2.id(), absAzimuthDifference)
                         # checks if any of connected lines are already validated by any previous iteration
                         if key1 not in connectedValidLines:
                             inval[key1.id()] = key1
@@ -585,17 +677,19 @@ class GeometryHandler(QObject):
                     continue
                 else:
                     # if lines touch each other at a right angle, then it is impossible to infer waterway direction
-                    reason = self.tr('Cannot infer directions for lines {0} and {1} (Right Angle)').format(key1.id(), key2.id())
+                    reason = self.tr(
+                        "Cannot infer directions for lines {0} and {1} (Right Angle)"
+                    ).format(key1.id(), key2.id())
                     if key1 not in connectedValidLines:
-                            inval[key1.id()] = key1
+                        inval[key1.id()] = key1
                     if key2 not in connectedValidLines:
                         inval[key2.id()] = key2
                     return val, inval, reason
         if not inval:
-            val = {k.id() : k for k in lines}
+            val = {k.id(): k for k in lines}
         return val, inval, reason
-    
-    def identifyAllNodes(self, networkLayer, onlySelected = False):
+
+    def identifyAllNodes(self, networkLayer, onlySelected=False):
         """
         Identifies all nodes from a given layer (or selected features of it). The result is returned as a dict of dict.
         :param networkLayer: target layer to which nodes identification is required.
@@ -613,60 +707,60 @@ class GeometryHandler(QObject):
                 if isMulti:
                     if len(nodes) > 1:
                         # if feat is multipart and has more than one part, a flag should be raised
-                        continue # CHANGE TO RAISE FLAG
+                        continue  # CHANGE TO RAISE FLAG
                     elif len(nodes) == 0:
                         # if no part is found, skip feature
                         continue
                     else:
                         # if feat is multipart, "nodes" is a list of list
-                        nodes = nodes[0]                
+                        nodes = nodes[0]
                 # initial node
                 pInit, pEnd = nodes[0], nodes[-1]
                 # filling starting node information into dictionary
                 if pInit not in nodeDict:
                     # if the point is not already started into dictionary, it creates a new item
-                    nodeDict[pInit] = { 'start' : [], 'end' : [] }
-                if feat not in nodeDict[pInit]['start']:
-                    nodeDict[pInit]['start'].append(feat)                            
+                    nodeDict[pInit] = {"start": [], "end": []}
+                if feat not in nodeDict[pInit]["start"]:
+                    nodeDict[pInit]["start"].append(feat)
                 # filling ending node information into dictionary
                 if pEnd not in nodeDict:
-                    nodeDict[pEnd] = { 'start' : [], 'end' : [] }
-                if feat not in nodeDict[pEnd]['end']:
-                    nodeDict[pEnd]['end'].append(feat)
+                    nodeDict[pEnd] = {"start": [], "end": []}
+                if feat not in nodeDict[pEnd]["end"]:
+                    nodeDict[pEnd]["end"].append(feat)
         return nodeDict
-    
+
     def makeQgsPolygonFromBounds(self, xmin, ymin, xmax, ymax, isMulti=True):
         """
         Creating a polygon for the given coordinates
         """
-        dx = (xmax - xmin)/3
-        dy = (ymax - ymin)/3
-        
+        dx = (xmax - xmin) / 3
+        dy = (ymax - ymin) / 3
+
         polyline = []
 
         point = QgsPointXY(xmin, ymin)
         polyline.append(point)
-        point = QgsPointXY(xmin+dx, ymin)
+        point = QgsPointXY(xmin + dx, ymin)
         polyline.append(point)
-        point = QgsPointXY(xmax-dx, ymin) 
+        point = QgsPointXY(xmax - dx, ymin)
         polyline.append(point)
         point = QgsPointXY(xmax, ymin)
         polyline.append(point)
-        point = QgsPointXY(xmax, ymin+dy)
+        point = QgsPointXY(xmax, ymin + dy)
         polyline.append(point)
-        point = QgsPointXY(xmax, ymax-dy)
+        point = QgsPointXY(xmax, ymax - dy)
         polyline.append(point)
         point = QgsPointXY(xmax, ymax)
         polyline.append(point)
-        point = QgsPointXY(xmax-dx, ymax)
+        point = QgsPointXY(xmax - dx, ymax)
         polyline.append(point)
-        point = QgsPointXY(xmin+dx, ymax)
+        point = QgsPointXY(xmin + dx, ymax)
         polyline.append(point)
         point = QgsPointXY(xmin, ymax)
         polyline.append(point)
-        point = QgsPointXY(xmin, ymax-dy)
+        point = QgsPointXY(xmin, ymax - dy)
         polyline.append(point)
-        point = QgsPointXY(xmin, ymin+dy)
+        point = QgsPointXY(xmin, ymin + dy)
         polyline.append(point)
         point = QgsPointXY(xmin, ymin)
         polyline.append(point)
@@ -676,17 +770,23 @@ class GeometryHandler(QObject):
         else:
             qgsPolygon = QgsGeometry.fromPolygonXY([polyline])
         return qgsPolygon
-    
-    def handleGeometryCollection(self, geom, geometryType, parameterDict=None, coordinateTransformer=None):
+
+    def handleGeometryCollection(
+        self, geom, geometryType, parameterDict=None, coordinateTransformer=None
+    ):
         parameterDict = {} if parameterDict is None else parameterDict
         outputSet = set()
         for part in geom.asGeometryCollection():
             if part.type() == geometryType:
-                handledList = self.handleGeometry(part, parameterDict=parameterDict, coordinateTransformer=coordinateTransformer)
+                handledList = self.handleGeometry(
+                    part,
+                    parameterDict=parameterDict,
+                    coordinateTransformer=coordinateTransformer,
+                )
                 for item in handledList:
                     outputSet.add(item)
         return list(outputSet)
-    
+
     def getFirstAndLastNodeFromGeom(self, geom):
         isMulti = geom.isMultipart()
         geomType = geom.type()
@@ -705,7 +805,7 @@ class GeometryHandler(QObject):
         :return: (list-of-QgsGeometry) list of single part geometries found.
         """
         return [part for part in geom.asGeometryCollection()]
-    
+
     @staticmethod
     def calcAzimuth(p1: QgsPoint, p2: QgsPoint) -> float:
         dx = p2.x() - p1.x()
@@ -717,15 +817,15 @@ class GeometryHandler(QObject):
             else:
                 return 180.0
 
-        theta = math.atan(dy/dx)
+        theta = math.atan(dy / dx)
         if dx < 0:
             theta += math.pi
-        
+
         azimuth = 90.0 - math.degrees(theta)
         if azimuth < 0:
             azimuth += 360.0
         return azimuth
-    
+
     @staticmethod
     def addVertex(vertex: QgsPoint, geom: QgsGeometry) -> QgsGeometry:
         distance, p, after, orient = geom.closestSegmentWithContext(QgsPointXY(vertex))
@@ -734,7 +834,7 @@ class GeometryHandler(QObject):
 
     def addVertexesToGeometry(self, vertexSet: set, geom: QgsGeometry) -> QgsGeometry:
         geomVertexSet = set(QgsGeometry(i) for i in geom.vertices())
-        changedGeom = QgsGeometry(geom) # deep copy
+        changedGeom = QgsGeometry(geom)  # deep copy
         for vertex in vertexSet:
             vertexPoint = QgsPoint(vertex.asPoint())
             closestVertexes = geom.closestVertex(vertex.asPoint())
@@ -744,4 +844,3 @@ class GeometryHandler(QObject):
             changedGeom = self.addVertex(vertexPoint, changedGeom)
         changedGeom.removeDuplicateNodes()
         return changedGeom
-

@@ -24,16 +24,14 @@ Builds a temp rubberband with a given size and shape.
 import os
 from qgis import core
 
+
 class CustomFormGenerator(object):
     def __init__(self):
         super(CustomFormGenerator, self).__init__()
-        self.lenColumnDict = {
-            1 : u'length_otf',
-            2 : u'area_otf'
-        }
+        self.lenColumnDict = {1: "length_otf", 2: "area_otf"}
 
     def get_form_template(self):
-        return u'''<?xml version="1.0" encoding="UTF-8"?>
+        return """<?xml version="1.0" encoding="UTF-8"?>
             <ui version="4.0">
             <class>Dialog</class>
             <widget class="QDialog" name="Dialog">
@@ -127,10 +125,10 @@ class CustomFormGenerator(object):
             </connection>
             </connections>
             </ui>
-            '''
+            """
 
-    def get_le_template(self, field, alias, row, readOnly=''):
-        return '''<item row="{row}" column="0">
+    def get_le_template(self, field, alias, row, readOnly=""):
+        return """<item row="{row}" column="0">
                 <widget class="QLabel" name="label_{field}">
                 <property name="text">
                 <string>{alias}</string>
@@ -142,10 +140,12 @@ class CustomFormGenerator(object):
                 {readOnly}
                 </widget>
             </item>
-            '''.format(alias=alias, field=field, row=row, readOnly=readOnly)
+            """.format(
+            alias=alias, field=field, row=row, readOnly=readOnly
+        )
 
     def get_cb_template(self, field, alias, row):
-        return '''<item row="{row}" column="0">
+        return """<item row="{row}" column="0">
                 <widget class="QLabel" name="label_{field}">
                 <property name="text">
                 <string>{alias}</string>
@@ -154,65 +154,52 @@ class CustomFormGenerator(object):
             </item>
             <item row="{row}" column="1">
                 <widget class="QComboBox" name="{field}"/>
-            </item>'''.format(alias=alias, field=field, row=row)
+            </item>""".format(
+            alias=alias, field=field, row=row
+        )
 
     def create_cb(self, field, alias, row):
         return self.get_cb_template(field, alias, row)
 
     def create_le(self, field, alias, row, setReadOnly=False):
-        """  if setReadOnly:
+        """if setReadOnly:
             readOnly =u'''<property name="readOnly">
                             <bool>true</bool>
                         </property>'''
-            return self.get_le_template(field, row, readOnly) 
-        else: """
+            return self.get_le_template(field, row, readOnly)
+        else:"""
         return self.get_le_template(field, alias, row)
 
     def create(self, vlayer, layerData):
-        form_path = os.path.join(
-            os.path.dirname(__file__),
-            u"forms",
-            vlayer.name()
-        )
+        form_path = os.path.join(os.path.dirname(__file__), "forms", vlayer.name())
         with open(form_path, "w") as formFile:
             form = self.get_form_template()
-            layerData = layerData['layer_fields']
-            all_items = u""
+            layerData = layerData["layer_fields"]
+            all_items = ""
             rowAttr = 1
             for field in vlayer.fields():
                 field_name = field.name()
                 field_alias = field.alias()
-                if field in [u'id', u'controle_id', u'ultimo_usuario', u'data_modificacao']:
+                if field in ["id", "controle_id", "ultimo_usuario", "data_modificacao"]:
                     all_items += self.create_le(
                         field_name, field_alias, rowAttr, setReadOnly=True
                     )
-                elif field_name == u'tipo':
-                    if u'filter' in layerData:
-                        all_items += self.create_cb(
-                            u'filter', u'filter', rowAttr
-                        )
-                    all_items += self.create_cb(
-                        field_name, field_alias, rowAttr
-                    )
+                elif field_name == "tipo":
+                    if "filter" in layerData:
+                        all_items += self.create_cb("filter", "filter", rowAttr)
+                    all_items += self.create_cb(field_name, field_alias, rowAttr)
                     rowAttr += 1
                 elif (field_name in layerData) and layerData[field]:
-                    all_items += self.create_cb(
-                        field_name, field_alias, rowAttr
-                    )
-                elif (field_name in layerData):
-                    all_items += self.create_le(
-                        field_name, field_alias, rowAttr
-                    )
+                    all_items += self.create_cb(field_name, field_alias, rowAttr)
+                elif field_name in layerData:
+                    all_items += self.create_le(field_name, field_alias, rowAttr)
                 rowAttr += 1
             if vlayer.geometryType() in self.lenColumnDict:
                 all_items += self.create_le(
                     self.lenColumnDict[vlayer.geometryType()],
                     self.lenColumnDict[vlayer.geometryType()],
-                    rowAttr + 1
+                    rowAttr + 1,
                 )
-            form = form.format(
-                items=unicode(all_items),
-                row_btn=rowAttr+1
-            )
+            form = form.format(items=unicode(all_items), row_btn=rowAttr + 1)
             formFile.write(form)
         return form_path

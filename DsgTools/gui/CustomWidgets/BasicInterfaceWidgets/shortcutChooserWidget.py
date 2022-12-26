@@ -21,16 +21,20 @@
  ***************************************************************************/
 """
 import os
+
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtGui import QKeySequence
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'shortcutChooserWidget.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "shortcutChooserWidget.ui")
+)
+
 
 class ShortcutChooserWidget(QtWidgets.QWidget, FORM_CLASS):
     keyPressed = pyqtSignal()
+
     def __init__(self, parent=None):
         """
         Initializates ShortcutChooserWidget
@@ -38,14 +42,14 @@ class ShortcutChooserWidget(QtWidgets.QWidget, FORM_CLASS):
         super(ShortcutChooserWidget, self).__init__(parent)
         self.resetVariables()
         self.setupUi(self)
-    
+
     @pyqtSlot(bool)
     def on_assignShortcutPushButton_clicked(self):
         """
         After button is clicked, focus is needed to use keyPressEvent and keyReleaseEvent
         """
         self.setFocus()
-    
+
     @pyqtSlot(bool)
     def on_assignShortcutPushButton_toggled(self, toggled):
         """
@@ -53,17 +57,17 @@ class ShortcutChooserWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         if toggled:
             self.resetVariables()
-            self.assignShortcutPushButton.setText(self.tr('Enter Value'))
-    
-    @pyqtSlot(bool, name = 'on_clearPushButton_clicked')
+            self.assignShortcutPushButton.setText(self.tr("Enter Value"))
+
+    @pyqtSlot(bool, name="on_clearPushButton_clicked")
     def clearAll(self):
         """
         Clears push button and also resets self.modifiers and self.keys
         """
         self.assignShortcutPushButton.setChecked(False)
-        self.assignShortcutPushButton.setText(self.tr('Assign Shortcut'))
+        self.assignShortcutPushButton.setText(self.tr("Assign Shortcut"))
         self.resetVariables()
-    
+
     def resetVariables(self):
         """
         Resets self.modifiers, self.key and self.keySequence to 0
@@ -73,8 +77,7 @@ class ShortcutChooserWidget(QtWidgets.QWidget, FORM_CLASS):
         self.keySequence = 0
 
     def keyPressEvent(self, event):
-        """
-        """
+        """ """
         if not self.assignShortcutPushButton.isChecked():
             super(ShortcutChooserWidget, self).keyPressEvent(event)
             return
@@ -121,7 +124,7 @@ class ShortcutChooserWidget(QtWidgets.QWidget, FORM_CLASS):
             self.assignShortcutPushButton.setChecked(False)
             self.updateShortcutText()
             self.setShortcut(self.keySequence)
-    
+
     def setEnabled(self, enabled):
         if not enabled:
             self.clearAll()
@@ -130,15 +133,21 @@ class ShortcutChooserWidget(QtWidgets.QWidget, FORM_CLASS):
     def setShortcut(self, shortcut):
         self.keySequence = QKeySequence(shortcut)
         self.assignShortcutPushButton.setChecked(False)
-        self.assignShortcutPushButton.setText(self.keySequence.toString(format = QKeySequence.NativeText))
-    
-    def getShortcut(self, asQKeySequence = False):
+        self.assignShortcutPushButton.setText(
+            self.keySequence.toString(format=QKeySequence.NativeText)
+        )
+
+    def getShortcut(self, asQKeySequence=False):
         if asQKeySequence:
             return self.keySequence
         else:
             return int(self.keySequence)
 
     def updateShortcutText(self):
-        self.keySequence = QKeySequence(self.modifiers+self.key)
-        #this uses QKeySequence.NativeText to show in the interface. To store data, no filter should be provided
-        self.assignShortcutPushButton.setText(self.tr('Input: {0}').format(self.keySequence.toString(format = QKeySequence.NativeText)))
+        self.keySequence = QKeySequence(self.modifiers + self.key)
+        # this uses QKeySequence.NativeText to show in the interface. To store data, no filter should be provided
+        self.assignShortcutPushButton.setText(
+            self.tr("Input: {0}").format(
+                self.keySequence.toString(format=QKeySequence.NativeText)
+            )
+        )

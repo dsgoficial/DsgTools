@@ -25,23 +25,33 @@ import os
 
 from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtSql import QSqlDatabase
-#DSG Tools imports
+
+# DSG Tools imports
 from .spatialiteDbCreator import SpatialiteDbCreator
 from .postgisDbCreator import PostgisDbCreator
 from .geopackageDbCreator import GeopackageDbCreator
 
+
 class DbCreatorFactory(object):
-    def createDbCreatorFactory(self, driverName, createParam, parentWidget = None):
-        #TODO Treat none return
-        if not ('QPSQL' in QSqlDatabase.drivers()): #Driver wasn't loaded
-            QgsMessageLog.logMessage('QT PSQL driver not installed!', 'DSGTools Plugin', Qgis.Critical)
+    def createDbCreatorFactory(self, driverName, createParam, parentWidget=None):
+        # TODO Treat none return
+        if not ("QPSQL" in QSqlDatabase.drivers()):  # Driver wasn't loaded
+            QgsMessageLog.logMessage(
+                "QT PSQL driver not installed!", "DSGTools Plugin", Qgis.Critical
+            )
             return None
-        if not ('QSQLITE' in QSqlDatabase.drivers()): #Driver wasn't loaded
-            QgsMessageLog.logMessage('QT QSQLITE driver not installed!', 'DSGTools Plugin', Qgis.Critical)
-            return None        
+        if not ("QSQLITE" in QSqlDatabase.drivers()):  # Driver wasn't loaded
+            QgsMessageLog.logMessage(
+                "QT QSQLITE driver not installed!", "DSGTools Plugin", Qgis.Critical
+            )
+            return None
         creators = {
-            "QSQLITE" : SpatialiteDbCreator,
-            "QPSQL" : PostgisDbCreator,
-            "GPKG" : GeopackageDbCreator
+            "QSQLITE": SpatialiteDbCreator,
+            "QPSQL": PostgisDbCreator,
+            "GPKG": GeopackageDbCreator,
         }
-        return creators[driverName](createParam, parentWidget) if driverName in creators else None
+        return (
+            creators[driverName](createParam, parentWidget)
+            if driverName in creators
+            else None
+        )

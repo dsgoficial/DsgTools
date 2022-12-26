@@ -26,8 +26,15 @@ import os
 
 from qgis.testing import unittest
 
-from DsgTools.core.NetworkTools.ExternalFilesHandler import ExternalFilesHandler, ExternalFileDownloadProcessor
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.spellChecker.datasets.ptBR import WordDatasetPtBRFileHandler, PalavrasFileHandler
+from DsgTools.core.NetworkTools.ExternalFilesHandler import (
+    ExternalFilesHandler,
+    ExternalFileDownloadProcessor,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.spellChecker.datasets.ptBR import (
+    WordDatasetPtBRFileHandler,
+    PalavrasFileHandler,
+)
+
 
 class ExternalFilesHandlerTest(unittest.TestCase):
     @classmethod
@@ -40,29 +47,23 @@ class ExternalFilesHandlerTest(unittest.TestCase):
                 output_folder=os.path.abspath(os.path.dirname(__file__))
             ),
         ]
+
     @classmethod
     def tearDownClass(cls):
         for handler in cls.handlerList:
-            os.unlink(
-                handler.getFullPath()
-            )
+            os.unlink(handler.getFullPath())
 
     def test_downloadfilesalgorithm(self):
         filesHandler = ExternalFilesHandler()
-        output = filesHandler.downloadFilesAlgorithm(
-            self.handlerList
-        )
+        output = filesHandler.downloadFilesAlgorithm(self.handlerList)
         self.assertTrue(output)
         for handler in self.handlerList:
-            self.assertTrue(
-                os.path.exists(
-                    handler.getFullPath()
-                )
-            )
+            self.assertTrue(os.path.exists(handler.getFullPath()))
+
 
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
-    filterString = 'test_' if filterString is None else filterString
+    filterString = "test_" if filterString is None else filterString
     suite = unittest.TestSuite()
     suite.addTests(unittest.makeSuite(ExternalFilesHandlerTest, filterString))
     unittest.TextTestRunner(verbosity=3, stream=sys.stdout).run(suite)

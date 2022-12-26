@@ -27,25 +27,33 @@ from qgis.core import Qgis, QgsProject, QgsVectorLayer, QgsMapLayerProxyModel
 from qgis.gui import QgsMessageBar, QgsMapLayerComboBox, QgsFieldExpressionWidget
 from qgis.PyQt.QtCore import QSize, QRegExp
 from qgis.PyQt.QtGui import QRegExpValidator
-from qgis.PyQt.QtWidgets import (QWidget,
-                                 QCheckBox,
-                                 QComboBox,
-                                 QLineEdit,
-                                 QVBoxLayout,
-                                 QMessageBox)
-from processing.gui.wrappers import (WidgetWrapper,
-                                     DIALOG_STANDARD,
-                                     DIALOG_MODELER,
-                                     DIALOG_BATCH)
+from qgis.PyQt.QtWidgets import (
+    QWidget,
+    QCheckBox,
+    QComboBox,
+    QLineEdit,
+    QVBoxLayout,
+    QMessageBox,
+)
+from processing.gui.wrappers import (
+    WidgetWrapper,
+    DIALOG_STANDARD,
+    DIALOG_MODELER,
+    DIALOG_BATCH,
+)
 
-from DsgTools.core.GeometricTools\
-             .spatialRelationsHandler import (SpatialRule,
-                                              SpatialRelationsHandler)
-from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets\
-             .orderedTableWidget import OrderedTableWidget
+from DsgTools.core.GeometricTools.spatialRelationsHandler import (
+    SpatialRule,
+    SpatialRelationsHandler,
+)
+from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedTableWidget import (
+    OrderedTableWidget,
+)
+
 
 class EnforceSpatialRuleWrapper(WidgetWrapper):
     __ATTRIBUTE_MAP_VERSION = 0.2
+
     def __init__(self, *args, **kwargs):
         super(EnforceSpatialRuleWrapper, self).__init__(*args, **kwargs)
         self.messageBar = QgsMessageBar(self.panel)
@@ -56,12 +64,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         """
         Resize QgsMessageBar to widget's width
         """
-        self.messageBar.resize(
-            QSize(
-                self.panel.parent().geometry().size().width(),
-                30
-            )
-        )
+        self.messageBar.resize(QSize(self.panel.parent().geometry().size().width(), 30))
 
     def ruleNameWidget(self):
         """
@@ -75,7 +78,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
     def mapLayerComboBox(self):
         """
         Retrieves the configured map layer selection combo box.
-        :return: (QgsMapLayerComboBox) configured layer selection widget. 
+        :return: (QgsMapLayerComboBox) configured layer selection widget.
         """
         cb = QgsMapLayerComboBox()
         cb.setFilters(QgsMapLayerProxyModel.VectorLayer)
@@ -97,6 +100,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         :return: (QgsFieldExpressionWidget) snap mode selection widget.
         """
         fe = QgsFieldExpressionWidget()
+
         def setValueProxy(exp):
             layer = fe.layer()
             if layer and exp.strip() in layer.fields().names():
@@ -105,12 +109,14 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                 # crash when running the algorithm. this seems to solve it.
                 exp = ""
             fe.setExpression(exp)
+
         def getValueProxy():
             layer = fe.layer()
             exp = fe.currentText()
             if layer and exp.strip() in layer.fields().names():
                 exp = ""
             return exp
+
         fe.setExpression_ = setValueProxy
         fe.currentText_ = getValueProxy
         return fe
@@ -121,9 +127,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         :return: (QComboBox) a combo box with all available predicates.
         """
         cb = QComboBox()
-        cb.addItems(
-            list(SpatialRelationsHandler().availablePredicates().values())
-        )
+        cb.addItems(list(SpatialRelationsHandler().availablePredicates().values()))
         return cb
 
     def de9imWidget(self):
@@ -174,9 +178,14 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         predicate = otw.getValue(row, 3)
         handler = SpatialRelationsHandler()
         noCardinality = predicate in (
-            handler.DISJOINT, handler.NOTEQUALS, handler.NOTINTERSECTS,
-            handler.NOTTOUCHES, handler.NOTCROSSES, handler.NOTWITHIN,
-            handler.NOTOVERLAPS, handler.NOTCONTAINS
+            handler.DISJOINT,
+            handler.NOTEQUALS,
+            handler.NOTINTERSECTS,
+            handler.NOTTOUCHES,
+            handler.NOTCROSSES,
+            handler.NOTWITHIN,
+            handler.NOTOVERLAPS,
+            handler.NOTCONTAINS,
         )
         otw.itemAt(row, 7).setEnabled(not noCardinality)
         if noCardinality:
@@ -216,6 +225,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         :param row: (int) row to have its widgets setup.
         """
         otw = self.panel.otw
+
         def checkLayerBeforeConnect(le, filterExp):
             lName = le.text().strip()
             for layer in QgsProject.instance().mapLayersByName(lName):
@@ -223,6 +233,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                     filterExp.setLayer(layer)
                     return
             filterExp.setLayer(None)
+
         for col in [1, 5]:
             le = otw.itemAt(row, col)
             filterWidget = otw.itemAt(row, col + 1)
@@ -246,64 +257,67 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         widget.cb = QCheckBox()
         widget.cb.setText(self.tr("Use DE-9IM inputs"))
         layout.addWidget(widget.cb)
-        widget.otw = OrderedTableWidget(headerMap={
-            0 : {
-                "header" : self.tr("Rule name"),
-                "type" : "widget",
-                "widget" : self.ruleNameWidget,
-                "setter" : "setText",
-                "getter" : "text"
-            },
-            1 : {
-                "header" : self.tr("Layer A"),
-                "type" : "widget",
-                "widget" : self.mapLayerComboBox,
-                "setter" : "setCurrentText",
-                "getter" : "currentText"
-            },
-            2 : {
-                "header" : self.tr("Filter A"),
-                "type" : "widget",
-                "widget" : self.filterExpressionWidget,
-                "setter" : "setExpression_",
-                "getter" : "currentText_"
-            },
-            3 : {
-                "header" : self.tr("Predicate"),
-                "type" : "widget",
-                "widget" : self.predicateComboBox,
-                "setter" : "setCurrentIndex",
-                "getter" : "currentIndex"
-            },
-            4 : {
-                "header" : self.tr("DE-9IM mask predicate"),
-                "type" : "widget",
-                "widget" : self.de9imWidget,
-                "setter" : "setText",
-                "getter" : "text"
-            },
-            5 : {
-                "header" : self.tr("Layer B"),
-                "type" : "widget",
-                "widget" : self.mapLayerComboBox,
-                "setter" : "setCurrentText",
-                "getter" : "currentText"
-            },
-            6 : {
-                "header" : self.tr("Filter B"),
-                "type" : "widget",
-                "widget" : self.filterExpressionWidget,
-                "setter" : "setExpression_",
-                "getter" : "currentText_"
-            },
-            7 : {
-                "header" : self.tr("Cardinality"),
-                "type" : "widget",
-                "widget" : self.cardinalityWidget,
-                "setter" : "setText",
-                "getter" : "text"
+        widget.otw = OrderedTableWidget(
+            headerMap={
+                0: {
+                    "header": self.tr("Rule name"),
+                    "type": "widget",
+                    "widget": self.ruleNameWidget,
+                    "setter": "setText",
+                    "getter": "text",
+                },
+                1: {
+                    "header": self.tr("Layer A"),
+                    "type": "widget",
+                    "widget": self.mapLayerComboBox,
+                    "setter": "setCurrentText",
+                    "getter": "currentText",
+                },
+                2: {
+                    "header": self.tr("Filter A"),
+                    "type": "widget",
+                    "widget": self.filterExpressionWidget,
+                    "setter": "setExpression_",
+                    "getter": "currentText_",
+                },
+                3: {
+                    "header": self.tr("Predicate"),
+                    "type": "widget",
+                    "widget": self.predicateComboBox,
+                    "setter": "setCurrentIndex",
+                    "getter": "currentIndex",
+                },
+                4: {
+                    "header": self.tr("DE-9IM mask predicate"),
+                    "type": "widget",
+                    "widget": self.de9imWidget,
+                    "setter": "setText",
+                    "getter": "text",
+                },
+                5: {
+                    "header": self.tr("Layer B"),
+                    "type": "widget",
+                    "widget": self.mapLayerComboBox,
+                    "setter": "setCurrentText",
+                    "getter": "currentText",
+                },
+                6: {
+                    "header": self.tr("Filter B"),
+                    "type": "widget",
+                    "widget": self.filterExpressionWidget,
+                    "setter": "setExpression_",
+                    "getter": "currentText_",
+                },
+                7: {
+                    "header": self.tr("Cardinality"),
+                    "type": "widget",
+                    "widget": self.cardinalityWidget,
+                    "setter": "setText",
+                    "getter": "text",
+                },
             }
-        })
+        )
+
         def handlePredicateColumns(checked):
             """
             Predicate input widgets are mutually exclusively: the user may only
@@ -313,6 +327,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             """
             widget.otw.tableWidget.hideColumn(3 if checked else 4)
             widget.otw.tableWidget.showColumn(4 if checked else 3)
+
         widget.cb.toggled.connect(handlePredicateColumns)
         widget.cb.toggled.emit(widget.cb.isChecked())
         widget.otw.setHeaderDoubleClickBehaviour("replicate")
@@ -339,64 +354,67 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         widget.cb = QCheckBox()
         widget.cb.setText(self.tr("Use DE-9IM inputs"))
         layout.addWidget(widget.cb)
-        widget.otw = OrderedTableWidget(headerMap={
-            0 : {
-                "header" : self.tr("Rule name"),
-                "type" : "widget",
-                "widget" : self.ruleNameWidget,
-                "setter" : "setText",
-                "getter" : "text"
-            },
-            1 : {
-                "header" : self.tr("Layer A"),
-                "type" : "widget",
-                "widget" : self.mapLayerModelDialog,
-                "setter" : "setText",
-                "getter" : "text"
-            },
-            2 : {
-                "header" : self.tr("Filter A"),
-                "type" : "widget",
-                "widget" : self.filterExpressionWidget,
-                "setter" : "setExpression_",
-                "getter" : "currentText_"
-            },
-            3 : {
-                "header" : self.tr("Predicate"),
-                "type" : "widget",
-                "widget" : self.predicateComboBox,
-                "setter" : "setCurrentIndex",
-                "getter" : "currentIndex"
-            },
-            4 : {
-                "header" : self.tr("DE-9IM mask predicate"),
-                "type" : "widget",
-                "widget" : self.de9imWidget,
-                "setter" : "setText",
-                "getter" : "text"
-            },
-            5 : {
-                "header" : self.tr("Layer B"),
-                "type" : "widget",
-                "widget" : self.mapLayerModelDialog,
-                "setter" : "setText",
-                "getter" : "text"
-            },
-            6 : {
-                "header" : self.tr("Filter B"),
-                "type" : "widget",
-                "widget" : self.filterExpressionWidget,
-                "setter" : "setExpression_",
-                "getter" : "currentText_"
-            },
-            7 : {
-                "header" : self.tr("Cardinality"),
-                "type" : "widget",
-                "widget" : self.cardinalityWidget,
-                "setter" : "setText",
-                "getter" : "text"
+        widget.otw = OrderedTableWidget(
+            headerMap={
+                0: {
+                    "header": self.tr("Rule name"),
+                    "type": "widget",
+                    "widget": self.ruleNameWidget,
+                    "setter": "setText",
+                    "getter": "text",
+                },
+                1: {
+                    "header": self.tr("Layer A"),
+                    "type": "widget",
+                    "widget": self.mapLayerModelDialog,
+                    "setter": "setText",
+                    "getter": "text",
+                },
+                2: {
+                    "header": self.tr("Filter A"),
+                    "type": "widget",
+                    "widget": self.filterExpressionWidget,
+                    "setter": "setExpression_",
+                    "getter": "currentText_",
+                },
+                3: {
+                    "header": self.tr("Predicate"),
+                    "type": "widget",
+                    "widget": self.predicateComboBox,
+                    "setter": "setCurrentIndex",
+                    "getter": "currentIndex",
+                },
+                4: {
+                    "header": self.tr("DE-9IM mask predicate"),
+                    "type": "widget",
+                    "widget": self.de9imWidget,
+                    "setter": "setText",
+                    "getter": "text",
+                },
+                5: {
+                    "header": self.tr("Layer B"),
+                    "type": "widget",
+                    "widget": self.mapLayerModelDialog,
+                    "setter": "setText",
+                    "getter": "text",
+                },
+                6: {
+                    "header": self.tr("Filter B"),
+                    "type": "widget",
+                    "widget": self.filterExpressionWidget,
+                    "setter": "setExpression_",
+                    "getter": "currentText_",
+                },
+                7: {
+                    "header": self.tr("Cardinality"),
+                    "type": "widget",
+                    "widget": self.cardinalityWidget,
+                    "setter": "setText",
+                    "getter": "text",
+                },
             }
-        })
+        )
+
         def handlePredicateColumns(checked):
             """
             Predicate input widgets are mutually exclusively: the user may only
@@ -406,6 +424,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             """
             widget.otw.tableWidget.hideColumn(3 if checked else 4)
             widget.otw.tableWidget.showColumn(4 if checked else 3)
+
         widget.cb.toggled.connect(handlePredicateColumns)
         widget.cb.toggled.emit(widget.cb.isChecked())
         widget.otw.setHeaderDoubleClickBehaviour("replicate")
@@ -416,24 +435,22 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
 
     def createPanel(self):
         return {
-            DIALOG_MODELER : self.modelerPanel,
-            DIALOG_STANDARD : self.standardPanel,
-            DIALOG_BATCH : self.batchPanel
+            DIALOG_MODELER: self.modelerPanel,
+            DIALOG_STANDARD: self.standardPanel,
+            DIALOG_BATCH: self.batchPanel,
         }[self.dialogType]()
-    
+
     def createWidget(self):
         self.panel = self.createPanel()
         self.panel.otw.showSaveLoadButtons(True)
         self.panel.otw.extension = ".rules"
         self.panel.otw.fileType = self.tr("Set of DSGTools Spatial Rules")
-        self.panel.otw.setMetadata({
-            "version": self.__ATTRIBUTE_MAP_VERSION
-        })
+        self.panel.otw.setMetadata({"version": self.__ATTRIBUTE_MAP_VERSION})
         return self.panel
-    
+
     def parentLayerChanged(self, layer=None):
         pass
-    
+
     def setLayer(self, layer):
         pass
 
@@ -452,7 +469,8 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             msg.setIcon(QMessageBox.Warning)
             msg.setText(self.tr("Some rules have not been loaded"))
             msg.setInformativeText(
-                self.tr("Do you want to ignore and continue or cancel?"))
+                self.tr("Do you want to ignore and continue or cancel?")
+            )
             msgString = "\n".join((r.ruleName() for r in invalidRules))
             formatedMsgString = self.tr(
                 "The following layers have not been loaded:\n{0}"
@@ -489,23 +507,25 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             if not rule.isValid(checkLoaded=isNotModeler):
                 invalids.append(rule)
                 continue
-            otw.addRow({
-                0: rule.ruleName(),
-                1: rule.layerA(),
-                2: rule.filterA(),
-                3: rule.predicateEnum(),
-                4: rule.predicateDE9IM(),
-                5: rule.layerB(),
-                6: rule.filterB(),
-                7: rule.cardinality()
-            })
+            otw.addRow(
+                {
+                    0: rule.ruleName(),
+                    1: rule.layerA(),
+                    2: rule.filterA(),
+                    3: rule.predicateEnum(),
+                    4: rule.predicateDE9IM(),
+                    5: rule.layerB(),
+                    6: rule.filterB(),
+                    7: rule.cardinality(),
+                }
+            )
         choice = self.showLoadingMsg(invalids, "warning" if invalids else "")
         if choice == QMessageBox.Cancel:
             otw.clear()
 
     def readStandardPanel(self):
         """
-        Reads widget's contents when process' parameters are set from an 
+        Reads widget's contents when process' parameters are set from an
         algorithm call (e.g. Processing toolbox).
         """
         ruleList = list()
@@ -514,8 +534,8 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         for row in range(otw.rowCount()):
             ruleList.append(
                 SpatialRule(
-                    name=otw.getValue(row, 0).strip(), # or \
-                            # self.tr("Spatial Rule #{n}".format(n=row + 1)),
+                    name=otw.getValue(row, 0).strip(),  # or \
+                    # self.tr("Spatial Rule #{n}".format(n=row + 1)),
                     layer_a=otw.getValue(row, 1),
                     filter_a=otw.getValue(row, 2),
                     predicate=otw.getValue(row, 3),
@@ -524,7 +544,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                     filter_b=otw.getValue(row, 6),
                     cardinality=otw.getValue(row, 7) or "1..*",
                     useDE9IM=useDe9im,
-                    checkLoadedLayer=False
+                    checkLoadedLayer=False,
                 ).asDict()
             )
         return ruleList
@@ -551,16 +571,16 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         :return: (bool) whether set of filled parameters if valid.
         """
         inputMap = {
-            DIALOG_STANDARD : self.readStandardPanel,
-            DIALOG_MODELER : self.readModelerPanel,
-            DIALOG_BATCH : self.readBatchPanel
+            DIALOG_STANDARD: self.readStandardPanel,
+            DIALOG_MODELER: self.readModelerPanel,
+            DIALOG_BATCH: self.readBatchPanel,
         }[self.dialogType]()
         if len(inputMap) == 0:
             if pushAlert:
                 self.messageBar.pushMessage(
                     self.tr("Please provide at least 1 spatial rule."),
                     level=Qgis.Warning,
-                    duration=5
+                    duration=5,
                 )
             return False
         for row, rule in enumerate(inputMap):
@@ -569,10 +589,9 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             if not rule.isValid():
                 if pushAlert:
                     self.messageBar.pushMessage(
-                        self.tr("{0} (row {1}).")\
-                            .format(rule.validate(), row + 1),
+                        self.tr("{0} (row {1}).").format(rule.validate(), row + 1),
                         level=Qgis.Warning,
-                        duration=5
+                        duration=5,
                     )
                 return False
         return True
@@ -584,10 +603,10 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         """
         if self.validate(pushAlert=True):
             return {
-                DIALOG_STANDARD : self.readStandardPanel,
-                DIALOG_MODELER : self.readModelerPanel,
-                DIALOG_BATCH : self.readBatchPanel
+                DIALOG_STANDARD: self.readStandardPanel,
+                DIALOG_MODELER: self.readModelerPanel,
+                DIALOG_BATCH: self.readBatchPanel,
             }[self.dialogType]()
-    
+
     def postInitialize(self, wrappers):
         pass

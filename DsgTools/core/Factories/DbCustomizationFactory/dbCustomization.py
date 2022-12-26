@@ -20,30 +20,36 @@
  *                                                                         *
  ***************************************************************************/
 """
-#Qt Imports
+# Qt Imports
 from builtins import str
 from qgis.PyQt.Qt import QObject
+
 
 class DbCustomization(QObject):
     def __init__(self, validatedJSONDict):
         super(DbCustomization, self).__init__()
-        self.log = ''
-        self.errorLog = ''
+        self.log = ""
+        self.errorLog = ""
         self.jsonDict = validatedJSONDict
-    
+
     def getName(self):
-        return str(self.__class__).split('.')[-1].replace('\'>', '').replace('Customization','')
-    
+        return (
+            str(self.__class__)
+            .split(".")[-1]
+            .replace("'>", "")
+            .replace("Customization", "")
+        )
+
     def getLog(self):
         return self.log
-    
-    def logEvent(self,event):
+
+    def logEvent(self, event):
         self.log += event
-    
+
     def buildSql(self):
-        #Abstract method. Must be reimplemented in each child.
+        # Abstract method. Must be reimplemented in each child.
         pass
-    
+
     def buildUndoSql(self):
-        #Abstract method. Must be reimplemented in each child.
+        # Abstract method. Must be reimplemented in each child.
         pass

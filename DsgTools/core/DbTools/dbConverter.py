@@ -24,16 +24,25 @@ import os, collections
 import time
 
 from qgis.PyQt.QtCore import QObject, pyqtSignal, QSettings
-from qgis.core import QgsFeatureRequest, QgsProject, QgsProcessingContext, \
-                      QgsProcessingMultiStepFeedback, QgsProcessingMultiStepFeedback, \
-                      QgsTask, QgsProcessingFeedback
+from qgis.core import (
+    QgsFeatureRequest,
+    QgsProject,
+    QgsProcessingContext,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingMultiStepFeedback,
+    QgsTask,
+    QgsProcessingFeedback,
+)
 
 from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
+    LayerLoaderFactory,
+)
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from DsgTools.core.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactory
+
 
 class DbConverter(QgsTask):
     conversionUpdated = pyqtSignal(str)
@@ -49,7 +58,10 @@ class DbConverter(QgsTask):
         3.b- apply feature map to destination - feature level; and
     4- each successfully filtered and mapped layer will be then sent to be perpetuated to output - layer level.
     """
-    def __init__(self, iface, conversionMap=None, description='', flags=QgsTask.CanCancel):
+
+    def __init__(
+        self, iface, conversionMap=None, description="", flags=QgsTask.CanCancel
+    ):
         """
         Class constructor.
         :param iface: (QgsInterface) QGIS interface object (for runtime operations).
@@ -60,11 +72,11 @@ class DbConverter(QgsTask):
         self.conversionMap = conversionMap
         self.coordinateTransformers = {}
         self.output = {
-            'creationErrors' : {},
-            'successfulLayers' : {},
-            'failedLayers' : {},
-            'status' : False,
-            'log' : ''
+            "creationErrors": {},
+            "successfulLayers": {},
+            "failedLayers": {},
+            "status": False,
+            "log": "",
         }
         self.feedback = QgsProcessingFeedback()
         self.feedback.progressChanged.connect(self.setProgress)
@@ -110,7 +122,7 @@ class DbConverter(QgsTask):
         for ds, convMaps in conversionMap.items():
             # datasources are key to conversion map dict
             for convMap in convMaps:
-                ds = convMap['outDs']
+                ds = convMap["outDs"]
                 if ds not in dsList:
                     dsList.append(ds)
         return dsList
@@ -123,7 +135,7 @@ class DbConverter(QgsTask):
         """
         abstractDb = DbFactory().createDbFactory(driver=DsgEnums.DriverPostGIS)
         (host, port, user, password) = abstractDb.getServerConfiguration(hostName)
-        abstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
+        abstractDb.connectDatabaseWithParameters(host, port, "postgres", user, password)
         return abstractDb
 
     def createDataset(self, parameters):
@@ -132,20 +144,33 @@ class DbConverter(QgsTask):
         :param parameters: (dict) dict with all necessary parameters for a supported drivers.
         """
         if self.connectToDb(parameters=parameters) is not None:
-            raise Exception(self.tr("Dataset {0} already exists.").format(parameters["db"]))
+            raise Exception(
+                self.tr("Dataset {0} already exists.").format(parameters["db"])
+            )
         driverName, createParam = {
-            DsgEnums.DriverPostGIS : lambda : ("QPSQL", self.getDefaultPgDb(parameters['host'])),
-            DsgEnums.DriverSpatiaLite : lambda : ("QSQLITE", os.path.dirname(parameters["path"])),
-            DsgEnums.DriverGeopackage : lambda : ("GPKG", os.path.dirname(parameters["path"])),
-            DsgEnums.DriverShapefile : lambda : ("SHP", parameters["path"])
-        }[parameters['driver']]()
-        dbCreator = DbCreatorFactory().createDbCreatorFactory(driverName=driverName, createParam=createParam)
+            DsgEnums.DriverPostGIS: lambda: (
+                "QPSQL",
+                self.getDefaultPgDb(parameters["host"]),
+            ),
+            DsgEnums.DriverSpatiaLite: lambda: (
+                "QSQLITE",
+                os.path.dirname(parameters["path"]),
+            ),
+            DsgEnums.DriverGeopackage: lambda: (
+                "GPKG",
+                os.path.dirname(parameters["path"]),
+            ),
+            DsgEnums.DriverShapefile: lambda: ("SHP", parameters["path"]),
+        }[parameters["driver"]]()
+        dbCreator = DbCreatorFactory().createDbCreatorFactory(
+            driverName=driverName, createParam=createParam
+        )
         return dbCreator.createDb(
-                    dbName=parameters['db'],
-                    srid=parameters['srid'],
-                    paramDict=parameters,
-                    parentWidget=None
-                )
+            dbName=parameters["db"],
+            srid=parameters["srid"],
+            paramDict=parameters,
+            parentWidget=None,
+        )
 
     def checkAndCreateDataset(self, conversionStepMap):
         """
@@ -158,24 +183,28 @@ class DbConverter(QgsTask):
         try:
             parameters = self.parseDatasourcePath(datasource=output)
             # filling missing parameters as required by dbCreator
-            parameters['srid'] = conversionStepMap['crs'].split(":")[-1]
-            parameters['isTemplateEdgv'] = True
-            parameters['version'], parameters['templateName'] = {
-                "EDGV 2.1.3" : ("2.1.3", 'template_edgv_213'),
-                "EDGV 2.1.3 F Ter" : ("FTer_2a_Ed", 'template_edgv_fter_2a_ed'),
-                "EDGV 2.1.3 Pro" : ("2.1.3 Pro", 'template_edgv_213_pro'),
-                "EDGV 3.0" : ("3.0", 'template_edgv_3')
+            parameters["srid"] = conversionStepMap["crs"].split(":")[-1]
+            parameters["isTemplateEdgv"] = True
+            parameters["version"], parameters["templateName"] = {
+                "EDGV 2.1.3": ("2.1.3", "template_edgv_213"),
+                "EDGV 2.1.3 F Ter": ("FTer_2a_Ed", "template_edgv_fter_2a_ed"),
+                "EDGV 2.1.3 Pro": ("2.1.3 Pro", "template_edgv_213_pro"),
+                "EDGV 3.0": ("3.0", "template_edgv_3")
                 # "EDGV 3.0 Pro" : ("3.0", 'template_edgv_3_pro')
-            }[conversionStepMap['edgv']]
-            if 'path' in parameters:
-                parameters['db'] = os.path.basename(os.path.splitext(parameters['path'])[0])
+            }[conversionStepMap["edgv"]]
+            if "path" in parameters:
+                parameters["db"] = os.path.basename(
+                    os.path.splitext(parameters["path"])[0]
+                )
             abstractDb = self.createDataset(parameters=parameters)
             msg = ""
         except Exception as e:
             if abstractDb is not None:
                 abstractDb.closeDatabase()
                 abstractDb = None
-            msg = "{0} dataset creation has failed: '{1}'".format(output, "; ".join(map(str, e.args)))
+            msg = "{0} dataset creation has failed: '{1}'".format(
+                output, "; ".join(map(str, e.args))
+            )
         return abstractDb, msg
 
     def getPgParamaters(self, parameters, conn):
@@ -185,9 +214,9 @@ class DbConverter(QgsTask):
         :param conn: (str) connection string.
         """
         # connection string: USER@HOST:PORT.DATABASE
-        parameters['username'], part = conn.split('@')
-        parameters['host'], part = part.split(':')
-        parameters['port'], parameters['db'] = part.split('.')
+        parameters["username"], part = conn.split("@")
+        parameters["host"], part = part.split(":")
+        parameters["port"], parameters["db"] = part.split(".")
 
     def parseDatasourcePath(self, datasource):
         """
@@ -196,34 +225,34 @@ class DbConverter(QgsTask):
         :return: (dict) a dict containing all connection parameters.
         """
         drivers = {
-            'pg' : DsgEnums.DriverPostGIS,
-            'sqlite' : DsgEnums.DriverSpatiaLite,
-            'shp' : DsgEnums.DriverShapefile,
-            'gpkg' : DsgEnums.DriverGeopackage
-            }
+            "pg": DsgEnums.DriverPostGIS,
+            "sqlite": DsgEnums.DriverSpatiaLite,
+            "shp": DsgEnums.DriverShapefile,
+            "gpkg": DsgEnums.DriverGeopackage,
+        }
         parameters = dict()
-        driver = datasource.split(':')[0]
-        conn = datasource[len(driver) + 1:]
-        if driver == 'pg':
+        driver = datasource.split(":")[0]
+        conn = datasource[len(driver) + 1 :]
+        if driver == "pg":
             self.getPgParamaters(parameters=parameters, conn=conn)
         else:
-            parameters['path'] = conn
-        parameters['driver'] = drivers[driver]
+            parameters["path"] = conn
+        parameters["driver"] = drivers[driver]
         return parameters
 
     def userPasswordFromHost(self, hostname, username):
         """
-        Gets the password of an user to a server from its name. 
+        Gets the password of an user to a server from its name.
         """
         settings = QSettings()
-        settings.beginGroup('PostgreSQL/servers')
+        settings.beginGroup("PostgreSQL/servers")
         connections = settings.childGroups()
         settings.endGroup()
         for connection in connections:
-            settings.beginGroup('PostgreSQL/servers/{0}'.format(connection))
-            host = settings.value('host')
-            user = settings.value('username')
-            password = settings.value('password')
+            settings.beginGroup("PostgreSQL/servers/{0}".format(connection))
+            host = settings.value("host")
+            user = settings.value("username")
+            password = settings.value("password")
             settings.endGroup()
             if host == hostname and username == user:
                 return password
@@ -235,12 +264,21 @@ class DbConverter(QgsTask):
         :param parameters: (dict) a dict containing all connection parameters.
         :return: (AbstractDb) returns the DSGTools database object.
         """
-        user, host, port, db = parameters['username'], parameters['host'], parameters['port'], parameters['db']
+        user, host, port, db = (
+            parameters["username"],
+            parameters["host"],
+            parameters["port"],
+            parameters["db"],
+        )
         # initiate abstractDb
         abstractDb = DbFactory().createDbFactory(driver=DsgEnums.DriverPostGIS)
         # ignore all info except for the password
         password = self.userPasswordFromHost(hostname=host, username=user)
-        return abstractDb if abstractDb.testCredentials(host, port, db, user, password) else None
+        return (
+            abstractDb
+            if abstractDb.testCredentials(host, port, db, user, password)
+            else None
+        )
 
     def connectToSpatialite(self, parameters):
         """
@@ -249,9 +287,9 @@ class DbConverter(QgsTask):
         :return: (AbstractDb) returns the DSGTools database object.
         """
         abstractDb = None
-        if os.path.exists(parameters['path']):
+        if os.path.exists(parameters["path"]):
             abstractDb = DbFactory().createDbFactory(driver=DsgEnums.DriverSpatiaLite)
-            abstractDb.connectDatabase(conn=parameters['path'])
+            abstractDb.connectDatabase(conn=parameters["path"])
         return abstractDb
 
     def connectToGeopackage(self, parameters):
@@ -261,9 +299,9 @@ class DbConverter(QgsTask):
         :return: (AbstractDb) returns the DSGTools database object.
         """
         abstractDb = None
-        if os.path.exists(parameters['path']):
+        if os.path.exists(parameters["path"]):
             abstractDb = DbFactory().createDbFactory(driver=DsgEnums.DriverGeopackage)
-            abstractDb.connectDatabase(conn=parameters['path'])
+            abstractDb.connectDatabase(conn=parameters["path"])
         return abstractDb
 
     def connectToShapefile(self, parameters):
@@ -273,8 +311,8 @@ class DbConverter(QgsTask):
         :return: (AbstractDb) returns the DSGTools database object.
         """
         abstractDb = DbFactory().createDbFactory(driver=DsgEnums.DriverShapefile)
-        abstractDb.connectDatabase(conn=parameters['path'])
-        return abstractDb if abstractDb.getDatabaseName() != '' else None
+        abstractDb.connectDatabase(conn=parameters["path"])
+        return abstractDb if abstractDb.getDatabaseName() != "" else None
 
     def connectToDb(self, parameters):
         """
@@ -283,12 +321,20 @@ class DbConverter(QgsTask):
         :return: (AbstractDb) returns the DSGTools database object.
         """
         drivers = {
-            DsgEnums.DriverPostGIS : lambda : self.connectToPostgis(parameters=parameters),
-            DsgEnums.DriverSpatiaLite : lambda : self.connectToSpatialite(parameters=parameters),
-            DsgEnums.DriverGeopackage : lambda : self.connectToGeopackage(parameters=parameters),
-            DsgEnums.DriverShapefile : lambda : self.connectToShapefile(parameters=parameters)
+            DsgEnums.DriverPostGIS: lambda: self.connectToPostgis(
+                parameters=parameters
+            ),
+            DsgEnums.DriverSpatiaLite: lambda: self.connectToSpatialite(
+                parameters=parameters
+            ),
+            DsgEnums.DriverGeopackage: lambda: self.connectToGeopackage(
+                parameters=parameters
+            ),
+            DsgEnums.DriverShapefile: lambda: self.connectToShapefile(
+                parameters=parameters
+            ),
         }
-        driver = parameters['driver']
+        driver = parameters["driver"]
         return drivers[driver]() if driver in drivers else None
 
     def getSpatialFilterBehaviour(self, predicate):
@@ -298,11 +344,7 @@ class DbConverter(QgsTask):
         :param spatialFilter: (str) spatial predicate.
         :return: (int) behaviour code.
         """
-        predicates = {
-            "Intersects" : 1,
-            "Clip" : 2,
-            "Buffer" : 3
-        }
+        predicates = {"Intersects": 1, "Clip": 2, "Buffer": 3}
         return predicates[predicate] if predicate in predicates else None
 
     def readInputLayers(self, datasourcePath, feedback=None):
@@ -319,11 +361,17 @@ class DbConverter(QgsTask):
             return {}
         layerLoader = LayerLoaderFactory().makeLoader(self.iface, abstractDb)
 
-        geometricLayers = list(abstractDb.listClassesWithElementsFromDatabase([]).keys())
+        geometricLayers = list(
+            abstractDb.listClassesWithElementsFromDatabase([]).keys()
+        )
         complexLayers = abstractDb.listComplexClassesFromDatabase()
 
         if feedback is not None:
-            stepSize = 100 / (len(geometricLayers) + len(complexLayers)) if len(geometricLayers) + len(complexLayers) else 0
+            stepSize = (
+                100 / (len(geometricLayers) + len(complexLayers))
+                if len(geometricLayers) + len(complexLayers)
+                else 0
+            )
         curr = 0
         for curr, l in enumerate(geometricLayers):
             if feedback is not None and feedback.isCanceled():
@@ -332,7 +380,7 @@ class DbConverter(QgsTask):
             inputLayerMap[vl.name()] = vl
             if feedback is not None:
                 feedback.setProgress(curr * stepSize)
-        
+
         for currComplex, l in enumerate(complexLayers):
             if feedback is not None and feedback.isCanceled():
                 return inputLayerMap
@@ -363,16 +411,18 @@ class DbConverter(QgsTask):
         geometricLayers = abstractDb.listGeomClassesFromDatabase([])
         complexLayers = abstractDb.listComplexClassesFromDatabase()
         if feedback is not None:
-            multiStepFeedback = QgsProcessingMultiStepFeedback(len(geometricLayers) + len(complexLayers), feedback)
-        
-        for  curr, l in enumerate(geometricLayers):
+            multiStepFeedback = QgsProcessingMultiStepFeedback(
+                len(geometricLayers) + len(complexLayers), feedback
+            )
+
+        for curr, l in enumerate(geometricLayers):
             if feedback is not None and multiStepFeedback.isCanceled():
                 return outputLayerMap
             vl = layerLoader.getLayerByName(l)
             outputLayerMap[vl.name()] = vl
             if feedback is not None:
                 multiStepFeedback.setCurrentStep(curr)
-        
+
         for currComplex, l in enumerate(complexLayers):
             if feedback is not None and multiStepFeedback.isCanceled():
                 return outputLayerMap
@@ -392,20 +442,28 @@ class DbConverter(QgsTask):
         :return: (QgsVectorLayer) reference layer as requested in the spatial filters.
         """
         # layer always comes from canvas
-        spatialFilterlLayer = QgsProject.instance().mapLayersByName(spatialFilters["layer"])
-        spatialFilterlLayer = spatialFilterlLayer[0] if spatialFilterlLayer != [] else None
+        spatialFilterlLayer = QgsProject.instance().mapLayersByName(
+            spatialFilters["layer"]
+        )
+        spatialFilterlLayer = (
+            spatialFilterlLayer[0] if spatialFilterlLayer != [] else None
+        )
         if spatialFilters["expression"]:
             context = context if context is not None else QgsProcessingContext()
-            spatialFilterlLayer = LayerHandler().filterByExpression(layer=spatialFilterlLayer,\
-                                                    expression=spatialFilters["expression"],\
-                                                    context=context)
+            spatialFilterlLayer = LayerHandler().filterByExpression(
+                layer=spatialFilterlLayer,
+                expression=spatialFilters["expression"],
+                context=context,
+            )
         return spatialFilterlLayer
 
-    def prepareInputLayers(self, inputLayers, stepConversionMap, context=None, feedback=None):
+    def prepareInputLayers(
+        self, inputLayers, stepConversionMap, context=None, feedback=None
+    ):
         """
         Prepare layers for a translation unit (step) to be executed (e.g. applies filters).
         :param inputLayers: (dict) a map from layer name to each vector layer contained by the
-                            input datasource. 
+                            input datasource.
         :param stepConversionMap: (dict) conversion map generated by Datasource Conversion tool
                                   for a conversion step.
         :param context: (QgsProcessingContext) environment parameters in which processing tools are used.
@@ -417,11 +475,17 @@ class DbConverter(QgsTask):
         layerFilters = stepConversionMap["filter"]["layer_filter"]
         spatialFilters = stepConversionMap["filter"]["spatial_filter"]
         # in case a selection of layers was made, only chosen layers should be translated
-        inputLayers = inputLayers if layerFilters == {} else {layer : inputLayers[layer] for layer in layerFilters}
+        inputLayers = (
+            inputLayers
+            if layerFilters == {}
+            else {layer: inputLayers[layer] for layer in layerFilters}
+        )
         multiStepFeedback = QgsProcessingMultiStepFeedback(len(inputLayers), feedback)
         if spatialFilters:
             # spatial filtering behaviour is set based on the modes defined in convertLayer2LayerAlgorithm
-            behaviour = self.getSpatialFilterBehaviour(spatialFilters["predicate"] if "predicate" in spatialFilters else None)
+            behaviour = self.getSpatialFilterBehaviour(
+                spatialFilters["predicate"] if "predicate" in spatialFilters else None
+            )
             spatialFilterLayer = self.prepareSpatialFilterLayer(spatialFilters, context)
         else:
             behaviour = None
@@ -435,19 +499,27 @@ class DbConverter(QgsTask):
                     break
                 currentStep += 1
             translatedLayer = lh.prepareConversion(
-                                inputLyr=vl,
-                                context=context,
-                                inputExpression=layerFilters[layer]["expression"] if layer in layerFilters else None,
-                                filterLyr=spatialFilterLayer,
-                                behavior=behaviour,
-                                conversionMap=stepConversionMap,
-                                feedback=multiStepFeedback if feedback is not None else None
-                                )
+                inputLyr=vl,
+                context=context,
+                inputExpression=layerFilters[layer]["expression"]
+                if layer in layerFilters
+                else None,
+                filterLyr=spatialFilterLayer,
+                behavior=behaviour,
+                conversionMap=stepConversionMap,
+                feedback=multiStepFeedback if feedback is not None else None,
+            )
             if translatedLayer.featureCount() > 0:
                 preparedLayers[layer] = translatedLayer
         return preparedLayers
 
-    def mapFeatures(self, inputPreparedLayers, outputLayers, featureConversionMap=None, feedback=None):
+    def mapFeatures(
+        self,
+        inputPreparedLayers,
+        outputLayers,
+        featureConversionMap=None,
+        feedback=None,
+    ):
         """
         Maps features from a given set of layers to a different set of layers (including attributes).
         :param inputPreparedLayers: (dict) map of layers to be translated.
@@ -464,32 +536,36 @@ class DbConverter(QgsTask):
             lh = LayerHandler()
             fh = FeatureHandler()
             if feedback is not None:
-                stepSize = 100 / len(inputPreparedLayers) if len(inputPreparedLayers) else 0
+                stepSize = (
+                    100 / len(inputPreparedLayers) if len(inputPreparedLayers) else 0
+                )
             for current, (layer, vl) in enumerate(inputPreparedLayers.items()):
                 if feedback is not None and feedback.isCanceled():
-                        break
+                    break
                 if vl.featureCount() == 0 or layer not in outputLayers:
                     continue
                 outuputLayer = outputLayers[layer]
                 k = "{0}->{1}".format(vl.crs().authid(), outuputLayer.crs().authid())
                 if k not in self.coordinateTransformers:
-                    self.coordinateTransformers[k] = lh.getCoordinateTransformer(inputLyr=vl, outputLyr=outuputLayer)
+                    self.coordinateTransformers[k] = lh.getCoordinateTransformer(
+                        inputLyr=vl, outputLyr=outuputLayer
+                    )
                 coordinateTransformer = self.coordinateTransformers[k]
                 param = lh.getDestinationParameters(vl)
                 for feature in vl.getFeatures(QgsFeatureRequest()):
                     featuresMap[layer] |= fh.handleConvertedFeature(
-                                                feat=feature,
-                                                lyr=outuputLayer,
-                                                parameterDict=param,
-                                                coordinateTransformer=coordinateTransformer
-                                                )
+                        feat=feature,
+                        lyr=outuputLayer,
+                        parameterDict=param,
+                        coordinateTransformer=coordinateTransformer,
+                    )
                 if feedback is not None:
                     feedback.setProgress(current * stepSize)
             return featuresMap
 
     # def fanOut(self, inputLayers, preparedLayers, referenceLayer, fanOutFieldName, context=None, feedback=None):
     #     """
-        
+
     #     """
     #     idx = referenceLayer.fields().indexFromName(fanOutFieldName)
     #     reference = referenceLayer.uniqueValues(idx)
@@ -513,7 +589,14 @@ class DbConverter(QgsTask):
     #                 fannedOutLayers[value][layer] = fannedOut
     #     return fannedOutLayers
 
-    def loadToOuput(self, featuresMap, outputLayers, conversionMode, featureConversionMap=None, feedback=None):
+    def loadToOuput(
+        self,
+        featuresMap,
+        outputLayers,
+        conversionMode,
+        featureConversionMap=None,
+        feedback=None,
+    ):
         """
         Loads converted features to output dataset.
         :param preparedLayers: (dict) map of (list-of-QgsFeature) features to be added to output layer.
@@ -542,10 +625,14 @@ class DbConverter(QgsTask):
                     count += vl.addFeature(featureSet.pop())
             vl.updateExtents()
             if vl.commitChanges():
-                self.conversionUpdated.emit(self.tr("{0} successfully loaded.").format(vl.name()))
+                self.conversionUpdated.emit(
+                    self.tr("{0} successfully loaded.").format(vl.name())
+                )
                 success[layer] = count
             else:
-                self.conversionUpdated.emit(self.tr("{0} failed to be loaded.").format(vl.name()))
+                self.conversionUpdated.emit(
+                    self.tr("{0} failed to be loaded.").format(vl.name())
+                )
                 fail[layer] = outputLayers[layer].commitErrors()[0]
             if feedback is not None:
                 feedback.setProgress(current * stepSize)
@@ -557,10 +644,27 @@ class DbConverter(QgsTask):
         """
         # any header info insertion should be through template
         # header's data handling should be in this method!
-        with open(os.path.join(os.path.dirname(__file__), 'Templates', 'headerConversionSummaryTemplate.html'), 'r') as f:
+        with open(
+            os.path.join(
+                os.path.dirname(__file__),
+                "Templates",
+                "headerConversionSummaryTemplate.html",
+            ),
+            "r",
+        ) as f:
             return f.read()
 
-    def addConversionStepToLog(self, conversionStep, inputDb, outputDb, inputLayers, creationErrors, successfulLayers, failedLayers, elapsedTime):
+    def addConversionStepToLog(
+        self,
+        conversionStep,
+        inputDb,
+        outputDb,
+        inputLayers,
+        creationErrors,
+        successfulLayers,
+        failedLayers,
+        elapsedTime,
+    ):
         """
         Builds conversion summary log message.
         :param conversionStep: (int) current conversion step.
@@ -573,11 +677,18 @@ class DbConverter(QgsTask):
         :param elapsedTime: (str) current step elapsed time.
         :return: (str) conversion step HTML text.
         """
-        with open(os.path.join(os.path.dirname(__file__), 'Templates', 'bodyConversionSummaryTemplate.html'), 'r') as f:
+        with open(
+            os.path.join(
+                os.path.dirname(__file__),
+                "Templates",
+                "bodyConversionSummaryTemplate.html",
+            ),
+            "r",
+        ) as f:
             bodyHtml = f.read()
-        bodyHtml = bodyHtml.replace('CONVERSION_STEP', str(conversionStep))
-        bodyHtml = bodyHtml.replace('INPUT_DATASET', inputDb)
-        bodyHtml = bodyHtml.replace('OUTPUT_DATASET', outputDb)
+        bodyHtml = bodyHtml.replace("CONVERSION_STEP", str(conversionStep))
+        bodyHtml = bodyHtml.replace("INPUT_DATASET", inputDb)
+        bodyHtml = bodyHtml.replace("OUTPUT_DATASET", outputDb)
         inputTable = ""
         for layer, vl in inputLayers.items():
             inputTable += """
@@ -585,8 +696,10 @@ class DbConverter(QgsTask):
                 <td>{0}</td>
                 <td style="text-align: center;">{1}</td>
             </tr>
-            """.format(layer, len([f for f in vl.getFeatures()]))
-        bodyHtml = bodyHtml.replace('INPUT_TABLE', inputTable)
+            """.format(
+                layer, len([f for f in vl.getFeatures()])
+            )
+        bodyHtml = bodyHtml.replace("INPUT_TABLE", inputTable)
         outputTable = ""
         for layer, feat_count in successfulLayers.items():
             outputTable += """
@@ -594,8 +707,10 @@ class DbConverter(QgsTask):
                 <td>{0}</td>
                 <td style="text-align: center;">{1}</td>
             </tr>
-            """.format(layer, feat_count)
-        bodyHtml = bodyHtml.replace('OUTPUT_TABLE', outputTable)
+            """.format(
+                layer, feat_count
+            )
+        bodyHtml = bodyHtml.replace("OUTPUT_TABLE", outputTable)
         dsErrors = ""
         if "{0} to {1}".format(inputDb, outputDb) in creationErrors:
             dsErrors = """
@@ -603,8 +718,10 @@ class DbConverter(QgsTask):
                 <td>{0}</td>
                 <td>{1}</td>
             </tr>
-            """.format(outputDb, creationErrors["{0} to {1}".format(inputDb, outputDb)])
-        bodyHtml = bodyHtml.replace('DATASET_CREATION_ERROR', dsErrors)
+            """.format(
+                outputDb, creationErrors["{0} to {1}".format(inputDb, outputDb)]
+            )
+        bodyHtml = bodyHtml.replace("DATASET_CREATION_ERROR", dsErrors)
         errors = ""
         for layer, reason in failedLayers.items():
             errors += """
@@ -612,11 +729,15 @@ class DbConverter(QgsTask):
                 <td>{0}</td>
                 <td>{1}</td>
             </tr>
-            """.format(layer, reason)
-        bodyHtml = bodyHtml.replace('WRITTING_ERRORS', errors)
-        return bodyHtml.replace('STEP_ELAPSED_TIME', elapsedTime) + "\n"
+            """.format(
+                layer, reason
+            )
+        bodyHtml = bodyHtml.replace("WRITTING_ERRORS", errors)
+        return bodyHtml.replace("STEP_ELAPSED_TIME", elapsedTime) + "\n"
 
-    def convertFromMap(self, conversionMap=None, featureConversionMap=None, feedback=None):
+    def convertFromMap(
+        self, conversionMap=None, featureConversionMap=None, feedback=None
+    ):
         """
         Converts all datasets from a conversion map.
         :param conversionMap: (dict) conversion map generated by Datasource Conversion tool.
@@ -644,10 +765,16 @@ class DbConverter(QgsTask):
             multiStepFeedback.setCurrentStep(currentStep)
             currentStep += 1
             # input setup
-            self.conversionUpdated.emit(self.tr("\nConversion Step {0} started...\n\n").format(conversionStep))
-            self.conversionUpdated.emit(self.tr("[INPUT] Reading {0}'s layers...\n").format(inputDb))
+            self.conversionUpdated.emit(
+                self.tr("\nConversion Step {0} started...\n\n").format(conversionStep)
+            )
+            self.conversionUpdated.emit(
+                self.tr("[INPUT] Reading {0}'s layers...\n").format(inputDb)
+            )
             if inputDb not in allInputLayers:
-                allInputLayers[inputDb] = self.readInputLayers(datasourcePath=inputDb, feedback=multiStepFeedback)
+                allInputLayers[inputDb] = self.readInputLayers(
+                    datasourcePath=inputDb, feedback=multiStepFeedback
+                )
             inputLayers = allInputLayers[inputDb]
             for currentOutput, conversionStepMap in enumerate(conversionStepMaps):
                 startTime = time.time()
@@ -657,57 +784,98 @@ class DbConverter(QgsTask):
                 outputDb = conversionStepMap["outDs"]
                 if outputDb not in allOutputLayers:
                     if conversionStepMap["createDs"]:
-                        self.conversionUpdated.emit(self.tr("[OUTPUT] Creating dataset {0}...\n").format(outputDb))
-                        outputAbstractDb, error = self.checkAndCreateDataset(conversionStepMap)
+                        self.conversionUpdated.emit(
+                            self.tr("[OUTPUT] Creating dataset {0}...\n").format(
+                                outputDb
+                            )
+                        )
+                        outputAbstractDb, error = self.checkAndCreateDataset(
+                            conversionStepMap
+                        )
                         del outputAbstractDb
                         if error != "":
                             k = "{0} to {1}".format(inputDb, outputDb)
-                            self.conversionUpdated.emit(self.tr("Dataset creation error ({0}): '{1}'\n").format(outputDb, error))
+                            self.conversionUpdated.emit(
+                                self.tr("Dataset creation error ({0}): '{1}'\n").format(
+                                    outputDb, error
+                                )
+                            )
                             errors[k] = error
-                            conversionSummary += self.addConversionStepToLog(conversionStep, inputDb, outputDb, \
-                                            inputLayers, errors, {}, {}, "{0:.2f} s".format(time.time() - startTime))
+                            conversionSummary += self.addConversionStepToLog(
+                                conversionStep,
+                                inputDb,
+                                outputDb,
+                                inputLayers,
+                                errors,
+                                {},
+                                {},
+                                "{0:.2f} s".format(time.time() - startTime),
+                            )
                             conversionStep += 1
                             continue
-                    self.conversionUpdated.emit(self.tr("[OUTPUT] Reading {0}'s layers...\n").format(outputDb))
+                    self.conversionUpdated.emit(
+                        self.tr("[OUTPUT] Reading {0}'s layers...\n").format(outputDb)
+                    )
                     multiStepFeedback.setCurrentStep(currentStep)
                     currentStep += 1
-                    allOutputLayers[outputDb] = self.readOutputLayers(datasourcePath=outputDb, feedback=multiStepFeedback)
+                    allOutputLayers[outputDb] = self.readOutputLayers(
+                        datasourcePath=outputDb, feedback=multiStepFeedback
+                    )
                 outputLayers = allOutputLayers[outputDb]
                 # now conversion starts
-                self.conversionUpdated.emit(self.tr("Preparing {0}'s layers for conversion...").format(inputDb))
+                self.conversionUpdated.emit(
+                    self.tr("Preparing {0}'s layers for conversion...").format(inputDb)
+                )
                 multiStepFeedback.setCurrentStep(currentStep)
                 currentStep += 1
-                preparedLayers = self.prepareInputLayers(inputLayers, conversionStepMap, feedback=multiStepFeedback)
+                preparedLayers = self.prepareInputLayers(
+                    inputLayers, conversionStepMap, feedback=multiStepFeedback
+                )
 
                 self.conversionUpdated.emit(self.tr("Mapping features..."))
                 multiStepFeedback.setCurrentStep(currentStep)
                 currentStep += 1
-                mappedFeatures = self.mapFeatures(preparedLayers, outputLayers, feedback=multiStepFeedback)
+                mappedFeatures = self.mapFeatures(
+                    preparedLayers, outputLayers, feedback=multiStepFeedback
+                )
 
-                self.conversionUpdated.emit(self.tr("Loading layers to {0}...").format(outputDb))
+                self.conversionUpdated.emit(
+                    self.tr("Loading layers to {0}...").format(outputDb)
+                )
                 multiStepFeedback.setCurrentStep(currentStep)
                 currentStep += 1
                 successfulLayers, failedLayers = self.loadToOuput(
-                                                    mappedFeatures, outputLayers, conversionStepMap["conversionMode"],\
-                                                    feedback=multiStepFeedback
-                                                 )
+                    mappedFeatures,
+                    outputLayers,
+                    conversionStepMap["conversionMode"],
+                    feedback=multiStepFeedback,
+                )
                 # log update
-                conversionSummary += self.addConversionStepToLog(conversionStep, inputDb, outputDb, inputLayers, \
-                                            errors, successfulLayers, failedLayers, "{0:.2f} s".format(time.time() - startTime))
+                conversionSummary += self.addConversionStepToLog(
+                    conversionStep,
+                    inputDb,
+                    outputDb,
+                    inputLayers,
+                    errors,
+                    successfulLayers,
+                    failedLayers,
+                    "{0:.2f} s".format(time.time() - startTime),
+                )
                 conversionStep += 1
         self.conversionFinished.emit()
         return {
-            'creationErrors' : errors,
-            'successfulLayers' : successfulLayers,
-            'failedLayers' : failedLayers,
-            'status' : not feedback.isCanceled(),
-            'log' : conversionSummary
+            "creationErrors": errors,
+            "successfulLayers": successfulLayers,
+            "failedLayers": failedLayers,
+            "status": not feedback.isCanceled(),
+            "log": conversionSummary,
         }
-    
+
     def run(self):
         elapsedTime = time.time()
         self.output = self.convertFromMap()
-        self.output['elapsedTime'] = "{0:.2f} s".format(time.time() - elapsedTime)
-        self.output['log'] = self.output['log'].replace('ELAPSED_TIME', self.output['elapsedTime'])
-        return self.output['status']
-
+        self.output["elapsedTime"] = "{0:.2f} s".format(time.time() - elapsedTime)
+        self.output["log"] = self.output["log"].replace(
+            "ELAPSED_TIME", self.output["elapsedTime"]
+        )
+        return self.output["status"]

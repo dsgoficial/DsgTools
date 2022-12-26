@@ -25,18 +25,24 @@ import os, json
 from time import sleep, time
 from functools import partial
 
-from qgis.core import (QgsApplication,
-                       QgsProcessingFeedback,
-                       QgsProcessingMultiStepFeedback)
+from qgis.core import (
+    QgsApplication,
+    QgsProcessingFeedback,
+    QgsProcessingMultiStepFeedback,
+)
 from qgis.PyQt.QtCore import QObject, pyqtSignal
 
-from DsgTools.core.DSGToolsProcessingAlgs.Models.dsgToolsProcessingModel import DsgToolsProcessingModel
+from DsgTools.core.DSGToolsProcessingAlgs.Models.dsgToolsProcessingModel import (
+    DsgToolsProcessingModel,
+)
+
 
 class QualityAssuranceWorkflow(QObject):
     """
     Works as a multi-model runner. Understands all models' parameters as an
     output vector layer.
     """
+
     workflowFinished = pyqtSignal()
     haltedOnFlags = pyqtSignal(DsgToolsProcessingModel)
     modelStarted = pyqtSignal(DsgToolsProcessingModel)
@@ -77,7 +83,7 @@ class QualityAssuranceWorkflow(QObject):
         if "models" not in parameters or not parameters["models"]:
             return self.tr("Workflow seems to have no models associated with it.")
         for modelName, modelParam in parameters["models"].items():
-            model=DsgToolsProcessingModel(modelParam, modelName)
+            model = DsgToolsProcessingModel(modelParam, modelName)
             if not model.isValid():
                 return self.tr("Model {model} is invalid: '{reason}'.").format(
                     model=modelName, reason=model.validateParameters(modelParam)
@@ -135,8 +141,7 @@ class QualityAssuranceWorkflow(QObject):
         Friendly name for the workflow.
         :return: (str) display name.
         """
-        return self._param["displayName"] if \
-                "displayName" in self._param else ""
+        return self._param["displayName"] if "displayName" in self._param else ""
 
     def name(self):
         """
@@ -150,7 +155,7 @@ class QualityAssuranceWorkflow(QObject):
         Model parameters defined to run in this workflow.
         :return: (dict) models maps to valid and invalid models.
         """
-        models = {"valid" : dict(), "invalid" : dict()}
+        models = {"valid": dict(), "invalid": dict()}
         self._multiStepFeedback = QgsProcessingMultiStepFeedback(
             len(self._param["models"]), self.feedback
         )
@@ -248,11 +253,9 @@ class QualityAssuranceWorkflow(QObject):
         if withOutputDict:
             outputCopy = dict(self.output)
             for key, value in outputCopy.items():
-                if 'result' in value:
-                    outputCopy[key].pop('result')
-            outputDict.update(
-                {"output": outputCopy}
-            )
+                if "result" in value:
+                    outputCopy[key].pop("result")
+            outputDict.update({"output": outputCopy})
         return outputDict
 
     def finished(self):
@@ -275,8 +278,8 @@ class QualityAssuranceWorkflow(QObject):
             self.output[mName] = dict()
             try:
                 self.output[mName]["result"] = {
-                    k.split(":", 2)[-1] : v \
-                        for k, v in model.runModel(model.feedback).items()
+                    k.split(":", 2)[-1]: v
+                    for k, v in model.runModel(model.feedback).items()
                 }
                 self.output[mName]["status"] = True
             except Exception as e:
@@ -352,9 +355,9 @@ class QualityAssuranceWorkflow(QObject):
         :param model: (DsgToolsProcessingModel) model to have its output handled.
         """
         onFlagsMethod = {
-            "warn" : partial(self.raiseFlagWarning, model),
-            "halt" : partial(self.raiseFlagError, model),
-            "ignore" : partial(self.modelFinished.emit, model)
+            "warn": partial(self.raiseFlagWarning, model),
+            "halt": partial(self.raiseFlagError, model),
+            "ignore": partial(self.modelFinished.emit, model),
         }[model.onFlagsRaised()]()
 
     def run(self, firstModelName=None, cooldown=None):
@@ -369,10 +372,12 @@ class QualityAssuranceWorkflow(QObject):
         modelCount = len(self._executionOrder)
         if self.hasInvalidModel() or modelCount == 0:
             return None
+
         def modelCompleted(model, step):
             self.output[model.name()] = model.output
             self._multiStepFeedback.setCurrentStep(step)
             self.handleFlags(model)
+
         if firstModelName is not None:
             for idx, model in self._executionOrder.items():
                 if model.name() == firstModelName:
@@ -391,16 +396,13 @@ class QualityAssuranceWorkflow(QObject):
             currentModel.taskCompleted.connect(
                 partial(modelCompleted, currentModel, idx + 1)
             )
-            currentModel.begun.connect(
-                partial(self.modelStarted.emit, currentModel)
-            )
+            currentModel.begun.connect(partial(self.modelStarted.emit, currentModel))
             currentModel.taskTerminated.connect(
                 partial(self.modelFailed.emit, currentModel)
             )
             if idx != modelCount - 1:
                 self._executionOrder[idx + 1].addSubTask(
-                    currentModel,
-                    subTaskDependency=currentModel.ParentDependsOnSubTask
+                    currentModel, subTaskDependency=currentModel.ParentDependsOnSubTask
                 )
             else:
                 # last model indicates workflow finish
@@ -420,14 +422,16 @@ class QualityAssuranceWorkflow(QObject):
         modelCount = len(self._executionOrder)
         for idx, model in self._executionOrder.items():
             modelName = self._executionOrder[idx].displayName()
-            if modelName not in self.output or \
-                self.output[modelName]["finishStatus"] != "finished":
+            if (
+                modelName not in self.output
+                or self.output[modelName]["finishStatus"] != "finished"
+            ):
                 return modelName
         else:
             return None
-    
+
     def getOutputStatusDict(self):
         return self.output
-    
+
     def setOutputStatusDict(self, statusDict):
         self.output = statusDict

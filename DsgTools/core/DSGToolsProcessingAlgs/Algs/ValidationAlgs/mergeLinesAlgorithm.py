@@ -24,29 +24,37 @@ from PyQt5.QtCore import QCoreApplication
 
 import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsSpatialIndex, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsGeometry,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterField,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsWkbTypes,
+)
 
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class MergeLinesAlgorithm(ValidationAlgorithm):
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
-    ATTRIBUTE_BLACK_LIST = 'ATTRIBUTE_BLACK_LIST'
-    IGNORE_VIRTUAL_FIELDS = 'IGNORE_VIRTUAL_FIELDS'
-    IGNORE_PK_FIELDS = 'IGNORE_PK_FIELDS'
-    OUTPUT = 'OUTPUT'
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
+    ATTRIBUTE_BLACK_LIST = "ATTRIBUTE_BLACK_LIST"
+    IGNORE_VIRTUAL_FIELDS = "IGNORE_VIRTUAL_FIELDS"
+    IGNORE_PK_FIELDS = "IGNORE_PK_FIELDS"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -54,46 +62,42 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorLine ]
+                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorLine]
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
         self.addParameter(
             QgsProcessingParameterField(
-                self.ATTRIBUTE_BLACK_LIST, 
-                self.tr('Fields to ignore'),
-                None, 
-                'INPUT', 
+                self.ATTRIBUTE_BLACK_LIST,
+                self.tr("Fields to ignore"),
+                None,
+                "INPUT",
                 QgsProcessingParameterField.Any,
                 allowMultiple=True,
-                optional = True
+                optional=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.IGNORE_VIRTUAL_FIELDS,
-                self.tr('Ignore virtual fields'),
-                defaultValue=True
+                self.tr("Ignore virtual fields"),
+                defaultValue=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.IGNORE_PK_FIELDS,
-                self.tr('Ignore primary key fields'),
-                defaultValue=True
+                self.tr("Ignore primary key fields"),
+                defaultValue=True,
             )
         )
         self.addOutput(
             QgsProcessingOutputVectorLayer(
-                self.OUTPUT,
-                self.tr('Original layer with merged lines')
+                self.OUTPUT, self.tr("Original layer with merged lines")
             )
         )
 
@@ -102,31 +106,15 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         Here is where the processing itself takes place.
         """
         layerHandler = LayerHandler()
-        inputLyr = self.parameterAsVectorLayer(
-            parameters,
-            self.INPUT,
-            context
-            )
-        onlySelected = self.parameterAsBool(
-            parameters,
-            self.SELECTED,
-            context
-            )
+        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         attributeBlackList = self.parameterAsFields(
-            parameters,
-            self.ATTRIBUTE_BLACK_LIST,
-            context
-            )
+            parameters, self.ATTRIBUTE_BLACK_LIST, context
+        )
         ignoreVirtual = self.parameterAsBool(
-            parameters,
-            self.IGNORE_VIRTUAL_FIELDS,
-            context
-            )
-        ignorePK = self.parameterAsBool(
-            parameters,
-            self.IGNORE_PK_FIELDS,
-            context
-            )
+            parameters, self.IGNORE_VIRTUAL_FIELDS, context
+        )
+        ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
 
         layerHandler.mergeLinesOnLayer(
             inputLyr,
@@ -134,8 +122,8 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
             ignoreVirtualFields=ignoreVirtual,
             attributeBlackList=attributeBlackList,
-            excludePrimaryKeys=ignorePK
-            )
+            excludePrimaryKeys=ignorePK,
+        )
 
         return {self.OUTPUT: inputLyr}
 
@@ -147,21 +135,21 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'mergelineswithsameattributeset'
+        return "mergelineswithsameattributeset"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Merge lines with same attribute set')
+        return self.tr("Merge lines with same attribute set")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Manipulation Processes)')
+        return self.tr("Quality Assurance Tools (Manipulation Processes)")
 
     def groupId(self):
         """
@@ -171,10 +159,10 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Manipulation Processes)'
+        return "DSGTools: Quality Assurance Tools (Manipulation Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('MergeLinesAlgorithm', string)
+        return QCoreApplication.translate("MergeLinesAlgorithm", string)
 
     def createInstance(self):
         return MergeLinesAlgorithm()

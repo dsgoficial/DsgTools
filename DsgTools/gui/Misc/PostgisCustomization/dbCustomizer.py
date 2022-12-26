@@ -20,30 +20,40 @@
  *                                                                         *
  ***************************************************************************/
 """
-#Qt Imports
+# Qt Imports
 from qgis.PyQt.Qt import QObject
-#DsgTools Imports
-from DsgTools.core.Utils.utils import Utils 
+
+# DsgTools Imports
+from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.Factories.DbFactory.postgisDb import PostgisDb
-from DsgTools.gui.Misc.PostgisCustomization.CustomJSONTools.customJSONValidator import CustomJSONValidator
-from DsgTools.core.Factories.DbCustomizationFactory.dbCustomizationFactory import DbCustomizationFactory
+from DsgTools.gui.Misc.PostgisCustomization.CustomJSONTools.customJSONValidator import (
+    CustomJSONValidator,
+)
+from DsgTools.core.Factories.DbCustomizationFactory.dbCustomizationFactory import (
+    DbCustomizationFactory,
+)
+
 
 class DbCustomizer(QObject):
     def __init__(self):
         super(DbCustomizer, self).__init__()
         self.customJSONValidator = None
         self.dbCustomizationFactory = DbCustomizationFactory()
-    
+
     def buildCustomizationSQL(self, customJSON):
-        sql = ''
+        sql = ""
         for customizationTag in list(customJSON.keys()):
-            customCreator = self.dbCustomizationFactory.createCustomization(customizationTag, customJSON[customizationTag])
+            customCreator = self.dbCustomizationFactory.createCustomization(
+                customizationTag, customJSON[customizationTag]
+            )
             sql += customCreator.buildSql()
         return sql
-    
+
     def buildUndoCustomizationSQL(self, customJSON):
-        sql = ''
+        sql = ""
         for customizationTag in list(customJSON.keys()):
-            customCreator = self.dbCustomizationFactory.createCustomization(customizationTag, customJSON[customizationTag])
+            customCreator = self.dbCustomizationFactory.createCustomization(
+                customizationTag, customJSON[customizationTag]
+            )
             sql += customCreator.buildUndoSql()
         return sql

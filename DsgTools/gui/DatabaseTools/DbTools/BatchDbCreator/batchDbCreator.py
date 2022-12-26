@@ -28,14 +28,21 @@ from qgis.PyQt.QtCore import pyqtSignal
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QWizard
 from fileinput import filename
 from DsgTools.core.Utils.utils import Utils
-from DsgTools.gui.DatabaseTools.DbTools.BatchDbCreator.createBatchFromCsv import CreateBatchFromCsv
-from DsgTools.gui.DatabaseTools.DbTools.BatchDbCreator.createBatchIncrementing import CreateBatchIncrementing
+from DsgTools.gui.DatabaseTools.DbTools.BatchDbCreator.createBatchFromCsv import (
+    CreateBatchFromCsv,
+)
+from DsgTools.gui.DatabaseTools.DbTools.BatchDbCreator.createBatchIncrementing import (
+    CreateBatchIncrementing,
+)
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'batchDbCreator.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "batchDbCreator.ui")
+)
+
 
 class BatchDbCreator(QtWidgets.QWizard, FORM_CLASS):
     coverageChanged = pyqtSignal()
+
     def __init__(self, manager, parentButton, parentMenu, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__()
@@ -49,38 +56,46 @@ class BatchDbCreator(QtWidgets.QWizard, FORM_CLASS):
         self.parentMenu = parentMenu
         self.parent = parent
         self.setupUi(self)
-        self.sequenceDict = {'CreateBatchFromCsv':1, 'CreateBatchIncrementing':2, 'CreateBatchBasedOnList':3}
-        
-        self.setPage(self.sequenceDict['CreateBatchFromCsv'],CreateBatchFromCsv())
-        self.setPage(self.sequenceDict['CreateBatchIncrementing'],CreateBatchIncrementing())
-    
+        self.sequenceDict = {
+            "CreateBatchFromCsv": 1,
+            "CreateBatchIncrementing": 2,
+            "CreateBatchBasedOnList": 3,
+        }
+
+        self.setPage(self.sequenceDict["CreateBatchFromCsv"], CreateBatchFromCsv())
+        self.setPage(
+            self.sequenceDict["CreateBatchIncrementing"], CreateBatchIncrementing()
+        )
+
     def nextId(self):
         if self.currentId() == 0:
             if self.csvRadioButton.isChecked():
-                return self.sequenceDict['CreateBatchFromCsv']
+                return self.sequenceDict["CreateBatchFromCsv"]
             elif self.patternRadioButton.isChecked():
-                return self.sequenceDict['CreateBatchIncrementing']
+                return self.sequenceDict["CreateBatchIncrementing"]
             else:
                 return self.currentId()
-        elif self.currentId() == self.sequenceDict['CreateBatchFromCsv']:
+        elif self.currentId() == self.sequenceDict["CreateBatchFromCsv"]:
             return -1
-        elif self.currentId() == self.sequenceDict['CreateBatchIncrementing']:
+        elif self.currentId() == self.sequenceDict["CreateBatchIncrementing"]:
             return -1
         else:
             return -1
 
     def initGui(self):
         """
-        Instantiates user interface and prepare it to be called whenever tool button is activated. 
+        Instantiates user interface and prepare it to be called whenever tool button is activated.
         """
-        callback = lambda : self.manager.createDatabase(isBatchCreation=True)
+        callback = lambda: self.manager.createDatabase(isBatchCreation=True)
         self.manager.addTool(
-            text=self.tr('Create batches of PostGIS, SpatiaLite or Geopackage Databases'),
+            text=self.tr(
+                "Create batches of PostGIS, SpatiaLite or Geopackage Databases"
+            ),
             callback=callback,
             parentMenu=self.parentMenu,
-            icon='batchDatabase.png',
+            icon="batchDatabase.png",
             parentButton=self.parentButton,
-            defaultButton=False
+            defaultButton=False,
         )
 
     def unload(self):

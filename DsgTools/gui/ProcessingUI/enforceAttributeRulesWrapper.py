@@ -23,21 +23,26 @@
 import json
 from functools import partial
 
-from qgis.core import (QgsProject, QgsVectorLayer)
+from qgis.core import QgsProject, QgsVectorLayer
 from qgis.gui import QgsFieldExpressionWidget
 from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtWidgets import (QMessageBox,
-                                 QHeaderView,
-                                 QComboBox,
-                                 QLineEdit)
-from processing.gui.wrappers import (WidgetWrapper,
-                                     DIALOG_STANDARD,
-                                     DIALOG_MODELER,
-                                     DIALOG_BATCH)
+from qgis.PyQt.QtWidgets import QMessageBox, QHeaderView, QComboBox, QLineEdit
+from processing.gui.wrappers import (
+    WidgetWrapper,
+    DIALOG_STANDARD,
+    DIALOG_MODELER,
+    DIALOG_BATCH,
+)
 
-from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedTableWidget import OrderedTableWidget
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.colorSelectorWidget import ColorSelectorWidget
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.layerAndFieldSelectorWidget import LayerAndFieldSelectorWidget
+from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedTableWidget import (
+    OrderedTableWidget,
+)
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.colorSelectorWidget import (
+    ColorSelectorWidget,
+)
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.layerAndFieldSelectorWidget import (
+    LayerAndFieldSelectorWidget,
+)
 from ...core.Utils.utils import ValidateImportedDataMethods
 
 
@@ -47,13 +52,13 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
     been customized, for a specific type of parameter used in QGIS processing
     algorithms.
     """
+
     __ATTRIBUTE_MAP_VERSION = 0.1
     # enum for column ordering
     STD_COLUMN_COUNT = 5
     MODELER_COLUMN_COUNT = 6
     descStd, lyrStd, expStd, errStd, colorStd = list(range(STD_COLUMN_COUNT))
-    descMd, lyrMd, fldMd, expMd, errMd, colorMd = list(
-        range(MODELER_COLUMN_COUNT))
+    descMd, lyrMd, fldMd, expMd, errMd, colorMd = list(range(MODELER_COLUMN_COUNT))
 
     def __init__(self, *args, **kwargs):
         """
@@ -95,10 +100,11 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         Retrieves the configured error type selection combo box.
         :return: (QComboBox) configured error selection widget.
         """
-        errorTypeList = ["Atributo de valor incomum",
-                         "Atributo com valor incorreto",
-                         "Preencher atributo",
-                         ]
+        errorTypeList = [
+            "Atributo de valor incomum",
+            "Atributo com valor incorreto",
+            "Preencher atributo",
+        ]
 
         cb = QComboBox()
         cb.addItem(self.tr("Select an error type"))
@@ -135,8 +141,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         layers = QgsProject.instance().mapLayers().values()
         for layer in layers:
             if layer.type() == 0:
-                loaded[layer.name()] = [field.name()
-                                        for field in layer.fields()]
+                loaded[layer.name()] = [field.name() for field in layer.fields()]
             else:
                 pass
         return loaded
@@ -153,8 +158,9 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         for k, v in attrRulesMap.items():
             if k == "metadata":
                 continue
-            if self.validateMethods.validatePythonTypes(v["1"], "list") and \
-                    self.validateMethods.validateLengthOfDataTypes(v["1"], 2):
+            if self.validateMethods.validatePythonTypes(
+                v["1"], "list"
+            ) and self.validateMethods.validateLengthOfDataTypes(v["1"], 2):
                 if v["1"][0] not in loadedLyr:
                     unsortedNotLoadedLyr.append(v["1"][0])
 
@@ -175,12 +181,12 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
             notLoadedLyrWarning = self.showLoadingMsg(notLoadedLyr, "warning")
             if notLoadedLyrWarning == QMessageBox.Ignore:
                 invalidRulesWarning = self.validateMethods.showLoadingMsg(
-                    invalidRules, "invalid")
+                    invalidRules, "invalid"
+                )
                 if invalidRulesWarning == QMessageBox.Ignore:
-                    self.modifyAttributeRulesMap(invalidRulesWarning,
-                                                 attrRulesMap,
-                                                 newDict,
-                                                 notLoadedLyr)
+                    self.modifyAttributeRulesMap(
+                        invalidRulesWarning, attrRulesMap, newDict, notLoadedLyr
+                    )
                 else:
                     attrRulesMap.clear()
             else:
@@ -188,18 +194,23 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
 
         elif not notLoadedLyr and invalidRules:
             invalidRulesWarning = self.validateMethods.showLoadingMsg(
-                invalidRules, "invalid")
+                invalidRules, "invalid"
+            )
             self.modifyAttributeRulesMap(
-                invalidRulesWarning, attrRulesMap, newDict, notLoadedLyr)
+                invalidRulesWarning, attrRulesMap, newDict, notLoadedLyr
+            )
 
         elif notLoadedLyr and not invalidRules:
             notLoadedLyrWarning = self.showLoadingMsg(notLoadedLyr, "warning")
             self.modifyAttributeRulesMap(
-                notLoadedLyrWarning, attrRulesMap, newDict, notLoadedLyr)
+                notLoadedLyrWarning, attrRulesMap, newDict, notLoadedLyr
+            )
         else:
             self.showLoadingMsg()
 
-    def modifyAttributeRulesMap(self, clickedAction, attrRulesMap, newDict, notLoadedLyr):
+    def modifyAttributeRulesMap(
+        self, clickedAction, attrRulesMap, newDict, notLoadedLyr
+    ):
         """
         Modifies the attrRulesMap dict with newDict data.
         :param clickedAction: (QtAction) clicked button signal.
@@ -229,33 +240,64 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         for attrRulesMapKey, attrRulesMapValue in attrRulesMap.items():
             if attrRulesMapKey == "metadata":
                 continue
-            if self.validateMethods.validatePythonTypes(attrRulesMapValue["0"], "string"):
-                if self.validateMethods.validatePythonTypes(attrRulesMapValue["1"], "list") \
-                        and self.validateMethods.validateLengthOfDataTypes(attrRulesMapValue["1"], 2):
-                    if self.validateMethods.validateQgsExpressions(attrRulesMapValue["2"]):
-                        if self.validateMethods.validatePythonTypes(attrRulesMapValue["3"], "string"):
-                            if self.validateMethods.validateQColor(attrRulesMapValue["4"]):
+            if self.validateMethods.validatePythonTypes(
+                attrRulesMapValue["0"], "string"
+            ):
+                if self.validateMethods.validatePythonTypes(
+                    attrRulesMapValue["1"], "list"
+                ) and self.validateMethods.validateLengthOfDataTypes(
+                    attrRulesMapValue["1"], 2
+                ):
+                    if self.validateMethods.validateQgsExpressions(
+                        attrRulesMapValue["2"]
+                    ):
+                        if self.validateMethods.validatePythonTypes(
+                            attrRulesMapValue["3"], "string"
+                        ):
+                            if self.validateMethods.validateQColor(
+                                attrRulesMapValue["4"]
+                            ):
                                 newDict[attrRulesMapKey] = attrRulesMapValue
                             else:
-                                invalidRules.append(self.tr(
-                                    "Rule number {} : {} - is not a valid color.".format(
-                                        attrRulesMapKey, attrRulesMapValue["4"])))
+                                invalidRules.append(
+                                    self.tr(
+                                        "Rule number {} : {} - is not a valid color.".format(
+                                            attrRulesMapKey, attrRulesMapValue["4"]
+                                        )
+                                    )
+                                )
                         else:
-                            invalidRules.append(self.tr(
-                                "Rule number {} : {} - is not a valid string.".format(
-                                    attrRulesMapKey, attrRulesMapValue["3"])))
+                            invalidRules.append(
+                                self.tr(
+                                    "Rule number {} : {} - is not a valid string.".format(
+                                        attrRulesMapKey, attrRulesMapValue["3"]
+                                    )
+                                )
+                            )
                     else:
-                        invalidRules.append(self.tr(
-                            "Rule number {} : {} - is not a valid expression.".format(
-                                attrRulesMapKey, attrRulesMapValue["2"])))
+                        invalidRules.append(
+                            self.tr(
+                                "Rule number {} : {} - is not a valid expression.".format(
+                                    attrRulesMapKey, attrRulesMapValue["2"]
+                                )
+                            )
+                        )
                 else:
-                    invalidRules.append(self.tr(
-                        "Rule number {} : {} - is not a valid length = 2 list.".format(
-                            attrRulesMapKey, attrRulesMapValue["1"])))
+                    invalidRules.append(
+                        self.tr(
+                            "Rule number {} : {} - is not a valid length = 2 list.".format(
+                                attrRulesMapKey, attrRulesMapValue["1"]
+                            )
+                        )
+                    )
             else:
-                invalidRules.append(self.tr(
-                    "Rule number {} : {} - is not a valid string description.".format(
-                        attrRulesMapKey, attrRulesMapValue["0"])))
+                invalidRules.append(
+                    self.tr(
+                        "Rule number {} : {} - is not a valid string description.".format(
+                            attrRulesMapKey, attrRulesMapValue["0"]
+                        )
+                    )
+                )
 
         return newDict, invalidRules
 
@@ -273,8 +315,7 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         for k, v in attrRulesMap.items():
             if k == "metadata":
                 continue
-            if v["1"][0] not in loadedLyr or \
-                    v["1"][1] not in loadedLyr[v["1"][0]]:
+            if v["1"][0] not in loadedLyr or v["1"][1] not in loadedLyr[v["1"][0]]:
                 notLoadedLyr.append(v["1"][0])
             else:
                 if isinstance(v["1"], (list, tuple)):
@@ -313,14 +354,15 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
             msg.setIcon(QMessageBox.Warning)
             msg.setText(self.tr("Some rules have not been loaded"))
             msg.setInformativeText(
-                self.tr("Do you want to ignore and continue or cancel?"))
+                self.tr("Do you want to ignore and continue or cancel?")
+            )
 
             textLyrList = sorted(set(lyrList))
             formatedLyrList = ["{}" for item in textLyrList]
             msgString = ",".join(formatedLyrList).replace(",", "\n")
             formatedMsgString = self.tr(
-                "The following layers have not been loaded:\n") + \
-                msgString.format(*textLyrList)
+                "The following layers have not been loaded:\n"
+            ) + msgString.format(*textLyrList)
 
             msg.setDetailedText(formatedMsgString)
             msg.setStandardButtons(QMessageBox.Ignore | QMessageBox.Cancel)
@@ -380,48 +422,51 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         Returns the table prepared for the standard Processing GUI.
         :return: (OrderedTableWidget) DSGTools customized table widget.
         """
-        otw = OrderedTableWidget(headerMap={
-            0: {
-                "header": self.tr("Description"),
-                "type": "widget",
-                "widget": lambda: self.stringDataWidget(self.tr(
-                    "Set a name for this attribute rule...")),
-                "setter": "setText",
-                "getter": "text"
-            },
-            1: {
-                "header": self.tr("Layer and field"),
-                "type": "widget",
-                "widget": self.mapLyrAndFieldComboBox,
-                "setter": "setCurrentInfo",
-                "getter": "getCurrentInfo"
-            },
-            2: {
-                "header": self.tr("Expression"),
-                "type": "widget",
-                "widget": self.filterExpressionWidget,
-                "setter": "setExpression",
-                "getter": "currentText"
-            },
-            3: {
-                "header": self.tr("Error type"),
-                "type": "widget",
-                "widget": self.errorTypeComboBox,
-                "setter": "setCurrentText",
-                "getter": "currentText"
-            },
-            4: {
-                "header": self.tr("Color"),
-                "type": "widget",
-                "widget": self.colorSelectionWidget,
-                "setter": "setCurrentColor",
-                "getter": "getCurrentColor"
-            },
-
-        })
+        otw = OrderedTableWidget(
+            headerMap={
+                0: {
+                    "header": self.tr("Description"),
+                    "type": "widget",
+                    "widget": lambda: self.stringDataWidget(
+                        self.tr("Set a name for this attribute rule...")
+                    ),
+                    "setter": "setText",
+                    "getter": "text",
+                },
+                1: {
+                    "header": self.tr("Layer and field"),
+                    "type": "widget",
+                    "widget": self.mapLyrAndFieldComboBox,
+                    "setter": "setCurrentInfo",
+                    "getter": "getCurrentInfo",
+                },
+                2: {
+                    "header": self.tr("Expression"),
+                    "type": "widget",
+                    "widget": self.filterExpressionWidget,
+                    "setter": "setExpression",
+                    "getter": "currentText",
+                },
+                3: {
+                    "header": self.tr("Error type"),
+                    "type": "widget",
+                    "widget": self.errorTypeComboBox,
+                    "setter": "setCurrentText",
+                    "getter": "currentText",
+                },
+                4: {
+                    "header": self.tr("Color"),
+                    "type": "widget",
+                    "widget": self.colorSelectionWidget,
+                    "setter": "setCurrentColor",
+                    "getter": "getCurrentColor",
+                },
+            }
+        )
         for row in [1, 3, 4]:
             otw.horizontalHeader().setSectionResizeMode(
-                row, QHeaderView.ResizeToContents)
+                row, QHeaderView.ResizeToContents
+            )
         otw.setHeaderDoubleClickBehaviour("order")
         otw.dataLoaded.connect(self.modifyImportedAttributeRulesMap)
         otw.rowAdded.connect(self.postAddRowStandard)
@@ -439,85 +484,89 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         Returns the table prepared for the modeler Processing GUI.
         :return: (OrderedTableWidget) DSGTools customized table widget.
         """
-        otw = OrderedTableWidget(headerMap={
-            0: {
-                "header": self.tr("Rule description"),
-                "type": "widget",
-                "widget": lambda: self.stringDataWidget(self.tr(
-                    "Set a name for this attribute rule...")),
-                "setter": "setText",
-                "getter": "text"
-            },
-            1: {
-                "header": self.tr("Layer"),
-                "type": "widget",
-                "widget": lambda: self.stringDataWidget(self.tr(
-                    "Type a vector layer name...")),
-                "setter": "setText",
-                "getter": "text"
-            },
-            2: {
-                "header": self.tr("Field"),
-                "type": "widget",
-                "widget": lambda: self.stringDataWidget(self.tr(
-                    "Type a field layer name...")),
-                "setter": "setText",
-                "getter": "text"
-            },
-            3: {
-                "header": self.tr("Expression"),
-                "type": "widget",
-                "widget": self.filterExpressionWidget,
-                "setter": "setExpression",
-                "getter": "currentText"
-            },
-            4: {
-                "header": self.tr("Error type"),
-                "type": "widget",
-                "widget": lambda: self.stringDataWidget(self.tr(
-                    "Type an error type...")),
-                "setter": "setText",
-                "getter": "text"
-            },
-            5: {
-                "header": self.tr("Color"),
-                "type": "widget",
-                "widget": self.colorSelectionWidget,
-                "setter": "setCurrentColor",
-                "getter": "getCurrentColor"
+        otw = OrderedTableWidget(
+            headerMap={
+                0: {
+                    "header": self.tr("Rule description"),
+                    "type": "widget",
+                    "widget": lambda: self.stringDataWidget(
+                        self.tr("Set a name for this attribute rule...")
+                    ),
+                    "setter": "setText",
+                    "getter": "text",
+                },
+                1: {
+                    "header": self.tr("Layer"),
+                    "type": "widget",
+                    "widget": lambda: self.stringDataWidget(
+                        self.tr("Type a vector layer name...")
+                    ),
+                    "setter": "setText",
+                    "getter": "text",
+                },
+                2: {
+                    "header": self.tr("Field"),
+                    "type": "widget",
+                    "widget": lambda: self.stringDataWidget(
+                        self.tr("Type a field layer name...")
+                    ),
+                    "setter": "setText",
+                    "getter": "text",
+                },
+                3: {
+                    "header": self.tr("Expression"),
+                    "type": "widget",
+                    "widget": self.filterExpressionWidget,
+                    "setter": "setExpression",
+                    "getter": "currentText",
+                },
+                4: {
+                    "header": self.tr("Error type"),
+                    "type": "widget",
+                    "widget": lambda: self.stringDataWidget(
+                        self.tr("Type an error type...")
+                    ),
+                    "setter": "setText",
+                    "getter": "text",
+                },
+                5: {
+                    "header": self.tr("Color"),
+                    "type": "widget",
+                    "widget": self.colorSelectionWidget,
+                    "setter": "setCurrentColor",
+                    "getter": "getCurrentColor",
+                },
             }
-        })
+        )
         otw.setHeaderDoubleClickBehaviour("order")
-        otw.dataLoaded.connect(self. modifyImportedAttributeRulesMapToModeler)
+        otw.dataLoaded.connect(self.modifyImportedAttributeRulesMapToModeler)
         otw.rowAdded.connect(self.postAddRowModeler)
         return otw
 
     def createPanel(self):
-        """ Docstring """
+        """Docstring"""
         return {
             DIALOG_MODELER: self.modelerPanel,
             # DIALOG_MODELER: self.standardPanel,
             DIALOG_STANDARD: self.standardPanel,
-            DIALOG_BATCH: self.batchPanel
+            DIALOG_BATCH: self.batchPanel,
         }[self.dialogType]()
 
     def createWidget(self):
-        """ Docstring """
+        """Docstring"""
         self.panel = self.createPanel()
         self.panel.showSaveLoadButtons(True)
         self.panel.extension = ".json"
         self.panel.fileType = self.tr("Set of DSGTools Attribute Rules")
-        self.panel.setMetadata({
-            "version": self.__ATTRIBUTE_MAP_VERSION
-        })
+        self.panel.setMetadata({"version": self.__ATTRIBUTE_MAP_VERSION})
         return self.panel
 
     def parentLayerChanged(self, layer=None):
-        """ Docstring """
+        """Docstring"""
         pass
 
     def setLayer(self, layer):
-        """ Docstring """
+        """Docstring"""
         pass
 
     def setValue(self, value):
@@ -528,13 +577,15 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         if value is None:
             return
         for valueMap in value:
-            self.panel.addRow({
-                0: valueMap["description"],
-                1: valueMap["layerField"],
-                2: valueMap["expression"],
-                3: valueMap["errorType"],
-                4: valueMap["color"],
-            })
+            self.panel.addRow(
+                {
+                    0: valueMap["description"],
+                    1: valueMap["layerField"],
+                    2: valueMap["expression"],
+                    3: valueMap["errorType"],
+                    4: valueMap["color"],
+                }
+            )
 
     def readStandardPanel(self):
         """
@@ -564,8 +615,10 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         for row in range(self.panel.rowCount()):
             values = dict()
             values["description"] = self.panel.getValue(row, 0).strip()
-            values["layerField"] = [self.panel.getValue(row, 1),
-                                    self.panel.getValue(row, 2)]
+            values["layerField"] = [
+                self.panel.getValue(row, 1),
+                self.panel.getValue(row, 2),
+            ]
             values["expression"] = self.panel.getValue(row, 3)
             values["errorType"] = self.panel.getValue(row, 4)
             values["color"] = self.panel.getValue(row, 5)
@@ -588,9 +641,9 @@ class EnforceAttributeRulesWrapper(WidgetWrapper):
         return {
             DIALOG_STANDARD: self.readStandardPanel,
             DIALOG_MODELER: self.readModelerPanel,
-            DIALOG_BATCH: self.readBatchPanel
+            DIALOG_BATCH: self.readBatchPanel,
         }[self.dialogType]()
 
     def postInitialize(self, wrappers):
-        """ Docstring """
+        """Docstring"""
         pass

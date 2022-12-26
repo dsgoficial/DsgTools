@@ -25,8 +25,8 @@ from qgis.PyQt.QtCore import QObject
 
 from DsgTools.gui.ServerTools.viewServers import ViewServers
 
+
 class ViewServersGui(QObject):
-    
     def __init__(self, manager, parentMenu, iface=None, parent=None):
         """
         Class constructor.
@@ -44,13 +44,13 @@ class ViewServersGui(QObject):
         """
         Sets server tools to DSGTools/QGIS interface.
         """
-        icon_path = ':/plugins/DsgTools/icons/server.png'
+        icon_path = ":/plugins/DsgTools/icons/server.png"
         action = self.manager.addTool(
-            text=self.tr('Configure Servers'),
+            text=self.tr("Configure Servers"),
             callback=self.openViewServers,
             parentMenu=self.parentMenu,
-            icon='server.png'
-            )
+            icon="server.png",
+        )
 
     def openViewServers(self):
         """

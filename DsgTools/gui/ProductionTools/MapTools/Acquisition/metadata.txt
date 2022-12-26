@@ -5,7 +5,7 @@ name=Ferramenta de Aquisição personalizada
 qgisMinimumVersion=2.0
 description=Ferramenta para auxiliar na aquisição de contornos
 version=version Version 0.1
-author=Jossan  
+author=Jossan
 email=me@hotmail.com
 ; end of mandatory metadata
 
@@ -25,4 +25,3 @@ tags=digitizing
 ; in a future version of the web application it will
 ; be probably possible to create a project on redmine
 ; if they are not filled
-

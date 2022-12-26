@@ -27,13 +27,14 @@ from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, Qt
 from qgis.PyQt.QtWidgets import QAbstractItemView, QApplication, QMessageBox
 from qgis.PyQt.QtGui import QCursor
+
 # DSGTools imports
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'createView.ui'))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), "createView.ui"))
+
 
 class CreateView(QtWidgets.QDialog, FORM_CLASS):
-    def __init__(self, abstractDb, dbName, parent = None):
+    def __init__(self, abstractDb, dbName, parent=None):
         """
         Constructor
         """
@@ -47,22 +48,26 @@ class CreateView(QtWidgets.QDialog, FORM_CLASS):
         self.abstractDb = abstractDb
         self.dBLineEdit.setText(dbName)
         self.dBLineEdit.setReadOnly(True)
-        self.viewTypeDict = {0:'VIEW',1:'MATERIALIZED VIEW'}
-        self.inheritanceType = {0:'FROM ONLY',1:'FROM'}
-    
+        self.viewTypeDict = {0: "VIEW", 1: "MATERIALIZED VIEW"}
+        self.inheritanceType = {0: "FROM ONLY", 1: "FROM"}
+
     @pyqtSlot()
     def on_buttonBox_accepted(self):
-        '''
+        """
         Creates view with resolved domain values
-        '''
+        """
         createViewClause = self.viewTypeDict[self.viewTypeComboBox.currentIndex()]
         fromClause = self.inheritanceType[self.inheritanceTypeComboBox.currentIndex()]
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.abstractDb.createResolvedDomainViews(createViewClause, fromClause)
             QApplication.restoreOverrideCursor()
-            QMessageBox.information(self, self.tr('Success!'), self.tr('Views created successfully on database ')+self.dBLineEdit.text())
+            QMessageBox.information(
+                self,
+                self.tr("Success!"),
+                self.tr("Views created successfully on database ")
+                + self.dBLineEdit.text(),
+            )
         except Exception as e:
-            QApplication.restoreOverrideCursor()            
-            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
-            
+            QApplication.restoreOverrideCursor()
+            QMessageBox.critical(self, self.tr("Critical!"), ":".join(e.args))

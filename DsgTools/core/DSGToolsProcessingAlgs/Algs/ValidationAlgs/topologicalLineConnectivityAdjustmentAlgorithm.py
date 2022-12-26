@@ -24,29 +24,37 @@ from PyQt5.QtCore import QCoreApplication
 
 import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterDistance,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsSpatialIndex, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsGeometry,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterDistance,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterField,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsWkbTypes,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
-    INPUTLAYERS = 'INPUTLAYERS'
-    SELECTED = 'SELECTED'
-    TOLERANCE = 'TOLERANCE'
+    INPUTLAYERS = "INPUTLAYERS"
+    SELECTED = "SELECTED"
+    TOLERANCE = "TOLERANCE"
 
     def initAlgorithm(self, config):
         """
@@ -55,23 +63,22 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUTLAYERS,
-                self.tr('Linestring Layers'),
-                QgsProcessing.TypeVectorLine
+                self.tr("Linestring Layers"),
+                QgsProcessing.TypeVectorLine,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
         self.addParameter(
             QgsProcessingParameterDistance(
                 self.TOLERANCE,
-                self.tr('Snap radius'),
+                self.tr("Snap radius"),
                 parentParameterName=self.INPUTLAYERS,
                 minValue=0,
-                defaultValue=1.0
+                defaultValue=1.0,
             )
         )
 
@@ -84,45 +91,59 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         inputLyrList = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
         if inputLyrList is None or inputLyrList == []:
             raise QgsProcessingException(
-                self.invalidSourceError(
-                    parameters,
-                    self.INPUTLAYERS
-                    )
-                )
+                self.invalidSourceError(parameters, self.INPUTLAYERS)
+            )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Building unified layer...'))
+        multiStepFeedback.pushInfo(self.tr("Building unified layer..."))
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
             inputLyrList,
             geomType=QgsWkbTypes.MultiPolygon,
             onlySelected=onlySelected,
-            feedback=multiStepFeedback
-            )
-
+            feedback=multiStepFeedback,
+        )
 
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(self.tr('Identifying dangles on {layer}...').format(layer=coverage.name()))
-        dangleLyr = algRunner.runIdentifyDangles(coverage, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected)
+        multiStepFeedback.pushInfo(
+            self.tr("Identifying dangles on {layer}...").format(layer=coverage.name())
+        )
+        dangleLyr = algRunner.runIdentifyDangles(
+            coverage,
+            tol,
+            context,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected,
+        )
 
         multiStepFeedback.setCurrentStep(2)
         layerHandler.filterDangles(dangleLyr, tol, feedback=multiStepFeedback)
 
         multiStepFeedback.setCurrentStep(3)
-        multiStepFeedback.pushInfo(self.tr('Snapping layer {layer} to dangles...').format(layer=coverage.name()))
-        algRunner.runSnapLayerOnLayer(coverage, dangleLyr, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected, behavior=0)
+        multiStepFeedback.pushInfo(
+            self.tr("Snapping layer {layer} to dangles...").format(
+                layer=coverage.name()
+            )
+        )
+        algRunner.runSnapLayerOnLayer(
+            coverage,
+            dangleLyr,
+            tol,
+            context,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected,
+            behavior=0,
+        )
 
         multiStepFeedback.setCurrentStep(4)
-        multiStepFeedback.pushInfo(self.tr('Updating original layers...'))
+        multiStepFeedback.pushInfo(self.tr("Updating original layers..."))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
-            inputLyrList,
-            coverage,
-            feedback=multiStepFeedback
-            )
+            inputLyrList, coverage, feedback=multiStepFeedback
+        )
 
-        return {self.INPUTLAYERS : inputLyrList}
+        return {self.INPUTLAYERS: inputLyrList}
 
     def name(self):
         """
@@ -132,21 +153,21 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'topologicallineconnectivityadjustment'
+        return "topologicallineconnectivityadjustment"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Topological adjustment of the connectivity of lines')
+        return self.tr("Topological adjustment of the connectivity of lines")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Network Processes)')
+        return self.tr("Quality Assurance Tools (Network Processes)")
 
     def groupId(self):
         """
@@ -156,10 +177,12 @@ class TopologicalLineConnectivityAdjustment(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Network Processes)'
+        return "DSGTools: Quality Assurance Tools (Network Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('TopologicalLineConnectivityAdjustment', string)
+        return QCoreApplication.translate(
+            "TopologicalLineConnectivityAdjustment", string
+        )
 
     def createInstance(self):
         return TopologicalLineConnectivityAdjustment()

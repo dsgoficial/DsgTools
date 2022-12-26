@@ -28,49 +28,65 @@
 
 
 import processing
-from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
-from qgis.core import QgsVectorLayer, QgsRasterLayer, QgsSpatialIndex, QgsFeatureRequest, QgsCoordinateTransform, QgsFeature, QgsCoordinateReferenceSystem
+from processing.core.GeoAlgorithmExecutionException import (
+    GeoAlgorithmExecutionException,
+)
+from qgis.core import (
+    QgsVectorLayer,
+    QgsRasterLayer,
+    QgsSpatialIndex,
+    QgsFeatureRequest,
+    QgsCoordinateTransform,
+    QgsFeature,
+    QgsCoordinateReferenceSystem,
+)
 from qgis.PyQt.QtCore import QSettings
 import os
 
-#script methods
+# script methods
 def createVrt(inventario, vrt):
-    #Camada de inventario
+    # Camada de inventario
     layer = processing.getObject(Inventario)
-    
+
     count = 0
     size = layer.featureCount()
     p = 0
-    progress.setPercentage(p)    
+    progress.setPercentage(p)
     rasterList = []
     for feature in layer.getFeatures():
-        filename = feature['fileName']
-        
+        filename = feature["fileName"]
+
         raster = QgsRasterLayer(filename, filename)
         if Override_CRS:
-            raster.setCrs( QgsCoordinateReferenceSystem(int(CRS.split(':')[-1]), QgsCoordinateReferenceSystem.EpsgCrsId) )
-           
-        rasterList.append(raster)
-        ovr = filename+'.ovr'
-        if not os.path.isfile(ovr):
-            progress.setText('Fazendo Pirâmides...')
-            #('gdalogr:overviews', input, levels=8, clean=False, resampling_method=0(nearest), format=1(Gtiff .ovr))
-            processing.runalg('gdalogr:overviews', raster, '4 8 32 128', True, 0, 1)
+            raster.setCrs(
+                QgsCoordinateReferenceSystem(
+                    int(CRS.split(":")[-1]), QgsCoordinateReferenceSystem.EpsgCrsId
+                )
+            )
 
-        if int(float(count)/size*100) != p:
-            p = int(float(count)/size*100)
-            progress.setPercentage(p)    
+        rasterList.append(raster)
+        ovr = filename + ".ovr"
+        if not os.path.isfile(ovr):
+            progress.setText("Fazendo Pirâmides...")
+            # ('gdalogr:overviews', input, levels=8, clean=False, resampling_method=0(nearest), format=1(Gtiff .ovr))
+            processing.runalg("gdalogr:overviews", raster, "4 8 32 128", True, 0, 1)
+
+        if int(float(count) / size * 100) != p:
+            p = int(float(count) / size * 100)
+            progress.setPercentage(p)
         count += 1
-    progress.setText('Fazendo raster virtual...')
-    processing.runalg('gdalogr:buildvirtualraster', rasterList, 0, False, False, VRT)
-#end of script methods
-        
-#Making the actual work
+    progress.setText("Fazendo raster virtual...")
+    processing.runalg("gdalogr:buildvirtualraster", rasterList, 0, False, False, VRT)
+
+
+# end of script methods
+
+# Making the actual work
 s = QSettings()
-oldValidation = s.value( "/Projections/defaultBehaviour")
-s.setValue( "/Projections/defaultBehaviour", "useGlobal" )
+oldValidation = s.value("/Projections/defaultBehaviour")
+s.setValue("/Projections/defaultBehaviour", "useGlobal")
 
 createVrt(Inventario, VRT)
 
-s.setValue( "/Projections/defaultBehaviour", oldValidation )
-#ending the actual work
+s.setValue("/Projections/defaultBehaviour", oldValidation)
+# ending the actual work

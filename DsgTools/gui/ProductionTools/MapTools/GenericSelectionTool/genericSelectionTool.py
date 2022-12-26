@@ -27,20 +27,28 @@ import os
 from functools import partial
 
 from qgis.gui import QgsMapTool, QgsRubberBand
-from qgis.core import QgsPointXY, QgsRectangle, QgsFeatureRequest, QgsVectorLayer, \
-                        QgsProject, QgsWkbTypes, QgsRasterLayer
+from qgis.core import (
+    QgsPointXY,
+    QgsRectangle,
+    QgsFeatureRequest,
+    QgsVectorLayer,
+    QgsProject,
+    QgsWkbTypes,
+    QgsRasterLayer,
+)
 from qgis.PyQt.QtCore import Qt, QSettings
 from qgis.PyQt.QtGui import QColor, QCursor
 from qgis.PyQt.QtWidgets import QMenu, QApplication
 
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
+
 class GenericSelectionTool(QgsMapTool):
     def __init__(self, iface):
         """
         Tool Behaviours: (all behaviours start edition, except for rectangle one)
-        1- Left Click: Clears previous selection, selects feature, sets feature layer as active layer. 
-        The selection is done with the following priority: Point, Line then Polygon. 
+        1- Left Click: Clears previous selection, selects feature, sets feature layer as active layer.
+        The selection is done with the following priority: Point, Line then Polygon.
         Selection is only done in visible layer.
         2- Control + Left Click: Adds to selection selected feature. This selection follows the priority in item 1.
         3- Right Click: Opens feature form
@@ -48,39 +56,41 @@ class GenericSelectionTool(QgsMapTool):
         follows priority of item 1;
         5- Shift + drag and drop: draws a rectangle, then features that intersect this rectangl'e are added to selection
         """
-        self.iface = iface        
+        self.iface = iface
         self.canvas = self.iface.mapCanvas()
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
         self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
         self.hoverRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
-        mFillColor = QColor( 254, 178, 76, 63 )
+        mFillColor = QColor(254, 178, 76, 63)
         self.rubberBand.setColor(mFillColor)
-        self.hoverRubberBand.setColor(QColor( 255, 0, 0, 90 ))
+        self.hoverRubberBand.setColor(QColor(255, 0, 0, 90))
         self.rubberBand.setWidth(1)
         self.reset()
         self.blackList = self.getBlackList()
         self.cursorChanged = False
         self.cursorChangingHotkey = Qt.Key_Alt
-        self.menuHovered = False # indicates hovering actions over context menu
+        self.menuHovered = False  # indicates hovering actions over context menu
         self.geometryHandler = GeometryHandler(iface=self.iface)
-    
+
     def addTool(self, manager, callback, parentMenu, iconBasePath):
-        icon_path = iconBasePath + '/genericSelect.png'
-        toolTip = self.tr("DSGTools: Generic Selector\nLeft Click: select feature's layer and put it on edit mode\nRight Click: Open feature's form\nControl+Left Click: add/remove feature from selection\nShift+Left Click+drag and drop: select all features that intersects rubberband.")
+        icon_path = iconBasePath + "/genericSelect.png"
+        toolTip = self.tr(
+            "DSGTools: Generic Selector\nLeft Click: select feature's layer and put it on edit mode\nRight Click: Open feature's form\nControl+Left Click: add/remove feature from selection\nShift+Left Click+drag and drop: select all features that intersects rubberband."
+        )
         action = manager.add_action(
             icon_path,
-            text=self.tr('DSGTools: Generic Selector'),
+            text=self.tr("DSGTools: Generic Selector"),
             callback=callback,
             add_to_menu=False,
             add_to_toolbar=True,
-            withShortcut = True,
-            tooltip = toolTip,
-            parentToolbar =parentMenu,
-            isCheckable = True
+            withShortcut=True,
+            tooltip=toolTip,
+            parentToolbar=parentMenu,
+            isCheckable=True,
         )
         self.setAction(action)
-    
+
     def keyPressEvent(self, e):
         """
         Reimplemetation of keyPressEvent() in order to handle cursor changing hotkey (Alt).
@@ -91,17 +101,17 @@ class GenericSelectionTool(QgsMapTool):
         else:
             self.cursorChanged = False
             QApplication.restoreOverrideCursor()
-    
+
     def getBlackList(self):
         settings = QSettings()
-        settings.beginGroup('PythonPlugins/DsgTools/Options')
-        valueList = settings.value('valueList')
+        settings.beginGroup("PythonPlugins/DsgTools/Options")
+        valueList = settings.value("valueList")
         if valueList:
-            valueList = valueList.split(';')
+            valueList = valueList.split(";")
             return valueList
         else:
-            return ['moldura']
-    
+            return ["moldura"]
+
     def reset(self):
         """
         Resets rubber band.
@@ -109,7 +119,7 @@ class GenericSelectionTool(QgsMapTool):
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
         self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
-    
+
     def keyPressEvent(self, e):
         """
         Reimplemetation of keyPressEvent() in order to handle cursor changing hotkey (F2).
@@ -119,19 +129,19 @@ class GenericSelectionTool(QgsMapTool):
             QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
         else:
             self.cursorChanged = False
-            QApplication.restoreOverrideCursor()         
+            QApplication.restoreOverrideCursor()
 
     def canvasMoveEvent(self, e):
         """
         Used only on rectangle select.
         """
         if self.menuHovered:
-            # deactivates rubberband when the context menu is "destroyed" 
+            # deactivates rubberband when the context menu is "destroyed"
             self.hoverRubberBand.reset(QgsWkbTypes.PolygonGeometry)
         if not self.isEmittingPoint:
             return
-        self.endPoint = self.toMapCoordinates( e.pos() )
-        self.showRect(self.startPoint, self.endPoint)        
+        self.endPoint = self.toMapCoordinates(e.pos())
+        self.showRect(self.startPoint, self.endPoint)
 
     def showRect(self, startPoint, endPoint):
         """
@@ -144,11 +154,11 @@ class GenericSelectionTool(QgsMapTool):
         point2 = QgsPointXY(startPoint.x(), endPoint.y())
         point3 = QgsPointXY(endPoint.x(), endPoint.y())
         point4 = QgsPointXY(endPoint.x(), startPoint.y())
-    
+
         self.rubberBand.addPoint(point1, False)
         self.rubberBand.addPoint(point2, False)
         self.rubberBand.addPoint(point3, False)
-        self.rubberBand.addPoint(point4, True)    # true to update canvas
+        self.rubberBand.addPoint(point4, True)  # true to update canvas
         self.rubberBand.show()
 
     def rectangle(self):
@@ -157,14 +167,17 @@ class GenericSelectionTool(QgsMapTool):
         """
         if self.startPoint is None or self.endPoint is None:
             return None
-        elif self.startPoint.x() == self.endPoint.x() or self.startPoint.y() == self.endPoint.y():
+        elif (
+            self.startPoint.x() == self.endPoint.x()
+            or self.startPoint.y() == self.endPoint.y()
+        ):
             return None
         return QgsRectangle(self.startPoint, self.endPoint)
 
     def setAction(self, action):
         self.toolAction = action
         self.toolAction.setCheckable(True)
-    
+
     def canvasReleaseEvent(self, e):
         """
         After the rectangle is built, here features are selected.
@@ -177,16 +190,18 @@ class GenericSelectionTool(QgsMapTool):
                 return
             layers = self.canvas.layers()
             for layer in layers:
-                #ignore layers on black list and features that are not vector layers
-                if not isinstance(layer, QgsVectorLayer) or (self.layerHasPartInBlackList(layer.name())):
+                # ignore layers on black list and features that are not vector layers
+                if not isinstance(layer, QgsVectorLayer) or (
+                    self.layerHasPartInBlackList(layer.name())
+                ):
                     continue
                 if firstGeom is not None and layer.geometryType() != firstGeom:
                     # if there are features already selected, shift will only get the same type geometry
                     # if more than one ty of geometry is present, only the strongest will be selected
                     continue
-                #builds bbRect and select from layer, adding selection
+                # builds bbRect and select from layer, adding selection
                 bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, r)
-                layer.selectByRect(bbRect, behavior = QgsVectorLayer.AddToSelection)
+                layer.selectByRect(bbRect, behavior=QgsVectorLayer.AddToSelection)
             self.rubberBand.hide()
 
     def canvasPressEvent(self, e):
@@ -202,15 +217,15 @@ class GenericSelectionTool(QgsMapTool):
         else:
             self.isEmittingPoint = False
             self.createContextMenu(e)
-    
+
     def getCursorRect(self, e):
         """
         Calculates small cursor rectangle around mouse position. Used to facilitate operations
         """
         p = self.toMapCoordinates(e.pos())
         w = self.canvas.mapUnitsPerPixel() * 10
-        return QgsRectangle(p.x()-w, p.y()-w, p.x()+w, p.y()+w)
-    
+        return QgsRectangle(p.x() - w, p.y() - w, p.x() + w, p.y() + w)
+
     def layerHasPartInBlackList(self, lyrName):
         """
         Verifies if terms in black list appear on lyrName
@@ -219,35 +234,45 @@ class GenericSelectionTool(QgsMapTool):
             if item.lower() in lyrName.lower():
                 return True
         return False
-    
+
     def getPrimitiveDict(self, e, hasControlModifier=False):
         """
         Builds a dict with keys as geometryTypes of layer, which are Qgis.Point (value 0), Qgis.Line (value 1) or Qgis.Polygon (value 2),
         and values as layers from self.iface.mapCanvas().layers(). When self.iface.mapCanvas().layers() is called, a list of
         layers ordered according to lyr order in TOC is returned.
         """
-        #these layers are ordered by view order
+        # these layers are ordered by view order
         primitiveDict = dict()
         firstGeom = self.checkSelectedLayers()
         visibleLayers = QgsProject.instance().layerTreeRoot().checkedLayers()
-        for lyr in self.iface.mapCanvas().layers(): #ordered layers
-            #layer types other than VectorLayer are ignored, as well as layers in black list and layers that are not visible
-            if not isinstance(lyr, QgsVectorLayer) or (self.layerHasPartInBlackList(lyr.name())) or lyr not in visibleLayers:
+        for lyr in self.iface.mapCanvas().layers():  # ordered layers
+            # layer types other than VectorLayer are ignored, as well as layers in black list and layers that are not visible
+            if (
+                not isinstance(lyr, QgsVectorLayer)
+                or (self.layerHasPartInBlackList(lyr.name()))
+                or lyr not in visibleLayers
+            ):
                 continue
-            if hasControlModifier and (not firstGeom) and (not primitiveDict or lyr.geometryType() < firstGeom):
+            if (
+                hasControlModifier
+                and (not firstGeom)
+                and (not primitiveDict or lyr.geometryType() < firstGeom)
+            ):
                 firstGeom = lyr.geometryType()
             geomType = lyr.geometryType()
             if geomType not in primitiveDict:
                 primitiveDict[geomType] = []
-            #removes selection
-            if (not hasControlModifier and e.button() == Qt.LeftButton) or (hasControlModifier and e.button() == Qt.RightButton):
+            # removes selection
+            if (not hasControlModifier and e.button() == Qt.LeftButton) or (
+                hasControlModifier and e.button() == Qt.RightButton
+            ):
                 lyr.removeSelection()
             primitiveDict[geomType].append(lyr)
         if hasControlModifier and firstGeom in [0, 1, 2]:
-            return { firstGeom : primitiveDict[firstGeom] }
+            return {firstGeom: primitiveDict[firstGeom]}
         else:
             return primitiveDict
-            
+
     def deactivate(self):
         """
         Deactivate tool.
@@ -271,15 +296,17 @@ class GenericSelectionTool(QgsMapTool):
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
 
-    def setSelectionFeature(self, layer, feature, selectAll=False, setActiveLayer=False):
+    def setSelectionFeature(
+        self, layer, feature, selectAll=False, setActiveLayer=False
+    ):
         """
-        Selects a given feature on canvas. 
+        Selects a given feature on canvas.
         :param layer: (QgsVectorLayer) layer containing the target feature.
         :param feature: (QgsFeature) taget feature to be selected.
         :param selectAll: (bool) indicates whether or not this fuction was called from a select all command.
                           so it doesn't remove selection from those that are selected already from the list.
         :param setActiveLayer: (bool) indicates whether method should set layer as active.
-        """        
+        """
         idList = layer.selectedFeatureIds()
         self.iface.setActiveLayer(layer)
         layer.startEditing()
@@ -296,7 +323,7 @@ class GenericSelectionTool(QgsMapTool):
 
     def setSelectionListFeature(self, dictLayerFeature, selectAll=True):
         """
-        Selects all features on canvas of a given dict.        
+        Selects all features on canvas of a given dict.
         :param dictLayerFeature: (dict) dict of layers/features to be selected.
         :param selectAll: (bool) indicates if "All"-command comes from a "Select All". In that case, selected features
                           won't be deselected.
@@ -315,7 +342,7 @@ class GenericSelectionTool(QgsMapTool):
                     idList.pop(idList.index(featId))
             layer.selectByIds(idList)
             layer.startEditing()
-        # last layer is set active and 
+        # last layer is set active and
         self.iface.setActiveLayer(layer)
 
     def openMultipleFeatureForm(self, dictLayerFeature):
@@ -346,11 +373,11 @@ class GenericSelectionTool(QgsMapTool):
             if lyr.geometryType() == strongest_geometry:
                 outDict[lyr] = dictLayerFeature[lyr]
         return outDict
-    
+
     def createRubberBand(self, feature, layer, geom):
         """
         Creates a rubber band around from a given a standard feature string.
-        :param feature: taget feature to be highlighted 
+        :param feature: taget feature to be highlighted
         :param layer: layer containing the target feature
         :param geom: int indicating geometry type of target feature
         """
@@ -423,20 +450,32 @@ class GenericSelectionTool(QgsMapTool):
         """
         if not geomType:
             geomType = layer.geometryType()
-        if e.button() == Qt.LeftButton: 
+        if e.button() == Qt.LeftButton:
             # line added to make sure the action is associated with current loop value,
             # lambda function is used with standard parameter set to current loops value.
             # triggeredAction = lambda t=[layer, feature] : self.setSelectionFeature(t[0], feature=t[1], selectAll=selectAll, setActiveLayer=True)
-            triggeredAction = partial(self.setSelectionFeature, layer=layer, feature=feature, selectAll=selectAll, setActiveLayer=True)
-            hoveredAction = partial(self.createRubberBand, feature=feature, layer=layer, geom=geomType)
+            triggeredAction = partial(
+                self.setSelectionFeature,
+                layer=layer,
+                feature=feature,
+                selectAll=selectAll,
+                setActiveLayer=True,
+            )
+            hoveredAction = partial(
+                self.createRubberBand, feature=feature, layer=layer, geom=geomType
+            )
         elif e.button() == Qt.RightButton:
-            selected = (QApplication.keyboardModifiers() == Qt.ControlModifier)
+            selected = QApplication.keyboardModifiers() == Qt.ControlModifier
             if selected:
                 triggeredAction = partial(self.iface.setActiveLayer, layer)
                 hoveredAction = None
             else:
-                triggeredAction = partial(self.iface.openFeatureForm, layer, feature, showModal=False)
-                hoveredAction = partial(self.createRubberBand, feature=feature, layer=layer, geom=geomType)
+                triggeredAction = partial(
+                    self.iface.openFeatureForm, layer, feature, showModal=False
+                )
+                hoveredAction = partial(
+                    self.createRubberBand, feature=feature, layer=layer, geom=geomType
+                )
         return triggeredAction, hoveredAction
 
     def getCallbackMultipleFeatures(self, e, dictLayerFeature, selectAll=True):
@@ -448,16 +487,24 @@ class GenericSelectionTool(QgsMapTool):
         """
         # setting the action for the "All" options
         if e.button() == Qt.LeftButton:
-            triggeredAction = partial(self.setSelectionListFeature, dictLayerFeature=dictLayerFeature, selectAll=selectAll)
+            triggeredAction = partial(
+                self.setSelectionListFeature,
+                dictLayerFeature=dictLayerFeature,
+                selectAll=selectAll,
+            )
         else:
-            triggeredAction = partial(self.openMultipleFeatureForm, dictLayerFeature=dictLayerFeature)
+            triggeredAction = partial(
+                self.openMultipleFeatureForm, dictLayerFeature=dictLayerFeature
+            )
         # to trigger "Hover" signal on QMenu for the multiple options
-        hoveredAction = partial(self.createMultipleRubberBand, dictLayerFeature=dictLayerFeature)
+        hoveredAction = partial(
+            self.createMultipleRubberBand, dictLayerFeature=dictLayerFeature
+        )
         return triggeredAction, hoveredAction
 
     def createSubmenu(self, e, parentMenu, menuDict, genericAction, selectAll):
         """
-        Creates a submenu in a given parent context menu and populates it, with classes/feature sublevels from the menuDict. 
+        Creates a submenu in a given parent context menu and populates it, with classes/feature sublevels from the menuDict.
         :param e: (QMouseEvent) mouse event on canvas. If menuDict has only 1 class in it, method will populate parent QMenu.
         :param parentMenu: (QMenu) menu containing the populated submenu
         :param menuDict: (dict) dictionary containing all classes and their features to be filled into submenu.
@@ -467,7 +514,7 @@ class GenericSelectionTool(QgsMapTool):
         # creating a dict to handle all "menu" for each class
         submenuDict = dict()
         # sort the layers from diciotnary
-        classNameDict = { cl.name() : cl for cl in menuDict }
+        classNameDict = {cl.name(): cl for cl in menuDict}
         layers = sorted(list(classNameDict.keys()))
         for className in layers:
             # menu for features of each class
@@ -476,54 +523,92 @@ class GenericSelectionTool(QgsMapTool):
             # get layer database name
             dsUri = cl.dataProvider().dataSourceUri()
             temp = []
-            if '/' in dsUri or '\\' in dsUri:
+            if "/" in dsUri or "\\" in dsUri:
                 db_name = dsUri.split("|")[0] if "|" in dsUri else dsUri
-                db_name = os.path.basename(db_name.split("'")[1]  if "'" in db_name else db_name)
-            elif 'memory' in dsUri:
-                db_name = self.tr('{0} (Memory Layer)').format(className)
+                db_name = os.path.basename(
+                    db_name.split("'")[1] if "'" in db_name else db_name
+                )
+            elif "memory" in dsUri:
+                db_name = self.tr("{0} (Memory Layer)").format(className)
             else:
                 db_name = dsUri.split("'")[1]
             if len(menuDict) == 1:
                 # if dictionaty has only 1 class, no need for an extra QMenu - features will be enlisted directly
                 # order features by ID to be displayer ordered
-                featDict = { feat.id() : feat for feat in  menuDict[cl] }
+                featDict = {feat.id(): feat for feat in menuDict[cl]}
                 orderedFeatIdList = sorted(list(featDict.keys()))
                 for featId in orderedFeatIdList:
                     feat = featDict[featId]
-                    s = "{db_name} | {className} (feat_id = {featId})".format(db_name=db_name, className=className, featId=featId)
+                    s = "{db_name} | {className} (feat_id = {featId})".format(
+                        db_name=db_name, className=className, featId=featId
+                    )
                     # inserting action for each feature
                     action = parentMenu.addAction(s)
-                    triggeredAction, hoveredAction = self.getCallback(e=e, layer=cl, feature=feat, geomType=geomType, selectAll=selectAll)
-                    self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
+                    triggeredAction, hoveredAction = self.getCallback(
+                        e=e,
+                        layer=cl,
+                        feature=feat,
+                        geomType=geomType,
+                        selectAll=selectAll,
+                    )
+                    self.addCallBackToAction(
+                        action=action,
+                        onTriggeredAction=triggeredAction,
+                        onHoveredAction=hoveredAction,
+                    )
                 # inserting generic action, if necessary
                 if len(menuDict[cl]) > 1:
                     # if there are more than 1 feature to be filled, "All"-command should be added
-                    action = parentMenu.addAction(self.tr("{0} From Class {1}").format(genericAction, className))
-                    triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=menuDict, selectAll=selectAll)
-                    self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
+                    action = parentMenu.addAction(
+                        self.tr("{0} From Class {1}").format(genericAction, className)
+                    )
+                    triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(
+                        e=e, dictLayerFeature=menuDict, selectAll=selectAll
+                    )
+                    self.addCallBackToAction(
+                        action=action,
+                        onTriggeredAction=triggeredAction,
+                        onHoveredAction=hoveredAction,
+                    )
                 # there is no mapping of class to be exposed, only information added to parent QMenu itself
                 return dict()
-            title = "{db_name} | {className}".format(db_name=db_name, className=className)
+            title = "{db_name} | {className}".format(
+                db_name=db_name, className=className
+            )
             submenuDict[cl] = QMenu(title=title, parent=parentMenu)
             parentMenu.addMenu(submenuDict[cl])
             # inserting an entry for every feature of each class in its own context menu
             # order features by ID to be displayer ordered
-            featDict = { feat.id() : feat for feat in  menuDict[cl] }
+            featDict = {feat.id(): feat for feat in menuDict[cl]}
             orderedFeatIdList = sorted(list(featDict.keys()))
             for featId in orderedFeatIdList:
                 feat = featDict[featId]
-                s = 'feat_id = {0}'.format(featId)
+                s = "feat_id = {0}".format(featId)
                 action = submenuDict[cl].addAction(s)
-                triggeredAction, hoveredAction = self.getCallback(e=e, layer=cl, feature=feat, geomType=geomType, selectAll=selectAll)
-                self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
+                triggeredAction, hoveredAction = self.getCallback(
+                    e=e, layer=cl, feature=feat, geomType=geomType, selectAll=selectAll
+                )
+                self.addCallBackToAction(
+                    action=action,
+                    onTriggeredAction=triggeredAction,
+                    onHoveredAction=hoveredAction,
+                )
                 # set up list for the "All"-commands
                 temp.append([cl, feat, geomType])
             # adding generic action for each class
             if len(menuDict[cl]) > 1:
                 # if there are more than 1 feature to be filled, "All"-command should be added
-                action = submenuDict[cl].addAction(self.tr("{0} From Class {1}").format(genericAction, className))
-                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature={ cl : menuDict[cl] }, selectAll=selectAll)
-                self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
+                action = submenuDict[cl].addAction(
+                    self.tr("{0} From Class {1}").format(genericAction, className)
+                )
+                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(
+                    e=e, dictLayerFeature={cl: menuDict[cl]}, selectAll=selectAll
+                )
+                self.addCallBackToAction(
+                    action=action,
+                    onTriggeredAction=triggeredAction,
+                    onHoveredAction=hoveredAction,
+                )
         return submenuDict
 
     def setContextMenuStyle(self, e, dictMenuSelected, dictMenuNotSelected):
@@ -538,54 +623,97 @@ class GenericSelectionTool(QgsMapTool):
         selectedDict = bool(dictMenuSelected)
         notSelectedDict = bool(dictMenuNotSelected)
         # finding out if one of either dictionaty are filled ("Exclusive or")
-        selectedXORnotSelected = (selectedDict != notSelectedDict)
+        selectedXORnotSelected = selectedDict != notSelectedDict
         # setting "All"-command name
         if e.button() == Qt.RightButton:
-            genericAction = self.tr('Open All Feature Forms')
+            genericAction = self.tr("Open All Feature Forms")
         else:
-            genericAction = self.tr('Select All Features')
+            genericAction = self.tr("Select All Features")
         # in case one of given dict is empty
         if selectedXORnotSelected:
             if selectedDict:
-                menuDict, menu = dictMenuSelected, QMenu(title=self.tr('Selected Features'))
-                genericAction = self.tr('Deselect All Features')
+                menuDict, menu = dictMenuSelected, QMenu(
+                    title=self.tr("Selected Features")
+                )
+                genericAction = self.tr("Deselect All Features")
                 # if the dictionary is from selected features, we want commands to be able to deselect them
                 selectAll = False
             else:
-                menuDict, menu = dictMenuNotSelected, QMenu(title=self.tr('Not Selected Features'))
-                genericAction = self.tr('Select All Features')
+                menuDict, menu = dictMenuNotSelected, QMenu(
+                    title=self.tr("Not Selected Features")
+                )
+                genericAction = self.tr("Select All Features")
                 # if the dictionary is from non-selected features, we want commands to be able to select them
                 selectAll = True
             if e.button() == Qt.RightButton:
-                genericAction = self.tr('Open All Feature Forms')
-            self.createSubmenu(e=e, parentMenu=menu, menuDict=menuDict, genericAction=genericAction, selectAll=selectAll)
+                genericAction = self.tr("Open All Feature Forms")
+            self.createSubmenu(
+                e=e,
+                parentMenu=menu,
+                menuDict=menuDict,
+                genericAction=genericAction,
+                selectAll=selectAll,
+            )
             if len(menuDict) != 1 and len(list(menuDict.values())) > 1:
                 # if there's only one class, "All"-command is given by createSubmenu method
                 action = menu.addAction(genericAction)
-                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=menuDict, selectAll=selectAll)
-                self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
+                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(
+                    e=e, dictLayerFeature=menuDict, selectAll=selectAll
+                )
+                self.addCallBackToAction(
+                    action=action,
+                    onTriggeredAction=triggeredAction,
+                    onHoveredAction=hoveredAction,
+                )
         elif selectedDict:
             # if both of them is empty one more QMenu level is added
             menu = QMenu()
-            selectedMenu = QMenu(title=self.tr('Selected Features'))
-            notSelectedMenu = QMenu(title=self.tr('Not Selected Features'))
+            selectedMenu = QMenu(title=self.tr("Selected Features"))
+            notSelectedMenu = QMenu(title=self.tr("Not Selected Features"))
             menu.addMenu(selectedMenu)
             menu.addMenu(notSelectedMenu)
-            selectedGenericAction = self.tr('Deselect All Features')
-            notSelectedGenericAction = self.tr('Select All Features')
+            selectedGenericAction = self.tr("Deselect All Features")
+            notSelectedGenericAction = self.tr("Select All Features")
             # selectAll is set to True as now we want command to Deselect Features in case they are selected
-            self.createSubmenu(e=e, parentMenu=selectedMenu, menuDict=dictMenuSelected, genericAction=selectedGenericAction, selectAll=False)
+            self.createSubmenu(
+                e=e,
+                parentMenu=selectedMenu,
+                menuDict=dictMenuSelected,
+                genericAction=selectedGenericAction,
+                selectAll=False,
+            )
             if len(dictMenuSelected) != 1 and len(list(dictMenuSelected.values())) > 1:
                 # if there's only one class, "All"-command is given by createSubmenu method
                 action = selectedMenu.addAction(selectedGenericAction)
-                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=dictMenuSelected, selectAll=False)
-                self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
-            self.createSubmenu(e=e, parentMenu=notSelectedMenu, menuDict=dictMenuNotSelected, genericAction=notSelectedGenericAction, selectAll=True)
-            if len(dictMenuNotSelected) != 1 and len(list(dictMenuNotSelected.values())) > 1:
+                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(
+                    e=e, dictLayerFeature=dictMenuSelected, selectAll=False
+                )
+                self.addCallBackToAction(
+                    action=action,
+                    onTriggeredAction=triggeredAction,
+                    onHoveredAction=hoveredAction,
+                )
+            self.createSubmenu(
+                e=e,
+                parentMenu=notSelectedMenu,
+                menuDict=dictMenuNotSelected,
+                genericAction=notSelectedGenericAction,
+                selectAll=True,
+            )
+            if (
+                len(dictMenuNotSelected) != 1
+                and len(list(dictMenuNotSelected.values())) > 1
+            ):
                 # if there's only one class, "All"-command is given by createSubmenu method
                 action = notSelectedMenu.addAction(notSelectedGenericAction)
-                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=dictMenuNotSelected, selectAll=True)
-                self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
+                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(
+                    e=e, dictLayerFeature=dictMenuNotSelected, selectAll=True
+                )
+                self.addCallBackToAction(
+                    action=action,
+                    onTriggeredAction=triggeredAction,
+                    onHoveredAction=hoveredAction,
+                )
         menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
 
     def checkSelectedFeaturesOnDict(self, menuDict):
@@ -627,7 +755,7 @@ class GenericSelectionTool(QgsMapTool):
         rasterMenu = QMenu(title="Rasters", parent=menu)
         for raster in rasters:
             action = rasterMenu.addAction(raster.name())
-            action.triggered.connect(lambda : self.iface.setActiveLayer(raster))
+            action.triggered.connect(lambda: self.iface.setActiveLayer(raster))
         menu.addMenu(rasterMenu)
 
     def createContextMenu(self, e):
@@ -635,7 +763,7 @@ class GenericSelectionTool(QgsMapTool):
         Creates the context menu for overlapping layers.
         :param e: mouse event caught from canvas.
         """
-        selected = (QApplication.keyboardModifiers() == Qt.ControlModifier)
+        selected = QApplication.keyboardModifiers() == Qt.ControlModifier
         if selected:
             firstGeom = self.checkSelectedLayers()
         # setting a list of features to iterate over
@@ -655,7 +783,9 @@ class GenericSelectionTool(QgsMapTool):
                 for feature in layer.getFeatures(QgsFeatureRequest(bbRect)):
                     geom = feature.geometry()
                     if geom:
-                        searchRect = self.geometryHandler.reprojectSearchArea(layer, rect)
+                        searchRect = self.geometryHandler.reprojectSearchArea(
+                            layer, rect
+                        )
                         if selected:
                             # if Control was held, appending behaviour is different
                             if not firstGeom:
@@ -675,31 +805,42 @@ class GenericSelectionTool(QgsMapTool):
                                 else:
                                     lyrFeatDict[layer] = [feature]
             lyrFeatDict = self.filterStrongestGeometry(lyrFeatDict)
-            #rasters = self.getSelectedRasters(e)
+            # rasters = self.getSelectedRasters(e)
             if lyrFeatDict:
-                moreThanOneFeat = len(list(lyrFeatDict.values())) > 1 or len(list(lyrFeatDict.values())[0]) > 1
+                moreThanOneFeat = (
+                    len(list(lyrFeatDict.values())) > 1
+                    or len(list(lyrFeatDict.values())[0]) > 1
+                )
                 if moreThanOneFeat:
                     # if there are overlapping features (valid candidates only)
-                    selectedFeaturesDict, notSelectedFeaturesDict = self.checkSelectedFeaturesOnDict(menuDict=lyrFeatDict)
+                    (
+                        selectedFeaturesDict,
+                        notSelectedFeaturesDict,
+                    ) = self.checkSelectedFeaturesOnDict(menuDict=lyrFeatDict)
                     self.setContextMenuStyle(
-                        e=e, 
-                        dictMenuSelected=selectedFeaturesDict, 
-                        dictMenuNotSelected=notSelectedFeaturesDict
+                        e=e,
+                        dictMenuSelected=selectedFeaturesDict,
+                        dictMenuNotSelected=notSelectedFeaturesDict,
                     )
                 else:
                     layer = list(lyrFeatDict.keys())[0]
                     feature = lyrFeatDict[layer][0]
-                    selected =  (QApplication.keyboardModifiers() == Qt.ControlModifier)
+                    selected = QApplication.keyboardModifiers() == Qt.ControlModifier
                     if e.button() == Qt.LeftButton:
                         # if feature is selected, we want it to be de-selected
-                        self.setSelectionFeature(layer=layer, feature=feature, selectAll=False, setActiveLayer=True)
+                        self.setSelectionFeature(
+                            layer=layer,
+                            feature=feature,
+                            selectAll=False,
+                            setActiveLayer=True,
+                        )
                     elif selected:
                         self.iface.setActiveLayer(layer)
                     else:
                         self.iface.openFeatureForm(layer, feature, showModal=False)
-            #elif rasters and e.button() == Qt.LeftButton:
+            # elif rasters and e.button() == Qt.LeftButton:
             #    self.openRastersMenu(e, rasters)
-            
+
     def openRastersMenu(self, e, rasters):
         menu = QMenu()
         self.addRasterMenu(menu, rasters)

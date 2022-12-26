@@ -25,16 +25,23 @@ import os
 
 from PyQt5.QtCore import QCoreApplication
 
-from qgis.core import (QgsDataSourceUri, QgsExpression, QgsExpressionContext,
-                       QgsExpressionContextUtils, QgsProcessing,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterExpression,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterString, QgsProject, QgsRelation,
-                       QgsVectorLayerJoinInfo)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsExpression,
+    QgsExpressionContext,
+    QgsExpressionContextUtils,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingOutputMultipleLayers,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterExpression,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterString,
+    QgsProject,
+    QgsRelation,
+    QgsVectorLayerJoinInfo,
+)
 from qgis.utils import iface
 
 
@@ -45,31 +52,28 @@ class BuildJoinsOnLayersAlgorithm(QgsProcessingAlgorithm):
     START_EDITING: starts edition of related layer if true
     OUTPUT: list of outputs
     """
-    INPUT_LAYERS = 'INPUT_LAYERS'
-    START_EDITING = 'START_EDITING'
-    OUTPUT = 'OUTPUT'
+
+    INPUT_LAYERS = "INPUT_LAYERS"
+    START_EDITING = "START_EDITING"
+    OUTPUT = "OUTPUT"
+
     def initAlgorithm(self, config):
         """
         Parameter setting.
         """
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
-                self.INPUT_LAYERS,
-                self.tr('Input Layers'),
-                QgsProcessing.TypeVector
+                self.INPUT_LAYERS, self.tr("Input Layers"), QgsProcessing.TypeVector
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                    self.START_EDITING,
-                    self.tr('Start Editing'),
-                    defaultValue=True
-                )
+                self.START_EDITING, self.tr("Start Editing"), defaultValue=True
             )
+        )
         self.addOutput(
             QgsProcessingOutputMultipleLayers(
-                self.OUTPUT,
-                self.tr('Original reorganized layers')
+                self.OUTPUT, self.tr("Original reorganized layers")
             )
         )
 
@@ -77,22 +81,14 @@ class BuildJoinsOnLayersAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        inputLyrList = self.parameterAsLayerList(
-            parameters,
-            self.INPUT_LAYERS,
-            context
-        )
-        startEditing = self.parameterAsBoolean(
-            parameters,
-            self.START_EDITING,
-            context
-        )
+        inputLyrList = self.parameterAsLayerList(parameters, self.INPUT_LAYERS, context)
+        startEditing = self.parameterAsBoolean(parameters, self.START_EDITING, context)
         listSize = len(inputLyrList)
-        progressStep = 100/listSize if listSize else 0
+        progressStep = 100 / listSize if listSize else 0
         relationManager = QgsProject.instance().relationManager()
         for current, relation in enumerate(
-                relationManager.discoverRelations([], inputLyrList)
-            ):
+            relationManager.discoverRelations([], inputLyrList)
+        ):
             if feedback.isCanceled():
                 break
             if relation.strength() != QgsRelation.Association:
@@ -107,12 +103,19 @@ class BuildJoinsOnLayersAlgorithm(QgsProcessingAlgorithm):
                 originalLyrFieldName,
                 joinnedLyr,
                 joinLyrFieldName,
-                startEdit=startEditing
+                startEdit=startEditing,
             )
-            feedback.setProgress(current*progressStep)
+            feedback.setProgress(current * progressStep)
         return {self.OUTPUT: [i.id() for i in inputLyrList]}
 
-    def buildJoin(self, originalLyr, originalLyrFieldName, joinnedLyr, joinLyrFieldName, startEdit=False):
+    def buildJoin(
+        self,
+        originalLyr,
+        originalLyrFieldName,
+        joinnedLyr,
+        joinLyrFieldName,
+        startEdit=False,
+    ):
         """
         Builds a join bewteen lyr and joinnedLyr.
         :param originalLyr: QgsVectorLayer original layer;
@@ -127,13 +130,12 @@ class BuildJoinsOnLayersAlgorithm(QgsProcessingAlgorithm):
             joinnedLyr.startEditing()
         joinObject.setJoinLayer(joinnedLyr)
         # joinObject.setJoinFieldNamesSubset([])
-        joinObject.setUpsertOnEdit(True) #set to enable edit on original lyr
+        joinObject.setUpsertOnEdit(True)  # set to enable edit on original lyr
         joinObject.setCascadedDelete(True)
         joinObject.setDynamicFormEnabled(True)
         joinObject.setEditable(True)
         joinObject.setUsingMemoryCache(True)
         originalLyr.addJoin(joinObject)
-
 
     def name(self):
         """
@@ -143,21 +145,21 @@ class BuildJoinsOnLayersAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'buildjoinsonlayersalgorithm'
+        return "buildjoinsonlayersalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Build Joins on Layers')
+        return self.tr("Build Joins on Layers")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Layer Management Algorithms')
+        return self.tr("Layer Management Algorithms")
 
     def groupId(self):
         """
@@ -167,13 +169,13 @@ class BuildJoinsOnLayersAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Layer Management Algorithms'
+        return "DSGTools: Layer Management Algorithms"
 
     def tr(self, string):
         """
         Translates input string.
         """
-        return QCoreApplication.translate('BuildJoinsOnLayersAlgorithm', string)
+        return QCoreApplication.translate("BuildJoinsOnLayersAlgorithm", string)
 
     def createInstance(self):
         """

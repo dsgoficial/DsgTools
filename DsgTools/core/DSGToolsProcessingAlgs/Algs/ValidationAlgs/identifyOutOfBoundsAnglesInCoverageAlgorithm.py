@@ -138,62 +138,55 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.Point, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(
-            6, feedback
-        )
+        multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
         currentStep = 0
-        #merge all layers into one
-        multiStepFeedback.setProgressText(self.tr('Building unified layer'))
+        # merge all layers into one
+        multiStepFeedback.setProgressText(self.tr("Building unified layer"))
         multiStepFeedback.setCurrentStep(currentStep)
         mergedLayers = algRunner.runMergeVectorLayers(
             inputList=inputLyrList, context=context, feedback=multiStepFeedback
         )
         currentStep += 1
 
-        
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr('Exploding lines'))
+        multiStepFeedback.setProgressText(self.tr("Exploding lines"))
         splitSegments = algRunner.runExplodeLines(
             inputLyr=mergedLayers, context=context, feedback=multiStepFeedback
         )
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr('Building spatial index'))
+        multiStepFeedback.setProgressText(self.tr("Building spatial index"))
         algRunner.runCreateSpatialIndex(
-            inputLyr=splitSegments,
-            context=context,
-            feedback=multiStepFeedback
+            inputLyr=splitSegments, context=context, feedback=multiStepFeedback
         )
         currentStep += 1
-        
 
-        #split segments with clean
+        # split segments with clean
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr('Splitting lines'))
+        multiStepFeedback.setProgressText(self.tr("Splitting lines"))
         cleanedLyr = algRunner.runSplitLinesWithLines(
             inputLyr=splitSegments,
             linesLyr=splitSegments,
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
-        
+
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr('Building node angle dict'))
+        multiStepFeedback.setProgressText(self.tr("Building node angle dict"))
         nodeAngleDict = self.buildNodeAngleDict(cleanedLyr, feedback=multiStepFeedback)
 
-        
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr('Evaluating flags'))
+        multiStepFeedback.setProgressText(self.tr("Evaluating flags"))
         self.computeSmallAnglesInCoverage(
             nodeAngleDict, tol, feedback=multiStepFeedback
         )
 
         return {self.FLAGS: self.flag_id}
-    
+
     def buildNodeAngleDict(self, splitSegments, feedback=None):
         nodeAngleDict = defaultdict(set)
         # nodeAngleDict = dict()
@@ -202,15 +195,21 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
             return nodeAngleDict
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.setProgressText(self.tr('Building node angle dict: building dict'))
-        multiStepFeedback.pushInfo(self.tr(f'Iterating over {nFeats} segments...'))
+        multiStepFeedback.setProgressText(
+            self.tr("Building node angle dict: building dict")
+        )
+        multiStepFeedback.pushInfo(self.tr(f"Iterating over {nFeats} segments..."))
         for current, feat in enumerate(splitSegments.getFeatures()):
             if feedback is not None and feedback.isCanceled():
                 break
             geom = feat.geometry()
             if geom.isNull():
                 continue
-            p1, p2 =  geom.asPolyline() if not geom.isMultipart() else geom.asMultiPolyline()[0]
+            p1, p2 = (
+                geom.asPolyline()
+                if not geom.isMultipart()
+                else geom.asMultiPolyline()[0]
+            )
             geom1 = QgsGeometry.fromPointXY(p1)
             wkb1 = geom1.asWkb()
             geom2 = QgsGeometry.fromPointXY(p2)
@@ -219,9 +218,11 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
             nodeAngleDict[wkb2].add(wkb1)
             if feedback is not None:
                 multiStepFeedback.setProgress(current * 100 / nFeats)
-            
+
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.setProgressText(self.tr('Building node angle dict: identifying nodes to pop'))
+        multiStepFeedback.setProgressText(
+            self.tr("Building node angle dict: identifying nodes to pop")
+        )
         keysToPop = set()
         nNodes = len(nodeAngleDict)
         for current, (point, pointSet) in enumerate(nodeAngleDict.items()):
@@ -232,7 +233,9 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
             if feedback is not None:
                 multiStepFeedback.setProgress(current * 100 / nNodes)
         multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.setProgressText(self.tr('Building node angle dict: removing single nodes'))
+        multiStepFeedback.setProgressText(
+            self.tr("Building node angle dict: removing single nodes")
+        )
         nItems = len(keysToPop)
         for current, point in enumerate(keysToPop):
             if feedback is not None and feedback.isCanceled():
@@ -242,9 +245,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
                 multiStepFeedback.setProgress(current * 100 / nItems)
         return nodeAngleDict
 
-    def computeSmallAnglesInCoverage(
-        self, nodeAngleDict, tol, feedback=None
-    ):
+    def computeSmallAnglesInCoverage(self, nodeAngleDict, tol, feedback=None):
         flagWkbSet = set()
         nIntersections = len(nodeAngleDict)
         if nIntersections == 0:

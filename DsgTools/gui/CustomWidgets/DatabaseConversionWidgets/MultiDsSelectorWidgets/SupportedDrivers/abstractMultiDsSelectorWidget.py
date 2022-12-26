@@ -1,4 +1,3 @@
- 
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
@@ -24,11 +23,13 @@
 
 from qgis.PyQt.QtCore import QObject
 
+
 class AbstractMultiDsSelectorWidget(QObject):
     """
     Class containing minimum structure for multiple datasource selection.
-    Particularities from each driver are settled within its own class (child from this). 
+    Particularities from each driver are settled within its own class (child from this).
     """
+
     def __init__(self, parent=None):
         """
         Class constructor.

@@ -21,11 +21,16 @@
  ***************************************************************************/
 """
 
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.abstractSelectionWidget import AbstractSelectionWidget
-from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.databaseFileLineEdit import DatabaseFileLineEdit
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.abstractSelectionWidget import (
+    AbstractSelectionWidget,
+)
+from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.databaseFileLineEdit import (
+    DatabaseFileLineEdit,
+)
 from DsgTools.core.dsgEnums import DsgEnums
 
 import os
+
 
 class GeopackageWidget(AbstractSelectionWidget):
     """
@@ -43,8 +48,12 @@ class GeopackageWidget(AbstractSelectionWidget):
         # initiate new instance of actual class widget
         self.selectionWidget = self.getNewSelectionWidget(parent=parent)
         self.selectionWidget.driver = DsgEnums.DriverGeopackage
-        self.selectionWidget.connectionSelectorLineEdit.caption = self.tr('Select a Geopackage Database')
-        self.selectionWidget.connectionSelectorLineEdit.filter = self.tr('Geopackage Database (*.gpkg)')
+        self.selectionWidget.connectionSelectorLineEdit.caption = self.tr(
+            "Select a Geopackage Database"
+        )
+        self.selectionWidget.connectionSelectorLineEdit.filter = self.tr(
+            "Geopackage Database (*.gpkg)"
+        )
 
     def getNewSelectionWidget(self, parent=None):
         """
@@ -61,8 +70,8 @@ class GeopackageWidget(AbstractSelectionWidget):
         """
         n = self.selectionWidget.connectionSelectorLineEdit.lineEdit.text()
         # n is a path and so it'll be something like /PATH/TO/datasource.sqlite or C:\PATH\TO\datasource.sqlite
-        splitChar = '/' if '/' in n else '\\'
-        ret = n.split(splitChar)[-1].split('.')[0] if n else ''
+        splitChar = "/" if "/" in n else "\\"
+        ret = n.split(splitChar)[-1].split(".")[0] if n else ""
         return ret
 
     def getDatasourcePath(self):
@@ -72,8 +81,10 @@ class GeopackageWidget(AbstractSelectionWidget):
         """
         if self.getDatasource():
             # just return a datasource path if a valid one was loaded
-            return "gpkg:{0}".format(self.selectionWidget.connectionSelectorLineEdit.lineEdit.text())
-        return ''
+            return "gpkg:{0}".format(
+                self.selectionWidget.connectionSelectorLineEdit.lineEdit.text()
+            )
+        return ""
 
     def setDatasource(self, newDatasource):
         """
@@ -81,11 +92,13 @@ class GeopackageWidget(AbstractSelectionWidget):
         :param newDatasource: (dict) containing datasource name and its path.
         """
         if newDatasource:
-            self.selectionWidget.connectionSelectorLineEdit.lineEdit.setText((list(newDatasource.values())[0]))
+            self.selectionWidget.connectionSelectorLineEdit.lineEdit.setText(
+                (list(newDatasource.values())[0])
+            )
 
     def getDatasource(self):
         """
         Gets the datasource selected on current widget.
-        :return: (AbstractDb) the object representing the target datasource according to its driver. 
+        :return: (AbstractDb) the object representing the target datasource according to its driver.
         """
         return self.selectionWidget.abstractDb

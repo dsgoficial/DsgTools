@@ -23,103 +23,97 @@
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtGui import QColor
 from qgis.PyQt.Qt import QVariant
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterExpression,
-                       QgsProcessingException,
-                       QgsProcessingParameterString,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterType,
-                       QgsProcessingParameterCrs,
-                       QgsCoordinateTransform,
-                       QgsProject,
-                       QgsCoordinateReferenceSystem,
-                       QgsField,
-                       QgsFields,
-                       QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterString,
-                       QgsConditionalStyle)
+from qgis.core import (
+    QgsProcessing,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFeatureSink,
+    QgsFeature,
+    QgsDataSourceUri,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsGeometry,
+    QgsProcessingParameterField,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterFile,
+    QgsProcessingParameterExpression,
+    QgsProcessingException,
+    QgsProcessingParameterString,
+    QgsProcessingParameterDefinition,
+    QgsProcessingParameterType,
+    QgsProcessingParameterCrs,
+    QgsCoordinateTransform,
+    QgsProject,
+    QgsCoordinateReferenceSystem,
+    QgsField,
+    QgsFields,
+    QgsProcessingOutputMultipleLayers,
+    QgsProcessingParameterString,
+    QgsConditionalStyle,
+)
 
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.ruleStatisticsAlgorithm import \
-    RuleStatisticsAlgorithm
-from DsgTools.core.LayerTools.CustomFormTools.customFormGenerator import CustomFormGenerator
-from DsgTools.core.LayerTools.CustomFormTools.customInitCodeGenerator import \
-    CustomInitCodeGenerator
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.ruleStatisticsAlgorithm import (
+    RuleStatisticsAlgorithm,
+)
+from DsgTools.core.LayerTools.CustomFormTools.customFormGenerator import (
+    CustomFormGenerator,
+)
+from DsgTools.core.LayerTools.CustomFormTools.customInitCodeGenerator import (
+    CustomInitCodeGenerator,
+)
 from operator import itemgetter
 from collections import defaultdict
 
+
 class AssignCustomFormAndFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
-    CLEAN_BEFORE_ASSIGN = 'CLEAN_BEFORE_ASSIGN'
-    MODE = 'MODE'
+    CLEAN_BEFORE_ASSIGN = "CLEAN_BEFORE_ASSIGN"
+    MODE = "MODE"
 
     def initAlgorithm(self, config=None):
-        super(AssignCustomFormAndFormatRulesToLayersAlgorithm, self).initAlgorithm(config=config)
+        super(AssignCustomFormAndFormatRulesToLayersAlgorithm, self).initAlgorithm(
+            config=config
+        )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.CLEAN_BEFORE_ASSIGN,
-                self.tr('Clean before assign format rules')
+                self.CLEAN_BEFORE_ASSIGN, self.tr("Clean before assign format rules")
             )
         )
         self.modes = [
-            self.tr('Assing only custom form'),
-            self.tr('Assign only format rules'),
-            self.tr('Assign custom form and format rules')
+            self.tr("Assing only custom form"),
+            self.tr("Assign only format rules"),
+            self.tr("Assign custom form and format rules"),
         ]
 
         self.addParameter(
             QgsProcessingParameterEnum(
-                self.MODE,
-                self.tr('Mode'),
-                options=self.modes,
-                defaultValue=0
+                self.MODE, self.tr("Mode"), options=self.modes, defaultValue=0
             )
         )
-        
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
-        inputLyrList = self.parameterAsLayerList(
-            parameters,
-            self.INPUTLAYERS,
-            context
-        )
+        inputLyrList = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
         if not inputLyrList:
             return {}
         input_data = self.load_rules_from_parameters(parameters)
-        mode = self.parameterAsEnum(
-            parameters,
-            self.MODE,
-            context
-        )
+        mode = self.parameterAsEnum(parameters, self.MODE, context)
         cleanBefore = self.parameterAsBool(
-            parameters,
-            self.CLEAN_BEFORE_ASSIGN,
-            context
-            )
+            parameters, self.CLEAN_BEFORE_ASSIGN, context
+        )
         if cleanBefore:
             self.cleanRules(inputLyrList)
         listSize = len(inputLyrList)
-        stepSize = 100/listSize if listSize else 0
+        stepSize = 100 / listSize if listSize else 0
         self.ruleDict = self.buildRuleDict(input_data)
         self.customFormGenerator = CustomFormGenerator()
         self.customInitGenerator = CustomInitCodeGenerator()
@@ -128,14 +122,14 @@ class AssignCustomFormAndFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
             if feedback.isCanceled():
                 break
             if mode == 0:
-                #only custom form
+                # only custom form
                 self.assignFormToLayer(lyr)
             elif mode == 1:
-                #only format rules
+                # only format rules
                 self.addRuleToLayer(lyr, feedback=feedback)
                 self.createRuleVirtualField(lyr)
             else:
-                #both
+                # both
                 self.assignFormToLayer(lyr)
                 self.addRuleToLayer(lyr, feedback=feedback)
                 self.createRuleVirtualField(lyr)
@@ -146,39 +140,38 @@ class AssignCustomFormAndFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
         input_data = input_data[0] if isinstance(input_data, list) else input_data
         sortedRuleList = sorted(
             input_data.values(),
-            key=itemgetter('camada', 'atributo', 'ordem'),
-            reverse=False
+            key=itemgetter("camada", "atributo", "ordem"),
+            reverse=False,
         )
-        ruleDict = defaultdict(
-            lambda: defaultdict(list)
-        )
+        ruleDict = defaultdict(lambda: defaultdict(list))
         for data in sortedRuleList:
-            ruleDict[data['camada']][data['atributo']].append(data)
+            ruleDict[data["camada"]][data["atributo"]].append(data)
         return ruleDict
 
     def addRuleToLayer(self, lyr, feedback=None):
         for field in lyr.fields():
             if feedback is not None and feedback.isCanceled():
                 break
-            if lyr.name() not in self.ruleDict or \
-                field.name() not in self.ruleDict[lyr.name()]:
+            if (
+                lyr.name() not in self.ruleDict
+                or field.name() not in self.ruleDict[lyr.name()]
+            ):
                 continue
             data = self.ruleDict[lyr.name()][field.name()]
             if not data:
                 return
             fieldStyleList = [
-                self.createConditionalStyle(i) \
-                    for i in data if i['tipo_regra'].lower() == 'atributo'
+                self.createConditionalStyle(i)
+                for i in data
+                if i["tipo_regra"].lower() == "atributo"
             ]
             rowStyleList = [
-                self.createConditionalStyle(i) \
-                    for i in data if i['tipo_regra'].lower() != 'atributo'
+                self.createConditionalStyle(i)
+                for i in data
+                if i["tipo_regra"].lower() != "atributo"
             ]
             if fieldStyleList:
-                lyr.conditionalStyles().setFieldStyles(
-                    field.name(),
-                    fieldStyleList
-                )
+                lyr.conditionalStyles().setFieldStyles(field.name(), fieldStyleList)
             elif rowStyleList:
                 lyr.conditionalStyles().setRowStyes(rowStyleList)
 
@@ -192,58 +185,50 @@ class AssignCustomFormAndFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
         Returns a QgsConditionalStyle
         """
         conditionalStyle = QgsConditionalStyle()
-        conditionalStyle.setName(data['descricao'])
-        conditionalStyle.setRule(data['regra'])
+        conditionalStyle.setName(data["descricao"])
+        conditionalStyle.setRule(data["regra"])
         conditionalStyle.setBackgroundColor(
-            QColor(
-                data['corRgb'][0],
-                data['corRgb'][1],
-                data['corRgb'][2]
-            ) 
+            QColor(data["corRgb"][0], data["corRgb"][1], data["corRgb"][2])
         )
         return conditionalStyle
-    
+
     def createRuleVirtualField(self, lyr):
         expressionString = """CASE\n"""
         for fieldName, dataList in self.ruleDict[lyr.name()].items():
             for data in dataList:
                 expressionString += """WHEN {condition} THEN '{result}'\n""".format(
-                    condition=data['regra'],
-                    result=data['descricao']
+                    condition=data["regra"], result=data["descricao"]
                 )
         expressionString += """ELSE ''\nEND"""
         lyr.addExpressionField(
-                    expressionString,
-                    QgsField(
-                        'attribute_error_description',
-                        QVariant.String
-                    )
-                )
+            expressionString, QgsField("attribute_error_description", QVariant.String)
+        )
 
     def cleanRules(self, inputLayerList):
         for lyr in inputLayerList:
             for field in lyr.fields():
                 lyr.conditionalStyles().setFieldStyles(field.name(), [])
-    
+
     def assignFormToLayer(self, lyr, layer_data):
         editFormConfig = lyr.editFormConfig()
         editFormConfig.setInitCodeSource(2)
         editFormConfig.setLayout(2)
-        file_name = self.customFormGenerator.create(lyr, layer_data) #TODO: Verificar esse layer_data no
+        file_name = self.customFormGenerator.create(
+            lyr, layer_data
+        )  # TODO: Verificar esse layer_data no
         editFormConfig.setUiForm(file_name)
         editFormConfig.setInitFunction("formOpen")
         code_init = self.create_custom_code_init(layer_data)
         editFormConfig.setInitCode(code_init)
-    
+
     def create_custom_code_init(self, layer_data):
         rules_form = []
         if self.rules:
-            rules_form = self.rules.get_rules_form(layer_data["layer_name"])  
-        if 'filter' in layer_data["layer_fields"]:
+            rules_form = self.rules.get_rules_form(layer_data["layer_name"])
+        if "filter" in layer_data["layer_fields"]:
             filter_data = layer_data["layer_fields"]["filter"]
             code_init = self.customInitGenerator.getInitCodeWithFilter(
-                filter_data,
-                rules_form
+                filter_data, rules_form
             )
         else:
             code_init = self.customInitGenerator.getInitCodeWithoutFilter(rules_form)
@@ -257,21 +242,21 @@ class AssignCustomFormAndFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'AssignCustomFormAndFormatRulesToLayersAlgorithm'
+        return "AssignCustomFormAndFormatRulesToLayersAlgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Assign Custom Form and Format Rules to Layers')
+        return self.tr("Assign Custom Form and Format Rules to Layers")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Layer Management Algorithms')
+        return self.tr("Layer Management Algorithms")
 
     def groupId(self):
         """
@@ -281,10 +266,12 @@ class AssignCustomFormAndFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Layer Management Algorithms'
+        return "DSGTools: Layer Management Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate('AssignCustomFormAndFormatRulesToLayersAlgorithm', string)
+        return QCoreApplication.translate(
+            "AssignCustomFormAndFormatRulesToLayersAlgorithm", string
+        )
 
     def createInstance(self):
         return AssignCustomFormAndFormatRulesToLayersAlgorithm()

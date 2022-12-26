@@ -20,19 +20,22 @@
  ***************************************************************************/
 """
 
-from qgis.core import (QgsProcessing,
-                       QgsProcessingException,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterMultipleLayers)
+from qgis.core import (
+    QgsProcessing,
+    QgsProcessingException,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterBoolean,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterMultipleLayers,
+)
 from qgis.PyQt.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs\
-       .validationAlgorithm import ValidationAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
+    ValidationAlgorithm,
+)
 
 
 class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
@@ -41,6 +44,7 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
     elongated areas which do not represent an entity in reality and,
     therefore, need to be removed.
     """
+
     FLAGS = "FLAGS"
     INPUT_LAYERS = "INPUT_LAYERS"
     SELECTED = "SELECTED"
@@ -55,19 +59,17 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LAYERS,
                 self.tr("Polygons to be checked"),
-                QgsProcessing.TypeVectorPolygon
+                QgsProcessing.TypeVectorPolygon,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr("Process only selected features")
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SILENT,
-                self.tr("Ignore empty and invalid geometries")
+                self.SILENT, self.tr("Ignore empty and invalid geometries")
             )
         )
         self.addParameter(
@@ -76,13 +78,12 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
                 self.tr("Tolerance area-perimeter ratio"),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Double,
-                defaultValue=10
+                defaultValue=10,
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr("{0} flags").format(self.displayName())
+                self.FLAGS, self.tr("{0} flags").format(self.displayName())
             )
         )
 
@@ -96,21 +97,9 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
                         algorithm's progress/status.
         :return: (tuple) input parameters provided.
         """
-        layers = self.parameterAsLayerList(
-            parameters,
-            self.INPUT_LAYERS,
-            context
-        )
-        selected = self.parameterAsBoolean(
-            parameters,
-            self.SELECTED,
-            context
-        )
-        silent = self.parameterAsBoolean(
-            parameters,
-            self.SILENT,
-            context
-        )
+        layers = self.parameterAsLayerList(parameters, self.INPUT_LAYERS, context)
+        selected = self.parameterAsBoolean(parameters, self.SELECTED, context)
+        silent = self.parameterAsBoolean(parameters, self.SILENT, context)
         ratio = self.parameterAsDouble(parameters, self.RATIO_TOL, context)
         return (layers, selected, silent, ratio)
 
@@ -125,7 +114,8 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
         :return: (dict) output mapping for identified flags.
         """
         layers, selected, silent, ratio = self.getParameters(
-            parameters, context, feedback)
+            parameters, context, feedback
+        )
         if not layers:
             raise QgsProcessingException(self.tr("No layers were provided."))
         for layer in layers:
@@ -139,24 +129,24 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
         lh = LayerHandler()
         flagCount = 0
         # a step for each input + 1 for loading flags into sink
-        multiStepFeedback = QgsProcessingMultiStepFeedback(
-            len(layers) + 1, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(len(layers) + 1, feedback)
         multiStepFeedback.setCurrentStep(0)
         for step, layer in enumerate(layers):
             if multiStepFeedback.isCanceled():
                 break
             # running polygon slivers to purposely raise an exception if an
             # empty geometry is found
-            multiStepFeedback.pushInfo(
-                self.tr("Checking {0}...").format(layer.name()))
+            multiStepFeedback.pushInfo(self.tr("Checking {0}...").format(layer.name()))
             slivers = lh.getPolygonSlivers(
-                layer, ratio, selected, silent, multiStepFeedback)
+                layer, ratio, selected, silent, multiStepFeedback
+            )
             if slivers:
                 # pushWarnign is only avalailable on 3.16.2+
                 # multiStepFeedback.pushWarning(
                 multiStepFeedback.pushDebugInfo(
-                    self.tr("{0} slivers were found on {1}!")\
-                        .format(len(slivers), layer.name())
+                    self.tr("{0} slivers were found on {1}!").format(
+                        len(slivers), layer.name()
+                    )
                 )
                 flags[layer] = slivers
                 flagCount += len(slivers)
@@ -187,10 +177,9 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
                 geom = feat.geometry()
                 self.flagFeature(
                     geom,
-                    self.tr("Feature {0} from layer {1} has ratio {2:.2f}")\
-                        .format(
-                            feat.id(), layername, geom.area() / geom.length()
-                        )
+                    self.tr("Feature {0} from layer {1} has ratio {2:.2f}").format(
+                        feat.id(), layername, geom.area() / geom.length()
+                    ),
                 )
                 current += 1
                 feedback.setProgress(current * stepSize)
@@ -230,8 +219,7 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
         return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate(
-            "IdentifyPolygonSliverAlgorithm", string)
+        return QCoreApplication.translate("IdentifyPolygonSliverAlgorithm", string)
 
     def createInstance(self):
         return IdentifyPolygonSliverAlgorithm()

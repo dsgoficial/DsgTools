@@ -33,24 +33,28 @@ from qgis.PyQt.QtSql import QSqlQuery
 from DsgTools.gui.ServerTools.viewServers import ViewServers
 from DsgTools.core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.gui.Misc.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
+from DsgTools.gui.Misc.PostgisCustomization.CustomJSONTools.customJSONBuilder import (
+    CustomJSONBuilder,
+)
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'newDomainValueWidget.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "newDomainValueWidget.ui")
+)
+
 
 class NewDomainValueWidget(QtWidgets.QWidget, FORM_CLASS):
-    def __init__(self, abstractDb, uiParameterJsonDict = None, parent = None):
+    def __init__(self, abstractDb, uiParameterJsonDict=None, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.abstractDb = abstractDb
         self.setupUi(self)
         self.jsonBuilder = CustomJSONBuilder()
         self.populateDomainCombo()
-        regex = QtCore.QRegExp('[0-9]*')
+        regex = QtCore.QRegExp("[0-9]*")
         validator = QtGui.QRegExpValidator(regex, self.codeLineEdit)
         self.codeLineEdit.setValidator(validator)
         self.populateFromUiParameterJsonDict(uiParameterJsonDict)
-    
+
     def populateFromUiParameterJsonDict(self, uiParameterJsonDict):
         """
         builds ui from uiParameterJsonDict
@@ -62,21 +66,23 @@ class NewDomainValueWidget(QtWidgets.QWidget, FORM_CLASS):
         }
         """
         if uiParameterJsonDict:
-            if uiParameterJsonDict['allDomainCheckBox']:
+            if uiParameterJsonDict["allDomainCheckBox"]:
                 self.allDomainCheckBox.setCheckState(Qt.Checked)
             else:
-                domainIdx = self.domainComboBox.findText(uiParameterJsonDict['domainComboBox'], flags = Qt.MatchExactly)
+                domainIdx = self.domainComboBox.findText(
+                    uiParameterJsonDict["domainComboBox"], flags=Qt.MatchExactly
+                )
                 self.domainComboBox.setCurrentIndex(domainIdx)
-            self.codeLineEdit.setText(uiParameterJsonDict['codeLineEdit'])
-            self.codeNameLineEdit.setText(uiParameterJsonDict['codeNameLineEdit'])
-                
+            self.codeLineEdit.setText(uiParameterJsonDict["codeLineEdit"])
+            self.codeNameLineEdit.setText(uiParameterJsonDict["codeNameLineEdit"])
+
     def populateDomainCombo(self):
         self.domainTableList = self.abstractDb.getDomainTables()
         self.domainComboBox.clear()
-        self.domainComboBox.addItem(self.tr('Select a domain'))
+        self.domainComboBox.addItem(self.tr("Select a domain"))
         for domain in self.domainTableList:
             self.domainComboBox.addItem(domain)
-    
+
     @pyqtSlot(int)
     def on_domainComboBox_currentIndexChanged(self, idx):
         if idx == 0:
@@ -88,7 +94,7 @@ class NewDomainValueWidget(QtWidgets.QWidget, FORM_CLASS):
             self.codeLineEdit.setEnabled(True)
             self.codeNameLineEdit.setEnabled(True)
         self.codeLineEdit.editingFinished.emit()
-    
+
     @pyqtSlot(int)
     def on_allDomainCheckBox_stateChanged(self, state):
         if state == 2:
@@ -96,38 +102,42 @@ class NewDomainValueWidget(QtWidgets.QWidget, FORM_CLASS):
         else:
             self.populateDomainCombo()
         self.codeLineEdit.editingFinished.emit()
-    
+
     @pyqtSlot()
     def on_codeLineEdit_editingFinished(self):
         if self.domainComboBox.currentIndex() == 0:
-            self.codeLineEdit.setStyleSheet('')
-            self.codeLineEdit.setToolTip('')
+            self.codeLineEdit.setStyleSheet("")
+            self.codeLineEdit.setToolTip("")
             return
         if self.allDomainCheckBox.checkState() == 2:
             domainValues = self.abstractDb.getAllDomainValues()
         else:
-            domainValues = self.abstractDb.getAllDomainValues(domainTableList = [self.domainComboBox.currentText()])
+            domainValues = self.abstractDb.getAllDomainValues(
+                domainTableList=[self.domainComboBox.currentText()]
+            )
         currentValue = self.codeLineEdit.text()
-        if currentValue == '':
-            self.codeLineEdit.setStyleSheet('')
-            self.codeLineEdit.setToolTip('')
+        if currentValue == "":
+            self.codeLineEdit.setStyleSheet("")
+            self.codeLineEdit.setToolTip("")
         elif int(currentValue) in domainValues:
             self.codeLineEdit.setStyleSheet("border: 1px solid red;")
-            self.codeLineEdit.setToolTip(self.tr('Code value already exists, choose another.'))
+            self.codeLineEdit.setToolTip(
+                self.tr("Code value already exists, choose another.")
+            )
         else:
-            self.codeLineEdit.setStyleSheet('')
-            self.codeLineEdit.setToolTip('')
+            self.codeLineEdit.setStyleSheet("")
+            self.codeLineEdit.setToolTip("")
 
     def getTitle(self):
         return self.title
-    
+
     def setTitle(self, title):
         self.title = title
 
     def validate(self):
-        if self.codeLineEdit.text() == '':
+        if self.codeLineEdit.text() == "":
             return False
-        if self.codeNameLineEdit.text() == '':
+        if self.codeNameLineEdit.text() == "":
             return False
         if self.allDomainCheckBox.checkState() == 2:
             return True
@@ -137,27 +147,39 @@ class NewDomainValueWidget(QtWidgets.QWidget, FORM_CLASS):
         return True
 
     def validateDiagnosis(self):
-        invalidatedReason = ''
-        if self.codeLineEdit.text() == '':
-            invalidatedReason += self.tr('A code value must be entered.\n')
-        if self.codeNameLineEdit.text() == '':
-            invalidatedReason += self.tr('A code name value must be entered.\n')
-        if self.domainComboBox.currentIndex() == 0 and self.allDomainCheckBox.checkState() != 2:
-            invalidatedReason += self.tr('A domain table must be chosen.\n')
+        invalidatedReason = ""
+        if self.codeLineEdit.text() == "":
+            invalidatedReason += self.tr("A code value must be entered.\n")
+        if self.codeNameLineEdit.text() == "":
+            invalidatedReason += self.tr("A code name value must be entered.\n")
+        if (
+            self.domainComboBox.currentIndex() == 0
+            and self.allDomainCheckBox.checkState() != 2
+        ):
+            invalidatedReason += self.tr("A domain table must be chosen.\n")
         return invalidatedReason
-    
+
     def getJSONTag(self):
         if not self.validate():
-            raise Exception(self.tr('Error in new domain value ')+ self.title + ' : ' + self.validateDiagnosis())
+            raise Exception(
+                self.tr("Error in new domain value ")
+                + self.title
+                + " : "
+                + self.validateDiagnosis()
+            )
         code = self.codeLineEdit.text()
         codeName = self.codeNameLineEdit.text()
         jsonList = []
         if self.allDomainCheckBox.checkState() != 2:
             domainName = self.domainComboBox.currentText()
-            jsonList.append(self.jsonBuilder.addDomainValueElement(domainName, code, codeName))
+            jsonList.append(
+                self.jsonBuilder.addDomainValueElement(domainName, code, codeName)
+            )
         else:
             for domainName in self.domainTableList:
-                jsonList.append(self.jsonBuilder.addDomainValueElement(domainName, code, codeName))
+                jsonList.append(
+                    self.jsonBuilder.addDomainValueElement(domainName, code, codeName)
+                )
         return jsonList
 
     def getUiParameterJsonDict(self):
@@ -171,9 +193,8 @@ class NewDomainValueWidget(QtWidgets.QWidget, FORM_CLASS):
         }
         """
         uiParameterJsonDict = dict()
-        uiParameterJsonDict['domainComboBox'] = self.domainComboBox.currentText()
-        uiParameterJsonDict['allDomainCheckBox'] = self.allDomainCheckBox.isChecked()
-        uiParameterJsonDict['codeLineEdit'] = self.codeLineEdit.text()
-        uiParameterJsonDict['codeNameLineEdit'] = self.codeNameLineEdit.text()
+        uiParameterJsonDict["domainComboBox"] = self.domainComboBox.currentText()
+        uiParameterJsonDict["allDomainCheckBox"] = self.allDomainCheckBox.isChecked()
+        uiParameterJsonDict["codeLineEdit"] = self.codeLineEdit.text()
+        uiParameterJsonDict["codeNameLineEdit"] = self.codeNameLineEdit.text()
         return uiParameterJsonDict
-        

@@ -24,10 +24,12 @@
 import sys
 from qgis.testing import unittest
 
-from DsgTools.core.DSGToolsProcessingAlgs.Models.dsgToolsProcessingModel import DsgToolsProcessingModel
+from DsgTools.core.DSGToolsProcessingAlgs.Models.dsgToolsProcessingModel import (
+    DsgToolsProcessingModel,
+)
+
 
 class ModelTester(unittest.TestCase):
-
     def test_constructor(self):
         """Runs class constructor checks."""
         # name and set of parameters are mandatory, even if they're invalid
@@ -38,9 +40,10 @@ class ModelTester(unittest.TestCase):
         self.assertFalse(model.isValid())
         self.assertEquals(model.name(), "Invalid model")
 
+
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
-    filterString = 'test_' if filterString is None else filterString
+    filterString = "test_" if filterString is None else filterString
     suite = unittest.TestSuite()
     suite.addTests(unittest.makeSuite(ModelTester, filterString))
     unittest.TextTestRunner(verbosity=3, stream=sys.stdout).run(suite)

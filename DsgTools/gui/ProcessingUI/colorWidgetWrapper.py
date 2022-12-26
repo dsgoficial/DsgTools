@@ -24,29 +24,30 @@ from qgis.gui import QgsColorButton
 from qgis.PyQt.QtGui import QColor
 from processing.gui.wrappers import WidgetWrapper
 
+
 class ColorWidgetWrapper(WidgetWrapper):
     def __init__(self, *args, **kwargs):
         super(ColorWidgetWrapper, self).__init__(*args, **kwargs)
-    
+
     def createPanel(self):
         return QgsColorButton()
-    
+
     def createWidget(self):
         self.panel = self.createPanel()
         self.panel.dialogType = self.dialogType
         return self.panel
-    
+
     def parentLayerChanged(self, layer=None):
         pass
-    
+
     def setLayer(self, layer):
         pass
-    
+
     def setValue(self, value):
         self.panel.setColor(value)
-    
+
     def value(self):
         return self.panel.color()
-    
+
     def postInitialize(self, wrappers):
         pass

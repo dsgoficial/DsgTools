@@ -27,17 +27,20 @@ from datetime import datetime
 from qgis.PyQt import uic
 from qgis.utils import iface
 from qgis.PyQt.QtCore import Qt, pyqtSlot, pyqtSignal
-from qgis.PyQt.QtWidgets import (QWidget,
-                                 QFileDialog,
-                                 QHeaderView,
-                                 QMessageBox,
-                                 QTableWidgetItem,
-                                 QAbstractItemView,
-                                 QDoubleSpinBox)
+from qgis.PyQt.QtWidgets import (
+    QWidget,
+    QFileDialog,
+    QHeaderView,
+    QMessageBox,
+    QTableWidgetItem,
+    QAbstractItemView,
+    QDoubleSpinBox,
+)
 
 FORM_CLASS, _ = uic.loadUiType(
-    os.path.join(os.path.dirname(__file__), 'orderedTableWidget.ui')
+    os.path.join(os.path.dirname(__file__), "orderedTableWidget.ui")
 )
+
 
 class OrderedTableWidget(QWidget, FORM_CLASS):
     rowAdded = pyqtSignal(int)
@@ -48,15 +51,21 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
     ORDER_MODE_COUNT = 2
     ASC_ORDER, DESC_ORDER = range(ORDER_MODE_COUNT)
 
-    def __init__(self, parent=None, headerMap=None, showButtons=False,
-                 fileType=None, extension=None):
+    def __init__(
+        self,
+        parent=None,
+        headerMap=None,
+        showButtons=False,
+        fileType=None,
+        extension=None,
+    ):
         """
         Class constructor.
         :param headerMap: (dict) a map from each header to be shown and type of
                            cell content (e.g. widget or item).
         :param parent: (QtWidgets.*) any widget parent to current instance.
         :param showButtons: (bool) whether buttons are visible.
-        :param fileType: (str) ex/import file type extension name (e.g. JSON 
+        :param fileType: (str) ex/import file type extension name (e.g. JSON
                          file).
         :param fileType: (str) ex/import file type extension (e.g. .json).
         """
@@ -99,13 +108,13 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         self.clear()
         self.headers = headerMap
         self.tableWidget.setColumnCount(len(self.headers))
-        self.tableWidget.setHorizontalHeaderLabels([
-            p["header"] for p in self.headers.values()
-        ])
+        self.tableWidget.setHorizontalHeaderLabels(
+            [p["header"] for p in self.headers.values()]
+        )
 
     def replicateColumnValue(self, col):
         """
-        Replicates the value from the first cell of a colums based on column 
+        Replicates the value from the first cell of a colums based on column
         filled values.
         :param col: (int) column to have its first value replicated to the
                     other rows.
@@ -131,14 +140,15 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
             self.currentRowOrder[col] = self.ASC_ORDER
         else:
             # get next mode
-            self.currentRowOrder[col] = (self.currentRowOrder[col] + 1) % \
-                                        self.ORDER_MODE_COUNT
+            self.currentRowOrder[col] = (
+                self.currentRowOrder[col] + 1
+            ) % self.ORDER_MODE_COUNT
         contents = []
         for row in range(self.rowCount()):
             contents.append(self.row(row))
         self.clear()
         rev = self.currentRowOrder[col] == self.DESC_ORDER
-        for content in sorted(contents, key = lambda i: i[col], reverse=rev):
+        for content in sorted(contents, key=lambda i: i[col], reverse=rev):
             self.addRow(content)
 
     def setHeaderDoubleClickBehaviour(self, mode=None, cols=None):
@@ -151,13 +161,11 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         self.unsetHeaderDoubleClickBehaviour()
         self.headerDoubleClicked = {
-            "replicate" : self.replicateColumnValue,
-            "order" : self.orderColumn,
-            "none" : lambda col : None
+            "replicate": self.replicateColumnValue,
+            "order": self.orderColumn,
+            "none": lambda col: None,
         }[mode or "none"]
-        self.horizontalHeader().sectionDoubleClicked.connect(
-            self.headerDoubleClicked
-        )
+        self.horizontalHeader().sectionDoubleClicked.connect(self.headerDoubleClicked)
 
     def unsetHeaderDoubleClickBehaviour(self):
         """
@@ -179,7 +187,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         for row in range(self.rowCount()):
             self.tableWidget.removeRow(row)
         self.tableWidget.setRowCount(0)
-    
+
     def getValue(self, row, column):
         """
         Gets the value from a table cell. It uses column definitions from
@@ -211,14 +219,14 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
                       writeable data (int, float, str, dict, etc). Depends on
                       input widget.
         """
-        if self.headers[column]['type'] == 'item':
+        if self.headers[column]["type"] == "item":
             self.tableWidget.item(row, column).setText(value)
         else:
-            setter = self.headers[column]['setter']
+            setter = self.headers[column]["setter"]
             widget = self.tableWidget.cellWidget(row, column)
             if not setter:
                 raise Exception(
-                    self.tr('Setter method must be defined for widget type.')
+                    self.tr("Setter method must be defined for widget type.")
                 )
             getattr(widget, setter)(value)
 
@@ -250,10 +258,10 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param mode: (str) resize policy identifier.
         """
         policies = {
-            "interactive" : QHeaderView.Interactive,
-            "stretch" : QHeaderView.Stretch,
-            "fixed" : QHeaderView.Fixed,
-            "resizetocontents" : QHeaderView.ResizeToContents,
+            "interactive": QHeaderView.Interactive,
+            "stretch": QHeaderView.Stretch,
+            "fixed": QHeaderView.Fixed,
+            "resizetocontents": QHeaderView.ResizeToContents,
         }
         if col < 0 or col >= self.rowCount() or mode not in policies:
             return
@@ -283,9 +291,15 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         Adds a new row of items and fill it into table.
         :param row: (int) position to add the new row.
         """
-        row = self.rowCount() if row is None else \
-                0 if row < 0 else \
-                row if row <= self.rowCount() else self.rowCount()
+        row = (
+            self.rowCount()
+            if row is None
+            else 0
+            if row < 0
+            else row
+            if row <= self.rowCount()
+            else self.rowCount()
+        )
         # row = row if row is not None else self.rowCount()
         self.tableWidget.insertRow(row)
         for col, properties in self.headers.items():
@@ -296,9 +310,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
                     item.setFlags(Qt.ItemIsEditable)
                 self.tableWidget.setItem(row, col, item)
             else:
-                self.tableWidget.setCellWidget(
-                    row, col, properties["widget"]()
-                )
+                self.tableWidget.setCellWidget(row, col, properties["widget"]())
         self.rowAdded.emit(row)
 
     def addRow(self, contents, row=None):
@@ -307,9 +319,15 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param row: (int) position to add the new row.
         :param contents: (dict) a map to items to be filled.
         """
-        row = self.rowCount() if row is None else \
-                0 if row < 0 else \
-                row if row <= self.rowCount() else self.rowCount()
+        row = (
+            self.rowCount()
+            if row is None
+            else 0
+            if row < 0
+            else row
+            if row <= self.rowCount()
+            else self.rowCount()
+        )
         self.tableWidget.insertRow(row)
         for col, properties in self.headers.items():
             value = contents[col] if col in contents else None
@@ -359,8 +377,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param col: (int) item's column to be read.
         :return: (QTableWIdgetItem/QWidget) cell contents.
         """
-        if row >= self.rowCount() or col >= self.columnCount() \
-           or row < 0 or col < 0:
+        if row >= self.rowCount() or col >= self.columnCount() or row < 0 or col < 0:
             return None
         if self.headers[col]["type"] == "item":
             return self.tableWidget.item(row, col)
@@ -391,7 +408,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         return sorted(
             set(i.row() for i in self.tableWidget.selectionModel().selectedRows()),
-            reverse=reverseOrder
+            reverse=reverseOrder,
         )
 
     def selectedColumns(self, reverseOrder=False):
@@ -401,8 +418,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :return: (list-of-int) ordered list of selected columns' indexes.
         """
         return sorted(
-            set(i.column() for i in self.selectedIndexes()),
-            reverse=reverseOrder
+            set(i.column() for i in self.selectedIndexes()), reverse=reverseOrder
         )
 
     def selectRow(self, row):
@@ -564,7 +580,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
             QMessageBox.warning(
                 iface.mainWindow(),
                 self.tr("Unable to import {0}").format(filepath),
-                "Check file {0}:\n{1}".format(filepath, "\n".join(e.args))
+                "Check file {0}:\n{1}".format(filepath, "\n".join(e.args)),
             )
             self.setHeaders(self.headers)
 
@@ -581,7 +597,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
             QMessageBox.warning(
                 iface.mainWindow(),
                 self.tr("Unable to export {0}").format(filepath),
-                "Check file {0}:\n{1}".format(filepath, "\n".join(e.args))
+                "Check file {0}:\n{1}".format(filepath, "\n".join(e.args)),
             )
 
     @pyqtSlot()
@@ -592,10 +608,8 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         fd = QFileDialog()
         # fd.setDirectory(QDir.homePath())
         filepath = fd.getOpenFileName(
-            caption=self.tr("Select a {0} to export data from")\
-                        .format(self.fileType),
-            filter=self.tr("{0} (*{1})")\
-                       .format(self.fileType, self.extension),
+            caption=self.tr("Select a {0} to export data from").format(self.fileType),
+            filter=self.tr("{0} (*{1})").format(self.fileType, self.extension),
         )
         filepath = filepath[0] if isinstance(filepath, tuple) else filepath
         if filepath:
@@ -606,7 +620,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         Gets time and date from the system. Format: "dd/mm/yyyy HH:MM:SS".
         :return: (str) current's date and time
         """
-        paddle = lambda n : str(n) if n > 9 else "0{0}".format(n)
+        paddle = lambda n: str(n) if n > 9 else "0{0}".format(n)
         now = datetime.now()
         return "{day}/{month}/{year} {hour}:{minute}:{second}".format(
             year=now.year,
@@ -614,7 +628,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
             day=paddle(now.day),
             hour=paddle(now.hour),
             minute=paddle(now.minute),
-            second=paddle(now.second)
+            second=paddle(now.second),
         )
 
     def metadata(self, updated=False):
@@ -624,9 +638,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
                  modification history.
         """
         if not hasattr(self, "_metadata"):
-            self._metadata = {
-                "lastModified": self.now()
-            }
+            self._metadata = {"lastModified": self.now()}
         elif updated:
             self._metadata["lastModified"] = self.now()
         return dict(self._metadata)
@@ -643,15 +655,13 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
     @pyqtSlot()
     def on_savePushButton_clicked(self):
         """
-        Collects filepath and 
+        Collects filepath and
         """
         fd = QFileDialog()
         # fd.setDirectory(QDir.homePath())
         filepath = fd.getSaveFileName(
-            caption=self.tr("Select a {0} to export data to")\
-                        .format(self.fileType),
-            filter=self.tr("{0} (*{1})")\
-                       .format(self.fileType, self.extension),
+            caption=self.tr("Select a {0} to export data to").format(self.fileType),
+            filter=self.tr("{0} (*{1})").format(self.fileType, self.extension),
         )
         filepath = filepath[0] if isinstance(filepath, tuple) else filepath
         if filepath:

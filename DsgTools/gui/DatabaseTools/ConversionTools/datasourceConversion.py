@@ -31,18 +31,26 @@ from qgis.utils import iface
 from qgis.core import Qgis, QgsApplication, QgsMessageLog, Qgis
 from qgis.gui import QgsCollapsibleGroupBox, QgsMessageBar
 
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.textBrowserDialog import TextBrowserDialog
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import (
+    GenericDialogLayout,
+)
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.textBrowserDialog import (
+    TextBrowserDialog,
+)
 from DsgTools.core.DbTools.dbConverter import DbConverter
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'datasourceConversion.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "datasourceConversion.ui")
+)
+
 
 class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
     # enum for column ordering
     COLUMN_COUNT = 7
     # InDs, Filter, SpatialFilterFanOut, InEdgv, OutDs, OutEdgv, outCrs, ConversionMode = list(range(COLUMN_COUNT))
-    InDs, Filter, InEdgv, OutDs, OutEdgv, outCrs, ConversionMode = list(range(COLUMN_COUNT))
+    InDs, Filter, InEdgv, OutDs, OutEdgv, outCrs, ConversionMode = list(
+        range(COLUMN_COUNT)
+    )
 
     def __init__(self, manager, parentMenu, parentButton, parent=None):
         """
@@ -61,48 +69,82 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.datasourceManagementWidgetOut.fillSupportedDatasources(inputPage=False)
         self.connectToolSignals()
         # initiate widget dicts
-        self.outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
-        self.inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
+        self.outDs = self.getWidgetNameDict(
+            self.datasourceManagementWidgetOut.activeDrivers
+        )
+        self.inDs = self.getWidgetNameDict(
+            self.datasourceManagementWidgetIn.activeDrivers
+        )
         # set table to its initial state
         self.resetTable(enabled=True)
         # set pages titles
-        self.page(0).setTitle(self.tr('Input Datasources'))
-        self.page(1).setTitle(self.tr('Output Datasources'))
-        self.page(2).setTitle(self.tr('Conversion Map and Summary'))
+        self.page(0).setTitle(self.tr("Input Datasources"))
+        self.page(1).setTitle(self.tr("Output Datasources"))
+        self.page(2).setTitle(self.tr("Conversion Map and Summary"))
         # set policy to make cell size adjust to content
-        self.tableWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
-        
+        self.tableWidget.setSizeAdjustPolicy(
+            QtWidgets.QAbstractScrollArea.AdjustToContents
+        )
+
     def connectToolSignals(self):
         """
         Connects all tool generic signals.
         """
         # if any widget was turned active/inactive
-        self.datasourceManagementWidgetIn.activeWidgetAdded.connect(self.addInputDatasource)
-        self.datasourceManagementWidgetOut.activeWidgetAdded.connect(self.addOutputDatasource)
-        self.datasourceManagementWidgetIn.activeWidgetRemoved.connect(self.removeInputDatasource)
-        self.datasourceManagementWidgetOut.activeWidgetRemoved.connect(self.removeOutputDatasource)
+        self.datasourceManagementWidgetIn.activeWidgetAdded.connect(
+            self.addInputDatasource
+        )
+        self.datasourceManagementWidgetOut.activeWidgetAdded.connect(
+            self.addOutputDatasource
+        )
+        self.datasourceManagementWidgetIn.activeWidgetRemoved.connect(
+            self.removeInputDatasource
+        )
+        self.datasourceManagementWidgetOut.activeWidgetRemoved.connect(
+            self.removeOutputDatasource
+        )
         # if datasource is changed (e.g. user changed his postgis database selection, for instance)
-        self.datasourceManagementWidgetIn.widgetUpdated.connect(self.updateInputInformation)
-        self.datasourceManagementWidgetOut.widgetUpdated.connect(self.updateOutputInformation)
+        self.datasourceManagementWidgetIn.widgetUpdated.connect(
+            self.updateInputInformation
+        )
+        self.datasourceManagementWidgetOut.widgetUpdated.connect(
+            self.updateOutputInformation
+        )
         # erase all options settled
         self.refreshPushButton.clicked.connect(self.setTableInitialState)
         # conversion mapping start
-        self.button(QtWidgets.QWizard.FinishButton).clicked.connect(self.startConversion)
+        self.button(QtWidgets.QWizard.FinishButton).clicked.connect(
+            self.startConversion
+        )
 
     def disconnectToolSignals(self):
         """
         Connects all tool generic signals.
         """
         # if any widget was turned active/inactive
-        self.datasourceManagementWidgetIn.activeWidgetAdded.disconnect(self.addInputDatasource)
-        self.datasourceManagementWidgetOut.activeWidgetAdded.disconnect(self.addOutputDatasource)
-        self.datasourceManagementWidgetIn.activeWidgetRemoved.disconnect(self.removeInputDatasource)
-        self.datasourceManagementWidgetOut.activeWidgetRemoved.disconnect(self.removeOutputDatasource)
+        self.datasourceManagementWidgetIn.activeWidgetAdded.disconnect(
+            self.addInputDatasource
+        )
+        self.datasourceManagementWidgetOut.activeWidgetAdded.disconnect(
+            self.addOutputDatasource
+        )
+        self.datasourceManagementWidgetIn.activeWidgetRemoved.disconnect(
+            self.removeInputDatasource
+        )
+        self.datasourceManagementWidgetOut.activeWidgetRemoved.disconnect(
+            self.removeOutputDatasource
+        )
         # if datasource is changed (e.g. user changed his postgis database selection, for instance)
-        self.datasourceManagementWidgetIn.widgetUpdated.disconnect(self.updateInputInformation)
-        self.datasourceManagementWidgetOut.widgetUpdated.disconnect(self.updateOutputInformation)
+        self.datasourceManagementWidgetIn.widgetUpdated.disconnect(
+            self.updateInputInformation
+        )
+        self.datasourceManagementWidgetOut.widgetUpdated.disconnect(
+            self.updateOutputInformation
+        )
         self.refreshPushButton.clicked.disconnect(self.setTableInitialState)
-        self.button(QtWidgets.QWizard.FinishButton).clicked.disconnect(self.startConversion)
+        self.button(QtWidgets.QWizard.FinishButton).clicked.disconnect(
+            self.startConversion
+        )
 
     def getWidgetNameDict(self, d):
         """
@@ -121,7 +163,10 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         Replicates first row value to all the other rows from a selected column.
         :param col: (int) column to have its first row replicated.
         """
-        if col in [DatasourceConversion.OutDs, DatasourceConversion.ConversionMode]: #, DatasourceConversion.SpatialFilterFanOut]:
+        if col in [
+            DatasourceConversion.OutDs,
+            DatasourceConversion.ConversionMode,
+        ]:  # , DatasourceConversion.SpatialFilterFanOut]:
             value = None
             for row in range(self.tableWidget.rowCount()):
                 widget = self.getRowContents(row=row)[col]
@@ -155,19 +200,23 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.tableWidget.setRowCount(0)
         # map header to its enum
         headerDict = {
-            DatasourceConversion.InDs : self.tr("Input"),
-            DatasourceConversion.Filter : self.tr("Filters"),
+            DatasourceConversion.InDs: self.tr("Input"),
+            DatasourceConversion.Filter: self.tr("Filters"),
             # DatasourceConversion.SpatialFilterFanOut : self.tr("Spatial Fan-out"),
-            DatasourceConversion.InEdgv : self.tr("In: EDGV Version"),
-            DatasourceConversion.OutDs : self.tr("Output"),
-            DatasourceConversion.outCrs : self.tr("Out: CRS"),
-            DatasourceConversion.OutEdgv : self.tr("Out: EDGV Version"),
-            DatasourceConversion.ConversionMode : self.tr("Conversion Mode")
+            DatasourceConversion.InEdgv: self.tr("In: EDGV Version"),
+            DatasourceConversion.OutDs: self.tr("Output"),
+            DatasourceConversion.outCrs: self.tr("Out: CRS"),
+            DatasourceConversion.OutEdgv: self.tr("Out: EDGV Version"),
+            DatasourceConversion.ConversionMode: self.tr("Conversion Mode"),
         }
         # make the order always follow as presented at enum
-        self.tableWidget.setHorizontalHeaderLabels(list([headerDict[i] for i in range(DatasourceConversion.COLUMN_COUNT)]))
+        self.tableWidget.setHorizontalHeaderLabels(
+            list([headerDict[i] for i in range(DatasourceConversion.COLUMN_COUNT)])
+        )
         # connect header double click signal to first row contents replicate to the other rows
-        self.tableWidget.horizontalHeader().sectionDoubleClicked.connect(self.replicateFirstRowContent)
+        self.tableWidget.horizontalHeader().sectionDoubleClicked.connect(
+            self.replicateFirstRowContent
+        )
 
     def addInputDatasource(self, containerWidget, resizeColumns=True):
         """
@@ -175,26 +224,43 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         :param containerWidget:
         :param resizeColumns: (bool)
         """
-        self.inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
+        self.inDs = self.getWidgetNameDict(
+            self.datasourceManagementWidgetIn.activeDrivers
+        )
         # create a 'function' to get datasource exposing name and create the output list
-        getNameAlias = lambda widget : '{0}: {1}'.format(widget.groupBox.title(), widget.getDatasourceConnectionName())
+        getNameAlias = lambda widget: "{0}: {1}".format(
+            widget.groupBox.title(), widget.getDatasourceConnectionName()
+        )
         # use it in a map loop to get output list
-        outDsList = [self.tr('Select a datasource')] + sorted(list(map(getNameAlias, self.outDs.values())))
+        outDsList = [self.tr("Select a datasource")] + sorted(
+            list(map(getNameAlias, self.outDs.values()))
+        )
         # update table rows #
         lastRow = self.tableWidget.rowCount()
         self.tableWidget.insertRow(lastRow)
         # crsIcon = QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'CRS_qgis.svg'))
         # create the item containing current loop's input ds
-        t = '{0}: {1}'.format(containerWidget.groupBox.title(), containerWidget.getDatasourceConnectionName())
-        self.addItemToTable(col=DatasourceConversion.InDs, row=lastRow, text=t, isEditable=False)
+        t = "{0}: {1}".format(
+            containerWidget.groupBox.title(),
+            containerWidget.getDatasourceConnectionName(),
+        )
+        self.addItemToTable(
+            col=DatasourceConversion.InDs, row=lastRow, text=t, isEditable=False
+        )
         # populate edgv versions column
         # input is always text
         t = containerWidget.connectionWidget.getDatasourceEdgvVersion()
-        self.addItemToTable(col=DatasourceConversion.InEdgv, row=lastRow, text=t, isEditable=False)
+        self.addItemToTable(
+            col=DatasourceConversion.InEdgv, row=lastRow, text=t, isEditable=False
+        )
         # create filter push button
         filterPushButton = QtWidgets.QPushButton()
         filterPushButton.setIcon(
-            QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'filter.png'))
+            QIcon(
+                os.path.join(
+                    os.path.dirname(__file__), "..", "..", "..", "icons", "filter.png"
+                )
+            )
         )
         # # create  push button
         # fanOutCheckBox = QtWidgets.QCheckBox()
@@ -207,18 +273,32 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         outDsComboBox.addItems(outDsList)
         # create combobox containing conversion mode options
         convModeComboBox = QtWidgets.QComboBox()
-        convModeComboBox.addItems([
-            self.tr('Choose Conversion Mode'), self.tr('Flexible Conversion'), self.tr('Strict Conversion')
-        ])
+        convModeComboBox.addItems(
+            [
+                self.tr("Choose Conversion Mode"),
+                self.tr("Flexible Conversion"),
+                self.tr("Strict Conversion"),
+            ]
+        )
         # set each widget to their column
-        self.tableWidget.setCellWidget(lastRow, DatasourceConversion.OutDs, outDsComboBox)
-        self.tableWidget.setCellWidget(lastRow, DatasourceConversion.Filter, filterPushButton)
+        self.tableWidget.setCellWidget(
+            lastRow, DatasourceConversion.OutDs, outDsComboBox
+        )
+        self.tableWidget.setCellWidget(
+            lastRow, DatasourceConversion.Filter, filterPushButton
+        )
         # self.tableWidget.setCellWidget(lastRow, DatasourceConversion.SpatialFilterFanOut, fanOutCheckBox)
-        self.tableWidget.setCellWidget(lastRow, DatasourceConversion.ConversionMode, convModeComboBox)
+        self.tableWidget.setCellWidget(
+            lastRow, DatasourceConversion.ConversionMode, convModeComboBox
+        )
         # start filter widget
-        filterPushButton.clicked.connect(partial(self.prepareRowFilterDialog, container=containerWidget))
+        filterPushButton.clicked.connect(
+            partial(self.prepareRowFilterDialog, container=containerWidget)
+        )
         # set table output information population to its widget
-        outDsComboBox.currentIndexChanged.connect(partial(self.fillOutDsInfoRow, row=lastRow))
+        outDsComboBox.currentIndexChanged.connect(
+            partial(self.fillOutDsInfoRow, row=lastRow)
+        )
         if resizeColumns:
             # resize to contents
             self.tableWidget.resizeColumnsToContents()
@@ -226,42 +306,59 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
     def removeInputDatasource(self, containerWidget):
         """
         Removes the map table row containing a given input information.
-        :param containerWidget: (DatasourceContainerWidget) input container widget. 
+        :param containerWidget: (DatasourceContainerWidget) input container widget.
         """
         row, _ = self.getInputDatasourceRow(inputDatasourceWidget=containerWidget)
         self.tableWidget.removeRow(row)
         # after the row is removed, it is also necessary to update datasources names, given that group boxes were renamed
         for row in range(self.tableWidget.rowCount()):
             inDs = self.getRowContents(row=row)[DatasourceConversion.InDs]
-            widget = self.inDs[inDs.split(':')[0]]
-            t = '{0}: {1}'.format(widget.groupBox.title(), widget.getDatasourceConnectionName())
-            self.addItemToTable(col=DatasourceConversion.InDs, row=row, text=t, isEditable=False)
+            widget = self.inDs[inDs.split(":")[0]]
+            t = "{0}: {1}".format(
+                widget.groupBox.title(), widget.getDatasourceConnectionName()
+            )
+            self.addItemToTable(
+                col=DatasourceConversion.InDs, row=row, text=t, isEditable=False
+            )
         # update input map - if map was updated before it would not be possible to retrieve widget (name changed)
-        self.inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
+        self.inDs = self.getWidgetNameDict(
+            self.datasourceManagementWidgetIn.activeDrivers
+        )
 
     def addOutputDatasource(self, containerWidget):
         """
         Updates datasource options for every row in table widget.
-        :param containerWidget: (DatasourceContainerWidget) output container widget. 
+        :param containerWidget: (DatasourceContainerWidget) output container widget.
         """
         # update output map
-        self.outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
+        self.outDs = self.getWidgetNameDict(
+            self.datasourceManagementWidgetOut.activeDrivers
+        )
         # get new datasource info
-        dsName = '{0}: {1}'.format(containerWidget.groupBox.title(), containerWidget.getDatasourceConnectionName())
+        dsName = "{0}: {1}".format(
+            containerWidget.groupBox.title(),
+            containerWidget.getDatasourceConnectionName(),
+        )
         for row in range(self.tableWidget.rowCount()):
             outCombobox = self.getRowContents(row=row)[DatasourceConversion.OutDs]
             outCombobox.addItem(dsName)
 
     def removeOutputDatasource(self, containerWidget):
         """
-        Removes output option from evey row in table widget. 
-        :param containerWidget: (DatasourceContainerWidget) output container widget. 
+        Removes output option from evey row in table widget.
+        :param containerWidget: (DatasourceContainerWidget) output container widget.
         """
         # update output map
-        self.outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
+        self.outDs = self.getWidgetNameDict(
+            self.datasourceManagementWidgetOut.activeDrivers
+        )
         # get new datasource info
-        getNewDsNames = lambda widget : '{0}: {1}'.format(widget.groupBox.title(), widget.getDatasourceConnectionName())
-        newDsNames = [self.tr('Select a datasource')] + sorted(list(map(getNewDsNames, self.outDs.values())))
+        getNewDsNames = lambda widget: "{0}: {1}".format(
+            widget.groupBox.title(), widget.getDatasourceConnectionName()
+        )
+        newDsNames = [self.tr("Select a datasource")] + sorted(
+            list(map(getNewDsNames, self.outDs.values()))
+        )
         groupTitle = containerWidget.groupBox.title()
         # initiate its index
         dsIdx = None
@@ -271,7 +368,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
                 # retrieve replaced datasource old index
                 if dsIdx is None:
                     # retrive old name
-                    oldName = ''
+                    oldName = ""
                     for i in range(outDsCombobox.count()):
                         if groupTitle in outDsCombobox.itemText(i):
                             oldName = outDsCombobox.itemText(i)
@@ -299,29 +396,42 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
     def updateInputInformation(self, containerWidget):
         """
         Updates input information.
-        :param containerWidget: (DatasourceContainerWidget) input container widget. 
+        :param containerWidget: (DatasourceContainerWidget) input container widget.
         """
         # update input map
-        self.inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
+        self.inDs = self.getWidgetNameDict(
+            self.datasourceManagementWidgetIn.activeDrivers
+        )
         # get input row
         row, _ = self.getInputDatasourceRow(inputDatasourceWidget=containerWidget)
         # get new datasource info
-        dsName = '{0}: {1}'.format(containerWidget.groupBox.title(), containerWidget.getDatasourceConnectionName())
+        dsName = "{0}: {1}".format(
+            containerWidget.groupBox.title(),
+            containerWidget.getDatasourceConnectionName(),
+        )
         inEdgv = containerWidget.connectionWidget.getDatasourceEdgvVersion()
         # update edgv and input name
-        self.addItemToTable(col=DatasourceConversion.InDs, row=row, text=dsName, isEditable=False)
-        self.addItemToTable(col=DatasourceConversion.InEdgv, row=row, text=inEdgv, isEditable=False)
+        self.addItemToTable(
+            col=DatasourceConversion.InDs, row=row, text=dsName, isEditable=False
+        )
+        self.addItemToTable(
+            col=DatasourceConversion.InEdgv, row=row, text=inEdgv, isEditable=False
+        )
 
     def updateOutputInformation(self, containerWidget):
         """
         Updates input information.
-        :param containerWidget: (DatasourceContainerWidget) output container widget. 
+        :param containerWidget: (DatasourceContainerWidget) output container widget.
         """
         # update output map
-        self.outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
+        self.outDs = self.getWidgetNameDict(
+            self.datasourceManagementWidgetOut.activeDrivers
+        )
         # get new datasource info
         groupTitle = containerWidget.groupBox.title()
-        dsName = '{0}: {1}'.format(groupTitle, containerWidget.getDatasourceConnectionName())
+        dsName = "{0}: {1}".format(
+            groupTitle, containerWidget.getDatasourceConnectionName()
+        )
         outEdgv = containerWidget.connectionWidget.getDatasourceEdgvVersion()
         # initiate its index
         dsIdx = None
@@ -331,7 +441,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
                 # retrieve replaced datasource old index
                 if dsIdx is None:
                     # retrive old name
-                    oldName = ''
+                    oldName = ""
                     for i in range(outDsCombobox.count()):
                         if groupTitle in outDsCombobox.itemText(i):
                             oldName = outDsCombobox.itemText(i)
@@ -356,8 +466,10 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         inDs = self.tableWidget.item(row, DatasourceConversion.InDs).text()
         inEdgv = self.tableWidget.item(row, DatasourceConversion.InEdgv).text()
         outEdgvItem = self.tableWidget.item(row, DatasourceConversion.OutEdgv)
-        outEdgv = outEdgvItem.text() if outEdgvItem else ''
-        conversionMode = self.tableWidget.cellWidget(row, DatasourceConversion.ConversionMode)
+        outEdgv = outEdgvItem.text() if outEdgvItem else ""
+        conversionMode = self.tableWidget.cellWidget(
+            row, DatasourceConversion.ConversionMode
+        )
         # output datasource, input and output SRC and filter status are always a QWidget
         outDs = self.tableWidget.cellWidget(row, DatasourceConversion.OutDs)
         # however, output info might not yet have been filled
@@ -386,12 +498,27 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         inputText = inputDatasourceWidget.groupBox.title()
         for row in range(self.tableWidget.rowCount()):
             # inDs, _filter, spatialFanOut, inEdgv, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
-            inDs, _filter, inEdgv, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
+            (
+                inDs,
+                _filter,
+                inEdgv,
+                outDs,
+                outEdgv,
+                outCrs,
+                conversionMode,
+            ) = self.getRowContents(row=row)
             if inputText in inDs:
                 # return row, [inDs, _filter, spatialFanOut, inEdgv, outDs, outEdgv, outCrs, conversionMode]
-                return row, [inDs, _filter, inEdgv, outDs, outEdgv, outCrs, conversionMode]
+                return row, [
+                    inDs,
+                    _filter,
+                    inEdgv,
+                    outDs,
+                    outEdgv,
+                    outCrs,
+                    conversionMode,
+                ]
         return -1, []
-
 
     def clearOutDsInforRow(self, row):
         """
@@ -406,7 +533,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
 
     def fillOutDsInfoRow(self, row):
         """
-        Fills out row with output info for each output column. In here, ouput SRC and EDGV are filled. 
+        Fills out row with output info for each output column. In here, ouput SRC and EDGV are filled.
         :param row: (int) row index to have its output columns populated.
         :return: (list-of-object) return a list containing (str) output EDGV version and (QPushButton) output SRC.
         """
@@ -419,8 +546,12 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         outDs = self.getRowContents(row=row)[DatasourceConversion.OutDs]
         # widget dict keys are defined as group title, which is part of outDs current text
         if outDs:
-            groupTitle = outDs.currentText().split(':')[0]
-            crsIcon = QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'CRS_qgis.svg'))
+            groupTitle = outDs.currentText().split(":")[0]
+            crsIcon = QIcon(
+                os.path.join(
+                    os.path.dirname(__file__), "..", "..", "..", "icons", "CRS_qgis.svg"
+                )
+            )
         else:
             return []
         if groupTitle in self.outDs:
@@ -431,10 +562,10 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             outCrs.setIcon(crsIcon)
             # get new text item to add output datasource
             edgvOut = containerWidget.connectionWidget.getDatasourceEdgvVersion()
-            edgvOut = edgvOut[5:] if 'EDGV' in edgvOut else edgvOut
+            edgvOut = edgvOut[5:] if "EDGV" in edgvOut else edgvOut
             itemEdgvOut = QtWidgets.QTableWidgetItem()
             itemEdgvOut.setText(edgvOut)
-            itemEdgvOut.setFlags(Qt.ItemIsEditable) # not editable
+            itemEdgvOut.setFlags(Qt.ItemIsEditable)  # not editable
             # add both to table
             self.tableWidget.setCellWidget(row, DatasourceConversion.outCrs, outCrs)
             self.tableWidget.setItem(row, DatasourceConversion.OutEdgv, itemEdgvOut)
@@ -443,7 +574,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # if is not controlled, clear line
             return []
 
-    def getNewTableItem(self, text='', isEditable=True):
+    def getNewTableItem(self, text="", isEditable=True):
         """
         Gets an item to be added to the table that may be set to not be editable.
         :param text: (str) name to be exposed on table cell.
@@ -453,10 +584,10 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         item = QtWidgets.QTableWidgetItem()
         item.setText(text)
         if not isEditable:
-            item.setFlags(Qt.ItemIsEditable) # not editable
+            item.setFlags(Qt.ItemIsEditable)  # not editable
         return item
 
-    def addItemToTable(self, col, row, text='', isEditable=True):
+    def addItemToTable(self, col, row, text="", isEditable=True):
         """
         Adds an item to the mapping table into a given column and row.
         :param col: (int) column containing new item.
@@ -491,14 +622,24 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         self.resetTable(enabled=True)
         # output ds dict/list
-        self.outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
+        self.outDs = self.getWidgetNameDict(
+            self.datasourceManagementWidgetOut.activeDrivers
+        )
         # create a 'function' to get datasource exposing name and create the output list
-        getNameAlias = lambda widget : '{0}: {1}'.format(widget.groupBox.title(), widget.getDatasourceConnectionName())
-        outDsList = [self.tr('Select a datasource')] + sorted(list(map(getNameAlias, self.outDs.values())))
+        getNameAlias = lambda widget: "{0}: {1}".format(
+            widget.groupBox.title(), widget.getDatasourceConnectionName()
+        )
+        outDsList = [self.tr("Select a datasource")] + sorted(
+            list(map(getNameAlias, self.outDs.values()))
+        )
         # input ds dict/list
-        self.inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
+        self.inDs = self.getWidgetNameDict(
+            self.datasourceManagementWidgetIn.activeDrivers
+        )
         for groupTitle in sorted(self.inDs.keys()):
-            self.addInputDatasource(containerWidget=self.inDs[groupTitle], resizeColumns=False)
+            self.addInputDatasource(
+                containerWidget=self.inDs[groupTitle], resizeColumns=False
+            )
         self.tableWidget.resizeColumnsToContents()
 
     def getConversionMap(self):
@@ -516,23 +657,35 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # initiate this row's mapping dict and fill it
             rowMapping = dict()
             # get input information to be mapped - input datasource identification and filtering options
-            containerWidget = self.inDs[inDs.split(':')[0]] # input group box title (widget's dict key)
-            inputDatasourceId =  containerWidget.connectionWidget.getDatasourcePath()
+            containerWidget = self.inDs[
+                inDs.split(":")[0]
+            ]  # input group box title (widget's dict key)
+            inputDatasourceId = containerWidget.connectionWidget.getDatasourcePath()
             inputFilteredLayers = containerWidget.filters()
             # get output information to be mapped - output datasource identification and if it's
-            containerWidget = self.outDs[outDs.currentText().split(':')[0]] # output group box title (widget's dict key)
+            containerWidget = self.outDs[
+                outDs.currentText().split(":")[0]
+            ]  # output group box title (widget's dict key)
             # populate row's conversion map
-            rowMapping['outDs'] = containerWidget.connectionWidget.getDatasourcePath(),  # still to decide what to fill up in here
-            rowMapping['outDs'] = rowMapping['outDs'][-1] # I DON'T KNOW WHY, BUT THAT'S THE ONLY WAY THIS COMES OUT AS A TUPLE.
-            rowMapping['filter'] = inputFilteredLayers
+            rowMapping["outDs"] = (
+                containerWidget.connectionWidget.getDatasourcePath(),
+            )  # still to decide what to fill up in here
+            rowMapping["outDs"] = rowMapping["outDs"][
+                -1
+            ]  # I DON'T KNOW WHY, BUT THAT'S THE ONLY WAY THIS COMES OUT AS A TUPLE.
+            rowMapping["filter"] = inputFilteredLayers
             # rowMapping['spatialFanOut'] = spatialFanOut.isChecked()
             # parameter indicating whether it is a new datasource
-            rowMapping['createDs'] = self.tr('new') in outDs.currentText().split(':')[0]
-            if self.tr('new') in outDs.currentText().split(':')[0]:
+            rowMapping["createDs"] = self.tr("new") in outDs.currentText().split(":")[0]
+            if self.tr("new") in outDs.currentText().split(":")[0]:
                 # if a new datasource will be created, EDGV version and CRS will be needed
-                rowMapping['edgv'] = containerWidget.connectionWidget.selectionWidget.edgvVersion()
-                rowMapping['crs'] = containerWidget.connectionWidget.selectionWidget.authId()
-            rowMapping['conversionMode'] = conversionMode.currentIndex()
+                rowMapping[
+                    "edgv"
+                ] = containerWidget.connectionWidget.selectionWidget.edgvVersion()
+                rowMapping[
+                    "crs"
+                ] = containerWidget.connectionWidget.selectionWidget.authId()
+            rowMapping["conversionMode"] = conversionMode.currentIndex()
             # it is possible for the same dataset to be chosen for different outputs, in order to prevent instantiating it
             # more than once, map it all to the same dict entry and control layer/feature flux through filter entry
             if inputDatasourceId not in conversionMap:
@@ -557,8 +710,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         conversionMap = self.getConversionMap()
         if not filepath:
-            filepath = os.path.join(os.path.dirname(__file__), 'conversion_map.json')
-        with open(filepath, 'w') as fp:
+            filepath = os.path.join(os.path.dirname(__file__), "conversion_map.json")
+        with open(filepath, "w") as fp:
             json.dump(conversionMap, fp, indent=4, sort_keys=True)
 
     def validateJson(self, inputJson):
@@ -579,7 +732,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         :param edgvOut: (str) output EDGV version.
         """
         # TO DO
-        return edgvIn == edgvOut and edgvOut != ''
+        return edgvIn == edgvOut and edgvOut != ""
 
     def validate(self):
         """
@@ -594,10 +747,12 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             msgBar = QgsMessageBar(self)
             # if window is resized, msgBar stays, not ideal, but works for now
             # maybe we should connect to some parent resizing signal or something...
-            msgBar.resize(QSize(self.geometry().size().width(), msgBar.geometry().height()))
-            msgBar.pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
-            QgsMessageLog.logMessage(msg, 'DSGTools Plugin', Qgis.Critical)
-        return msg == ''
+            msgBar.resize(
+                QSize(self.geometry().size().width(), msgBar.geometry().height())
+            )
+            msgBar.pushMessage(self.tr("Warning!"), msg, level=Qgis.Warning, duration=5)
+            QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.Critical)
+        return msg == ""
 
     def validateCurrentPage(self):
         """
@@ -616,7 +771,10 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         if self.tableWidget.rowCount() == 0:
             return self.tr("No datasets were selected (input or output)")
-        for obj in [self.datasourceManagementWidgetIn, self.datasourceManagementWidgetOut]:
+        for obj in [
+            self.datasourceManagementWidgetIn,
+            self.datasourceManagementWidgetOut,
+        ]:
             # validate in/ouput
             msg = obj.validate()
             if msg:
@@ -627,31 +785,54 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         for row in range(self.tableWidget.rowCount()):
             # get row contents
             # inDsName, _, _, inEdgv, outDs, _, outEdgv, conversionMode = self.getRowContents(row=row)
-            inDsName, _, inEdgv, outDs, outEdgv, _, conversionMode = self.getRowContents(row=row)
+            (
+                inDsName,
+                _,
+                inEdgv,
+                outDs,
+                outEdgv,
+                _,
+                conversionMode,
+            ) = self.getRowContents(row=row)
             outDsName = outDs.currentText()
             # FTer was discontinued. conv should not allow dataset creation for this EDGV version
-            if outEdgv == 'EDGV 2.1.3 F Ter' and self.tr('new') in outDsName.split(' #')[0]:
-                return self.tr('EDGV 2.1.3 F Ter model was terminated. DSGTools no longer support its creation (row {1})').format(inDsName, row + 1)
+            if (
+                outEdgv == "EDGV 2.1.3 F Ter"
+                and self.tr("new") in outDsName.split(" #")[0]
+            ):
+                return self.tr(
+                    "EDGV 2.1.3 F Ter model was terminated. DSGTools no longer support its creation (row {1})"
+                ).format(inDsName, row + 1)
             # check if a conversion mode was selected
-            if conversionMode.currentText() == self.tr('Choose Conversion Mode'):
-                return self.tr('Conversion mode not selected for input {0} (row {1})').format(inDsName, row + 1)
+            if conversionMode.currentText() == self.tr("Choose Conversion Mode"):
+                return self.tr(
+                    "Conversion mode not selected for input {0} (row {1})"
+                ).format(inDsName, row + 1)
             # check if EDGV versions are compatible
             if not self.checkEdgvConversion(edgvIn=inEdgv, edgvOut=outEdgv):
-                return self.tr('Conversion map unavailable for {0} to {1} (row {2})').format(inEdgv, outEdgv, row + 1)
+                return self.tr(
+                    "Conversion map unavailable for {0} to {1} (row {2})"
+                ).format(inEdgv, outEdgv, row + 1)
             # # add input to the checked ones list
             # inChecked.append(inDsName)
             # add output to checked ones list, if it's not 'select a datasource'
-            if outDsName == self.tr('Select a datasource'):
-                return self.tr('Output datasource not selected for {0} (row {1})').format(inDsName, row + 1)
+            if outDsName == self.tr("Select a datasource"):
+                return self.tr(
+                    "Output datasource not selected for {0} (row {1})"
+                ).format(inDsName, row + 1)
             outChecked.add(outDsName)
         # last check: if all chosen outputs are listed
-        splitAlias = lambda x : x.split(':')[0]
+        splitAlias = lambda x: x.split(":")[0]
         if len(outChecked) != len(self.outDs):
             # if not all outputs were used, user should remove it (or may have wrongfully chosen a different dataset)
             notUsed = set(self.outDs.keys()) - set(map(splitAlias, outChecked))
-            msg = self.tr('Output datasource {0} was not used.') if len(notUsed) == 1 else self.tr('Output datasources {0} were not used.')
+            msg = (
+                self.tr("Output datasource {0} was not used.")
+                if len(notUsed) == 1
+                else self.tr("Output datasources {0} were not used.")
+            )
             return msg.format(", ".join(notUsed))
-        return ''
+        return ""
 
     def cancelConversion(self, conversionTask, summaryDlg):
         """
@@ -664,7 +845,11 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             summaryDlg.cancelPushButton.setEnabled(False)
             conversionTask.blockSignals(True)
             summaryDlg.progressBar.setValue(0)
-            summaryDlg.addToHtml(self.tr('<span style="color: #ff0000;"><br><p>CONVERSION TASK WAS CANCELLED.</span></p>'))
+            summaryDlg.addToHtml(
+                self.tr(
+                    '<span style="color: #ff0000;"><br><p>CONVERSION TASK WAS CANCELLED.</span></p>'
+                )
+            )
             summaryDlg.savePushButton.setEnabled(True)
 
     def run(self, conversionMap):
@@ -686,7 +871,9 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # QgsApplication.taskManager().addTask(task)
         # summaryDlg.show()
         # conversion off the thread
-        conv = DbConverter(iface, conversionMap, description=self.tr('DSGTools Dataset Conversion'))
+        conv = DbConverter(
+            iface, conversionMap, description=self.tr("DSGTools Dataset Conversion")
+        )
         summaryDlg = TextBrowserDialog(parent=iface.mainWindow())
         summaryDlg.cancelPushButton.hide()
         summaryDlg.progressBar.hide()
@@ -694,17 +881,25 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             QtWidgets.QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             if not conv.run():
                 # advise conversion has failed
-                msg = self.tr("Dataset conversion has finished with some errors. Check conversion log for details.")
-                iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
+                msg = self.tr(
+                    "Dataset conversion has finished with some errors. Check conversion log for details."
+                )
+                iface.messageBar().pushMessage(
+                    self.tr("Warning!"), msg, level=Qgis.Warning, duration=5
+                )
             else:
                 self.resetInterface()
             QtWidgets.QApplication.restoreOverrideCursor()
-            summaryDlg.setHtml(conv.output['log'])
+            summaryDlg.setHtml(conv.output["log"])
         except Exception as e:
             QtWidgets.QApplication.restoreOverrideCursor()
-            msg = self.tr("Dataset conversion has failed: '{0}'").format(', '.join(map(str, e.args)))
-            iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
-            QgsMessageLog.logMessage(':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
+            msg = self.tr("Dataset conversion has failed: '{0}'").format(
+                ", ".join(map(str, e.args))
+            )
+            iface.messageBar().pushMessage(
+                self.tr("Warning!"), msg, level=Qgis.Warning, duration=5
+            )
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
         summaryDlg.exec_()
 
     def startConversion(self, exportMap=False):
@@ -734,15 +929,15 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
 
     def initGui(self):
         """
-        Instantiate GUI for user, including button shortcut (if necessary) and tool insertion on DSGTools tab on QGIS. 
+        Instantiate GUI for user, including button shortcut (if necessary) and tool insertion on DSGTools tab on QGIS.
         """
         self.manager.addTool(
-            text=self.tr('Convert Databases'),
+            text=self.tr("Convert Databases"),
             callback=self.execute,
             parentMenu=self.parentMenu,
-            icon='install.png',
+            icon="install.png",
             parentButton=self.parentButton,
-            defaultButton=False
+            defaultButton=False,
         )
 
     def resetInterface(self):
@@ -767,7 +962,10 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         except:
             pass
         # remove every widget added to interface (in and output) and, consequently, disconnect all signals
-        for obj in [self.datasourceManagementWidgetIn, self.datasourceManagementWidgetOut]:
+        for obj in [
+            self.datasourceManagementWidgetIn,
+            self.datasourceManagementWidgetOut,
+        ]:
             for driverName, wList in obj.activeDrivers.items():
                 for w in wList:
                     # removeWidget method disconnects all widget signals

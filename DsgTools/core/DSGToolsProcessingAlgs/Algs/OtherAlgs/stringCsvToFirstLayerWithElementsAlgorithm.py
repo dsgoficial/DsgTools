@@ -21,15 +21,17 @@
 """
 
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessingAlgorithm,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterString,
-                       QgsProcessingUtils)
+from qgis.core import (
+    QgsProcessingAlgorithm,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterString,
+    QgsProcessingUtils,
+)
 
 
 class StringCsvToFirstLayerWithElementsAlgorithm(QgsProcessingAlgorithm):
-    INPUTLAYERS = 'INPUTLAYERS'
-    OUTPUT = 'OUTPUT'
+    INPUTLAYERS = "INPUTLAYERS"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config=None):
         """
@@ -37,32 +39,24 @@ class StringCsvToFirstLayerWithElementsAlgorithm(QgsProcessingAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterString(
-                self.INPUTLAYERS,
-                self.tr('Comma separated Input Layer Names')
+                self.INPUTLAYERS, self.tr("Comma separated Input Layer Names")
             )
         )
-       
+
         self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT,
-                self.tr('Loaded layer')
-            )
+            QgsProcessingOutputVectorLayer(self.OUTPUT, self.tr("Loaded layer"))
         )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
-        layerCsv = self.parameterAsString(
-            parameters,
-            self.INPUTLAYERS,
-            context
-        )
-        layerNameList = layerCsv.split(',')
+        layerCsv = self.parameterAsString(parameters, self.INPUTLAYERS, context)
+        layerNameList = layerCsv.split(",")
         nSteps = len(layerNameList)
         if not nSteps:
-            return {self.OUTPUT : None}
-        progressStep = 100/nSteps
+            return {self.OUTPUT: None}
+        progressStep = 100 / nSteps
         for idx, layerName in enumerate(layerNameList):
             if feedback.isCanceled():
                 break
@@ -74,27 +68,27 @@ class StringCsvToFirstLayerWithElementsAlgorithm(QgsProcessingAlgorithm):
                 return {"OUTPUT": lyr}
             feedback.setProgress(idx * progressStep)
 
-        return {"OUTPUT": None} # case where no layer from input has elements
+        return {"OUTPUT": None}  # case where no layer from input has elements
 
     def name(self):
         """
         Here is where the processing itself takes place.
         """
-        return 'stringcsvtofirstlayerwithelementsalgorithm'
+        return "stringcsvtofirstlayerwithelementsalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('String CSV to First Layer With Elements')
+        return self.tr("String CSV to First Layer With Elements")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Other Algorithms')
+        return self.tr("Other Algorithms")
 
     def groupId(self):
         """
@@ -104,10 +98,12 @@ class StringCsvToFirstLayerWithElementsAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Other Algorithms'
+        return "DSGTools: Other Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate('StringCsvToFirstLayerWithElementsAlgorithm', string)
+        return QCoreApplication.translate(
+            "StringCsvToFirstLayerWithElementsAlgorithm", string
+        )
 
     def createInstance(self):
         return StringCsvToFirstLayerWithElementsAlgorithm()

@@ -23,13 +23,15 @@
 from collections import defaultdict
 import os
 
-from qgis.core import (Qgis,
-                       QgsField,
-                       QgsWkbTypes,
-                       QgsMessageLog,
-                       QgsVectorLayer,
-                       QgsDataSourceUri,
-                       QgsVectorLayerJoinInfo)
+from qgis.core import (
+    Qgis,
+    QgsField,
+    QgsWkbTypes,
+    QgsMessageLog,
+    QgsVectorLayer,
+    QgsDataSourceUri,
+    QgsVectorLayerJoinInfo,
+)
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.Qt import QObject
@@ -37,41 +39,63 @@ from qgis.PyQt.QtXml import QDomDocument
 
 from DsgTools.core.Utils.utils import Utils
 
+
 class EDGVLayerLoader(QObject):
-    
     def __init__(self, iface, abstractDb, loadCentroids):
         """Constructor."""
         super(EDGVLayerLoader, self).__init__()
-        
+
         self.abstractDb = abstractDb
-        self.uri = QgsDataSourceUri() 
+        self.uri = QgsDataSourceUri()
         self.iface = iface
         self.utils = Utils()
         self.logErrorDict = dict()
-        self.errorLog = ''
+        self.errorLog = ""
         self.geomTypeDict = self.abstractDb.getGeomTypeDict(loadCentroids)
         self.geomDict = self.abstractDb.getGeomDict(self.geomTypeDict)
-        self.correspondenceDict = {'POINT':'Point', 'MULTIPOINT':'Point', 'LINESTRING':'Line','MULTILINESTRING':'Line', 'POLYGON':'Area', 'MULTIPOLYGON':'Area'}
-    
+        self.correspondenceDict = {
+            "POINT": "Point",
+            "MULTIPOINT": "Point",
+            "LINESTRING": "Line",
+            "MULTILINESTRING": "Line",
+            "POLYGON": "Area",
+            "MULTIPOLYGON": "Area",
+        }
+
     def preLoadStep(self, inputList):
         if len(inputList) == 0:
             return [], False
         else:
             if isinstance(inputList[0], dict):
-                lyrList = [i['tableName'] for i in inputList]
+                lyrList = [i["tableName"] for i in inputList]
                 return lyrList, True
             else:
                 return inputList, False
 
-    def load(self, inputList, useQml=False, uniqueLoad=False, useInheritance=False, stylePath=None, onlyWithElements=False, geomFilterList=[], isEdgv=True, customForm=False, loadEditingStructure=False, parent=None):
+    def load(
+        self,
+        inputList,
+        useQml=False,
+        uniqueLoad=False,
+        useInheritance=False,
+        stylePath=None,
+        onlyWithElements=False,
+        geomFilterList=[],
+        isEdgv=True,
+        customForm=False,
+        loadEditingStructure=False,
+        parent=None,
+    ):
         return None
-    
+
     def getStyle(self, stylePath, className):
-        if 'db:' in stylePath['style']:
-            return self.abstractDb.getStyle(stylePath['style'].split(':')[-1], className)
+        if "db:" in stylePath["style"]:
+            return self.abstractDb.getStyle(
+                stylePath["style"].split(":")[-1], className
+            )
         else:
-            return self.getStyleFromFile(stylePath['style'], className)
-    
+            return self.getStyleFromFile(stylePath["style"], className)
+
     def getStyleFromFile(self, stylePath, className):
         styleName = "{0}.qml".format(className)
         if styleName.lower() in [f.lower() for f in os.listdir(stylePath)]:
@@ -79,34 +103,40 @@ class EDGVLayerLoader(QObject):
             # dsgtools have the right to write on its own directory
             # a temporary file "temp.qml"
             tempPath = os.path.join(stylePath, "temp.qml")
-            with open(tempPath, "w", encoding='utf-8') as f:
+            with open(tempPath, "w", encoding="utf-8") as f:
                 f.writelines(qml)
                 f.close()
             return tempPath
         else:
             return None
-    
+
     def prepareLoad(self):
         dbName = self.abstractDb.getDatabaseName()
-        groupList =  iface.legendInterface().groups()
+        groupList = iface.legendInterface().groups()
         if dbName in groupList:
             return groupList.index(dbName)
         else:
-            parentTreeNode = iface.legendInterface().addGroup(self.abstractDb.getDatabaseName(), -1)
+            parentTreeNode = iface.legendInterface().addGroup(
+                self.abstractDb.getDatabaseName(), -1
+            )
             return parentTreeNode
 
     def createMeasureColumn(self, layer):
         if layer.geometryType() == QgsWkbTypes.PolygonGeometry:
-            layer.addExpressionField('$area', QgsField(self.tr('area_otf'), QVariant.Double))
+            layer.addExpressionField(
+                "$area", QgsField(self.tr("area_otf"), QVariant.Double)
+            )
         elif layer.geometryType() == QgsWkbTypes.LineGeometry:
-            layer.addExpressionField('$length', QgsField(self.tr('length_otf'), QVariant.Double))
+            layer.addExpressionField(
+                "$length", QgsField(self.tr("length_otf"), QVariant.Double)
+            )
         return layer
-    
+
     def getDatabaseGroup(self, rootNode):
         dbName = self.abstractDb.getDatabaseName()
         return self.createGroup(dbName, rootNode)
 
-    def getLyrDict(self, inputList, isEdgv = True):
+    def getLyrDict(self, inputList, isEdgv=True):
         """
         Builds lyrDict in order to build loading tree
         lyrList: list of layers to be loaded
@@ -114,21 +144,26 @@ class EDGVLayerLoader(QObject):
         """
         lyrDict = defaultdict(lambda: defaultdict(list))
         if isinstance(inputList, list) and len(inputList) > 0:
-            if isinstance(inputList[0],dict):
+            if isinstance(inputList[0], dict):
                 for elem in inputList:
-                    if elem['geomType'] == 'GEOMETRY':
+                    if elem["geomType"] == "GEOMETRY":
                         continue
-                    lyrDict[self.correspondenceDict[elem['geomType']]][elem['cat']].append(elem)
+                    lyrDict[self.correspondenceDict[elem["geomType"]]][
+                        elem["cat"]
+                    ].append(elem)
             else:
                 for type in list(self.geomTypeDict.keys()):
                     # some tables are only registered as GEOMETRY and should not be considered
-                    if type == 'GEOMETRY':
+                    if type == "GEOMETRY":
                         continue
                     for lyr in self.geomTypeDict[type]:
                         if lyr not in inputList:
                             continue
-                        cat = lyr.split('_')[0] if isEdgv \
+                        cat = (
+                            lyr.split("_")[0]
+                            if isEdgv
                             else self.abstractDb.getTableSchemaFromDb(lyr)
+                        )
                         lyrDict[self.correspondenceDict[type]][cat].append(lyr)
                 for type in list(lyrDict.keys()):
                     if lyrDict[type] == dict():
@@ -146,18 +181,20 @@ class EDGVLayerLoader(QObject):
             catList = list(lyrDict[geomNodeName].keys())
             catList.sort()
             for catNodeName in catList:
-                groupDict[geomNodeName][catNodeName] = self.createGroup(catNodeName, geomNode)
+                groupDict[geomNodeName][catNodeName] = self.createGroup(
+                    catNodeName, geomNode
+                )
         return groupDict
-    
+
     def createGroup(self, groupName, rootNode):
         groupNode = rootNode.findGroup(groupName)
         if groupNode:
             return groupNode
         else:
             return rootNode.addGroup(groupName)
-        
+
     def loadDomains(self, layerList, dbRootNode, edgvVersion):
-        if edgvVersion not in ('FTer_2a_Ed', '3.0'):
+        if edgvVersion not in ("FTer_2a_Ed", "3.0"):
             return dict()
         domLayerDict = dict()
         try:
@@ -165,7 +202,11 @@ class EDGVLayerLoader(QObject):
         except:
             return dict()
         domainNode = self.createGroup(self.tr("Domains"), dbRootNode)
-        loadedDomainsDict = {} if not domainNode.findLayers() else {i.layer().name() : i.layer() for i in domainNode.findLayers()}
+        loadedDomainsDict = (
+            {}
+            if not domainNode.findLayers()
+            else {i.layer().name(): i.layer() for i in domainNode.findLayers()}
+        )
         for lyr in layerList:
             if lyr in qmlDict:
                 for attr in qmlDict[lyr]:
@@ -176,48 +217,49 @@ class EDGVLayerLoader(QObject):
                     if attr not in list(domLayerDict[lyr].keys()):
                         domLayerDict[lyr][attr] = domLyr
         return domLayerDict
-    
+
     def getDomainLyr(self, domain, loadedDomainsDict, domainNode):
         if domain in loadedDomainsDict:
             return loadedDomainsDict[domain]
         domainLyr = self.loadDomain(domain, domainNode)
         loadedDomainsDict[domain] = domainLyr
         return domainLyr
-        
 
     def logError(self):
-        msg = ''
+        msg = ""
         for lyr in self.logErrorDict:
-            msg += self.tr('Error for lyr ')+ lyr + ': ' +self.logErrorDict[lyr] + '\n'
+            msg += (
+                self.tr("Error for lyr ") + lyr + ": " + self.logErrorDict[lyr] + "\n"
+            )
         self.errorLog += msg
 
-    def setDataSource(self, schema, layer, geomColumn, sql, pkColumn='id'):
+    def setDataSource(self, schema, layer, geomColumn, sql, pkColumn="id"):
         self.uri.setDataSource(schema, layer, geomColumn, sql, pkColumn)
-        if sql == '':
+        if sql == "":
             self.uri.disableSelectAtId(False)
         else:
             self.uri.disableSelectAtId(True)
 
     def setDomainsAndRestrictionsWithQml(self, vlayer):
-        qmldir = ''
+        qmldir = ""
         try:
             qmldir, qmlType = self.abstractDb.getQml(vlayer.name())
         except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
             return None
-        if qmlType == 'db':
+        if qmlType == "db":
             tempPath = os.path.join(os.path.dirname(__file__), "temp.qml")
-            with open(tempPath, "w", encoding='utf-8') as f:
+            with open(tempPath, "w", encoding="utf-8") as f:
                 f.writelines(qmldir)
                 f.close()
             vlayer.loadNamedStyle(tempPath, True)
             os.remove(tempPath)
         else:
-            vlayerQml = os.path.join(qmldir, vlayer.name()+'.qml')
-            #treat case of qml with multi
+            vlayerQml = os.path.join(qmldir, vlayer.name() + ".qml")
+            # treat case of qml with multi
             vlayer.loadNamedStyle(vlayerQml, True)
         return vlayer
-    
+
     def removeEmptyNodes(self, dbNode):
         for geomNode in dbNode.children():
             if not geomNode.findLayers():
@@ -226,31 +268,31 @@ class EDGVLayerLoader(QObject):
             for catNode in geomNode.children():
                 if not catNode.findLayers():
                     geomNode.removeChildNode(catNode)
-    
+
     def getParams(self, inputParam):
         if isinstance(inputParam, dict):
-            lyrName = inputParam['lyrName']
-            schema = inputParam['tableSchema']
-            geomColumn = inputParam['geom']
-            tableName = inputParam['tableName']
-            srid =  self.geomDict['tablePerspective'][tableName]['srid']
+            lyrName = inputParam["lyrName"]
+            schema = inputParam["tableSchema"]
+            geomColumn = inputParam["geom"]
+            tableName = inputParam["tableName"]
+            srid = self.geomDict["tablePerspective"][tableName]["srid"]
         elif isinstance(inputParam, tuple):
             schema, tableName = inputParam
             lyrName = tableName
-            geomColumn, srid = '', ''
+            geomColumn, srid = "", ""
         else:
             lyrName = inputParam
-            tableName = self.geomDict['tablePerspective'][lyrName]['tableName']
-            schema = self.geomDict['tablePerspective'][lyrName]['schema']
-            geomColumn = self.geomDict['tablePerspective'][lyrName]['geometryColumn']
-            srid =  self.geomDict['tablePerspective'][lyrName]['srid']
+            tableName = self.geomDict["tablePerspective"][lyrName]["tableName"]
+            schema = self.geomDict["tablePerspective"][lyrName]["schema"]
+            geomColumn = self.geomDict["tablePerspective"][lyrName]["geometryColumn"]
+            srid = self.geomDict["tablePerspective"][lyrName]["srid"]
         return lyrName, schema, geomColumn, tableName, srid
 
     def getLayerByName(self, layer):
         """
         Return the layer layer from a given layer name.
         :param layer: (str) layer name.
-        :return: (QgsVectorLayer) vector layer. 
+        :return: (QgsVectorLayer) vector layer.
         """
         try:
             # self.provider is added on children classes
@@ -262,7 +304,7 @@ class EDGVLayerLoader(QObject):
         """
         Return the layer layer from a given layer name.
         :param layer: (str) layer name.
-        :return: (QgsVectorLayer) vector layer. 
+        :return: (QgsVectorLayer) vector layer.
         """
         try:
             # self.provider is added on children classes]
@@ -270,8 +312,10 @@ class EDGVLayerLoader(QObject):
             return QgsVectorLayer(self.uri.uri(), table, self.provider)
         except:
             return None
-    
-    def buildJoin(self, originalLyr, originalLyrFieldName, joinnedLyr, joinLyrFieldName):
+
+    def buildJoin(
+        self, originalLyr, originalLyrFieldName, joinnedLyr, joinLyrFieldName
+    ):
         """
         Builds a join bewteen lyr and joinnedLyr.
         :param originalLyr: QgsVectorLayer original layer;
@@ -284,7 +328,7 @@ class EDGVLayerLoader(QObject):
         joinObject.setTargetFieldName(originalLyrFieldName)
         joinObject.setJoinLayer(joinnedLyr)
         joinObject.setJoinFieldNamesSubset()
-        joinObject.upsertOnEdit(True) #set to enable edit on original lyr
+        joinObject.upsertOnEdit(True)  # set to enable edit on original lyr
         joinObject.setCascadedDelete(True)
         joinObject.setDynamicFormEnabled(True)
         joinObject.setEditable(True)

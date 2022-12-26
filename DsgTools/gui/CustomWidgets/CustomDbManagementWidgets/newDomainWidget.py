@@ -35,36 +35,43 @@ from qgis.PyQt.QtWidgets import QTableWidgetItem, QLineEdit, QToolTip
 from DsgTools.gui.ServerTools.viewServers import ViewServers
 from DsgTools.core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.gui.CustomWidgets.CustomDbManagementWidgets.addAttributeWidget import AddAttributeWidget
-from DsgTools.gui.Misc.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
+from DsgTools.gui.CustomWidgets.CustomDbManagementWidgets.addAttributeWidget import (
+    AddAttributeWidget,
+)
+from DsgTools.gui.Misc.PostgisCustomization.CustomJSONTools.customJSONBuilder import (
+    CustomJSONBuilder,
+)
 
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'newDomainWidget.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "newDomainWidget.ui")
+)
+
 
 class ValidatedItemDelegate(QtWidgets.QStyledItemDelegate):
     def createEditor(self, widget, option, index):
         if not index.isValid():
             return 0
-        if index.column() == 0: #only on the cells in the first column
+        if index.column() == 0:  # only on the cells in the first column
             editor = QtGui.QLineEdit(widget)
             validator = QtGui.QRegExpValidator(QtCore.QRegExp("[0-9]*"), editor)
             editor.setValidator(validator)
             return editor
         elif index.column() == 1:
             editor = QtGui.QLineEdit(widget)
-            editor.setPlaceholderText(self.tr('Enter a value.'))
+            editor.setPlaceholderText(self.tr("Enter a value."))
             return editor
         return super(ValidatedItemDelegate, self).createEditor(widget, option, index)
 
+
 class NewDomainWidget(QtWidgets.QWidget, FORM_CLASS):
-    def __init__(self, abstractDb, uiParameterJsonDict = None, parent = None):
+    def __init__(self, abstractDb, uiParameterJsonDict=None, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
-        self.setupUi(self) 
+        self.setupUi(self)
         header = self.tableWidget.horizontalHeader()
         header.setStretchLastSection(True)
-        regex = QtCore.QRegExp('[a-z][a-z\_]*')
+        regex = QtCore.QRegExp("[a-z][a-z\_]*")
         validator = QtGui.QRegExpValidator(regex, self.domainNameLineEdit)
         self.domainNameLineEdit.setValidator(validator)
         self.abstractDb = abstractDb
@@ -72,7 +79,7 @@ class NewDomainWidget(QtWidgets.QWidget, FORM_CLASS):
         self.tableWidget.setItemDelegate(ValidatedItemDelegate())
         self.oldBackground = None
         self.populateFromUiParameterJsonDict(uiParameterJsonDict)
-    
+
     def populateFromUiParameterJsonDict(self, uiParameterJsonDict):
         """
         populates ui from  uiParameterJsonDict with the following keys:
@@ -82,34 +89,36 @@ class NewDomainWidget(QtWidgets.QWidget, FORM_CLASS):
         }
         """
         if uiParameterJsonDict:
-            self.domainNameLineEdit.setText(uiParameterJsonDict['domainNameLineEdit'])
-            for domainItem in uiParameterJsonDict['tableWidget']:
-                self.addItemInTableWidget(codeText = domainItem[0], valueText = domainItem[1])
-    
+            self.domainNameLineEdit.setText(uiParameterJsonDict["domainNameLineEdit"])
+            for domainItem in uiParameterJsonDict["tableWidget"]:
+                self.addItemInTableWidget(
+                    codeText=domainItem[0], valueText=domainItem[1]
+                )
+
     @pyqtSlot()
     def on_domainNameLineEdit_editingFinished(self):
         text = self.domainNameLineEdit.text()
-        while text[-1] == '_':
+        while text[-1] == "_":
             self.domainNameLineEdit.setText(text[0:-1])
             text = text[0:-1]
-    
+
     @pyqtSlot(str)
     def on_domainNameLineEdit_textEdited(self, newText):
         if len(newText) > 1:
-            if newText[-1] == '_' and newText[-2] == '_':
-                    self.domainNameLineEdit.setText(newText[0:-1])
-    
-    @pyqtSlot(bool, name='on_addValuePushButton_clicked')
-    def addItemInTableWidget(self, codeText = '', valueText = ''):
+            if newText[-1] == "_" and newText[-2] == "_":
+                self.domainNameLineEdit.setText(newText[0:-1])
+
+    @pyqtSlot(bool, name="on_addValuePushButton_clicked")
+    def addItemInTableWidget(self, codeText="", valueText=""):
         index = self.tableWidget.rowCount()
         self.tableWidget.insertRow(index)
         codeItem = QtGui.QTableWidgetItem(codeText)
         valueItem = QtGui.QTableWidgetItem(valueText)
-        self.tableWidget.setItem(self.tableWidget.rowCount()-1, 0, codeItem)
-        self.tableWidget.setItem(self.tableWidget.rowCount()-1, 1, valueItem)
+        self.tableWidget.setItem(self.tableWidget.rowCount() - 1, 0, codeItem)
+        self.tableWidget.setItem(self.tableWidget.rowCount() - 1, 1, valueItem)
         if index == 0:
-            self.oldBackground = self.tableWidget.item(0,0).background()     
-    
+            self.oldBackground = self.tableWidget.item(0, 0).background()
+
     @pyqtSlot(bool)
     def on_removeValuePushButton_clicked(self):
         selected = self.tableWidget.selectedIndexes()
@@ -117,74 +126,74 @@ class NewDomainWidget(QtWidgets.QWidget, FORM_CLASS):
         rowList.sort(reverse=True)
         for row in rowList:
             self.tableWidget.removeRow(row)
-    
+
     @pyqtSlot(QTableWidgetItem)
     def on_tableWidget_itemChanged(self, widgetItem):
         if self.checkNull(widgetItem):
             return
         if self.tableWidget.currentColumn() == 0:
             self.checkUnique(widgetItem)
-    
+
     def checkNull(self, widgetItem):
-        if widgetItem.text() == '':
-            widgetItem.setToolTip(self.tr('Enter a value!'))
+        if widgetItem.text() == "":
+            widgetItem.setToolTip(self.tr("Enter a value!"))
             return True
         else:
-            widgetItem.setToolTip('')
+            widgetItem.setToolTip("")
             return False
-    
+
     def checkUnique(self, widgetItem):
-        currentValue = widgetItem.text() 
+        currentValue = widgetItem.text()
         itemList = []
         for i in range(self.tableWidget.rowCount()):
             if i != widgetItem.row():
                 curItem = self.tableWidget.item(i, 0)
                 itemList.append(curItem.text())
         if currentValue in itemList:
-            widgetItem.setBackground(QtGui.QColor(230,124,127))
+            widgetItem.setBackground(QtGui.QColor(230, 124, 127))
             self.tableWidget.setCurrentCell(widgetItem.row(), 0)
-            widgetItem.setToolTip(self.tr('Code value already entered.'))
+            widgetItem.setToolTip(self.tr("Code value already entered."))
         else:
             if self.oldBackground:
                 widgetItem.setBackground(self.oldBackground)
-                widgetItem.setToolTip('')
-    
+                widgetItem.setToolTip("")
+
     def getTitle(self):
         return self.title
-    
+
     def setTitle(self, title):
         self.title = title
-    
+
     def validate(self):
-        if self.domainNameLineEdit.text() == '':
+        if self.domainNameLineEdit.text() == "":
             return False
         if self.tableHasEmptyValue():
             return False
         if self.tableHasDuplicatedCode():
-            return False 
+            return False
         return True
 
     def validateDiagnosis(self):
-        invalidatedReason = ''
-        if self.domainNameLineEdit.text() == '':
-            invalidatedReason += self.tr('A domain name must be chosen.\n')
+        invalidatedReason = ""
+        if self.domainNameLineEdit.text() == "":
+            invalidatedReason += self.tr("A domain name must be chosen.\n")
         if self.tableHasEmptyValue():
-            invalidatedReason += self.tr('There must be no empty codes or values.\n')
+            invalidatedReason += self.tr("There must be no empty codes or values.\n")
         if self.tableHasEmptyValue():
-            invalidatedReason += self.tr('Codes must be unique.\n')
+            invalidatedReason += self.tr("Codes must be unique.\n")
         return invalidatedReason
 
     def tableHasEmptyValue(self):
         for row in range(self.tableWidget.rowCount()):
             for column in range(self.tableWidget.columnCount()):
-                if self.tableWidget.item(row,column).text() == '':
+                if self.tableWidget.item(row, column).text() == "":
                     return True
         return False
-    
+
     def tableHasDuplicatedCode(self):
         listOfCodes = []
         for row in range(self.tableWidget.rowCount()):
-            code = self.tableWidget.item(row,0)
+            code = self.tableWidget.item(row, 0)
             if code not in listOfCodes:
                 listOfCodes.append(code)
             else:
@@ -193,12 +202,17 @@ class NewDomainWidget(QtWidgets.QWidget, FORM_CLASS):
 
     def getJSONTag(self):
         if not self.validate():
-            raise Exception(self.tr('Error in domain ')+ self.title + ' : ' + self.validateDiagnosis())
+            raise Exception(
+                self.tr("Error in domain ")
+                + self.title
+                + " : "
+                + self.validateDiagnosis()
+            )
         domainName = self.domainNameLineEdit.text()
         valueDict = dict()
         for row in range(self.tableWidget.rowCount()):
-            code = self.tableWidget.item(row,0).text()
-            value = self.tableWidget.item(row,1).text()
+            code = self.tableWidget.item(row, 0).text()
+            value = self.tableWidget.item(row, 1).text()
             valueDict[code] = value
         return [self.jsonBuilder.addDomainTableElement(domainName, valueDict)]
 
@@ -211,10 +225,10 @@ class NewDomainWidget(QtWidgets.QWidget, FORM_CLASS):
         }
         """
         uiParameterJsonDict = dict()
-        uiParameterJsonDict['domainNameLineEdit'] = self.domainNameLineEdit.text()
-        uiParameterJsonDict['tableWidget'] = []
+        uiParameterJsonDict["domainNameLineEdit"] = self.domainNameLineEdit.text()
+        uiParameterJsonDict["tableWidget"] = []
         for row in range(self.tableWidget.rowCount()):
-            code = self.tableWidget.item(row,0).text()
-            value = self.tableWidget.item(row,1).text()
-            uiParameterJsonDict['tableWidget'].append((code,value))
+            code = self.tableWidget.item(row, 0).text()
+            value = self.tableWidget.item(row, 1).text()
+            uiParameterJsonDict["tableWidget"].append((code, value))
         return uiParameterJsonDict

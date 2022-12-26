@@ -24,24 +24,33 @@
 from __future__ import print_function
 from builtins import str
 from builtins import range
-from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, \
-                        QgsProcessingContext, QgsFeature
+from qgis.core import (
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
+    QgsProcessingContext,
+    QgsFeature,
+)
 from qgis.PyQt import QtWidgets, QtCore, uic, QtGui
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.PyQt.QtCore import pyqtSlot, Qt
 from qgis.PyQt.QtGui import QCursor
 
 import os
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'ui_create_inom_dialog_base.ui'))
 
-#DsgTools imports
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "ui_create_inom_dialog_base.ui")
+)
+
+# DsgTools imports
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
-from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
+    LayerLoaderFactory,
+)
 
-#qgis imports
+# qgis imports
 import qgis as qgis
 import processing
+
 
 class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, iface, parent=None):
@@ -65,11 +74,15 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
         Creates the actual frame.
         """
         if not self.widget.dbLoaded:
-            QMessageBox.warning(self, self.tr("Warning!"), self.tr('Please, select a database first.'))
+            QMessageBox.warning(
+                self, self.tr("Warning!"), self.tr("Please, select a database first.")
+            )
             return
 
         if not self.validateMI():
-            QMessageBox.warning(self, self.tr("Warning!"), self.tr('Map name index not valid!'))
+            QMessageBox.warning(
+                self, self.tr("Warning!"), self.tr("Map name index not valid!")
+            )
             return
         try:
             QtWidgets.QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -80,29 +93,30 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
             QtWidgets.QApplication.restoreOverrideCursor()
             raise e
         self.done(1)
-    
+
     def runCreateFrameAndAddFeaturesToFrame(self, layer):
         crs = self.widget.crs.authid()
         inom = self.inomLineEdit.text()
         scaleIdx = self.scaleCombo.currentIndex()
         context = QgsProcessingContext()
         processingOutput = processing.run(
-            'dsgtools:gridzonegenerator',
+            "dsgtools:gridzonegenerator",
             {
-                'START_SCALE' : scaleIdx,
-                'STOP_SCALE' : scaleIdx,
-                'INDEX_TYPE' : 1,
-                'INDEX' : inom,
-                'CRS' : crs,
-                'OUTPUT' : 'memory:'
+                "START_SCALE": scaleIdx,
+                "STOP_SCALE": scaleIdx,
+                "INDEX_TYPE": 1,
+                "INDEX": inom,
+                "CRS": crs,
+                "OUTPUT": "memory:",
             },
-            context = context)
+            context=context,
+        )
         featList = []
-        for feat in processingOutput['OUTPUT'].getFeatures():
+        for feat in processingOutput["OUTPUT"].getFeatures():
             newFeat = QgsFeature(layer.fields())
-            newFeat['mi'] = feat['mi']
-            newFeat['inom'] = feat['inom']
-            newFeat['escala'] = self.scaleCombo.currentText()
+            newFeat["mi"] = feat["mi"]
+            newFeat["inom"] = feat["inom"]
+            newFeat["escala"] = self.scaleCombo.currentText()
             newFeat.setGeometry(feat.geometry())
             newFeat.geometry().convertToMultiType()
             featList.append(newFeat)
@@ -110,7 +124,7 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
         layer.addFeatures(featList)
         layer.commitChanges()
         self.zoomToLayer(layer, featList[0].geometry())
-    
+
     def zoomToLayer(self, layer, frame):
         """
         Zooms in to the updated frame layer.
@@ -122,47 +136,63 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
         bbox = self.iface.mapCanvas().mapSettings().layerToMapCoordinates(layer, bbox)
         self.iface.mapCanvas().setExtent(bbox)
         self.iface.mapCanvas().refresh()
-    
+
     def loadFrameLayer(self):
         """
         Loads the frame layer case it is not loaded yet.
         """
-        loader = LayerLoaderFactory().makeLoader(self.iface,self.widget.abstractDb)
-        if loader.provider == 'postgres':
-            layerMeta = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOLYGON', 'lyrName': 'moldura_a', 'tableName':'aux_moldura_a', 'tableSchema':'public', 'tableType': 'BASE TABLE'}
-        elif loader.provider == 'spatialite':
-            layerMeta = {'cat': 'aux', 'geom': 'GEOMETRY', 'geomType':'MULTIPOLYGON', 'lyrName': 'moldura_a', 'tableName':'aux_moldura_a', 'tableSchema':'public', 'tableType': 'BASE TABLE'}
+        loader = LayerLoaderFactory().makeLoader(self.iface, self.widget.abstractDb)
+        if loader.provider == "postgres":
+            layerMeta = {
+                "cat": "aux",
+                "geom": "geom",
+                "geomType": "MULTIPOLYGON",
+                "lyrName": "moldura_a",
+                "tableName": "aux_moldura_a",
+                "tableSchema": "public",
+                "tableType": "BASE TABLE",
+            }
+        elif loader.provider == "spatialite":
+            layerMeta = {
+                "cat": "aux",
+                "geom": "GEOMETRY",
+                "geomType": "MULTIPOLYGON",
+                "lyrName": "moldura_a",
+                "tableName": "aux_moldura_a",
+                "tableSchema": "public",
+                "tableType": "BASE TABLE",
+            }
         else:
             layerMeta = None
-        layerDict = loader.load([layerMeta], uniqueLoad = True)
-        if layerMeta['lyrName'] in list(layerDict.keys()):
-            layer = layerDict[layerMeta['lyrName']]
+        layerDict = loader.load([layerMeta], uniqueLoad=True)
+        if layerMeta["lyrName"] in list(layerDict.keys()):
+            layer = layerDict[layerMeta["lyrName"]]
         else:
             layer = None
         return layer
 
-    def getFrameLayer(self,ifaceLayers):
+    def getFrameLayer(self, ifaceLayers):
         """
         Gets the frame layer according to the database.
         """
         for lyr in ifaceLayers:
-            if 'moldura_a' in lyr.name():
+            if "moldura_a" in lyr.name():
                 dbname = self.getDBNameFromLayer(lyr)
                 if dbname == self.widget.abstractDb.getDatabaseName():
                     return lyr
         return None
-    
+
     def getDBNameFromLayer(self, lyr):
         """
         Gets the database name according to the database.
         """
         dbname = None
-        splitUri = lyr.dataProvider().dataSourceUri().split(' ')
+        splitUri = lyr.dataProvider().dataSourceUri().split(" ")
         if len(splitUri) > 0:
-            dbsplit = splitUri[0].split('=')
-            if len(dbsplit) > 1 and dbsplit[0] == 'dbname':
+            dbsplit = splitUri[0].split("=")
+            if len(dbsplit) > 1 and dbsplit[0] == "dbname":
                 dbnameInString = dbsplit[1]
-                dbnameSplit = dbnameInString.split('\'')
+                dbnameSplit = dbnameInString.split("'")
                 if len(dbnameSplit) > 1:
                     dbname = dbnameSplit[1]
         return dbname
@@ -173,41 +203,41 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
         Closes the dialog returning 0.
         """
         self.done(0)
-    
+
     @pyqtSlot(str)
-    def on_inomLineEdit_textEdited(self,s):
+    def on_inomLineEdit_textEdited(self, s):
         """
         Method to automatically update MI based on the INOM.
         It also changes all characters to upper case
         """
-        if (s!=''):
+        if s != "":
             s = s.upper()
             self.inomLineEdit.setText(s)
             mi = self.map_index.getMIfromInom(str(s))
             self.miLineEdit.setText(mi)
 
     @pyqtSlot(str)
-    def on_miLineEdit_textEdited(self,s):
+    def on_miLineEdit_textEdited(self, s):
         """
         Method to automatically update INOM based on the MI.
         It also changes all characters to upper case
         """
-        if (s!=''):
+        if s != "":
             s = s.upper()
             self.miLineEdit.setText(s)
-            self.inomen=self.map_index.getINomenFromMI(str(s))
+            self.inomen = self.map_index.getINomenFromMI(str(s))
             self.inomLineEdit.setText(self.inomen)
 
     @pyqtSlot(str)
-    def on_mirLineEdit_textEdited(self,s):
+    def on_mirLineEdit_textEdited(self, s):
         """
         Method to automatically update INOM based on the MIR.
         It also changes all characters to upper case
         """
-        if (s!=''):
+        if s != "":
             s = s.upper()
             self.mirLineEdit.setText(s)
-            self.inomen=self.map_index.getINomenFromMIR(str(s))
+            self.inomen = self.map_index.getINomenFromMIR(str(s))
             self.inomLineEdit.setText(self.inomen)
 
     def reprojectFrame(self, poly):
@@ -229,79 +259,151 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
         """
         self.chars = []
 
-        chars = 'NS'
+        chars = "NS"
         self.chars.append(chars)
-        chars = 'ABCDEFGHIJKLMNOPQRSTUVZ'
+        chars = "ABCDEFGHIJKLMNOPQRSTUVZ"
         self.chars.append(chars)
-        chars = ['01','02','03','04','05','06','07','08','09','10',
-                   '11','12','13','14','15','16','17','18','19','20',
-                   '21','22','23','24','25','26','27','28','29','30',
-                   '31','32','33','34','35','36','37','38','39','40',
-                   '41','42','43','44','45','46','47','48','49','50',
-                   '51','52','53','54','55','56','57','58','59','60']
+        chars = [
+            "01",
+            "02",
+            "03",
+            "04",
+            "05",
+            "06",
+            "07",
+            "08",
+            "09",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34",
+            "35",
+            "36",
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42",
+            "43",
+            "44",
+            "45",
+            "46",
+            "47",
+            "48",
+            "49",
+            "50",
+            "51",
+            "52",
+            "53",
+            "54",
+            "55",
+            "56",
+            "57",
+            "58",
+            "59",
+            "60",
+        ]
         self.chars.append(chars)
-        chars = 'VXYZ'
+        chars = "VXYZ"
         self.chars.append(chars)
-        chars = 'ABCD'
+        chars = "ABCD"
         self.chars.append(chars)
-        chars = ['I','II','III','IV','V','VI']
+        chars = ["I", "II", "III", "IV", "V", "VI"]
         self.chars.append(chars)
-        chars = '1234'
+        chars = "1234"
         self.chars.append(chars)
-        chars = ['NO','NE','SO','SE']
+        chars = ["NO", "NE", "SO", "SE"]
         self.chars.append(chars)
-        chars = 'ABCDEF'
+        chars = "ABCDEF"
         self.chars.append(chars)
-        chars = ['I','II','III','IV']
+        chars = ["I", "II", "III", "IV"]
         self.chars.append(chars)
-        chars = '123456'
+        chars = "123456"
         self.chars.append(chars)
-        chars = 'ABCD'
+        chars = "ABCD"
         self.chars.append(chars)
 
     def setMask(self):
         """
         REGEx closely related to the valid chars method 'setValidCharacters'
         """
-        if self.scaleCombo.currentText() == '1000k':
-            regex = QtCore.QRegExp('[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}')
+        if self.scaleCombo.currentText() == "1000k":
+            regex = QtCore.QRegExp("[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}")
             validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
-        elif self.scaleCombo.currentText() == '500k':
-            regex = QtCore.QRegExp('[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}')
+        elif self.scaleCombo.currentText() == "500k":
+            regex = QtCore.QRegExp("[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}")
             validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
-        elif self.scaleCombo.currentText() == '250k':
-            regex = QtCore.QRegExp('[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}')
+        elif self.scaleCombo.currentText() == "250k":
+            regex = QtCore.QRegExp(
+                "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}"
+            )
             validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
-        elif self.scaleCombo.currentText() == '100k':
-            regex = QtCore.QRegExp('[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}')
+        elif self.scaleCombo.currentText() == "100k":
+            regex = QtCore.QRegExp(
+                "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}"
+            )
             validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
-        elif self.scaleCombo.currentText() == '50k':
-            self.inomLineEdit.setInputMask('NN-NN-N-N-Nnn-0')
-            regex = QtCore.QRegExp('[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}')
+        elif self.scaleCombo.currentText() == "50k":
+            self.inomLineEdit.setInputMask("NN-NN-N-N-Nnn-0")
+            regex = QtCore.QRegExp(
+                "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}"
+            )
             validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
-        elif self.scaleCombo.currentText() == '25k':
-            regex = QtCore.QRegExp('[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}\-[NSns]{1}[OEoe]{1}')
+        elif self.scaleCombo.currentText() == "25k":
+            regex = QtCore.QRegExp(
+                "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}\-[NSns]{1}[OEoe]{1}"
+            )
             validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
-        elif self.scaleCombo.currentText() == '10k':
-            regex = QtCore.QRegExp('[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}\-[NSns]{1}[OEoe]{1}\-[A-Fa-f]{1}')
+        elif self.scaleCombo.currentText() == "10k":
+            regex = QtCore.QRegExp(
+                "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}\-[NSns]{1}[OEoe]{1}\-[A-Fa-f]{1}"
+            )
             validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
-        elif self.scaleCombo.currentText() == '5k':
-            regex = QtCore.QRegExp('[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}\-[NSns]{1}[OEoe]{1}\-[A-Fa-f]{1}\-[IViv]{1,3}')
+        elif self.scaleCombo.currentText() == "5k":
+            regex = QtCore.QRegExp(
+                "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}\-[NSns]{1}[OEoe]{1}\-[A-Fa-f]{1}\-[IViv]{1,3}"
+            )
             validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
-        elif self.scaleCombo.currentText() == '2k':
-            regex = QtCore.QRegExp('[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}\-[NSns]{1}[OEoe]{1}\-[A-Fa-f]{1}\-[IViv]{1,3}\-[1-6]{1}')
+        elif self.scaleCombo.currentText() == "2k":
+            regex = QtCore.QRegExp(
+                "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}\-[NSns]{1}[OEoe]{1}\-[A-Fa-f]{1}\-[IViv]{1,3}\-[1-6]{1}"
+            )
             validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
-        elif self.scaleCombo.currentText() == '1k':
-            regex = QtCore.QRegExp('[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}\-[NSns]{1}[OEoe]{1}\-[A-Fa-f]{1}\-[IViv]{1,3}\-[1-6]{1}\-[A-Da-d]{1}')
+        elif self.scaleCombo.currentText() == "1k":
+            regex = QtCore.QRegExp(
+                "[NSns]{1}[A-Za-z]{1}\-[0-9]{1,2}\-[V-Zv-z]{1}\-[A-Da-d]{1}\-[IViv]{1,3}\-[1-4]{1}\-[NSns]{1}[OEoe]{1}\-[A-Fa-f]{1}\-[IViv]{1,3}\-[1-6]{1}\-[A-Da-d]{1}"
+            )
             validator = QtGui.QRegExpValidator(regex, self.inomLineEdit)
             self.inomLineEdit.setValidator(validator)
 
@@ -310,7 +412,7 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
         Method to validate INOM based on the valid characters.
         """
         mi = self.inomLineEdit.text()
-        split = mi.split('-')
+        split = mi.split("-")
         for i in range(len(split)):
             word = str(split[i])
             if len(word) == 0:
@@ -390,7 +492,7 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
         Adjusts the mask according to the scale.
         """
         self.setMask()
-        if self.scaleCombo.currentText() == '1000k':
+        if self.scaleCombo.currentText() == "1000k":
             self.miRadioButton.setEnabled(False)
             self.miLineEdit.setEnabled(False)
             self.mirRadioButton.setEnabled(True)

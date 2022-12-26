@@ -24,164 +24,108 @@ from PyQt5.QtCore import QCoreApplication
 
 from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import \
-    LayerLoaderFactory
+from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
+    LayerLoaderFactory,
+)
 import processing
-from qgis.core import (QgsCoordinateReferenceSystem, QgsCoordinateTransform,
-                       QgsDataSourceUri, QgsFeature, QgsFeatureSink, QgsField,
-                       QgsFields, QgsGeometry, QgsProcessing,
-                       QgsProcessingAlgorithm, QgsProcessingException,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputMultipleLayers,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterCrs,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterExpression,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterField, QgsProcessingParameterFile,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterString,
-                       QgsProcessingParameterType,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsProject, QgsSpatialIndex, QgsWkbTypes)
+from qgis.core import (
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsField,
+    QgsFields,
+    QgsGeometry,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputMultipleLayers,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterCrs,
+    QgsProcessingParameterDefinition,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterExpression,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterField,
+    QgsProcessingParameterFile,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterString,
+    QgsProcessingParameterType,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingUtils,
+    QgsProject,
+    QgsSpatialIndex,
+    QgsWkbTypes,
+)
 from qgis.utils import iface
 
+
 class LoadNonSpatialLayersFromPostgreSQLAlgorithm(QgsProcessingAlgorithm):
-    HOST = 'HOST'
-    PORT = 'PORT'
-    DATABASE = 'DATABASE'
-    USER = 'USER'
-    PASSWORD = 'PASSWORD'
-    LAYER_LIST = 'LAYER_LIST'
-    LOAD_TO_CANVAS = 'LOAD_TO_CANVAS'
-    UNIQUE_LOAD = 'UNIQUE_LOAD'
-    SCHEMA_NAME = 'SCHEMA_NAME'
-    OUTPUT = 'OUTPUT'
+    HOST = "HOST"
+    PORT = "PORT"
+    DATABASE = "DATABASE"
+    USER = "USER"
+    PASSWORD = "PASSWORD"
+    LAYER_LIST = "LAYER_LIST"
+    LOAD_TO_CANVAS = "LOAD_TO_CANVAS"
+    UNIQUE_LOAD = "UNIQUE_LOAD"
+    SCHEMA_NAME = "SCHEMA_NAME"
+    OUTPUT = "OUTPUT"
+
     def initAlgorithm(self, config):
         """
         Parameter setting.
         """
+        self.addParameter(QgsProcessingParameterString(self.HOST, self.tr("Host")))
+        self.addParameter(QgsProcessingParameterString(self.PORT, self.tr("Port")))
         self.addParameter(
-            QgsProcessingParameterString(
-                self.HOST,
-                self.tr('Host')
-            )
+            QgsProcessingParameterString(self.DATABASE, self.tr("Database"))
+        )
+        self.addParameter(QgsProcessingParameterString(self.USER, self.tr("User")))
+        self.addParameter(
+            QgsProcessingParameterString(self.PASSWORD, self.tr("Password"))
         )
         self.addParameter(
-            QgsProcessingParameterString(
-                self.PORT,
-                self.tr('Port')
-            )
+            QgsProcessingParameterString(self.LAYER_LIST, self.tr("Layer List"))
         )
         self.addParameter(
-            QgsProcessingParameterString(
-                self.DATABASE,
-                self.tr('Database')
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.USER,
-                self.tr('User')
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.PASSWORD,
-                self.tr('Password')
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.LAYER_LIST,
-                self.tr('Layer List')
+            QgsProcessingParameterBoolean(
+                self.LOAD_TO_CANVAS, self.tr("Load layers to canvas"), defaultValue=True
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.LOAD_TO_CANVAS,
-                self.tr('Load layers to canvas'),
-                defaultValue=True
+                self.UNIQUE_LOAD, self.tr("Unique load"), defaultValue=True
             )
         )
         self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.UNIQUE_LOAD,
-                self.tr('Unique load'),
-                defaultValue=True
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.SCHEMA_NAME,
-                self.tr('Schema name')
-            )
+            QgsProcessingParameterString(self.SCHEMA_NAME, self.tr("Schema name"))
         )
         self.addOutput(
-            QgsProcessingOutputMultipleLayers(
-                self.OUTPUT,
-                self.tr('Loaded layers')
-            )
+            QgsProcessingOutputMultipleLayers(self.OUTPUT, self.tr("Loaded layers"))
         )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
-        host = self.parameterAsString(
-            parameters,
-            self.HOST,
-            context
-        )
-        port = self.parameterAsString(
-            parameters,
-            self.PORT,
-            context
-        )
-        database = self.parameterAsString(
-            parameters,
-            self.DATABASE,
-            context
-        )
-        user = self.parameterAsString(
-            parameters,
-            self.USER,
-            context
-        )
-        password = self.parameterAsString(
-            parameters,
-            self.PASSWORD,
-            context
-        )
-        layerStringList = self.parameterAsString(
-            parameters,
-            self.LAYER_LIST,
-            context
-        )
-        loadToCanvas = self.parameterAsBoolean(
-            parameters,
-            self.LOAD_TO_CANVAS,
-            context
-        )
-        uniqueLoad = self.parameterAsBoolean(
-            parameters,
-            self.UNIQUE_LOAD,
-            context
-        )
-        tableSchema = self.parameterAsString(
-            parameters,
-            self.SCHEMA_NAME,
-            context
-        )
+        host = self.parameterAsString(parameters, self.HOST, context)
+        port = self.parameterAsString(parameters, self.PORT, context)
+        database = self.parameterAsString(parameters, self.DATABASE, context)
+        user = self.parameterAsString(parameters, self.USER, context)
+        password = self.parameterAsString(parameters, self.PASSWORD, context)
+        layerStringList = self.parameterAsString(parameters, self.LAYER_LIST, context)
+        loadToCanvas = self.parameterAsBoolean(parameters, self.LOAD_TO_CANVAS, context)
+        uniqueLoad = self.parameterAsBoolean(parameters, self.UNIQUE_LOAD, context)
+        tableSchema = self.parameterAsString(parameters, self.SCHEMA_NAME, context)
         abstractDb = self.getAbstractDb(host, port, database, user, password)
-        inputParamList = [(tableSchema, i) for i in layerStringList.split(',')]
-        layerLoader = LayerLoaderFactory().makeLoader(
-            iface, abstractDb
-        )
+        inputParamList = [(tableSchema, i) for i in layerStringList.split(",")]
+        layerLoader = LayerLoaderFactory().makeLoader(iface, abstractDb)
         if loadToCanvas:
             iface.mapCanvas().freeze(True)
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
@@ -191,30 +135,26 @@ class LoadNonSpatialLayersFromPostgreSQLAlgorithm(QgsProcessingAlgorithm):
             uniqueLoad=uniqueLoad,
             addToCanvas=loadToCanvas,
             nonSpatial=True,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         multiStepFeedback.setCurrentStep(1)
         output = processing.run(
-            'dsgtools:grouplayers',
+            "dsgtools:grouplayers",
             {
-                'INPUT_LAYERS' : outputLayers,
-                'CATEGORY_EXPRESSION' : "to_string('{name}')".format(
-                        name=tableSchema
-                    ),
-                'OUTPUT' : ':memory'
+                "INPUT_LAYERS": outputLayers,
+                "CATEGORY_EXPRESSION": "to_string('{name}')".format(name=tableSchema),
+                "OUTPUT": ":memory",
             },
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         if loadToCanvas:
             iface.mapCanvas().freeze(False)
         return {self.OUTPUT: [i.id() for i in outputLayers]}
-    
+
     def getAbstractDb(self, host, port, database, user, password):
         abstractDb = DbFactory().createDbFactory(DsgEnums.DriverPostGIS)
-        abstractDb.connectDatabaseWithParameters(
-            host, port, database, user, password
-        )
+        abstractDb.connectDatabaseWithParameters(host, port, database, user, password)
         return abstractDb
 
     def name(self):
@@ -225,21 +165,21 @@ class LoadNonSpatialLayersFromPostgreSQLAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'LoadNonSpatialLayersFromPostgreSQLAlgorithm'
+        return "LoadNonSpatialLayersFromPostgreSQLAlgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Load Non-Spatial Layers From PostgreSQL')
+        return self.tr("Load Non-Spatial Layers From PostgreSQL")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Layer Management Algorithms')
+        return self.tr("Layer Management Algorithms")
 
     def groupId(self):
         """
@@ -249,10 +189,12 @@ class LoadNonSpatialLayersFromPostgreSQLAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Layer Management Algorithms'
+        return "DSGTools: Layer Management Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate('LoadNonSpatialLayersFromPostgreSQLAlgorithm', string)
+        return QCoreApplication.translate(
+            "LoadNonSpatialLayersFromPostgreSQLAlgorithm", string
+        )
 
     def createInstance(self):
         return LoadNonSpatialLayersFromPostgreSQLAlgorithm()

@@ -27,8 +27,9 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QProgressBar, QSizePolicy
 import time
 
+
 class ProgressWidget(QgsMessageBar):
-    def __init__(self, min, max, message, parent=None, timeout = 1.5):
+    def __init__(self, min, max, message, parent=None, timeout=1.5):
         """
         Constructs a progress widget
         """
@@ -37,24 +38,31 @@ class ProgressWidget(QgsMessageBar):
         self.max = max
         sizePolicy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
         if parent:
-            self.setMinimumSize(parent.width(),40)
+            self.setMinimumSize(parent.width(), 40)
         else:
-            self.setMinimumSize(766,40)
+            self.setMinimumSize(766, 40)
         self.setSizePolicy(sizePolicy)
         self.progressBar = QProgressBar()
         self.progressBar.setMinimum(min)
         self.progressBar.setMaximum(max)
         self.parent = parent
-        self.msgBarItem = QgsMessageBarItem(self.tr("INFO: "), message, self.progressBar, level=Qgis.Info, duration=timeout, parent = self.parent)
+        self.msgBarItem = QgsMessageBarItem(
+            self.tr("INFO: "),
+            message,
+            self.progressBar,
+            level=Qgis.Info,
+            duration=timeout,
+            parent=self.parent,
+        )
         self.pushItem(self.msgBarItem)
         self.parent.repaint()
-    
+
     def initBar(self):
         """
         Initializes the progress bar
         """
         self.progressBar.setValue(0)
-    
+
     def step(self):
         """
         Increments the progress bar

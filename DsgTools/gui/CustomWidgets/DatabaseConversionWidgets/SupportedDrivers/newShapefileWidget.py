@@ -25,11 +25,16 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtWidgets import QFileDialog
 from qgis.PyQt.QtCore import pyqtSlot
 
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.abstractSelectionWidget import AbstractSelectionWidget
-from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.newDatabaseLineEdit import NewDatabaseLineEdit
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.abstractSelectionWidget import (
+    AbstractSelectionWidget,
+)
+from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.newDatabaseLineEdit import (
+    NewDatabaseLineEdit,
+)
 from DsgTools.core.dsgEnums import DsgEnums
 
 import os
+
 
 class NewShapefileWidget(AbstractSelectionWidget):
     """
@@ -46,10 +51,14 @@ class NewShapefileWidget(AbstractSelectionWidget):
         self.source = DsgEnums.NewShapefile
         # initiate new instance of actual class widget
         self.selectionWidget = self.getNewSelectionWidget(parent=parent)
-        self.selectionWidget.caption = self.tr('Select a Directory for Shapes to be Saved At')
-        self.selectionWidget.filter = self.tr('Shapefile Database')
+        self.selectionWidget.caption = self.tr(
+            "Select a Directory for Shapes to be Saved At"
+        )
+        self.selectionWidget.filter = self.tr("Shapefile Database")
         # connect datasource selection to this ones
-        self.selectionWidget.selectFilePushButton.clicked.disconnect(self.selectionWidget.selectDatasource)
+        self.selectionWidget.selectFilePushButton.clicked.disconnect(
+            self.selectionWidget.selectDatasource
+        )
         self.selectionWidget.selectFilePushButton.clicked.connect(self.selectDatasource)
 
     def getNewSelectionWidget(self, parent=None):
@@ -68,11 +77,15 @@ class NewShapefileWidget(AbstractSelectionWidget):
         ret = self.selectionWidget.dsLineEdit.text()
         if ret:
             # path is something like /PATH/TO/datasource/***.shp or C:\PATH\TO\datasource\***.shp
-            splitChar = '/' if '/' in ret else '\\'
+            splitChar = "/" if "/" in ret else "\\"
             if len(ret) > 4:
                 # datasource connection name for a shape 'database' is its parent folder
-                ret = ret.split(splitChar)[-1] if ret[-4:].lower() != '.shp' else ret.split(splitChar)[:-4]
-        ret = ret if ret != self.tr("New Database") else ''
+                ret = (
+                    ret.split(splitChar)[-1]
+                    if ret[-4:].lower() != ".shp"
+                    else ret.split(splitChar)[:-4]
+                )
+        ret = ret if ret != self.tr("New Database") else ""
         return ret
 
     def getDatasourcePath(self):
@@ -85,7 +98,7 @@ class NewShapefileWidget(AbstractSelectionWidget):
     def getDatasource(self):
         """
         Gets the datasource selected on current widget.
-        :return: (AbstractDb) the object representing the target datasource according to its driver. 
+        :return: (AbstractDb) the object representing the target datasource according to its driver.
         """
         return None
 
@@ -107,7 +120,9 @@ class NewShapefileWidget(AbstractSelectionWidget):
         if directory:
             if len(directory) > 4:
                 # datasource connection name for a shape 'database' is its parent folder
-                directory = directory if directory[-4:].lower() != '.shp' else directory[:-4]
+                directory = (
+                    directory if directory[-4:].lower() != ".shp" else directory[:-4]
+                )
             # set only directories as line text
             self.selectionWidget.dsLineEdit.setText(directory)
         self.selectionWidget.loadDatabase(currentText=directory)

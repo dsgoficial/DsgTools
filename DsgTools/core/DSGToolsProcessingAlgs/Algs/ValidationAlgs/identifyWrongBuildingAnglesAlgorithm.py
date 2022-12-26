@@ -24,24 +24,31 @@ import math
 from PyQt5.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes,
-                       QgsProcessingException)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingException,
+)
 
 from .validationAlgorithm import ValidationAlgorithm
 
+
 class IdentifyWrongBuildingAnglesAlgorithm(ValidationAlgorithm):
-    FLAGS = 'FLAGS'
-    INPUT = 'INPUT'
-    TOLERANCE = 'TOLERANCE'
-    SELECTED = 'SELECTED'
-    IGNORE_CIRCLES = 'IGNORE_CIRCLES'
+    FLAGS = "FLAGS"
+    INPUT = "INPUT"
+    TOLERANCE = "TOLERANCE"
+    SELECTED = "SELECTED"
+    IGNORE_CIRCLES = "IGNORE_CIRCLES"
 
     def initAlgorithm(self, config):
         """
@@ -49,39 +56,35 @@ class IdentifyWrongBuildingAnglesAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorPolygon]
+                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorPolygon]
             )
         )
 
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.TOLERANCE,
-                self.tr('Angular tolerance in decimal degrees'),
+                self.tr("Angular tolerance in decimal degrees"),
                 minValue=0,
                 defaultValue=0.1,
-                type=QgsProcessingParameterNumber.Double
+                type=QgsProcessingParameterNumber.Double,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.IGNORE_CIRCLES,
-                self.tr('Ignore circular geometries'),
-                defaultValue = False
+                self.tr("Ignore circular geometries"),
+                defaultValue=False,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
 
@@ -92,14 +95,18 @@ class IdentifyWrongBuildingAnglesAlgorithm(ValidationAlgorithm):
         geometryHandler = GeometryHandler()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.INPUT)
+            )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         ignoreCircles = self.parameterAsBool(parameters, self.IGNORE_CIRCLES, context)
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        featureList, total = self.getIteratorAndFeatureCount(inputLyr, onlySelected = onlySelected)           
+        featureList, total = self.getIteratorAndFeatureCount(
+            inputLyr, onlySelected=onlySelected
+        )
 
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
@@ -110,12 +117,12 @@ class IdentifyWrongBuildingAnglesAlgorithm(ValidationAlgorithm):
             outOfBoundsList = geometryHandler.getInvalidBuildingAngle(feat, tol)
             if outOfBoundsList:
                 for item in outOfBoundsList:
-                    flagText = self.tr('Feature from layer {name} with id={id} has invalid building angle ({angle})').format(
-                        name=inputLyr.name(),
-                        id=item['feat_id'],
-                        angle=item['angle']
-                        )
-                    self.flagFeature(item['geom'], flagText)      
+                    flagText = self.tr(
+                        "Feature from layer {name} with id={id} has invalid building angle ({angle})"
+                    ).format(
+                        name=inputLyr.name(), id=item["feat_id"], angle=item["angle"]
+                    )
+                    self.flagFeature(item["geom"], flagText)
             # Update the progress bar
             feedback.setProgress(int(current * total))
 
@@ -136,21 +143,21 @@ class IdentifyWrongBuildingAnglesAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifywrongbuildinganglesalgorithm'
+        return "identifywrongbuildinganglesalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Wrong Building Angles')
+        return self.tr("Identify Wrong Building Angles")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -160,10 +167,12 @@ class IdentifyWrongBuildingAnglesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyWrongBuildingAnglesAlgorithm', string)
+        return QCoreApplication.translate(
+            "IdentifyWrongBuildingAnglesAlgorithm", string
+        )
 
     def createInstance(self):
         return IdentifyWrongBuildingAnglesAlgorithm()

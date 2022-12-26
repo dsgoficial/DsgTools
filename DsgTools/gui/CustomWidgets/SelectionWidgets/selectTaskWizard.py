@@ -7,7 +7,7 @@
         git sha              : $Format:%H$
         copyright            : (C) 2017 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
-        mod history          : 
+        mod history          :
  ***************************************************************************/
 
 /***************************************************************************
@@ -21,15 +21,17 @@
 """
 import os, json
 
-#PyQt imports
+# PyQt imports
 from qgis.PyQt import QtWidgets, QtCore, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt
 from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 from qgis.PyQt.QtGui import QCursor
 
-#DsgTools imports
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'selectTaskWizard.ui'))
+# DsgTools imports
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "selectTaskWizard.ui")
+)
+
 
 class SelectTaskWizard(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, iface, settingList, parent=None):
@@ -40,20 +42,20 @@ class SelectTaskWizard(QtWidgets.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.hideSettings(True)
         self.settingList = settingList
-    
+
     def hideSettings(self, hide):
         self.settingComboBox.hide(hide)
         self.label.hide(hide)
-    
+
     def populateSettingCombo(self, settingList):
         self.settingComboBox.clear()
-        self.settingComboBox.addItem(self.tr('Select one setting'))
+        self.settingComboBox.addItem(self.tr("Select one setting"))
         for setting in settingList:
             self.settingComboBox.addItem(setting)
-    
-    @pyqtSlot(name='on_importRadioButton_toggled')
-    @pyqtSlot(name='on_createNewRadioButton_toggled')
-    @pyqtSlot(name='on_installRadioButton_toggled')
+
+    @pyqtSlot(name="on_importRadioButton_toggled")
+    @pyqtSlot(name="on_createNewRadioButton_toggled")
+    @pyqtSlot(name="on_installRadioButton_toggled")
     def manageCombos(self):
         if self.installRadioButton.checkState() == Qt.Checked:
             self.hideSettings(False)
@@ -64,14 +66,18 @@ class SelectTaskWizard(QtWidgets.QDialog, FORM_CLASS):
 
     def validateCurrentPage(self):
         if self.currentId() == 0:
-            if self.importRadioButton.checkState() == Qt.Unchecked() and self.createNewRadioButton.checkState() == Qt.Unchecked() and self.installRadioButton.checkState() == Qt.Unchecked():
-                errorMsg = self.tr('An option must be chosen!\n')
-                QMessageBox.warning(self, self.tr('Error!'), errorMsg)
+            if (
+                self.importRadioButton.checkState() == Qt.Unchecked()
+                and self.createNewRadioButton.checkState() == Qt.Unchecked()
+                and self.installRadioButton.checkState() == Qt.Unchecked()
+            ):
+                errorMsg = self.tr("An option must be chosen!\n")
+                QMessageBox.warning(self, self.tr("Error!"), errorMsg)
                 return False
             if self.installRadioButton.checkState() == Qt.Checked():
                 if self.settingComboBox.currentIndex() == 0:
-                    errorMsg = self.tr('A setting must be chosen!\n')
-                    QMessageBox.warning(self, self.tr('Error!'), errorMsg)
+                    errorMsg = self.tr("A setting must be chosen!\n")
+                    QMessageBox.warning(self, self.tr("Error!"), errorMsg)
                     return False
                 else:
                     return True

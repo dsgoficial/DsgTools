@@ -24,11 +24,13 @@
 import sys
 from qgis.testing import unittest
 
-from DsgTools.gui.ProductionTools.Toolboxes.CustomFeatureToolBox.customButtonSetup import (CustomButtonSetup,
-                                                                                           CustomFeatureButton)
+from DsgTools.gui.ProductionTools.Toolboxes.CustomFeatureToolBox.customButtonSetup import (
+    CustomButtonSetup,
+    CustomFeatureButton,
+)
+
 
 class ButtonTester(unittest.TestCase):
-
     def test_constructorNoArgs(self):
         """Runs class constructor checks when no args are provided."""
         b = CustomFeatureButton()
@@ -47,6 +49,7 @@ class ButtonTester(unittest.TestCase):
         self.assertEquals(b.isChecked(), False)
         self.assertEquals(b.isEnabled(), False)
         from qgis.PyQt.QtWidgets import QPushButton
+
         p = {
             "name": "New button",
             "openForm": False,
@@ -62,7 +65,7 @@ class ButtonTester(unittest.TestCase):
             "digitizingTool": "default",
             "isCheckable": False,
             "isChecked": False,
-            "isEnabled": False
+            "isEnabled": False,
         }
         self.assertEquals(b.properties(), p)
 
@@ -74,7 +77,7 @@ class ButtonTester(unittest.TestCase):
             "default": "QGIS default feature extraction tool",
             "freeHandAcquisiton": "DSGTools: Free Hand Acquisition",
             "circle2points": "QGIS Circle extraction tool",
-            "acquisition": "DSGTools: Right Degree Angle Digitizing"
+            "acquisition": "DSGTools: Right Degree Angle Digitizing",
         }
         self.assertEquals(b.supportedTools(), tools)
 
@@ -99,8 +102,8 @@ class ButtonTester(unittest.TestCase):
         # asserts whether "old" widgets are updated.
         self.assertEquals(pb.font().pointSize(), 100)
 
-class SetupTester(unittest.TestCase):
 
+class SetupTester(unittest.TestCase):
     def test_emptyConstructor(self):
         """Runs class constructor with no args passed to it"""
         s = CustomButtonSetup()
@@ -117,7 +120,7 @@ class SetupTester(unittest.TestCase):
         s = CustomButtonSetup(
             buttonsProps=[b.properties() for b in (b1, b2, b3)],
             displayName="My setup",
-            description="..."
+            description="...",
         )
         self.assertEquals(s.name(), "My setup")
         self.assertEquals(s.description(), "...")
@@ -157,11 +160,11 @@ class SetupTester(unittest.TestCase):
     def test_groupButtons(self):
         """Tests if grouping buttons work"""
         from collections import defaultdict
+
         b1 = CustomFeatureButton({"name": "Button 1", "category": "Cat 1"})
         b2 = CustomFeatureButton({"name": "Button 2", "isCheckable": True})
         b3 = CustomFeatureButton({"name": "Button 3", "color": (10, 2, 45, 5)})
-        s = CustomButtonSetup(
-            buttonsProps=[b.properties() for b in (b1, b2, b3)])
+        s = CustomButtonSetup(buttonsProps=[b.properties() for b in (b1, b2, b3)])
         groups = defaultdict(set)
         for b in s.buttons():
             if b.name() == b1.name():
@@ -175,8 +178,7 @@ class SetupTester(unittest.TestCase):
         b1 = CustomFeatureButton({"size": 5})
         b2 = CustomFeatureButton({"size": 5})
         b3 = CustomFeatureButton({"size": 5})
-        s = CustomButtonSetup(
-            buttonsProps=[b.properties() for b in (b1, b2, b3)])
+        s = CustomButtonSetup(buttonsProps=[b.properties() for b in (b1, b2, b3)])
         for b in s.buttons():
             self.assertEquals(b.size(), 5)
         s.setButtonsSize(10)
@@ -188,8 +190,7 @@ class SetupTester(unittest.TestCase):
         b1 = CustomFeatureButton({"name": "B1", "keywords": set(["test"])})
         b2 = CustomFeatureButton({"name": "B2", "keywords": set(["test"])})
         b3 = CustomFeatureButton({"name": "B3"})
-        s = CustomButtonSetup(
-            buttonsProps=[b.properties() for b in (b1, b2, b3)])
+        s = CustomButtonSetup(buttonsProps=[b.properties() for b in (b1, b2, b3)])
         self.assertEquals(s.checkKeyword("test"), [b1, b2])
 
     def test_toggleButton(self):
@@ -201,22 +202,23 @@ class SetupTester(unittest.TestCase):
         s.toggleButton(s.button("New button 2"), True)
         self.assertEquals(
             {b.name(): b.isChecked() for b in s.buttons()},
-            {"New button": False, "New button 1": False, "New button 2": True}
+            {"New button": False, "New button 1": False, "New button 2": True},
         )
         s.toggleButton(s.button("New button"), True)
         self.assertEquals(
             {b.name(): b.isChecked() for b in s.buttons()},
-            {"New button": True, "New button 1": False, "New button 2": False}
+            {"New button": True, "New button 1": False, "New button 2": False},
         )
         s.toggleButton(s.button("New button 1"), True)
         self.assertEquals(
             {b.name(): b.isChecked() for b in s.buttons()},
-            {"New button": False, "New button 1": True, "New button 2": False}
+            {"New button": False, "New button 1": True, "New button 2": False},
         )
+
 
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
-    filterString = 'test_' if filterString is None else filterString
+    filterString = "test_" if filterString is None else filterString
     suite = unittest.TestSuite()
     suite.addTests(unittest.makeSuite(ButtonTester, filterString))
     suite.addTests(unittest.makeSuite(SetupTester, filterString))

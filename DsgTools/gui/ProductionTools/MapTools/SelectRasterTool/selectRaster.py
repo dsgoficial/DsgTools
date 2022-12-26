@@ -29,30 +29,30 @@ from PyQt5 import QtWidgets, QtGui
 class SelectRasterTool(QgsMapTool):
     def __init__(self, iface):
         self.rasters = []
-        self.iface = iface       
+        self.iface = iface
         self.canvas = self.iface.mapCanvas()
         super(SelectRasterTool, self).__init__(self.canvas)
-    
+
     def addTool(self, manager, callback, parentToolbar, iconBasePath):
-        icon_path = iconBasePath + '/selectRaster.png'
+        icon_path = iconBasePath + "/selectRaster.png"
         toolTip = self.tr("DSGTools: Select Raster")
         action = manager.add_action(
             icon_path,
-            text=self.tr('DSGTools: Select Raster'),
+            text=self.tr("DSGTools: Select Raster"),
             callback=callback,
             add_to_menu=False,
             add_to_toolbar=False,
-            withShortcut = True,
-            tooltip = toolTip,
+            withShortcut=True,
+            tooltip=toolTip,
             parentToolbar=parentToolbar,
-            isCheckable = True
+            isCheckable=True,
         )
         self.setAction(action)
-    
+
     def setAction(self, action):
         self.toolAction = action
         self.toolAction.setCheckable(True)
-    
+
     # def activate(self):
     #     """
     #     Activate tool.
@@ -60,7 +60,7 @@ class SelectRasterTool(QgsMapTool):
     #     if self.toolAction:
     #         self.toolAction.setChecked(True)
     #     QgsMapTool.activate(self)
-    
+
     # def deactivate(self):
     #     """
     #     Deactivate tool.
@@ -72,7 +72,7 @@ class SelectRasterTool(QgsMapTool):
     #             QgsMapTool.deactivate(self)
     #     except:
     #         pass
-    
+
     def canvasPressEvent(self, e):
         self.run()
 

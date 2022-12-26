@@ -22,48 +22,50 @@
 """
 import json
 
-from qgis.core import (QgsEditorWidgetSetup, QgsProcessing,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterString)
+from qgis.core import (
+    QgsEditorWidgetSetup,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingOutputMultipleLayers,
+    QgsProcessingParameterFile,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterString,
+)
 from qgis.PyQt.QtCore import QCoreApplication
 
 
 class AssignValueMapToLayersAlgorithm(QgsProcessingAlgorithm):
-    INPUT_LAYERS = 'INPUT_LAYERS'
-    VALUE_MAP_FILE = 'VALUE_MAP_FILE'
-    VALUE_MAP = 'VALUE_MAP'
-    OUTPUT = 'OUTPUT'
+    INPUT_LAYERS = "INPUT_LAYERS"
+    VALUE_MAP_FILE = "VALUE_MAP_FILE"
+    VALUE_MAP = "VALUE_MAP"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LAYERS,
-                self.tr('Input Layers'),
-                QgsProcessing.TypeVectorAnyGeometry
+                self.tr("Input Layers"),
+                QgsProcessing.TypeVectorAnyGeometry,
             )
         )
         self.addParameter(
             QgsProcessingParameterFile(
                 self.VALUE_MAP_FILE,
-                description=self.tr('Json file with value maps'),
-                defaultValue='.json'
+                description=self.tr("Json file with value maps"),
+                defaultValue=".json",
             )
         )
         self.addParameter(
             QgsProcessingParameterString(
                 self.VALUE_MAP,
-                description=self.tr('Json data'),
+                description=self.tr("Json data"),
                 multiLine=True,
-                defaultValue='{}'
+                defaultValue="{}",
             )
         )
         self.addOutput(
             QgsProcessingOutputMultipleLayers(
-                self.OUTPUT,
-                self.tr('Original layers with values mapped')
+                self.OUTPUT, self.tr("Original layers with values mapped")
             )
         )
 
@@ -71,28 +73,25 @@ class AssignValueMapToLayersAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        inputLyrList = self.parameterAsLayerList(
-            parameters,
-            self.INPUT_LAYERS,
-            context
-        )
-        #self.domainDict = self.loadMapFromParameters(parameters)
+        inputLyrList = self.parameterAsLayerList(parameters, self.INPUT_LAYERS, context)
+        # self.domainDict = self.loadMapFromParameters(parameters)
         layerValueMaps = self.loadMapFromParameters(parameters)
         listSize = len(inputLyrList)
-        stepSize = 100/listSize if listSize else 0
+        stepSize = 100 / listSize if listSize else 0
 
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
-            if  (
-                    lyr.dataProvider().uri().table() in layerValueMaps 
-                    and 
-                    len(layerValueMaps[lyr.dataProvider().uri().table()]) > 0
-                ):
-                self.loadLayerValueMap(lyr, layerValueMaps[lyr.dataProvider().uri().table()])
+            if (
+                lyr.dataProvider().uri().table() in layerValueMaps
+                and len(layerValueMaps[lyr.dataProvider().uri().table()]) > 0
+            ):
+                self.loadLayerValueMap(
+                    lyr, layerValueMaps[lyr.dataProvider().uri().table()]
+                )
             feedback.setProgress(current * stepSize)
 
-        return {self.OUTPUT: [ lyr.id() for lyr in inputLyrList]}
+        return {self.OUTPUT: [lyr.id() for lyr in inputLyrList]}
 
     def loadMapFromParameters(self, parameters):
         """
@@ -101,26 +100,26 @@ class AssignValueMapToLayersAlgorithm(QgsProcessingAlgorithm):
         """
         rules_path = parameters[self.VALUE_MAP_FILE]
         rules_text = parameters[self.VALUE_MAP]
-        if rules_path and rules_path != '.json':
-            with open(rules_path, 'r') as f:
+        if rules_path and rules_path != ".json":
+            with open(rules_path, "r") as f:
                 rules_input = json.load(f)
-        if rules_text and rules_text != '{}':
+        if rules_text and rules_text != "{}":
             rules_input = json.loads(rules_text)
         return rules_input
 
     def loadLayerValueMap(self, lyr, valueMap):
         pkIdxList = lyr.primaryKeyAttributes()
-        attributes = [ item['attribute'] for item in valueMap]
+        attributes = [item["attribute"] for item in valueMap]
         for i, field in enumerate(lyr.fields()):
             attrName = field.name()
-            if attrName == 'id' or 'id_' in attrName or i in pkIdxList:
+            if attrName == "id" or "id_" in attrName or i in pkIdxList:
                 formConfig = lyr.editFormConfig()
                 formConfig.setReadOnly(i, True)
                 lyr.setEditFormConfig(formConfig)
             elif attrName in attributes:
                 widgetSetup = QgsEditorWidgetSetup(
-                    'ValueMap',
-                    {'map': valueMap[attributes.index(attrName)]['valueMap']}
+                    "ValueMap",
+                    {"map": valueMap[attributes.index(attrName)]["valueMap"]},
                 )
                 lyr.setEditorWidgetSetup(i, widgetSetup)
         return lyr
@@ -133,21 +132,21 @@ class AssignValueMapToLayersAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'assignvaluemaptolayersalgorithm'
+        return "assignvaluemaptolayersalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Assign Value Map to Layers')
+        return self.tr("Assign Value Map to Layers")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Layer Management Algorithms')
+        return self.tr("Layer Management Algorithms")
 
     def groupId(self):
         """
@@ -157,13 +156,10 @@ class AssignValueMapToLayersAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Layer Management Algorithms'
+        return "DSGTools: Layer Management Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate(
-            'AssignValueMapToLayersAlgorithm',
-            string
-        )
+        return QCoreApplication.translate("AssignValueMapToLayersAlgorithm", string)
 
     def createInstance(self):
         return AssignValueMapToLayersAlgorithm()

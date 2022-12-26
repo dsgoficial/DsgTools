@@ -9,7 +9,7 @@
         git sha              : $Format:%H$
         copyright            : (C) 2014 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
-        mod history          : 
+        mod history          :
  ***************************************************************************/
 
 /***************************************************************************
@@ -23,22 +23,26 @@
 """
 import os, json
 
-#Qgis imports
+# Qgis imports
 from qgis.gui import QgsMessageBar
 from qgis.core import QgsMessageLog
 
-#PyQt imports
+# PyQt imports
 from qgis.PyQt import QtWidgets, QtCore, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt
 from qgis.PyQt.QtWidgets import QApplication
 from qgis.PyQt.QtGui import QCursor
 import qgis as qgis
 
-#DsgTools imports
-from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+# DsgTools imports
+from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
+    LayerLoaderFactory,
+)
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'loadAuxStruct.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "loadAuxStruct.ui")
+)
+
 
 class LoadAuxStruct(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, iface, parent=None):
@@ -50,18 +54,22 @@ class LoadAuxStruct(QtWidgets.QDialog, FORM_CLASS):
         self.iface = iface
         self.layerFactory = LayerLoaderFactory()
         self.selectedClasses = []
-        self.widget.tabWidget.setTabEnabled(0,True)
-        self.widget.tabWidget.setTabEnabled(1,False)
+        self.widget.tabWidget.setTabEnabled(0, True)
+        self.widget.tabWidget.setTabEnabled(1, False)
         self.widget.tabWidget.setCurrentIndex(0)
         self.bar = QgsMessageBar()
         self.setLayout(QtGui.QGridLayout(self))
-        self.layout().setContentsMargins(0,0,0,0)
+        self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setAlignment(QtCore.Qt.AlignTop)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed
+        )
         self.bar.setSizePolicy(sizePolicy)
-        self.layout().addWidget(self.bar, 0,0,1,1)
+        self.layout().addWidget(self.bar, 0, 0, 1, 1)
 
-        QtCore.QObject.connect(self.widget, QtCore.SIGNAL(("problemOccurred()")), self.pushMessage)
+        QtCore.QObject.connect(
+            self.widget, QtCore.SIGNAL(("problemOccurred()")), self.pushMessage
+        )
         self.widget.dbChanged.connect(self.widgetConv.setDatabase)
 
     @pyqtSlot(bool)
@@ -70,7 +78,7 @@ class LoadAuxStruct(QtWidgets.QDialog, FORM_CLASS):
         Closes the dialog
         """
         self.close()
-        
+
     def pushMessage(self, msg):
         """
         Pushes a message into message bar
@@ -80,12 +88,16 @@ class LoadAuxStruct(QtWidgets.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_pushButtonOk_clicked(self):
         """
-        Checks the linee-centroid structure and loads the correspondent layers 
+        Checks the linee-centroid structure and loads the correspondent layers
         """
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         if self.widgetConv.settingDict == dict():
             QApplication.restoreOverrideCursor()
-            self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load auxiliary classes! Check log for details!"), level=QgsMessageBar.CRITICAL)
+            self.bar.pushMessage(
+                self.tr("Error!"),
+                self.tr("Could not load auxiliary classes! Check log for details!"),
+                level=QgsMessageBar.CRITICAL,
+            )
         else:
             self.loadLayers()
         QApplication.restoreOverrideCursor()
@@ -96,27 +108,34 @@ class LoadAuxStruct(QtWidgets.QDialog, FORM_CLASS):
         Loads the layers defined in the line-centroid structure
         """
         try:
-            if self.widget.abstractDb.getDatabaseVersion() == 'Non_EDGV':
+            if self.widget.abstractDb.getDatabaseVersion() == "Non_EDGV":
                 isEdgv = False
             else:
                 isEdgv = True
-            auxClassesDict = self.widgetConv.settingDict['earthCoverageDict']
+            auxClassesDict = self.widgetConv.settingDict["earthCoverageDict"]
             auxClasses = []
             for key in list(auxClassesDict.keys()):
                 for cl in auxClassesDict[key]:
                     if cl not in auxClasses:
-                        if '.' in cl:
-                            classToLoad = cl.split('.')[-1]
+                        if "." in cl:
+                            classToLoad = cl.split(".")[-1]
                         else:
                             classToLoad = cl
                         auxClasses.append(classToLoad)
             auxCentroids = self.widgetConv.abstractDb.getEarthCoverageCentroids()
             auxClasses = auxClasses + auxCentroids
             auxClasses.sort(reverse=True)
-            auxClasses = [self.widgetConv.settingDict['frameLayer'].split('.')[-1]]+auxClasses
-            factory = self.layerFactory.makeLoader(self.iface, self.widget.abstractDb, loadCentroids=True)
-            factory.load(auxClasses, uniqueLoad = True, isEdgv = isEdgv)
+            auxClasses = [
+                self.widgetConv.settingDict["frameLayer"].split(".")[-1]
+            ] + auxClasses
+            factory = self.layerFactory.makeLoader(
+                self.iface, self.widget.abstractDb, loadCentroids=True
+            )
+            factory.load(auxClasses, uniqueLoad=True, isEdgv=isEdgv)
         except Exception as e:
-                QgsMessageLog.logMessage(':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
-                self.bar.pushMessage(self.tr("Error!"), self.tr("Could not load auxiliary classes! Check log for details!"), level=QgsMessageBar.CRITICAL)
-                
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
+            self.bar.pushMessage(
+                self.tr("Error!"),
+                self.tr("Could not load auxiliary classes! Check log for details!"),
+                level=QgsMessageBar.CRITICAL,
+            )

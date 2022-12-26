@@ -24,28 +24,35 @@ from itertools import chain
 from PyQt5.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterDistance,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterDistance,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterField,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
-    INPUT_LINES = 'INPUT_LINES'
-    INPUT_POLYGONS = 'INPUT_POLYGONS'
-    SELECTED = 'SELECTED'
-    SEARCH_RADIUS = 'SEARCH_RADIUS'
-    GEOGRAPHIC_BOUNDARY = 'GEOGRAPHIC_BOUNDARY'
+    INPUT_LINES = "INPUT_LINES"
+    INPUT_POLYGONS = "INPUT_POLYGONS"
+    SELECTED = "SELECTED"
+    SEARCH_RADIUS = "SEARCH_RADIUS"
+    GEOGRAPHIC_BOUNDARY = "GEOGRAPHIC_BOUNDARY"
 
     def initAlgorithm(self, config):
         """
@@ -54,45 +61,39 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LINES,
-                self.tr('Linestring Layers'),
+                self.tr("Linestring Layers"),
                 QgsProcessing.TypeVectorLine,
-                optional=True
+                optional=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_POLYGONS,
-                self.tr('Polygon Layers'),
+                self.tr("Polygon Layers"),
                 QgsProcessing.TypeVectorPolygon,
-                optional=True
+                optional=True,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
         param = QgsProcessingParameterDistance(
-            self.SEARCH_RADIUS,
-            self.tr('Search Radius'),
-            defaultValue=1.0
+            self.SEARCH_RADIUS, self.tr("Search Radius"), defaultValue=1.0
         )
-        param.setMetadata( {'widget_wrapper':
-            { 'decimals': 8 }
-        })
+        param.setMetadata({"widget_wrapper": {"decimals": 8}})
         self.addParameter(param)
-        
+
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
-                self.tr('Geographic Boundary'),
+                self.tr("Geographic Boundary"),
                 [QgsProcessing.TypeVectorPolygon],
-                optional=True
+                optional=True,
             )
         )
-
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -100,33 +101,17 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
         """
         algRunner = AlgRunner()
         inputLineLyrList = self.parameterAsLayerList(
-            parameters,
-            self.INPUT_LINES,
-            context
+            parameters, self.INPUT_LINES, context
         )
         inputPolygonLyrList = self.parameterAsLayerList(
-            parameters,
-            self.INPUT_POLYGONS,
-            context
+            parameters, self.INPUT_POLYGONS, context
         )
         if inputLineLyrList + inputPolygonLyrList == []:
-            raise QgsProcessingException(
-                self.tr('Select at least one layer')
-            )
-        onlySelected = self.parameterAsBool(
-            parameters,
-            self.SELECTED,
-            context
-        )
-        searchRadius = self.parameterAsDouble(
-            parameters,
-            self.SEARCH_RADIUS,
-            context
-        )
+            raise QgsProcessingException(self.tr("Select at least one layer"))
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
         geographicBoundary = self.parameterAsVectorLayer(
-            parameters,
-            self.GEOGRAPHIC_BOUNDARY,
-            context
+            parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
         lyrList = list(chain(inputLineLyrList, inputPolygonLyrList))
         nLyrs = len(lyrList)
@@ -139,7 +124,7 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
             searchRadius=searchRadius,
             context=context,
             feedback=multiStepFeedback,
-            is_child_algorithm=True
+            is_child_algorithm=True,
         )
         if geographicBoundary is not None:
             multiStepFeedback.setCurrentStep(1)
@@ -148,12 +133,14 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
                 geographicBoundary,
                 context=context,
                 feedback=multiStepFeedback,
-                is_child_algorithm=True
+                is_child_algorithm=True,
             )
         for current, lyr in enumerate(lyrList):
             if feedback.isCanceled():
                 break
-            multiStepFeedback.setCurrentStep(current + 1 + (geographicBoundary is not None))
+            multiStepFeedback.setCurrentStep(
+                current + 1 + (geographicBoundary is not None)
+            )
             algRunner.runSnapLayerOnLayer(
                 inputLayer=lyr,
                 referenceLayer=flagsLyr,
@@ -162,7 +149,7 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
                 onlySelected=onlySelected,
                 feedback=multiStepFeedback,
                 behavior=1,
-                is_child_algorithm=True
+                is_child_algorithm=True,
             )
         # currentStep = current + 1 + (geographicBoundary is not None)
         # multiStepFeedback.setCurrentStep(currentStep)
@@ -205,21 +192,21 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'addunsharedvertexonsharededgesalgorithm'
+        return "addunsharedvertexonsharededgesalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Add Unshared Vertex on Shared Edges')
+        return self.tr("Add Unshared Vertex on Shared Edges")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Correction Processes)')
+        return self.tr("Quality Assurance Tools (Correction Processes)")
 
     def groupId(self):
         """
@@ -229,10 +216,12 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'Quality Assurance Tools (Correction Processes)'
+        return "Quality Assurance Tools (Correction Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('AddUnsharedVertexOnSharedEdgesAlgorithm', string)
+        return QCoreApplication.translate(
+            "AddUnsharedVertexOnSharedEdgesAlgorithm", string
+        )
 
     def createInstance(self):
         return AddUnsharedVertexOnSharedEdgesAlgorithm()

@@ -23,49 +23,52 @@ from PyQt5.QtCore import QCoreApplication
 from qgis.PyQt.QtXml import QDomDocument
 
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterString,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterVectorLayer, 
-                       QgsWkbTypes,
-                       QgsVectorLayer,
-                       QgsProject)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterString,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFile,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsVectorLayer,
+    QgsProject,
+)
 
 from qgis.utils import iface
 
+
 class ExportToMemoryLayer(QgsProcessingAlgorithm):
-    INPUT = 'INPUT_LAYER'
-    OUTPUT_NAME = 'OUTPUT_NAME'
-    OUTPUT_QML_STYLE = 'OUTPUT_QML_STYLE'
+    INPUT = "INPUT_LAYER"
+    OUTPUT_NAME = "OUTPUT_NAME"
+    OUTPUT_QML_STYLE = "OUTPUT_QML_STYLE"
 
     def initAlgorithm(self, config):
         """
         Parameter setting.
         """
         self.addParameter(
-            QgsProcessingParameterVectorLayer(
-                self.INPUT,
-                self.tr('Camada de entrada')
-            )
+            QgsProcessingParameterVectorLayer(self.INPUT, self.tr("Camada de entrada"))
         )
         self.addParameter(
             QgsProcessingParameterString(
                 self.OUTPUT_NAME,
-                self.tr('Nome da camada de saída'),
+                self.tr("Nome da camada de saída"),
                 optional=True,
-                defaultValue='resultado'
+                defaultValue="resultado",
             )
-        )   
+        )
         self.addParameter(
             QgsProcessingParameterString(
                 self.OUTPUT_QML_STYLE,
-                self.tr('Estilo da camada de saída'),
-                multiLine = True,
-                optional=True
+                self.tr("Estilo da camada de saída"),
+                multiLine=True,
+                optional=True,
             )
         )
 
@@ -75,16 +78,20 @@ class ExportToMemoryLayer(QgsProcessingAlgorithm):
         """
         layer = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         geom_types = {
-            0 : 'Point',
-            1 : 'LineString',
-            2 : 'Polygon',
+            0: "Point",
+            1: "LineString",
+            2: "Polygon",
         }
         outputLayerName = self.parameterAsString(parameters, self.OUTPUT_NAME, context)
-        outputLayerStyle = self.parameterAsString(parameters, self.OUTPUT_QML_STYLE, context)
+        outputLayerStyle = self.parameterAsString(
+            parameters, self.OUTPUT_QML_STYLE, context
+        )
         temp = QgsVectorLayer(
-            '{0}?crs={1}'.format(geom_types[layer.geometryType()], layer.crs().authid()), 
-            "{0}".format(outputLayerName), 
-            "memory"
+            "{0}?crs={1}".format(
+                geom_types[layer.geometryType()], layer.crs().authid()
+            ),
+            "{0}".format(outputLayerName),
+            "memory",
         )
         doc = QDomDocument()
         doc.setContent(outputLayerStyle)
@@ -92,7 +99,7 @@ class ExportToMemoryLayer(QgsProcessingAlgorithm):
         temp_data = temp.dataProvider()
         temp_data.addAttributes(layer.dataProvider().fields().toList())
         temp.updateFields()
-        temp_data.addFeatures([ feat for feat in layer.getFeatures() ])
+        temp_data.addFeatures([feat for feat in layer.getFeatures()])
         QgsProject().instance().addMapLayer(temp)
         return {}
 
@@ -104,21 +111,21 @@ class ExportToMemoryLayer(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'exportToMemoryLayer'
+        return "exportToMemoryLayer"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Export To Memory Layer (works only on models)')
+        return self.tr("Export To Memory Layer (works only on models)")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Other Algorithms')
+        return self.tr("Other Algorithms")
 
     def groupId(self):
         """
@@ -128,10 +135,10 @@ class ExportToMemoryLayer(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Other Algorithms'
+        return "DSGTools: Other Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate('ExportToMemoryLayer', string)
+        return QCoreApplication.translate("ExportToMemoryLayer", string)
 
     def createInstance(self):
         return ExportToMemoryLayer()

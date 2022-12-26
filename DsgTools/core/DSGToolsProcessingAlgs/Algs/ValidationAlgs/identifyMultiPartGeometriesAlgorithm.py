@@ -27,24 +27,35 @@ import processing
 import concurrent.futures
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsProject, QgsWkbTypes, QgsProcessingFeatureSourceDefinition, QgsExpression, QgsFeatureRequest)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingUtils,
+    QgsProject,
+    QgsWkbTypes,
+    QgsProcessingFeatureSourceDefinition,
+    QgsExpression,
+    QgsFeatureRequest,
+)
 
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class IdentifyMultiPartGeometriesAlgorithm(ValidationAlgorithm):
-    FLAGS = 'FLAGS'
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
+    FLAGS = "FLAGS"
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
 
     def initAlgorithm(self, config):
         """
@@ -53,24 +64,22 @@ class IdentifyMultiPartGeometriesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input layer'),
+                self.tr("Input layer"),
                 [
                     QgsProcessing.TypeVectorAnyGeometry,
-                ]
+                ],
             )
         )
 
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
 
@@ -80,7 +89,9 @@ class IdentifyMultiPartGeometriesAlgorithm(ValidationAlgorithm):
         """
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.INPUT)
+            )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
         request = QgsFeatureRequest()
@@ -95,7 +106,9 @@ class IdentifyMultiPartGeometriesAlgorithm(ValidationAlgorithm):
         for current, feat in enumerate(featuresWithProblem):
             if feedback is not None and feedback.isCanceled():
                 break
-            self.flagFeature(feat.geometry(), flagText=self.tr('Geometry with multi part.'))
+            self.flagFeature(
+                feat.geometry(), flagText=self.tr("Geometry with multi part.")
+            )
             if feedback is not None:
                 feedback.setProgress(current * stepSize)
 
@@ -109,21 +122,21 @@ class IdentifyMultiPartGeometriesAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifymultigeometries'
+        return "identifymultigeometries"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Multipart Geometries')
+        return self.tr("Identify Multipart Geometries")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -133,10 +146,12 @@ class IdentifyMultiPartGeometriesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyMultiPartGeometriesAlgorithm', string)
+        return QCoreApplication.translate(
+            "IdentifyMultiPartGeometriesAlgorithm", string
+        )
 
     def createInstance(self):
         return IdentifyMultiPartGeometriesAlgorithm()

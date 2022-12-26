@@ -28,24 +28,29 @@ from qgis.PyQt.QtCore import pyqtSlot, Qt, pyqtSignal
 from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QFileDialog
 from qgis.PyQt.QtGui import QCursor
 
-#DsgTools imports
+# DsgTools imports
 from DsgTools.core.ServerManagementTools.styleManager import StyleManager
-from DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.BasicPropertyWidgets.genericParameterSetter import GenericParameterSetter
-from DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.BasicPropertyWidgets.genericManagerWidget import GenericManagerWidget
+from DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.BasicPropertyWidgets.genericParameterSetter import (
+    GenericParameterSetter,
+)
+from DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.BasicPropertyWidgets.genericManagerWidget import (
+    GenericManagerWidget,
+)
 from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.dsgEnums import DsgEnums
 
 from qgis.core import QgsMessageLog
 import json
 
+
 class StyleManagerWidget(GenericManagerWidget):
-    def __init__(self, manager = None, parent = None):
+    def __init__(self, manager=None, parent=None):
         """
         Constructor
         """
-        super(self.__class__, self).__init__(genericDbManager = manager, parent = parent)
+        super(self.__class__, self).__init__(genericDbManager=manager, parent=parent)
 
-    def setParameters(self, serverAbstractDb, edgvVersion, dbsDict = {}):
+    def setParameters(self, serverAbstractDb, edgvVersion, dbsDict={}):
         if serverAbstractDb:
             self.setComponentsEnabled(True)
             self.serverAbstractDb = serverAbstractDb
@@ -59,37 +64,37 @@ class StyleManagerWidget(GenericManagerWidget):
         """
         Slot that opens the create profile dialog
         """
-        #TODO
-        pass        
-    
-    def populateConfigInterface(self, templateDb, jsonDict = None):
-        '''
-        Must be reimplemented in each child
-        '''
-        #TODO
+        # TODO
         pass
-    
+
+    def populateConfigInterface(self, templateDb, jsonDict=None):
+        """
+        Must be reimplemented in each child
+        """
+        # TODO
+        pass
+
     def getUpdateSelectedSettingHeader(self):
-        header = self.tr('Update Style configuration complete. \n')
-        operation = self.tr('style configuration')
+        header = self.tr("Update Style configuration complete. \n")
+        operation = self.tr("style configuration")
         return header, operation
 
     def getUninstallSelectedSettingHeader(self):
-        header = self.tr('Uninstall Style configuration complete. \n')
-        operation = self.tr('style configuration')
+        header = self.tr("Uninstall Style configuration complete. \n")
+        operation = self.tr("style configuration")
         return header, operation
 
     def getApplyHeader(self):
-        header = self.tr('Install Style configuration complete. \n')
-        operation = self.tr('style configurations')
+        header = self.tr("Install Style configuration complete. \n")
+        operation = self.tr("style configurations")
         return header, operation
-    
+
     def getDeleteHeader(self):
-        header = self.tr('Delete Style configuration complete. \n')
-        operation = self.tr('style configurations')
+        header = self.tr("Delete Style configuration complete. \n")
+        operation = self.tr("style configurations")
         return header, operation
-    
+
     def getUninstallFromSelected(self):
-        header = self.tr('Uninstall Style configuration complete. \n')
-        operation = self.tr('style configurations')
+        header = self.tr("Uninstall Style configuration complete. \n")
+        operation = self.tr("style configurations")
         return header, operation

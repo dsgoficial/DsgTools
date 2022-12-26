@@ -27,31 +27,32 @@ from qgis.PyQt.QtCore import QSettings, QObject
 
 from qgis.core import QgsProject, QgsVectorLayer
 
+
 class ShortcutTool(QObject):
     def __init__(self, iface):
         """
         Hides or show active layers labels.
         """
-        self.iface = iface       
+        self.iface = iface
         super(ShortcutTool, self).__init__()
-    
+
     def addTool(self, manager, callback, parentToolbar, stackButton, iconBasePath):
         self.stackButton = stackButton
-        icon_path = iconBasePath + '/on_off.png'
+        icon_path = iconBasePath + "/on_off.png"
         toolTip = self.tr("DSGTools: Active Layer visibility")
         action = manager.add_action(
             icon_path,
-            text=self.tr('DSGTools: Active Layer visibility'),
+            text=self.tr("DSGTools: Active Layer visibility"),
             callback=self.hideOrShowActiveLayer,
             add_to_menu=False,
             add_to_toolbar=False,
             withShortcut=True,
             tooltip=toolTip,
             parentButton=stackButton,
-            isCheckable=False
+            isCheckable=False,
         )
 
-        icon_path = iconBasePath + '/vertex.png'
+        icon_path = iconBasePath + "/vertex.png"
         toolTip = self.tr("DSGTools: Toggle vertex's marker visibility")
         action = manager.add_action(
             icon_path,
@@ -62,7 +63,7 @@ class ShortcutTool(QObject):
             withShortcut=True,
             tooltip=toolTip,
             parentButton=stackButton,
-            isCheckable=False
+            isCheckable=False,
         )
 
     def hideOrShowMarkers(self):
@@ -71,8 +72,8 @@ class ShortcutTool(QObject):
         except:
             pass
         qSettings = QSettings()
-        currentState = qSettings.value(u'qgis/digitizing/marker_only_for_selected')
-        qSettings.setValue(u'qgis/digitizing/marker_only_for_selected', not currentState)
+        currentState = qSettings.value("qgis/digitizing/marker_only_for_selected")
+        qSettings.setValue("qgis/digitizing/marker_only_for_selected", not currentState)
         self.iface.mapCanvas().refresh()
 
     def hideOrShowActiveLayer(self):
@@ -83,8 +84,9 @@ class ShortcutTool(QObject):
         activeLayer = self.iface.activeLayer()
         layerTreeRoot = QgsProject.instance().layerTreeRoot()
         layerVisibilityState = activeLayer in layerTreeRoot.checkedLayers()
-        layerTreeRoot.findLayer(activeLayer.id()).setItemVisibilityChecked(not layerVisibilityState)
-    
+        layerTreeRoot.findLayer(activeLayer.id()).setItemVisibilityChecked(
+            not layerVisibilityState
+        )
+
     def unload(self):
         pass
-        

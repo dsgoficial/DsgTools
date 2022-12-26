@@ -28,7 +28,13 @@ from qgis.core import QgsMessageLog
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
-from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox, QMenu, QApplication, QFileDialog
+from qgis.PyQt.QtWidgets import (
+    QListWidgetItem,
+    QMessageBox,
+    QMenu,
+    QApplication,
+    QFileDialog,
+)
 from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
@@ -37,17 +43,20 @@ from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.gui.ServerTools.viewServers import ViewServers
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.gui.DatabaseTools.UserTools.permission_properties import PermissionProperties
+from DsgTools.gui.DatabaseTools.UserTools.permission_properties import (
+    PermissionProperties,
+)
 from DsgTools.gui.ServerTools.createView import CreateView
 from DsgTools.gui.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
 
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'selectStyles.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "selectStyles.ui")
+)
+
 
 class SelectStyles(QtWidgets.QDialog, FORM_CLASS):
-    
-    def __init__(self, styleList, parent = None):
+    def __init__(self, styleList, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -57,11 +66,13 @@ class SelectStyles(QtWidgets.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.customSelector.setInitialState(styleList)
-        self.customSelector.setTitle(self.tr('Select Styles'))
+        self.customSelector.setTitle(self.tr("Select Styles"))
         self.selectedStyles = []
 
     @pyqtSlot()
     def on_buttonBox_accepted(self):
         self.selectedStyles = self.customSelector.toLs
         if len(self.selectedStyles) == 0:
-            QMessageBox.warning(self, self.tr('Warning'), self.tr('Select at least one style!'))
+            QMessageBox.warning(
+                self, self.tr("Warning"), self.tr("Select at least one style!")
+            )

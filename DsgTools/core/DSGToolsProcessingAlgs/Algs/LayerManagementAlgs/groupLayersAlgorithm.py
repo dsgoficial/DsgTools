@@ -25,14 +25,20 @@ import os
 
 from PyQt5.QtCore import QCoreApplication
 
-from qgis.core import (QgsDataSourceUri, QgsExpression, QgsExpressionContext,
-                       QgsExpressionContextUtils, QgsProcessing,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterExpression,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterString, QgsProject)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsExpression,
+    QgsExpressionContext,
+    QgsExpressionContextUtils,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingOutputMultipleLayers,
+    QgsProcessingParameterExpression,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterString,
+    QgsProject,
+)
 from qgis.utils import iface
 
 
@@ -44,31 +50,30 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
     CATEGORY_TOKEN_INDEX: index of the split list
     OUTPUT: list of outputs
     """
-    INPUT_LAYERS = 'INPUT_LAYERS'
-    CATEGORY_EXPRESSION = 'CATEGORY_EXPRESSION'
-    OUTPUT = 'OUTPUT'
+
+    INPUT_LAYERS = "INPUT_LAYERS"
+    CATEGORY_EXPRESSION = "CATEGORY_EXPRESSION"
+    OUTPUT = "OUTPUT"
+
     def initAlgorithm(self, config):
         """
         Parameter setting.
         """
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
-                self.INPUT_LAYERS,
-                self.tr('Input Layers'),
-                QgsProcessing.TypeVector
+                self.INPUT_LAYERS, self.tr("Input Layers"), QgsProcessing.TypeVector
             )
         )
         self.addParameter(
             QgsProcessingParameterExpression(
                 self.CATEGORY_EXPRESSION,
-                self.tr('Expression used to find out the category'),
-                defaultValue="regexp_substr(@layer_name ,'([^_]+)')"
+                self.tr("Expression used to find out the category"),
+                defaultValue="regexp_substr(@layer_name ,'([^_]+)')",
             )
         )
         self.addOutput(
             QgsProcessingOutputMultipleLayers(
-                self.OUTPUT,
-                self.tr('Original reorganized layers')
+                self.OUTPUT, self.tr("Original reorganized layers")
             )
         )
 
@@ -76,25 +81,19 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        inputLyrList = self.parameterAsLayerList(
-            parameters,
-            self.INPUT_LAYERS,
-            context
-        )
+        inputLyrList = self.parameterAsLayerList(parameters, self.INPUT_LAYERS, context)
         categoryExpression = self.parameterAsExpression(
-            parameters,
-            self.CATEGORY_EXPRESSION,
-            context
-        ) 
+            parameters, self.CATEGORY_EXPRESSION, context
+        )
         listSize = len(inputLyrList)
-        progressStep = 100/listSize if listSize else 0
+        progressStep = 100 / listSize if listSize else 0
         rootNode = QgsProject.instance().layerTreeRoot()
         inputLyrList.sort(key=lambda x: (x.geometryType(), x.name()))
         geometryNodeDict = {
-            0 : self.tr('Point'),
-            1 : self.tr('Line'),
-            2 : self.tr('Polygon'),
-            4 : self.tr('Non spatial')
+            0: self.tr("Point"),
+            1: self.tr("Line"),
+            2: self.tr("Polygon"),
+            4: self.tr("Non spatial"),
         }
         iface.mapCanvas().freeze(True)
         for current, lyr in enumerate(inputLyrList):
@@ -102,20 +101,17 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
                 break
             rootDatabaseNode = self.getLayerRootNode(lyr, rootNode)
             geometryNode = self.createGroup(
-                geometryNodeDict[lyr.geometryType()],
-                rootDatabaseNode
+                geometryNodeDict[lyr.geometryType()], rootDatabaseNode
             )
             categoryNode = self.getLayerCategoryNode(
-                lyr,
-                geometryNode,
-                categoryExpression
+                lyr, geometryNode, categoryExpression
             )
             lyrNode = rootNode.findLayer(lyr.id())
             myClone = lyrNode.clone()
             categoryNode.addChildNode(myClone)
             # not thread safe, must set flag to FlagNoThreading
             rootNode.removeChildNode(lyrNode)
-            feedback.setProgress(current*progressStep)
+            feedback.setProgress(current * progressStep)
         iface.mapCanvas().freeze(False)
         return {self.OUTPUT: [i.id() for i in inputLyrList]}
 
@@ -131,21 +127,21 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
         rootNodeName = candidateUri.database()
         if not rootNodeName:
             rootNodeName = self.getRootNodeName(uriText)
-        #creates database root
+        # creates database root
         return self.createGroup(rootNodeName, rootNode)
 
     def getRootNodeName(self, uriText):
         """
         Gets root node name from uri according to provider type.
         """
-        if 'memory?' in uriText:
-            rootNodeName = 'memory'
-        elif 'dbname' in uriText:
-            rootNodeName = uriText.replace('dbname=', '').split(' ')[0]
-        elif '|' in uriText:
-            rootNodeName = os.path.dirname(uriText.split(' ')[0].split('|')[0])
+        if "memory?" in uriText:
+            rootNodeName = "memory"
+        elif "dbname" in uriText:
+            rootNodeName = uriText.replace("dbname=", "").split(" ")[0]
+        elif "|" in uriText:
+            rootNodeName = os.path.dirname(uriText.split(" ")[0].split("|")[0])
         else:
-            rootNodeName = 'unrecognised_format'
+            rootNodeName = "unrecognised_format"
         return rootNodeName
 
     def getLayerCategoryNode(self, lyr, rootNode, categoryExpression):
@@ -155,9 +151,7 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
         """
         exp = QgsExpression(categoryExpression)
         context = QgsExpressionContext()
-        context.appendScopes(
-            QgsExpressionContextUtils.globalProjectLayerScopes(lyr)
-        )
+        context.appendScopes(QgsExpressionContextUtils.globalProjectLayerScopes(lyr))
         if exp.hasParserError():
             raise Exception(exp.parserErrorString())
         if exp.hasEvalError():
@@ -180,21 +174,21 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'grouplayers'
+        return "grouplayers"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Group Layers')
+        return self.tr("Group Layers")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Layer Management Algorithms')
+        return self.tr("Layer Management Algorithms")
 
     def groupId(self):
         """
@@ -204,13 +198,13 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Layer Management Algorithms'
+        return "DSGTools: Layer Management Algorithms"
 
     def tr(self, string):
         """
         Translates input string.
         """
-        return QCoreApplication.translate('GroupLayersAlgorithm', string)
+        return QCoreApplication.translate("GroupLayersAlgorithm", string)
 
     def createInstance(self):
         """

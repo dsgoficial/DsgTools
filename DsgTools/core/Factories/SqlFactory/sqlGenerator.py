@@ -23,6 +23,7 @@
 from builtins import object
 from ...dsgEnums import DsgEnums
 
+
 class SqlGenerator(object):
     def getComplexLinks(self, complex):
         return None
@@ -33,7 +34,9 @@ class SqlGenerator(object):
     def getComplexData(self, complex_schema, complex):
         return None
 
-    def getAssociatedFeaturesData(self, aggregated_schema, aggregated_class, column_name, complex_uuid):
+    def getAssociatedFeaturesData(
+        self, aggregated_schema, aggregated_class, column_name, complex_uuid
+    ):
         return None
 
     def getLinkColumn(self, complexClass, aggregatedClass):
@@ -45,7 +48,7 @@ class SqlGenerator(object):
     def getEDGVVersion(self):
         sql = "SELECT edgvversion FROM db_metadata LIMIT 1"
         return sql
-    
+
     def getEDGVVersionAndImplementationVersion(self):
         sql = "SELECT edgvversion, dbimplversion FROM db_metadata LIMIT 1"
         return sql
@@ -67,79 +70,79 @@ class SqlGenerator(object):
 
     def getDatabasesFromServer(self):
         return None
-    
+
     def dropDatabase(self, name):
         return None
-    
+
     def createRole(self, mydict):
         return None
 
     def dropRole(self, role):
         return None
-    
+
     def grantRole(self, user, role):
         return None
-    
+
     def revokeRole(self, user, role):
         return None
-    
+
     def getRoles(self):
         return None
-    
+
     def getUserRelatedRoles(self):
         return None
-    
+
     def getUsers(self):
         return None
-    
+
     def createUser(self):
         return None
-    
+
     def removeUser(self):
-        return None   
+        return None
 
     def alterUserPass(self):
         return None
-    
+
     def validateWithDomain(self):
-        return None 
-    
-    def getNotNullFields(self):
-        return None  
-    
-    def getFeaturesWithSQL(self,layer,attrList):
         return None
 
-    def getStructure(self,edgvVersion):
+    def getNotNullFields(self):
+        return None
+
+    def getFeaturesWithSQL(self, layer, attrList):
+        return None
+
+    def getStructure(self, edgvVersion):
         return None
 
     def getAggregationColumn(self):
         return None
 
     def getAggregatorFromId(self, className, id):
-       return None
-   
-    def getAggregatorFromComplexSchema(self,aggregated,aggregationColumn):
         return None
-    
+
+    def getAggregatorFromComplexSchema(self, aggregated, aggregationColumn):
+        return None
+
     def createCustomSort(self):
         return None
-    
+
     def getRolePrivileges(self, role, dbname):
         return None
 
-    def isSuperUser(self,user):
+    def isSuperUser(self, user):
         return None
-    
+
     def getInvalidGeom(self, tableSchema, tableName):
         return None
 
     def checkValidationStructure(self):
         return None
 
-    def createValidationStructure(self,srid):
+    def createValidationStructure(self, srid):
         return None
-    
+
     def getTableExtent(self, tableSchema, tableName):
         return None
 

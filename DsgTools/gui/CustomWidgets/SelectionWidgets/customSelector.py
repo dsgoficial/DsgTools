@@ -28,13 +28,15 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'customSelector.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "customSelector.ui")
+)
+
 
 class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
-    selectionChanged = pyqtSignal(list,str)
+    selectionChanged = pyqtSignal(list, str)
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -45,7 +47,7 @@ class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
         self.fromLs = []
         self.toLs = []
         self.setupUi(self)
-    
+
     def clearAll(self):
         """
         Clears everything to return to the initial state
@@ -55,7 +57,7 @@ class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
         self.fromList.clear()
         self.toList.clear()
         self.filterLineEdit.clear()
-    
+
     def setInitialState(self, fromList, unique=False):
         """
         Sets the initial state
@@ -63,7 +65,7 @@ class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
         self.clearAll()
         if not isinstance(fromList, int):
             self.setFromList(fromList, unique)
-    
+
     def setFromList(self, fromList, unique=False):
         """
         Setting the "from" items (QListWidget and python list)
@@ -78,7 +80,7 @@ class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
             self.fromLs.sort()
             self.fromList.addItems(fromList)
             self.fromList.sortItems()
-    
+
     def addItems(self, addList, unique=False):
         """
         Adding "from" items (QListWidget and python list)
@@ -95,7 +97,7 @@ class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
             self.fromList.addItems(toAddList)
             self.fromList.sortItems()
             self.fromLs.sort()
-    
+
     def removeItem(self, removeItem):
         """
         Removing items (QListWidget and python list)
@@ -113,7 +115,6 @@ class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
                     self.toLs.remove(toItem.text())
                     item = self.toList.takeItem(i)
 
-
     def setToList(self, toList):
         """
         Setting the "to" items (QListWidget and python list)
@@ -121,14 +122,14 @@ class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
         self.toLs = list(toList)
         self.toList.addItems(self.toLs)
         self.toList.sortItems()
-    
-    def setTitle(self,title):
+
+    def setTitle(self, title):
         """
         Setting the title
         """
         self.groupBox.setTitle(title)
 
-    @pyqtSlot(bool, name='on_pushButtonSelectOne_clicked')
+    @pyqtSlot(bool, name="on_pushButtonSelectOne_clicked")
     def selectItems(self, isSelected, selectedItems=None):
         """
         Adds the selected items to the "to" list
@@ -154,10 +155,10 @@ class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
             self.fromLs.remove(item.text())
             added.append(item.text())
         self.toList.sortItems()
-        #emits added items
+        # emits added items
         if len(added) > 0:
-            self.selectionChanged.emit(added,'added')
-        
+            self.selectionChanged.emit(added, "added")
+
     @pyqtSlot(bool)
     def on_pushButtonSelectAll_clicked(self):
         """
@@ -165,16 +166,16 @@ class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
         """
         tam = self.fromList.__len__()
         added = []
-        for i in range(tam+1,1,-1):
-            item = self.fromList.takeItem(i-2)
+        for i in range(tam + 1, 1, -1):
+            item = self.fromList.takeItem(i - 2)
             self.toList.addItem(item)
             self.toLs.append(item.text())
             added.append(item.text())
             self.fromLs.remove(item.text())
         self.toList.sortItems()
-        #emits added items
+        # emits added items
         if len(added) > 0:
-            self.selectionChanged.emit(added,'added')
+            self.selectionChanged.emit(added, "added")
 
     @pyqtSlot(bool)
     def on_pushButtonDeselectOne_clicked(self):
@@ -190,9 +191,9 @@ class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
             removed.append(item.text())
             self.fromList.addItem(item)
         self.fromList.sortItems()
-        #emits removed items
+        # emits removed items
         if len(removed) > 0:
-            self.selectionChanged.emit(removed,'removed')
+            self.selectionChanged.emit(removed, "removed")
 
     @pyqtSlot(bool)
     def on_pushButtonDeselectAll_clicked(self):
@@ -201,23 +202,27 @@ class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
         """
         tam = self.toList.__len__()
         removed = []
-        for i in range(tam+1,1,-1):
-            item = self.toList.takeItem(i-2)
+        for i in range(tam + 1, 1, -1):
+            item = self.toList.takeItem(i - 2)
             self.fromLs.append(item.text())
             self.toLs.remove(item.text())
             self.fromList.addItem(item)
             removed.append(item.text())
         self.fromList.sortItems()
-        #emits removed items
+        # emits removed items
         if len(removed) > 0:
-            self.selectionChanged.emit(removed,'removed')
-    
+            self.selectionChanged.emit(removed, "removed")
+
     def on_filterLineEdit_textChanged(self, text):
         """
         Filters the items to make it easier to spot and select them
         """
-        classes = [edgvClass for edgvClass in self.fromLs if text.lower() in edgvClass.lower()]
-        filteredClasses = [i for i in classes if i.lower() not in [j.lower() for j in self.toLs]]
+        classes = [
+            edgvClass for edgvClass in self.fromLs if text.lower() in edgvClass.lower()
+        ]
+        filteredClasses = [
+            i for i in classes if i.lower() not in [j.lower() for j in self.toLs]
+        ]
         self.fromList.clear()
         self.fromList.addItems(classes)
         self.fromList.sortItems()
@@ -234,8 +239,8 @@ class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
         and avoid losing items.
         """
         tam = self.toList.__len__()
-        for i in range(tam+1,1,-1):
-            item = self.toList.takeItem(i-2)
+        for i in range(tam + 1, 1, -1):
+            item = self.toList.takeItem(i - 2)
             self.fromLs.append(item.text())
             self.toLs.remove(item.text())
             self.fromLs.sort()

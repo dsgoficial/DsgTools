@@ -24,44 +24,48 @@ import os
 from PyQt5.QtCore import QCoreApplication
 from qgis.PyQt.Qt import QVariant
 from qgis.PyQt.QtXml import QDomDocument
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterExpression,
-                       QgsProcessingException,
-                       QgsProcessingParameterString,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterType,
-                       QgsProcessingParameterCrs,
-                       QgsCoordinateTransform,
-                       QgsProject,
-                       QgsCoordinateReferenceSystem,
-                       QgsField,
-                       QgsFields,
-                       QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterString)
+from qgis.core import (
+    QgsProcessing,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFeatureSink,
+    QgsFeature,
+    QgsDataSourceUri,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsGeometry,
+    QgsProcessingParameterField,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterFile,
+    QgsProcessingParameterExpression,
+    QgsProcessingException,
+    QgsProcessingParameterString,
+    QgsProcessingParameterDefinition,
+    QgsProcessingParameterType,
+    QgsProcessingParameterCrs,
+    QgsCoordinateTransform,
+    QgsProject,
+    QgsCoordinateReferenceSystem,
+    QgsField,
+    QgsFields,
+    QgsProcessingOutputMultipleLayers,
+    QgsProcessingParameterString,
+)
+
 
 class ApplyStylesFromDatabaseToLayersAlgorithm(QgsProcessingAlgorithm):
-    INPUT_LAYERS = 'INPUT_LAYERS'
-    STYLE_NAME = 'STYLE_NAME'
-    OUTPUT = 'OUTPUT'
+    INPUT_LAYERS = "INPUT_LAYERS"
+    STYLE_NAME = "STYLE_NAME"
+    OUTPUT = "OUTPUT"
+
     def initAlgorithm(self, config):
         """
         Parameter setting.
@@ -69,22 +73,18 @@ class ApplyStylesFromDatabaseToLayersAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LAYERS,
-                self.tr('Input Layers'),
-                QgsProcessing.TypeVectorAnyGeometry
+                self.tr("Input Layers"),
+                QgsProcessing.TypeVectorAnyGeometry,
             )
         )
 
         self.addParameter(
-            QgsProcessingParameterString(
-                self.STYLE_NAME,
-                self.tr('Style Name')
-            )
+            QgsProcessingParameterString(self.STYLE_NAME, self.tr("Style Name"))
         )
 
         self.addOutput(
             QgsProcessingOutputMultipleLayers(
-                self.OUTPUT,
-                self.tr('Original layers with styles applied column')
+                self.OUTPUT, self.tr("Original layers with styles applied column")
             )
         )
 
@@ -94,18 +94,10 @@ class ApplyStylesFromDatabaseToLayersAlgorithm(QgsProcessingAlgorithm):
 
         This process matches the layer name to the qml name.
         """
-        inputLyrList = self.parameterAsLayerList(
-            parameters,
-            self.INPUT_LAYERS,
-            context
-        )
-        styleName = self.parameterAsString(
-            parameters,
-            self.STYLE_NAME,
-            context
-        )
+        inputLyrList = self.parameterAsLayerList(parameters, self.INPUT_LAYERS, context)
+        styleName = self.parameterAsString(parameters, self.STYLE_NAME, context)
         listSize = len(inputLyrList)
-        progressStep = 100/listSize if listSize else 0
+        progressStep = 100 / listSize if listSize else 0
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
@@ -114,17 +106,26 @@ class ApplyStylesFromDatabaseToLayersAlgorithm(QgsProcessingAlgorithm):
             if styleName in styleDict:
                 styleQml, _ = lyr.getStyleFromDatabase(styleDict[styleName])
                 self.applyStyle(lyr, styleQml)
-            elif '{style_name}/{layer_name}'.format(style_name=styleName, layer_name=lyr.name()) in styleDict:
+            elif (
+                "{style_name}/{layer_name}".format(
+                    style_name=styleName, layer_name=lyr.name()
+                )
+                in styleDict
+            ):
                 styleQml, _ = lyr.getStyleFromDatabase(
-                    styleDict['{style_name}/{layer_name}'.format(style_name=styleName, layer_name=lyr.name())]
+                    styleDict[
+                        "{style_name}/{layer_name}".format(
+                            style_name=styleName, layer_name=lyr.name()
+                        )
+                    ]
                 )
                 self.applyStyle(lyr, styleQml)
-            feedback.setProgress(current*progressStep)
+            feedback.setProgress(current * progressStep)
 
         return {self.OUTPUT: [i.id() for i in inputLyrList]}
-    
+
     def applyStyle(self, lyr, styleQml):
-        styleDoc = QDomDocument('qgis')
+        styleDoc = QDomDocument("qgis")
         styleDoc.setContent(styleQml)
         lyr.importNamedStyle(styleDoc)
         lyr.triggerRepaint()
@@ -137,21 +138,21 @@ class ApplyStylesFromDatabaseToLayersAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'applystylesfromdatabasetolayersalgorithm'
+        return "applystylesfromdatabasetolayersalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Apply Styles from Database to Layers')
+        return self.tr("Apply Styles from Database to Layers")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Layer Management Algorithms')
+        return self.tr("Layer Management Algorithms")
 
     def groupId(self):
         """
@@ -161,10 +162,12 @@ class ApplyStylesFromDatabaseToLayersAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Layer Management Algorithms'
+        return "DSGTools: Layer Management Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate('ApplyStylesFromDatabaseToLayersAlgorithm', string)
+        return QCoreApplication.translate(
+            "ApplyStylesFromDatabaseToLayersAlgorithm", string
+        )
 
     def createInstance(self):
         return ApplyStylesFromDatabaseToLayersAlgorithm()

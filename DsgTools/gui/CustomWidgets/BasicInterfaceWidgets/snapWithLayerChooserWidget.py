@@ -31,11 +31,18 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import QSettings, Qt, pyqtSlot
 from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
-from qgis.PyQt.QtWidgets import (QApplication, QFileDialog, QListWidgetItem,
-                                 QMenu, QMessageBox)
+from qgis.PyQt.QtWidgets import (
+    QApplication,
+    QFileDialog,
+    QListWidgetItem,
+    QMenu,
+    QMessageBox,
+)
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'snapWithLayerChooserWidget.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "snapWithLayerChooserWidget.ui")
+)
+
 
 class SnapWithLayerChooserWidget(QtWidgets.QWidget, FORM_CLASS):
     def __init__(self, parameterDict={}, blackList=None, parent=None):
@@ -44,14 +51,13 @@ class SnapWithLayerChooserWidget(QtWidgets.QWidget, FORM_CLASS):
         self.parent = parent
         self.setupUi(self)
         self.project = QgsProject.instance()
-        self.validKeys = ['layer', 'layerName', 'snap']
+        self.validKeys = ["layer", "layerName", "snap"]
         self.snapDoubleSpinBox.setDecimals(20)
         self.snapDoubleSpinBox.setMaximum(1000000)
         self.snapDoubleSpinBox.setMinimum(0.00000000000000001)
         self.layerComboBox.setFilters(
-            QgsMapLayerProxyModel.HasGeometry |
-            QgsMapLayerProxyModel.VectorLayer
-            )
+            QgsMapLayerProxyModel.HasGeometry | QgsMapLayerProxyModel.VectorLayer
+        )
         if blackList is not None:
             self.layerComboBox.setExceptedLayerList(blackList)
         if parameterDict != {}:
@@ -82,9 +88,9 @@ class SnapWithLayerChooserWidget(QtWidgets.QWidget, FORM_CLASS):
         if not self.validate():
             raise Exception(self.invalidatedReason())
         parameterDict = dict()
-        parameterDict['layer'] = self.layerComboBox.currentLayer()
-        parameterDict['layerName'] = self.layerComboBox.currentLayer().name()
-        parameterDict['snap'] = self.snapDoubleSpinBox.value()
+        parameterDict["layer"] = self.layerComboBox.currentLayer()
+        parameterDict["layerName"] = self.layerComboBox.currentLayer().name()
+        parameterDict["snap"] = self.snapDoubleSpinBox.value()
         return parameterDict
 
     def populateInterface(self, parameterDict):
@@ -93,17 +99,14 @@ class SnapWithLayerChooserWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         if parameterDict:
             if not self.validateJson(parameterDict):
-                raise Exception(
-                    self.tr('Invalid Snap Chooser Widget json config!')
-                    )
-            #set layer combo
+                raise Exception(self.tr("Invalid Snap Chooser Widget json config!"))
+            # set layer combo
             idx = self.layerComboBox.findText(
-                parameterDict['layerName'],
-                flags=Qt.MatchExactly
-                )
+                parameterDict["layerName"], flags=Qt.MatchExactly
+            )
             self.layerComboBox.setCurrentIndex(idx)
-            #set snap double spin box
-            self.snapDoubleSpinBox.setValue(parameterDict['snap'])
+            # set snap double spin box
+            self.snapDoubleSpinBox.setValue(parameterDict["snap"])
 
     def validateJson(self, inputJson):
         """
@@ -125,14 +128,14 @@ class SnapWithLayerChooserWidget(QtWidgets.QWidget, FORM_CLASS):
         # if self.snapDoubleSpinBox.value() <= 0:
         #     return False
         return True
-    
+
     def invalidatedReason(self):
         """
         Error reason
         """
-        msg = ''
+        msg = ""
         if self.layerComboBox.currentIndex() < 1:
-            msg += self.tr('Invalid layer!\n')
+            msg += self.tr("Invalid layer!\n")
         if self.snapDoubleSpinBox.value() <= 0:
-            msg += self.tr('Invalid snap value!\n')
+            msg += self.tr("Invalid snap value!\n")
         return msg

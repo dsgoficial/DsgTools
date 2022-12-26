@@ -29,10 +29,12 @@ from DsgTools.core.dsgEnums import DsgEnums
 
 import os
 
+
 class MultiSpatialiteSelectorWidget(AbstractMultiDsSelectorWidget):
     """
     Class designed to retrieve a SpatiaLite database list.
     """
+
     def __init__(self, parent=None):
         """
         Class constructor.
@@ -60,8 +62,10 @@ class MultiSpatialiteSelectorWidget(AbstractMultiDsSelectorWidget):
         """
         # clear datasources
         self.datasources = {}
-        dbList = self.selector.getOpenFileNames(caption=self.tr("Select SpatiaLite Datasources"), \
-                                                filter=self.tr('SpatiaLite Databases (*.sqlite)'))[0]
+        dbList = self.selector.getOpenFileNames(
+            caption=self.tr("Select SpatiaLite Datasources"),
+            filter=self.tr("SpatiaLite Databases (*.sqlite)"),
+        )[0]
         for db in dbList:
             self.datasources[self.getDatabaseName(datasourcePath=db)] = db
-        return int(not self.datasources) # execution code
+        return int(not self.datasources)  # execution code

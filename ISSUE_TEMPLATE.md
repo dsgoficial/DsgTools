@@ -2,9 +2,9 @@
 Describe your issue here. (Descreva seu problema aqui).
 
 ### Your environment (Seu ambiente)
-* your operating system (Seu sistema operacional): 
-* version of QGIS (Versão do QGIS): 
-* version of DSGTools (Versão do DSGTools): 
+* your operating system (Seu sistema operacional):
+* version of QGIS (Versão do QGIS):
+* version of DSGTools (Versão do DSGTools):
 
 ### Steps to reproduce (Passos para reproduzir)
 Tell us how to reproduce this issue. Please provide screenshots to further information. (Descreva os passos para reproduzir o problema. Por favor informe capturas de tela para informaçes adicionais)

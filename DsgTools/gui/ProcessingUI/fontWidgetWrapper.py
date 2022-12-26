@@ -24,29 +24,30 @@ from qgis.PyQt.QtWidgets import QFontComboBox
 from processing.gui.wrappers import WidgetWrapper
 from qgis.PyQt.QtGui import QFont
 
+
 class FontWidgetWrapper(WidgetWrapper):
     def __init__(self, *args, **kwargs):
         super(FontWidgetWrapper, self).__init__(*args, **kwargs)
-    
+
     def createPanel(self):
         return QFontComboBox()
-    
+
     def createWidget(self):
         self.panel = self.createPanel()
         self.panel.dialogType = self.dialogType
         return self.panel
-    
+
     def parentLayerChanged(self, layer=None):
         pass
-    
+
     def setLayer(self, layer):
         pass
-    
+
     def setValue(self, value):
         self.panel.setCurrentFont(value)
-    
+
     def value(self):
         return self.panel.currentFont()
-    
+
     def postInitialize(self, wrappers):
         pass

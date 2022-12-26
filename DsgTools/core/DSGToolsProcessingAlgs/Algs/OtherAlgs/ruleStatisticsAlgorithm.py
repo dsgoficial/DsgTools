@@ -22,33 +22,36 @@
 
 from PyQt5.QtCore import QCoreApplication
 import json
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsProcessingParameterString,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsWkbTypes,
-                       QgsProcessingUtils,
-                       QgsProject,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterFile)
+from qgis.core import (
+    QgsProcessing,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFeatureSink,
+    QgsFeature,
+    QgsDataSourceUri,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingParameterString,
+    QgsWkbTypes,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterMultipleLayers,
+    QgsWkbTypes,
+    QgsProcessingUtils,
+    QgsProject,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterFile,
+)
 from operator import itemgetter
 from collections import defaultdict
 import fnmatch
 
+
 class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
-    INPUTLAYERS = 'INPUTLAYERS'
-    RULEFILE = 'RULEFILE'
-    RULEDATA = 'RULEDATA'
-    OUTPUT = 'OUTPUT'
+    INPUTLAYERS = "INPUTLAYERS"
+    RULEFILE = "RULEFILE"
+    RULEDATA = "RULEDATA"
+    OUTPUT = "OUTPUT"
 
     def __init__(self):
         super(RuleStatisticsAlgorithm, self).__init__()
@@ -59,23 +62,22 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
-                self.INPUTLAYERS,
-                'Camadas de entrada :'
+                self.INPUTLAYERS, "Camadas de entrada :"
             )
         )
         self.addParameter(
             QgsProcessingParameterFile(
                 self.RULEFILE,
-                description = 'Arquivo ".json" com regras :',
-                defaultValue = '.json'
+                description='Arquivo ".json" com regras :',
+                defaultValue=".json",
             )
         )
         self.addParameter(
             QgsProcessingParameterString(
                 self.RULEDATA,
-                description =  'Regras no formato "json" :',
-                multiLine = True,
-                defaultValue = '{}'
+                description='Regras no formato "json" :',
+                multiLine=True,
+                defaultValue="{}",
             )
         )
 
@@ -85,79 +87,96 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
         """
         layers_list = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
         inputLyrNamesWithSchemaList = [
-            f"{lyr.dataProvider().uri().schema()}.{lyr.dataProvider().uri().table()}" for lyr in layers_list
+            f"{lyr.dataProvider().uri().schema()}.{lyr.dataProvider().uri().table()}"
+            for lyr in layers_list
         ]
         input_data = self.load_rules_from_parameters(parameters)
         rows = self.buildRuleDict(input_data[0], inputLyrNamesWithSchemaList)
 
         result = {}
         for i, row in enumerate(rows):
-            if not row['type'] in result:
-                result[row['type']] = []
-            failed  = self.check_rules_on_layers(
-                row['attribute'],
-                row['rule'],
+            if not row["type"] in result:
+                result[row["type"]] = []
+            failed = self.check_rules_on_layers(
+                row["attribute"],
+                row["rule"],
                 [
-                    lyr for lyr in layers_list
-                    if f"{lyr.dataProvider().uri().schema()}.{lyr.dataProvider().uri().table()}" in row['layers']
-                ]
+                    lyr
+                    for lyr in layers_list
+                    if f"{lyr.dataProvider().uri().schema()}.{lyr.dataProvider().uri().table()}"
+                    in row["layers"]
+                ],
             )
-            result[row['type']].append(failed)
+            result[row["type"]].append(failed)
         if not input_data:
-            self.print_log('Carregue um arquivos com as Regras ou insira as Regras!', feedback)
+            self.print_log(
+                "Carregue um arquivos com as Regras ou insira as Regras!", feedback
+            )
             return {}
-        return { self.OUTPUT : self.format_output_result(result) }
+        return {self.OUTPUT: self.format_output_result(result)}
 
     def buildRuleDict(self, inputData, inputLyrNamesWithSchemaList):
         ruleDict = []
         styleDict = {
             style["tipo_estilo"]: {
                 "corRgb": list(map(int, style["cor_rgb"].split(","))),
-                "rank": idx
-            } for idx, style in enumerate(inputData["grupo_estilo"])
+                "rank": idx,
+            }
+            for idx, style in enumerate(inputData["grupo_estilo"])
         }
         for rule in inputData["regras"]:
             lyrSet = self.getLayerNames(rule["camadas"], inputLyrNamesWithSchemaList)
-            ruleDict.append({
-                'type': rule['tipo_estilo'],
-                'name': rule['descricao'],
-                'rule': rule['regra'],
-                'attribute': rule['atributo'],
-                'layers': list(lyrSet)
-            })
+            ruleDict.append(
+                {
+                    "type": rule["tipo_estilo"],
+                    "name": rule["descricao"],
+                    "rule": rule["regra"],
+                    "attribute": rule["atributo"],
+                    "layers": list(lyrSet),
+                }
+            )
         return ruleDict
-    
+
     def getLayerNames(self, filterList, nameList):
         outputSet = set()
-        wildCardFilterList = [filterItem for filterItem in filterList if "*" in filterItem]
+        wildCardFilterList = [
+            filterItem for filterItem in filterList if "*" in filterItem
+        ]
         for wildCardFilter in wildCardFilterList:
             outputSet = outputSet.union(set(fnmatch.filter(nameList, wildCardFilter)))
-        outputSet = outputSet.union(set(name for name in nameList if name in filterList))
+        outputSet = outputSet.union(
+            set(name for name in nameList if name in filterList)
+        )
         return outputSet
 
     def print_log(self, number, text, feedback):
-        feedback.pushInfo("{0}{1}LOG START - {2}{1}{0}\n\n".format('*'*10, ' '*3, number+1))
+        feedback.pushInfo(
+            "{0}{1}LOG START - {2}{1}{0}\n\n".format("*" * 10, " " * 3, number + 1)
+        )
         feedback.pushInfo(text)
-        feedback.pushInfo("{0}{1}LOG END - {2}{1}{0}\n\n".format('*'*10, ' '*3, number+1))
-    
+        feedback.pushInfo(
+            "{0}{1}LOG END - {2}{1}{0}\n\n".format("*" * 10, " " * 3, number + 1)
+        )
+
     def load_rules_from_parameters(self, parameters):
         rules_input = []
         rules_path = parameters[self.RULEFILE]
         rules_text = parameters[self.RULEDATA]
-        if rules_path and rules_path != '.json':
-            with open(rules_path, 'r') as f:
-                rules_input.append(
-                    json.load(f)
-                )
-        if rules_text and rules_text != '{}':
-            rules_input.append(
-                json.loads(rules_text)
-            )
+        if rules_path and rules_path != ".json":
+            with open(rules_path, "r") as f:
+                rules_input.append(json.load(f))
+        if rules_text and rules_text != "{}":
+            rules_input.append(json.loads(rules_text))
         return rules_input
 
     def hasAttribute(self, attribute, lyr):
-        return len([ c for c in lyr.attributeTableConfig().columns() if c.name == attribute ]) != 0
-    
+        return (
+            len(
+                [c for c in lyr.attributeTableConfig().columns() if c.name == attribute]
+            )
+            != 0
+        )
+
     def check_rules_on_layers(self, attribute, rule, layers):
         failed = {}
         for lyr in layers:
@@ -171,7 +190,7 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
         return failed
 
     def format_output_result(self, result):
-        html=""
+        html = ""
         for ruleName in sorted(result.keys()):
             row = "[REGRAS] : {0}\n\n".format(ruleName)
             html += row
@@ -192,26 +211,26 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
                 rows = "As camadas passaram em todas as regras.\n\n"
             html += rows
         return html
-        
+
     def name(self):
         """
         Here is where the processing itself takes place.
         """
-        return 'rulestatistics'
+        return "rulestatistics"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Rule Statistics')
+        return self.tr("Rule Statistics")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Other Algorithms')
+        return self.tr("Other Algorithms")
 
     def groupId(self):
         """
@@ -221,10 +240,10 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Other Algorithms'
+        return "DSGTools: Other Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate('RuleStatisticsAlgorithm', string)
+        return QCoreApplication.translate("RuleStatisticsAlgorithm", string)
 
     def createInstance(self):
         return RuleStatisticsAlgorithm()

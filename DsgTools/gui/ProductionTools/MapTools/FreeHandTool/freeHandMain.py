@@ -24,31 +24,40 @@ from qgis.PyQt.QtCore import QObject
 from .models.acquisitionFree import AcquisitionFree
 from .controllers.acquisitionFreeController import AcquisitionFreeController
 
-class FreeHandMain(QObject):    
 
+class FreeHandMain(QObject):
     def __init__(self, iface):
-        #construtor
+        # construtor
         super(FreeHandMain, self).__init__()
         self.iface = iface
         self.acquisitionFree = AcquisitionFree(iface)
         self.acquisitionFreeController = AcquisitionFreeController(
-            self.acquisitionFree,
-            iface
+            self.acquisitionFree, iface
         )
 
-    def addTool(self, manager, callback, parentMenu, iconBasePath, parentButton=None, defaultButton=False):
+    def addTool(
+        self,
+        manager,
+        callback,
+        parentMenu,
+        iconBasePath,
+        parentButton=None,
+        defaultButton=False,
+    ):
         self.parentButton = parentButton
-        icon_path = iconBasePath + 'free_hand.png'
+        icon_path = iconBasePath + "free_hand.png"
         action = manager.add_action(
             icon_path,
-            text=self.tr('DSGTools: Free Hand Acquisition'),
+            text=self.tr("DSGTools: Free Hand Acquisition"),
             callback=self.run,
             add_to_menu=False,
             add_to_toolbar=False,
             withShortcut=True,
-            tooltip = self.tr('DSGTools: Free Hand Acquisition\nAcquires polygon or line features from mouse movement.'),
+            tooltip=self.tr(
+                "DSGTools: Free Hand Acquisition\nAcquires polygon or line features from mouse movement."
+            ),
             parentToolbar=parentMenu,
-            parentButton=parentButton
+            parentButton=parentButton,
         )
         self.setAction(action)
         if defaultButton:
@@ -56,7 +65,7 @@ class FreeHandMain(QObject):
 
     def setAcquisitionFreeController(self, acquisitionFreeController):
         self.acquisitionFreeController = acquisitionFreeController
-    
+
     def getAcquisitionFreeController(self):
         return self.acquisitionFreeController
 
@@ -65,7 +74,7 @@ class FreeHandMain(QObject):
         return self.getAction()
 
     def setIface(self, iface):
-        self.iface = iface 
+        self.iface = iface
 
     def getIface(self):
         return self.iface

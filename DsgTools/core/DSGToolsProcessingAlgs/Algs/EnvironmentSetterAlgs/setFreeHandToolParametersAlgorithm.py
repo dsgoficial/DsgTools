@@ -26,47 +26,50 @@ import processing, os, requests
 from time import sleep
 from PyQt5.QtCore import QCoreApplication
 from qgis.PyQt.QtCore import QSettings
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterExpression,
-                       QgsProcessingException,
-                       QgsProcessingParameterString,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterType)
+from qgis.core import (
+    QgsProcessing,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFeatureSink,
+    QgsFeature,
+    QgsDataSourceUri,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsGeometry,
+    QgsProcessingParameterField,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterFile,
+    QgsProcessingParameterExpression,
+    QgsProcessingException,
+    QgsProcessingParameterString,
+    QgsProcessingParameterDefinition,
+    QgsProcessingParameterType,
+)
+
 
 class SetFreeHandToolParametersAlgorithm(QgsProcessingAlgorithm):
-    FREE_HAND_TOLERANCE = 'FREE_HAND_TOLERANCE'
-    FREE_HAND_SMOOTH_ITERATIONS = 'FREE_HAND_SMOOTH_ITERATIONS'
-    FREE_HAND_SMOOTH_OFFSET = 'FREE_HAND_SMOOTH_OFFSET'
-    ALG_ITERATIONS = 'ALG_ITERATIONS'
-    UNDO_POINTS = 'UNDO_POINTS'
-    FREE_HAND_FINAL_SIMPLIFY_TOLERANCE = 'FREE_HAND_FINAL_SIMPLIFY_TOLERANCE'
+    FREE_HAND_TOLERANCE = "FREE_HAND_TOLERANCE"
+    FREE_HAND_SMOOTH_ITERATIONS = "FREE_HAND_SMOOTH_ITERATIONS"
+    FREE_HAND_SMOOTH_OFFSET = "FREE_HAND_SMOOTH_OFFSET"
+    ALG_ITERATIONS = "ALG_ITERATIONS"
+    UNDO_POINTS = "UNDO_POINTS"
+    FREE_HAND_FINAL_SIMPLIFY_TOLERANCE = "FREE_HAND_FINAL_SIMPLIFY_TOLERANCE"
 
     QSETTINGS_DICT = {
-        'FREE_HAND_TOLERANCE' : 'freeHandTolerance',
-        'FREE_HAND_SMOOTH_ITERATIONS' : 'freeHandSmoothIterations',
-        'FREE_HAND_SMOOTH_OFFSET' : 'freeHandSmoothOffset',
-        'ALG_ITERATIONS' : 'algIterations',
-        'UNDO_POINTS' : 'undoPoints',
-        'FREE_HAND_FINAL_SIMPLIFY_TOLERANCE' : 'freeHandFinalSimplifyTolerance'
+        "FREE_HAND_TOLERANCE": "freeHandTolerance",
+        "FREE_HAND_SMOOTH_ITERATIONS": "freeHandSmoothIterations",
+        "FREE_HAND_SMOOTH_OFFSET": "freeHandSmoothOffset",
+        "ALG_ITERATIONS": "algIterations",
+        "UNDO_POINTS": "undoPoints",
+        "FREE_HAND_FINAL_SIMPLIFY_TOLERANCE": "freeHandFinalSimplifyTolerance",
     }
 
     def initAlgorithm(self, config):
@@ -76,68 +79,68 @@ class SetFreeHandToolParametersAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.FREE_HAND_TOLERANCE,
-                self.tr('Free hand tolerance'),
+                self.tr("Free hand tolerance"),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Double,
-                defaultValue=2
+                defaultValue=2,
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.FREE_HAND_SMOOTH_ITERATIONS,
-                self.tr('Free hand smooth iterations'),
+                self.tr("Free hand smooth iterations"),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Integer,
-                defaultValue=3
+                defaultValue=3,
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.FREE_HAND_SMOOTH_OFFSET,
-                self.tr('Free hand smooth offset'),
+                self.tr("Free hand smooth offset"),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Double,
-                defaultValue=0.25
+                defaultValue=0.25,
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.ALG_ITERATIONS,
-                self.tr('Free hand algorithm iterations'),
+                self.tr("Free hand algorithm iterations"),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Integer,
-                defaultValue=2
+                defaultValue=2,
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.UNDO_POINTS,
-                self.tr('Number of points removed on undo action'),
+                self.tr("Number of points removed on undo action"),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Integer,
-                defaultValue=50
+                defaultValue=50,
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.FREE_HAND_FINAL_SIMPLIFY_TOLERANCE,
-                self.tr('Free hand tolerance'),
+                self.tr("Free hand tolerance"),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Double,
-                defaultValue=1
+                defaultValue=1,
             )
         )
-    
+
     def getValueFromQSettings(self, v):
         settings = QSettings()
-        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        settings.beginGroup("PythonPlugins/DsgTools/Options")
         value = settings.value(v)
         settings.endGroup()
         return value
-    
+
     def storeParametersInConfig(self, parameters):
         settings = QSettings()
-        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        settings.beginGroup("PythonPlugins/DsgTools/Options")
         for key, value in parameters.items():
             settings.setValue(self.QSETTINGS_DICT[key], value)
         settings.endGroup()
@@ -158,21 +161,21 @@ class SetFreeHandToolParametersAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'setfreehandtoolparametersalgorithm'
+        return "setfreehandtoolparametersalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Set Free Hand Tool Parameters')
+        return self.tr("Set Free Hand Tool Parameters")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Environment Setters')
+        return self.tr("Environment Setters")
 
     def groupId(self):
         """
@@ -182,10 +185,10 @@ class SetFreeHandToolParametersAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Environment Setters'
+        return "DSGTools: Environment Setters"
 
     def tr(self, string):
-        return QCoreApplication.translate('SetFreeHandToolParametersAlgorithm', string)
+        return QCoreApplication.translate("SetFreeHandToolParametersAlgorithm", string)
 
     def createInstance(self):
         return SetFreeHandToolParametersAlgorithm()

@@ -23,8 +23,8 @@
 from .spatialiteSqlGenerator import SpatialiteSqlGenerator
 from DsgTools.core.dsgEnums import DsgEnums
 
-class GeopackageSqlGenerator(SpatialiteSqlGenerator):
 
+class GeopackageSqlGenerator(SpatialiteSqlGenerator):
     def getEDGVVersion(self):
         """
         Gets the version of the data model.
@@ -32,7 +32,7 @@ class GeopackageSqlGenerator(SpatialiteSqlGenerator):
         sql = "SELECT edgvversion FROM db_metadata LIMIT 1"
         return sql
 
-    def getSrid(self, parameters = dict()):
+    def getSrid(self, parameters=dict()):
         """
         Gets SRID for selected database (it is assumed all tables have the same SRID).
         """
@@ -43,7 +43,7 @@ class GeopackageSqlGenerator(SpatialiteSqlGenerator):
         """
         Gets a dict for tables and their geometry columns.
         """
-        sql = 'select srs_id, column_name, geometry_type_name, table_name from gpkg_geometry_columns'
+        sql = "select srs_id, column_name, geometry_type_name, table_name from gpkg_geometry_columns"
         return sql
 
     def getGeomByPrimitive(self, edgvVersion):
@@ -55,11 +55,13 @@ class GeopackageSqlGenerator(SpatialiteSqlGenerator):
         return sql
 
     def getFullTablesName(self, name):
-        sql = "SELECT table_name as name FROM gpkg_geometry_columns WHERE table_name LIKE '%{0}%' ORDER BY name".format(name)
+        sql = "SELECT table_name as name FROM gpkg_geometry_columns WHERE table_name LIKE '%{0}%' ORDER BY name".format(
+            name
+        )
         return sql
 
-    def getGeomColumnTupleList(self, edgvVersion, showViews = False):
-        if edgvVersion in ('2.1.3','FTer_2a_Ed'):
+    def getGeomColumnTupleList(self, edgvVersion, showViews=False):
+        if edgvVersion in ("2.1.3", "FTer_2a_Ed"):
             sql = """select table_name, column_name, geometry_type_name from gpkg_geometry_columns"""
         else:
             sql = """select table_name, column_name, geometry_type_name from gpkg_geometry_columns"""
@@ -69,14 +71,16 @@ class GeopackageSqlGenerator(SpatialiteSqlGenerator):
         sql = "SELECT tbl_name as name, type FROM sqlite_master WHERE type='table' ORDER BY name"
         return sql
 
-    def getStructure(self,edgvVersion):
-        sql = ''
-        if edgvVersion == '2.1.3':
-            sql = 'select tbl_name as name, sql from sqlite_master where type = \'table\' and (name like \'cb_%\' or name like \'complexos_%\' or name like \'public_%\')'
-        elif edgvVersion == 'FTer_2a_Ed':
-            sql = 'select tbl_name as name, sql from sqlite_master where type = \'table\' and (name like \'ge_%\' or name like \'pe_%\' or name like \'complexos_%\' or name like \'public_%\')' 
-        elif edgvVersion == '3.0':
-            sql = sql = 'select tbl_name as name, sql from sqlite_master where type = \'table\' and (name like \'edgv_%\' or name like \'complexos_%\' or name like \'public_%\')'
+    def getStructure(self, edgvVersion):
+        sql = ""
+        if edgvVersion == "2.1.3":
+            sql = "select tbl_name as name, sql from sqlite_master where type = 'table' and (name like 'cb_%' or name like 'complexos_%' or name like 'public_%')"
+        elif edgvVersion == "FTer_2a_Ed":
+            sql = "select tbl_name as name, sql from sqlite_master where type = 'table' and (name like 'ge_%' or name like 'pe_%' or name like 'complexos_%' or name like 'public_%')"
+        elif edgvVersion == "3.0":
+            sql = (
+                sql
+            ) = "select tbl_name as name, sql from sqlite_master where type = 'table' and (name like 'edgv_%' or name like 'complexos_%' or name like 'public_%')"
         return sql
 
     def getComplexTablesFromDatabase(self):

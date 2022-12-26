@@ -21,28 +21,33 @@
  ***************************************************************************/
 """
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsGeometry, QgsProcessing, QgsProcessingException, QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+from qgis.core import (
+    QgsGeometry,
+    QgsProcessing,
+    QgsProcessingException,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterField,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+)
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from DsgTools.core.GeometricTools.spatialRelationsHandler import \
-    SpatialRelationsHandler
+from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
 
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
-    CONTOUR_INTERVAL = 'CONTOUR_INTERVAL'
-    GEOGRAPHIC_BOUNDS = 'GEOGRAPHIC_BOUNDS'
-    CONTOUR_ATTR = 'CONTOUR_ATTR'
-    POINT_FLAGS = 'POINT_FLAGS'
-    LINE_FLAGS = 'LINE_FLAGS'
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
+    CONTOUR_INTERVAL = "CONTOUR_INTERVAL"
+    GEOGRAPHIC_BOUNDS = "GEOGRAPHIC_BOUNDS"
+    CONTOUR_ATTR = "CONTOUR_ATTR"
+    POINT_FLAGS = "POINT_FLAGS"
+    LINE_FLAGS = "LINE_FLAGS"
 
     def initAlgorithm(self, config):
         """
@@ -51,52 +56,46 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input contour layer'),
-                [QgsProcessing.TypeVectorLine]
+                self.tr("Input contour layer"),
+                [QgsProcessing.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
         self.addParameter(
             QgsProcessingParameterField(
                 self.CONTOUR_ATTR,
-                self.tr('Contour value field'),
+                self.tr("Contour value field"),
                 None,
-                'INPUT',
-                QgsProcessingParameterField.Any
+                "INPUT",
+                QgsProcessingParameterField.Any,
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.CONTOUR_INTERVAL,
-                self.tr('Threshold'),
-                minValue=0,
-                defaultValue=10
+                self.CONTOUR_INTERVAL, self.tr("Threshold"), minValue=0, defaultValue=10
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDS,
-                self.tr('Geographic bounds layer'),
+                self.tr("Geographic bounds layer"),
                 [QgsProcessing.TypeVectorPolygon],
-                optional=False
+                optional=False,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.POINT_FLAGS,
-                self.tr('{0} Point Flags').format(self.displayName())
+                self.POINT_FLAGS, self.tr("{0} Point Flags").format(self.displayName())
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.LINE_FLAGS,
-                self.tr('{0} Line Flags').format(self.displayName())
+                self.LINE_FLAGS, self.tr("{0} Line Flags").format(self.displayName())
             )
         )
 
@@ -108,14 +107,16 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.INPUT))
+                self.invalidSourceError(parameters, self.INPUT)
+            )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         heightFieldName = self.parameterAsFields(
-            parameters, self.CONTOUR_ATTR, context)[0]
-        threshold = self.parameterAsDouble(
-            parameters, self.CONTOUR_INTERVAL, context)
+            parameters, self.CONTOUR_ATTR, context
+        )[0]
+        threshold = self.parameterAsDouble(parameters, self.CONTOUR_INTERVAL, context)
         geoBoundsLyr = self.parameterAsVectorLayer(
-            parameters, self.GEOGRAPHIC_BOUNDS, context)
+            parameters, self.GEOGRAPHIC_BOUNDS, context
+        )
         point_flagSink, point_flag_id = self.prepareAndReturnFlagSink(
             parameters, inputLyr, QgsWkbTypes.Point, context, self.POINT_FLAGS
         )
@@ -129,16 +130,20 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             heightFieldName=heightFieldName,
             threshold=threshold,
             geoBoundsLyr=geoBoundsLyr,
-            feedback=feedback
+            feedback=feedback,
         )
 
         for flagGeom, text in invalidDict.items():
             geom = QgsGeometry()
             geom.fromWkb(flagGeom)
-            flagSink = line_flagSink if geom.type() == QgsWkbTypes.LineGeometry else point_flagSink
+            flagSink = (
+                line_flagSink
+                if geom.type() == QgsWkbTypes.LineGeometry
+                else point_flagSink
+            )
             self.flagFeature(geom, text, fromWkb=False, sink=flagSink)
 
-        return {self.POINT_FLAGS : point_flag_id, self.LINE_FLAGS : line_flag_id}
+        return {self.POINT_FLAGS: point_flag_id, self.LINE_FLAGS: line_flag_id}
 
     def name(self):
         """
@@ -148,21 +153,21 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifyterrainmodelerrorsalgorithm'
+        return "identifyterrainmodelerrorsalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Terrain Model Errors Algorithm')
+        return self.tr("Identify Terrain Model Errors Algorithm")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -172,10 +177,10 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyTerrainModelErrorsAlgorithm', string)
+        return QCoreApplication.translate("IdentifyTerrainModelErrorsAlgorithm", string)
 
     def createInstance(self):
         return IdentifyTerrainModelErrorsAlgorithm()

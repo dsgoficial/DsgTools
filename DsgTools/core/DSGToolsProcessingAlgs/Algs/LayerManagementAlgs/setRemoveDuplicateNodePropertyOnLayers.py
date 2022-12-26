@@ -21,14 +21,18 @@
  ***************************************************************************/
 """
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingOutputMultipleLayers)
+from qgis.core import (
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingOutputMultipleLayers,
+)
+
 
 class SetRemoveDuplicateNodePropertyOnLayers(QgsProcessingAlgorithm):
-    INPUT_LAYERS = 'INPUT_LAYERS'
-    OUTPUT = 'OUTPUT'
+    INPUT_LAYERS = "INPUT_LAYERS"
+    OUTPUT = "OUTPUT"
+
     def initAlgorithm(self, config):
         """
         Parameter setting.
@@ -36,15 +40,14 @@ class SetRemoveDuplicateNodePropertyOnLayers(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LAYERS,
-                self.tr('Input Layers'),
-                QgsProcessing.TypeVectorAnyGeometry
+                self.tr("Input Layers"),
+                QgsProcessing.TypeVectorAnyGeometry,
             )
         )
 
         self.addOutput(
             QgsProcessingOutputMultipleLayers(
-                self.OUTPUT,
-                self.tr('Original layers with measure column')
+                self.OUTPUT, self.tr("Original layers with measure column")
             )
         )
 
@@ -52,13 +55,9 @@ class SetRemoveDuplicateNodePropertyOnLayers(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        inputLyrList = self.parameterAsLayerList(
-            parameters,
-            self.INPUT_LAYERS,
-            context
-        )
+        inputLyrList = self.parameterAsLayerList(parameters, self.INPUT_LAYERS, context)
         listSize = len(inputLyrList)
-        stepSize = 100/listSize if listSize else 0
+        stepSize = 100 / listSize if listSize else 0
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
@@ -75,21 +74,21 @@ class SetRemoveDuplicateNodePropertyOnLayers(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'setremoveduplicatenodepropertyonlayers'
+        return "setremoveduplicatenodepropertyonlayers"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Set Remove Duplicate Node Property On Layers')
+        return self.tr("Set Remove Duplicate Node Property On Layers")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Layer Management Algorithms')
+        return self.tr("Layer Management Algorithms")
 
     def groupId(self):
         """
@@ -99,10 +98,12 @@ class SetRemoveDuplicateNodePropertyOnLayers(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Layer Management Algorithms'
+        return "DSGTools: Layer Management Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate('SetRemoveDuplicateNodePropertyOnLayers', string)
+        return QCoreApplication.translate(
+            "SetRemoveDuplicateNodePropertyOnLayers", string
+        )
 
     def createInstance(self):
         return SetRemoveDuplicateNodePropertyOnLayers()

@@ -232,7 +232,9 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
                 version = auxAbstractDb.getDatabaseVersion()
                 dbimplversion = auxAbstractDb.getImplementationVersion()
                 dbList.append((dbName, version, dbimplversion))
-                self.spatialiteDict[self.getDisplayString(dbName, version, dbimplversion)] = dbPath
+                self.spatialiteDict[
+                    self.getDisplayString(dbName, version, dbimplversion)
+                ] = dbPath
         except Exception as e:
             QMessageBox.critical(self, self.tr("Critical!"), ":".join(e.args))
             self.clearSpatialiteTab()
@@ -254,6 +256,7 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.edgvType = None
         self.selectedDbsDict = dict()
         self.resetAll.emit()
+
     def clearPostgisTab(self):
         """
         Clears the spatialite tab, returning it to the original state

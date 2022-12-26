@@ -24,29 +24,39 @@ from PyQt5.QtCore import QCoreApplication
 
 import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterDistance,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterType,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsSpatialIndex, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsGeometry,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterDefinition,
+    QgsProcessingParameterDistance,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterField,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterType,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsWkbTypes,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
+
 class IdentifyInvalidAttributeCombinationsAlgorithm(ValidationAlgorithm):
-    ATTRIBUTE_RULES = 'ATTRIBUTE_RULES'
-    BEHAVIOR = 'BEHAVIOR'
+    ATTRIBUTE_RULES = "ATTRIBUTE_RULES"
+    BEHAVIOR = "BEHAVIOR"
 
     def initAlgorithm(self, config):
         """
@@ -54,31 +64,31 @@ class IdentifyInvalidAttributeCombinationsAlgorithm(ValidationAlgorithm):
         """
 
         hierarchy = ParameterAttributeRules(
-            self.ATTRIBUTE_RULES,
-            description=self.tr('Attribute Rules')
-            )
-        hierarchy.setMetadata({
-            'widget_wrapper': 'DsgTools.gui.ProcessingUI.attributeRulesWrapper.AttributeRulesWrapper'
-        })
+            self.ATTRIBUTE_RULES, description=self.tr("Attribute Rules")
+        )
+        hierarchy.setMetadata(
+            {
+                "widget_wrapper": "DsgTools.gui.ProcessingUI.attributeRulesWrapper.AttributeRulesWrapper"
+            }
+        )
         self.addParameter(hierarchy)
 
-        self.modes = [self.tr('Prefer aligning nodes, insert extra vertices where required'),
-                      self.tr('Prefer closest point, insert extra vertices where required'),
-                      self.tr('Prefer aligning nodes, don\'t insert new vertices'),
-                      self.tr('Prefer closest point, don\'t insert new vertices'),
-                      self.tr('Move end points only, prefer aligning nodes'),
-                      self.tr('Move end points only, prefer closest point'),
-                      self.tr('Snap end points to end points only')]
+        self.modes = [
+            self.tr("Prefer aligning nodes, insert extra vertices where required"),
+            self.tr("Prefer closest point, insert extra vertices where required"),
+            self.tr("Prefer aligning nodes, don't insert new vertices"),
+            self.tr("Prefer closest point, don't insert new vertices"),
+            self.tr("Move end points only, prefer aligning nodes"),
+            self.tr("Move end points only, prefer closest point"),
+            self.tr("Snap end points to end points only"),
+        ]
 
         self.addParameter(
             QgsProcessingParameterEnum(
-                self.BEHAVIOR,
-                self.tr('Behavior'),
-                options=self.modes,
-                defaultValue=0
+                self.BEHAVIOR, self.tr("Behavior"), options=self.modes, defaultValue=0
             )
         )
-    
+
     def parameterAsAttributeRules(self, parameters, name, context):
         return parameters[name]
 
@@ -87,37 +97,39 @@ class IdentifyInvalidAttributeCombinationsAlgorithm(ValidationAlgorithm):
         Here is where the processing itself takes place.
         """
         layerHandler = LayerHandler()
-        snapDict = self.parameterAsSnapHierarchy(parameters, self.SNAP_HIERARCHY, context)
+        snapDict = self.parameterAsSnapHierarchy(
+            parameters, self.SNAP_HIERARCHY, context
+        )
 
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
 
         behavior = self.parameterAsEnum(parameters, self.BEHAVIOR, context)
         nSteps = 0
         for item in snapDict:
-            nSteps += len(item['snapLayerList'])
+            nSteps += len(item["snapLayerList"])
         currStep = 0
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         for current, item in enumerate(snapDict):
-            refLyr = item['referenceLayer']
-            for i, lyr in enumerate(item['snapLayerList']):
+            refLyr = item["referenceLayer"]
+            for i, lyr in enumerate(item["snapLayerList"]):
                 if multiStepFeedback.isCanceled():
                     break
                 multiStepFeedback.setCurrentStep(currStep)
                 multiStepFeedback.pushInfo(
-                    self.tr('Snapping geometries from layer {input} to {reference} with snap {snap}...').format(
-                        input=lyr.name(),
-                        reference=refLyr.name(),
-                        snap=item['snap']
-                        )
+                    self.tr(
+                        "Snapping geometries from layer {input} to {reference} with snap {snap}..."
+                    ).format(
+                        input=lyr.name(), reference=refLyr.name(), snap=item["snap"]
                     )
+                )
                 layerHandler.snapToLayer(
                     lyr,
                     refLyr,
-                    item['snap'],
+                    item["snap"],
                     behavior,
                     onlySelected=onlySelected,
-                    feedback=multiStepFeedback
-                    )
+                    feedback=multiStepFeedback,
+                )
                 currStep += 1
         return {}
 
@@ -129,21 +141,21 @@ class IdentifyInvalidAttributeCombinationsAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifyinvalidattributecombinations'
+        return "identifyinvalidattributecombinations"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Invalid Attribute Combinations')
+        return self.tr("Identify Invalid Attribute Combinations")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -153,37 +165,44 @@ class IdentifyInvalidAttributeCombinationsAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyInvalidAttributeCombinationsAlgorithm', string)
+        return QCoreApplication.translate(
+            "IdentifyInvalidAttributeCombinationsAlgorithm", string
+        )
 
     def createInstance(self):
         return IdentifyInvalidAttributeCombinationsAlgorithm()
 
-class ParameterAttributeRulesType(QgsProcessingParameterType):
 
+class ParameterAttributeRulesType(QgsProcessingParameterType):
     def __init__(self):
         super().__init__()
 
     def create(self, name):
-        return ParameterAttributeRules(name) #mudar
+        return ParameterAttributeRules(name)  # mudar
 
     def metadata(self):
-        return {'widget_wrapper': 'DSGTools.gui.ProcessingUI.attributeRulesWrapper.AttributeRulesWrapper'} #mudar
+        return {
+            "widget_wrapper": "DSGTools.gui.ProcessingUI.attributeRulesWrapper.AttributeRulesWrapper"
+        }  # mudar
 
     def name(self):
-        return QCoreApplication.translate('Processing', 'Attribute Rules')
+        return QCoreApplication.translate("Processing", "Attribute Rules")
 
     def id(self):
-        return 'attribute_rules'
+        return "attribute_rules"
 
     def description(self):
-        return QCoreApplication.translate('Processing', 'An attribute rules type. Used in the Identify Invalid Attribute Combinations algorithm.')
+        return QCoreApplication.translate(
+            "Processing",
+            "An attribute rules type. Used in the Identify Invalid Attribute Combinations algorithm.",
+        )
+
 
 class ParameterAttributeRules(QgsProcessingParameterDefinition):
-
-    def __init__(self, name, description=''):
+    def __init__(self, name, description=""):
         super().__init__(name, description)
 
     def clone(self):
@@ -195,7 +214,7 @@ class ParameterAttributeRules(QgsProcessingParameterDefinition):
 
     @staticmethod
     def typeName():
-        return 'attribute_rules'
+        return "attribute_rules"
 
     def checkValueIsAcceptable(self, value, context=None):
         # if not isinstance(value, list):

@@ -34,6 +34,7 @@ import sys
 import colorsys
 import numpy
 
+
 class RasterProcess(object):
     def __init__(self):
         """
@@ -50,7 +51,7 @@ class RasterProcess(object):
             raster = gdal.Open(file)
         except RuntimeError as e:
             # fix_print_with_import
-            print('Unable to open image')
+            print("Unable to open image")
             # fix_print_with_import
             print(e)
 
@@ -69,7 +70,7 @@ class RasterProcess(object):
         except RuntimeError as e:
             # for example, try GetRasterBand(10)
             # fix_print_with_import
-            print('Band ( %i ) not found' % bandnumber)
+            print("Band ( %i ) not found" % bandnumber)
             # fix_print_with_import
             print(e)
             sys.exit(1)
@@ -79,7 +80,7 @@ class RasterProcess(object):
     def getGeoreferenceInfo(self, raster):
         """
         Gets georeference information
-        raster: raster file 
+        raster: raster file
         """
         # Get raster georeference info
         transform = raster.GetGeoTransform()
@@ -109,7 +110,7 @@ class RasterProcess(object):
         destfile: destination file
         """
         outRaster = self.createRaster(srcraster, destfile)
-        
+
         outRaster.GetRasterBand(1).WriteArray(red)
         outRaster.GetRasterBand(2).WriteArray(green)
         outRaster.GetRasterBand(3).WriteArray(blue)
@@ -124,16 +125,18 @@ class RasterProcess(object):
         cols = srcraster.RasterXSize
         rows = srcraster.RasterYSize
 
-        (xOrigin, yOrigin, pixelWidth, pixelHeight) = self.getGeoreferenceInfo(srcraster)
+        (xOrigin, yOrigin, pixelWidth, pixelHeight) = self.getGeoreferenceInfo(
+            srcraster
+        )
 
         targetSR = self.getCRS(srcraster)
 
-        driver = gdal.GetDriverByName('GTiff')
+        driver = gdal.GetDriverByName("GTiff")
 
         outRaster = driver.Create(destfile, cols, rows, 3, pixelType)
         outRaster.SetGeoTransform((xOrigin, pixelWidth, 0, yOrigin, 0, pixelHeight))
         outRaster.SetProjection(targetSR.ExportToWkt())
-        
+
         return outRaster
 
     def pansharpenImage(self, rgbfile, panfile, destfile):
@@ -150,10 +153,10 @@ class RasterProcess(object):
 
         panraster = self.openRaster(panfile)
         pan = panraster.GetRasterBand(1)
-        
+
         rgb_to_hsv = numpy.vectorize(colorsys.rgb_to_hsv)
         hsv_to_rgb = numpy.vectorize(colorsys.hsv_to_rgb)
-        
+
         if red.DataType > pan.DataType:
             pixelType = red.DataType
         else:
@@ -165,7 +168,7 @@ class RasterProcess(object):
         outB = outRaster.GetRasterBand(3)
 
         sizeX = pan.XSize
-        sizeY = pan.YSize        
+        sizeY = pan.YSize
 
         p = 0
         progress.setPercentage(p)
@@ -188,23 +191,23 @@ class RasterProcess(object):
             self.writeBlock(outG, g, sizeX, lines, row, pixelType)
             self.writeBlock(outB, b, sizeX, lines, row, pixelType)
 
-            if int(float(row)/sizeY*100) != p:
-                p = int(float(row)/sizeY*100)
+            if int(float(row) / sizeY * 100) != p:
+                p = int(float(row) / sizeY * 100)
                 progress.setPercentage(p)
 
         rgb = None
         panraster = None
         outRaster = None
-        
+
     def normalize(self, arr):
         """
         Function to normalize an input array to 0-1
         """
         arr_min = arr.min()
         arr_max = arr.max()
-        return [(arr - arr_min) / (arr_max - arr_min)]*255
-    
-    def readBlock(self, band, sizeX, sizeY = 1, offsetY = 0, pixelType = gdal.GDT_Byte):
+        return [(arr - arr_min) / (arr_max - arr_min)] * 255
+
+    def readBlock(self, band, sizeX, sizeY=1, offsetY=0, pixelType=gdal.GDT_Byte):
         """
         Reads image block
         band: band used
@@ -215,12 +218,14 @@ class RasterProcess(object):
         """
         numpytype = self.getNumpyType(pixelType)
 
-        bandscanline =band.ReadRaster( 0, offsetY, sizeX, sizeY, sizeX, sizeY, pixelType )
-        pixelArray=numpy.fromstring(bandscanline, dtype=numpytype)
-        
+        bandscanline = band.ReadRaster(
+            0, offsetY, sizeX, sizeY, sizeX, sizeY, pixelType
+        )
+        pixelArray = numpy.fromstring(bandscanline, dtype=numpytype)
+
         return pixelArray
-    
-    def getNumpyType(self, pixelType = gdal.GDT_Byte):
+
+    def getNumpyType(self, pixelType=gdal.GDT_Byte):
         """
         Translates the gdal raster type to numpy type
         pixelType: gdal raster type
@@ -239,8 +244,10 @@ class RasterProcess(object):
             return numpy.float32
         elif pixelType == gdal.GDT_Float64:
             return numpy.float64
-    
-    def writeBlock(self, band, block, sizeX, sizeY = 1, offsetY = 0, pixelType = gdal.GDT_Byte):
+
+    def writeBlock(
+        self, band, block, sizeX, sizeY=1, offsetY=0, pixelType=gdal.GDT_Byte
+    ):
         """
         Writes image block
         band: band used
@@ -253,7 +260,6 @@ class RasterProcess(object):
 
         band.WriteRaster(0, offsetY, sizeX, sizeY, block.astype(numpytype).tostring())
 
+
 obj = RasterProcess()
-obj.pansharpenImage(RGB_Layer,
-                    Pan_Layer,
-                    Pansharpened)
+obj.pansharpenImage(RGB_Layer, Pan_Layer, Pansharpened)

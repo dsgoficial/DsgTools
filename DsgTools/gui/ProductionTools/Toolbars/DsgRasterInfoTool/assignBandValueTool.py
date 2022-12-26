@@ -23,12 +23,28 @@
 
 from functools import partial
 
-from qgis.gui import QgsMapTool, QgsRubberBand, QgsMapToolEmitPoint, \
-                     QgsAttributeDialog, QgsAttributeForm, QgsMessageBar
+from qgis.gui import (
+    QgsMapTool,
+    QgsRubberBand,
+    QgsMapToolEmitPoint,
+    QgsAttributeDialog,
+    QgsAttributeForm,
+    QgsMessageBar,
+)
 from qgis import core
-from qgis.core import QgsPointXY, QgsRectangle, QgsVectorLayer, QgsGeometry, \
-                      QgsEditFormConfig, QgsRaster, QgsFeature, QgsWkbTypes, \
-                      QgsProject, QgsVectorLayerUtils, Qgis
+from qgis.core import (
+    QgsPointXY,
+    QgsRectangle,
+    QgsVectorLayer,
+    QgsGeometry,
+    QgsEditFormConfig,
+    QgsRaster,
+    QgsFeature,
+    QgsWkbTypes,
+    QgsProject,
+    QgsVectorLayerUtils,
+    Qgis,
+)
 from qgis.PyQt.QtCore import QSettings
 from qgis.PyQt import QtCore, QtGui
 from qgis.PyQt.QtGui import QColor, QCursor
@@ -37,15 +53,16 @@ from qgis.PyQt.QtWidgets import QMenu, QApplication
 from qgis.PyQt.QtCore import Qt
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
+
 class AssignBandValueTool(QgsMapTool):
     def __init__(self, iface, rasterLayer):
         """
         Tool Behaviours: (all behaviours start edition, except for rectangle one)
-        1- Left Click: Creates a new point feature with the value from raster, according to selected attribute. 
-        5- Shift + drag and drop: draws a rectangle, then features that intersect this rectangle are selected 
+        1- Left Click: Creates a new point feature with the value from raster, according to selected attribute.
+        5- Shift + drag and drop: draws a rectangle, then features that intersect this rectangle are selected
         and their value is set according to raster value and selected attribute.
         """
-        self.iface = iface        
+        self.iface = iface
         self.canvas = self.iface.mapCanvas()
         QgsMapTool.__init__(self, self.canvas)
         self.toolAction = None
@@ -59,28 +76,28 @@ class AssignBandValueTool(QgsMapTool):
 
     def getDecimals(self):
         settings = QSettings()
-        settings.beginGroup('PythonPlugins/DsgTools/Options')
-        decimals = settings.value('decimals')
+        settings.beginGroup("PythonPlugins/DsgTools/Options")
+        decimals = settings.value("decimals")
         if decimals:
             return int(decimals)
         else:
             return 0
-    
+
     def getSuppressOptions(self):
         qgisSettings = QSettings()
-        qgisSettings.beginGroup('qgis/digitizing')
-        setting = qgisSettings.value('disable_enter_attribute_values_dialog')
+        qgisSettings.beginGroup("qgis/digitizing")
+        setting = qgisSettings.value("disable_enter_attribute_values_dialog")
         qgisSettings.endGroup()
         return setting
 
     def setRubberbandParameters(self):
         self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
         self.hoverRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
-        mFillColor = QColor( 254, 178, 76, 63 )
+        mFillColor = QColor(254, 178, 76, 63)
         self.rubberBand.setColor(mFillColor)
-        self.hoverRubberBand.setColor(QColor( 255, 0, 0, 90 ))
+        self.hoverRubberBand.setColor(QColor(255, 0, 0, 90))
         self.rubberBand.setWidth(1)
-    
+
     def reset(self):
         """
         Resets rubber band.
@@ -109,8 +126,8 @@ class AssignBandValueTool(QgsMapTool):
         """
         if not self.isEmittingPoint:
             return
-        self.endPoint = self.toMapCoordinates( e.pos() )
-        self.showRect(self.startPoint, self.endPoint)        
+        self.endPoint = self.toMapCoordinates(e.pos())
+        self.showRect(self.startPoint, self.endPoint)
 
     def showRect(self, startPoint, endPoint):
         """
@@ -123,11 +140,11 @@ class AssignBandValueTool(QgsMapTool):
         point2 = QgsPointXY(startPoint.x(), endPoint.y())
         point3 = QgsPointXY(endPoint.x(), endPoint.y())
         point4 = QgsPointXY(endPoint.x(), startPoint.y())
-    
+
         self.rubberBand.addPoint(point1, False)
         self.rubberBand.addPoint(point2, False)
         self.rubberBand.addPoint(point3, False)
-        self.rubberBand.addPoint(point4, True)    # true to update canvas
+        self.rubberBand.addPoint(point4, True)  # true to update canvas
         self.rubberBand.show()
 
     def rectangle(self):
@@ -136,19 +153,22 @@ class AssignBandValueTool(QgsMapTool):
         """
         if self.startPoint is None or self.endPoint is None:
             return None
-        elif self.startPoint.x() == self.endPoint.x() or self.startPoint.y() == self.endPoint.y():
+        elif (
+            self.startPoint.x() == self.endPoint.x()
+            or self.startPoint.y() == self.endPoint.y()
+        ):
             return None
         return QgsRectangle(self.startPoint, self.endPoint)
 
     def setAction(self, action):
         self.toolAction = action
         self.toolAction.setCheckable(True)
-    
+
     def canvasReleaseEvent(self, e):
         """
         After the rectangle is built, here features are selected.
         """
-        # tool was planned to work on left click 
+        # tool was planned to work on left click
         if e.button() == QtCore.Qt.LeftButton:
             layer = self.iface.mapCanvas().currentLayer()
             if QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
@@ -158,25 +178,29 @@ class AssignBandValueTool(QgsMapTool):
                     return
                 bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, r)
                 self.rubberBand.hide()
-                #select all stuff
-                layer.selectByIds([]) #portar para o feature handler
+                # select all stuff
+                layer.selectByIds([])  # portar para o feature handler
                 layer.selectByRect(bbRect)
-                #mudar depois para o dsgmothafucka
+                # mudar depois para o dsgmothafucka
                 featDict = dict()
                 pointDict = dict()
                 for feat in layer.selectedFeatures():
                     featDict[feat.id()] = feat
                     pointDict[feat.id()] = feat.geometry()
-                pixelValueDict = self.getPixelValueFromPointDict(pointDict, self.rasterLayer)
+                pixelValueDict = self.getPixelValueFromPointDict(
+                    pointDict, self.rasterLayer
+                )
                 for idx in pointDict:
                     value = pixelValueDict[idx]
                     if value:
-                        self.auxList.append({'featId':idx, 'feat':featDict[idx], 'value':value})
+                        self.auxList.append(
+                            {"featId": idx, "feat": featDict[idx], "value": value}
+                        )
             else:
                 value, pointGeom = self.getPixelValue(self.rasterLayer)
                 if value:
-                    self.auxList.append({'geom':pointGeom, 'value':value})
-            #create context menu to select attribute
+                    self.auxList.append({"geom": pointGeom, "value": value})
+            # create context menu to select attribute
             if self.auxList:
                 self.createContextMenuOnPosition(e, layer)
             self.iface.mapCanvas().currentLayer().triggerRepaint()
@@ -190,34 +214,38 @@ class AssignBandValueTool(QgsMapTool):
             callback = partial(self.handleFeatures, field, layer)
             action.triggered.connect(callback)
         menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
-    
+
     def handleFeatures(self, selectedField, layer):
         layer.startEditing()
         for item in self.auxList:
-            if 'featId' in item:
-                feat = item['feat']
+            if "featId" in item:
+                feat = item["feat"]
                 idx = feat.fieldNameIndex(selectedField)
-                feat.setAttribute(idx, item['value'])
+                feat.setAttribute(idx, item["value"])
                 layer.updateFeature(feat)
             else:
-                self.geometryHandler.reprojectFeature(item['geom'], layer.crs())
-                feature = QgsVectorLayerUtils.createFeature(layer, item['geom'])
-                self.addFeature(feature, layer, selectedField, item['value'])
+                self.geometryHandler.reprojectFeature(item["geom"], layer.crs())
+                feature = QgsVectorLayerUtils.createFeature(layer, item["geom"])
+                self.addFeature(feature, layer, selectedField, item["value"])
         self.auxList = []
         self.canvas.refresh()
-    
+
     def addFeature(self, feature, layer, field, pointValue):
-        fields = layer.fields()          
-        provider = layer.dataProvider()             
+        fields = layer.fields()
+        provider = layer.dataProvider()
         for i in range(fields.count()):
-            value = provider.defaultValue(i) if fields[i].name() != field else pointValue
+            value = (
+                provider.defaultValue(i) if fields[i].name() != field else pointValue
+            )
             if value is not None:
-                feature.setAttribute(i, value)                
+                feature.setAttribute(i, value)
         form = QgsAttributeDialog(layer, feature, False)
         form.setMode(int(QgsAttributeForm.AddFeatureMode))
         formSuppress = layer.editFormConfig().suppress()
         if formSuppress == QgsEditFormConfig.SuppressDefault:
-            if self.getSuppressOptions(): #this is calculated every time because user can switch options while using tool
+            if (
+                self.getSuppressOptions()
+            ):  # this is calculated every time because user can switch options while using tool
                 layer.addFeature(feature)
             else:
                 if not form.exec_():
@@ -234,8 +262,8 @@ class AssignBandValueTool(QgsMapTool):
         """
         p = self.toMapCoordinates(e.pos())
         w = self.canvas.mapUnitsPerPixel() * 10
-        return QgsRectangle(p.x()-w, p.y()-w, p.x()+w, p.y()+w)
-    
+        return QgsRectangle(p.x() - w, p.y() - w, p.x() + w, p.y() + w)
+
     def deactivate(self):
         """
         Deactivate tool.
@@ -261,7 +289,12 @@ class AssignBandValueTool(QgsMapTool):
         # self.iface.mapCanvas().setMapTool(self)
         layer = self.iface.mapCanvas().currentLayer()
         if not layer or not isinstance(layer, QgsVectorLayer):
-            self.iface.messageBar().pushMessage(self.tr("Warning"), self.tr("Select a point vector layer as the active layer"), level=Qgis.Warning, duration=5)
+            self.iface.messageBar().pushMessage(
+                self.tr("Warning"),
+                self.tr("Select a point vector layer as the active layer"),
+                level=Qgis.Warning,
+                duration=5,
+            )
             self.deactivate()
 
     def getPixelValue(self, rasterLayer):
@@ -270,9 +303,7 @@ class AssignBandValueTool(QgsMapTool):
         return self.getPixelValueFromPoint(mousePosGeom, rasterLayer), mousePosGeom
 
     def getPixelValueFromPoint(self, mousePosGeom, rasterLayer, fromCanvas=True):
-        """
-        
-        """
+        """ """
         rasterCrs = rasterLayer.crs()
         # if fromCanvas:
         #     self.geometryHandler.reprojectFeature(mousePosGeom, rasterCrs, QgsProject.instance().crs())
@@ -283,21 +314,30 @@ class AssignBandValueTool(QgsMapTool):
             destinationCrs=self.canvas.currentLayer().crs(),
             referenceCrs=rasterCrs,
         )
-        mousePos = mousePosGeom.asMultiPoint()[0] if mousePosGeom.isMultipart() else mousePosGeom.asPoint()
+        mousePos = (
+            mousePosGeom.asMultiPoint()[0]
+            if mousePosGeom.isMultipart()
+            else mousePosGeom.asPoint()
+        )
         # identify pixel(s) information
-        i = rasterLayer.dataProvider().identify( mousePos, QgsRaster.IdentifyFormatValue )
+        i = rasterLayer.dataProvider().identify(mousePos, QgsRaster.IdentifyFormatValue)
         if i.isValid():
             value = list(i.results().values())[0]
             if value:
-                value = int(value) if self.decimals == 0 else round(value, self.decimals)
+                value = (
+                    int(value) if self.decimals == 0 else round(value, self.decimals)
+                )
             return value
         else:
             return None
-    
+
     def getPixelValueFromPointDict(self, pointDict, rasterLayer):
         """
         pointDict = {'pointId':QgsGeometry}
 
         returns {'pointId': value}
         """
-        return {key : self.getPixelValueFromPoint(value, rasterLayer, fromCanvas=False) for key, value in pointDict.items()} #no python3 eh items()
+        return {
+            key: self.getPixelValueFromPoint(value, rasterLayer, fromCanvas=False)
+            for key, value in pointDict.items()
+        }  # no python3 eh items()

@@ -24,12 +24,17 @@
 import os
 import concurrent.futures
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing, QgsProcessingException,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource, QgsGeometry,
-                       QgsWkbTypes, QgsPoint)
+from qgis.core import (
+    QgsProcessing,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsGeometry,
+    QgsWkbTypes,
+    QgsPoint,
+)
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
@@ -38,30 +43,28 @@ from .validationAlgorithm import ValidationAlgorithm
 
 
 class IdentifyDrainageLoops(ValidationAlgorithm):
-    INPUT = 'INPUT'
-    BUILD_CACHE = 'BUILD_CACHE'
-    FLAGS = 'FLAGS'
+    INPUT = "INPUT"
+    BUILD_CACHE = "BUILD_CACHE"
+    FLAGS = "FLAGS"
 
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input'),
+                self.tr("Input"),
                 [
                     QgsProcessing.TypeVectorLine,
-                ]
+                ],
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.BUILD_CACHE,
-                self.tr('Build local cache of the input layer')
+                self.BUILD_CACHE, self.tr("Build local cache of the input layer")
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
 
@@ -70,19 +73,15 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
             import networkx as nx
         except ImportError:
             raise QgsProcessingException(
-                self.tr('This algorithm requires the Python networkx library. Please install this library and try again.')
+                self.tr(
+                    "This algorithm requires the Python networkx library. Please install this library and try again."
+                )
             )
         algRunner = AlgRunner()
         geometryHandler = GeometryHandler()
 
-        inputLyr = self.parameterAsVectorLayer(
-            parameters,
-            'INPUT',
-            context
-        )
-        buildCache = self.parameterAsBool(
-            parameters, self.BUILD_CACHE, context
-        )
+        inputLyr = self.parameterAsVectorLayer(parameters, "INPUT", context)
+        buildCache = self.parameterAsBool(parameters, self.BUILD_CACHE, context)
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.LineString, context)
 
         # Iterate over lines setting the dictionary counters:
@@ -101,7 +100,7 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
                 inputLyr=inputLyr, context=context, feedback=multiStepFeedback
             )
             currentStep += 1
-        
+
         multiStepFeedback.setProgressText(self.tr("Building loop area candidates..."))
         multiStepFeedback.setCurrentStep(currentStep)
         polygonLyr = algRunner.runPolygonize(
@@ -111,13 +110,13 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
 
         if polygonLyr.featureCount() == 0:
             return {self.FLAGS: self.flag_id}
-        
+
         multiStepFeedback.setCurrentStep(currentStep)
         mergedPolygons = algRunner.runDissolve(
             inputLyr=polygonLyr, context=context, feedback=multiStepFeedback
         )
         currentStep += 1
-        
+
         multiStepFeedback.setCurrentStep(currentStep)
         polygonLoops = algRunner.runMultipartToSingleParts(
             inputLayer=mergedPolygons, context=context, feedback=multiStepFeedback
@@ -125,25 +124,30 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
         currentStep += 1
         polygonCount = polygonLoops.featureCount()
         if polygonCount == 0:
-            multiStepFeedback.setProgressText(self.tr("Building loop area candidates..."))
+            multiStepFeedback.setProgressText(
+                self.tr("Building loop area candidates...")
+            )
             return {self.FLAGS: self.flag_id}
 
         multiStepFeedback.setCurrentStep(currentStep)
-        self.searchLoops(nx, geometryHandler, inputLyr, multiStepFeedback, polygonLoops, polygonCount)
+        self.searchLoops(
+            nx, geometryHandler, inputLyr, multiStepFeedback, polygonLoops, polygonCount
+        )
 
         return {self.FLAGS: self.flag_id}
 
-    def searchLoops(self, nx, geometryHandler, inputLyr, feedback, polygonLoops, polygonCount):
+    def searchLoops(
+        self, nx, geometryHandler, inputLyr, feedback, polygonLoops, polygonCount
+    ):
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         stepSize = 100 / polygonCount
         flagFeatLambda = lambda x: self.flagFeature(
-            flagGeom=x, flagText=self.tr('Loop on input drainages')
+            flagGeom=x, flagText=self.tr("Loop on input drainages")
         )
-        firstAndLastNode = lambda x: geometryHandler.getFirstAndLastNode(
-            inputLyr, x
-        )
+        firstAndLastNode = lambda x: geometryHandler.getFirstAndLastNode(inputLyr, x)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.setProgressText(self.tr('Submitting tasks to thread'))
+        multiStepFeedback.setProgressText(self.tr("Submitting tasks to thread"))
+
         def evaluate(polygonFeature):
             geom = polygonFeature.geometry()
             geomEngine = QgsGeometry.createGeometryEngine(geom.constGet())
@@ -154,14 +158,17 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
                 p0, pn = firstAndLastNode(feat)
                 p0 = QgsGeometry.fromPointXY(p0)
                 pn = QgsGeometry.fromPointXY(pn)
-                if not geomEngine.intersects(p0.constGet()) or not geomEngine.intersects(pn.constGet()):
+                if not geomEngine.intersects(
+                    p0.constGet()
+                ) or not geomEngine.intersects(pn.constGet()):
                     continue
                 vertexList = list(feat.geometry().vertices())
                 for v1, v2 in zip(vertexList, vertexList[1:]):
                     graph.add_edge(v1.asWkt(), v2.asWkt())
             loopSet = self.findLoopsOnEdgeSet(nx, graph, feedback=multiStepFeedback)
             return loopSet
-        pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count()-1)
+
+        pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count() - 1)
         futures = set()
         for current, polygonFeature in enumerate(polygonLoops.getFeatures()):
             if multiStepFeedback.isCanceled():
@@ -170,8 +177,8 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
             multiStepFeedback.setCurrentStep(current * stepSize)
 
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.setProgressText(self.tr('Evaluating results'))
-        
+        multiStepFeedback.setProgressText(self.tr("Evaluating results"))
+
         for current, future in enumerate(concurrent.futures.as_completed(futures)):
             if multiStepFeedback.isCanceled():
                 break
@@ -193,14 +200,12 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
                 continue
             pointFromWkt = lambda x: QgsPoint(QgsGeometry.fromWkt(x).asPoint())
             loopGeom = QgsGeometry.fromPolyline(
-                [pointFromWkt(initialNode)] + 
-                list(map(pointFromWkt, nodeList)) + 
                 [pointFromWkt(initialNode)]
+                + list(map(pointFromWkt, nodeList))
+                + [pointFromWkt(initialNode)]
             )
             loopSet.add(loopGeom)
         return loopSet
-            
-        
 
     def name(self):
         """
@@ -210,21 +215,21 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifydrainageloops'
+        return "identifydrainageloops"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Drainage Loops')
+        return self.tr("Identify Drainage Loops")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -234,10 +239,10 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return self.tr('DSGTools: Quality Assurance Tools (Identification Processes)')
+        return self.tr("DSGTools: Quality Assurance Tools (Identification Processes)")
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyDrainageLoops', string)
+        return QCoreApplication.translate("IdentifyDrainageLoops", string)
 
     def createInstance(self):
         return IdentifyDrainageLoops()

@@ -26,25 +26,28 @@ import os, json
 from qgis.core import Qgis, QgsMessageLog, QgsApplication
 from qgis.gui import QgsMessageBar
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import (Qt,
-                              QSize,
-                              pyqtSlot,
-                              QSettings,
-                              pyqtSignal)
+from qgis.PyQt.QtCore import Qt, QSize, pyqtSlot, QSettings, pyqtSignal
 from qgis.PyQt.QtGui import QColor
 from qgis.PyQt.QtSql import QSqlQuery
-from qgis.PyQt.QtWidgets import (QDialog,
-                                 QFileDialog,
-                                 QMessageBox,
-                                 QHeaderView,
-                                 QRadioButton,
-                                 QAbstractItemView)
+from qgis.PyQt.QtWidgets import (
+    QDialog,
+    QFileDialog,
+    QMessageBox,
+    QHeaderView,
+    QRadioButton,
+    QAbstractItemView,
+)
 
-from DsgTools.gui.ProductionTools.Toolboxes.CustomFeatureToolBox.customButtonSetup import CustomButtonSetup, CustomFeatureButton
+from DsgTools.gui.ProductionTools.Toolboxes.CustomFeatureToolBox.customButtonSetup import (
+    CustomButtonSetup,
+    CustomFeatureButton,
+)
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'buttonSetupWidget.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "buttonSetupWidget.ui")
+)
 app = QgsApplication.instance()
+
 
 class ButtonSetupWidget(QDialog, FORM_CLASS):
     def __init__(self, parent=None, buttonSetup=None):
@@ -61,13 +64,16 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         if buttonSetup:
             self.setSetup(buttonSetup)
         self.buttonComboBox.addItem(self.tr("No button selected"))
-        self.tableWidget.itemSelectionChanged.connect(
-            self._setButtonFromRow)
+        self.tableWidget.itemSelectionChanged.connect(self._setButtonFromRow)
         bEnabled = self.buttonComboBox.currentIndex() > 0
-        for w in ("savePushButton", "undoPushButton", "removePushButton",
-                  "buttonPropWidget"):
+        for w in (
+            "savePushButton",
+            "undoPushButton",
+            "removePushButton",
+            "buttonPropWidget",
+        ):
             getattr(self, w).setEnabled(bEnabled)
-        
+
         # making the button selection to stand out a little bit
         if "Night Mapping" in app.activeThemePath():
             ss = """QHeaderView::section:checked
@@ -87,11 +93,13 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         :param duration: (int) warning message display time.
         """
         self.messageBar.pushMessage(
-            title or self.tr('Invalid workflow'), msg,
-            level=lvl or Qgis.Warning, duration=duration or 5
+            title or self.tr("Invalid workflow"),
+            msg,
+            level=lvl or Qgis.Warning,
+            duration=duration or 5,
         )
         # msg = self.tr("Buttons setup definion invalid: {m}").format(m=msg)
-        QgsMessageLog.logMessage(msg, 'DSGTools Plugin', Qgis.Warning)
+        QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.Warning)
 
     def resizeEvent(self, e):
         """
@@ -103,7 +111,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         self.messageBar.resize(
             QSize(
                 self.geometry().size().width(),
-                40 # this felt nicer than the original height (30)
+                40,  # this felt nicer than the original height (30)
             )
         )
 
@@ -218,7 +226,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
     def setSetup(self, newSetup):
         """
         Imports buttons setup definitions from another buttons setup.
-        :param newSetup: (CustomButtonSetup) setup to be imported. 
+        :param newSetup: (CustomButtonSetup) setup to be imported.
         """
         self.buttonComboBox.blockSignals(True)
         self.setSetupName(newSetup.name())
@@ -439,14 +447,14 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
     def setAttributeMap(self, attrMap):
         """
         Sets the attribute value map for current button to GUI.
-        :param attrMap: (dict) a map from each field and its value to be set. 
+        :param attrMap: (dict) a map from each field and its value to be set.
         """
         self.buttonPropWidget.setAttributeMap(attrMap)
 
     def attributeMap(self):
         """
         Reads the field map data and set it to a button attribute map format.
-        :return: (dict) read attribute map. 
+        :return: (dict) read attribute map.
         """
         return self.buttonPropWidget.attributeMap()
 
@@ -462,7 +470,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         Reads current layer selection from GUI.
         :return: (str) name for the selected layer.
         """
-        self.buttonPropWidget.layer() 
+        self.buttonPropWidget.layer()
 
     def currentButton(self):
         """
@@ -551,8 +559,12 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
             pass
         self.buttonComboBox.setCurrentText(button.name())
         bEnabled = self.buttonComboBox.currentIndex() > 0
-        for w in ("savePushButton", "undoPushButton", "removePushButton",
-                  "buttonPropWidget"):
+        for w in (
+            "savePushButton",
+            "undoPushButton",
+            "removePushButton",
+            "buttonPropWidget",
+        ):
             getattr(self, w).setEnabled(bEnabled)
         self.buttonPropWidget.setButton(button)
 
@@ -601,10 +613,10 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         if button is not None and not isinstance(button, bool):
             buttonName = button.name()
             if buttonName in self.registeredButtonNames():
-                msg = self.tr("Button {b} already exists. Would you like to "
-                              "replace it?").format(b=buttonName)
-                cnf = self.confirmAction(msg,
-                    self.tr("Replace existing button"))
+                msg = self.tr(
+                    "Button {b} already exists. Would you like to " "replace it?"
+                ).format(b=buttonName)
+                cnf = self.confirmAction(msg, self.tr("Replace existing button"))
                 if not cnf:
                     return self.getButtonByName(buttonName)
                 self.updateButton(buttonName, button.properties())
@@ -689,11 +701,10 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         self.tableWidget.setCellWidget(row, 0, w)
         # button instances on this widget are never the same as the original
         # and so, modifying the properties below won't modify anything outside
-        # the scope of this dialog 
+        # the scope of this dialog
         button.setCheckable(False)
         # button.setEnabled(False)
-        button.setCallback(
-            lambda: self.setCurrentButton(button), ignoreEnabled=True)
+        button.setCallback(lambda: self.setCurrentButton(button), ignoreEnabled=True)
 
     def removeButtonFromTable(self, button):
         """
@@ -721,9 +732,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         count = self.tableWidget.rowCount()
         if count > 0:
             for row in range(count):
-                buttons.append(
-                    self.buttonFromRow(row).name()
-                )
+                buttons.append(self.buttonFromRow(row).name())
         return buttons
 
     def buttonsOrder(self):
@@ -759,8 +768,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         :return: (list-of-int) ordered list of selected columns' indexes.
         """
         return sorted(
-            set(i.column() for i in self.selectedIndexes()),
-            reverse=reverseOrder
+            set(i.column() for i in self.selectedIndexes()), reverse=reverseOrder
         )
 
     def selectRow(self, row):
@@ -882,8 +890,10 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
             msg = self.tr("Invalid input data: {r}").format(r=self.validate())
             self.raiseWarning(msg)
             return
-        msg = self.tr("Current button has been modified and not saved. Would "
-                        "you like to save it?")
+        msg = self.tr(
+            "Current button has been modified and not saved. Would "
+            "you like to save it?"
+        )
         title = self.tr("Unsaved modifications")
         if self.buttonIsModified() and self.confirmAction(msg, title):
             self.updateCurrentButton()
@@ -910,10 +920,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         for idx, props in enumerate(state["buttons"]):
             kws = props["keywords"]
             state["buttons"][idx]["keywords"] = tuple(kws)
-        return {
-            "state": state,
-            "order": self.buttonsOrder()
-        }
+        return {"state": state, "order": self.buttonsOrder()}
 
     def setState(self, state):
         """
@@ -930,15 +937,14 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         fd = QFileDialog()
         filename = fd.getOpenFileName(
             caption=self.tr("Import a DSGTools Button Setup (set of buttons)"),
-            filter=self.tr("DSGTools Buttons Setup (*.setup)")
+            filter=self.tr("DSGTools Buttons Setup (*.setup)"),
         )
         filename = filename[0] if isinstance(filename, tuple) else filename
         if not filename:
             return
         with open(filename, "r", encoding="utf-8") as fp:
             state = json.load(fp)
-            order = [b[0] for b in \
-                        sorted(state["order"].items(), key=lambda i: i[1])]
+            order = [b[0] for b in sorted(state["order"].items(), key=lambda i: i[1])]
             state = state["state"]
         # buttons' keywords are stored as tuple in order to be seriallizable
         for idx, props in enumerate(state["buttons"]):
@@ -963,10 +969,10 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         self.setSetupName(self.setup.name())
         self.setDescription(self.setup.description())
         self.setDynamicShortcut(self.setup.dynamicShortcut())
-        msg = self.tr('Setup "{0}" imported from "{1}"')\
-                  .format(self.setup.name(), filename)
-        self.raiseWarning(
-            msg, title=self.tr("Imported workflow"), lvl=Qgis.Success)
+        msg = self.tr('Setup "{0}" imported from "{1}"').format(
+            self.setup.name(), filename
+        )
+        self.raiseWarning(msg, title=self.tr("Imported workflow"), lvl=Qgis.Success)
 
     @pyqtSlot(bool, name="on_exportPushButton_clicked")
     def exportSetup(self):
@@ -983,7 +989,7 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
         fd = QFileDialog()
         filename = fd.getSaveFileName(
             caption=self.tr("Export setup - {0}").format(s.name()),
-            filter=self.tr("DSGTools Buttons Setup (*.setup)")
+            filter=self.tr("DSGTools Buttons Setup (*.setup)"),
         )
         filename = filename[0] if isinstance(filename, tuple) else filename
         if not filename:
@@ -992,8 +998,6 @@ class ButtonSetupWidget(QDialog, FORM_CLASS):
             fp.write(json.dumps(self.state(), sort_keys=True, indent=4))
         res = os.path.exists(filename)
         if res:
-            msg = self.tr('Setup "{0}" exported to "{1}"')\
-                      .format(s.name(), filename)
-            self.raiseWarning(
-                msg, title=self.tr("Exported workflow"), lvl=Qgis.Success)
+            msg = self.tr('Setup "{0}" exported to "{1}"').format(s.name(), filename)
+            self.raiseWarning(msg, title=self.tr("Exported workflow"), lvl=Qgis.Success)
         return res

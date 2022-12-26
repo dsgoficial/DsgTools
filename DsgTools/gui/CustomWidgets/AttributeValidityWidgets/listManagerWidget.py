@@ -27,17 +27,24 @@ from qgis.core import QgsMessageLog
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
-from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox, QMenu, QApplication, QFileDialog
+from qgis.PyQt.QtWidgets import (
+    QListWidgetItem,
+    QMessageBox,
+    QMenu,
+    QApplication,
+    QFileDialog,
+)
 from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "listManagerWidget.ui")
+)
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'listManagerWidget.ui'))
 
 class ListManagerWidget(QtWidgets.QWidget, FORM_CLASS):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -46,5 +53,3 @@ class ListManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-
- 

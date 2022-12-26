@@ -21,7 +21,12 @@
  ***************************************************************************/
 """
 
-from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsCoordinateTransformContext
+from qgis.core import (
+    Qgis,
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
+    QgsCoordinateTransformContext,
+)
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -30,23 +35,19 @@ from PyQt5 import uic
 from qgis.utils import iface
 import os
 
-class GetCrsDialog(QDialog):
 
+class GetCrsDialog(QDialog):
     def __init__(self):
         super(GetCrsDialog, self).__init__()
         uic.loadUi(self.getUiPath(), self)
         self.buttonBox.addButton("Sim", QDialogButtonBox.AcceptRole)
         self.buttonBox.addButton("Não mudar", QDialogButtonBox.RejectRole)
-        
 
     def setCrsValue(self, value):
-        self.selectCRS.setCrs( value)
+        self.selectCRS.setCrs(value)
 
     def getUiPath(self):
-        return os.path.join(
-            os.path.abspath(os.path.dirname(__file__)),
-            'changeCRS.ui'
-        )
+        return os.path.join(os.path.abspath(os.path.dirname(__file__)), "changeCRS.ui")
 
     def getCrs(self):
         return self.selectCRS.crs()
@@ -54,7 +55,7 @@ class GetCrsDialog(QDialog):
 
 def copywkt():
     layer = iface.activeLayer()
-    
+
     result, destCrs = callDialog(layer.crs())
     wktcoord = []
     for feature in layer.getSelectedFeatures():
@@ -63,11 +64,16 @@ def copywkt():
             transformcrs = getGeometryTransforms(layer.crs(), destCrs)
             geom.transform(transformcrs)
         wktcoord.append(geom.asWkt())
-    QApplication.clipboard().setText(
-        '\n'.join(wktcoord)
+    QApplication.clipboard().setText("\n".join(wktcoord))
+    iface.messageBar().pushMessage(
+        "Executado",
+        " As coordenadas das feições selecionadas foram copiadas em WKT para o sistema {}".format(
+            destCrs.authid()
+        ),
+        level=Qgis.Success,
+        duration=5,
     )
-    iface.messageBar().pushMessage("Executado",
-                                    u" As coordenadas das feições selecionadas foram copiadas em WKT para o sistema {}".format(destCrs.authid()), level=Qgis.Success, duration=5)
+
 
 def callDialog(crsvalue):
     getCrsDialog = GetCrsDialog()
@@ -78,11 +84,20 @@ def callDialog(crsvalue):
         errorAction()
         return callDialog()
     return result, crs
+
+
 def errorAction():
-    reply = QMessageBox.question(iface.mainWindow(), 'CRS Invalido', 
-                 'Se deseja mudar o CRS, selecione um CRS valido', QMessageBox.Ok)
+    reply = QMessageBox.question(
+        iface.mainWindow(),
+        "CRS Invalido",
+        "Se deseja mudar o CRS, selecione um CRS valido",
+        QMessageBox.Ok,
+    )
     return False
 
+
 def getGeometryTransforms(sourceCrs, destCrs):
-    destTransform = QgsCoordinateTransform(sourceCrs, destCrs, QgsCoordinateTransformContext())
+    destTransform = QgsCoordinateTransform(
+        sourceCrs, destCrs, QgsCoordinateTransformContext()
+    )
     return destTransform

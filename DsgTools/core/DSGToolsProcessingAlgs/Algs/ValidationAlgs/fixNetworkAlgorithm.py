@@ -24,89 +24,93 @@ from PyQt5.QtCore import QCoreApplication
 
 import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterDistance,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsSpatialIndex, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsGeometry,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterDistance,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterField,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsWkbTypes,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class FixNetworkAlgorithm(ValidationAlgorithm):
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
-    TOLERANCE = 'TOLERANCE'
-    ATTRIBUTE_BLACK_LIST = 'ATTRIBUTE_BLACK_LIST'
-    IGNORE_VIRTUAL_FIELDS = 'IGNORE_VIRTUAL_FIELDS'
-    IGNORE_PK_FIELDS = 'IGNORE_PK_FIELDS'
-    OUTPUT = 'OUTPUT'
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
+    TOLERANCE = "TOLERANCE"
+    ATTRIBUTE_BLACK_LIST = "ATTRIBUTE_BLACK_LIST"
+    IGNORE_VIRTUAL_FIELDS = "IGNORE_VIRTUAL_FIELDS"
+    IGNORE_PK_FIELDS = "IGNORE_PK_FIELDS"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
         Parameter setting.
         """
-         self.addParameter(
+        self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorLine ]
+                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorLine]
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
         self.addParameter(
             QgsProcessingParameterDistance(
                 self.TOLERANCE,
-                self.tr('Topology radius'),
+                self.tr("Topology radius"),
                 parentParameterName=self.INPUT,
                 minValue=0,
-                defaultValue=1.0
+                defaultValue=1.0,
             )
         )
         self.addParameter(
             QgsProcessingParameterField(
-                self.ATTRIBUTE_BLACK_LIST, 
-                self.tr('Fields to ignore'),
-                None, 
-                'INPUT', 
+                self.ATTRIBUTE_BLACK_LIST,
+                self.tr("Fields to ignore"),
+                None,
+                "INPUT",
                 QgsProcessingParameterField.Any,
                 allowMultiple=True,
-                optional = True
+                optional=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.IGNORE_VIRTUAL_FIELDS,
-                self.tr('Ignore virtual fields'),
-                defaultValue=True
+                self.tr("Ignore virtual fields"),
+                defaultValue=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.IGNORE_PK_FIELDS,
-                self.tr('Ignore primary key fields'),
-                defaultValue=True
+                self.tr("Ignore primary key fields"),
+                defaultValue=True,
             )
         )
         self.addOutput(
             QgsProcessingOutputVectorLayer(
-                self.OUTPUT,
-                self.tr('Original layer with merged lines')
+                self.OUTPUT, self.tr("Original layer with merged lines")
             )
         )
 
@@ -118,36 +122,16 @@ class FixNetworkAlgorithm(ValidationAlgorithm):
         algRunner = AlgRunner()
 
         layerHandler = LayerHandler()
-        inputLyr = self.parameterAsVectorLayer(
-            parameters,
-            self.INPUT,
-            context
-            )
-        onlySelected = self.parameterAsBool(
-            parameters,
-            self.SELECTED,
-            context
-            )
-        tol = self.parameterAsDouble(
-            parameters,
-            self.TOLERANCE,
-            context
-            )
+        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         attributeBlackList = self.parameterAsFields(
-            parameters,
-            self.ATTRIBUTE_BLACK_LIST,
-            context
-            )
+            parameters, self.ATTRIBUTE_BLACK_LIST, context
+        )
         ignoreVirtual = self.parameterAsBool(
-            parameters,
-            self.IGNORE_VIRTUAL_FIELDS,
-            context
-            )
-        ignorePK = self.parameterAsBool(
-            parameters,
-            self.IGNORE_PK_FIELDS,
-            context
-            )
+            parameters, self.IGNORE_VIRTUAL_FIELDS, context
+        )
+        ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
 
         layerHandler.mergeLinesOnLayer(
             inputLyr,
@@ -155,83 +139,90 @@ class FixNetworkAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
             ignoreVirtualFields=ignoreVirtual,
             attributeBlackList=attributeBlackList,
-            excludePrimaryKeys=ignorePK
-            )
-        #aux layer
+            excludePrimaryKeys=ignorePK,
+        )
+        # aux layer
         multiStepFeedback = QgsProcessingMultiStepFeedback(8, feedback)
         multiStepFeedback.setCurrentStep(0)
         if onlySelected:
-            multiStepFeedback.pushInfo(self.tr('Building auxiliar layer...'))
+            multiStepFeedback.pushInfo(self.tr("Building auxiliar layer..."))
             coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
                 [inputLyr],
                 geomType=QgsWkbTypes.MultiPolygon,
                 onlySelected=onlySelected,
-                feedback=multiStepFeedback
-                )
+                feedback=multiStepFeedback,
+            )
         else:
             coverage = inputLyr
-        #dangles
+        # dangles
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(self.tr('Identifying dangles on {layer}...').format(layer=coverage.name()))
+        multiStepFeedback.pushInfo(
+            self.tr("Identifying dangles on {layer}...").format(layer=coverage.name())
+        )
         dangleLyr = algRunner.runIdentifyDangles(
             inputLayer=coverage,
             searchRadius=tol,
             context=context,
             feedback=multiStepFeedback,
-            onlySelected=False
-            )
-        #filter dangles
+            onlySelected=False,
+        )
+        # filter dangles
         multiStepFeedback.setCurrentStep(2)
-        layerHandler.filterDangles(
-            dangleLyr,
-            tol,
-            feedback=multiStepFeedback
-            )
-        #snap layer to dangles
+        layerHandler.filterDangles(dangleLyr, tol, feedback=multiStepFeedback)
+        # snap layer to dangles
         multiStepFeedback.setCurrentStep(3)
-        multiStepFeedback.pushInfo(self.tr('Snapping layer {layer} to dangles...').format(layer=coverage.name()))
+        multiStepFeedback.pushInfo(
+            self.tr("Snapping layer {layer} to dangles...").format(
+                layer=coverage.name()
+            )
+        )
         algRunner.runSnapLayerOnLayer(
             coverage,
             dangleLyr,
             tol,
             context,
             feedback=multiStepFeedback,
-            onlySelected=False, #this is done due to the aux layer usage
-            behavior=0
-            )
-        #inner layer snap
+            onlySelected=False,  # this is done due to the aux layer usage
+            behavior=0,
+        )
+        # inner layer snap
         multiStepFeedback.setCurrentStep(4)
-        multiStepFeedback.pushInfo(self.tr('Snapping layer {layer} with {layer}...').format(layer=coverage.name()))
+        multiStepFeedback.pushInfo(
+            self.tr("Snapping layer {layer} with {layer}...").format(
+                layer=coverage.name()
+            )
+        )
         algRunner.runSnapLayerOnLayer(
             coverage,
             coverage,
             tol,
             context,
             feedback=multiStepFeedback,
-            onlySelected=False, #this is done due to the aux layer usage
-            behavior=0
-            )
-        #clean to break lines
+            onlySelected=False,  # this is done due to the aux layer usage
+            behavior=0,
+        )
+        # clean to break lines
         multiStepFeedback.setCurrentStep(5)
-        multiStepFeedback.pushInfo(self.tr('Running clean on {layer}...').format(layer=coverage.name()))
-        multiStepFeedback.pushInfo(self.tr('Running clean on unified layer...'))
+        multiStepFeedback.pushInfo(
+            self.tr("Running clean on {layer}...").format(layer=coverage.name())
+        )
+        multiStepFeedback.pushInfo(self.tr("Running clean on unified layer..."))
         cleanedCoverage, error = algRunner.runClean(
             coverage,
-            [
-                algRunner.RMSA,
-                algRunner.Break,
-                algRunner.RmDupl,
-                algRunner.RmDangle
-                ],
+            [algRunner.RMSA, algRunner.Break, algRunner.RmDupl, algRunner.RmDangle],
             context,
             returnError=True,
             snap=snap,
             minArea=minArea,
-            feedback=multiStepFeedback
-            )
-        #remove duplicated features
+            feedback=multiStepFeedback,
+        )
+        # remove duplicated features
         multiStepFeedback.setCurrentStep(6)
-        multiStepFeedback.pushInfo(self.tr('Removing duplicated features from {layer}...').format(layer=coverage.name()))
+        multiStepFeedback.pushInfo(
+            self.tr("Removing duplicated features from {layer}...").format(
+                layer=coverage.name()
+            )
+        )
         algRunner.runRemoveDuplicatedFeatures(
             inputLyr=cleanedCoverage,
             context=context,
@@ -239,22 +230,23 @@ class FixNetworkAlgorithm(ValidationAlgorithm):
             attributeBlackList=attributeBlackList,
             excludePrimaryKeys=excludePrimaryKeys,
             ignorePK=ignorePK,
-            ignoreVirtual=ignoreVirtual
+            ignoreVirtual=ignoreVirtual,
         )
-        #merging lines with same attributes
+        # merging lines with same attributes
         multiStepFeedback.setCurrentStep(6)
-        multiStepFeedback.pushInfo(self.tr('Merging lines from {layer} with same attribute set...').format(layer=coverage.name()))
+        multiStepFeedback.pushInfo(
+            self.tr("Merging lines from {layer} with same attribute set...").format(
+                layer=coverage.name()
+            )
+        )
 
         multiStepFeedback.setCurrentStep(7)
-        multiStepFeedback.pushInfo(self.tr('Updating original layers...'))
+        multiStepFeedback.pushInfo(self.tr("Updating original layers..."))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
-            [inputLyr],
-            coverage,
-            feedback=multiStepFeedback,
-            onlySelected=onlySelected
-            )
+            [inputLyr], coverage, feedback=multiStepFeedback, onlySelected=onlySelected
+        )
 
-        return {self.INPUTLAYERS : inputLyrList}
+        return {self.INPUTLAYERS: inputLyrList}
 
     def name(self):
         """
@@ -264,21 +256,21 @@ class FixNetworkAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'topologicallineconnectivityadjustment'
+        return "topologicallineconnectivityadjustment"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Topological adjustment of the connectivity of lines')
+        return self.tr("Topological adjustment of the connectivity of lines")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Network Processes)')
+        return self.tr("Quality Assurance Tools (Network Processes)")
 
     def groupId(self):
         """
@@ -288,10 +280,12 @@ class FixNetworkAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Network Processes)'
+        return "DSGTools: Quality Assurance Tools (Network Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('TopologicalLineConnectivityAdjustment', string)
+        return QCoreApplication.translate(
+            "TopologicalLineConnectivityAdjustment", string
+        )
 
     def createInstance(self):
         return TopologicalLineConnectivityAdjustment()

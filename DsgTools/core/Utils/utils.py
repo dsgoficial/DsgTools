@@ -36,7 +36,6 @@ from qgis.PyQt.QtGui import QColor
 
 
 class Utils(object):
-
     def mergeDict(self, dictionary1, dictionary2):
         """
         Merges two dictionaries
@@ -55,11 +54,11 @@ class Utils(object):
                         for i in value:
                             if i not in output[item]:
                                 output[item].append(i)
-                        output[item].extend(self.mergeDict(
-                            value, dictionary2.pop(item)))
+                        output[item].extend(
+                            self.mergeDict(value, dictionary2.pop(item))
+                        )
                     else:
-                        output[item] = self.mergeDict(
-                            value, dictionary2.pop(item))
+                        output[item] = self.mergeDict(value, dictionary2.pop(item))
             else:
                 if type(value) == list:
                     if item not in list(output.keys()):
@@ -100,7 +99,8 @@ class Utils(object):
                 if len(list(inputDict.values())) == 0:
                     inputDict[keyList[0]] = dict()
             inputDict[keyList[0]] = self.buildOneNestedDict(
-                inputDict[keyList[0]], keyList[1::], value)
+                inputDict[keyList[0]], keyList[1::], value
+            )
             return inputDict
 
     def buildNestedDict(self, inputDict, keyList, value):
@@ -118,7 +118,7 @@ class Utils(object):
         Reads a json file and makes a dictionary
         """
         try:
-            file = open(filename, 'r')
+            file = open(filename, "r")
             data = file.read()
             fileDict = json.loads(data)
             file.close()
@@ -131,19 +131,19 @@ class Utils(object):
 
     def parseStyle(self, qml):
         qml = qml.replace("''", "'")
-        if '.qml' in qml:
+        if ".qml" in qml:
             doc = parse(qml)
         else:
             try:
                 doc = parseString(qml)
             except:
-                doc = parseString(qml.encode('utf-8'))
-        forbiddenList = doc.getElementsByTagName('edittypes')
+                doc = parseString(qml.encode("utf-8"))
+        forbiddenList = doc.getElementsByTagName("edittypes")
         if len(forbiddenList) > 0:
             forbiddenNode = forbiddenList[0]
-            qgisNode = doc.getElementsByTagName('qgis')[0]
+            qgisNode = doc.getElementsByTagName("qgis")[0]
             qgisNode.removeChild(forbiddenNode)
-        return doc.toxml().replace('<?xml version="1.0" encoding="utf-8"?>', '')
+        return doc.toxml().replace('<?xml version="1.0" encoding="utf-8"?>', "")
 
     def parseMultiQml(self, qmlPath, lyrList):
         """
@@ -152,14 +152,18 @@ class Utils(object):
         refDict = dict()
         for lyr in lyrList:
             try:
-                qml = os.path.join(qmlPath, lyr + '.qml')
+                qml = os.path.join(qmlPath, lyr + ".qml")
                 doc = parse(qml)
                 refDict[lyr] = dict()
-                for node in doc.getElementsByTagName('edittype'):
-                    if node.getAttribute('widgetv2type') in ('ValueMap', 'ValueRelation'):
-                        attrName = node.getAttribute('name')
+                for node in doc.getElementsByTagName("edittype"):
+                    if node.getAttribute("widgetv2type") in (
+                        "ValueMap",
+                        "ValueRelation",
+                    ):
+                        attrName = node.getAttribute("name")
                         refDict[lyr][attrName] = node.getElementsByTagName(
-                            'widgetv2config')[0].getAttribute('Layer')
+                            "widgetv2config"
+                        )[0].getAttribute("Layer")
             except:
                 pass
         return refDict
@@ -175,13 +179,14 @@ class Utils(object):
                 try:
                     doc = parseString(qml)
                 except:
-                    doc = parseString(qml.encode('utf-8'))
+                    doc = parseString(qml.encode("utf-8"))
                 refDict[lyr] = dict()
-                for node in doc.getElementsByTagName('edittype'):
-                    if node.getAttribute('widgetv2type') == 'ValueRelation':
-                        attrName = node.getAttribute('name')
+                for node in doc.getElementsByTagName("edittype"):
+                    if node.getAttribute("widgetv2type") == "ValueRelation":
+                        attrName = node.getAttribute("name")
                         refDict[lyr][attrName] = node.getElementsByTagName(
-                            'widgetv2config')[0].getAttribute('Layer')
+                            "widgetv2config"
+                        )[0].getAttribute("Layer")
             except:
                 pass
         return refDict
@@ -198,8 +203,7 @@ class Utils(object):
             resultDict[parent] = dict()
         if parent in list(inhDict.keys()):
             for child in inhDict[parent]:
-                self.getRecursiveInheritanceTreeDict(
-                    child, resultDict[parent], inhDict)
+                self.getRecursiveInheritanceTreeDict(child, resultDict[parent], inhDict)
 
     def find_all_paths(self, graph, start, end, path=[]):
         path = path + [start]
@@ -235,21 +239,20 @@ class Utils(object):
     def createTreeWidgetFromDict(self, parentNode, inputDict, treeWidget, column):
         for key in list(inputDict.keys()):
             item = self.createWidgetItem(parentNode, key, column)
-            self.createTreeWidgetFromDict(
-                item, inputDict[key], treeWidget, column)
+            self.createTreeWidgetFromDict(item, inputDict[key], treeWidget, column)
 
     def getTreeBranchFromNode(self, startNode, inputDict):
-        if 'root' not in list(inputDict.keys()):
-            graph = {'root': inputDict}
+        if "root" not in list(inputDict.keys()):
+            graph = {"root": inputDict}
         else:
             graph = inputDict
-        path = self.find_all_paths(graph, 'root', startNode)[0]
+        path = self.find_all_paths(graph, "root", startNode)[0]
         for node in path:
             graph = graph[node]
         return {startNode: graph}
 
     def getNodeLineage(self, node, inputDict):
-        return self.find_all_paths(inputDict, 'root', node)[0][1::]
+        return self.find_all_paths(inputDict, "root", node)[0][1::]
 
     def instantiateJsonDict(self, jsonDict):
         if isinstance(jsonDict, dict):
@@ -262,7 +265,7 @@ class Utils(object):
         Deletes a file from a given dir, if it's a QML file.
         """
         try:
-            if tempQml[-4:].lower() == '.qml':
+            if tempQml[-4:].lower() == ".qml":
                 try:
                     os.remove(tempQml)
                 except:
@@ -274,7 +277,7 @@ class Utils(object):
             return False
 
     def get_proxy_config(self):
-        """ Get proxy config from QSettings and builds proxy parameters
+        """Get proxy config from QSettings and builds proxy parameters
         :return: dictionary of transfer protocols mapped to addresses, also authentication if set in QSettings
         :rtype: (dict, requests.auth.HTTPProxyAuth) or (dict, None)
         """
@@ -282,31 +285,34 @@ class Utils(object):
 
         proxy_dict = {}
         if enabled and host:
-            port_str = str(port) if port else ''
-            for protocol in ['http', 'https', 'ftp']:
-                proxy_dict[protocol] = '{}://{}:{}'.format(
-                    protocol, host, port_str)
+            port_str = str(port) if port else ""
+            for protocol in ["http", "https", "ftp"]:
+                proxy_dict[protocol] = "{}://{}:{}".format(protocol, host, port_str)
 
-        auth = requests.auth.HTTPProxyAuth(
-            user, password) if enabled and user and password else None
+        auth = (
+            requests.auth.HTTPProxyAuth(user, password)
+            if enabled and user and password
+            else None
+        )
 
         return proxy_dict, auth
 
     @staticmethod
     def get_proxy_from_qsettings():
-        """ Gets the proxy configuration from QSettings
+        """Gets the proxy configuration from QSettings
         :return: Proxy settings: flag specifying if proxy is enabled, host, port, user and password
         :rtype: tuple(str)
         """
         settings = QSettings()
-        settings.beginGroup('proxy')
-        enabled = str(settings.value('proxyEnabled')).lower(
-        ) == 'true'  # to be compatible with QGIS 2 and 3
+        settings.beginGroup("proxy")
+        enabled = (
+            str(settings.value("proxyEnabled")).lower() == "true"
+        )  # to be compatible with QGIS 2 and 3
         # proxy_type = settings.value("proxyType")
-        host = settings.value('proxyHost')
-        port = settings.value('proxyPort')
-        user = settings.value('proxyUser')
-        password = settings.value('proxyPassword')
+        host = settings.value("proxyHost")
+        port = settings.value("proxyPort")
+        user = settings.value("proxyUser")
+        password = settings.value("proxyPassword")
         settings.endGroup()
         return enabled, host, port, user, password
 
@@ -375,11 +381,7 @@ class Utils(object):
         :param field: (QgsField) field to be checked.
         :return: (bool) if data is a whole number.
         """
-        intTypes = [
-            QVariant.Int,
-            QVariant.UInt,
-            QVariant.LongLong,
-            QVariant.ULongLong]
+        intTypes = [QVariant.Int, QVariant.UInt, QVariant.LongLong, QVariant.ULongLong]
         return field.type() in intTypes
 
     def fieldIsNumeric(self, field):
@@ -419,8 +421,7 @@ class MessageRaiser(QObject):
         """
         level = Qgis.Info if level is None else level
         duration = 3 if duration is None else duration
-        iface.messageBar().pushMessage(
-            title, msg, level=level, duration=duration)
+        iface.messageBar().pushMessage(title, msg, level=level, duration=duration)
 
     def logMessage(self, msg, level=None):
         """
@@ -429,7 +430,7 @@ class MessageRaiser(QObject):
         :param level: (int) level code (warning, critical, etc).
         """
         level = Qgis.Info if level is None else level
-        QgsMessageLog.logMessage(msg, 'DSGTools Plugin', level)
+        QgsMessageLog.logMessage(msg, "DSGTools Plugin", level)
 
     def confirmAction(self, parent, msg, title=None, showNo=True):
         """
@@ -441,15 +442,20 @@ class MessageRaiser(QObject):
         """
         title = title or self.tr("Confirm action")
         if showNo:
-            return QMessageBox.question(
-                parent, title, msg, QMessageBox.Yes | QMessageBox.No
-            ) == QMessageBox.Yes
+            return (
+                QMessageBox.question(
+                    parent, title, msg, QMessageBox.Yes | QMessageBox.No
+                )
+                == QMessageBox.Yes
+            )
         else:
-            return QMessageBox.question(
-                parent, title, msg, QMessageBox.Ok) == QMessageBox.Ok
+            return (
+                QMessageBox.question(parent, title, msg, QMessageBox.Ok)
+                == QMessageBox.Ok
+            )
 
 
-class ValidateImportedDataMethods():
+class ValidateImportedDataMethods:
     """
     Docstring.
     """
@@ -462,7 +468,7 @@ class ValidateImportedDataMethods():
         This method receives a string and evaluate if its an valid QColor.
         """
 
-        colorStrWithoutSpaces = re.sub(r'\s', '', str(colorToEvaluate))
+        colorStrWithoutSpaces = re.sub(r"\s", "", str(colorToEvaluate))
 
         hexColor = re.search(r"^#[0-9a-fA-F]{3,6}$", colorStrWithoutSpaces)
         listColor = re.search(r"\d{1,3},\d{1,3},\d{1,3}", colorStrWithoutSpaces)
@@ -472,7 +478,7 @@ class ValidateImportedDataMethods():
                 return True
         elif listColor is not None:
             color = listColor[0].split(",")
-            rgb = QColor(int(color[0]),int(color[1]),int(color[2]))
+            rgb = QColor(int(color[0]), int(color[1]), int(color[2]))
             if rgb.isValid():
                 return True
         return False
@@ -518,13 +524,16 @@ class ValidateImportedDataMethods():
         if lyrList and msgType == "invalid":
             msg.setIcon(QMessageBox.Critical)
             msg.setText("Some rules has invalid itens!")
-            msg.setInformativeText("If you ignore, the invalid rules may not be loaded.")
+            msg.setInformativeText(
+                "If you ignore, the invalid rules may not be loaded."
+            )
 
             textLyrList = sorted(set(lyrList))
             formatedLyrList = ["{}" for item in textLyrList]
             msgString = ",".join(formatedLyrList).replace(",", "\n")
-            formatedMsgString = "The following rules are not valid:\n" + \
-                msgString.format(*textLyrList)
+            formatedMsgString = (
+                "The following rules are not valid:\n" + msgString.format(*textLyrList)
+            )
 
             msg.setDetailedText(formatedMsgString)
             msg.setStandardButtons(QMessageBox.Ignore | QMessageBox.Cancel)

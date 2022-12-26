@@ -32,14 +32,16 @@ from qgis.PyQt.QtSql import QSqlQuery
 from qgis.PyQt.QtWidgets import QFileDialog
 
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'customTableWidget.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "customTableWidget.ui")
+)
+
 
 class ValidatedItemDelegate(QtWidgets.QStyledItemDelegate):
-    def defineValidatorList(self, validatorList, maskList = None):
+    def defineValidatorList(self, validatorList, maskList=None):
         self.validatorList = validatorList
         if not maskList:
-            self.maskList = [None]*len(self.validatorList)
+            self.maskList = [None] * len(self.validatorList)
         else:
             self.maskList = maskList
 
@@ -54,40 +56,42 @@ class ValidatedItemDelegate(QtWidgets.QStyledItemDelegate):
             return editor
         return super(ValidatedItemDelegate, self).createEditor(widget, option, index)
 
+
 class CustomTableWidget(QtWidgets.QWidget, FORM_CLASS):
     filesSelected = pyqtSignal()
-    def __init__(self, parent = None):
+
+    def __init__(self, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.setupUi(self)
-    
+
     def setHeaders(self, headerList):
         for header in headerList:
             currColumn = self.tableWidget.columnCount()
             self.tableWidget.insertColumn(currColumn)
         self.tableWidget.setHorizontalHeaderLabels(headerList)
-    
+
     def setValidator(self, validatorList):
         itemDelegate = ValidatedItemDelegate()
         itemDelegate.defineValidatorList(validatorList)
         self.tableWidget.setItemDelegate(itemDelegate)
-    
-    @pyqtSlot(bool, name = 'on_addPushButton_clicked')
-    def addItems(self, itemList = []):
+
+    @pyqtSlot(bool, name="on_addPushButton_clicked")
+    def addItems(self, itemList=[]):
         if isinstance(itemList, bool):
-            oneItemList = ['' for i in range(self.tableWidget.columnCount())]
+            oneItemList = ["" for i in range(self.tableWidget.columnCount())]
             self.addOneItem(oneItemList)
         else:
             for item in itemList:
                 self.addOneItem(item)
-    
+
     def addOneItem(self, oneItemList):
         rowCount = self.tableWidget.rowCount()
         self.tableWidget.insertRow(rowCount)
         for i in range(len(oneItemList)):
             newItem = QtGui.QTableWidgetItem(oneItemList[i])
             self.tableWidget.setItem(rowCount, i, newItem)
-        
+
     @pyqtSlot(bool)
     def on_removePushButton_clicked(self):
         selected = self.tableWidget.selectedIndexes()
@@ -97,7 +101,7 @@ class CustomTableWidget(QtWidgets.QWidget, FORM_CLASS):
             self.tableWidget.removeRow(row)
             self.validatorList.pop(row)
             self.maskList.pop(row)
-    
+
     def clearItems(self):
         rowList = list(range(self.tableWidget.rowCount()))
         rowList.sort(reverse=True)

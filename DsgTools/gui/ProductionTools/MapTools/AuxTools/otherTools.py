@@ -21,35 +21,32 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import (QgsProject,
-                       Qgis,
-                       QgsVectorLayer
-                       )
+from qgis.core import QgsProject, Qgis, QgsVectorLayer
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QObject
 from qgis.PyQt.QtWidgets import QMessageBox
 from .copiarwkt import copywkt
 
-class OtherTools(QObject):
 
+class OtherTools(QObject):
     def addTool(self, manager, callback, parentToolbar, stackButton, iconBasePath):
         self.stackButton = stackButton
-        icon_path = iconBasePath + '/tempLayer.png'
+        icon_path = iconBasePath + "/tempLayer.png"
         toolTip = self.tr("DSGTools: Copy Features to Temporary Layer")
         action = manager.add_action(
             icon_path,
-            text=self.tr('DSGTools: Copy Features to Temporary Layer'),
+            text=self.tr("DSGTools: Copy Features to Temporary Layer"),
             callback=self.copyToTempLayer,
             add_to_menu=False,
             add_to_toolbar=False,
             withShortcut=True,
             tooltip=toolTip,
             parentButton=stackButton,
-            isCheckable=False
+            isCheckable=False,
         )
         self.stackButton.setDefaultAction(action)
 
-        icon_path = iconBasePath + '/copywkt.png'
+        icon_path = iconBasePath + "/copywkt.png"
         toolTip = self.tr("DSGTools: Copy Feature's Coordinates as WKT")
         action = manager.add_action(
             icon_path,
@@ -60,23 +57,27 @@ class OtherTools(QObject):
             withShortcut=True,
             tooltip=toolTip,
             parentButton=stackButton,
-            isCheckable=False
+            isCheckable=False,
         )
 
-    
     def unload(self):
         pass
 
     def copyToTempLayer(self):
         confirmation = self.confirmAction()
         if not confirmation:
-            iface.messageBar().pushMessage("Cancelado", u"ação cancelada pelo usuário",
-                                            level=Qgis.Warning, duration=5)
+            iface.messageBar().pushMessage(
+                "Cancelado",
+                "ação cancelada pelo usuário",
+                level=Qgis.Warning,
+                duration=5,
+            )
             return
         layer = iface.activeLayer()
         if not layer:
-            iface.messageBar().pushMessage("Erro", u"Selecione uma camada válida",
-                                            level=Qgis.Critical, duration=5)
+            iface.messageBar().pushMessage(
+                "Erro", "Selecione uma camada válida", level=Qgis.Critical, duration=5
+            )
             return
         features = layer.selectedFeatures()
         newFields = layer.fields()
@@ -84,9 +85,9 @@ class OtherTools(QObject):
         geomtype = layer.geometryType()
         print(geomtype)
         print(type(geomtype))
-        newName = name + '_temp'
-        geomdict = {0:'multipoint', 1:'multilinestring', 2:'multipolygon'}
-        selection = QgsVectorLayer(geomdict[int(geomtype)], newName , 'memory')
+        newName = name + "_temp"
+        geomdict = {0: "multipoint", 1: "multilinestring", 2: "multipolygon"}
+        selection = QgsVectorLayer(geomdict[int(geomtype)], newName, "memory")
         selection.startEditing()
         selection.setCrs(layer.crs())
         dp = selection.dataProvider()
@@ -95,11 +96,19 @@ class OtherTools(QObject):
         selection.commitChanges()
         selection.updateExtents()
         QgsProject.instance().addMapLayer(selection)
-        iface.messageBar().pushMessage("Executado", "Camada temporária criada: "+newName,
-                                        level=Qgis.Success, duration=5)
+        iface.messageBar().pushMessage(
+            "Executado",
+            "Camada temporária criada: " + newName,
+            level=Qgis.Success,
+            duration=5,
+        )
 
     def confirmAction(self):
-        reply = QMessageBox.question(iface.mainWindow(), 'Continuar?', 
-                    'Será criado uma nova camada com as feições selecionadas. Deseja continuar?', QMessageBox.Yes, QMessageBox.No)
+        reply = QMessageBox.question(
+            iface.mainWindow(),
+            "Continuar?",
+            "Será criado uma nova camada com as feições selecionadas. Deseja continuar?",
+            QMessageBox.Yes,
+            QMessageBox.No,
+        )
         return reply == QMessageBox.Yes
-

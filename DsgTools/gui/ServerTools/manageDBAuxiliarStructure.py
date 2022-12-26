@@ -31,14 +31,18 @@ from qgis.PyQt.QtGui import QCursor
 # DSGTools imports
 from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.gui.DatabaseTools.UserTools.permission_properties import PermissionProperties
+from DsgTools.gui.DatabaseTools.UserTools.permission_properties import (
+    PermissionProperties,
+)
 from DsgTools.gui.ServerTools.createView import CreateView
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'manageDBAuxiliarStructure.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "manageDBAuxiliarStructure.ui")
+)
+
 
 class ManageDBAuxiliarStructure(QtWidgets.QDialog, FORM_CLASS):
-    def __init__(self, abstractDb, parent = None):
+    def __init__(self, abstractDb, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -52,4 +56,3 @@ class ManageDBAuxiliarStructure(QtWidgets.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
         self.done(0)
-    

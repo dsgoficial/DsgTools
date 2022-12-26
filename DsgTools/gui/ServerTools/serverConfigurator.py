@@ -25,8 +25,10 @@ from qgis.PyQt.QtWidgets import QMessageBox, QDialog, QLineEdit
 from qgis.PyQt import uic
 import os
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'ui_serverConfigurator.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "ui_serverConfigurator.ui")
+)
+
 
 class ServerConfigurator(QDialog, FORM_CLASS):
     def __init__(self, iface):
@@ -43,15 +45,15 @@ class ServerConfigurator(QDialog, FORM_CLASS):
 
         self.iface = iface
         self.isEdit = 0
-        self.oldName=''
+        self.oldName = ""
 
         self.passwordEdit.setEchoMode(QLineEdit.Password)
 
     @pyqtSlot(bool)
     def on_saveButton_clicked(self):
-        '''
+        """
         Saves a new server
-        '''
+        """
         if self.checkFields():
             name = self.servEdit.text()
             host = self.hostEdit.text()
@@ -63,66 +65,82 @@ class ServerConfigurator(QDialog, FORM_CLASS):
             QMessageBox.warning(self, self.tr("Info!"), self.tr("Server stored."))
             self.done(1)
         else:
-            QMessageBox.warning(self, self.tr("Warning!"), self.tr("Fill all parameters."))
+            QMessageBox.warning(
+                self, self.tr("Warning!"), self.tr("Fill all parameters.")
+            )
 
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):
-        '''
+        """
         Cancel everything
-        '''
+        """
         self.done(0)
 
     def checkFields(self):
-        '''
+        """
         Checks if the fields are filled
-        '''
-        if self.hostEdit.text() == '' or self.portEdit.text() == '' or self.userEdit.text() == '':
+        """
+        if (
+            self.hostEdit.text() == ""
+            or self.portEdit.text() == ""
+            or self.userEdit.text() == ""
+        ):
             return False
         return True
 
-    def storeServerConfiguration(self, name, host, port, user, password, isDefault = False):
-        '''
+    def storeServerConfiguration(
+        self, name, host, port, user, password, isDefault=False
+    ):
+        """
         Stores server configuration in QSettings
-        '''
-        if '_' in name:
-            QMessageBox.warning(self, self.tr("Warning!"), self.tr("Server name cannot contain the character \"_\"."))
-            self.servEdit.setStyleSheet('background-color: rgb(255, 150, 150)')
+        """
+        if "_" in name:
+            QMessageBox.warning(
+                self,
+                self.tr("Warning!"),
+                self.tr('Server name cannot contain the character "_".'),
+            )
+            self.servEdit.setStyleSheet("background-color: rgb(255, 150, 150)")
             return 0
-        
+
         settings = QSettings()
         if self.isEdit:
-            settings.beginGroup('PostgreSQL/servers/'+self.oldName)
-            settings.remove('')
+            settings.beginGroup("PostgreSQL/servers/" + self.oldName)
+            settings.remove("")
             settings.endGroup()
         else:
-            if settings.contains('PostgreSQL/servers/'+name+'/host'):
-                QMessageBox.warning(self, self.tr("Warning!"), self.tr("Already has a server with this name."))
-                self.servEdit.setStyleSheet('background-color: rgb(255, 150, 150)')
+            if settings.contains("PostgreSQL/servers/" + name + "/host"):
+                QMessageBox.warning(
+                    self,
+                    self.tr("Warning!"),
+                    self.tr("Already has a server with this name."),
+                )
+                self.servEdit.setStyleSheet("background-color: rgb(255, 150, 150)")
                 return 0
-        settings.beginGroup('PostgreSQL/servers/'+name)
-        settings.setValue('host', host)
-        settings.setValue('port', port)
-        settings.setValue('username', user)
-        settings.setValue('password', password)
+        settings.beginGroup("PostgreSQL/servers/" + name)
+        settings.setValue("host", host)
+        settings.setValue("port", port)
+        settings.setValue("username", user)
+        settings.setValue("password", password)
         if isDefault:
-            settings.setValue('isDefault', True)
+            settings.setValue("isDefault", True)
         else:
-            settings.setValue('isDefault', False)
+            settings.setValue("isDefault", False)
         settings.endGroup()
         return 1
 
     def setServerConfiguration(self, name):
-        '''
+        """
         Sets server confogiration by its name
-        '''
+        """
         self.isEdit = 1
-        self.oldName=name
+        self.oldName = name
         settings = QSettings()
-        settings.beginGroup('PostgreSQL/servers/'+name)
-        host = settings.value('host')
-        port = settings.value('port')
-        user = settings.value('username')
-        password = settings.value('password')
+        settings.beginGroup("PostgreSQL/servers/" + name)
+        host = settings.value("host")
+        port = settings.value("port")
+        user = settings.value("username")
+        password = settings.value("password")
         settings.endGroup()
 
         self.servEdit.setText(name)

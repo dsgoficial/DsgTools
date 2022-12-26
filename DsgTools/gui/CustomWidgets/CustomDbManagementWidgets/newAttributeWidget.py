@@ -33,13 +33,17 @@ from qgis.PyQt.QtSql import QSqlQuery
 from DsgTools.gui.ServerTools.viewServers import ViewServers
 from DsgTools.core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.gui.Misc.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
+from DsgTools.gui.Misc.PostgisCustomization.CustomJSONTools.customJSONBuilder import (
+    CustomJSONBuilder,
+)
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'newAttributeWidget.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "newAttributeWidget.ui")
+)
+
 
 class NewAttributeWidget(QtWidgets.QWidget, FORM_CLASS):
-    def __init__(self, abstractDb, uiParameterJsonDict = None, parent = None):
+    def __init__(self, abstractDb, uiParameterJsonDict=None, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.abstractDb = abstractDb
@@ -48,7 +52,7 @@ class NewAttributeWidget(QtWidgets.QWidget, FORM_CLASS):
         self.jsonBuilder = CustomJSONBuilder()
         self.populateSchemaCombo()
         self.populateFromUiParameterJsonDict(uiParameterJsonDict)
-    
+
     def populateFromUiParameterJsonDict(self, uiParameterJsonDict):
         """
         {
@@ -59,29 +63,35 @@ class NewAttributeWidget(QtWidgets.QWidget, FORM_CLASS):
         }
         """
         if uiParameterJsonDict:
-            if uiParameterJsonDict['allTablesCheckBox']:
+            if uiParameterJsonDict["allTablesCheckBox"]:
                 self.allTablesCheckBox.setCheckState(Qt.Checked)
             else:
-                schemaIdx = self.schemaComboBox.findText(uiParameterJsonDict['schemaComboBox'], flags = Qt.MatchExactly)
+                schemaIdx = self.schemaComboBox.findText(
+                    uiParameterJsonDict["schemaComboBox"], flags=Qt.MatchExactly
+                )
                 self.schemaComboBox.setCurrentIndex(schemaIdx)
-                tableIdx = self.tableComboBox.findText(uiParameterJsonDict['tableComboBox'], flags = Qt.MatchExactly)
+                tableIdx = self.tableComboBox.findText(
+                    uiParameterJsonDict["tableComboBox"], flags=Qt.MatchExactly
+                )
                 self.tableComboBox.setCurrentIndex(tableIdx)
-            self.addAttributeWidget.populateFromUiParameterJsonDict(uiParameterJsonDict['attrWidget'])
-    
+            self.addAttributeWidget.populateFromUiParameterJsonDict(
+                uiParameterJsonDict["attrWidget"]
+            )
+
     def getTitle(self):
         return self.title
-    
+
     def setTitle(self, title):
         self.title = title
-    
+
     def populateSchemaCombo(self):
         self.schemaComboBox.clear()
-        self.schemaComboBox.addItem(self.tr('Select a schema'))
+        self.schemaComboBox.addItem(self.tr("Select a schema"))
         schemaList = self.abstractDb.getGeometricSchemaList()
         for schema in schemaList:
-            if schema not in ['views', 'validation']:
+            if schema not in ["views", "validation"]:
                 self.schemaComboBox.addItem(schema)
-    
+
     @pyqtSlot(int)
     def on_schemaComboBox_currentIndexChanged(self, idx):
         if idx == 0:
@@ -91,13 +101,13 @@ class NewAttributeWidget(QtWidgets.QWidget, FORM_CLASS):
             schema = self.schemaComboBox.currentText()
             self.tableComboBox.setEnabled(True)
             self.tableComboBox.clear()
-            self.tableComboBox.addItem(self.tr('Select a table'))
+            self.tableComboBox.addItem(self.tr("Select a table"))
             tableList = self.abstractDb.getGeometricTableListFromSchema(schema)
             for table in tableList:
                 self.tableComboBox.addItem(table)
-    
+
     @pyqtSlot(int)
-    def on_allTablesCheckBox_stateChanged(self,idx):
+    def on_allTablesCheckBox_stateChanged(self, idx):
         if idx == 2:
             self.tableComboBox.clear()
             self.tableComboBox.setEnabled(False)
@@ -106,43 +116,64 @@ class NewAttributeWidget(QtWidgets.QWidget, FORM_CLASS):
         else:
             self.schemaComboBox.setEnabled(True)
             self.populateSchemaCombo()
-    
+
     def validate(self):
         if not self.allTablesCheckBox.isChecked():
-            if self.tableComboBox.currentText() == '':
+            if self.tableComboBox.currentText() == "":
                 return False
-            if self.schemaComboBox.currentText() == '':
+            if self.schemaComboBox.currentText() == "":
                 return False
         return self.addAttributeWidget.validate()
 
     def validateDiagnosis(self):
-        invalidatedReason = ''
+        invalidatedReason = ""
         if self.tableComboBox.currentIndex() == 0:
-            invalidatedReason += self.tr('A table name must be chosen.\n')
+            invalidatedReason += self.tr("A table name must be chosen.\n")
         if self.schemaComboBox.currentIndex() == 0:
-            invalidatedReason += self.tr('A schema must be chosen.\n')
+            invalidatedReason += self.tr("A schema must be chosen.\n")
         invalidatedReason += self.addAttributeWidget.validateDiagnosis()
         return invalidatedReason
-    
+
     def getJSONTag(self):
         if not self.validate():
-            raise Exception(self.tr('Error in attribute ')+ self.title + ' : ' + self.validateDiagnosis())
+            raise Exception(
+                self.tr("Error in attribute ")
+                + self.title
+                + " : "
+                + self.validateDiagnosis()
+            )
         schema = self.schemaComboBox.currentText()
         tableName = self.tableComboBox.currentText()
         attrList = [self.addAttributeWidget.getJSONTag()]
         if not self.allTablesCheckBox.isChecked():
-            bloodLine = [i for i in self.abstractDb.getInheritanceBloodLine(tableName) if i != tableName]
-            return [self.jsonBuilder.buildNewAttributeElement(schema, tableName, attrList, childrenToAlter = bloodLine)]
+            bloodLine = [
+                i
+                for i in self.abstractDb.getInheritanceBloodLine(tableName)
+                if i != tableName
+            ]
+            return [
+                self.jsonBuilder.buildNewAttributeElement(
+                    schema, tableName, attrList, childrenToAlter=bloodLine
+                )
+            ]
         else:
             attrModList = []
-            classTuppleList = self.abstractDb.getParentGeomTables(getTupple = True)
+            classTuppleList = self.abstractDb.getParentGeomTables(getTupple=True)
             for tupple in classTuppleList:
                 schema, tableName = tupple
-                if schema not in ('views', 'validation'):
-                    bloodLine = [i for i in self.abstractDb.getInheritanceBloodLine(tableName) if i != tableName]
-                    attrModList.append(self.jsonBuilder.buildNewAttributeElement(schema, tableName, attrList, childrenToAlter = bloodLine)) 
+                if schema not in ("views", "validation"):
+                    bloodLine = [
+                        i
+                        for i in self.abstractDb.getInheritanceBloodLine(tableName)
+                        if i != tableName
+                    ]
+                    attrModList.append(
+                        self.jsonBuilder.buildNewAttributeElement(
+                            schema, tableName, attrList, childrenToAlter=bloodLine
+                        )
+                    )
             return attrModList
-    
+
     def getUiParameterJsonDict(self):
         """
         builds a dict with the following format:
@@ -154,8 +185,10 @@ class NewAttributeWidget(QtWidgets.QWidget, FORM_CLASS):
         }
         """
         uiParameterJsonDict = dict()
-        uiParameterJsonDict['schemaComboBox'] = self.schemaComboBox.currentText()
-        uiParameterJsonDict['tableComboBox'] = self.tableComboBox.currentText()
-        uiParameterJsonDict['allTablesCheckBox'] = self.allTablesCheckBox.isChecked()
-        uiParameterJsonDict['attrWidget'] = self.addAttributeWidget.getUiParameterJsonDict()
+        uiParameterJsonDict["schemaComboBox"] = self.schemaComboBox.currentText()
+        uiParameterJsonDict["tableComboBox"] = self.tableComboBox.currentText()
+        uiParameterJsonDict["allTablesCheckBox"] = self.allTablesCheckBox.isChecked()
+        uiParameterJsonDict[
+            "attrWidget"
+        ] = self.addAttributeWidget.getUiParameterJsonDict()
         return uiParameterJsonDict

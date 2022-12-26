@@ -24,13 +24,16 @@ from builtins import range
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QWidget, QFormLayout, QLabel
 
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import (
+    DsgCustomComboBox,
+)
+
 
 class AuxLayerSelector(QWidget):
     def __init__(self, parent=None):
         super(AuxLayerSelector, self).__init__(parent)
         self.layout = QFormLayout()
-    
+
     def setInitialState(self, initDict):
         """
         Sets widget interface with initDict entries. Keys are labels and values are list of items for each combobox corresponding to each key.
@@ -41,14 +44,14 @@ class AuxLayerSelector(QWidget):
             widget.addItems(value)
             self.layout.addRow(label, widget)
         self.setLayout(self.layout)
-    
+
     def resetLayout(self):
         """
         Resets current widget layout.
         """
         self.layout = QFormLayout()
         self.setLayout(self.layout)
-    
+
     def getParameters(self):
         """
         Gets current values fom each widget as a dictionary.

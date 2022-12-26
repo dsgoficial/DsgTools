@@ -27,10 +27,16 @@ import os
 # Qt imports
 from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, Qt, pyqtSignal
-from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QFileDialog, QMenu, QHeaderView
+from qgis.PyQt.QtWidgets import (
+    QMessageBox,
+    QApplication,
+    QFileDialog,
+    QMenu,
+    QHeaderView,
+)
 from qgis.PyQt.QtGui import QCursor
 
-#DsgTools imports
+# DsgTools imports
 from DsgTools.gui.CustomWidgets.SelectionWidgets.listSelector import ListSelector
 from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.dsgEnums import DsgEnums
@@ -38,39 +44,54 @@ from DsgTools.core.dsgEnums import DsgEnums
 from qgis.core import QgsMessageLog, Qgis
 import json
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'genericManagerWidget.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "genericManagerWidget.ui")
+)
+
 
 class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
     Install, Delete, Uninstall, Update, Create = list(range(5))
-    def __init__(self, genericDbManager = None, parent = None):
+
+    def __init__(self, genericDbManager=None, parent=None):
         """
         Constructor
         """
         super(GenericManagerWidget, self).__init__(parent)
         self.setupUi(self)
         self.genericDbManager = genericDbManager
-        self.textDict = {'EarthCoverage':self.tr('Earth Coverage'),
-                            'Customization':self.tr('Customization'),
-                            'Style':self.tr('Style'),
-                            'ValidationConfig':self.tr('Validation'),
-                            'Permission':self.tr('Permissions'),
-                            'AttributeRules':self.tr('Attribute Rule Configuration'),
-                            'SpatialRuleConfig':self.tr('Spatial Rule Configuration')}
-        self.captionDict = {'EarthCoverage':self.tr('Earth Coverage'),
-                            'Customization':self.tr('Customization'),
-                            'Style':self.tr('Style'),
-                            'ValidationConfig':self.tr('Validation'),
-                            'Permission':self.tr('Select a dsgtools permission profile'),
-                            'AttributeRules':self.tr('Attribute Rule Configuration file'),
-                            'SpatialRuleConfig':self.tr('Spatial Rule Configuration file')}
-        self.filterDict = {'EarthCoverage':self.tr('Earth Coverage Setup File (*.dsgearthcov)'),
-                            'Customization':self.tr('DsgTools Customization File (*.dsgcustom)'),
-                            'Style':self.tr('DsgTools Styles File (*.dsgstyle)'),
-                            'ValidationConfig':self.tr('DsgTools Validation Configuration File (*.dsgvalidcfg)'),
-                            'Permission':self.tr('DsgTools Permission Profile File (*.dsgperm)'),
-                            'AttributeRules':self.tr('Attribute Rule Configuration file (*.dsgattrrul)'),
-                            'SpatialRuleConfig':self.tr('Spatial Rule Configuration file (*.dsgspatrul)')}
+        self.textDict = {
+            "EarthCoverage": self.tr("Earth Coverage"),
+            "Customization": self.tr("Customization"),
+            "Style": self.tr("Style"),
+            "ValidationConfig": self.tr("Validation"),
+            "Permission": self.tr("Permissions"),
+            "AttributeRules": self.tr("Attribute Rule Configuration"),
+            "SpatialRuleConfig": self.tr("Spatial Rule Configuration"),
+        }
+        self.captionDict = {
+            "EarthCoverage": self.tr("Earth Coverage"),
+            "Customization": self.tr("Customization"),
+            "Style": self.tr("Style"),
+            "ValidationConfig": self.tr("Validation"),
+            "Permission": self.tr("Select a dsgtools permission profile"),
+            "AttributeRules": self.tr("Attribute Rule Configuration file"),
+            "SpatialRuleConfig": self.tr("Spatial Rule Configuration file"),
+        }
+        self.filterDict = {
+            "EarthCoverage": self.tr("Earth Coverage Setup File (*.dsgearthcov)"),
+            "Customization": self.tr("DsgTools Customization File (*.dsgcustom)"),
+            "Style": self.tr("DsgTools Styles File (*.dsgstyle)"),
+            "ValidationConfig": self.tr(
+                "DsgTools Validation Configuration File (*.dsgvalidcfg)"
+            ),
+            "Permission": self.tr("DsgTools Permission Profile File (*.dsgperm)"),
+            "AttributeRules": self.tr(
+                "Attribute Rule Configuration file (*.dsgattrrul)"
+            ),
+            "SpatialRuleConfig": self.tr(
+                "Spatial Rule Configuration file (*.dsgspatrul)"
+            ),
+        }
         self.widgetName = self.textDict[self.getWhoAmI()]
         self.genericDict = None
         self.setComponentsEnabled(False)
@@ -79,30 +100,39 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.setButtons()
         self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.treeWidget.customContextMenuRequested.connect(self.createMenuAssigned)
-       
+
     def setButtons(self):
         createText = self.createPushButton.text()
-        self.createPushButton.setText(createText.replace(self.tr('Setting'),self.widgetName))
+        self.createPushButton.setText(
+            createText.replace(self.tr("Setting"), self.widgetName)
+        )
         deleteText = self.deletePushButton.text()
-        self.deletePushButton.setText(deleteText.replace(self.tr('Setting'),self.widgetName))
-    
+        self.deletePushButton.setText(
+            deleteText.replace(self.tr("Setting"), self.widgetName)
+        )
+
     def setHeaders(self):
         viewType = self.getViewType()
         if viewType == DsgEnums.Database:
-            self.treeWidget.setHeaderLabels([self.tr('Database'), self.widgetName])
+            self.treeWidget.setHeaderLabels([self.tr("Database"), self.widgetName])
         else:
-            self.treeWidget.setHeaderLabels([self.widgetName, self.tr('Database')])
+            self.treeWidget.setHeaderLabels([self.widgetName, self.tr("Database")])
         return viewType
-    
+
     def getWhoAmI(self):
-        return str(self.__class__).split('.')[-1].replace('\'>', '').replace('ManagerWidget','')
-    
+        return (
+            str(self.__class__)
+            .split(".")[-1]
+            .replace("'>", "")
+            .replace("ManagerWidget", "")
+        )
+
     def setChildParameter(self):
         """
         Reimplement in each child
         """
         pass
-    
+
     def setComponentsEnabled(self, enabled):
         """
         Changes states of all components of the widget, according to the boolean parameter enabled.
@@ -115,17 +145,19 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.databasePerspectivePushButton.setEnabled(enabled)
         self.propertyPerspectivePushButton.setEnabled(enabled)
 
-    def populateConfigInterface(self, templateDb, jsonDict = None):
+    def populateConfigInterface(self, templateDb, jsonDict=None):
         """
         Must be reimplemented in each child
         """
-        pass    
+        pass
 
     def readJsonFromDatabase(self, propertyName, edgvVersion):
         """
         Reads the profile file, gets a dictionary of it and builds the tree widget
         """
-        self.genericDict = self.genericDbManager.getCustomization(propertyName, edgvVersion)
+        self.genericDict = self.genericDbManager.getCustomization(
+            propertyName, edgvVersion
+        )
 
     @pyqtSlot(bool)
     def on_importPushButton_clicked(self):
@@ -134,21 +166,34 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         fd = QFileDialog()
         widgetType = self.getWhoAmI()
-        filename = fd.getOpenFileName(caption=self.captionDict[widgetType],filter=self.filterDict[widgetType])[0]
+        filename = fd.getOpenFileName(
+            caption=self.captionDict[widgetType], filter=self.filterDict[widgetType]
+        )[0]
         filename = filename[0] if isinstance(filename, tuple) else filename
-        if filename == '':
+        if filename == "":
             # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a file to import!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.genericDbManager.importSetting(filename)
             QApplication.restoreOverrideCursor()
-            QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully imported.'))
+            QMessageBox.information(
+                self,
+                self.tr("Success!"),
+                self.widgetName + self.tr(" successfully imported."),
+            )
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem importing ') +self.widgetName + ': '  + ':'.join(e.args))
+            QMessageBox.critical(
+                self,
+                self.tr("Error!"),
+                self.tr("Error! Problem importing ")
+                + self.widgetName
+                + ": "
+                + ":".join(e.args),
+            )
         self.refresh()
-    
+
     @pyqtSlot(bool)
     def on_exportPushButton_clicked(self):
         """
@@ -159,12 +204,16 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             # user cancelled
             return
         if exportPropertyList == []:
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a profile to export!'))
+            QMessageBox.warning(
+                self,
+                self.tr("Warning!"),
+                self.tr("Warning! Select a profile to export!"),
+            )
             return
         fd = QFileDialog()
-        folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
+        folder = fd.getExistingDirectory(caption=self.tr("Select a folder to output"))
         folder = folder[0] if isinstance(folder, tuple) else folder
-        if folder == '':
+        if folder == "":
             # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
             return
         edgvVersion = self.genericDbManager.edgvVersion
@@ -173,55 +222,92 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             for exportProperty in exportPropertyList:
                 self.genericDbManager.exportSetting(exportProperty, edgvVersion, folder)
             QApplication.restoreOverrideCursor()
-            QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully exported.'))
+            QMessageBox.information(
+                self,
+                self.tr("Success!"),
+                self.widgetName + self.tr(" successfully exported."),
+            )
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem exporting ') + self.widgetName + ': ' + ':'.join(e.args))
-        
+            QMessageBox.critical(
+                self,
+                self.tr("Error!"),
+                self.tr("Error! Problem exporting ")
+                + self.widgetName
+                + ": "
+                + ":".join(e.args),
+            )
+
     @pyqtSlot(bool)
     def on_batchExportPushButton_clicked(self):
         """
         Exports all configs from dsgtools_admindb.
         """
         fd = QFileDialog()
-        folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
+        folder = fd.getExistingDirectory(caption=self.tr("Select a folder to output"))
         folder = folder[0] if isinstance(folder, tuple) else folder
-        if folder == '':
+        if folder == "":
             # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.genericDbManager.batchExportSettings(folder)
             QApplication.restoreOverrideCursor()
-            QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully exported.'))
+            QMessageBox.information(
+                self,
+                self.tr("Success!"),
+                self.widgetName + self.tr(" successfully exported."),
+            )
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem exporting ') + self.widgetName + ': ' + ':'.join(e.args))
-    
+            QMessageBox.critical(
+                self,
+                self.tr("Error!"),
+                self.tr("Error! Problem exporting ")
+                + self.widgetName
+                + ": "
+                + ":".join(e.args),
+            )
+
     @pyqtSlot(bool)
     def on_batchImportPushButton_clicked(self):
         """
         Imports all config files from a folder into dsgtools_admindb. It only works for a single type of config per time.
         """
         fd = QFileDialog()
-        folder = fd.getExistingDirectory(caption = self.tr('Select a folder with json files: '))
-        if folder == '':
+        folder = fd.getExistingDirectory(
+            caption=self.tr("Select a folder with json files: ")
+        )
+        if folder == "":
             # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a input folder!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.genericDbManager.batchImportSettings(folder)
             QApplication.restoreOverrideCursor()
-            QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully imported.'))
+            QMessageBox.information(
+                self,
+                self.tr("Success!"),
+                self.widgetName + self.tr(" successfully imported."),
+            )
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem importing ') + self.widgetName + ': ' + ':'.join(e.args))
+            QMessageBox.critical(
+                self,
+                self.tr("Error!"),
+                self.tr("Error! Problem importing ")
+                + self.widgetName
+                + ": "
+                + ":".join(e.args),
+            )
 
     @pyqtSlot(bool)
     def on_applyPushButton_clicked(self):
         dbList = list(self.genericDbManager.dbDict.keys())
-        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, dbList = dbList)
-        if successDict == {} and  exceptionDict == {}:
+        successDict, exceptionDict = self.manageSettings(
+            GenericManagerWidget.Install, dbList=dbList
+        )
+        if successDict == {} and exceptionDict == {}:
             return
         header, operation = self.getApplyHeader()
         self.outputMessage(operation, header, successDict, exceptionDict)
@@ -229,7 +315,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_deletePushButton_clicked(self):
         successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Delete)
-        if successDict == {} and  exceptionDict == {}:
+        if successDict == {} and exceptionDict == {}:
             return
         header, operation = self.getDeleteHeader()
         self.outputMessage(operation, header, successDict, exceptionDict)
@@ -237,8 +323,10 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_uninstallFromSelectedPushButton_clicked(self):
         dbList = []
-        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, dbList)
-        if successDict == {} and  exceptionDict == {}:
+        successDict, exceptionDict = self.manageSettings(
+            GenericManagerWidget.Uninstall, dbList
+        )
+        if successDict == {} and exceptionDict == {}:
             return
         header, operation = self.getUninstallFromSelected()
         self.outputMessage(operation, header, successDict, exceptionDict)
@@ -249,11 +337,13 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         else:
             return DsgEnums.Property
 
-    @pyqtSlot(bool, name='on_databasePerspectivePushButton_clicked')
-    @pyqtSlot(bool, name='on_propertyPerspectivePushButton_clicked')
+    @pyqtSlot(bool, name="on_databasePerspectivePushButton_clicked")
+    @pyqtSlot(bool, name="on_propertyPerspectivePushButton_clicked")
     def refresh(self):
         viewType = self.setHeaders()
-        propertyPerspectiveDict = self.genericDbManager.getPropertyPerspectiveDict(viewType)
+        propertyPerspectiveDict = self.genericDbManager.getPropertyPerspectiveDict(
+            viewType
+        )
         self.treeWidget.clear()
         rootNode = self.treeWidget.invisibleRootItem()
         if viewType == DsgEnums.Database:
@@ -264,13 +354,15 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             parentCustomItem = self.utils.createWidgetItem(rootNode, key, 0)
             if key in list(propertyPerspectiveDict.keys()):
                 for item in propertyPerspectiveDict[key]:
-                    if item and item != '':
+                    if item and item != "":
                         dbItem = self.utils.createWidgetItem(parentCustomItem, item, 1)
         self.treeWidget.sortItems(0, Qt.AscendingOrder)
         self.treeWidget.expandAll()
-        self.treeWidget.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        self.treeWidget.header().setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeToContents
+        )
         self.treeWidget.header().setStretchLastSection(False)
-    
+
     def outputMessage(self, operation, header, successDict, exceptionDict):
         """
         successDict = {configName: [--list of successful databases--]}
@@ -281,48 +373,65 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         for setting in list(successDict.keys()):
             successList = successDict[setting]
             if len(successDict[setting]) > 0:
-                msg += self.tr('\nSuccessful ')
-                msg += operation + ' : '
+                msg += self.tr("\nSuccessful ")
+                msg += operation + " : "
                 msg += setting
                 if successList:
                     if len(successList) > 0:
                         try:
-                            msg += self.tr(' on databases ') + ', '.join(successList)
-                        except: #none type case, just add .
-                            msg += '.'
+                            msg += self.tr(" on databases ") + ", ".join(successList)
+                        except:  # none type case, just add .
+                            msg += "."
         msg += self.logInternalError(exceptionDict)
-        QMessageBox.warning(self, self.tr('Operation Complete!'), msg)
-    
+        QMessageBox.warning(self, self.tr("Operation Complete!"), msg)
+
     def logInternalError(self, exceptionDict):
         """
         exceptionDict = {configName: {dbName: errorText}}
         """
-        msg = ''
+        msg = ""
         configList = list(exceptionDict.keys())
         if len(configList) > 0:
-            msg += self.tr('\nConfig with error:') + ','.join(configList)
-            msg+= self.tr('\nError messages for each config and database were output in qgis log.')
+            msg += self.tr("\nConfig with error:") + ",".join(configList)
+            msg += self.tr(
+                "\nError messages for each config and database were output in qgis log."
+            )
             for config in configList:
                 for dbName in list(exceptionDict[config].keys()):
                     if exceptionDict[config][dbName] != dict():
-                        QgsMessageLog.logMessage(self.tr('Error for config ')+ config + ' in database ' +dbName+' : '+exceptionDict[config][dbName], "DSGTools Plugin", Qgis.Critical)
-        return msg 
+                        QgsMessageLog.logMessage(
+                            self.tr("Error for config ")
+                            + config
+                            + " in database "
+                            + dbName
+                            + " : "
+                            + exceptionDict[config][dbName],
+                            "DSGTools Plugin",
+                            Qgis.Critical,
+                        )
+        return msg
 
-    def manageSetting(self, config, manageType, dbList = [], parameterDict = dict()):
+    def manageSetting(self, config, manageType, dbList=[], parameterDict=dict()):
         if manageType == GenericManagerWidget.Install:
-            return self.genericDbManager.installSetting(config, dbNameList = dbList)
+            return self.genericDbManager.installSetting(config, dbNameList=dbList)
         elif manageType == GenericManagerWidget.Delete:
             return self.genericDbManager.deleteSetting(config)
         elif manageType == GenericManagerWidget.Uninstall:
-            return self.genericDbManager.uninstallSetting(config, dbNameList = dbList)
+            return self.genericDbManager.uninstallSetting(config, dbNameList=dbList)
         elif manageType == GenericManagerWidget.Update:
-            return self.genericDbManager.updateSetting(config, parameterDict['newJsonDict'])
+            return self.genericDbManager.updateSetting(
+                config, parameterDict["newJsonDict"]
+            )
         elif manageType == GenericManagerWidget.Create:
-            return self.genericDbManager.createSetting(config, parameterDict['newJsonDict'])
-    
+            return self.genericDbManager.createSetting(
+                config, parameterDict["newJsonDict"]
+            )
+
     def selectConfig(self):
-        availableConfig = list(self.genericDbManager.getPropertyPerspectiveDict().keys())
-        dlg = ListSelector(availableConfig,[])
+        availableConfig = list(
+            self.genericDbManager.getPropertyPerspectiveDict().keys()
+        )
+        dlg = ListSelector(availableConfig, [])
         res = dlg.exec_()
         if res == 0:
             # to identify when user presses Cancel
@@ -330,7 +439,9 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         selectedConfig = dlg.getSelected()
         return selectedConfig
 
-    def manageSettings(self, manageType, dbList=None, selectedConfig=None, parameterDict = dict()):
+    def manageSettings(
+        self, manageType, dbList=None, selectedConfig=None, parameterDict=dict()
+    ):
         """
         Executes the setting work according to manageType
         successDict = {configName: [--list of successful databases--]}
@@ -343,15 +454,21 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
                 # user cancelled
                 return dict(), dict()
             if selectedConfig == []:
-                QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one configuration!'))
-                return (dict(),dict())
+                QMessageBox.warning(
+                    self,
+                    self.tr("Warning!"),
+                    self.tr("Select at least one configuration!"),
+                )
+                return (dict(), dict())
         successDict = dict()
         exceptionDict = dict()
         dbList = [] if dbList is None else dbList
-        if self.lookAndPromptForStructuralChanges(dbList = dbList):
+        if self.lookAndPromptForStructuralChanges(dbList=dbList):
             for config in selectedConfig:
                 QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-                sucessList, errorDict = self.manageSetting(config, manageType, dbList = dbList, parameterDict = parameterDict)
+                sucessList, errorDict = self.manageSetting(
+                    config, manageType, dbList=dbList, parameterDict=parameterDict
+                )
                 QApplication.restoreOverrideCursor()
                 successDict[config] = sucessList
                 if errorDict != dict():
@@ -359,9 +476,11 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             self.refresh()
             return successDict, exceptionDict
         else:
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Operation canceled by user!'))
-            return (dict(),dict())
-    
+            QMessageBox.warning(
+                self, self.tr("Warning!"), self.tr("Operation canceled by user!")
+            )
+            return (dict(), dict())
+
     def createMenuAssigned(self, position):
         """
         Creates a pop up menu
@@ -376,31 +495,61 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         menu = QMenu()
         item = self.treeWidget.itemAt(position)
         if item:
-            if item.text(0) != '':
-                menu.addAction(self.tr('Uninstall all settings from selected database'), self.uninstallSettings)
-                menu.addAction(self.tr('Manage settings from selected database'), self.manageDbSettings)
-            elif item.text(1) != '':
-                menu.addAction(self.tr('Update selected setting'), self.updateSelectedSetting)
-                menu.addAction(self.tr('Clone selected setting'), self.cloneSelectedSetting)
-                menu.addAction(self.tr('Uninstall selected setting'), self.uninstallSettings)
-                menu.addAction(self.tr('Delete selected setting'), self.deleteSelectedSetting)
+            if item.text(0) != "":
+                menu.addAction(
+                    self.tr("Uninstall all settings from selected database"),
+                    self.uninstallSettings,
+                )
+                menu.addAction(
+                    self.tr("Manage settings from selected database"),
+                    self.manageDbSettings,
+                )
+            elif item.text(1) != "":
+                menu.addAction(
+                    self.tr("Update selected setting"), self.updateSelectedSetting
+                )
+                menu.addAction(
+                    self.tr("Clone selected setting"), self.cloneSelectedSetting
+                )
+                menu.addAction(
+                    self.tr("Uninstall selected setting"), self.uninstallSettings
+                )
+                menu.addAction(
+                    self.tr("Delete selected setting"), self.deleteSelectedSetting
+                )
         menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
-    
+
     def createPropertyPerspectiveContextMenu(self, position):
         menu = QMenu()
         item = self.treeWidget.itemAt(position)
         if item:
-            if item.text(0) != '':
-                menu.addAction(self.tr('Update selected setting'), self.updateSelectedSetting)
-                menu.addAction(self.tr('Clone selected setting'), self.cloneSelectedSetting)
-                menu.addAction(self.tr('Manage selected setting'), self.manageSelectedSetting)
-                menu.addAction(self.tr('Uninstall selected setting on all databases'), self.uninstallSettings)
-                menu.addAction(self.tr('Delete selected setting'), self.deleteSelectedSetting)                
-            elif item.text(1) != '':
-                menu.addAction(self.tr('Manage Settings on database'), self.manageDbSettings)
-                menu.addAction(self.tr('Uninstall selected setting on selected database'), self.uninstallSettings)
+            if item.text(0) != "":
+                menu.addAction(
+                    self.tr("Update selected setting"), self.updateSelectedSetting
+                )
+                menu.addAction(
+                    self.tr("Clone selected setting"), self.cloneSelectedSetting
+                )
+                menu.addAction(
+                    self.tr("Manage selected setting"), self.manageSelectedSetting
+                )
+                menu.addAction(
+                    self.tr("Uninstall selected setting on all databases"),
+                    self.uninstallSettings,
+                )
+                menu.addAction(
+                    self.tr("Delete selected setting"), self.deleteSelectedSetting
+                )
+            elif item.text(1) != "":
+                menu.addAction(
+                    self.tr("Manage Settings on database"), self.manageDbSettings
+                )
+                menu.addAction(
+                    self.tr("Uninstall selected setting on selected database"),
+                    self.uninstallSettings,
+                )
         menu.exec_(self.treeWidget.viewport().mapToGlobal(position))
-    
+
     def manageDbSettings(self):
         """
         1. get installed profiles and available profiles
@@ -409,25 +558,41 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         uiParameterDict = self.getParametersFromInterface()
         propertyPerspectiveDict = self.genericDbManager.getPropertyPerspectiveDict()
-        availableConfig = [i for i in list(propertyPerspectiveDict.keys()) if i not in uiParameterDict['parameterList']]
-        dlg = ListSelector(availableConfig,uiParameterDict['parameterList'])
+        availableConfig = [
+            i
+            for i in list(propertyPerspectiveDict.keys())
+            if i not in uiParameterDict["parameterList"]
+        ]
+        dlg = ListSelector(availableConfig, uiParameterDict["parameterList"])
         dlg.exec_()
         fromLs, toLs = dlg.getInputAndOutputLists()
-        #build install list: elements from toLs that were not in uiParameterDict['parameterList']
-        installList = [i for i in toLs if i not in uiParameterDict['parameterList']]
-        #build uninstall list: : elements fromLs that were not in availableConfig
-        uninstallList = [i for i in fromLs if i in uiParameterDict['parameterList']]
-        if (installList == [] and uninstallList == []):
-            QMessageBox.warning(self, self.tr('Error!'), self.tr('Select at least one configuration to manage!'))
+        # build install list: elements from toLs that were not in uiParameterDict['parameterList']
+        installList = [i for i in toLs if i not in uiParameterDict["parameterList"]]
+        # build uninstall list: : elements fromLs that were not in availableConfig
+        uninstallList = [i for i in fromLs if i in uiParameterDict["parameterList"]]
+        if installList == [] and uninstallList == []:
+            QMessageBox.warning(
+                self,
+                self.tr("Error!"),
+                self.tr("Select at least one configuration to manage!"),
+            )
             return
         if installList != []:
-            #install:
-            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, selectedConfig = installList, dbList = uiParameterDict['databaseList'])
+            # install:
+            successDict, exceptionDict = self.manageSettings(
+                GenericManagerWidget.Install,
+                selectedConfig=installList,
+                dbList=uiParameterDict["databaseList"],
+            )
             header, operation = self.getApplyHeader()
             self.outputMessage(operation, header, successDict, exceptionDict)
         if uninstallList != []:
-            #uninstall:
-            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, selectedConfig = uninstallList, dbList = uiParameterDict['databaseList'])
+            # uninstall:
+            successDict, exceptionDict = self.manageSettings(
+                GenericManagerWidget.Uninstall,
+                selectedConfig=uninstallList,
+                dbList=uiParameterDict["databaseList"],
+            )
             header, operation = self.getUninstallSelectedSettingHeader()
             self.outputMessage(operation, header, successDict, exceptionDict)
 
@@ -438,26 +603,44 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         3. get final lists and uninstall items and them install items
         """
         uiParameterDict = self.getParametersFromInterface()
-        propertyPerspectiveDict = self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Database)
-        availableDb = [i for i in list(propertyPerspectiveDict.keys()) if i not in uiParameterDict['databaseList']]
-        dlg = ListSelector(availableDb,uiParameterDict['databaseList'])
+        propertyPerspectiveDict = self.genericDbManager.getPropertyPerspectiveDict(
+            viewType=DsgEnums.Database
+        )
+        availableDb = [
+            i
+            for i in list(propertyPerspectiveDict.keys())
+            if i not in uiParameterDict["databaseList"]
+        ]
+        dlg = ListSelector(availableDb, uiParameterDict["databaseList"])
         dlg.exec_()
         fromLs, toLs = dlg.getInputAndOutputLists()
-        #build install list: elements from toLs that were not in uiParameterDict['parameterList']
-        installList = [i for i in toLs if i not in uiParameterDict['databaseList']]
-        #build uninstall list: : elements fromLs that were not in availableConfig
-        uninstallList = [i for i in fromLs if i in uiParameterDict['databaseList']]
-        if (installList == [] and uninstallList == []):
-            QMessageBox.warning(self, self.tr('Error!'), self.tr('Select at least one configuration database to manage!'))
+        # build install list: elements from toLs that were not in uiParameterDict['parameterList']
+        installList = [i for i in toLs if i not in uiParameterDict["databaseList"]]
+        # build uninstall list: : elements fromLs that were not in availableConfig
+        uninstallList = [i for i in fromLs if i in uiParameterDict["databaseList"]]
+        if installList == [] and uninstallList == []:
+            QMessageBox.warning(
+                self,
+                self.tr("Error!"),
+                self.tr("Select at least one configuration database to manage!"),
+            )
             return
         if installList != []:
-            #install:
-            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, selectedConfig = uiParameterDict['parameterList'], dbList = installList)
+            # install:
+            successDict, exceptionDict = self.manageSettings(
+                GenericManagerWidget.Install,
+                selectedConfig=uiParameterDict["parameterList"],
+                dbList=installList,
+            )
             header, operation = self.getApplyHeader()
             self.outputMessage(operation, header, successDict, exceptionDict)
         if uninstallList != []:
-            #uninstall:
-            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, selectedConfig = uiParameterDict['parameterList'], dbList = uninstallList)
+            # uninstall:
+            successDict, exceptionDict = self.manageSettings(
+                GenericManagerWidget.Uninstall,
+                selectedConfig=uiParameterDict["parameterList"],
+                dbList=uninstallList,
+            )
             header, operation = self.getUninstallSelectedSettingHeader()
             self.outputMessage(operation, header, successDict, exceptionDict)
 
@@ -475,12 +658,16 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         edgvVersion = self.genericDbManager.edgvVersion
         templateDb = self.genericDbManager.instantiateTemplateDb(edgvVersion)
         originalDict = self.genericDbManager.getSetting(settingName, edgvVersion)
-        newDict = self.populateConfigInterface(templateDb, jsonDict = originalDict)
+        newDict = self.populateConfigInterface(templateDb, jsonDict=originalDict)
         if newDict:
-            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Update, selectedConfig = [settingName], parameterDict = {'newJsonDict':newDict})
+            successDict, exceptionDict = self.manageSettings(
+                GenericManagerWidget.Update,
+                selectedConfig=[settingName],
+                parameterDict={"newJsonDict": newDict},
+            )
             header, operation = self.getUpdateSelectedSettingHeader()
             self.outputMessage(operation, header, successDict, exceptionDict)
-    
+
     def cloneSelectedSetting(self):
         currItem = self.treeWidget.currentItem()
         if self.getViewType() == DsgEnums.Database:
@@ -490,28 +677,32 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         edgvVersion = self.genericDbManager.edgvVersion
         templateDb = self.genericDbManager.instantiateTemplateDb(edgvVersion)
         originalDict = self.genericDbManager.getSetting(settingName, edgvVersion)
-        newDict = self.populateConfigInterface(templateDb, jsonDict = originalDict)
+        newDict = self.populateConfigInterface(templateDb, jsonDict=originalDict)
         if newDict:
-            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Create, selectedConfig = [settingName], parameterDict = {'newJsonDict':newDict})
+            successDict, exceptionDict = self.manageSettings(
+                GenericManagerWidget.Create,
+                selectedConfig=[settingName],
+                parameterDict={"newJsonDict": newDict},
+            )
             header, operation = self.getUpdateSelectedSettingHeader()
             self.outputMessage(operation, header, successDict, exceptionDict)
 
     def getParametersFromInterface(self):
         """
-        Gets selected database and selected property. 
+        Gets selected database and selected property.
         Returns {'databaseList':dbList, 'parameterList':parameterList}
         """
         currItem = self.treeWidget.currentItem()
         if self.getViewType() == DsgEnums.Database:
-            #2 possibilities: leaf (if first column is '') or parent (if first column != '')
-            if currItem.text(0) == '':
-                #leaf -> must get 
+            # 2 possibilities: leaf (if first column is '') or parent (if first column != '')
+            if currItem.text(0) == "":
+                # leaf -> must get
                 parentNode = currItem.parent()
                 dbName = parentNode.text(0)
                 parameter = currItem.text(1)
-                return {'databaseList':[dbName], 'parameterList':[parameter]}
+                return {"databaseList": [dbName], "parameterList": [parameter]}
             else:
-                #parent
+                # parent
                 dbName = currItem.text(0)
                 childCount = currItem.childCount()
                 parameterList = []
@@ -520,16 +711,16 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
                     parameterName = childNode.text(1)
                     if parameterName not in parameterList:
                         parameterList.append(parameterName)
-                return {'databaseList':[dbName], 'parameterList':parameterList}
+                return {"databaseList": [dbName], "parameterList": parameterList}
         else:
-            if currItem.text(0) == '':
-                #leaf
+            if currItem.text(0) == "":
+                # leaf
                 parentNode = currItem.parent()
                 parameter = parentNode.text(0)
                 dbName = currItem.text(1)
-                return {'databaseList':[dbName], 'parameterList':[parameter]}
+                return {"databaseList": [dbName], "parameterList": [parameter]}
             else:
-                #parent
+                # parent
                 parameter = currItem.text(0)
                 childCount = currItem.childCount()
                 dbList = []
@@ -538,33 +729,58 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
                     dbName = childNode.text(1)
                     if dbName not in dbList:
                         dbList.append(dbName)
-                return {'databaseList':dbList, 'parameterList':[parameter]}
+                return {"databaseList": dbList, "parameterList": [parameter]}
 
     def uninstallSettings(self):
         edgvVersion = self.genericDbManager.edgvVersion
         uiParameterDict = self.getParametersFromInterface()
-        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, dbList = uiParameterDict['databaseList'], selectedConfig = uiParameterDict['parameterList'])
+        successDict, exceptionDict = self.manageSettings(
+            GenericManagerWidget.Uninstall,
+            dbList=uiParameterDict["databaseList"],
+            selectedConfig=uiParameterDict["parameterList"],
+        )
         header, operation = self.getUninstallSelectedSettingHeader()
         self.outputMessage(operation, header, successDict, exceptionDict)
-    
+
     def deleteSelectedSetting(self):
         edgvVersion = self.genericDbManager.edgvVersion
         uiParameterDict = self.getParametersFromInterface()
-        settingTextList = ', '.join(uiParameterDict['parameterList'])
-        if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to delete ')+settingTextList+'?', QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
+        settingTextList = ", ".join(uiParameterDict["parameterList"])
+        if (
+            QMessageBox.question(
+                self,
+                self.tr("Question"),
+                self.tr("Do you really want to delete ") + settingTextList + "?",
+                QMessageBox.Ok | QMessageBox.Cancel,
+            )
+            == QMessageBox.Cancel
+        ):
             return
-        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Delete, selectedConfig = uiParameterDict['parameterList'])
+        successDict, exceptionDict = self.manageSettings(
+            GenericManagerWidget.Delete, selectedConfig=uiParameterDict["parameterList"]
+        )
         header, operation = self.getDeleteHeader()
         self.outputMessage(operation, header, successDict, exceptionDict)
-    
-    def lookAndPromptForStructuralChanges(self, dbList = []):
-        '''
+
+    def lookAndPromptForStructuralChanges(self, dbList=[]):
+        """
         Returns True if user accepts the process
-        '''
+        """
         structuralChanges = self.genericDbManager.hasStructuralChanges(dbList)
         if structuralChanges != []:
-            dbChangeList = ', '.join(structuralChanges)
-            if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to apply selected operation on ')+dbChangeList+'?'+self.tr(' (Data may be lost in the process)'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
+            dbChangeList = ", ".join(structuralChanges)
+            if (
+                QMessageBox.question(
+                    self,
+                    self.tr("Question"),
+                    self.tr("Do you really want to apply selected operation on ")
+                    + dbChangeList
+                    + "?"
+                    + self.tr(" (Data may be lost in the process)"),
+                    QMessageBox.Ok | QMessageBox.Cancel,
+                )
+                == QMessageBox.Cancel
+            ):
                 return False
             else:
                 return True

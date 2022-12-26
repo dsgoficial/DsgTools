@@ -27,10 +27,12 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtGui import QIntValidator
 
-#DSGTools imports
+# DSGTools imports
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'contour_value.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "contour_value.ui")
+)
+
 
 class ContourValue(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, contour_tool, parent=None):
@@ -46,15 +48,15 @@ class ContourValue(QtWidgets.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.value_line_edit.setValidator(QIntValidator(0, 1000000))
         self.contour_tool = contour_tool
-        
+
     @pyqtSlot(bool)
     def on_cancel_push_button_clicked(self):
         """
         Closes the dialog
         """
         self.done(0)
-        
-    @pyqtSlot()    
+
+    @pyqtSlot()
     def on_ok_push_button_clicked(self):
         """
         Gets the first value entered by the user and return it

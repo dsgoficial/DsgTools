@@ -24,6 +24,7 @@ from builtins import object
 from qgis.core import QgsLayoutExporter, QgsProject, QgsPrintLayout, QgsReadWriteContext
 from qgis.PyQt.QtXml import QDomDocument
 
+
 class ProductExporter(object):
     def __init__(self):
         self.layout = QgsPrintLayout(QgsProject.instance())
@@ -31,7 +32,7 @@ class ProductExporter(object):
     def populateTemplate(self, templateXMLContent):
         templateDomDoc = QDomDocument()
         templateDomDoc.setContent(templateXMLContent)
-        #TODO: Adicionar um parser para o XML para substituir
+        # TODO: Adicionar um parser para o XML para substituir
         # informações pertinentes, como por exemplo, id da
         # camada de atlas.
         self.layout.loadFromTemplate(templateDomDoc, QgsReadWriteContext())
@@ -41,11 +42,12 @@ class ProductExporter(object):
 
     def exportPdf(self, outputPath, feedback=None):
         exporter = QgsLayoutExporter(self.layout)
-        result, error = exporter.exportToPdfs(self.layout.atlas(),
-                                              outputPath,
-                                              settings=QgsLayoutExporter.PdfExportSettings(),
-                                              feedback=feedback
-                                            )
+        result, error = exporter.exportToPdfs(
+            self.layout.atlas(),
+            outputPath,
+            settings=QgsLayoutExporter.PdfExportSettings(),
+            feedback=feedback,
+        )
         return result, error
 
     def exportTiff(self):

@@ -15,7 +15,9 @@ class Ui_ReviewToolbar(object):
     def setupUi(self, ReviewToolbar):
         ReviewToolbar.setObjectName("ReviewToolbar")
         ReviewToolbar.resize(335, 50)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.MinimumExpanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.MinimumExpanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(ReviewToolbar.sizePolicy().hasHeightForWidth())
@@ -26,16 +28,24 @@ class Ui_ReviewToolbar(object):
         self.gridLayout = QtWidgets.QGridLayout(ReviewToolbar)
         self.gridLayout.setObjectName("gridLayout")
         self.reviewPushButton = QtWidgets.QPushButton(ReviewToolbar)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.reviewPushButton.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.reviewPushButton.sizePolicy().hasHeightForWidth()
+        )
         self.reviewPushButton.setSizePolicy(sizePolicy)
         self.reviewPushButton.setMinimumSize(QtCore.QSize(24, 24))
         self.reviewPushButton.setMaximumSize(QtCore.QSize(24, 24))
         self.reviewPushButton.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/plugins/DsgTools/icons/review.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(":/plugins/DsgTools/icons/review.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.reviewPushButton.setIcon(icon)
         self.reviewPushButton.setIconSize(QtCore.QSize(16, 16))
         self.reviewPushButton.setCheckable(True)
@@ -46,32 +56,46 @@ class Ui_ReviewToolbar(object):
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setObjectName("splitter")
         self.mMapLayerComboBox = QgsMapLayerComboBox(self.splitter)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.mMapLayerComboBox.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.mMapLayerComboBox.sizePolicy().hasHeightForWidth()
+        )
         self.mMapLayerComboBox.setSizePolicy(sizePolicy)
         self.mMapLayerComboBox.setMinimumSize(QtCore.QSize(0, 24))
         self.mMapLayerComboBox.setObjectName("mMapLayerComboBox")
         self.mMapLayerComboBox.setFilters(core.QgsMapLayerProxyModel.PolygonLayer)
         self.rankFieldComboBox = QgsFieldComboBox(self.splitter)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.rankFieldComboBox.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.rankFieldComboBox.sizePolicy().hasHeightForWidth()
+        )
         self.rankFieldComboBox.setSizePolicy(sizePolicy)
         self.rankFieldComboBox.setMinimumSize(QtCore.QSize(0, 24))
         self.rankFieldComboBox.setObjectName("rankFieldComboBox")
         self.visitedFieldComboBox = QgsFieldComboBox(self.splitter)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.visitedFieldComboBox.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.visitedFieldComboBox.sizePolicy().hasHeightForWidth()
+        )
         self.visitedFieldComboBox.setSizePolicy(sizePolicy)
         self.visitedFieldComboBox.setMinimumSize(QtCore.QSize(0, 24))
         self.visitedFieldComboBox.setObjectName("visitedFieldComboBox")
         self.zoomComboBox = QtWidgets.QComboBox(self.splitter)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.zoomComboBox.sizePolicy().hasHeightForWidth())
@@ -82,78 +106,117 @@ class Ui_ReviewToolbar(object):
         self.zoomComboBox.addItem(self.tr("Pan to next"))
         self.zoomComboBox.addItem(self.tr("Do nothing"))
         self.preparePushButton = QtWidgets.QPushButton(self.splitter)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.preparePushButton.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.preparePushButton.sizePolicy().hasHeightForWidth()
+        )
         self.preparePushButton.setSizePolicy(sizePolicy)
         self.preparePushButton.setMinimumSize(QtCore.QSize(0, 24))
         self.preparePushButton.setMaximumSize(QtCore.QSize(24, 24))
         self.preparePushButton.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/plugins/DsgTools/icons/config.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(
+            QtGui.QPixmap(":/plugins/DsgTools/icons/config.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.preparePushButton.setIcon(icon1)
         self.preparePushButton.setIconSize(QtCore.QSize(16, 16))
         self.preparePushButton.setObjectName("preparePushButton")
         self.previousTileButton = QtWidgets.QPushButton(self.splitter)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.previousTileButton.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.previousTileButton.sizePolicy().hasHeightForWidth()
+        )
         self.previousTileButton.setSizePolicy(sizePolicy)
         self.previousTileButton.setMinimumSize(QtCore.QSize(24, 24))
         self.previousTileButton.setMaximumSize(QtCore.QSize(24, 24))
         self.previousTileButton.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/plugins/DsgTools/icons/backInspect.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(":/plugins/DsgTools/icons/backInspect.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.previousTileButton.setIcon(icon)
         self.previousTileButton.setIconSize(QtCore.QSize(16, 16))
         self.previousTileButton.setObjectName("previousTileButton")
         self.nextTileButton = QtWidgets.QPushButton(self.splitter)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.nextTileButton.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.nextTileButton.sizePolicy().hasHeightForWidth()
+        )
         self.nextTileButton.setSizePolicy(sizePolicy)
         self.nextTileButton.setMinimumSize(QtCore.QSize(24, 24))
         self.nextTileButton.setMaximumSize(QtCore.QSize(24, 24))
         self.nextTileButton.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/plugins/DsgTools/icons/nextInspect.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(
+            QtGui.QPixmap(":/plugins/DsgTools/icons/nextInspect.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.nextTileButton.setIcon(icon1)
         self.nextTileButton.setIconSize(QtCore.QSize(16, 16))
         self.nextTileButton.setObjectName("nextTileButton")
         self.applyPushButton = QtWidgets.QPushButton(self.splitter)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.applyPushButton.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.applyPushButton.sizePolicy().hasHeightForWidth()
+        )
         self.applyPushButton.setSizePolicy(sizePolicy)
         self.applyPushButton.setMinimumSize(QtCore.QSize(0, 24))
         self.applyPushButton.setMaximumSize(QtCore.QSize(24, 24))
         self.applyPushButton.setText("")
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/plugins/DsgTools/icons/attributeSelector.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(
+            QtGui.QPixmap(":/plugins/DsgTools/icons/attributeSelector.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.applyPushButton.setIcon(icon2)
         self.applyPushButton.setIconSize(QtCore.QSize(16, 16))
         self.applyPushButton.setObjectName("applyPushButton")
-        
+
         self.resetPushButton = QtWidgets.QPushButton(self.splitter)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.resetPushButton.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.resetPushButton.sizePolicy().hasHeightForWidth()
+        )
         self.resetPushButton.setSizePolicy(sizePolicy)
         self.resetPushButton.setMinimumSize(QtCore.QSize(0, 24))
         self.resetPushButton.setMaximumSize(QtCore.QSize(24, 24))
         self.resetPushButton.setText("")
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/plugins/DsgTools/icons/reset.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(
+            QtGui.QPixmap(":/plugins/DsgTools/icons/reset.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.resetPushButton.setIcon(icon2)
         self.resetPushButton.setIconSize(QtCore.QSize(16, 16))
         self.resetPushButton.setObjectName("resetPushButton")
-        
-        
+
         self.gridLayout.addWidget(self.splitter, 0, 1, 1, 1)
 
         self.retranslateUi(ReviewToolbar)
@@ -162,9 +225,12 @@ class Ui_ReviewToolbar(object):
     def retranslateUi(self, ReviewToolbar):
         _translate = QtCore.QCoreApplication.translate
         ReviewToolbar.setWindowTitle(_translate("ReviewToolbar", "Form"))
-        self.reviewPushButton.setToolTip(_translate("ReviewToolbar", "Inspect Features Tool"))
+        self.reviewPushButton.setToolTip(
+            _translate("ReviewToolbar", "Inspect Features Tool")
+        )
+
+
 from qgis import core
 from qgsfieldcombobox import QgsFieldComboBox
 from qgsmaplayercombobox import QgsMapLayerComboBox
 import resources_rc
-

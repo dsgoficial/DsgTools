@@ -26,31 +26,37 @@ from math import sqrt, cos, sin, pi, atan2
 
 from qgis.gui import QgsRubberBand, QgsMapTool
 from qgis.core import (
-    QgsPointXY, 
-    Qgis, 
-    QgsWkbTypes, 
-    QgsProject, 
-    QgsDistanceArea, 
-    QgsCoordinateTransformContext, 
-    QgsCoordinateReferenceSystem
+    QgsPointXY,
+    Qgis,
+    QgsWkbTypes,
+    QgsProject,
+    QgsDistanceArea,
+    QgsCoordinateTransformContext,
+    QgsCoordinateReferenceSystem,
 )
 from qgis.PyQt import QtGui, QtCore, QtWidgets
-from qgis.core import (QgsPointXY,
-                       QgsGeometry,
-                       QgsWkbTypes,
-                       QgsUnitTypes,
-                       QgsDistanceArea,
-                       QgsCoordinateTransform,
-                       QgsCoordinateReferenceSystem,
-                       QgsCoordinateTransformContext)
+from qgis.core import (
+    QgsPointXY,
+    QgsGeometry,
+    QgsWkbTypes,
+    QgsUnitTypes,
+    QgsDistanceArea,
+    QgsCoordinateTransform,
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransformContext,
+)
 from qgis.PyQt.QtCore import pyqtSignal, Qt as Qt2
 from qgis.PyQt.QtGui import QColor, QCursor
 from qgis.PyQt.QtWidgets import QApplication
 
+
 class ShapeTool(QgsMapTool):
-    #signal emitted when the mouse is clicked. This indicates that the tool finished its job
+    # signal emitted when the mouse is clicked. This indicates that the tool finished its job
     toolFinished = pyqtSignal()
-    def __init__(self, canvas, geometryType, param, type, color = QColor( 254, 178, 76, 63 )):
+
+    def __init__(
+        self, canvas, geometryType, param, type, color=QColor(254, 178, 76, 63)
+    ):
         """
         Constructor
         """
@@ -58,24 +64,24 @@ class ShapeTool(QgsMapTool):
         self.canvas = canvas
         self.active = False
         self.geometryType = self.tr(geometryType)
-        self.param=param
-        self.type=type       
-        self.cursor=None
-        self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)     
+        self.param = param
+        self.type = type
+        self.cursor = None
+        self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
         self.setColor(color)
         self.reset()
         self.rotAngle = 0
         self.currentCentroid = None
         self.rotate = False
-    
+
     def setColor(self, mFillColor):
         """
         Adjusting the color to create the rubber band
         """
-    
+
         self.rubberBand.setColor(mFillColor)
         self.rubberBand.setWidth(1)
-    
+
     def reset(self):
         """
         Resetting the rubber band
@@ -94,15 +100,14 @@ class ShapeTool(QgsMapTool):
         item_position = self.canvas.mapToGlobal(e.pos())
         c = self.toCanvasCoordinates(centroid)
         c = self.canvas.mapToGlobal(c)
-        rotAngle = pi - atan2(
-            item_position.y() - c.y(), item_position.x() - c.x())
+        rotAngle = pi - atan2(item_position.y() - c.y(), item_position.x() - c.x())
         return rotAngle
 
     def canvasPressEvent(self, e):
         """
         When the canvas is pressed the tool finishes its job
         """
-        # enforce mouse restoring if clicked right after rotation 
+        # enforce mouse restoring if clicked right after rotation
         QApplication.restoreOverrideCursor()
         self.canvas.unsetMapTool(self)
         self.toolFinished.emit()
@@ -117,7 +122,8 @@ class ShapeTool(QgsMapTool):
         source_crs = self.canvas.mapSettings().destinationCrs()
         dest_crs = QgsCoordinateReferenceSystem(3857)
         tr = QgsCoordinateTransform(
-            source_crs, dest_crs, QgsCoordinateTransformContext())
+            source_crs, dest_crs, QgsCoordinateTransformContext()
+        )
         p1t = QgsGeometry().fromPointXY(QgsPointXY(1, 0))
         p1t.transform(tr)
         p2t = QgsGeometry().fromPointXY(QgsPointXY(0, 0))
@@ -130,7 +136,7 @@ class ShapeTool(QgsMapTool):
         size adjusted. This is necessary because input parameters are designed
         to be meters on tool's GUI.
         :param size: (float) tool's radius/length reference size in meters.
-        :return: (float)  
+        :return: (float)
         """
         source_crs = self.canvas.mapSettings().destinationCrs()
         if source_crs.mapUnits() != QgsUnitTypes.DistanceMeters:
@@ -147,56 +153,61 @@ class ShapeTool(QgsMapTool):
                 # change rotate status
                 self.rotate = False
             QApplication.restoreOverrideCursor()
-            self.endPoint = self.toMapCoordinates( e.pos() )
-        elif e.button() != None and ctrlIsHeld \
-            and self.geometryType == self.tr(u"Square"):
+            self.endPoint = self.toMapCoordinates(e.pos())
+        elif (
+            e.button() != None and ctrlIsHeld and self.geometryType == self.tr("Square")
+        ):
             # calculate angle between mouse and last rubberband centroid before holding control
             self.rotAngle = self.rotateRect(self.currentCentroid, e)
             if not self.rotate:
                 # only override mouse if it is not overriden already
                 QApplication.setOverrideCursor(QCursor(Qt2.BlankCursor))
                 self.rotate = True
-        if self.geometryType == self.tr(u"Circle"):
-                self.showCircle(self.endPoint, self.param)
-        elif self.geometryType == self.tr(u"Square"):
+        if self.geometryType == self.tr("Circle"):
+            self.showCircle(self.endPoint, self.param)
+        elif self.geometryType == self.tr("Square"):
             self.showRect(self.endPoint, self.param, self.rotAngle)
-    
+
     def showCircle(self, startPoint, param):
         """
         Draws a circle in the canvas
         """
-        if not( self.type == self.tr('distance') ):
-            param = sqrt(param)/2
-        #r = self.convertDistance( param )
+        if not (self.type == self.tr("distance")):
+            param = sqrt(param) / 2
+        # r = self.convertDistance( param )
         nPoints = 50
         x = startPoint.x()
         y = startPoint.y()
-        if self.type == self.tr('distance'):
+        if self.type == self.tr("distance"):
             r = self.getAdjustedSize(self.param)
             self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
-            for itheta in range(nPoints+1):
-                theta = itheta*(2.0*pi/nPoints)
-                self.rubberBand.addPoint(QgsPointXY(x+r*cos(theta), y+r*sin(theta)))
+            for itheta in range(nPoints + 1):
+                theta = itheta * (2.0 * pi / nPoints)
+                self.rubberBand.addPoint(
+                    QgsPointXY(x + r * cos(theta), y + r * sin(theta))
+                )
             self.rubberBand.show()
         else:
-            r = self.getAdjustedSize(sqrt(self.param/pi))
+            r = self.getAdjustedSize(sqrt(self.param / pi))
             self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
-            for itheta in range(nPoints+1):
-                theta = itheta*(2.0*pi/nPoints)
-                self.rubberBand.addPoint(QgsPointXY(x+r*cos(theta), y+r*sin(theta)))
+            for itheta in range(nPoints + 1):
+                theta = itheta * (2.0 * pi / nPoints)
+                self.rubberBand.addPoint(
+                    QgsPointXY(x + r * cos(theta), y + r * sin(theta))
+                )
             self.rubberBand.show()
 
     def showRect(self, startPoint, param, rotAngle=0):
         """
         Draws a rectangle in the canvas
-        """  
-        if not( self.type == self.tr('distance') ):
-            param = sqrt(param)/2
-        #param = self.convertDistance( param )
-       
+        """
+        if not (self.type == self.tr("distance")):
+            param = sqrt(param) / 2
+        # param = self.convertDistance( param )
+
         self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
-        x = startPoint.x() # center point x
-        y = startPoint.y() # center point y
+        x = startPoint.x()  # center point x
+        y = startPoint.y()  # center point y
         # rotation angle is always applied in reference to center point
         # to avoid unnecessary calculations
         c = cos(rotAngle)
@@ -216,12 +227,13 @@ class ShapeTool(QgsMapTool):
 
     def convertDistance(self, distance):
         distanceArea = QgsDistanceArea()
-        distanceArea.setSourceCrs( QgsCoordinateReferenceSystem(3857), QgsCoordinateTransformContext())
-        return distanceArea.convertLengthMeasurement( 
-            distance, 
-            self.canvas.mapSettings().destinationCrs().mapUnits()
+        distanceArea.setSourceCrs(
+            QgsCoordinateReferenceSystem(3857), QgsCoordinateTransformContext()
         )
-        
+        return distanceArea.convertLengthMeasurement(
+            distance, self.canvas.mapSettings().destinationCrs().mapUnits()
+        )
+
     def deactivate(self):
         """
         Deactivates the tool and hides the rubber band
@@ -230,7 +242,7 @@ class ShapeTool(QgsMapTool):
         QgsMapTool.deactivate(self)
         # restore mouse in case tool is disabled right after rotation
         QApplication.restoreOverrideCursor()
-        
+
     def activate(self):
         """
         Activates the tool

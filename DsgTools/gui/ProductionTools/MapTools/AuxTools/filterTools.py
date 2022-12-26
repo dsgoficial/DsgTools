@@ -27,24 +27,23 @@ from qgis.PyQt.QtCore import QObject
 
 
 class FilterTools(QObject):
-
     def addTool(self, manager, callback, parentToolbar, stackButton, iconBasePath):
         self.stackButton = stackButton
-        icon_path = iconBasePath + '/filter.svg'
+        icon_path = iconBasePath + "/filter.svg"
         toolTip = self.tr("DSGTools: Filter Selected")
         action = manager.add_action(
             icon_path,
-            text=self.tr('DSGTools: Filter Selected'),
+            text=self.tr("DSGTools: Filter Selected"),
             callback=self.filterSelections,
             add_to_menu=False,
             add_to_toolbar=False,
             withShortcut=True,
             tooltip=toolTip,
             parentButton=stackButton,
-            isCheckable=False
+            isCheckable=False,
         )
 
-        icon_path = iconBasePath + '/filterByGeomtries.png'
+        icon_path = iconBasePath + "/filterByGeomtries.png"
         toolTip = self.tr("DSGTools: Filter All Using the Selected Feature's Geometry")
         action = manager.add_action(
             icon_path,
@@ -55,10 +54,10 @@ class FilterTools(QObject):
             withShortcut=True,
             tooltip=toolTip,
             parentButton=stackButton,
-            isCheckable=False
+            isCheckable=False,
         )
 
-        icon_path = iconBasePath + '/removeSpatialFilter.png'
+        icon_path = iconBasePath + "/removeSpatialFilter.png"
         toolTip = self.tr("DSGTools: Remove Filters")
         action = manager.add_action(
             icon_path,
@@ -69,22 +68,27 @@ class FilterTools(QObject):
             withShortcut=True,
             tooltip=toolTip,
             parentButton=stackButton,
-            isCheckable=False
+            isCheckable=False,
         )
-    
+
     def unload(self):
         pass
 
     def cleanAllFilters(self):
-        loadedLayers = core.QgsProject.instance().mapLayers().values()   
+        loadedLayers = core.QgsProject.instance().mapLayers().values()
         showMessage = False
         for layer in loadedLayers:
             if layer.isEditable():
                 showMessage = True
-            layer.setSubsetString('')
+            layer.setSubsetString("")
         iface.mapCanvas().refresh()
         if showMessage:
-            iface.messageBar().pushMessage("Attention", "Enabled layers for edition have not been unfiltered.", level=core.Qgis.Info, duration=3)
+            iface.messageBar().pushMessage(
+                "Attention",
+                "Enabled layers for edition have not been unfiltered.",
+                level=core.Qgis.Info,
+                duration=3,
+            )
 
     def filterBySelectedGeometries(self):
         layer = iface.activeLayer()
@@ -93,25 +97,26 @@ class FilterTools(QObject):
         selectedFeatures = layer.selectedFeatures()
         if not selectedFeatures:
             return
-        if not( layer.geometryType() == core.QgsWkbTypes.PolygonGeometry ):
+        if not (layer.geometryType() == core.QgsWkbTypes.PolygonGeometry):
             return
         multiPolygon = core.QgsMultiPolygon()
         for feature in selectedFeatures:
             for geometry in feature.geometry().asGeometryCollection():
-                multiPolygon.addGeometry( geometry.constGet().clone() )
+                multiPolygon.addGeometry(geometry.constGet().clone())
         multiPolygon = core.QgsGeometry(multiPolygon).makeValid()
-        textFilter = "(geom && st_geomfromewkt('SRID={0};{1}') ) AND st_relate(geom, st_geomfromewkt('SRID={0};{1}'), 'T********')".format( 
-            layer.crs().authid().split(':')[-1], 
-            multiPolygon.asWkt()
+        textFilter = "(geom && st_geomfromewkt('SRID={0};{1}') ) AND st_relate(geom, st_geomfromewkt('SRID={0};{1}'), 'T********')".format(
+            layer.crs().authid().split(":")[-1], multiPolygon.asWkt()
         )
-        layersBacklist = [ 'aux_moldura_a' ]
-        loadedLayers = core.QgsProject.instance().mapLayers().values()    
+        layersBacklist = ["aux_moldura_a"]
+        loadedLayers = core.QgsProject.instance().mapLayers().values()
         for loadedLayer in loadedLayers:
-            if not isinstance(loadedLayer, core.QgsVectorLayer) or \
-                loadedLayer.dataProvider().name() != 'postgres' or \
-                loadedLayer.dataProvider().uri().table() in layersBacklist:
+            if (
+                not isinstance(loadedLayer, core.QgsVectorLayer)
+                or loadedLayer.dataProvider().name() != "postgres"
+                or loadedLayer.dataProvider().uri().table() in layersBacklist
+            ):
                 continue
-            loadedLayer.setSubsetString( textFilter )
+            loadedLayer.setSubsetString(textFilter)
         iface.mapCanvas().refresh()
 
     def filterSelections(self):
@@ -122,13 +127,17 @@ class FilterTools(QObject):
         if not selectedFeatures:
             return
         primaryKeyIndex = layer.primaryKeyAttributes()[0]
-        primaryKeyName = layer.fields().names()[ primaryKeyIndex ]
-        layer.setSubsetString( 
-            '"{0}" in ({1})'.format( 
-                primaryKeyName, 
-                ','.join([ 
-                    "'{}'".format(str(i[primaryKeyName])) if not isinstance(i[primaryKeyName], int) else str(i[primaryKeyName])
-                    for i in selectedFeatures
-                ]) 
-            ) 
+        primaryKeyName = layer.fields().names()[primaryKeyIndex]
+        layer.setSubsetString(
+            '"{0}" in ({1})'.format(
+                primaryKeyName,
+                ",".join(
+                    [
+                        "'{}'".format(str(i[primaryKeyName]))
+                        if not isinstance(i[primaryKeyName], int)
+                        else str(i[primaryKeyName])
+                        for i in selectedFeatures
+                    ]
+                ),
+            )
         )

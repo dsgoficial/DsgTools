@@ -36,19 +36,27 @@ from osgeo import ogr
 
 import processing
 from qgis.utils import iface
-from qgis.core import QgsDataSourceUri, QgsVectorLayer, QgsProcessingFeedback,\
-                      QgsProcessingContext, QgsLayerTreeLayer, QgsProject
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsVectorLayer,
+    QgsProcessingFeedback,
+    QgsProcessingContext,
+    QgsLayerTreeLayer,
+    QgsProject,
+)
 from qgis.PyQt.QtSql import QSqlDatabase
 
 from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
+    LayerLoaderFactory,
+)
 from qgis.testing import unittest
 
 from DsgTools.tests.algorithmsTestBase import AlgorithmsTest, GenericAlgorithmsTest
 
-class Tester(GenericAlgorithmsTest, AlgorithmsTest):
 
+class Tester(GenericAlgorithmsTest, AlgorithmsTest):
     @classmethod
     def setUpClass(cls):
         cls.cleanup_paths = []
@@ -60,11 +68,12 @@ class Tester(GenericAlgorithmsTest, AlgorithmsTest):
             shutil.rmtree(path)
 
     def get_definition_file(self):
-        return 'otherAlgorithms.yaml'
+        return "otherAlgorithms.yaml"
+
 
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
-    filterString = 'test_' if filterString is None else filterString
+    filterString = "test_" if filterString is None else filterString
     suite = unittest.TestSuite()
     suite.addTests(unittest.makeSuite(Tester, filterString))
     unittest.TextTestRunner(verbosity=3, stream=sys.stdout).run(suite)

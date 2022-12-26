@@ -27,22 +27,24 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'customSnaperParameterSelector.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "customSnaperParameterSelector.ui")
+)
+
 
 class CustomSnaperParameterSelector(QtWidgets.QWidget, FORM_CLASS):
-    selectionChanged = pyqtSignal(list,str)
+    selectionChanged = pyqtSignal(list, str)
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.referenceLayer = None
         self.selectedLayers = []
         self.setupUi(self)
-    
+
     def setTitle(self, title):
         self.customSelectorWidget.setTitle(title)
-    
+
     @pyqtSlot(int)
     def on_referenceComboBox_currentIndexChanged(self, idx):
         if idx == 0:
@@ -58,14 +60,16 @@ class CustomSnaperParameterSelector(QtWidgets.QWidget, FORM_CLASS):
             self.referenceLayer = self.referenceComboBox.currentText()
             if self.unifiedList:
                 self.customSelectorWidget.removeItem(self.referenceLayer)
-    
-    def setInitialState(self, referenceList, originalList, unique=False, parameterDict = {}):
+
+    def setInitialState(
+        self, referenceList, originalList, unique=False, parameterDict={}
+    ):
         """
         Sets the initial state
         """
         self.originalList = originalList
         self.customSelectorWidget.addItems(originalList)
-        self.referenceComboBox.addItem(self.tr('Select a layer'))
+        self.referenceComboBox.addItem(self.tr("Select a layer"))
         originalList.sort()
         if len(referenceList) == 0:
             self.unifiedList = True
@@ -75,7 +79,7 @@ class CustomSnaperParameterSelector(QtWidgets.QWidget, FORM_CLASS):
             self.referenceComboBox.addItems(referenceList)
         if parameterDict:
             self.populateInterface(parameterDict)
-    
+
     def getParameters(self):
         """
         Gets parameters
@@ -83,8 +87,10 @@ class CustomSnaperParameterSelector(QtWidgets.QWidget, FORM_CLASS):
         return self.referenceLayer, self.customSelectorWidget.toLs
 
     def getParameterDict(self):
-        return OrderedDict({'referenceDictList':interfaceLineDict, 'layersDictList':interfaceDict})
-    
+        return OrderedDict(
+            {"referenceDictList": interfaceLineDict, "layersDictList": interfaceDict}
+        )
+
     def populateInterface(self, parameterDict):
         """
         Sets saved state

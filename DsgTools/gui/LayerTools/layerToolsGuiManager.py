@@ -29,44 +29,55 @@ from qgis.PyQt.QtCore import QObject
 from .LoadLayersFromServer.loadLayersFromServer import LoadLayersFromServer
 from .CreateFrameTool.ui_create_inom_dialog import CreateInomDialog
 
-class LayerToolsGuiManager(QObject):
 
-    def __init__(self, manager, iface, parentMenu = None, toolbar = None):
-        """Constructor.
-        """
+class LayerToolsGuiManager(QObject):
+    def __init__(self, manager, iface, parentMenu=None, toolbar=None):
+        """Constructor."""
         super(LayerToolsGuiManager, self).__init__()
         self.manager = manager
         self.iface = iface
         self.parentMenu = parentMenu
         self.toolbar = toolbar
-        self.menu = self.manager.addMenu(u'layers', self.tr('Layer Tools'),'layers.png')
-        self.stackButton = self.manager.createToolButton(self.toolbar, u'LayerTools')
-        self.iconBasePath = ':/plugins/DsgTools/icons/'
-    
-    def addTool(self, text, callback, parentMenu, icon, defaultButton = False):
+        self.menu = self.manager.addMenu("layers", self.tr("Layer Tools"), "layers.png")
+        self.stackButton = self.manager.createToolButton(self.toolbar, "LayerTools")
+        self.iconBasePath = ":/plugins/DsgTools/icons/"
+
+    def addTool(self, text, callback, parentMenu, icon, defaultButton=False):
         icon_path = self.iconBasePath + icon
         action = self.manager.add_action(
             icon_path,
             text=text,
             callback=callback,
-            add_to_menu = False,
-            add_to_toolbar = False,
-            withShortcut = False,
-            parentToolbar = parentMenu,
-            isCheckable = False
+            add_to_menu=False,
+            add_to_toolbar=False,
+            withShortcut=False,
+            parentToolbar=parentMenu,
+            isCheckable=False,
         )
         self.stackButton.addAction(action)
         if defaultButton:
             self.stackButton.setDefaultAction(action)
-    
+
     def initGui(self):
-        #adding minimum area tool
-        self.addTool(self.tr('Load Layers'), self.loadLayersFromServer, self.menu, 'category.png', defaultButton=True)
-        self.addTool(self.tr('Create Frame'), self.createFrame, self.menu, 'frame.png', defaultButton=False)
-    
+        # adding minimum area tool
+        self.addTool(
+            self.tr("Load Layers"),
+            self.loadLayersFromServer,
+            self.menu,
+            "category.png",
+            defaultButton=True,
+        )
+        self.addTool(
+            self.tr("Create Frame"),
+            self.createFrame,
+            self.menu,
+            "frame.png",
+            defaultButton=False,
+        )
+
     def unload(self):
         pass
-    
+
     def loadLayersFromServer(self):
         """
         Shows the dialog that loads layers from server

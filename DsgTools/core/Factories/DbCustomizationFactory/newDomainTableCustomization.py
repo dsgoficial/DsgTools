@@ -20,32 +20,41 @@
  *                                                                         *
  ***************************************************************************/
 """
-#DsgTools Imports
-from DsgTools.core.Factories.DbCustomizationFactory.dbCustomization import DbCustomization
+# DsgTools Imports
+from DsgTools.core.Factories.DbCustomizationFactory.dbCustomization import (
+    DbCustomization,
+)
+
 
 class NewDomainTableCustomization(DbCustomization):
     def __init__(self, customJson):
         super(NewDomainTableCustomization, self).__init__(customJson)
-    
+
     def buildSql(self):
-        '''
+        """
         {'domainName':domainName, 'valueDict': valueDict}
-        '''
-        #Abstract method. Must be reimplemented in each child.
-        sql = ''
-        for modItem in self.customJson['AddDomainTable']:
-            sql += '''CREATE TABLE IF NOT EXISTS dominios."{0}";\n'''.format(modItem['domainName'])
-            for code in list(modItem['valueDict'].keys()):
-                sql += '''INSERT INTO dominios."{0}" (code, code_name) VALUES ({1}, '{2}');\n'''.format(modItem['domainName'],code, modItem['valueDict'][code])
+        """
+        # Abstract method. Must be reimplemented in each child.
+        sql = ""
+        for modItem in self.customJson["AddDomainTable"]:
+            sql += """CREATE TABLE IF NOT EXISTS dominios."{0}";\n""".format(
+                modItem["domainName"]
+            )
+            for code in list(modItem["valueDict"].keys()):
+                sql += """INSERT INTO dominios."{0}" (code, code_name) VALUES ({1}, '{2}');\n""".format(
+                    modItem["domainName"], code, modItem["valueDict"][code]
+                )
         return sql
-    
+
     def buildUndoSql(self):
-        '''
+        """
         {'domainName':domainName, 'valueDict': valueDict}
-        '''
-        #Abstract method. Must be reimplemented in each child.
-        sql = ''
-        for modItem in self.customJson['AddDomainTable']:
-            for code in list(modItem['valueDict'].keys()):
-                sql += '''DROP TABLE IF EXISTS dominios."{0}";'''.format(modItem['domainName'])
+        """
+        # Abstract method. Must be reimplemented in each child.
+        sql = ""
+        for modItem in self.customJson["AddDomainTable"]:
+            for code in list(modItem["valueDict"].keys()):
+                sql += """DROP TABLE IF EXISTS dominios."{0}";""".format(
+                    modItem["domainName"]
+                )
         return sql

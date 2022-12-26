@@ -29,19 +29,23 @@ from DsgTools.core.dsgEnums import DsgEnums
 
 import os
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'multiNewDsSelector.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "multiNewDsSelector.ui")
+)
+
 
 class MultiNewDsSelector(QDialog, FORM_CLASS):
     """
     Class designed to control multiple (new) datasource selection widget.
     """
+
     def __init__(self, parent=None):
         """
         Class constructor
         """
         super(MultiNewDsSelector, self).__init__(parent)
         self.setupUi(self)
-        self.edgv = ''
+        self.edgv = ""
         self.crs = None
         self.numberOfDs = 0
         self.fillEdgvVersions()
@@ -50,15 +54,14 @@ class MultiNewDsSelector(QDialog, FORM_CLASS):
 
     def fillEdgvVersions(self):
         """
-        Populates EDGV combo box with available versions. 
+        Populates EDGV combo box with available versions.
         """
         versions = [
             self.tr("EDGV Version..."),
             "EDGV 2.1.3",
-            "EDGV 2.1.3 F Ter"
-            "EDGV 2.1.3 Pro",
+            "EDGV 2.1.3 F Ter" "EDGV 2.1.3 Pro",
             "EDGV 3.0",
-            "EDGV 3.0 Pro"
+            "EDGV 3.0 Pro",
         ]
         self.edgvComboBox.addItems(versions)
 
@@ -75,7 +78,7 @@ class MultiNewDsSelector(QDialog, FORM_CLASS):
         :return: (str) EDGV version.
         """
         edgv = self.edgvComboBox.currentText()
-        return edgv if not edgv is None and edgv != self.tr("EDGV Version...") else ''
+        return edgv if not edgv is None and edgv != self.tr("EDGV Version...") else ""
 
     def authId(self):
         """
@@ -83,7 +86,7 @@ class MultiNewDsSelector(QDialog, FORM_CLASS):
         :return: (str) EDGV version.
         """
         crs = self.getCrs()
-        return crs.authid() if not crs is None and crs.isValid() else ''
+        return crs.authid() if not crs is None and crs.isValid() else ""
 
     def getCrs(self):
         """
@@ -105,10 +108,10 @@ class MultiNewDsSelector(QDialog, FORM_CLASS):
             for i in range(self.amount()):
                 # add an entry for each desired datasource
                 # in here, we may change for an automatic datasource name to be passed on as dict key
-                self.datasources[i] = { 'edgv' : self.edgvVersion(), 'crs' : self.getCrs() }
+                self.datasources[i] = {"edgv": self.edgvVersion(), "crs": self.getCrs()}
             self.close()
             return 0
-        QMessageBox.warning(self, self.tr('Warning!'), self.validate())
+        QMessageBox.warning(self, self.tr("Warning!"), self.validate())
         return 1
 
     @pyqtSlot(bool)
@@ -130,15 +133,15 @@ class MultiNewDsSelector(QDialog, FORM_CLASS):
         """
         # check amount of servers selection
         if self.amount() == 0:
-            return self.tr('Select the amount of datasources to be created.')
+            return self.tr("Select the amount of datasources to be created.")
         # check if a valid EDGV version was selected
         if not self.edgvVersion():
-            return self.tr('Invalid EDGV version.')
+            return self.tr("Invalid EDGV version.")
         # check if a valid projection was selected
-        if not self.getCrs() or 'EPSG' not in self.authId():
-            return self.tr('Invalid CRS.')
+        if not self.getCrs() or "EPSG" not in self.authId():
+            return self.tr("Invalid CRS.")
         # if all tests were positive, widget has a valid selection
-        return ''
+        return ""
 
     def isValid(self):
         """
@@ -146,4 +149,4 @@ class MultiNewDsSelector(QDialog, FORM_CLASS):
         :return: (bool) invalidation status.
         """
         msg = self.validate()
-        return msg == ''
+        return msg == ""

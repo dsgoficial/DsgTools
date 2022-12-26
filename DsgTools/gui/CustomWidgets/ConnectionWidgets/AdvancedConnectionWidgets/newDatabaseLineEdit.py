@@ -24,6 +24,7 @@
 from qgis.PyQt.QtWidgets import QWidget, QFileDialog
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QDir
 from qgis.PyQt import uic
+
 # from qgis.utils import iface
 from qgis.core import Qgis, QgsMessageLog
 
@@ -31,14 +32,18 @@ from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 
 import os
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'newDatabaseLineEdit.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "newDatabaseLineEdit.ui")
+)
+
 
 class NewDatabaseLineEdit(QWidget, FORM_CLASS):
     """
     Class designed to control generic behaviors of a widget able to
     retrieve parameters for a PostGIS database creation.
     """
-    # signals to keep 
+
+    # signals to keep
     connectionChanged = pyqtSignal()
     dbChanged = pyqtSignal(AbstractDb)
     problemOccurred = pyqtSignal(str)
@@ -49,8 +54,8 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         """
         super(NewDatabaseLineEdit, self).__init__()
         self.setupUi(self)
-        self.caption = ''
-        self.filter = ''
+        self.caption = ""
+        self.filter = ""
         self.fillEdgvVersions()
         self.connectSignals()
         self.reset()
@@ -64,7 +69,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
 
     def fillEdgvVersions(self):
         """
-        Populates EDGV combo box with available versions. 
+        Populates EDGV combo box with available versions.
         """
         versions = [
             self.tr("EDGV Version..."),
@@ -72,7 +77,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
             "EDGV 2.1.3 F Ter",
             "EDGV 2.1.3 Pro",
             "EDGV 3.0",
-            "EDGV 3.0 Pro"
+            "EDGV 3.0 Pro",
         ]
         self.edgvComboBox.addItems(versions)
 
@@ -82,7 +87,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         :return: (str) datasource path.
         """
         ds = self.dsLineEdit.text()
-        return ds if not ds is None and ds != self.tr("New Database") else ''
+        return ds if not ds is None and ds != self.tr("New Database") else ""
 
     def edgvVersion(self):
         """
@@ -90,7 +95,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         :return: (str) EDGV version.
         """
         edgv = self.edgvComboBox.currentText()
-        return edgv if not edgv is None and edgv != self.tr("EDGV Version...") else ''
+        return edgv if not edgv is None and edgv != self.tr("EDGV Version...") else ""
 
     def authId(self):
         """
@@ -98,7 +103,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         :return: (str) EDGV version.
         """
         crs = self.crs()
-        return crs.authid() if not crs is None and crs.isValid() else ''
+        return crs.authid() if not crs is None and crs.isValid() else ""
 
     def crs(self):
         """
@@ -110,7 +115,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
 
     def reset(self):
         """
-        Clears all GUI selections. 
+        Clears all GUI selections.
         """
         self.dsLineEdit.setText(self.tr("New Database"))
         self.edgvComboBox.setCurrentIndex(0)
@@ -137,7 +142,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         # for files, it is only necessary to check if file exists and is not empty.
         ds = self.currentDb()
         try:
-            with open(ds, 'rb') as f:
+            with open(ds, "rb") as f:
                 # read paths
                 l = f.readlines()
             return bool(l)
@@ -149,7 +154,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
                 # if directory is not empty, check if there are shapefiles in it
                 for f in os.listdir(ds):
                     if len(f) > 4:
-                        if '.shp' == f[-4:].lower():
+                        if ".shp" == f[-4:].lower():
                             return True
             return False
 
@@ -169,8 +174,10 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
             # if msg:
             #     raise Exception(msg)
         except Exception as e:
-            self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
+            self.problemOccurred.emit(
+                self.tr("A problem occurred! Check log for details.")
+            )
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
 
     def validate(self):
         """
@@ -184,23 +191,23 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         # check a valid server name
         # check if datasource is a valid name and if it already exists into selected server
         if not self.currentDb():
-            return self.tr('Invalid datasource.')
+            return self.tr("Invalid datasource.")
         else:
             # check if the connection is a valid connection
             if not self.serverIsValid():
-                return self.tr('Invalid connection to server.')
+                return self.tr("Invalid connection to server.")
             # check if it exists
             if self.databaseExists():
-                return self.tr('Database {0} already exists.').format(self.currentDb())
+                return self.tr("Database {0} already exists.").format(self.currentDb())
             pass
         # check if a valid EDGV version was selected
         if not self.edgvVersion():
-            return self.tr('Invalid EDGV version.')
+            return self.tr("Invalid EDGV version.")
         # check if a valid projection was selected
-        if not self.crs() or 'EPSG' not in self.authId():
-            return self.tr('Invalid CRS.')
+        if not self.crs() or "EPSG" not in self.authId():
+            return self.tr("Invalid CRS.")
         # if all tests were positive, widget has a valid selection
-        return ''
+        return ""
 
     def isValid(self):
         """
@@ -212,7 +219,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         # if msg:
         #     # if an invalidation reason was given, warn user and nothing else.
         #     iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
-        return msg == ''
+        return msg == ""
 
     def selectDatasource(self):
         """

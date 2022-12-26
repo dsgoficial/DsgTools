@@ -24,7 +24,7 @@
 """
 Module designed to centralize the access to DSGTools tools.
 This module CANNOT be imported at the beginning of modules and must be called
-from within methods that are NOT the __init__! 
+from within methods that are NOT the __init__!
 """
 
 from DsgTools import dsgTools
@@ -32,6 +32,7 @@ from DsgTools import dsgTools
 mapToolManager = dsgTools.guiManager.productionToolsGuiManager.mapToolsGuiManager
 toolBoxManager = dsgTools.guiManager.productionToolsGuiManager.toolBoxesGuiManager
 toolBarManager = dsgTools.guiManager.productionToolsGuiManager.toolbarsGuiManager
+
 
 def mapToolsNames():
     """
@@ -45,8 +46,9 @@ def mapToolsNames():
         "freeHandAcquisiton",
         "freeHandReshape",
         "labelTool",
-        "shortcutsTool"
+        "shortcutsTool",
     ]
+
 
 def mapTools():
     """
@@ -55,6 +57,7 @@ def mapTools():
     """
     return [getattr(mapToolManager, tn) for tn in mapToolsNames()]
 
+
 def mapTool(name):
     """
     Provides the map tool from DSGTools plugin through its non-i18n name.
@@ -62,6 +65,7 @@ def mapTool(name):
     :return: (*QgsMapTools) target DSGTools map tool.
     """
     return getattr(mapToolManager, name)
+
 
 def toolBarsNames():
     """
@@ -73,8 +77,9 @@ def toolBarsNames():
         "inspectFeaturesTool",
         "styleManagerTool",
         "rasterInfoTool",
-        "dataValidationTool"
+        "dataValidationTool",
     ]
+
 
 def toolBars():
     """
@@ -82,6 +87,7 @@ def toolBars():
     :return: (list-of-QgsMapTools) DSGTools tool bars.
     """
     return [getattr(toolBarManager, tn) for tn in toolBarsNames()]
+
 
 def toolBar(name):
     """
@@ -91,18 +97,14 @@ def toolBar(name):
     """
     return getattr(toolBarManager, name)
 
+
 def toolBoxesNames():
     """
     Lists all non-i18n names for DSGTools tool boxes.
     :return: (list-of-str) list of non-i18n of all available tool boxes.
     """
-    return [
-        "qaToolBox",
-        "cfToolbox",
-        "calcContour",
-        "codeList",
-        "complexWindow"
-    ]
+    return ["qaToolBox", "cfToolbox", "calcContour", "codeList", "complexWindow"]
+
 
 def toolBoxes():
     """
@@ -110,6 +112,7 @@ def toolBoxes():
     :return: (list-of-QgsMapTools) DSGTools tool boxes.
     """
     return [getattr(toolBoxManager, tn) for tn in toolBoxesNames()]
+
 
 def toolBox(name):
     """
@@ -119,6 +122,7 @@ def toolBox(name):
     """
     return getattr(toolBoxManager, name)
 
+
 def toolsNames():
     """
     Lists all non-i18n names for DSGTools tools.
@@ -126,12 +130,14 @@ def toolsNames():
     """
     return mapToolsNames() + toolBarsNames() + toolBoxesNames()
 
+
 def tools():
     """
     List of all available DSGTools tools.
     :return: (list-of-*) all DSGTools map tools, tool boxes and tool bars.
     """
     return mapTools() + toolBars() + toolBoxes()
+
 
 def toolByName(name):
     """
@@ -145,6 +151,7 @@ def toolByName(name):
         return toolBar(name)
     else:
         return toolBox(name)
+
 
 def actions():
     """

@@ -24,6 +24,7 @@ from builtins import range
 from builtins import object
 from qgis.PyQt.QtXml import QDomDocument
 
+
 class QmlParser(object):
     def __init__(self, fileName):
         """
@@ -40,7 +41,7 @@ class QmlParser(object):
         """
         Loads QML data
         """
-        qml = open(self.fileName, 'r')
+        qml = open(self.fileName, "r")
         data = qml.read()
         loaded = self.qml.setContent(data)
         qml.close()
@@ -78,9 +79,9 @@ class QmlParser(object):
             for i in range(len(values)):
                 value = values.item(i).toElement()
                 keyText = value.attribute("key")
-                #print 'key: '+keyText
+                # print 'key: '+keyText
                 valueText = value.attribute("value")
-                #print 'value: '+valueText
+                # print 'value: '+valueText
                 valueMapDict[keyText] = valueText
             self.domainDict[name] = valueMapDict
         elif type == "ValueRelation":
@@ -99,7 +100,13 @@ class QmlParser(object):
         self.domainDict.clear()
 
         if not self.loadFileContent():
-            QMessageBox.warning(self.iface.mainWindow(), self.tr("Warning!"), self.tr("QML file not loaded properly. Enum values won't be available."))
+            QMessageBox.warning(
+                self.iface.mainWindow(),
+                self.tr("Warning!"),
+                self.tr(
+                    "QML file not loaded properly. Enum values won't be available."
+                ),
+            )
             return
 
         self.readQGISElement()

@@ -33,8 +33,9 @@ from qgis.gui import QgsMessageBar
 
 from DsgTools.core.Utils.utils import Utils
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), "fmeManagerWidget.ui"))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "fmeManagerWidget.ui")
+)
 
 
 class FMEManagerWidget(QWidget, FORM_CLASS):
@@ -51,7 +52,7 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
         """
         Removes all inserted widgets from workspace's parameters from GUI.
         """
-        for i in range(self.verticalLayout_2.count()-1, -1, -1):
+        for i in range(self.verticalLayout_2.count() - 1, -1, -1):
             self.verticalLayout_2.itemAt(i).widget().setParent(None)
 
     @pyqtSlot(int)
@@ -63,7 +64,7 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
         self.clearLayout()
         workspace = self.getCurrentWorkspace()
         key = "parameters" if self.version() == "v1" else "parametros"
-        _parameters =  workspace.get(key, list())
+        _parameters = workspace.get(key, list())
         parameters = filter(lambda x: x != "LOG_FILE", _parameters)
         for parameter in parameters:
             newLabel = QLabel(parameter)
@@ -76,12 +77,7 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
         """
         Resize QgsMessageBar to widget's width
         """
-        self.messageBar.resize(
-            QSize(
-                self.geometry().size().width(),
-                30
-            )
-        )
+        self.messageBar.resize(QSize(self.geometry().size().width(), 30))
 
     def getProxyInfo(self):
         """
@@ -139,41 +135,37 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
             jsonKey = "dados"
         try:
             if not self.useProxy():
-                workspaceList = requests.get(
-                    url,
-                    verify=useSsl,
-                    timeout=15
-                ).json()[jsonKey]
+                workspaceList = requests.get(url, verify=useSsl, timeout=15).json()[
+                    jsonKey
+                ]
             else:
                 proxyInfo, proxyAuth = self.getProxyInfo()
                 workspaceList = requests.get(
-                    url,
-                    proxies=proxyInfo,
-                    auth=proxyAuth,
-                    verify=useSsl,
-                    timeout=15
+                    url, proxies=proxyInfo, auth=proxyAuth, verify=useSsl, timeout=15
                 ).json()[jsonKey]
         except ReadTimeout:
             self.messageBar.pushMessage(
-                self.tr("Connection timed out."), level=Qgis.Warning)
+                self.tr("Connection timed out."), level=Qgis.Warning
+            )
             workspaceList = list()
         except ConnectTimeout:
             self.messageBar.pushMessage(
-                self.tr("Connection timed out (max attempts)."),
-                level=Qgis.Warning
+                self.tr("Connection timed out (max attempts)."), level=Qgis.Warning
             )
             workspaceList = list()
         except InvalidSchema:
             self.messageBar.pushMessage(
                 self.tr("Missing connection schema (e.g.'http', etc)."),
-                level=Qgis.Warning
+                level=Qgis.Warning,
             )
             workspaceList = list()
         except BaseException as e:
             self.messageBar.pushMessage(
-                self.tr("Unexpected error while trying to reach server. "
-                        "Check your parameters. Error message: {}".format(e)),
-                level=Qgis.Warning
+                self.tr(
+                    "Unexpected error while trying to reach server. "
+                    "Check your parameters. Error message: {}".format(e)
+                ),
+                level=Qgis.Warning,
             )
             workspaceList = list()
         return workspaceList
@@ -181,7 +173,7 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
     def setWorkspaces(self, workspaces):
         """
         Sets a list of workspaces to the GUI.
-        :param workspaces: (list-of-str) 
+        :param workspaces: (list-of-str)
         """
         self.workspaceComboBox.clear()
         if workspaces:
@@ -216,7 +208,7 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
             self.workspaceComboBox.addItem(
                 "{name} ({description})".format(
                     name=workspace[workspaceNameKey],
-                    description=workspace[workspaceDescKey]
+                    description=workspace[workspaceDescKey],
                 )
             )
 
@@ -231,16 +223,17 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
         if self.useProxy() and not proxyInfo:
             if pushAlert:
                 self.messageBar.pushMessage(
-                    self.tr("Proxy usage is set but no QGIS proxy settings "
-                            "was found."),
-                    level=Qgis.Warning
+                    self.tr(
+                        "Proxy usage is set but no QGIS proxy settings " "was found."
+                    ),
+                    level=Qgis.Warning,
                 )
             return False
         if self.server() == "":
             if pushAlert:
                 self.messageBar.pushMessage(
                     self.tr("URL to FME Manager server was not provided."),
-                    level=Qgis.Warning
+                    level=Qgis.Warning,
                 )
             return False
         return True
@@ -253,7 +246,9 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
         workspaceId = workspace.get("id", None)
         version = self.version()
         parameters = {
-            "parameters" if version == "v1" else "parametros": {
+            "parameters"
+            if version == "v1"
+            else "parametros": {
                 key: value.text() for key, value in self.paramWidgetMap.items()
             }
         }
@@ -266,5 +261,5 @@ class FMEManagerWidget(QWidget, FORM_CLASS):
             "auth": proxyAuth,
             "proxy_dict": proxyInfo,
             "use_ssl": self.useSsl(),
-            "use_proxy": self.useProxy()
+            "use_proxy": self.useProxy(),
         }

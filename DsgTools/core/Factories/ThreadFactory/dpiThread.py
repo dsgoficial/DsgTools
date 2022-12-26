@@ -36,6 +36,7 @@ import os, codecs
 
 from .genericThread import GenericThread
 
+
 class DpiMessages(QObject):
     def __init__(self, thread):
         super(DpiMessages, self).__init__()
@@ -43,13 +44,13 @@ class DpiMessages(QObject):
         self.thread = thread
 
     def getProblemMessage(self):
-        return self.tr('Problem processing image: ')
+        return self.tr("Problem processing image: ")
 
     def getProblemFeedbackMessage(self):
-        return self.tr('Problem processing images. Check log for details.')
+        return self.tr("Problem processing images. Check log for details.")
 
     def getUserCanceledFeedbackMessage(self):
-        return self.tr('User canceled image processing!')
+        return self.tr("User canceled image processing!")
 
     def getSuccessFeedbackMessage(self):
         return self.tr("Successful image processing.")
@@ -61,6 +62,7 @@ class DpiMessages(QObject):
     def progressCanceled(self):
         self.thread.stopped[0] = True
 
+
 class DpiThread(GenericThread):
     def __init__(self):
         """
@@ -70,7 +72,18 @@ class DpiThread(GenericThread):
 
         self.messenger = DpiMessages(self)
 
-    def setParameters(self, filesList, rasterType, minOutValue, maxOutValue, outDir, percent, epsg, stopped, bands = []):
+    def setParameters(
+        self,
+        filesList,
+        rasterType,
+        minOutValue,
+        maxOutValue,
+        outDir,
+        percent,
+        epsg,
+        stopped,
+        bands=[],
+    ):
         """
         Sets thread parameters
         filesList: files processed
@@ -111,7 +124,7 @@ class DpiThread(GenericThread):
 
         steps = 0
         for file in self.filesList:
-            #Open image
+            # Open image
             imgIn = osgeo.gdal.Open(file)
             if not imgIn:
                 continue
@@ -125,7 +138,9 @@ class DpiThread(GenericThread):
 
         problemOcurred = False
         for file in self.filesList:
-            ret = self.stretchImage(file, self.outDir, self.percent, self.epsg, self.bands)
+            ret = self.stretchImage(
+                file, self.outDir, self.percent, self.epsg, self.bands
+            )
             if ret == 1:
                 pass
             elif ret == 0:
@@ -143,74 +158,89 @@ class DpiThread(GenericThread):
         Method that applies a specific histogram stretching to a group of images.
         The method also performs a conversion changing the raster type.
         """
-        #Getting the output raster type
-        (rasterType, minOutValue, maxOutValue) = (self.rasterType, self.minOutValue, self.maxOutValue)
+        # Getting the output raster type
+        (rasterType, minOutValue, maxOutValue) = (
+            self.rasterType,
+            self.minOutValue,
+            self.maxOutValue,
+        )
 
-        #Open image
+        # Open image
         imgIn = osgeo.gdal.Open(inFile)
         if not imgIn:
-            QgsMessageLog.logMessage(self.messenger.getProblemMessage() + inFile, "DSGTools Plugin", QgsMessageLog.INFO)
+            QgsMessageLog.logMessage(
+                self.messenger.getProblemMessage() + inFile,
+                "DSGTools Plugin",
+                QgsMessageLog.INFO,
+            )
             return 0
 
-        #Setting the output file name
+        # Setting the output file name
         fileName = inFile.split("/")[-1]
         split = fileName.split(".")
         baseName = split[0]
-        extension = '.' + split[-1]
+        extension = "." + split[-1]
 
-        #Defining the output driver
+        # Defining the output driver
         outDriver = imgIn.GetDriver()
-        createOptions = ['PHOTOMETRIC=RGB', 'ALPHA=NO']
+        createOptions = ["PHOTOMETRIC=RGB", "ALPHA=NO"]
 
-        #creating temp file for contrast stretch
-        outFileTmp = os.path.join(outDir, baseName+'_tmp'+extension)
-        #creating output file for contrast stretch
-        outFile = os.path.join(outDir, baseName+'_stretch'+extension)
+        # creating temp file for contrast stretch
+        outFileTmp = os.path.join(outDir, baseName + "_tmp" + extension)
+        # creating output file for contrast stretch
+        outFile = os.path.join(outDir, baseName + "_stretch" + extension)
 
-        #if bands is empty, make a new file with the same band size
+        # if bands is empty, make a new file with the same band size
         if bands == []:
             bands = list(range(0, imgIn.RasterCount))
 
-        #Creating a temp image, with the same input parameters, to store the converted input image to 8 bits
-        imgOut = outDriver.Create(outFileTmp, imgIn.RasterXSize, imgIn.RasterYSize, len(bands), rasterType, options=createOptions)
+        # Creating a temp image, with the same input parameters, to store the converted input image to 8 bits
+        imgOut = outDriver.Create(
+            outFileTmp,
+            imgIn.RasterXSize,
+            imgIn.RasterYSize,
+            len(bands),
+            rasterType,
+            options=createOptions,
+        )
         imgOut.SetProjection(imgIn.GetProjection())
         imgOut.SetGeoTransform(imgIn.GetGeoTransform())
 
-        #Linear stretching
-        topPercent = 1.-percent/200.
-        bottomPercent = percent/200.
+        # Linear stretching
+        topPercent = 1.0 - percent / 200.0
+        bottomPercent = percent / 200.0
         outBandNumber = 1
         for bandNumber in bands:
             if not self.stopped[0]:
-                b1 = imgIn.GetRasterBand(bandNumber+1)
+                b1 = imgIn.GetRasterBand(bandNumber + 1)
                 arr = b1.ReadAsArray()
                 # Updating progress
                 self.signals.stepProcessed.emit(self.getId())
 
-                #computing percentile
+                # computing percentile
                 newArr = arr.flatten()
                 newArr.sort()
                 total = len(newArr)
                 if percent == 0:
                     minValue = float(newArr[0])
-                    maxValue = float(newArr[total-1])
+                    maxValue = float(newArr[total - 1])
                 else:
-                    minValue = float(newArr[int(bottomPercent*total)])
-                    maxValue = float(newArr[int(math.ceil(topPercent*total))])
+                    minValue = float(newArr[int(bottomPercent * total)])
+                    maxValue = float(newArr[int(math.ceil(topPercent * total))])
                 del newArr
                 # Updating progress
                 self.signals.stepProcessed.emit(self.getId())
 
-                #Transformation parameters
-                #Rouding the values out of bounds
+                # Transformation parameters
+                # Rouding the values out of bounds
                 numpy.putmask(arr, arr > maxValue, maxValue)
                 numpy.putmask(arr, arr < minValue, minValue)
                 # Updating progress
                 self.signals.stepProcessed.emit(self.getId())
 
-                #The maxOutValue and the minOutValue must be set according to the convertion that will be applied (e.g. 8 bits, 16 bits, 32 bits)
-                a = (maxOutValue-minOutValue)/(maxValue-minValue)
-                newArr = (arr-minValue)*a+minOutValue
+                # The maxOutValue and the minOutValue must be set according to the convertion that will be applied (e.g. 8 bits, 16 bits, 32 bits)
+                a = (maxOutValue - minOutValue) / (maxValue - minValue)
+                newArr = (arr - minValue) * a + minOutValue
                 # Updating progress
                 self.signals.stepProcessed.emit(self.getId())
 
@@ -221,31 +251,54 @@ class DpiThread(GenericThread):
                 # Updating progress
                 self.signals.stepProcessed.emit(self.getId())
 
-                QgsMessageLog.logMessage("Band " + str(bandNumber) + ": "+str(minValue)+" , "+str(maxValue), "DSGTools Plugin", QgsMessageLog.INFO)
+                QgsMessageLog.logMessage(
+                    "Band "
+                    + str(bandNumber)
+                    + ": "
+                    + str(minValue)
+                    + " , "
+                    + str(maxValue),
+                    "DSGTools Plugin",
+                    QgsMessageLog.INFO,
+                )
             else:
-                QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSGTools Plugin", QgsMessageLog.INFO)
+                QgsMessageLog.logMessage(
+                    self.messenger.getUserCanceledFeedbackMessage(),
+                    "DSGTools Plugin",
+                    QgsMessageLog.INFO,
+                )
                 return -1
 
-        #creating final image for reprojection
+        # creating final image for reprojection
         outRasterSRS = osgeo.osr.SpatialReference()
         outRasterSRS.ImportFromEPSG(epsg)
 
-        #this code uses virtual raster to compute the parameters of the output image
-        vrt = osgeo.gdal.AutoCreateWarpedVRT(imgOut, None, outRasterSRS.ExportToWkt(), osgeo.gdal.GRA_NearestNeighbour,  0.0)
-        imgWGS = outDriver.CreateCopy(outFile, vrt, options = createOptions)
+        # this code uses virtual raster to compute the parameters of the output image
+        vrt = osgeo.gdal.AutoCreateWarpedVRT(
+            imgOut,
+            None,
+            outRasterSRS.ExportToWkt(),
+            osgeo.gdal.GRA_NearestNeighbour,
+            0.0,
+        )
+        imgWGS = outDriver.CreateCopy(outFile, vrt, options=createOptions)
 
-        #Checking if the output file was created with success
+        # Checking if the output file was created with success
         if os.path.exists(outFile):
-            QgsMessageLog.logMessage(self.messenger.getSuccessfullFileCreation() + outFile, "DSGTools Plugin", QgsMessageLog.INFO)
+            QgsMessageLog.logMessage(
+                self.messenger.getSuccessfullFileCreation() + outFile,
+                "DSGTools Plugin",
+                QgsMessageLog.INFO,
+            )
             # Updating progress
             self.signals.stepProcessed.emit(self.getId())
 
-        #Deleting the objects
+        # Deleting the objects
         imgWGS = None
         imgOut = None
         imgIn = None
 
-        #Unlinking the temp file
+        # Unlinking the temp file
         osgeo.gdal.Unlink(outFileTmp)
 
         return 1

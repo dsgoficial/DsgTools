@@ -20,35 +20,51 @@
  *                                                                         *
  ***************************************************************************/
 """
-#DsgTools imports
+# DsgTools imports
 from builtins import object
-from DsgTools.core.Factories.DbCustomizationFactory.attributeCustomization import AttributeCustomization
-from DsgTools.core.Factories.DbCustomizationFactory.classCustomization import ClassCustomization
-from DsgTools.core.Factories.DbCustomizationFactory.codeNameCustomization import CodeNameCustomization
-from DsgTools.core.Factories.DbCustomizationFactory.defaultCustomization import DefaultCustomization
-from DsgTools.core.Factories.DbCustomizationFactory.newDomainTableCustomization import NewDomainTableCustomization
-from DsgTools.core.Factories.DbCustomizationFactory.domainValueCustomization import DomainValueCustomization
-from DsgTools.core.Factories.DbCustomizationFactory.nullityCustomization import NullityCustomization
-from DsgTools.core.Factories.DbCustomizationFactory.filterCustomization import FilterCustomization
+from DsgTools.core.Factories.DbCustomizationFactory.attributeCustomization import (
+    AttributeCustomization,
+)
+from DsgTools.core.Factories.DbCustomizationFactory.classCustomization import (
+    ClassCustomization,
+)
+from DsgTools.core.Factories.DbCustomizationFactory.codeNameCustomization import (
+    CodeNameCustomization,
+)
+from DsgTools.core.Factories.DbCustomizationFactory.defaultCustomization import (
+    DefaultCustomization,
+)
+from DsgTools.core.Factories.DbCustomizationFactory.newDomainTableCustomization import (
+    NewDomainTableCustomization,
+)
+from DsgTools.core.Factories.DbCustomizationFactory.domainValueCustomization import (
+    DomainValueCustomization,
+)
+from DsgTools.core.Factories.DbCustomizationFactory.nullityCustomization import (
+    NullityCustomization,
+)
+from DsgTools.core.Factories.DbCustomizationFactory.filterCustomization import (
+    FilterCustomization,
+)
 
 
 class DbCustomizationFactory(object):
     def createCustomization(self, type, validatedJSONDict):
-        if type == 'attribute':
+        if type == "attribute":
             return AttributeCustomization(validatedJSONDict)
-        elif type == 'class':
+        elif type == "class":
             return ClassCustomization(validatedJSONDict)
-        elif type == 'codeName':
+        elif type == "codeName":
             return CodeNameCustomization(validatedJSONDict)
-        elif type == 'default':
-            return DefaultCustomization(validatedJSONDict)        
-        elif type == 'domain':
+        elif type == "default":
+            return DefaultCustomization(validatedJSONDict)
+        elif type == "domain":
             return NewDomainTableCustomization(validatedJSONDict)
-        elif type == 'domainValue':
+        elif type == "domainValue":
             return DomainValueCustomization(validatedJSONDict)
-        elif type == 'nullity':
+        elif type == "nullity":
             return NullityCustomization(validatedJSONDict)
-        elif type == 'filter':
+        elif type == "filter":
             return FilterCustomization(validatedJSONDict)
         else:
-            raise Exception(self.tr('Customization type not defined.'))
+            raise Exception(self.tr("Customization type not defined."))

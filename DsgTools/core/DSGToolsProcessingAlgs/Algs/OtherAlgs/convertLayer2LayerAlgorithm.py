@@ -24,37 +24,40 @@ from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from ...algRunner import AlgRunner
 import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterExpression,
-                       QgsProcessingException)
+from qgis.core import (
+    QgsProcessing,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFeatureSink,
+    QgsFeature,
+    QgsDataSourceUri,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsGeometry,
+    QgsProcessingParameterField,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterFile,
+    QgsProcessingParameterExpression,
+    QgsProcessingException,
+)
+
 
 class ConvertLayer2LayerAlgorithm(QgsProcessingAlgorithm):
-    INPUT = 'INPUT'
-    INPUT_FILTER_EXPRESSION = 'INPUT_FILTER_EXPRESSION'
-    FILTER_LAYER = 'FILTER_LAYER'
-    FL_FILTER_EXPRESSION = 'FL_FILTER_EXPRESSION'
-    BEHAVIOR = 'BEHAVIOR'
-    OUTPUT = 'OUTPUT'
-    CONVERSION_MAP = 'CONVERSION_MAP'
+    INPUT = "INPUT"
+    INPUT_FILTER_EXPRESSION = "INPUT_FILTER_EXPRESSION"
+    FILTER_LAYER = "FILTER_LAYER"
+    FL_FILTER_EXPRESSION = "FL_FILTER_EXPRESSION"
+    BEHAVIOR = "BEHAVIOR"
+    OUTPUT = "OUTPUT"
+    CONVERSION_MAP = "CONVERSION_MAP"
 
     def initAlgorithm(self, config):
         """
@@ -63,124 +66,101 @@ class ConvertLayer2LayerAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry]
+                self.tr("Input layer"),
+                [QgsProcessing.TypeVectorAnyGeometry],
             )
         )
         self.addParameter(
             QgsProcessingParameterExpression(
                 self.INPUT_FILTER_EXPRESSION,
-                description = self.tr('Input layer expression'),
-                parentLayerParameterName = self.INPUT,
-                optional = True
+                description=self.tr("Input layer expression"),
+                parentLayerParameterName=self.INPUT,
+                optional=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.FILTER_LAYER,
-                self.tr('Filter layer'),
+                self.tr("Filter layer"),
                 [QgsProcessing.TypeVectorPolygon],
-                optional = True
+                optional=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterExpression(
                 self.FL_FILTER_EXPRESSION,
-                description = self.tr('Filter layer expression'),
-                parentLayerParameterName = self.FILTER_LAYER,
-                optional = True
+                description=self.tr("Filter layer expression"),
+                parentLayerParameterName=self.FILTER_LAYER,
+                optional=True,
             )
         )
-        self.modes = [self.tr('Select a spatial filtering option...'),
-                      self.tr('Only features from input that intersect features from filter layer'),
-                      self.tr('Clip features from input with features from filter layer and take inside features'),
-                      self.tr('Clip features from input with features from buffer of filter layer and take inside features')
-                      ]
+        self.modes = [
+            self.tr("Select a spatial filtering option..."),
+            self.tr(
+                "Only features from input that intersect features from filter layer"
+            ),
+            self.tr(
+                "Clip features from input with features from filter layer and take inside features"
+            ),
+            self.tr(
+                "Clip features from input with features from buffer of filter layer and take inside features"
+            ),
+        ]
 
         self.addParameter(
             QgsProcessingParameterEnum(
-                self.BEHAVIOR,
-                self.tr('Behavior'),
-                options=self.modes,
-                optional = True
+                self.BEHAVIOR, self.tr("Behavior"), options=self.modes, optional=True
             )
         )
         self.addParameter(
             QgsProcessingParameterFile(
                 self.CONVERSION_MAP,
-                description = self.tr('JSON Map'),
-                extension = '.json',
-                optional = True
+                description=self.tr("JSON Map"),
+                extension=".json",
+                optional=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.OUTPUT,
-                self.tr('Output layer'),
-                [QgsProcessing.TypeVectorAnyGeometry]
+                self.tr("Output layer"),
+                [QgsProcessing.TypeVectorAnyGeometry],
             )
         )
-        
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
         layerHandler = LayerHandler()
-        inputLyr = self.parameterAsVectorLayer(
-            parameters,
-            self.INPUT,
-            context
-            )
+        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
-                self.invalidSourceError(
-                    parameters,
-                    self.INPUT
-                    )
-                )
-        outputLyr = self.parameterAsVectorLayer(
-            parameters,
-            self.OUTPUT,
-            context
+                self.invalidSourceError(parameters, self.INPUT)
             )
+        outputLyr = self.parameterAsVectorLayer(parameters, self.OUTPUT, context)
         if outputLyr is None:
             raise QgsProcessingException(
-                self.invalidSourceError(
-                    parameters,
-                    self.OUTPUT
-                    )
-                )
+                self.invalidSourceError(parameters, self.OUTPUT)
+            )
         if inputLyr == outputLyr:
             raise QgsProcessingException(
-                self.tr('Input must be different from output!')
-                )
+                self.tr("Input must be different from output!")
+            )
         inputExpression = self.parameterAsExpression(
-            parameters,
-            self.INPUT_FILTER_EXPRESSION,
-            context
-            )
-        filterLyr = self.parameterAsVectorLayer(
-            parameters,
-            self.FILTER_LAYER,
-            context
-            )
-        behavior = self.parameterAsEnum(
-            parameters,
-            self.BEHAVIOR,
-            context
-            )
-        
+            parameters, self.INPUT_FILTER_EXPRESSION, context
+        )
+        filterLyr = self.parameterAsVectorLayer(parameters, self.FILTER_LAYER, context)
+        behavior = self.parameterAsEnum(parameters, self.BEHAVIOR, context)
+
         prepairedLyr = layerHandler.prepareConversion(
             inputLyr=inputLyr,
             context=context,
             inputExpression=inputExpression,
             filterLyr=filterLyr,
             behavior=behavior,
-            feedback=feedback
+            feedback=feedback,
         )
-
-        
 
         return {self.INPUT: inputLyr}
 
@@ -192,21 +172,21 @@ class ConvertLayer2LayerAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'convertlayer2layer'
+        return "convertlayer2layer"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Convert layer to layer')
+        return self.tr("Convert layer to layer")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Other Algorithms')
+        return self.tr("Other Algorithms")
 
     def groupId(self):
         """
@@ -214,10 +194,10 @@ class ConvertLayer2LayerAlgorithm(QgsProcessingAlgorithm):
         string should be fixed for the algorithm, and must not be localised.
         The group id should be unique within each provider.
         """
-        return 'DSGTools: Other Algorithms'
+        return "DSGTools: Other Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate('ConvertLayer2LayerAlgorithm', string)
+        return QCoreApplication.translate("ConvertLayer2LayerAlgorithm", string)
 
     def createInstance(self):
         return ConvertLayer2LayerAlgorithm()

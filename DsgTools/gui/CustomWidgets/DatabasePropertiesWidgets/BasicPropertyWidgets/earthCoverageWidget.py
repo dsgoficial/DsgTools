@@ -27,14 +27,18 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from qgis.PyQt.QtWidgets import QTreeWidgetItem, QMessageBox
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'earthCoverageWidget.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "earthCoverageWidget.ui")
+)
 
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from qgis.core import QgsMessageLog
-from DsgTools.core.ServerManagementTools.earthCoverageManager import EarthCoverageManager
+from DsgTools.core.ServerManagementTools.earthCoverageManager import (
+    EarthCoverageManager,
+)
 from DsgTools.core.dsgEnums import DsgEnums
+
 
 class EarthCoverageWidget(QtWidgets.QWidget, FORM_CLASS):
     def __init__(self, parent=None):
@@ -68,14 +72,18 @@ class EarthCoverageWidget(QtWidgets.QWidget, FORM_CLASS):
         self.earthCoverageTreeWidget.invisibleRootItem().takeChildren()
 
     def getEarthCoverageDict(self):
-        if self.abstractDb.checkIfExistsConfigTable('EarthCoverage'):
+        if self.abstractDb.checkIfExistsConfigTable("EarthCoverage"):
             edgvVersion = self.abstractDb.getDatabaseVersion()
-            propertyDict = self.abstractDb.getAllSettingsFromAdminDb('EarthCoverage')
+            propertyDict = self.abstractDb.getAllSettingsFromAdminDb("EarthCoverage")
             if edgvVersion in list(propertyDict.keys()):
                 propertyName = propertyDict[edgvVersion][0]
                 dbName = self.abstractDb.db.databaseName()
-                self.settingDict = json.loads(self.abstractDb.getSettingFromAdminDb('EarthCoverage', propertyName, edgvVersion))
-                self.earthCoverageDict = self.settingDict['earthCoverageDict']
+                self.settingDict = json.loads(
+                    self.abstractDb.getSettingFromAdminDb(
+                        "EarthCoverage", propertyName, edgvVersion
+                    )
+                )
+                self.earthCoverageDict = self.settingDict["earthCoverageDict"]
 
     def loadEarthCoverage(self):
         """
@@ -86,14 +94,19 @@ class EarthCoverageWidget(QtWidgets.QWidget, FORM_CLASS):
             if self.earthCoverageDict == dict():
                 self.getEarthCoverageDict()
             rootItem = self.earthCoverageTreeWidget.invisibleRootItem()
-            #database item
+            # database item
             for key in list(self.earthCoverageDict.keys()):
                 item = QTreeWidgetItem(rootItem)
-                item.setText(0,key)
+                item.setText(0, key)
                 item.setExpanded(True)
                 for cl in self.earthCoverageDict[key]:
                     covItem = QTreeWidgetItem(item)
-                    covItem.setText(1,cl)
+                    covItem.setText(1, cl)
                     covItem.setExpanded(True)
         except Exception as e:
-            QgsMessageLog.logMessage(self.tr('Earth Coverage not loaded! Check log for details.')+':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(
+                self.tr("Earth Coverage not loaded! Check log for details.")
+                + ":".join(e.args),
+                "DSGTools Plugin",
+                Qgis.Critical,
+            )

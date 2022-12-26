@@ -29,37 +29,52 @@ from qgis.PyQt import uic
 from qgis.core import Qgis
 from qgis.gui import QgsMessageBar
 from qgis.PyQt.QtCore import QSize, QCoreApplication, pyqtSlot
-from qgis.PyQt.QtWidgets import (QDialog,
-                                 QComboBox,
-                                 QCheckBox,
-                                 QLineEdit,
-                                 QFileDialog,
-                                 QMessageBox,
-                                 QTableWidgetItem)
+from qgis.PyQt.QtWidgets import (
+    QDialog,
+    QComboBox,
+    QCheckBox,
+    QLineEdit,
+    QFileDialog,
+    QMessageBox,
+    QTableWidgetItem,
+)
 from processing.modeler.ModelerUtils import ModelerUtils
 
-from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import SelectFileWidget
-from DsgTools.core.DSGToolsProcessingAlgs.Models.qualityAssuranceWorkflow import QualityAssuranceWorkflow
-from DsgTools.core.DSGToolsProcessingAlgs.Models.dsgToolsProcessingModel import DsgToolsProcessingModel
+from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import (
+    SelectFileWidget,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Models.qualityAssuranceWorkflow import (
+    QualityAssuranceWorkflow,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Models.dsgToolsProcessingModel import (
+    DsgToolsProcessingModel,
+)
 
 FORM_CLASS, _ = uic.loadUiType(
-    os.path.join(os.path.dirname(__file__), 'workflowSetupDialog.ui')
+    os.path.join(os.path.dirname(__file__), "workflowSetupDialog.ui")
 )
+
 
 class WorkflowSetupDialog(QDialog, FORM_CLASS):
     __qgisModelPath__ = ModelerUtils.modelsFolders()[0]
     ON_FLAGS_HALT, ON_FLAGS_WARN, ON_FLAGS_IGNORE = range(3)
     onFlagsDisplayNameMap = {
-        ON_FLAGS_HALT : QCoreApplication.translate('WorkflowSetupDialog', "Halt"),
-        ON_FLAGS_WARN : QCoreApplication.translate('WorkflowSetupDialog', "Warn"),
-        ON_FLAGS_IGNORE : QCoreApplication.translate('WorkflowSetupDialog', "Ignore")
+        ON_FLAGS_HALT: QCoreApplication.translate("WorkflowSetupDialog", "Halt"),
+        ON_FLAGS_WARN: QCoreApplication.translate("WorkflowSetupDialog", "Warn"),
+        ON_FLAGS_IGNORE: QCoreApplication.translate("WorkflowSetupDialog", "Ignore"),
     }
     onFlagsValueMap = {
-        ON_FLAGS_HALT : "halt",
-        ON_FLAGS_WARN : "warn",
-        ON_FLAGS_IGNORE : "ignore"
+        ON_FLAGS_HALT: "halt",
+        ON_FLAGS_WARN: "warn",
+        ON_FLAGS_IGNORE: "ignore",
     }
-    MODEL_NAME_HEADER, MODEL_SOURCE_HEADER, ON_FLAGS_HEADER, LOAD_OUT_HEADER, FLAG_KEYS_HEADER = range(5)
+    (
+        MODEL_NAME_HEADER,
+        MODEL_SOURCE_HEADER,
+        ON_FLAGS_HEADER,
+        LOAD_OUT_HEADER,
+        FLAG_KEYS_HEADER,
+    ) = range(5)
 
     def __init__(self, parent=None):
         """
@@ -72,43 +87,45 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         self.parent = parent
         self.setupUi(self)
         self.messageBar = QgsMessageBar(self)
-        self.orderedTableWidget.setHeaders({
-            self.MODEL_NAME_HEADER : {
-                "header" : self.tr("Model name"),
-                "type" : "widget",
-                "widget" : self.modelNameWidget,
-                "setter" : "setText",
-                "getter" : "text"
-            },
-            self.MODEL_SOURCE_HEADER : {
-                "header" : self.tr("Model source"),
-                "type" : "widget",
-                "widget" : self.modelWidget,
-                "setter" : "setText",
-                "getter" : "text"
-            },
-            self.ON_FLAGS_HEADER : {
-                "header" : self.tr("On flags"),
-                "type" : "widget",
-                "widget" : self.onFlagsWidget,
-                "setter" : "setCurrentIndex",
-                "getter" : "currentIndex"
-            },
-            self.LOAD_OUT_HEADER : {
-                "header" : self.tr("Load output"),
-                "type" : "widget",
-                "widget" : self.loadOutputWidget,
-                "setter" : "setChecked",
-                "getter" : "isChecked"
-            },
-            self.FLAG_KEYS_HEADER: {
-                "header" : self.tr("Flag keys"),
-                "type" : "widget",
-                "widget" : self.loadFlagLayers,
-                "setter" : "setText",
-                "getter" : "text"
-            },
-        })
+        self.orderedTableWidget.setHeaders(
+            {
+                self.MODEL_NAME_HEADER: {
+                    "header": self.tr("Model name"),
+                    "type": "widget",
+                    "widget": self.modelNameWidget,
+                    "setter": "setText",
+                    "getter": "text",
+                },
+                self.MODEL_SOURCE_HEADER: {
+                    "header": self.tr("Model source"),
+                    "type": "widget",
+                    "widget": self.modelWidget,
+                    "setter": "setText",
+                    "getter": "text",
+                },
+                self.ON_FLAGS_HEADER: {
+                    "header": self.tr("On flags"),
+                    "type": "widget",
+                    "widget": self.onFlagsWidget,
+                    "setter": "setCurrentIndex",
+                    "getter": "currentIndex",
+                },
+                self.LOAD_OUT_HEADER: {
+                    "header": self.tr("Load output"),
+                    "type": "widget",
+                    "widget": self.loadOutputWidget,
+                    "setter": "setChecked",
+                    "getter": "isChecked",
+                },
+                self.FLAG_KEYS_HEADER: {
+                    "header": self.tr("Flag keys"),
+                    "type": "widget",
+                    "widget": self.loadFlagLayers,
+                    "setter": "setText",
+                    "getter": "text",
+                },
+            }
+        )
         self.orderedTableWidget.setHeaderDoubleClickBehaviour("replicate")
         self.promptToAll = None
 
@@ -116,13 +133,20 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         """
         Adjusts table columns sizes.
         """
-        dSize = self.orderedTableWidget.geometry().width() - \
-                self.orderedTableWidget.horizontalHeader().geometry().width()
+        dSize = (
+            self.orderedTableWidget.geometry().width()
+            - self.orderedTableWidget.horizontalHeader().geometry().width()
+        )
         onFlagsColSize = self.orderedTableWidget.sectionSize(2)
         loadOutColSize = self.orderedTableWidget.sectionSize(3)
         flagsOutColSize = self.orderedTableWidget.sectionSize(4)
-        missingBarSize = self.geometry().size().width() - dSize\
-                         - onFlagsColSize - loadOutColSize - flagsOutColSize
+        missingBarSize = (
+            self.geometry().size().width()
+            - dSize
+            - onFlagsColSize
+            - loadOutColSize
+            - flagsOutColSize
+        )
         # the "-11" is empiric: it makes it fit header to table
         self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(
             0, int(0.4 * missingBarSize) - 11
@@ -141,7 +165,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         self.messageBar.resize(
             QSize(
                 self.geometry().size().width(),
-                40 # this felt nicer than the original height (30)
+                40,  # this felt nicer than the original height (30)
             )
         )
         self.resizeTable()
@@ -153,28 +177,34 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         :param showCancel: (bool) whether Cancel button should be exposed.
         :return: (bool) whether action was confirmed.
         """
-        if not addPromptToAll: #comportamento antigo
+        if not addPromptToAll:  # comportamento antigo
             if showCancel:
-                return QMessageBox.question(
-                        self, self.tr('Confirm Action'), msg,
-                        QMessageBox.Ok|QMessageBox.Cancel
-                    ) == QMessageBox.Ok
+                return (
+                    QMessageBox.question(
+                        self,
+                        self.tr("Confirm Action"),
+                        msg,
+                        QMessageBox.Ok | QMessageBox.Cancel,
+                    )
+                    == QMessageBox.Ok
+                )
             else:
-                return QMessageBox.question(
-                    self, self.tr('Confirm Action'), msg,
-                    QMessageBox.Ok
-                ) == QMessageBox.Ok
+                return (
+                    QMessageBox.question(
+                        self, self.tr("Confirm Action"), msg, QMessageBox.Ok
+                    )
+                    == QMessageBox.Ok
+                )
         # prompt to all == true daqui para frente
         if self.promptToAll is not None:
             return self.promptToAll
-        # prompt to all == true daqui para frente e self.promptToAll is None 
+        # prompt to all == true daqui para frente e self.promptToAll is None
         # (o usuario nao mandou algum sim ou nao para todos)
         buttonPromptList = QMessageBox.Ok | QMessageBox.YesAll | QMessageBox.NoAll
         if showCancel:
             buttonPromptList = buttonPromptList | QMessageBox.Cancel
         answer = QMessageBox.question(
-            self, self.tr('Confirm Action'), msg,
-            buttonPromptList
+            self, self.tr("Confirm Action"), msg, buttonPromptList
         )
         if answer in [QMessageBox.YesAll, QMessageBox.NoAll]:
             self.promptToAll = answer == QMessageBox.YesAll
@@ -220,9 +250,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         widget.lineEdit.setPlaceholderText(self.tr("Select a model..."))
         widget.lineEdit.setFrame(False)
         widget.setCaption(self.tr("Select a QGIS Processing model file"))
-        widget.setFilter(
-            self.tr("Select a QGIS Processing model (*.model *.model3)")
-        )
+        widget.setFilter(self.tr("Select a QGIS Processing model (*.model *.model3)"))
         # defining setter and getter methods for composed widgets into OTW
         widget.setText = widget.lineEdit.setText
         widget.text = widget.lineEdit.text
@@ -235,14 +263,16 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         Gets a new instance for the widget that sets model's behaviour when
         flags are raised.
         :param option: (str) on flags raised behaviour (non translatable text).
-        :return: (QComboBox) model's behaviour selection widget. 
+        :return: (QComboBox) model's behaviour selection widget.
         """
         combo = QComboBox()
-        combo.addItems([
-            self.onFlagsDisplayNameMap[self.ON_FLAGS_HALT],
-            self.onFlagsDisplayNameMap[self.ON_FLAGS_WARN],
-            self.onFlagsDisplayNameMap[self.ON_FLAGS_IGNORE]
-        ])
+        combo.addItems(
+            [
+                self.onFlagsDisplayNameMap[self.ON_FLAGS_HALT],
+                self.onFlagsDisplayNameMap[self.ON_FLAGS_WARN],
+                self.onFlagsDisplayNameMap[self.ON_FLAGS_IGNORE],
+            ]
+        )
         if option is not None:
             optIdx = None
             for idx, txt in self.onFlagsValueMap.items():
@@ -275,7 +305,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         Gets time and date from the system. Format: "dd/mm/yyyy HH:MM:SS".
         :return: (str) current's date and time
         """
-        paddle = lambda n : str(n) if n > 9 else "0{0}".format(n)
+        paddle = lambda n: str(n) if n > 9 else "0{0}".format(n)
         now = datetime.now()
         return "{day}/{month}/{year} {hour}:{minute}:{second}".format(
             year=now.year,
@@ -283,7 +313,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             day=paddle(now.day),
             hour=paddle(now.hour),
             minute=paddle(now.minute),
-            second=paddle(now.second)
+            second=paddle(now.second),
         )
 
     def workflowName(self):
@@ -346,28 +376,28 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         onFlagsIdx = contents[self.ON_FLAGS_HEADER]
         name = contents[self.MODEL_NAME_HEADER].strip()
         loadOutput = contents[self.LOAD_OUT_HEADER]
-        flagLayerNames = contents[self.FLAG_KEYS_HEADER].strip().split(',')
+        flagLayerNames = contents[self.FLAG_KEYS_HEADER].strip().split(",")
         if not os.path.exists(filepath):
             xml = ""
         else:
             with open(filepath, "r", encoding="utf-8") as f:
                 xml = f.read()
         return {
-            "displayName" : name,
-            "flags" : {
-                "onFlagsRaised" : self.onFlagsValueMap[onFlagsIdx],
-                "loadOutput" : loadOutput,
+            "displayName": name,
+            "flags": {
+                "onFlagsRaised": self.onFlagsValueMap[onFlagsIdx],
+                "loadOutput": loadOutput,
                 "flagLayerNames": flagLayerNames,
             },
-            "source" : {
-                "type" : "xml",
-                "data" : xml,
+            "source": {
+                "type": "xml",
+                "data": xml,
             },
-            "metadata" : {
-                "originalName" : os.path.relpath(
-                    os.path.realpath(filepath),
-                    os.path.realpath(self.__qgisModelPath__)),
-            }
+            "metadata": {
+                "originalName": os.path.relpath(
+                    os.path.realpath(filepath), os.path.realpath(self.__qgisModelPath__)
+                ),
+            },
         }
 
     def setModelToRow(self, row, model):
@@ -386,8 +416,11 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         elif model.source() == "xml":
             xml = data
             meta = model.metadata()
-            originalName = model.originalName() if model.originalName() \
-                            else "temp_{0}.model3".format(hash(time()))
+            originalName = (
+                model.originalName()
+                if model.originalName()
+                else "temp_{0}.model3".format(hash(time()))
+            )
         else:
             return False
         path = os.path.join(self.__qgisModelPath__, originalName)
@@ -399,18 +432,21 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         if not os.path.exists(path):
             with open(path, "w") as f:
                 f.write(xml)
-        self.orderedTableWidget.addRow(contents={
-            self.MODEL_NAME_HEADER : model.displayName(),
-            self.MODEL_SOURCE_HEADER : path,
-            self.ON_FLAGS_HEADER : {
-                "halt" : self.ON_FLAGS_HALT,
-                "warn" : self.ON_FLAGS_WARN,
-                "ignore" : self.ON_FLAGS_IGNORE
-                
-            }[model.onFlagsRaised()],
-            self.LOAD_OUT_HEADER : model.loadOutput(),
-            self.FLAG_KEYS_HEADER: ",".join(map(lambda x: str(x).strip(), model.flagLayerNames())),
-        })
+        self.orderedTableWidget.addRow(
+            contents={
+                self.MODEL_NAME_HEADER: model.displayName(),
+                self.MODEL_SOURCE_HEADER: path,
+                self.ON_FLAGS_HEADER: {
+                    "halt": self.ON_FLAGS_HALT,
+                    "warn": self.ON_FLAGS_WARN,
+                    "ignore": self.ON_FLAGS_IGNORE,
+                }[model.onFlagsRaised()],
+                self.LOAD_OUT_HEADER: model.loadOutput(),
+                self.FLAG_KEYS_HEADER: ",".join(
+                    map(lambda x: str(x).strip(), model.flagLayerNames())
+                ),
+            }
+        )
         return True
 
     def validateRowContents(self, contents):
@@ -455,13 +491,13 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         Generates a Workflow map from input data.
         """
         return {
-            "displayName" : self.workflowName(),
-            "models" : self.models(),
-            "metadata" : {
-                "author" : self.author(),
-                "version" : self.version(),
-                "lastModified" : self.now()
-            }
+            "displayName": self.workflowName(),
+            "models": self.models(),
+            "metadata": {
+                "author": self.author(),
+                "version": self.version(),
+                "lastModified": self.now(),
+            },
         }
 
     def currentWorkflow(self):
@@ -506,38 +542,44 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         msg = self.validate()
         if msg != "":
             self.messageBar.pushMessage(
-                self.tr('Invalid workflow'), msg, level=Qgis.Warning, duration=5
+                self.tr("Invalid workflow"), msg, level=Qgis.Warning, duration=5
             )
             return False
         fd = QFileDialog()
         filename = fd.getSaveFileName(
             caption=self.tr("Export DSGTools Workflow"),
-            filter=self.tr("DSGTools Workflow (*.workflow)")
+            filter=self.tr("DSGTools Workflow (*.workflow)"),
         )
         filename = filename[0] if isinstance(filename, tuple) else ""
         if filename == "":
             return False
-        filename = filename if filename.lower().endswith(".workflow") \
-                    else "{0}.workflow".format(filename)
+        filename = (
+            filename
+            if filename.lower().endswith(".workflow")
+            else "{0}.workflow".format(filename)
+        )
         try:
             self.exportWorkflow(filename)
         except Exception as e:
             self.messageBar.pushMessage(
-                self.tr('Invalid workflow'),
+                self.tr("Invalid workflow"),
                 self.tr("Unable to export workflow to '{fp}' ({error}).").format(
                     fp=filename, error=str(e)
                 ),
                 level=Qgis.Warning,
-                duration=5
+                duration=5,
             )
             return False
         result = os.path.exists(filename)
-        msg = (self.tr("Workflow exported to {fp}") if result else \
-                self.tr("Unable to export workflow to '{fp}'")).format(fp=filename)
+        msg = (
+            self.tr("Workflow exported to {fp}")
+            if result
+            else self.tr("Unable to export workflow to '{fp}'")
+        ).format(fp=filename)
         lvl = Qgis.Success if result else Qgis.Warning
         self.messageBar.pushMessage(
-                self.tr('Workflow exportation'), msg, level=lvl, duration=5
-            )
+            self.tr("Workflow exportation"), msg, level=lvl, duration=5
+        )
         return result
 
     def importWorkflow(self, filepath):
@@ -563,8 +605,8 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         """
         fd = QFileDialog()
         filename = fd.getOpenFileName(
-            caption=self.tr('Select a Workflow file'),
-            filter=self.tr('DSGTools Workflow (*.workflow *.json)')
+            caption=self.tr("Select a Workflow file"),
+            filter=self.tr("DSGTools Workflow (*.workflow *.json)"),
         )
         filename = filename[0] if isinstance(filename, tuple) else ""
         if not filename:
@@ -573,21 +615,19 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             self.importWorkflow(filename)
         except Exception as e:
             self.messageBar.pushMessage(
-                self.tr('Invalid workflow'),
+                self.tr("Invalid workflow"),
                 self.tr("Unable to export workflow to '{fp}' ({error}).").format(
                     fp=filename, error=str(e)
                 ),
                 level=Qgis.Critical,
-                duration=5
+                duration=5,
             )
             return False
         self.messageBar.pushMessage(
-            self.tr('Success'),
-            self.tr("Workflow '{fp}' imported!").format(
-                fp=filename
-            ),
+            self.tr("Success"),
+            self.tr("Workflow '{fp}' imported!").format(fp=filename),
             level=Qgis.Info,
-            duration=5
+            duration=5,
         )
         return True
 
@@ -601,10 +641,10 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             self.done(1)
         else:
             self.messageBar.pushMessage(
-                self.tr('Invalid workflow'),
+                self.tr("Invalid workflow"),
                 self.validate(),
                 level=Qgis.Warning,
-                duration=5
+                duration=5,
             )
 
     @pyqtSlot(bool, name="on_cancelPushButton_clicked")

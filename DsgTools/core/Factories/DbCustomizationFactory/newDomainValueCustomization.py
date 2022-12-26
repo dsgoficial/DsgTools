@@ -20,29 +20,36 @@
  *                                                                         *
  ***************************************************************************/
 """
-#DsgTools Imports
-from DsgTools.core.Factories.DbCustomizationFactory.dbCustomization import DbCustomization
+# DsgTools Imports
+from DsgTools.core.Factories.DbCustomizationFactory.dbCustomization import (
+    DbCustomization,
+)
+
 
 class NewDomainValueCustomization(DbCustomization):
     def __init__(self, customJson):
         super(NewDomainValueCustomization, self).__init__(customJson)
-    
+
     def buildSql(self):
-        '''
+        """
         {'domainName':domainName, 'code':code, 'code_name':code_name}
-        '''
-        #Abstract method. Must be reimplemented in each child.
-        sql = ''
-        for modItem in self.customJson['AddDomainValue']:
-            sql += '''INSERT INTO dominios."{0}" (code, code_name) VALUES ({1}, '{2}');\n'''.format(modItem['domainName'], code, code_name)
+        """
+        # Abstract method. Must be reimplemented in each child.
+        sql = ""
+        for modItem in self.customJson["AddDomainValue"]:
+            sql += """INSERT INTO dominios."{0}" (code, code_name) VALUES ({1}, '{2}');\n""".format(
+                modItem["domainName"], code, code_name
+            )
         return sql
-    
+
     def buildUndoSql(self):
-        '''
+        """
         {'domainName':domainName, 'code':code, 'code_name':code_name}
-        '''
-        #Abstract method. Must be reimplemented in each child.
-        sql = ''
-        for modItem in self.customJson['AddDomainValue']:
-            sql += '''DELETE FROM dominios."{0}" where code = {1};\n'''.format(modItem['domainName'], modItem['code'])
+        """
+        # Abstract method. Must be reimplemented in each child.
+        sql = ""
+        for modItem in self.customJson["AddDomainValue"]:
+            sql += """DELETE FROM dominios."{0}" where code = {1};\n""".format(
+                modItem["domainName"], modItem["code"]
+            )
         return sql

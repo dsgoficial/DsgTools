@@ -24,10 +24,12 @@
 from qgis.PyQt.QtCore import QObject
 
 from DsgTools.gui.ServerTools.ViewServersGui.viewServersGui import ViewServersGui
-from DsgTools.gui.ServerTools.BatchDbManagerGui.batchDbManagerGui import BatchDbManagerGui
+from DsgTools.gui.ServerTools.BatchDbManagerGui.batchDbManagerGui import (
+    BatchDbManagerGui,
+)
+
 
 class ServerToolsGuiManager(QObject):
-
     def __init__(self, manager, iface, parentMenu=None, toolbar=None):
         """Constructor.
         :param iface: An interface instance that will be passed to this class
@@ -42,9 +44,11 @@ class ServerToolsGuiManager(QObject):
         self.parentMenu = parentMenu
         # self.dbAbstract = dbAbstract
         self.toolbar = toolbar
-        self.menu = self.manager.addMenu(u'server', self.tr('Servers Tools'),'server.png')
-        self.iconBasePath = ':/plugins/DsgTools/icons/'
-    
+        self.menu = self.manager.addMenu(
+            "server", self.tr("Servers Tools"), "server.png"
+        )
+        self.iconBasePath = ":/plugins/DsgTools/icons/"
+
     def addTool(self, text, callback, parentMenu, icon):
         """
         Prepares the funcionalities to be added to both the DSGTools menu and it's shortcut button into QGIS main interface.
@@ -62,12 +66,12 @@ class ServerToolsGuiManager(QObject):
             add_to_toolbar=False,
             withShortcut=False,
             parentToolbar=parentMenu,
-            isCheckable=False
+            isCheckable=False,
         )
 
     def initGui(self):
         """
-        Instantiates all available database creation GUI. 
+        Instantiates all available database creation GUI.
         """
         self.viewServersGui = ViewServersGui(manager=self, parentMenu=self.menu)
         self.viewServersGui.initGui()

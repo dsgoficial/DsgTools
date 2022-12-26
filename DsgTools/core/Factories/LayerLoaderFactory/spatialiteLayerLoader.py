@@ -24,29 +24,32 @@ import os
 import json
 from collections import defaultdict
 
-from qgis.core import (Qgis,
-                       QgsProject,
-                       QgsMessageLog,
-                       QgsVectorLayer,
-                       QgsDataSourceUri,
-                       QgsEditorWidgetSetup,
-                       QgsCoordinateReferenceSystem)
+from qgis.core import (
+    Qgis,
+    QgsProject,
+    QgsMessageLog,
+    QgsVectorLayer,
+    QgsDataSourceUri,
+    QgsEditorWidgetSetup,
+    QgsCoordinateReferenceSystem,
+)
 from qgis.PyQt.QtSql import QSqlQuery
 
 from .edgvLayerLoader import EDGVLayerLoader
 from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
+
 class SpatialiteLayerLoader(EDGVLayerLoader):
     def __init__(self, iface, abstractDb, loadCentroids):
         """Constructor."""
         super(SpatialiteLayerLoader, self).__init__(iface, abstractDb, loadCentroids)
-        
-        self.provider = 'spatialite'
-        
+
+        self.provider = "spatialite"
+
         try:
             dbVersion = abstractDb.getDatabaseVersion()
         except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), 'DSGTools Plugin', Qgis.Critical)
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
             return
 
         self.buildUri()
@@ -57,11 +60,11 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         :return:
         """
         self.uri.setDatabase(self.abstractDb.db.databaseName())
-    
+
     def checkLoaded(self, name):
         """
         Checks if the layers is already loaded in the QGIS' TOC
-        :param name: 
+        :param name:
         :return:
         """
         loaded = None
@@ -77,7 +80,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         """
         Gets the list of attributes shared by many EDGV classes and have a different domain
         depending on which category the EDGV class belongs to.
-        :return: (list-of-str) list of "special" EDGV classes. 
+        :return: (list-of-str) list of "special" EDGV classes.
         """
         return ["finalidade", "relacionado", "coincidecomdentrode", "tipo"]
 
@@ -105,14 +108,15 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
             }
         """
         basePath = os.path.join(
-            os.path.dirname(__file__), "..", "..", "DbModels", "DomainMapping")
+            os.path.dirname(__file__), "..", "..", "DbModels", "DomainMapping"
+        )
         path = {
             "EDGV 3.0": os.path.join(basePath, "edgv_3.json"),
             "3.0": os.path.join(basePath, "edgv_3.json"),
             "EDGV 2.1.3 Pro": os.path.join(basePath, "edgv_213_pro.json"),
             "2.1.3 Pro": os.path.join(basePath, "edgv_213_pro.json"),
             "EDGV 2.1.3": os.path.join(basePath, "edgv_213.json"),
-            "2.1.3": os.path.join(basePath, "edgv_213.json")
+            "2.1.3": os.path.join(basePath, "edgv_213.json"),
         }.pop(modelVersion, None)
         if path is None or not os.path.exists(path):
             return dict()
@@ -133,7 +137,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         edgv = self.abstractDb.getDatabaseVersion()
         domainMap = self.domainMapping(edgv)
         fullTablaName = schema + "_" + table
-        sql = 'select code, code_name from dominios_{field} order by code'
+        sql = "select code, code_name from dominios_{field} order by code"
         for fieldName in self.tableFields(fullTablaName):
             if fullTablaName in domainMap:
                 domains = domainMap[fullTablaName]
@@ -165,7 +169,19 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
                 ret[fieldName][code_name] = code
         return ret
 
-    def load(self, inputList, useQml=False, uniqueLoad=False, useInheritance=False, stylePath=None, onlyWithElements=False, geomFilterList=[], customForm=False, editingDict=None, parent=None):
+    def load(
+        self,
+        inputList,
+        useQml=False,
+        uniqueLoad=False,
+        useInheritance=False,
+        stylePath=None,
+        onlyWithElements=False,
+        geomFilterList=[],
+        customForm=False,
+        editingDict=None,
+        parent=None,
+    ):
         """
         1. Get loaded layers
         2. Filter layers;
@@ -174,11 +190,17 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         5. Build Groups;
         6. Load Layers;
         """
-        self.iface.mapCanvas().freeze() #done to speedup things
+        self.iface.mapCanvas().freeze()  # done to speedup things
         layerList, isDictList = self.preLoadStep(inputList)
-        #2. Filter Layers:
-        filteredLayerList = self.filterLayerList(layerList, False, onlyWithElements, geomFilterList)
-        filteredDictList = [i for i in inputList if i['tableName'] in filteredLayerList] if isDictList else filteredLayerList
+        # 2. Filter Layers:
+        filteredLayerList = self.filterLayerList(
+            layerList, False, onlyWithElements, geomFilterList
+        )
+        filteredDictList = (
+            [i for i in inputList if i["tableName"] in filteredLayerList]
+            if isDictList
+            else filteredLayerList
+        )
         edgvVersion = self.abstractDb.getDatabaseVersion()
         isEdgv = not edgvVersion == "Non_EDGV"
         rootNode = QgsProject.instance().layerTreeRoot()
@@ -191,41 +213,51 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         #       loaded in any of our current use cases, this will be ignored and set to an
         #       empty dict
         domLayerDict = dict()
-        #4. Get Aux dicts
-        lyrDict = self.getLyrDict(filteredDictList, isEdgv = isEdgv)
-        #5. Build Groups
+        # 4. Get Aux dicts
+        lyrDict = self.getLyrDict(filteredDictList, isEdgv=isEdgv)
+        # 5. Build Groups
         groupDict = self.prepareGroups(dbNode, lyrDict)
-        #5. load layers
+        # 5. load layers
         if parent:
             primNumber = 0
             for prim in list(lyrDict.keys()):
                 for cat in list(lyrDict[prim].keys()):
                     for lyr in lyrDict[prim][cat]:
                         primNumber += 1
-            localProgress = ProgressWidget(1, primNumber-1, self.tr('Loading layers... '), parent=parent)
+            localProgress = ProgressWidget(
+                1, primNumber - 1, self.tr("Loading layers... "), parent=parent
+            )
         loadedDict = dict()
         for prim in list(lyrDict.keys()):
             for cat in list(lyrDict[prim].keys()):
                 for lyr in lyrDict[prim][cat]:
                     try:
-                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], uniqueLoad, stylePath, domLayerDict)
+                        vlayer = self.loadLayer(
+                            lyr,
+                            groupDict[prim][cat],
+                            uniqueLoad,
+                            stylePath,
+                            domLayerDict,
+                        )
                         if vlayer:
                             if isinstance(lyr, dict):
-                                key = lyr['lyrName']
+                                key = lyr["lyrName"]
                             else:
                                 key = lyr
-                            loadedDict[key]=vlayer
+                            loadedDict[key] = vlayer
                     except Exception as e:
                         if isinstance(lyr, dict):
-                            key = lyr['lyrName']
+                            key = lyr["lyrName"]
                         else:
                             key = lyr
-                        self.logErrorDict[key] = self.tr('Error for layer ')+key+': '+':'.join(e.args)
+                        self.logErrorDict[key] = (
+                            self.tr("Error for layer ") + key + ": " + ":".join(e.args)
+                        )
                         self.logError()
                     if parent:
                         localProgress.step()
         self.removeEmptyNodes(dbNode)
-        self.iface.mapCanvas().freeze(False) #done to speedup things
+        self.iface.mapCanvas().freeze(False)  # done to speedup things
         return loadedDict
 
     def loadLayer(self, inputParam, parentNode, uniqueLoad, stylePath, domLayerDict):
@@ -242,11 +274,13 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         lyr = self.checkLoaded(tableName)
         if uniqueLoad and lyr:
             return lyr
-        self.setDataSource('', '_'.join([schema,tableName]), geomColumn, '')
+        self.setDataSource("", "_".join([schema, tableName]), geomColumn, "")
 
         vlayer = QgsVectorLayer(self.uri.uri(), tableName, self.provider)
-        QgsProject.instance().addMapLayer(vlayer, addToLegend = False)
-        crs = QgsCoordinateReferenceSystem(int(srid), QgsCoordinateReferenceSystem.EpsgCrsId)
+        QgsProject.instance().addMapLayer(vlayer, addToLegend=False)
+        crs = QgsCoordinateReferenceSystem(
+            int(srid), QgsCoordinateReferenceSystem.EpsgCrsId
+        )
         vlayer.setCrs(crs)
         # vlayer = self.setDomainsAndRestrictionsWithQml(vlayer)
         # vlayer = self.setMulti(vlayer, domLayerDict)
@@ -282,11 +316,11 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         :param domainGroup:
         :return:
         """
-        #TODO: Avaliar se o table = deve ser diferente
+        # TODO: Avaliar se o table = deve ser diferente
         uri = QgsDataSourceUri()
         uri.setDatabase(self.abstractDb.db.databaseName())
-        uri.setDataSource('', 'dominios_'+domainTableName, None)
-        #TODO Load domain layer into a group
+        uri.setDataSource("", "dominios_" + domainTableName, None)
+        # TODO Load domain layer into a group
         domLayer = self.iface.addVectorLayer(uri.uri(), domainTableName, self.provider)
         self.iface.legendInterface().moveLayer(domLayer, domainGroup)
         return domLayer
@@ -294,7 +328,9 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
     def getStyleFromDb(self, edgvVersion, className):
         return None
 
-    def filterLayerList(self, layerList, useInheritance, onlyWithElements, geomFilterList):
+    def filterLayerList(
+        self, layerList, useInheritance, onlyWithElements, geomFilterList
+    ):
         """
         Filters the layers to be loaded
         :param layerList: list of layers
@@ -305,7 +341,9 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         """
         filterList = []
         if onlyWithElements:
-            semifinalList = self.abstractDb.getLayersWithElementsV2(layerList, useInheritance=False)
+            semifinalList = self.abstractDb.getLayersWithElementsV2(
+                layerList, useInheritance=False
+            )
         else:
             semifinalList = layerList
         if len(geomFilterList) > 0:
@@ -314,12 +352,12 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
                 if self.correspondenceDict[key] in geomFilterList:
                     if key in self.geomTypeDict:
                         for lyr in semifinalList:
-                            if lyr in self.geomTypeDict[key] and  lyr not in finalList:
+                            if lyr in self.geomTypeDict[key] and lyr not in finalList:
                                 finalList.append(lyr)
         else:
             finalList = semifinalList
         return finalList
-    
+
     def setMulti(self, vlayer, domLayerDict):
         """
         Sets attributes with value relation
@@ -327,15 +365,15 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         :param domLayerDict:
         :return:
         """
-        #sweep vlayer to find v2
+        # sweep vlayer to find v2
         attrList = vlayer.fields()
         for field in attrList:
             i = attrList.lookupField(field.name())
             editorWidgetSetup = vlayer.editorWidgetSetup(i)
-            if editorWidgetSetup.type() == 'ValueRelation':
+            if editorWidgetSetup.type() == "ValueRelation":
                 valueRelationDict = editorWidgetSetup.config()
                 domLayer = domLayerDict[vlayer.name()][field.name()]
-                valueRelationDict['Layer'] = domLayer.id()
+                valueRelationDict["Layer"] = domLayer.id()
                 vlayer.setEditorWidgetSetup(i, valueRelationDict)
         return vlayer
 
@@ -343,11 +381,11 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         """
         Return the layer layer from a given layer name.
         :param layer: (str) layer name.
-        :return: (QgsVectorLayer) vector layer. 
+        :return: (QgsVectorLayer) vector layer.
         """
         # parent class reimplementation
-        schema = layer.split('_')[0]
-        table = layer[len(schema) + 1:]
+        schema = layer.split("_")[0]
+        table = layer[len(schema) + 1 :]
         lyrName, schema, geomColumn, tableName, srid = self.getParams(table)
-        self.setDataSource('', layer, geomColumn, '')
+        self.setDataSource("", layer, geomColumn, "")
         return QgsVectorLayer(self.uri.uri(), table, self.provider)

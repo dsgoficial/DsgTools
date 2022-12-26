@@ -21,11 +21,16 @@
  ***************************************************************************/
 """
 
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.abstractSelectionWidget import AbstractSelectionWidget
-from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.connectionComboBox import ConnectionComboBox
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.abstractSelectionWidget import (
+    AbstractSelectionWidget,
+)
+from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.connectionComboBox import (
+    ConnectionComboBox,
+)
 from DsgTools.core.dsgEnums import DsgEnums
 
 import os
+
 
 class PostgisWidget(AbstractSelectionWidget):
     """
@@ -57,7 +62,11 @@ class PostgisWidget(AbstractSelectionWidget):
         Gets the datasource connection name.
         :return: (str) datasource connection name.
         """
-        return self.selectionWidget.connectionSelectorComboBox.currentText() if self.selectionWidget else ''
+        return (
+            self.selectionWidget.connectionSelectorComboBox.currentText()
+            if self.selectionWidget
+            else ""
+        )
 
     def getDatasourcePath(self):
         """
@@ -67,8 +76,10 @@ class PostgisWidget(AbstractSelectionWidget):
         abstractDb = self.getDatasource()
         if abstractDb:
             host, port, username, _ = abstractDb.getDatabaseParameters()
-            return 'pg:{2}@{0}:{1}.{3}'.format(host, port, username, self.getDatasourceConnectionName())
-        return ''
+            return "pg:{2}@{0}:{1}.{3}".format(
+                host, port, username, self.getDatasourceConnectionName()
+            )
+        return ""
 
     def setDatasource(self, newDatasource):
         """
@@ -77,16 +88,22 @@ class PostgisWidget(AbstractSelectionWidget):
         """
         # the input parameter is a dict due to a standard behavior on the other widgets (keep parallel)
         if self.selectionWidget:
-            for db, (serverName, host, port, username, password) in newDatasource.items():
+            for db, (
+                serverName,
+                host,
+                port,
+                username,
+                password,
+            ) in newDatasource.items():
                 self.selectionWidget.setHost(serverName)
                 self.selectionWidget.connectionSelectorComboBox.setCurrentIndex(
                     self.selectionWidget.connectionSelectorComboBox.findText(db)
                 )
-                return # first item will be set (if more than one is given)
+                return  # first item will be set (if more than one is given)
 
     def getDatasource(self):
         """
         Gets the datasource selected on current widget.
-        :return: (AbstractDb) the object representing the target datasource according to its driver. 
+        :return: (AbstractDb) the object representing the target datasource according to its driver.
         """
         return self.selectionWidget.abstractDb

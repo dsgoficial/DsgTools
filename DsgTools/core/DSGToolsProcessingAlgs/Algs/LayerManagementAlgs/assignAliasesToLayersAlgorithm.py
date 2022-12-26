@@ -21,59 +21,64 @@
  ***************************************************************************/
 """
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterString,
-                       QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterString,
-                       QgsEditorWidgetSetup)
+from qgis.core import (
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterFile,
+    QgsProcessingParameterString,
+    QgsProcessingOutputMultipleLayers,
+    QgsProcessingParameterString,
+    QgsEditorWidgetSetup,
+)
 from PyQt5.QtGui import QColor
 from qgis.PyQt.Qt import QVariant
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterExpression,
-                       QgsProcessingException,
-                       QgsProcessingParameterString,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterType,
-                       QgsProcessingParameterCrs,
-                       QgsCoordinateTransform,
-                       QgsProject,
-                       QgsCoordinateReferenceSystem,
-                       QgsField,
-                       QgsFields,
-                       QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterString,
-                       QgsConditionalStyle)
+from qgis.core import (
+    QgsProcessing,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFeatureSink,
+    QgsFeature,
+    QgsDataSourceUri,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsGeometry,
+    QgsProcessingParameterField,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterFile,
+    QgsProcessingParameterExpression,
+    QgsProcessingException,
+    QgsProcessingParameterString,
+    QgsProcessingParameterDefinition,
+    QgsProcessingParameterType,
+    QgsProcessingParameterCrs,
+    QgsCoordinateTransform,
+    QgsProject,
+    QgsCoordinateReferenceSystem,
+    QgsField,
+    QgsFields,
+    QgsProcessingOutputMultipleLayers,
+    QgsProcessingParameterString,
+    QgsConditionalStyle,
+)
 from operator import itemgetter
 from collections import defaultdict
 import json, os
 
+
 class AssignAliasesToLayersAlgorithm(QgsProcessingAlgorithm):
-    INPUT_LAYERS = 'INPUT_LAYERS'
-    FILE = 'FILE'
-    TEXT = 'TEXT'
-    OUTPUT = 'OUTPUT'
+    INPUT_LAYERS = "INPUT_LAYERS"
+    FILE = "FILE"
+    TEXT = "TEXT"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -82,32 +87,29 @@ class AssignAliasesToLayersAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LAYERS,
-                self.tr('Input Layers'),
-                QgsProcessing.TypeVectorAnyGeometry
+                self.tr("Input Layers"),
+                QgsProcessing.TypeVectorAnyGeometry,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFile(
-                self.FILE,
-                self.tr('Input json file'),
-                defaultValue = ".json"
+                self.FILE, self.tr("Input json file"), defaultValue=".json"
             )
         )
 
         self.addParameter(
             QgsProcessingParameterString(
                 self.TEXT,
-                description =  self.tr('Input json text'),
-                multiLine = True,
-                defaultValue = '[]'
+                description=self.tr("Input json text"),
+                multiLine=True,
+                defaultValue="[]",
             )
         )
 
         self.addOutput(
             QgsProcessingOutputMultipleLayers(
-                self.OUTPUT,
-                self.tr('Original layers id with aliases')
+                self.OUTPUT, self.tr("Original layers id with aliases")
             )
         )
 
@@ -116,22 +118,10 @@ class AssignAliasesToLayersAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
 
         """
-        inputLyrList = self.parameterAsLayerList(
-            parameters,
-            self.INPUT_LAYERS,
-            context
-        )
-        inputJSONFile = self.parameterAsFile(
-            parameters,
-            self.FILE,
-            context
-        )
+        inputLyrList = self.parameterAsLayerList(parameters, self.INPUT_LAYERS, context)
+        inputJSONFile = self.parameterAsFile(parameters, self.FILE, context)
         inputJSONData = json.loads(
-            self.parameterAsString(
-                parameters,
-                self.TEXT,
-                context
-            )
+            self.parameterAsString(parameters, self.TEXT, context)
         )
         if os.path.exists(inputJSONFile):
             self.loadAliasFromJSONFile(inputJSONFile, inputLyrList, feedback)
@@ -144,34 +134,38 @@ class AssignAliasesToLayersAlgorithm(QgsProcessingAlgorithm):
     def loadAliasFromJSONFile(self, inputJSONFile, inputLyrList, feedback):
         inputJSONData = json.load(inputJSONFile)
         self.loadAliasFromJSONData(inputJSONData, inputLyrList, feedback)
-            
+
     def loadAliasFromJSONData(self, inputJSONData, inputLyrList, feedback):
         listSize = len(inputLyrList)
-        progressStep = 100/listSize if listSize else 0
-        layerNames = [ item['camadaNome'] for item in inputJSONData]
+        progressStep = 100 / listSize if listSize else 0
+        layerNames = [item["camadaNome"] for item in inputJSONData]
         for current, lyr in enumerate(inputLyrList):
-            
+
             if feedback.isCanceled():
                 break
 
-            feedback.setProgress(current*progressStep)
-            
-            if not(lyr.dataProvider().uri().table() in layerNames):
+            feedback.setProgress(current * progressStep)
+
+            if not (lyr.dataProvider().uri().table() in layerNames):
                 continue
-            
+
             layerIdx = layerNames.index(lyr.dataProvider().uri().table())
-            
-            layerAlias = inputJSONData[layerIdx]['camadaApelido']
+
+            layerAlias = inputJSONData[layerIdx]["camadaApelido"]
             if layerAlias:
                 lyr.setName(layerAlias)
 
-            attributeAlias = inputJSONData[layerIdx]['atributosApelido']
+            attributeAlias = inputJSONData[layerIdx]["atributosApelido"]
             if len(attributeAlias) > 0:
                 for attr in attributeAlias:
                     idx = lyr.fields().indexOf(attr["nome"])
-                    if not(idx > 0):
+                    if not (idx > 0):
                         continue
-                    oldEditor = QgsEditorWidgetSetup(lyr.editorWidgetSetup(idx)) if lyr.editorWidgetSetup(idx).config() else None
+                    oldEditor = (
+                        QgsEditorWidgetSetup(lyr.editorWidgetSetup(idx))
+                        if lyr.editorWidgetSetup(idx).config()
+                        else None
+                    )
                     lyr.setFieldAlias(idx, attr["alias"])
                     if oldEditor is not None:
                         lyr.setEditorWidgetSetup(idx, oldEditor)
@@ -184,21 +178,21 @@ class AssignAliasesToLayersAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'assignaliasestolayersalgorithm'
+        return "assignaliasestolayersalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Assign Aliases to Layers')
+        return self.tr("Assign Aliases to Layers")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Layer Management Algorithms')
+        return self.tr("Layer Management Algorithms")
 
     def groupId(self):
         """
@@ -208,10 +202,10 @@ class AssignAliasesToLayersAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Layer Management Algorithms'
+        return "DSGTools: Layer Management Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate('AssignAliasesToLayersAlgorithm', string)
+        return QCoreApplication.translate("AssignAliasesToLayersAlgorithm", string)
 
     def createInstance(self):
         return AssignAliasesToLayersAlgorithm()

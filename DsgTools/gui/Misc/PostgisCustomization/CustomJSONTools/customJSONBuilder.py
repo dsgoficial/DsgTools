@@ -21,41 +21,101 @@
  ***************************************************************************/
 """
 import json
-#Qt Imports
+
+# Qt Imports
 from qgis.PyQt.Qt import QObject
-#DsgTools Imports
+
+# DsgTools Imports
+
 
 class CustomJSONBuilder(QObject):
     def __init__(self):
-        super(CustomJSONBuilder,self).__init__()
+        super(CustomJSONBuilder, self).__init__()
 
     def buildClassElement(self, schema, name, attrList):
-        return {'schema':schema, 'name':name, 'attrs':attrList}
+        return {"schema": schema, "name": name, "attrs": attrList}
 
     def buildNewAttributeElement(self, schema, name, attrList, childrenToAlter=[]):
-        return {'schema':schema, 'name':name, 'attrs':attrList, 'childrenToAlter':childrenToAlter}
+        return {
+            "schema": schema,
+            "name": name,
+            "attrs": attrList,
+            "childrenToAlter": childrenToAlter,
+        }
 
-    def buildAttributeElement(self, attrName, attrType, isPk, isNullable, defaultValue = None, references = None, filter=[]):
-        return {'attrName':attrName, 'attrType':attrType, 'isPk':isPk, 'isNullable':isNullable, 'defaultValue':defaultValue, 'references':references, 'filter':filter}
+    def buildAttributeElement(
+        self,
+        attrName,
+        attrType,
+        isPk,
+        isNullable,
+        defaultValue=None,
+        references=None,
+        filter=[],
+    ):
+        return {
+            "attrName": attrName,
+            "attrType": attrType,
+            "isPk": isPk,
+            "isNullable": isNullable,
+            "defaultValue": defaultValue,
+            "references": references,
+            "filter": filter,
+        }
 
     def addDomainTableElement(self, domainName, valueDict):
-        return {'domainName':domainName, 'valueDict': valueDict}
+        return {"domainName": domainName, "valueDict": valueDict}
 
     def addValueToValueDict(self, valueDict, code, codeName):
         if code not in list(valueDict.keys()):
             valueDict[code] = codeName
 
-    def buildCodeNameToChangeElement(self, domainTable, codeValue, oldCodeName, newCodeName):
-        return {'domainTable':domainTable, 'codeValue':codeValue, 'oldCodeName':oldCodeName, 'newCodeName':newCodeName}
+    def buildCodeNameToChangeElement(
+        self, domainTable, codeValue, oldCodeName, newCodeName
+    ):
+        return {
+            "domainTable": domainTable,
+            "codeValue": codeValue,
+            "oldCodeName": oldCodeName,
+            "newCodeName": newCodeName,
+        }
 
     def buildChangeDefaultElement(self, schema, table, attrName, oldValue, newValue):
-        return {'schema': schema, 'table': table, 'attrName':attrName, 'oldValue':oldValue, 'newValue':newValue}
+        return {
+            "schema": schema,
+            "table": table,
+            "attrName": attrName,
+            "oldValue": oldValue,
+            "newValue": newValue,
+        }
 
     def buildChangeNullityElement(self, schema, table, attrName, notNull):
-        return {'schema':schema, 'table':table, 'attrName':attrName, 'notNull':notNull}
+        return {
+            "schema": schema,
+            "table": table,
+            "attrName": attrName,
+            "notNull": notNull,
+        }
 
     def addDomainValueElement(self, domainName, code, codeName):
-        return {'domainName':domainName, 'code':code, 'codeName':codeName}
+        return {"domainName": domainName, "code": code, "codeName": codeName}
 
-    def alterFilterElement(self, schema, tableName, attrName, filterName, originalFilterList, valueList, isMulti = False):
-        return {'schema':schema, 'tableName':tableName, 'attrName':attrName, 'filterName':filterName,'originalFilterList':originalFilterList, 'valueList':valueList, 'isMulti':isMulti}
+    def alterFilterElement(
+        self,
+        schema,
+        tableName,
+        attrName,
+        filterName,
+        originalFilterList,
+        valueList,
+        isMulti=False,
+    ):
+        return {
+            "schema": schema,
+            "tableName": tableName,
+            "attrName": attrName,
+            "filterName": filterName,
+            "originalFilterList": originalFilterList,
+            "valueList": valueList,
+            "isMulti": isMulti,
+        }

@@ -23,14 +23,15 @@ from qgis import core, gui
 from qgis.utils import iface
 from qgis.core import QgsGeometry
 
+
 class AcquisitionFree(gui.QgsMapTool):
- 
-    #Sinal usado para enviar a geometria adquirida ao finalizar aquisição
+
+    # Sinal usado para enviar a geometria adquirida ao finalizar aquisição
     acquisitionFinished = QtCore.pyqtSignal(QgsGeometry)
     reshapeLineCreated = QtCore.pyqtSignal(QgsGeometry)
 
     def __init__(self, iface):
-        #construtor
+        # construtor
         self.iface = iface
         self.canvas = iface.mapCanvas()
         super(AcquisitionFree, self).__init__(self.canvas)
@@ -41,125 +42,131 @@ class AcquisitionFree(gui.QgsMapTool):
         self.active = False
         self.contadorVert = 0
         self.stopState = False
-        self.cur = QtGui.QCursor(QtGui.QPixmap(["18 13 4 1",
-                                    "           c None",
-                                    "#          c #FF0000",
-                                    ".          c #FF0000",
-                                    "+          c #1210f3",
-                                    "                 ", 
-                                    "   +++++++++++   ",
-                                    "  +     #     +  ",
-                                    " +      #      + ",
-                                    "+       #       +",
-                                    "+       #       +",
-                                    "++#############++", 
-                                    "+       #       +",
-                                    "+       #       +",
-                                    " +      #      +",
-                                    "  +     #     +  ",
-                                    "   +++++++++++   ",
-                                    "                 ",]))
+        self.cur = QtGui.QCursor(
+            QtGui.QPixmap(
+                [
+                    "18 13 4 1",
+                    "           c None",
+                    "#          c #FF0000",
+                    ".          c #FF0000",
+                    "+          c #1210f3",
+                    "                 ",
+                    "   +++++++++++   ",
+                    "  +     #     +  ",
+                    " +      #      + ",
+                    "+       #       +",
+                    "+       #       +",
+                    "++#############++",
+                    "+       #       +",
+                    "+       #       +",
+                    " +      #      +",
+                    "  +     #     +  ",
+                    "   +++++++++++   ",
+                    "                 ",
+                ]
+            )
+        )
         self.controlPressed = False
 
     def setCursor(self, cursor):
-        #Método para definir cursor da ferramenta
-        #Parâmetro de entrada: cursor (cursor usado na ferramenta)
-        self.cur = cursor 
+        # Método para definir cursor da ferramenta
+        # Parâmetro de entrada: cursor (cursor usado na ferramenta)
+        self.cur = cursor
 
     def getCursor(self):
-        #Método para obter cursor da ferramenta
-        #Parâmetro de retorno: cursor (cursor usado na ferramenta)
+        # Método para obter cursor da ferramenta
+        # Parâmetro de retorno: cursor (cursor usado na ferramenta)
         return self.cur
 
     def setCanvas(self, canvas):
-        #Método para definir o canvas do Qgis
-        #Parâmetro de entrada: canvas (Canvas do Qgis)
+        # Método para definir o canvas do Qgis
+        # Parâmetro de entrada: canvas (Canvas do Qgis)
         self.canvas = canvas
 
     def getCanvas(self):
-        #Método para obter o canvas do Qgis
-        #Parâmetro de retorno: canvas (Canvas do Qgis)
+        # Método para obter o canvas do Qgis
+        # Parâmetro de retorno: canvas (Canvas do Qgis)
         return self.canvas
 
     def setActiveState(self, state):
-        #Método para definir se a ferramenta está ativa ou não
-        #Parâmetro de entrada: state (Boleano)
-        self.active = state 
-    
+        # Método para definir se a ferramenta está ativa ou não
+        # Parâmetro de entrada: state (Boleano)
+        self.active = state
+
     def getActiveState(self):
-        #Método para obter se a ferramenta está ativa ou não
-        #Parâmetro de retorno: state (Boleano)
+        # Método para obter se a ferramenta está ativa ou não
+        # Parâmetro de retorno: state (Boleano)
         return self.active
-     
+
     def setStopedState(self, state):
-        #Método para definir se a ferramenta está pausada
-        #Parâmetro de entrada: state (Boleano)
+        # Método para definir se a ferramenta está pausada
+        # Parâmetro de entrada: state (Boleano)
         self.stopState = state
-    
+
     def getStopedState(self):
-        #Método para obter se a ferramenta está pausada
-        #Parâmetro de retorno: state (Boleano)
+        # Método para obter se a ferramenta está pausada
+        # Parâmetro de retorno: state (Boleano)
         return self.stopState
 
     def setDrawingState(self, state):
-        #Método para definir se a ferramenta está desenhando
-        #Parâmetro de entrada: state (Boleano)
+        # Método para definir se a ferramenta está desenhando
+        # Parâmetro de entrada: state (Boleano)
         self.drawing = state
 
     def getDrawingState(self):
-        #Método para obter se a ferramenta está desenhando
-        #Parâmetro de retorno: state (Boleano)
+        # Método para obter se a ferramenta está desenhando
+        # Parâmetro de retorno: state (Boleano)
         return self.drawing
 
     def setRubberBand(self, rb):
-        #Método para definir o rubberBand de aquisição
-        #Parâmetro de entrada: rb (rubberBand)
+        # Método para definir o rubberBand de aquisição
+        # Parâmetro de entrada: rb (rubberBand)
         self.rubberBand = rb
 
     def getRubberBand(self):
-        #Método para obter o rubberBand de aquisição
-        #Parâmetro de retorno: rb (rubberBand)
+        # Método para obter o rubberBand de aquisição
+        # Parâmetro de retorno: rb (rubberBand)
         return self.rubberBand
 
     def setRubberBandToStopState(self, rb):
-        #Método para definir o rubberBand de pausa da ferramenta
-        #Parâmetro de entrada: rb (rubberBand)
+        # Método para definir o rubberBand de pausa da ferramenta
+        # Parâmetro de entrada: rb (rubberBand)
         self.rubberBandToStopState = rb
 
     def getRubberBandToStopState(self):
-        #Método para obter o rubberBand de pausa da ferramenta
-        #Parâmetro de retorno: rb (rubberBand)
+        # Método para obter o rubberBand de pausa da ferramenta
+        # Parâmetro de retorno: rb (rubberBand)
         return self.rubberBandToStopState
 
     def setGeometryType(self, geomType):
-        #Método para definir o tipo da geometria
-        #Parâmetro de entrada: geomType (Tipo da geometria)
+        # Método para definir o tipo da geometria
+        # Parâmetro de entrada: geomType (Tipo da geometria)
         self.geometryType = geomType
 
     def getGeometryType(self):
-        #Método para obter o tipo da geometria
-        #Parâmetro de retorno: geomType (Tipo da geometria)
+        # Método para obter o tipo da geometria
+        # Parâmetro de retorno: geomType (Tipo da geometria)
         return self.geometryType
 
     def setSnapRubberBand(self, snapRb):
-        #Método para definir o rubberBand do snap
-        #Parâmetro de entrada: rb (rubberBand)
-        self.snapCursorRubberBand = snapRb   
+        # Método para definir o rubberBand do snap
+        # Parâmetro de entrada: rb (rubberBand)
+        self.snapCursorRubberBand = snapRb
 
     def getSnapRubberBand(self):
-        #Método para obter o rubberBand do snap
-        #Parâmetro de entrada: rb (rubberBand)
+        # Método para obter o rubberBand do snap
+        # Parâmetro de entrada: rb (rubberBand)
         return self.snapCursorRubberBand
 
     def isPolygon(self):
-        #Método para testar se a camada atual é polígono
-        #Parâmetro de retorno: isPolygon (Boleano)
-        isPolygon = (self.getGeometryType() != core.QgsWkbTypes.LineGeometry)
+        # Método para testar se a camada atual é polígono
+        # Parâmetro de retorno: isPolygon (Boleano)
+        isPolygon = self.getGeometryType() != core.QgsWkbTypes.LineGeometry
         return isPolygon
-        
+
     def keyPressEvent(self, event):
-        #Método para receber os eventos do teclado
-        #Parâmetro de entrada: event (Evento que chamou o método)
+        # Método para receber os eventos do teclado
+        # Parâmetro de entrada: event (Evento que chamou o método)
         if event.key() in [QtCore.Qt.Key_Delete, QtCore.Qt.Key_Backspace]:
             self.setStopedState(True)
             self.removeVertice()
@@ -168,8 +175,8 @@ class AcquisitionFree(gui.QgsMapTool):
             self.cancelEdition()
             event.ignore()
 
-    def cancelEdition(self): 
-        #Método para cancelar aquisição
+    def cancelEdition(self):
+        # Método para cancelar aquisição
         self.getRubberBand().reset() if self.getRubberBand() else None
         self.getRubberBandToStopState().reset() if self.getRubberBandToStopState() else None
         self.setRubberBand(None)
@@ -177,18 +184,18 @@ class AcquisitionFree(gui.QgsMapTool):
         self.setActiveState(False)
         self.contadorVert = 0
         self.getCanvas().refresh()
-    
+
     def getParametersFromConfig(self):
-        #Método para obter as configurações da tool do QSettings
-        #Parâmetro de retorno: parameters (Todas os parâmetros do QSettings usado na ferramenta)
+        # Método para obter as configurações da tool do QSettings
+        # Parâmetro de retorno: parameters (Todas os parâmetros do QSettings usado na ferramenta)
         settings = QtCore.QSettings()
-        settings.beginGroup('PythonPlugins/DsgTools/Options')
-        undoPoints = settings.value('undoPoints')
+        settings.beginGroup("PythonPlugins/DsgTools/Options")
+        undoPoints = settings.value("undoPoints")
         settings.endGroup()
         return int(undoPoints)
-   
+
     def removeVertice(self):
-        #Método para remover vertices
+        # Método para remover vertices
         firstPoint = None
         lastPoint = None
         rubberBand = self.getRubberBand()
@@ -198,13 +205,17 @@ class AcquisitionFree(gui.QgsMapTool):
                 rubberBand.removeLastPoint()
             if not self.isPolygon():
                 lastPoint = rubberBand.asGeometry().asPolyline()[-1]
-                new_rubberBand = gui.QgsRubberBand(self.getCanvas(), core.QgsWkbTypes.LineGeometry)
+                new_rubberBand = gui.QgsRubberBand(
+                    self.getCanvas(), core.QgsWkbTypes.LineGeometry
+                )
                 new_rubberBand.setColor(QtGui.QColor(255, 0, 0, 150))
-            else:                
+            else:
                 if len(rubberBand.asGeometry().asPolygon()[0]) > 1:
                     firstPoint = rubberBand.asGeometry().asPolygon()[0][0]
                     lastPoint = rubberBand.asGeometry().asPolygon()[0][-2]
-                new_rubberBand = gui.QgsRubberBand(self.getCanvas(), core.QgsWkbTypes.PolygonGeometry)
+                new_rubberBand = gui.QgsRubberBand(
+                    self.getCanvas(), core.QgsWkbTypes.PolygonGeometry
+                )
                 new_rubberBand.setColor(QtGui.QColor(255, 0, 0, 63))
             new_rubberBand.setWidth(1)
             rubberBandToStopState = self.getRubberBandToStopState()
@@ -217,30 +228,29 @@ class AcquisitionFree(gui.QgsMapTool):
             self.setRubberBandToStopState(new_rubberBand)
         elif rubberBand:
             self.setStopedState(False)
-            self.getRubberBandToStopState().reset() if self.getRubberBandToStopState() else ''
+            self.getRubberBandToStopState().reset() if self.getRubberBandToStopState() else ""
             self.cancelEdition()
 
     def createSnapCursor(self, point):
-        #Método para criar rubberBand do snap
+        # Método para criar rubberBand do snap
         rubberBand = self.getSnapRubberBand()
         if rubberBand:
             rubberBand.reset()
         else:
             rubberBand = gui.QgsRubberBand(
-                self.getCanvas(), 
-                geometryType = core.QgsWkbTypes.PointGeometry
+                self.getCanvas(), geometryType=core.QgsWkbTypes.PointGeometry
             )
         rubberBand.setColor(QtGui.QColor(255, 0, 0, 200))
         rubberBand.setFillColor(QtGui.QColor(255, 0, 0, 40))
         rubberBand.setWidth(5)
         rubberBand.setIcon(gui.QgsRubberBand.ICON_X)
         rubberBand.addPoint(point)
-        self.setSnapRubberBand(rubberBand)         
-		    
+        self.setSnapRubberBand(rubberBand)
+
     def canvasReleaseEvent(self, event):
-        #Método para receber os eventos release do canvas do Qgis
-        #Parâmetro de entrada: event (Evento que chamou o método)
-        self.getRubberBandToStopState().reset() if self.getRubberBandToStopState() else ''
+        # Método para receber os eventos release do canvas do Qgis
+        # Parâmetro de entrada: event (Evento que chamou o método)
+        self.getRubberBandToStopState().reset() if self.getRubberBandToStopState() else ""
         if self.getStopedState():
             self.setStopedState(False)
         elif self.getActiveState():
@@ -251,8 +261,8 @@ class AcquisitionFree(gui.QgsMapTool):
             self.startEdition(event)
 
     def startEdition(self, event):
-        #Método para iniciar a aquisição
-        #Parâmetro de entrada: event (Evento)
+        # Método para iniciar a aquisição
+        # Parâmetro de entrada: event (Evento)
         snapRubberBand = self.getSnapRubberBand()
         if snapRubberBand:
             snapRubberBand.reset(geometryType=core.QgsWkbTypes.PointGeometry)
@@ -260,29 +270,33 @@ class AcquisitionFree(gui.QgsMapTool):
             self.setSnapRubberBand(None)
         layer = self.getCanvas().currentLayer()
         if layer:
-            mapPoint = event.snapPoint()            
+            mapPoint = event.snapPoint()
             self.startRubberBand(mapPoint, layer)
 
     def startRubberBand(self, pointMap, layer):
-        #Método para iniciar o rubberBand da aquisição
-        #Parâmetro de entrada: pointMap (Primeiro ponto da feição em aquisição), layer (Camada ativa)
+        # Método para iniciar o rubberBand da aquisição
+        # Parâmetro de entrada: pointMap (Primeiro ponto da feição em aquisição), layer (Camada ativa)
         self.setDrawingState(True)
         self.setGeometryType(layer.geometryType())
         if self.isPolygon():
-            rubberBand = gui.QgsRubberBand(self.getCanvas(), core.QgsWkbTypes.PolygonGeometry)
+            rubberBand = gui.QgsRubberBand(
+                self.getCanvas(), core.QgsWkbTypes.PolygonGeometry
+            )
             rubberBand.setColor(QtGui.QColor(255, 0, 0, 63))
             rubberBand.setWidth(2)
         else:
-            rubberBand = gui.QgsRubberBand(self.getCanvas(), core.QgsWkbTypes.LineGeometry)
+            rubberBand = gui.QgsRubberBand(
+                self.getCanvas(), core.QgsWkbTypes.LineGeometry
+            )
             rubberBand.setColor(QtGui.QColor(255, 0, 0, 150))
             rubberBand.setWidth(1)
         rubberBand.addPoint(pointMap)
         self.setRubberBand(rubberBand)
-        
+
     def canvasMoveEvent(self, event):
-        #Método para receber os eventos canvas move do Qgis
-        #Parâmetro de entrada: event (Evento que chamou o método)
-        if not(self.getStopedState()):
+        # Método para receber os eventos canvas move do Qgis
+        # Parâmetro de entrada: event (Evento que chamou o método)
+        if not (self.getStopedState()):
             snapRubberBand = self.getSnapRubberBand()
             if snapRubberBand:
                 snapRubberBand.hide()
@@ -291,21 +305,23 @@ class AcquisitionFree(gui.QgsMapTool):
             oldPoint = event.mapPoint()
             event.snapPoint()
             point = event.mapPoint()
-            self.createSnapCursor(point) if oldPoint != point else ''
+            self.createSnapCursor(point) if oldPoint != point else ""
             if self.getRubberBand() and self.getRubberBand().numberOfVertices() == 0:
                 self.getRubberBand().addPoint(point)
             elif self.getRubberBand():
                 self.getRubberBand().addPoint(oldPoint)
         if self.getRubberBandToStopState():
-            self.updateRubberBandToStopState(
-                self.toMapCoordinates( event.pos() )
-            )
+            self.updateRubberBandToStopState(self.toMapCoordinates(event.pos()))
 
     def updateRubberBandToStopState(self, point):
-        #Método para atualizar o rubberband do pause da ferramenta
+        # Método para atualizar o rubberband do pause da ferramenta
         rubberBand = self.getRubberBandToStopState()
         if rubberBand.asGeometry():
-            listPoints = rubberBand.asGeometry().asPolygon() if self.isPolygon() else rubberBand.asGeometry().asPolyline()
+            listPoints = (
+                rubberBand.asGeometry().asPolygon()
+                if self.isPolygon()
+                else rubberBand.asGeometry().asPolyline()
+            )
             if self.isPolygon() and self.getRubberBand():
                 rubberBand.reset(geometryType=core.QgsWkbTypes.PolygonGeometry)
                 firstPoint = self.getRubberBand().asGeometry().asPolygon()[0][0]
@@ -313,12 +329,12 @@ class AcquisitionFree(gui.QgsMapTool):
                 rubberBand.addPoint(secondPoint)
                 rubberBand.addPoint(point)
                 rubberBand.addPoint(firstPoint)
-            elif not(self.isPolygon()) and len(listPoints) >= 1:
+            elif not (self.isPolygon()) and len(listPoints) >= 1:
                 rubberBand.removeLastPoint()
                 rubberBand.addPoint(point)
 
     def finishEdition(self, event):
-        #Método para finalizar a aquisição
+        # Método para finalizar a aquisição
         if self.getRubberBand():
             event.snapPoint()
             self.getRubberBand().addPoint(event.mapPoint())
@@ -333,7 +349,7 @@ class AcquisitionFree(gui.QgsMapTool):
         self.cancelEdition()
 
     def doReshape(self, geom):
-        line = ''
+        line = ""
         if geom.type() == core.QgsWkbTypes.LineGeometry:
             line = geom.asPolyline()
         elif geom.type() == core.QgsWkbTypes.PolygonGeometry:
@@ -342,11 +358,11 @@ class AcquisitionFree(gui.QgsMapTool):
             else:
                 line = geom.asPolygon()[0]
             del line[-1]
-        
+
         self.reshapeLineCreated.emit(QgsGeometry.fromPolylineXY(line))
 
     def activate(self):
-        #Método chamado ao ativar a ferramenta
+        # Método chamado ao ativar a ferramenta
         mapCanvas = self.getCanvas()
         mapCanvas.setCursor(self.getCursor())
 

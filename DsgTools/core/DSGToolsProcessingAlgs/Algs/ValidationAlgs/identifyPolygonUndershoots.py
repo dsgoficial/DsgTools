@@ -26,10 +26,14 @@ import os
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing, QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterNumber, QgsWkbTypes)
+from qgis.core import (
+    QgsProcessing,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterNumber,
+    QgsWkbTypes,
+)
 
 from .validationAlgorithm import ValidationAlgorithm
 
@@ -167,8 +171,8 @@ class IdentifyPolygonUndershootsAlgorithm(ValidationAlgorithm):
                 if geom.distance(boundGeom) > 10**-9:
                     return geom
             return None
-        
-        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
+
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
         futures = set()
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
@@ -210,7 +214,7 @@ class IdentifyPolygonUndershootsAlgorithm(ValidationAlgorithm):
             inputSource, context, feedback=multiStepFeedback
         )
         currentStep += 1
-        
+
         multiStepFeedback.setCurrentStep(currentStep)
         if boundaryLyr.geometryType() == QgsWkbTypes.LineGeometry:
             boundaryLyr = algRunner.runExplodeLines(

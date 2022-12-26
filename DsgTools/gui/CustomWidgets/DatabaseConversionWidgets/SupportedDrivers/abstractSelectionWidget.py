@@ -25,7 +25,10 @@ from qgis.PyQt.QtCore import QObject
 from qgis.utils import iface
 
 from DsgTools.core.dsgEnums import DsgEnums
-from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import (
+    LayerLoaderFactory,
+)
+
 
 class AbstractSelectionWidget(QObject):
     """
@@ -34,6 +37,7 @@ class AbstractSelectionWidget(QObject):
     1- Define common methods to all manageable drivers
     2- Set and define generic behavior method for reimplementation in all children.
     """
+
     def __init__(self, parent=None):
         """
         Class constructor.
@@ -41,13 +45,11 @@ class AbstractSelectionWidget(QObject):
         :param source: (str) driver codename to have its widget produced.
         """
         super(AbstractSelectionWidget, self).__init__()
-        self.source = ''
+        self.source = ""
         self.selectionWidget = None
 
     def __del__(self):
-        """
-        
-        """
+        """ """
         abstractDb = self.getDatasource()
         if abstractDb is not None:
             abstractDb.closeDatabase()
@@ -61,17 +63,17 @@ class AbstractSelectionWidget(QObject):
         :return: (str) selection widget user-friendly name for selected driver.
         """
         if not source:
-            return self.tr('No database selected.')
+            return self.tr("No database selected.")
         sourceNameDict = {
-            DsgEnums.NoDriver : self.tr('Select a datasource driver'),
-            DsgEnums.PostGIS : 'PostGIS',
-            DsgEnums.NewPostGIS : self.tr('PostGIS (create new database)'),
-            DsgEnums.SpatiaLite : 'SpatiaLite',
-            DsgEnums.NewSpatiaLite : self.tr('SpatiaLite (create new database)'),
-            DsgEnums.Shapefile : 'Shapefile',
-            DsgEnums.NewShapefile : self.tr('Shapefile (create new database)'),
-            #DsgEnums.Geopackage : 'Geopackage',
-            #DsgEnums.NewGeopackage : self.tr('Geopackage (create new database)')
+            DsgEnums.NoDriver: self.tr("Select a datasource driver"),
+            DsgEnums.PostGIS: "PostGIS",
+            DsgEnums.NewPostGIS: self.tr("PostGIS (create new database)"),
+            DsgEnums.SpatiaLite: "SpatiaLite",
+            DsgEnums.NewSpatiaLite: self.tr("SpatiaLite (create new database)"),
+            DsgEnums.Shapefile: "Shapefile",
+            DsgEnums.NewShapefile: self.tr("Shapefile (create new database)"),
+            # DsgEnums.Geopackage : 'Geopackage',
+            # DsgEnums.NewGeopackage : self.tr('Geopackage (create new database)')
         }
         return sourceNameDict[source]
 
@@ -81,7 +83,7 @@ class AbstractSelectionWidget(QObject):
         :return: (str) datasource connection name.
         """
         # to be reimplemented
-        return ''
+        return ""
 
     def getDatasourcePath(self):
         """
@@ -89,7 +91,7 @@ class AbstractSelectionWidget(QObject):
         :return: (str) datasource path.
         """
         # to be reimplemented
-        return ''
+        return ""
 
     def getNewSelectionWidget(self):
         """
@@ -106,15 +108,15 @@ class AbstractSelectionWidget(QObject):
         """
         # implementation for new datasources, but may be reimplemented into ALL children classes
         # for new datasources, entry is always { int : { 'edgv' : (str)edgv, 'crs' : (QgsCoordinateReferenceSystem)crs } }
-        edgv = list(newDatasource.values())[0]['edgv']
-        crs = list(newDatasource.values())[0]['crs']
+        edgv = list(newDatasource.values())[0]["edgv"]
+        crs = list(newDatasource.values())[0]["crs"]
         self.selectionWidget.edgvComboBox.setCurrentText(edgv)
         self.selectionWidget.mQgsProjectionSelectionWidget.setCrs(crs)
 
     def getDatasource(self):
         """
         Gets the datasource selected on current widget.
-        :return: (AbstractDb) the object representing the target datasource according. 
+        :return: (AbstractDb) the object representing the target datasource according.
         """
         # to be reimplemented
         pass
@@ -125,7 +127,7 @@ class AbstractSelectionWidget(QObject):
         :return: (str) current EDGV version.
         """
         abstracDb = self.getDatasource()
-        return abstracDb.getDatabaseVersion() if abstracDb else ''
+        return abstracDb.getDatabaseVersion() if abstracDb else ""
 
     def getLayerLoader(self):
         """
@@ -133,7 +135,11 @@ class AbstractSelectionWidget(QObject):
         :return: (EDGVLayerLoader) layer loader.
         """
         abstracDb = self.getDatasource()
-        return LayerLoaderFactory().makeLoader(iface=iface, abstractDb=abstracDb) if abstracDb else None
+        return (
+            LayerLoaderFactory().makeLoader(iface=iface, abstractDb=abstracDb)
+            if abstracDb
+            else None
+        )
 
     def getLayerByName(self, layer):
         """
@@ -169,7 +175,9 @@ class AbstractSelectionWidget(QObject):
         if abstracDb:
             layerLoader = self.getLayerLoader()
             # alias for retrieving layer CRS and inserting it to out dict
-            getCrsAlias = lambda x : crs.update({ x : layerLoader.getLayerByName(layer=x).crs().description() })
+            getCrsAlias = lambda x: crs.update(
+                {x: layerLoader.getLayerByName(layer=x).crs().description()}
+            )
             # update crs dict
             list(map(getCrsAlias, self.getLayersDict()))
         return crs
@@ -181,7 +189,9 @@ class AbstractSelectionWidget(QObject):
         """
         abstracDb = self.getDatasource()
         if abstracDb:
-            return abstracDb.listClassesWithElementsFromDatabase(useComplex=False, primitiveFilter=[])
+            return abstracDb.listClassesWithElementsFromDatabase(
+                useComplex=False, primitiveFilter=[]
+            )
         return {}
 
     def getComplexDict(self):
@@ -200,7 +210,11 @@ class AbstractSelectionWidget(QObject):
         Validates selection widgets contents.
         :return: (str) invalidation reason.
         """
-        return self.selectionWidget.validate() if self.selectionWidget else self.tr('Selection widget not available.')
+        return (
+            self.selectionWidget.validate()
+            if self.selectionWidget
+            else self.tr("Selection widget not available.")
+        )
 
     def isValid(self):
         """
@@ -208,4 +222,4 @@ class AbstractSelectionWidget(QObject):
         :return: (bool) invalidation status.
         """
         msg = self.validate()
-        return msg == ''
+        return msg == ""

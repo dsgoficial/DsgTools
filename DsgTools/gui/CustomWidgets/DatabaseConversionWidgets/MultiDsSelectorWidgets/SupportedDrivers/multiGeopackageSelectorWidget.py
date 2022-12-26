@@ -29,10 +29,12 @@ from DsgTools.core.dsgEnums import DsgEnums
 
 import os
 
+
 class MultiGeopackageSelectorWidget(AbstractMultiDsSelectorWidget):
     """
     Class designed to retrieve a Geopackage database list.
     """
+
     def __init__(self, parent=None):
         """
         Class constructor.
@@ -60,8 +62,10 @@ class MultiGeopackageSelectorWidget(AbstractMultiDsSelectorWidget):
         """
         # clear datasources
         self.datasources = {}
-        dbList = self.selector.getOpenFileNames(caption=self.tr("Select Geopackage Databases"), \
-                                                filter=self.tr('Geopackage Databases (*.gpkg)'))[0]
+        dbList = self.selector.getOpenFileNames(
+            caption=self.tr("Select Geopackage Databases"),
+            filter=self.tr("Geopackage Databases (*.gpkg)"),
+        )[0]
         for db in dbList:
             self.datasources[db] = os.path.dirname(db)
-        return int(not self.datasources) # execution code
+        return int(not self.datasources)  # execution code

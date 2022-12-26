@@ -280,12 +280,12 @@ global a
 
 class ValidateForm:
 	def __init__(self, layer, formValues, logBrowser):
-		self.layer = layer 
+		self.layer = layer
 		self.formValues = formValues
 		self.rules = []
 		self.logBrowser = logBrowser
 		self.validateForm()
-		
+
 	def calculateExpression(self, exp):
 		for field in self.formValues:
 			if field != 'filter':
@@ -297,7 +297,7 @@ class ValidateForm:
 				exp = exp.replace("'NULL'".format(field), "NULL")
 		r = QgsExpression(exp)
 		return r.evaluate()
-		
+
 	def validateForm(self):
 		self.cleanRulesOnForm()
 		logText = ""
@@ -328,7 +328,7 @@ class ValidateForm:
 	def cleanRulesOnForm(self):
 		for field in self.formValues:
 			if len(self.formValues[field]) == 3:
-				self.formValues[field][2].setStyleSheet("")			
+				self.formValues[field][2].setStyleSheet("")
 			else:
 				self.formValues[field][1].setStyleSheet("")
 
@@ -360,12 +360,12 @@ class ManagerForm(QtCore.QObject):
             self.logFrame.show()
         else:
             self.logFrame.hide()
-		
+
     def eventFilter(self, o, event):
         if event.type() in [7, 10, 11, 100]:
             self.validateLayerByRules()
         return False
-		
+
     def validateLayerByRules(self):
         formValues = {}
         for cb in self.myDialog.findChildren(QComboBox):
@@ -381,7 +381,7 @@ class ManagerForm(QtCore.QObject):
                 le
             ]
         self.validadeForm = ValidateForm(self.lyr, formValues, self.logBrowser)
-		
+
     def finishedForm(self):
         pass
 

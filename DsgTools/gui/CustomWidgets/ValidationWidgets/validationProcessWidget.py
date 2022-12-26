@@ -28,39 +28,47 @@ from qgis.core import QgsMessageLog
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
-from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox, QMenu, QApplication, QFileDialog
+from qgis.PyQt.QtWidgets import (
+    QListWidgetItem,
+    QMessageBox,
+    QMenu,
+    QApplication,
+    QFileDialog,
+)
 from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'validationProcessWidget.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "validationProcessWidget.ui")
+)
+
 
 class ValidationProcessWidget(QtWidgets.QWidget, FORM_CLASS):
-    def __init__(self, parameterDict = {}, parent = None):
+    def __init__(self, parameterDict={}, parent=None):
         """Constructor."""
-        super(ValidationProcessWidget, self).__init__(parent = parent)
+        super(ValidationProcessWidget, self).__init__(parent=parent)
         self.setupUi(self)
         self.parent = parent
         if self.parent:
             self.validationManager = parent.validationManager
-        self.validKeys = ['halt', 'validationProcess']
+        self.validKeys = ["halt", "validationProcess"]
         self.parameters = None
         self.setInitialState()
         if parameterDict != {}:
             self.populateInterface(parameterDict)
-    
+
     def setInitialState(self):
         self.validationProcessComboBox.clear()
-        self.validationProcessComboBox.addItem(self.tr('Select a model'))
+        self.validationProcessComboBox.addItem(self.tr("Select a model"))
         for model in self.validationManager.modelList:
             self.validationProcessComboBox.addItem(model.displayName())
-    
+
     def clearAll(self):
         """
         Clears all widget information
         """
         pass
-    
+
     def getParameterDict(self):
         """
         Components:
@@ -70,7 +78,9 @@ class ValidationProcessWidget(QtWidgets.QWidget, FORM_CLASS):
         if not self.validate():
             raise Exception(self.invalidatedReason())
         parameterDict = dict()
-        parameterDict['validationProcess'] = self.validationProcessComboBox.currentText()
+        parameterDict[
+            "validationProcess"
+        ] = self.validationProcessComboBox.currentText()
         return parameterDict
 
     def populateInterface(self, parameterDict):
@@ -79,10 +89,12 @@ class ValidationProcessWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         if parameterDict:
             if not self.validateJson(parameterDict):
-                raise Exception(self.tr('Invalid Validation Process Widget json config!'))
-            #set layer combo
-            self.validationProcessComboBox.setText(parameterDict['validationProcess'])
-    
+                raise Exception(
+                    self.tr("Invalid Validation Process Widget json config!")
+                )
+            # set layer combo
+            self.validationProcessComboBox.setText(parameterDict["validationProcess"])
+
     def validateJson(self, inputJson):
         """
         Validates input json
@@ -98,15 +110,15 @@ class ValidationProcessWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         Validates fields. Returns True if all information are filled correctly.
         """
-        if self.attributeRuleTypeLineEdit.text() == '':
+        if self.attributeRuleTypeLineEdit.text() == "":
             return False
         return True
-    
+
     def invalidatedReason(self):
         """
         Error reason
         """
-        msg = ''
-        if self.attributeRuleTypeLineEdit.text() == '':
-            msg += self.tr('Invalid rule name!\n')
+        msg = ""
+        if self.attributeRuleTypeLineEdit.text() == "":
+            msg += self.tr("Invalid rule name!\n")
         return msg

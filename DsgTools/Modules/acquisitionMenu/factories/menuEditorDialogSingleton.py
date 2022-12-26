@@ -1,4 +1,5 @@
-from DsgTools.Modules.acquisitionMenu.widgets.menuEditorDialog  import MenuEditorDialog
+from DsgTools.Modules.acquisitionMenu.widgets.menuEditorDialog import MenuEditorDialog
+
 
 class MenuEditorDialogSingleton:
 
@@ -7,5 +8,5 @@ class MenuEditorDialogSingleton:
     @staticmethod
     def getInstance(controller):
         if not MenuEditorDialogSingleton.instance:
-            MenuEditorDialogSingleton.instance = MenuEditorDialog( controller )
+            MenuEditorDialogSingleton.instance = MenuEditorDialog(controller)
         return MenuEditorDialogSingleton.instance
