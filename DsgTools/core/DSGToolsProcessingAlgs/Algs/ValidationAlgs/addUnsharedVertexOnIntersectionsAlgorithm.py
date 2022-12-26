@@ -52,6 +52,7 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
     INPUT_LINES = "INPUT_LINES"
     INPUT_POLYGONS = "INPUT_POLYGONS"
     SELECTED = "SELECTED"
+    SEARCH_RADIUS = "SEARCH_RADIUS"
     GEOGRAPHIC_BOUNDARY = "GEOGRAPHIC_BOUNDARY"
 
     def initAlgorithm(self, config):
@@ -89,6 +90,12 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             )
         )
 
+        param = QgsProcessingParameterDistance(
+            self.SEARCH_RADIUS, self.tr("Search Radius"), defaultValue=1.0
+        )
+        param.setMetadata({"widget_wrapper": {"decimals": 8}})
+        self.addParameter(param)
+
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
@@ -112,6 +119,7 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         inputPolygonLyrList = self.parameterAsLayerList(
             parameters, self.INPUT_POLYGONS, context
         )
+        searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
         geographicBoundary = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
@@ -151,7 +159,7 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             algRunner.runSnapLayerOnLayer(
                 inputLayer=lyr,
                 referenceLayer=flagsLyr,
-                tol=1e-5,
+                tol=searchRadius,
                 context=context,
                 onlySelected=onlySelected,
                 feedback=multiStepFeedback,
@@ -186,7 +194,7 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         LayerHandler().addVertexesToLayers(
             vertexLyr=newFlagsLyr,
             layerList=list(chain(inputLineLyrList, inputPolygonLyrList)),
-            searchRadius=1e-5,
+            searchRadius=searchRadius,
             feedback=multiStepFeedback,
         )
 

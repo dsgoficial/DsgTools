@@ -2,6 +2,10 @@
 
 ## 4.7.0
 
+Novas funcionalidades:
+- Novo processo de selecionar feições no canvas de camadas selecionadas;
+- Novo processo de filtrar lista de camadas no processing por tipo geométrico;
+
 Melhorias:
 - Adicionada a opção de dar pan na barra de ferramentas de revisão;
 

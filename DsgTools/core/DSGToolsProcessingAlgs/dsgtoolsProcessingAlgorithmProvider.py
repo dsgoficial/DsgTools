@@ -110,6 +110,12 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm im
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFramesWithConstraintAlgorithm import (
     CreateFramesWithConstraintAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeometryType import (
+    FilterLayerListByGeometryType
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.selectFeaturesOnCurrentCanvas import (
+    SelectFeaturesOnCurrentCanvas
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnIntersectionsAlgorithm import (
     AddUnsharedVertexOnIntersectionsAlgorithm,
 )
@@ -151,9 +157,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.stringCsvToLayerListAlg
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.unicodeFilterAlgorithm import (
     UnicodeFilterAlgorithm,
 )
-
-# from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import \
-#     SingleOutputUnitTestAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateOriginalLayerAlgorithm import (
     UpdateOriginalLayerAlgorithm,
 )
@@ -490,6 +493,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ExtendLinesToGeographicBoundsAlgorithm(),
             AddUnsharedVertexOnIntersectionsAlgorithm(),
             AddUnsharedVertexOnSharedEdgesAlgorithm(),
+            SelectFeaturesOnCurrentCanvas(),
+            FilterLayerListByGeometryType()
         ]
         return algList
 
