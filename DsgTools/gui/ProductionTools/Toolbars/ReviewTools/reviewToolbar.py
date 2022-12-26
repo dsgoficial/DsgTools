@@ -396,6 +396,8 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
             self.zoomToFeature(nextFeat)
         elif self.zoomComboBox.currentIndex() == ReviewToolbar.PanToNext:
             self.panToFeature(nextFeat)
+        else:
+            self.iface.mapCanvas().refresh()
         currentField = self.rankFieldComboBox.currentField()
         if currentField is None:
             return
