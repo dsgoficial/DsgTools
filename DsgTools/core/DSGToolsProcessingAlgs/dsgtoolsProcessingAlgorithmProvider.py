@@ -111,10 +111,10 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFramesWithConstra
     CreateFramesWithConstraintAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeometryType import (
-    FilterLayerListByGeometryType
+    FilterLayerListByGeometryType,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.selectFeaturesOnCurrentCanvas import (
-    SelectFeaturesOnCurrentCanvas
+    SelectFeaturesOnCurrentCanvas,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnIntersectionsAlgorithm import (
     AddUnsharedVertexOnIntersectionsAlgorithm,
@@ -124,6 +124,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexO
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.extendLinesToGeographicBoundsAlgorithm import (
     ExtendLinesToGeographicBoundsAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixDrainageFlowAlgorithm import (
+    FixDrainageFlowAlgorithm,
 )
 from .Algs.OtherAlgs.createReviewGridAlgorithm import CreateReviewGridAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.exportToMemoryLayer import (
@@ -494,7 +497,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             AddUnsharedVertexOnIntersectionsAlgorithm(),
             AddUnsharedVertexOnSharedEdgesAlgorithm(),
             SelectFeaturesOnCurrentCanvas(),
-            FilterLayerListByGeometryType()
+            FilterLayerListByGeometryType(),
+            FixDrainageFlowAlgorithm(),
         ]
         return algList
 
