@@ -22,13 +22,19 @@
  ***************************************************************************/
 """
 from qgis.core import QgsProject, Qgis, QgsVectorLayer
+from qgis.gui import QgsMapTool
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QObject
 from qgis.PyQt.QtWidgets import QMessageBox
 from .copiarwkt import copywkt
 
 
-class OtherTools(QObject):
+class OtherTools(QgsMapTool):
+    def __init__(self, iface):
+        self.iface = iface
+        self.canvas = self.iface.mapCanvas()
+        super(OtherTools, self).__init__(self.canvas)
+
     def addTool(self, manager, callback, parentToolbar, stackButton, iconBasePath):
         self.stackButton = stackButton
         icon_path = iconBasePath + "/tempLayer.png"
@@ -51,7 +57,7 @@ class OtherTools(QObject):
         action = manager.add_action(
             icon_path,
             text=self.tr("DSGTools: Copy Feature's Coordinates as WKT"),
-            callback=copywkt,
+            callback=self.runCopyWkt,
             add_to_menu=False,
             add_to_toolbar=False,
             withShortcut=True,
@@ -59,11 +65,22 @@ class OtherTools(QObject):
             parentButton=stackButton,
             isCheckable=False,
         )
+    
+    def setCurrentActionOnStackButton(self):
+        try:
+            self.stackButton.setDefaultAction(self.sender())
+        except:
+            pass
 
     def unload(self):
         pass
+    
+    def runCopyWkt(self):
+        self.setCurrentActionOnStackButton()
+        copywkt()
 
     def copyToTempLayer(self):
+        self.setCurrentActionOnStackButton()
         confirmation = self.confirmAction()
         if not confirmation:
             iface.messageBar().pushMessage(

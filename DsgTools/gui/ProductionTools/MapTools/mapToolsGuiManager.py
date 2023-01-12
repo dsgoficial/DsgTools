@@ -141,7 +141,9 @@ class MapToolsGuiManager(QObject):
         self.filterStackButton = self.manager.createToolButton(
             self.toolbar_extra, "FilterTools"
         )
-        self.spatialFilterTool = SpatialFilter()
+        self.spatialFilterTool = SpatialFilter(
+            stackButton=self.filterStackButton
+        )
         action = self.manager.add_action(
             icon_path=self.iconBasePath + "spatialFilter.png",
             text=self.tr("DSGTools: Spatial Filter"),

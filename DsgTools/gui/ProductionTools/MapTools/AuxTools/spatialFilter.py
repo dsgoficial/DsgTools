@@ -22,12 +22,14 @@
 """
 
 from qgis import gui, core
+from qgis.gui import QgsMapTool
 from qgis.utils import iface
 from PyQt5 import QtGui, QtCore
 
 
-class SpatialFilter:
-    def __init__(self):
+class SpatialFilter(QgsMapTool):
+    def __init__(self, stackButton):
+        self.stackButton = stackButton
         self.previousMapTool = iface.mapCanvas().mapTool()
         self.myMapTool = gui.QgsMapToolEmitPoint(iface.mapCanvas())
         self.coordinates = []
@@ -39,8 +41,18 @@ class SpatialFilter:
             if event.key() == QtCore.Qt.Key_Escape
             else ""
         )
+        self.iface = iface
+        self.canvas = self.iface.mapCanvas()
+        super(SpatialFilter, self).__init__(self.canvas)
+    
+    def setCurrentActionOnStackButton(self):
+        try:
+            self.stackButton.setDefaultAction(self.sender())
+        except:
+            pass
 
     def start(self):
+        self.setCurrentActionOnStackButton()
         self.isActive = not self.isActive
         if self.isActive:
             self.myRubberBand = gui.QgsRubberBand(
