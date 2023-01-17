@@ -1051,6 +1051,8 @@ class LayerHandler(QObject):
         """
         spatialIdx = QgsSpatialIndex()
         idDict = {}
+        if inputLyr is None:
+            return spatialIdx, idDict
         featCount = inputLyr.featureCount()
         size = 100 / featCount if featCount else 0
         iterator = (
@@ -1955,7 +1957,7 @@ class LayerHandler(QObject):
         )
         mergedLayer = algRunner.runMergeVectorLayers(
             lineList, context, feedback=multiStepFeedback
-        )
+        ) if lineList != [] else None
         return mergedLayer
 
     def reprojectLayer(self, layer, targetEpsg, output=None):

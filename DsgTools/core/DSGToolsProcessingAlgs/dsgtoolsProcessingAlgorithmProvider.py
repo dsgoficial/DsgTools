@@ -32,6 +32,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.buildTerrainSlicing
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.donutHoleExtractorAlgorithm import (
     DonutHoleExtractorAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.smallHoleRemoverAlgorithm import SmallHoleRemoverAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.applyStylesFromDatabaseToLayersAlgorithm import (
     ApplyStylesFromDatabaseToLayersAlgorithm,
 )
@@ -494,7 +495,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             AddUnsharedVertexOnIntersectionsAlgorithm(),
             AddUnsharedVertexOnSharedEdgesAlgorithm(),
             SelectFeaturesOnCurrentCanvas(),
-            FilterLayerListByGeometryType()
+            FilterLayerListByGeometryType(),
+            SmallHoleRemoverAlgorithm(),
         ]
         return algList
 
