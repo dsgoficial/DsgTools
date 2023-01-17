@@ -63,12 +63,12 @@ class AlgRunner:
         else:
             return lyr
 
-    def runDissolve(self, inputLyr, context, feedback=None, outputLyr=None, field=None):
+    def runDissolve(self, inputLyr, context, feedback=None, outputLyr=None, field=None, is_child_algorithm=False):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         field = [] if field is None else field
         parameters = {"INPUT": inputLyr, "FIELD": field, "OUTPUT": outputLyr}
         output = processing.run(
-            "native:dissolve", parameters, context=context, feedback=feedback
+            "native:dissolve", parameters, context=context, feedback=feedback, is_child_algorithm=is_child_algorithm
         )
         return output["OUTPUT"]
 
