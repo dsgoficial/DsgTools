@@ -45,6 +45,7 @@ from qgis.core import (
 class SmallHoleRemoverAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     SELECTED = "SELECTED"
+    DISSOLVE_OUTPUT = "DISSOLVE_OUTPUT"
     DISSOLVE_ATTRIBUTE_LIST = "DISSOLVE_ATTRIBUTE_LIST"
     MAX_HOLE_AREA_TO_ELIMINATE = "MAX_HOLE_AREA_TO_ELIMINATE"
     OUPUT = "OUPUT"
@@ -66,6 +67,13 @@ class SmallHoleRemoverAlgorithm(ValidationAlgorithm):
                 self.SELECTED, self.tr("Process only selected features")
             )
         )
+
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.DISSOLVE_OUTPUT, self.tr("Dissolve Output")
+            )
+        )
+
 
         self.addParameter(
             QgsProcessingParameterField(
@@ -107,6 +115,7 @@ class SmallHoleRemoverAlgorithm(ValidationAlgorithm):
             )
 
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        dissolveOutput = self.parameterAsBool(parameters, self.DISSOLVE_OUTPUT, context)
         (output_sink, output_sink_id) = self.parameterAsSink(
             parameters,
             self.OUPUT,
@@ -115,7 +124,7 @@ class SmallHoleRemoverAlgorithm(ValidationAlgorithm):
             inputLyr.wkbType(),
             inputLyr.sourceCrs(),
         )
-        multiStepFeedback = QgsProcessingMultiStepFeedback(7, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(10, feedback)
 
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.setProgressText(self.tr("Building Cache"))
@@ -125,18 +134,27 @@ class SmallHoleRemoverAlgorithm(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback
         )
+        cacheDict = {feat["featid"]:feat for feat in cacheLyr.getFeatures()}
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.setProgressText(self.tr("Building Spatial Index"))
         algRunner.runCreateSpatialIndex(inputLyr=cacheLyr, context=context, feedback=multiStepFeedback)
 
         multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.setProgressText(self.tr("Point on surface layer"))
+        pointOnSurfaceLyr = algRunner.runPointOnSurface(
+            inputLyr=cacheLyr, context=context, feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(3)
+        multiStepFeedback.setProgressText(self.tr("Building Spatial Index on point on surface layer"))
+        algRunner.runCreateSpatialIndex(inputLyr=pointOnSurfaceLyr, context=context, feedback=multiStepFeedback)
+        multiStepFeedback.setCurrentStep(4)
         multiStepFeedback.setProgressText(self.tr("Extracting Donut Holes"))
         _, donutHole = algRunner.runDonutHoleExtractor(
             inputLyr=cacheLyr,
             context=context,
             feedback=multiStepFeedback,
         )
-        multiStepFeedback.setCurrentStep(3)
+        multiStepFeedback.setCurrentStep(5)
         multiStepFeedback.setProgressText(self.tr("Submitting to thread"))
         nFeats = donutHole.featureCount()
         if nFeats == 0:
@@ -153,20 +171,23 @@ class SmallHoleRemoverAlgorithm(ValidationAlgorithm):
             if geom.area() > maxHoleArea:
                 return outputList
             bbox = geom.boundingBox()
-            for candidateFeat in cacheLyr.getFeatures(bbox):
-                candidateGeom = candidateFeat.geometry()
-                if geom.equals(candidateGeom):
+            for newCandidate in cacheLyr.getFeatures(bbox):
+                newCandidateGeom = newCandidate.geometry()
+                if newCandidateGeom.equals(geom):
                     for fieldName in fieldNames:
                         candidateFeat[fieldName] = feat[fieldName]
-                    outputList.append(candidateFeat)
-                    break
-                centerPoint = candidateGeom.pointOnSurface()
-                if not geom.intersects(centerPoint):
+                    outputList.append(newCandidate)
+                    return outputList
+            for candidateFeat in pointOnSurfaceLyr.getFeatures(bbox):
+                candidatePointGeom = candidateFeat.geometry()
+                if not geom.intersects(candidatePointGeom):
                     continue
+                candidateFeat = cacheDict[candidateFeat["featid"]]
                 for fieldName in fieldNames:
                     candidateFeat[fieldName] = feat[fieldName]
                 outputList.append(candidateFeat)
             return outputList
+
         cacheLyr.startEditing()
         cacheLyr.beginEditCommand("Updating holes")
         for current, feat in enumerate(donutHole.getFeatures()):
@@ -175,26 +196,47 @@ class SmallHoleRemoverAlgorithm(ValidationAlgorithm):
             futures.add(pool.submit(compute, feat))
             multiStepFeedback.setProgress(current * stepSize)
 
-        multiStepFeedback.setCurrentStep(4)
+        multiStepFeedback.setCurrentStep(6)
         multiStepFeedback.setProgressText(self.tr("Evaluating Results"))
+        cacheLyrDataProvider = cacheLyr.dataProvider()
+        indexDict = {fieldName:cacheLyrDataProvider.fields().indexFromName(fieldName) for fieldName in fieldNames}
+        def updateFunc(feat):
+            featid = cacheDict[feat['featid']].id()
+            cacheLyrDataProvider.changeAttributeValues({
+                featid: { indexDict[fieldName]:feat[fieldName] for fieldName in fieldNames}
+            })
         for current, future in enumerate(concurrent.futures.as_completed(futures)):
             if multiStepFeedback.isCanceled():
                 break
-            for featToUpdate in future.result():
-            # for featToUpdate in compute(feat):
-                cacheLyr.updateFeature(featToUpdate)
+            results = future.result()
+            if results == []:
+                continue
+            list(map(updateFunc, results))
+            # for featToUpdate in future.result():
+            # # for featToUpdate in compute(feat):
+            #     cacheLyr.updateFeature(featToUpdate)
             multiStepFeedback.setProgress(current * stepSize)
         cacheLyr.endEditCommand()
 
-        multiStepFeedback.setCurrentStep(5)
-        multiStepFeedback.setProgressText(self.tr("Dissolving Polygons"))
-        mergedLyr = algRunner.runDissolve(
-            inputLyr=cacheLyr,
-            context=context,
-            feedback=multiStepFeedback,
-            field=dissolveAttributeList
-        )
-        multiStepFeedback.setCurrentStep(6)
+        multiStepFeedback.setCurrentStep(7)
+        if dissolveOutput:
+            multiStepFeedback.setProgressText(self.tr("Dissolving Polygons"))
+            mergedLyr = algRunner.runDissolve(
+                inputLyr=cacheLyr,
+                context=context,
+                feedback=multiStepFeedback,
+                field=dissolveAttributeList,
+                is_child_algorithm=True
+            )
+            multiStepFeedback.setCurrentStep(8)
+            mergedLyr = algRunner.runMultipartToSingleParts(
+                inputLayer=mergedLyr,
+                context=context,
+                feedback=multiStepFeedback
+            )
+        else:
+            mergedLyr = cacheLyr
+        multiStepFeedback.setCurrentStep(9)
         nFeats = mergedLyr.featureCount()
         if nFeats == 0:
             return {self.OUPUT: output_sink_id}
