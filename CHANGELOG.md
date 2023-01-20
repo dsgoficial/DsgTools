@@ -6,6 +6,7 @@ Novas funcionalidades:
 - Novo processo de selecionar feições no canvas de camadas selecionadas;
 - Novo processo de filtrar lista de camadas no processing por tipo geométrico;
 - Novo processo de remover holes pequenos de camadas de cobertura;
+- Novo processo de dissolver polígonos para vizinhos (heurística pelo maior comprimento da intersecção);
 
 Melhorias:
 - Adicionada a opção de dar pan na barra de ferramentas de revisão;

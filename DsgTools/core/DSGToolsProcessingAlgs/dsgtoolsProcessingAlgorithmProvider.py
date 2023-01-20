@@ -32,7 +32,12 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.buildTerrainSlicing
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.donutHoleExtractorAlgorithm import (
     DonutHoleExtractorAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.smallHoleRemoverAlgorithm import SmallHoleRemoverAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.reclassifyAdjecentPolygonsAlgorithm import (
+    ReclassifyAdjacentPolygonsAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.smallHoleRemoverAlgorithm import (
+    SmallHoleRemoverAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.applyStylesFromDatabaseToLayersAlgorithm import (
     ApplyStylesFromDatabaseToLayersAlgorithm,
 )
@@ -112,10 +117,10 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFramesWithConstra
     CreateFramesWithConstraintAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeometryType import (
-    FilterLayerListByGeometryType
+    FilterLayerListByGeometryType,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.selectFeaturesOnCurrentCanvas import (
-    SelectFeaturesOnCurrentCanvas
+    SelectFeaturesOnCurrentCanvas,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnIntersectionsAlgorithm import (
     AddUnsharedVertexOnIntersectionsAlgorithm,
@@ -497,6 +502,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             SelectFeaturesOnCurrentCanvas(),
             FilterLayerListByGeometryType(),
             SmallHoleRemoverAlgorithm(),
+            ReclassifyAdjacentPolygonsAlgorithm(),
         ]
         return algList
 
