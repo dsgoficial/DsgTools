@@ -175,7 +175,7 @@ class SmallHoleRemoverAlgorithm(ValidationAlgorithm):
                 newCandidateGeom = newCandidate.geometry()
                 if newCandidateGeom.equals(geom):
                     for fieldName in fieldNames:
-                        candidateFeat[fieldName] = feat[fieldName]
+                        newCandidate[fieldName] = feat[fieldName]
                     outputList.append(newCandidate)
                     return outputList
             for candidateFeat in pointOnSurfaceLyr.getFeatures(bbox):
