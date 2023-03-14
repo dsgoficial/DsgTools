@@ -143,11 +143,11 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
 
         if outputPointsSet != set():
             sink_id = self.outLayer(
-                parameters, context, outputPointsSet, streamLayerInput, 1
+                parameters, context, outputPointsSet, streamLayerInput, QgsWkbTypes.Point
             )
         if outputLinesSet != set():
             sink_id = self.outLayer(
-                parameters, context, outputLinesSet, streamLayerInput, 2
+                parameters, context, outputLinesSet, streamLayerInput, QgsWkbTypes.LineString
             )
         return {self.OUTPUT: sink_id}
 
@@ -201,11 +201,11 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
                 return
             countourGeom = idDict[riverFeat["AUTO_2"]].geometry()
             intersection = countourGeom.intersection(riverGeom)
-            if intersection.isEmpty() or intersection.wkbType() == 1:
+            if intersection.isEmpty() or intersection.wkbType() == QgsWkbTypes.Point:
                 return
-            if intersection.wkbType() == 4:
+            if intersection.wkbType() == QgsWkbTypes.MultiPoint:
                 outputPointsSet.add(intersection)
-            if intersection.wkbType() in [2, 5]:
+            if intersection.wkbType() in [QgsWkbTypes.LineString, QgsWkbTypes.MultiLineString]:
                 outputLinesSet.add(intersection)
 
         buildOutputsLambda = lambda x: buildOutputs(x, feedback)
