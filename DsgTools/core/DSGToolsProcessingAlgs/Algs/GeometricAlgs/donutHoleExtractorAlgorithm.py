@@ -92,7 +92,7 @@ class DonutHoleExtractorAlgorithm(ValidationAlgorithm):
             )
 
         inputType = inputLyr.wkbType()
-        isMulti = QgsWkbTypes.isMultiType(int(inputType))
+        isMulti = QgsWkbTypes.isMultiType(inputType)
         inputFields = inputLyr.fields()
 
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)

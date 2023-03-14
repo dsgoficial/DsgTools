@@ -457,7 +457,7 @@ class GeometryHandler(QObject):
         if not geomType:
             geomType = layer.geometryType()
         # getting whether geometry is multipart or not
-        isMulti = QgsWkbTypes.isMultiType(int(layer.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(layer.wkbType())
         geom = feature.geometry()
         return self.getGeomNodes(geom, geomType, isMulti)
 
@@ -488,7 +488,7 @@ class GeometryHandler(QObject):
         :return: starting node point (QgsPoint).
         """
         n = self.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(lyr.wkbType())
         if isMulti:
             if len(n) > 1:
                 return
@@ -505,7 +505,7 @@ class GeometryHandler(QObject):
         :return: starting node point (QgsPoint).
         """
         n = self.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(lyr.wkbType())
         if isMulti:
             if len(n) > 1:
                 # process doesn't treat multipart features that does have more than 1 part
@@ -523,7 +523,7 @@ class GeometryHandler(QObject):
         :return: ending node point (QgsPoint).
         """
         n = self.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(lyr.wkbType())
         if isMulti:
             if len(n) > 1:
                 return
@@ -540,7 +540,7 @@ class GeometryHandler(QObject):
         :return: ending node point (QgsPoint).
         """
         n = self.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(lyr.wkbType())
         if isMulti:
             if len(n) > 1:
                 return
@@ -557,7 +557,7 @@ class GeometryHandler(QObject):
         :return: starting node point (QgsPoint).
         """
         n = self.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(lyr.wkbType())
         if isMulti:
             if len(n) > 1:
                 return

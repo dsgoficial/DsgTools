@@ -104,7 +104,7 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
             )
         isMulti = True
         for inputLyr in inputLyrList:
-            isMulti &= QgsWkbTypes.isMultiType(int(inputLyr.wkbType()))
+            isMulti &= QgsWkbTypes.isMultiType(inputLyr.wkbType())
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.Polygon, context)
         # Compute the number of steps to display within the progress bar and

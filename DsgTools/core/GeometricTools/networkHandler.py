@@ -116,7 +116,7 @@ class NetworkHandler(QObject):
             }
         """
         nodeDict = dict()
-        isMulti = QgsWkbTypes.isMultiType(int(networkLayer.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(networkLayer.wkbType())
         iterator = (
             networkLayer.getFeatures()
             if not onlySelected
@@ -420,7 +420,7 @@ class NetworkHandler(QObject):
         nextNodes = []
         # to reduce calculation time
         nodePointDict = self.nodeDict[node]
-        isMulti = QgsWkbTypes.isMultiType(int(networkLayer.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(networkLayer.wkbType())
         # get all other nodes connected to lines connected to "node"
         lines = nodePointDict["start"] + nodePointDict["end"]
         if len(lines) > 1:
@@ -875,7 +875,7 @@ class NetworkHandler(QObject):
         n = self.geometryHandler.getFeatureNodes(
             layer=lyr, feature=feat, geomType=geomType
         )
-        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(lyr.wkbType())
         if isMulti:
             if len(n) > 1:
                 return
@@ -894,7 +894,7 @@ class NetworkHandler(QObject):
         n = self.geometryHandler.getFeatureNodes(
             layer=lyr, feature=feat, geomType=geomType
         )
-        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(lyr.wkbType())
         if isMulti:
             if len(n) > 1:
                 # process doesn't treat multipart features that does have more than 1 part
@@ -914,7 +914,7 @@ class NetworkHandler(QObject):
         n = self.geometryHandler.getFeatureNodes(
             layer=lyr, feature=feat, geomType=geomType
         )
-        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(lyr.wkbType())
         if isMulti:
             if len(n) > 1:
                 return
@@ -933,7 +933,7 @@ class NetworkHandler(QObject):
         n = self.geometryHandler.getFeatureNodes(
             layer=lyr, feature=feat, geomType=geomType
         )
-        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(lyr.wkbType())
         if isMulti:
             if len(n) > 1:
                 return
@@ -1878,7 +1878,7 @@ class NetworkHandler(QObject):
         :return: (tuple-of-dict) node type dict and node id dict, respectively
         """
         nodeTypeDict, nodeIdDict = dict(), dict()
-        isMulti = QgsWkbTypes.isMultiType(int(networkNodeLayer.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(networkNodeLayer.wkbType())
         featCount = networkNodeLayer.featureCount()
         size = 100 / featCount if featCount else 0
         for current, feat in enumerate(networkNodeLayer.getFeatures()):
@@ -2150,7 +2150,7 @@ class NetworkHandler(QObject):
         :return: (bool) True if method runs OK or False, if lines do not touch.
         """
         # check if original layer is a multipart
-        isMulti = QgsWkbTypes.isMultiType(int(layer.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(layer.wkbType())
         # retrieve lines geometries
         geometry_a = line_a.geometry()
         geometry_b = line_b.geometry()
