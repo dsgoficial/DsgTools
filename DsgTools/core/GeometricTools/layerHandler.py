@@ -161,13 +161,9 @@ class LayerHandler(QObject):
         parameterDict = dict()
         parameterDict["geomType"] = destinationLayer.geometryType()
         # generic check (not every database is implemented as ours)
-        parameterDict["hasMValues"] = QgsWkbTypes.hasM(int(destinationLayer.wkbType()))
-        parameterDict["hasZValues"] = QgsWkbTypes.hasZ(
-            int(destinationLayer.wkbType())
-        )  #
-        parameterDict["isMulti"] = QgsWkbTypes.isMultiType(
-            int(destinationLayer.wkbType())
-        )
+        parameterDict["hasMValues"] = QgsWkbTypes.hasM(destinationLayer.wkbType())
+        parameterDict["hasZValues"] = QgsWkbTypes.hasZ(destinationLayer.wkbType())  #
+        parameterDict["isMulti"] = QgsWkbTypes.isMultiType(destinationLayer.wkbType())
         return parameterDict
 
     def getCoordinateTransformer(self, inputLyr, outputLyr):
@@ -202,7 +198,7 @@ class LayerHandler(QObject):
             geomType = None
             for layer in layerList:
                 if layer.featureCount() > 0:
-                    geomType = int(next(layer.getFeatures()).geometry().wkbType())
+                    geomType = next(layer.getFeatures()).geometry().wkbType()
                     break
             else:
                 raise ValueError(
@@ -229,9 +225,7 @@ class LayerHandler(QObject):
         Creates a unified vector layer for validation purposes.
         """
         fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
-        lyrUri = "{0}?crs=epsg:{1}".format(
-            QgsWkbTypes.displayString(int(geomType)), srid
-        )
+        lyrUri = "{0}?crs=epsg:{1}".format(QgsWkbTypes.displayString(geomType), srid)
         lyr = QgsVectorLayer(lyrUri, "unified_layer", "memory")
         lyr.startEditing()
         fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
@@ -702,7 +696,7 @@ class LayerHandler(QObject):
         }
         """
         geomDict = dict()
-        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(lyr.wkbType())
         iterator, featCount = self.getFeatureList(
             lyr, onlySelected=onlySelected, returnIterator=True
         )
@@ -1137,7 +1131,7 @@ class LayerHandler(QObject):
         :return: { node_id : { start : [feature_which_starts_with_node], end : feature_which_ends_with_node } }.
         """
         nodeDict = dict()
-        isMulti = QgsWkbTypes.isMultiType(int(networkLayer.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(networkLayer.wkbType())
         if self.parameters["Only Selected"]:
             features = networkLayer.selectedFeatures()
         else:
@@ -1955,9 +1949,13 @@ class LayerHandler(QObject):
         multiStepFeedback.pushInfo(
             self.tr("Adding exploded lines to one single layer.")
         )
-        mergedLayer = algRunner.runMergeVectorLayers(
-            lineList, context, feedback=multiStepFeedback
-        ) if lineList != [] else None
+        mergedLayer = (
+            algRunner.runMergeVectorLayers(
+                lineList, context, feedback=multiStepFeedback
+            )
+            if lineList != []
+            else None
+        )
         return mergedLayer
 
     def reprojectLayer(self, layer, targetEpsg, output=None):
