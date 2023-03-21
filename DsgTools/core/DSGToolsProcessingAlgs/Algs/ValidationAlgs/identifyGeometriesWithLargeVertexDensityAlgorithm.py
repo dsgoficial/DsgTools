@@ -169,9 +169,10 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
             request = (
                 QgsFeatureRequest()
                 .setFilterExpression(f"featid = {feat['featid']}")
-                .setFilterExpression(f"vertex_part_ring = {feat['vertex_part_ring']}")
                 .setFilterRect(bufferBB)
             )
+            if "vertex_part_ring" in feat:
+                request.setFilterExpression(f"vertex_part_ring = {feat['vertex_part_ring']}")
             for candidateFeat in vertexLayer.getFeatures(request):
                 if candidateFeat.id() == feat.id():
                     continue
