@@ -66,7 +66,6 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
     WATER_BODY_WITH_FLOW_LAYER = "WATER_BODY_WITH_FLOW_LAYER"
     WATER_BODY_WITHOUT_FLOW_LAYER = "WATER_BODY_WITHOUT_FLOW_LAYER"
     OCEAN_LAYER = "OCEAN_LAYER"
-    DITCH_LAYER = "DITCH_LAYER"
     POINT_FLAGS = "POINT_FLAGS"
     LINE_FLAGS = "LINE_FLAGS"
     POLYGON_FLAGS = "POLYGON_FLAGS"
@@ -124,14 +123,6 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             )
         )
         self.addParameter(
-            QgsProcessingParameterVectorLayer(
-                self.DITCH_LAYER,
-                self.tr("Ditch layer"),
-                [QgsProcessing.TypeVectorLine],
-                optional=True,
-            )
-        )
-        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.POINT_FLAGS, self.tr("{0} point flags").format(self.displayName())
             )
@@ -169,7 +160,6 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             parameters, self.WATER_BODY_WITHOUT_FLOW_LAYER, context
         )
         oceanLyr = self.parameterAsLayer(parameters, self.OCEAN_LAYER, context)
-        ditchLyr = self.parameterAsLayer(parameters, self.DITCH_LAYER, context)
         (self.pointFlagSink, self.point_flag_id) = self.prepareAndReturnFlagSink(
             parameters, inputDrainagesLyr, QgsWkbTypes.Point, context, self.POINT_FLAGS
         )
@@ -204,8 +194,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             spillwayLayer,
             waterBodyWithFlowLyr,
             waterBodyWithoutFlowLyr,
-            oceanLyr,
-            ditchLyr,
+            oceanLyr
         ) = self.buildCacheAndSpatialIndexOnLayerList(
             layerList=[
                 waterSinkLayer,
@@ -213,7 +202,6 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 waterBodyWithFlowLyr,
                 waterBodyWithoutFlowLyr,
                 oceanLyr,
-                ditchLyr,
             ],
             context=context,
             feedback=multiStepFeedback,
@@ -328,7 +316,6 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 waterBodyWithFlowLyr,
                 waterBodyWithoutFlowLyr,
                 oceanLyr,
-                ditchLyr,
             ],
             feedback=multiStepFeedback,
         )
@@ -571,22 +558,23 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             return intersectionSet, polygonWithProblem
 
         stepSize = 100 / nFeats
-        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
-        futures = set()
-        for current, feat in enumerate(waterBodyLyr.getFeatures()):
-            if multiStepFeedback.isCanceled():
-                break
-            futures.add(pool.submit(evaluate, feat))
-            multiStepFeedback.setProgress(stepSize * current)
+        # pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
+        # futures = set()
+        # for current, feat in enumerate(waterBodyLyr.getFeatures()):
+        #     if multiStepFeedback.isCanceled():
+        #         break
+        #     futures.add(pool.submit(evaluate, feat))
+        #     multiStepFeedback.setProgress(stepSize * current)
 
         multiStepFeedback.setCurrentStep(1)
-        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+        for current, feat in enumerate(waterBodyLyr.getFeatures()):
+        # for current, future in enumerate(concurrent.futures.as_completed(futures)):
             if multiStepFeedback.isCanceled():
                 break
-            intersectionSet, polygonWithProblem = future.result()
-            # intersectionSet, polygonWithProblem = evaluate(feat)
-            # for wkt in intersectionSet:
-            #     flagLineLambda(QgsGeometry.fromWkt(wkt))
+            # intersectionSet, polygonWithProblem = future.result()
+            intersectionSet, polygonWithProblem =  (feat)
+            for wkt in intersectionSet:
+                flagLineLambda(QgsGeometry.fromWkt(wkt))
             if intersectionSet != set():
                 list(
                     map(
