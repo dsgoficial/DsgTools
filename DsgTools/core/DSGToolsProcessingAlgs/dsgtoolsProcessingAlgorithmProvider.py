@@ -131,6 +131,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexO
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.extendLinesToGeographicBoundsAlgorithm import (
     ExtendLinesToGeographicBoundsAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.streamOrder import StreamOrder
 from .Algs.OtherAlgs.createReviewGridAlgorithm import CreateReviewGridAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.exportToMemoryLayer import (
     ExportToMemoryLayer,
@@ -503,6 +504,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             FilterLayerListByGeometryType(),
             SmallHoleRemoverAlgorithm(),
             ReclassifyAdjacentPolygonsAlgorithm(),
+            StreamOrder(),
         ]
         return algList
 
