@@ -23,6 +23,10 @@
 from collections import defaultdict
 from itertools import tee
 from typing import Iterable
+from itertools import chain
+from itertools import product
+from itertools import starmap
+from functools import partial
 
 from qgis.core import QgsGeometry, QgsFeature, QgsProcessingMultiStepFeedback
 
@@ -126,6 +130,11 @@ def evaluateStreamOrder(G, feedback=None):
                     [idx] + [G_copy[i][n0]["stream_order"] + 1 for i in G_copy.predecessors(n0)]
                 )
                 G.remove_edge(n0, n1)
+                succList = list(G_copy.successors(n1))
+                if len(succList) > 1:
+                    for i in G_copy.successors(n1):
+                        G_copy[n1][i]["stream_order"] = idx + 1
+                    G.remove_edge(n1, succList[0])
                 if feedback is not None:
                     feedback.setProgress(current * stepSize)
             for n in connectedNodes:
@@ -135,3 +144,23 @@ def evaluateStreamOrder(G, feedback=None):
         firstOrderNodes = set(node for node in G.nodes if G.degree(node) == 1 and len(list(G.successors(node))) > 0) - visitedNodes
         # firstOrderNodes = [node for node in G.nodes if G.degree(node) == 1 and node not in visitedNodes]
     return G_copy
+
+
+# def evaluateStreamOrder(nx, G, feedback=None):
+#     G = G.copy()
+#     firstOrderNodes = set(node for node in G.nodes if G.degree(node) == 1 and len(list(G.successors(node))) > 0)
+#     stepSize = 100 / len(G.edges)
+#     current = 0
+#     G_copy = G.copy()
+#     visitedNodes = set()
+#     for n0, n1 in G_copy.edges:
+#         G_copy[n0][n1]["stream_order"] = 0
+#     roots = (v for v, d in G.in_degree() if d == 0)
+#     leaves = (v for v, d in G.out_degree() if d == 0)
+#     all_paths = partial(nx.all_simple_paths, G)
+#     pathDict = defaultdict(list)
+#     for path in sorted(chain.from_iterable(starmap(all_paths, product(roots, leaves))), key=lambda x: len(x), reverse=True):
+#         pathDict[path[0]].append(path)
+    
+        
+
