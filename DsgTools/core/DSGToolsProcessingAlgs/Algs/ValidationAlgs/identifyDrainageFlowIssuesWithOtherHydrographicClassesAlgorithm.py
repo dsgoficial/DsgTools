@@ -283,6 +283,14 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
 
         if waterBodyWithoutFlowLyr is not None:
             multiStepFeedback.setCurrentStep(currentStep)
+            self.validateIntersection(
+                lyrA=startPointsLyr,
+                lyrB=waterBodyWithoutFlowLyr,
+                flagText=self.tr("Drainage starting in water body without flow."),
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            multiStepFeedback.setCurrentStep(currentStep)
             self.validateDrainagesWithWaterBody(
                 cachedDrainagesLyr,
                 waterBodyWithoutFlowLyr,
@@ -295,6 +303,14 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             currentStep += 1
 
         if waterBodyWithFlowLyr is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.validateIntersection(
+                lyrA=startPointsLyr,
+                lyrB=waterBodyWithFlowLyr,
+                flagText=self.tr("Drainage starting in water body with flow."),
+                context=context,
+                feedback=multiStepFeedback,
+            )
             multiStepFeedback.setCurrentStep(currentStep)
             self.validateDrainagesWithWaterBody(
                 cachedDrainagesLyr,
@@ -572,7 +588,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             if multiStepFeedback.isCanceled():
                 break
             # intersectionSet, polygonWithProblem = future.result()
-            intersectionSet, polygonWithProblem =  (feat)
+            intersectionSet, polygonWithProblem =  evaluate(feat)
             for wkt in intersectionSet:
                 flagLineLambda(QgsGeometry.fromWkt(wkt))
             if intersectionSet != set():
