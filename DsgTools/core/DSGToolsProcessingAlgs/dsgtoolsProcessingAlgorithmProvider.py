@@ -26,9 +26,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.EditingAlgs.createEditingGridAlgo
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.setFreeHandToolParametersAlgorithm import (
     SetFreeHandToolParametersAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.buildTerrainSlicingFromContoursAlgorihtm import (
-    BuildTerrainSlicingFromContoursAlgorihtm,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.donutHoleExtractorAlgorithm import (
     DonutHoleExtractorAlgorithm,
 )
@@ -491,7 +488,6 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             StringCsvToFirstLayerWithElementsAlgorithm(),
             IdentifyDrainageFlowIssues(),
             IdentifyDrainageAngleIssues(),
-            BuildTerrainSlicingFromContoursAlgorihtm(),
             SetRemoveDuplicateNodePropertyOnLayers(),
             IdentifyDrainageLoops(),
             IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(),
