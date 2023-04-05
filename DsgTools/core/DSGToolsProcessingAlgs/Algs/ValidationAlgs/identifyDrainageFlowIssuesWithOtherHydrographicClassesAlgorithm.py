@@ -320,7 +320,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 endPointDict=endPointDict,
                 waterBodyName=self.tr("water body with flow"),
                 feedback=multiStepFeedback,
-                withFlow=False,
+                withFlow=True,
             )
             currentStep += 1
 
