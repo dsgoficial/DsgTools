@@ -68,6 +68,7 @@ class SpatialRelationsHandler(QObject):
         QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not overlap"),
         QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "contains"),
         QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not contain"),
+        QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "de9im"),
     )
     (
         EQUALS,
@@ -85,6 +86,7 @@ class SpatialRelationsHandler(QObject):
         NOTOVERLAPS,
         CONTAINS,
         NOTCONTAINS,
+        DE9IM,
     ) = range(len(__predicates))
 
     def __init__(self, iface=None, parent=None):

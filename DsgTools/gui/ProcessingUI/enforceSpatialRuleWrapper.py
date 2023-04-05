@@ -29,7 +29,6 @@ from qgis.PyQt.QtCore import QSize, QRegExp
 from qgis.PyQt.QtGui import QRegExpValidator
 from qgis.PyQt.QtWidgets import (
     QWidget,
-    QCheckBox,
     QComboBox,
     QLineEdit,
     QVBoxLayout,
@@ -153,13 +152,15 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         le.setPlaceholderText("1..*")
         return le
 
-    def useDE9IM(self):
-        """
-        Identifies whether user chose to input predicate as a DE-9IM mask.
-        :return: (bool) whether GUI should handle the DE-9IM mask widget over
-                 the combo box selection.
-        """
-        return self.panel.cb.isChecked()
+    def _check_de9im_is_available(self, row):
+        otw = self.panel.otw
+        predicate = otw.getValue(row, 3)
+        handler = SpatialRelationsHandler()
+        enableDE9IM = predicate == handler.DE9IM
+        otw.itemAt(row, 4).setEnabled(enableDE9IM)
+        if not enableDE9IM:
+            otw.setValue(row, 4, "")
+        return enableDE9IM
 
     def _checkCardinalityAvailability(self, row):
         """
@@ -170,11 +171,6 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         :return: (bool) whether cardinality is available
         """
         otw = self.panel.otw
-        if self.useDE9IM():
-            # if user is using the DE-9IM input, cardinality won't be
-            # managed
-            otw.itemAt(row, 7).setEnabled(True)
-            return True
         predicate = otw.getValue(row, 3)
         handler = SpatialRelationsHandler()
         noCardinality = predicate in (
@@ -187,7 +183,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             handler.NOTOVERLAPS,
             handler.NOTCONTAINS,
         )
-        otw.itemAt(row, 7).setEnabled(not noCardinality)
+        otw.itemAt(row, 7).setEnabled(noCardinality)
         if noCardinality:
             otw.setValue(row, 7, "")
         return not noCardinality
@@ -218,6 +214,10 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         )
         # also triggers the action for the first time it is open
         self._checkCardinalityAvailability(row)
+        predicateWidget.currentIndexChanged.connect(
+            partial(self._check_de9im_is_available, row)
+        )
+        self._check_de9im_is_available(row)
 
     def postAddRowModeler(self, row):
         """
@@ -245,6 +245,10 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             partial(self._checkCardinalityAvailability, row)
         )
         self._checkCardinalityAvailability(row)
+        predicateWidget.currentIndexChanged.connect(
+            partial(self._check_de9im_is_available, row)
+        )
+        self._check_de9im_is_available(row)
 
     def standardPanel(self):
         """
@@ -254,9 +258,6 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         widget = QWidget()
         layout = QVBoxLayout()
         # added as an attribute in order to make it easier to be read
-        widget.cb = QCheckBox()
-        widget.cb.setText(self.tr("Use DE-9IM inputs"))
-        layout.addWidget(widget.cb)
         widget.otw = OrderedTableWidget(
             headerMap={
                 0: {
@@ -318,18 +319,6 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             }
         )
 
-        def handlePredicateColumns(checked):
-            """
-            Predicate input widgets are mutually exclusively: the user may only
-            input data through either of them. This method manages hiding and
-            showing correct columns in accord to the user selection.
-            :param checked: (bool) whether the DE-9IM usage checkbox is ticked.
-            """
-            widget.otw.tableWidget.hideColumn(3 if checked else 4)
-            widget.otw.tableWidget.showColumn(4 if checked else 3)
-
-        widget.cb.toggled.connect(handlePredicateColumns)
-        widget.cb.toggled.emit(widget.cb.isChecked())
         widget.otw.setHeaderDoubleClickBehaviour("replicate")
         widget.otw.rowAdded.connect(self.postAddRowStandard)
         layout.addWidget(widget.otw)
@@ -351,9 +340,6 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         widget = QWidget()
         layout = QVBoxLayout()
         # added as an attribute in order to make it easier to be read
-        widget.cb = QCheckBox()
-        widget.cb.setText(self.tr("Use DE-9IM inputs"))
-        layout.addWidget(widget.cb)
         widget.otw = OrderedTableWidget(
             headerMap={
                 0: {
@@ -415,18 +401,6 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             }
         )
 
-        def handlePredicateColumns(checked):
-            """
-            Predicate input widgets are mutually exclusively: the user may only
-            input data through either of them. This method manages hiding and
-            showing correct columns in accord to the user selection.
-            :param checked: (bool) whether the DE-9IM usage checkbox is ticked.
-            """
-            widget.otw.tableWidget.hideColumn(3 if checked else 4)
-            widget.otw.tableWidget.showColumn(4 if checked else 3)
-
-        widget.cb.toggled.connect(handlePredicateColumns)
-        widget.cb.toggled.emit(widget.cb.isChecked())
         widget.otw.setHeaderDoubleClickBehaviour("replicate")
         widget.otw.rowAdded.connect(self.postAddRowModeler)
         layout.addWidget(widget.otw)
@@ -492,10 +466,6 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         if not value:
             return
         otw = self.panel.otw
-        useDE9IM = value[0].get("useDE9IM", False)
-        self.panel.cb.setChecked(useDE9IM)
-        # signal must be triggered to adjust the correct column display
-        self.panel.cb.toggled.emit(useDE9IM)
         isNotModeler = self.dialogType != DIALOG_MODELER
         invalids = list()
         for rule in value:
@@ -530,8 +500,9 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
         """
         ruleList = list()
         otw = self.panel.otw
-        useDe9im = self.useDE9IM()
+        handler = SpatialRelationsHandler()
         for row in range(otw.rowCount()):
+            useDE9IM = otw.getValue(row, 3) == handler.DE9IM
             ruleList.append(
                 SpatialRule(
                     name=otw.getValue(row, 0).strip(),  # or \
@@ -543,7 +514,7 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
                     layer_b=otw.getValue(row, 5),
                     filter_b=otw.getValue(row, 6),
                     cardinality=otw.getValue(row, 7) or "1..*",
-                    useDE9IM=useDe9im,
+                    useDE9IM=useDE9IM,
                     checkLoadedLayer=False,
                 ).asDict()
             )
