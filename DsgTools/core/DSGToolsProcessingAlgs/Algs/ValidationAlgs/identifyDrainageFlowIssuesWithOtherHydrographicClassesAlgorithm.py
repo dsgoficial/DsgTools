@@ -312,7 +312,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 feedback=multiStepFeedback,
             )
             multiStepFeedback.setCurrentStep(currentStep)
-            self.validateDrainagesWithWaterBody_com_fluxo(
+            self.validateDrainagesWithWaterBody(
                 cachedDrainagesLyr,
                 waterBodyWithFlowLyr,
                 startPointDict=startPointDict,
