@@ -503,6 +503,106 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         )
         list(map(flagLambda, invalidIntersection.getFeatures()))
 
+    def validateDrainagesWithWaterBody_com_fluxo(
+        self,
+        drainagesLyr,
+        waterBodyLyr,
+        startPointDict,
+        endPointDict,
+        waterBodyName,
+        feedback,
+        withFlow=True,
+     ):
+        nFeats = waterBodyLyr.featureCount()
+        if nFeats == 0:
+            return
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setProgressText(
+            self.tr(f"Validating drainages with {waterBodyName}")
+        )
+        multiStepFeedback.setCurrentStep(0)
+        flagLineLambda = lambda geom: self.flagFeature(
+            geom,
+            flagText=self.tr(f"Invalid intersection of drainage and {waterBodyName}."),
+            sink=self.lineFlagSink,
+        )
+        flagPolygonLambda = lambda geom: self.flagFeature(
+            geom,
+            flagText=self.tr(f"Invalid flow on polygon of {waterBodyName}"),
+            sink=self.polygonFlagSink,
+        )
+        flowCheckLambda = (
+            lambda x: ((x[0] >= 0 and x[1] == 0) or (x[0] >= 0 and x[1] == 0))
+            if not withFlow
+            else (x[0] > 0 and x[1] > 0)
+        )
+
+        def evaluate(feat):
+            geom = feat.geometry()
+            bbox = geom.boundingBox()
+            geomEngine = QgsGeometry.createGeometryEngine(geom.constGet())
+            geomEngine.prepareGeometry()
+            intersectionSet = set()
+            inCount, outCount = 0, 0
+            for drainageFeat in drainagesLyr.getFeatures(bbox):
+                if multiStepFeedback.isCanceled():
+                    return intersectionSet
+                drainageGeom = drainageFeat.geometry()
+                if not geomEngine.intersects(drainageGeom.constGet()):
+                    continue
+                # if geomEngine.relatePattern(drainageGeom.constGet(), 'FF2FF1102'):
+
+                #     continue
+                intersection = geomEngine.intersection(drainageGeom.constGet())
+                if (
+                    QgsWkbTypes.geometryType(intersection.wkbType())
+                    == QgsWkbTypes.PointGeometry
+                ):
+                    outCount += geomEngine.intersects(
+                        startPointDict[drainageFeat["featid"]].geometry().constGet()
+                    )
+                    inCount += geomEngine.intersects(
+                        endPointDict[drainageFeat["featid"]].geometry().constGet()
+                    )
+                    continue
+                interWkt = intersection.asWkt()
+                if withFlow and drainageGeom.equals(
+                    QgsGeometry.fromWkt(intersection.asWkt())
+                ):
+                    continue
+                intersectionSet.add(interWkt)
+            polygonWithProblem = None if flowCheckLambda([inCount, outCount]) else geom
+            return intersectionSet, polygonWithProblem
+
+        stepSize = 100 / nFeats
+        # pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
+        # futures = set()
+        # for current, feat in enumerate(waterBodyLyr.getFeatures()):
+        #     if multiStepFeedback.isCanceled():
+        #         break
+        #     futures.add(pool.submit(evaluate, feat))
+        #     multiStepFeedback.setProgress(stepSize * current)
+
+        multiStepFeedback.setCurrentStep(1)
+        for current, feat in enumerate(waterBodyLyr.getFeatures()):
+        # for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback.isCanceled():
+                break
+            # intersectionSet, polygonWithProblem = future.result()
+            intersectionSet, polygonWithProblem =  evaluate(feat)
+            for wkt in intersectionSet:
+                flagLineLambda(QgsGeometry.fromWkt(wkt))
+            if intersectionSet != set():
+                list(
+                    map(
+                        flagLineLambda,
+                        list(map(lambda x: QgsGeometry.fromWkt(x), intersectionSet)),
+                    )
+                )
+            if polygonWithProblem is not None:
+                flagPolygonLambda(polygonWithProblem)
+            multiStepFeedback.setProgress(current * stepSize)
+
     def validateDrainagesWithWaterBody(
         self,
         drainagesLyr,
@@ -603,105 +703,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 flagPolygonLambda(polygonWithProblem)
             multiStepFeedback.setProgress(current * stepSize)
 
-    def validateDrainagesWithWaterBody_com_fluxo(
-        self,
-        drainagesLyr,
-        waterBodyLyr,
-        startPointDict,
-        endPointDict,
-        waterBodyName,
-        feedback,
-        withFlow=True,
-     ):
-        nFeats = waterBodyLyr.featureCount()
-        if nFeats == 0:
-            return
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setProgressText(
-            self.tr(f"Validating drainages with {waterBodyName}")
-        )
-        multiStepFeedback.setCurrentStep(0)
-        flagLineLambda = lambda geom: self.flagFeature(
-            geom,
-            flagText=self.tr(f"Invalid intersection of drainage and {waterBodyName}."),
-            sink=self.lineFlagSink,
-        )
-        flagPolygonLambda = lambda geom: self.flagFeature(
-            geom,
-            flagText=self.tr(f"Invalid flow on polygon of {waterBodyName}"),
-            sink=self.polygonFlagSink,
-        )
-        flowCheckLambda = (
-            lambda x: ((x[0] >= 0 and x[1] == 0) or (x[0] >= 0 and x[1] == 0))
-            if not withFlow
-            else (x[0] > 0 and x[1] > 0)
-        )
-
-        def evaluate(feat):
-            geom = feat.geometry()
-            bbox = geom.boundingBox()
-            geomEngine = QgsGeometry.createGeometryEngine(geom.constGet())
-            geomEngine.prepareGeometry()
-            intersectionSet = set()
-            inCount, outCount = 0, 0
-            for drainageFeat in drainagesLyr.getFeatures(bbox):
-                if multiStepFeedback.isCanceled():
-                    return intersectionSet
-                drainageGeom = drainageFeat.geometry()
-                if not geomEngine.intersects(drainageGeom.constGet()):
-                    continue
-                # if geomEngine.relatePattern(drainageGeom.constGet(), 'FF2FF1102'):
-
-                #     continue
-                intersection = geomEngine.intersection(drainageGeom.constGet())
-                if (
-                    QgsWkbTypes.geometryType(intersection.wkbType())
-                    == QgsWkbTypes.PointGeometry
-                ):
-                    outCount += geomEngine.intersects(
-                        startPointDict[drainageFeat["featid"]].geometry().constGet()
-                    )
-                    inCount += geomEngine.intersects(
-                        endPointDict[drainageFeat["featid"]].geometry().constGet()
-                    )
-                    continue
-                interWkt = intersection.asWkt()
-                if withFlow and drainageGeom.equals(
-                    QgsGeometry.fromWkt(intersection.asWkt())
-                ):
-                    continue
-                intersectionSet.add(interWkt)
-            polygonWithProblem = None if flowCheckLambda([inCount, outCount]) else geom
-            return intersectionSet, polygonWithProblem
-
-        stepSize = 100 / nFeats
-        # pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
-        # futures = set()
-        # for current, feat in enumerate(waterBodyLyr.getFeatures()):
-        #     if multiStepFeedback.isCanceled():
-        #         break
-        #     futures.add(pool.submit(evaluate, feat))
-        #     multiStepFeedback.setProgress(stepSize * current)
-
-        multiStepFeedback.setCurrentStep(1)
-        for current, feat in enumerate(waterBodyLyr.getFeatures()):
-        # for current, future in enumerate(concurrent.futures.as_completed(futures)):
-            if multiStepFeedback.isCanceled():
-                break
-            # intersectionSet, polygonWithProblem = future.result()
-            intersectionSet, polygonWithProblem =  evaluate(feat)
-            for wkt in intersectionSet:
-                flagLineLambda(QgsGeometry.fromWkt(wkt))
-            if intersectionSet != set():
-                list(
-                    map(
-                        flagLineLambda,
-                        list(map(lambda x: QgsGeometry.fromWkt(x), intersectionSet)),
-                    )
-                )
-            if polygonWithProblem is not None:
-                flagPolygonLambda(polygonWithProblem)
-            multiStepFeedback.setProgress(current * stepSize)
+    
 
     def validateDrainagesEndPoints(self, endPointDict, elementList, feedback):
         nFeats = len(endPointDict)
