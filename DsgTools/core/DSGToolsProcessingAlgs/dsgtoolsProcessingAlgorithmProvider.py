@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -250,9 +251,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyCountourStac
     VerifyCountourStackingAlgorihtm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import \
     VerifyNetworkDirectioningAlgorithm
-
-from .Algs.OtherAlgs.createReviewGridAlgorithm import CreateReviewGridAlgorithm
-
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.streamOrder import StreamOrder
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
     """
@@ -385,6 +384,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             FilterLayerListByGeometryType(),
             SmallHoleRemoverAlgorithm(),
             ReclassifyAdjacentPolygonsAlgorithm(),
+            StreamOrder(),
         ]
         return algList
 
