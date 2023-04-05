@@ -252,6 +252,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyCountourStac
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import \
     VerifyNetworkDirectioningAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.streamOrder import StreamOrder
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createReviewGridAlgorithm import CreateReviewGridAlgorithm
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
     """
