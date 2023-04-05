@@ -16,7 +16,7 @@ from qgis.core import (
 )
 from qgis.PyQt.Qt import QVariant
 
-from .spellChecker.spellCheckerCtrl import SpellCheckerCtrl
+from ..LayerManagementAlgs.spellChecker.spellCheckerCtrl import SpellCheckerCtrl
 
 
 class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
@@ -153,10 +153,21 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
         return self.tr("Spell check")
 
     def group(self):
-        return self.tr("Layer Management Algorithms")
+        """
+        Returns the name of the group this algorithm belongs to. This string
+        should be localised.
+        """
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
-        return "DSGTools: Layer Management Algorithms"
+        """
+        Returns the unique ID of the group this algorithm belongs to. This
+        string should be fixed for the algorithm, and must not be localised.
+        The group id should be unique within each provider. Group id should
+        contain lowercase alphanumeric characters only and no spaces or other
+        formatting characters.
+        """
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
         return QCoreApplication.translate("SpellCheckerAlgorithm", string)

@@ -65,7 +65,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFilterT
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFormatRulesToLayersAlgorithm import (
     AssignFormatRulesToLayersAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.detectNullGeometriesAlgorithm import (
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.detectNullGeometriesAlgorithm import (
     DetectNullGeometriesAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignMeasureColumnToLayersAlgorithm import (
@@ -98,7 +98,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.matchAndApply
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.removeEmptyLayers import (
     RemoveEmptyLayers,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.spellCheckerAlgorithm import (
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.spellCheckerAlgorithm import (
     SpellCheckerAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithm import (
@@ -157,7 +157,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.stringCsvToFirstLayerWi
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.stringCsvToLayerListAlgorithm import (
     StringCsvToLayerListAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.unicodeFilterAlgorithm import (
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unicodeFilterAlgorithm import (
     UnicodeFilterAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateOriginalLayerAlgorithm import (
