@@ -227,7 +227,7 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "Quality Assurance Tools (Correction Processes)"
+        return "DSGTools: Quality Assurance Tools (Correction Processes)"
 
     def tr(self, string):
         return QCoreApplication.translate(

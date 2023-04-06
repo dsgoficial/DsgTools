@@ -11,6 +11,7 @@ Novas funcionalidades:
 Melhorias:
 - Adicionada a opção de dar pan na barra de ferramentas de revisão;
 - Adicionada mudanca de ferramenta atual nos icones das ferramentas de filtro;
+- Processing de construção do diagrama de elevação portado para o Ferramentas de Edição;
 
 Correção de bug:
 - Corrigido o bug de sempre apontar flags quando a geometria tem buraco do processo de identificar geometrias com densidade incorreta de vértices;

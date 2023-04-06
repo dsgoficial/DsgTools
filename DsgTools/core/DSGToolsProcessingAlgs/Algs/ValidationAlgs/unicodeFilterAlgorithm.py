@@ -151,13 +151,24 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
         return "unicodefilter"
 
     def displayName(self):
-        return self.tr("Identifica Feições que contém unicode não permitido")
+        return self.tr("Identify features with invalid unicode")
 
     def group(self):
-        return self.tr("Other Algorithms")
+        """
+        Returns the name of the group this algorithm belongs to. This string
+        should be localised.
+        """
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
-        return "DSGTools: Other Algorithms"
+        """
+        Returns the unique ID of the group this algorithm belongs to. This
+        string should be fixed for the algorithm, and must not be localised.
+        The group id should be unique within each provider. Group id should
+        contain lowercase alphanumeric characters only and no spaces or other
+        formatting characters.
+        """
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def shortHelpString(self):
         return self.tr(
