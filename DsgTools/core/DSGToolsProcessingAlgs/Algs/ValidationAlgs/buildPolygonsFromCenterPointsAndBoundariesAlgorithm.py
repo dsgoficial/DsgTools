@@ -721,6 +721,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             currentStep += 1
             polygonFeatList += localPolygonFeatList
             flagDict.update(localFlagDict)
+        return polygonFeatList, flagDict
 
     def extractFeaturesUsingGeographicBounds(
         self, inputLyr, geographicBounds, context, onlySelected=False, feedback=None
