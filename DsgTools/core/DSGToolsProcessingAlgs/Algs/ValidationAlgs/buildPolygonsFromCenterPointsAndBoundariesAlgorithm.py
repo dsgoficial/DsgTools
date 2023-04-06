@@ -20,9 +20,12 @@
  ***************************************************************************/
 """
 
+import concurrent.futures
+import os
 from uuid import uuid4
 from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
 import processing
+from processing.tools import dataobjects
 from PyQt5.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
@@ -47,6 +50,7 @@ from qgis.core import (
     QgsProcessingUtils,
     QgsVectorLayer,
     QgsProcessingFeatureSourceDefinition,
+    QgsProcessingContext,
 )
 
 from ...algRunner import AlgRunner
@@ -599,7 +603,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         polygonFeatList = []
         flagDict = dict()
         boundaryCount = geographicBoundaryLyr.featureCount()
-        nSteps = 5 + boundaryCount * 5
+        nSteps = 5 + 2
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
@@ -644,65 +648,55 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             )
         currentStep += 1
 
-        for current, localGeographicBoundsLyr in enumerate(
-            geographicBoundaryLayerList, start=1
-        ):
+        def compute(localGeographicBoundsLyr):
+            context = QgsProcessingContext()
             if multiStepFeedback.isCanceled():
-                break
-            multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(
-                self.tr(
-                    f"Running build polygons for boundary {current}/{boundaryCount}"
-                )
-            )
+                return [], {}
             localInputCenterPointLyr = self.extractFeaturesUsingGeographicBounds(
                 inputLyr=inputCenterPointLyr,
                 geographicBounds=localGeographicBoundsLyr,
-                feedback=multiStepFeedback,
+                feedback=None,
                 context=context,
                 onlySelected=onlySelected,
             )
-            currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback.isCanceled():
+                return [], {}
             localBoundaryLineLyr = self.extractFeaturesUsingGeographicBounds(
                 inputLyr=boundaryLineLyr,
                 geographicBounds=localGeographicBoundsLyr,
-                feedback=multiStepFeedback,
+                feedback=None,
                 context=context,
                 onlySelected=onlySelected,
             )
-            currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback.isCanceled():
+                return [], {}
             localLinesConstraintLyr = (
                 self.extractFeaturesUsingGeographicBounds(
                     inputLyr=constraintLinesLyr,
                     geographicBounds=localGeographicBoundsLyr,
-                    feedback=multiStepFeedback,
+                    feedback=None,
                     context=context,
                     onlySelected=onlySelected,
                 )
                 if constraintLinesLyr is not None
                 else None
             )
-            currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback.isCanceled():
+                return [], {}
             localPolygonsConstraintLyr = (
                 self.extractFeaturesUsingGeographicBounds(
                     inputLyr=constraintPolygonsLyr,
                     geographicBounds=localGeographicBoundsLyr,
-                    feedback=multiStepFeedback,
+                    feedback=None,
                     context=context,
                     onlySelected=onlySelected,
                 )
                 if constraintPolygonsLyr is not None
                 else None
             )
-            currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
-            (
-                localPolygonFeatList,
-                localFlagDict,
-            ) = layerHandler.getPolygonsFromCenterPointsAndBoundaries(
+            if multiStepFeedback.isCanceled():
+                return [], {}
+            return layerHandler.getPolygonsFromCenterPointsAndBoundariesAlt(
                 localInputCenterPointLyr,
                 geographicBoundaryLyr=localGeographicBoundsLyr,
                 constraintLineLyrList=[localLinesConstraintLyr, localBoundaryLineLyr]
@@ -714,11 +708,41 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 onlySelected=False,  # the selected features were already filtered
                 suppressPolygonWithoutCenterPointFlag=suppressPolygonWithoutCenterPointFlag,
                 context=context,
-                feedback=multiStepFeedback,
+                feedback=None,
                 attributeBlackList=attributeBlackList,
-                algRunner=self.algRunner,
+                algRunner=AlgRunner(),
             )
-            currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        nRegions = len(geographicBoundaryLayerList)
+        if nRegions == 0:
+            return polygonFeatList, flagDict
+        stepSize = 100 / nRegions
+        futures = set()
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
+        multiStepFeedback.pushInfo(
+            self.tr("Submitting building polygon tasks to thread...")
+        )
+        for current, localGeographicBoundsLyr in enumerate(
+            geographicBoundaryLayerList, start=0
+        ):
+            if multiStepFeedback.isCanceled():
+                break
+            futures.add(pool.submit(compute, localGeographicBoundsLyr))
+            multiStepFeedback.setProgress(current * stepSize)
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        multiStepFeedback.pushInfo(self.tr("Evaluating results..."))
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback.isCanceled():
+                break
+            localPolygonFeatList, localFlagDict = future.result()
+            multiStepFeedback.pushInfo(
+                self.tr(f"Polygons from region {current+1}/{nRegions}")
+            )
+            multiStepFeedback.setProgress(current * stepSize)
             polygonFeatList += localPolygonFeatList
             flagDict.update(localFlagDict)
         return polygonFeatList, flagDict
@@ -731,7 +755,8 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             if feedback is not None
             else None
         )
-        multiStepFeedback.setCurrentStep(0)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
         extractedLyr = self.algRunner.runExtractByLocation(
             inputLyr=inputLyr
             if not onlySelected
@@ -740,7 +765,8 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        multiStepFeedback.setCurrentStep(1)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
         self.algRunner.runCreateSpatialIndex(
             inputLyr=extractedLyr, context=context, feedback=multiStepFeedback
         )

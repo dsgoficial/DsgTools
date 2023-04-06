@@ -2161,6 +2161,115 @@ class LayerHandler(QObject):
             if feat not in notBoundarySet:
                 outputBoundarySink.addFeature(feat, QgsFeatureSink.FastInsert)
 
+    def getPolygonsFromCenterPointsAndBoundariesAlt(
+        self,
+        inputCenterPointLyr,
+        constraintLineLyrList=None,
+        constraintPolygonLyrList=None,
+        attributeBlackList=None,
+        geographicBoundaryLyr=None,
+        onlySelected=False,
+        suppressPolygonWithoutCenterPointFlag=False,
+        context=None,
+        feedback=None,
+        algRunner=None,
+    ):
+        algRunner = AlgRunner() if algRunner is None else algRunner
+        constraintLineLyrList = (
+            [] if constraintLineLyrList is None else constraintLineLyrList
+        )
+        constraintPolygonList = (
+            [] if constraintPolygonLyrList is None else constraintPolygonLyrList
+        )
+        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
+        constraintPolygonListWithGeoBounds = (
+            constraintPolygonList + [geographicBoundaryLyr]
+            if geographicBoundaryLyr is not None
+            else constraintPolygonList
+        )
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(8, feedback)
+            if feedback is not None
+            else None
+        )
+        currentStep = 0
+        if multiStepFeedback is not None:
+            multiStepFeedback.setProgressText(self.tr("Merging all into one layer..."))
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        constraintPolygonsAsPolygonsLyr = (
+            algRunner.runMergeVectorLayers(
+                inputList=constraintPolygonListWithGeoBounds,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            if len(constraintPolygonListWithGeoBounds) > 0
+            else None
+        )
+        currentStep += 1
+        constraintPolygonsAsLinesLyr = (
+            algRunner.runPolygonsToLines(
+                inputLyr=constraintPolygonsAsPolygonsLyr,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            if constraintPolygonsAsPolygonsLyr is not None
+            else None
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        allLinesLyr = algRunner.runMergeVectorLayers(
+            inputList=constraintLineLyrList + [constraintPolygonsAsLinesLyr]
+            if constraintPolygonsAsLinesLyr is not None
+            else constraintLineLyrList,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Exploding lines..."))
+        explodedLines = algRunner.runExplodeLines(
+            inputLyr=allLinesLyr, context=context, feedback=multiStepFeedback
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(explodedLines, context, multiStepFeedback)
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Splitting lines..."))
+        splitLines = algRunner.runSplitLinesWithLines(
+            inputLyr=explodedLines,
+            linesLyr=explodedLines,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(
+                self.tr("Starting the process of building polygons...")
+            )
+        builtPolygonLyr = algRunner.runPolygonize(
+            splitLines, context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(
+                self.tr("Relating center points with built polygons...")
+            )
+        return self.relateCenterPointsWithPolygons(
+            inputCenterPointLyr,
+            builtPolygonLyr,
+            constraintPolygonList=constraintPolygonList,
+            geomBoundary=geographicBoundaryLyr,
+            attributeBlackList=attributeBlackList,
+            suppressPolygonWithoutCenterPointFlag=suppressPolygonWithoutCenterPointFlag,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+
     def getPolygonsFromCenterPointsAndBoundaries(
         self,
         inputCenterPointLyr,
@@ -2306,14 +2415,20 @@ class LayerHandler(QObject):
         :return polygonList, flagList: list of polygons (QgsFeature)
         """
         nSteps = 4 if constraintPolygonList else 2
-        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(nSteps, feedback)
+            if feedback is not None
+            else None
+        )
         currentStep = 0
-        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner = AlgRunner()
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
 
         # If there were no polygon list, it was breaking the method.
         # tried to solve it with this if else
         if constraintPolygonList:
-            constraintPolygonLyr = self.algRunner.runMergeVectorLayers(
+            constraintPolygonLyr = algRunner.runMergeVectorLayers(
                 constraintPolygonList, context, feedback=multiStepFeedback
             )
             currentStep += 1
@@ -2330,7 +2445,8 @@ class LayerHandler(QObject):
                 QgsSpatialIndex(),
                 {},
             )
-        multiStepFeedback.setCurrentStep(currentStep)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
         builtPolygonToCenterPointDict = self.buildCenterPolygonToCenterPointDict(
             inputCenterPointLyr,
             builtPolygonLyr,
@@ -2338,7 +2454,8 @@ class LayerHandler(QObject):
             feedback=multiStepFeedback,
         )
         currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
         (
             polygonList,
             flagList,
