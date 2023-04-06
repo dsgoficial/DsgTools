@@ -740,7 +740,9 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 break
             localPolygonFeatList, localFlagDict = future.result()
             multiStepFeedback.pushInfo(
-                self.tr(f"Polygons from region {current+1}/{nRegions}")
+                self.tr(
+                    f"Building polygons from region {current+1}/{nRegions} is done."
+                )
             )
             multiStepFeedback.setProgress(current * stepSize)
             polygonFeatList += localPolygonFeatList
