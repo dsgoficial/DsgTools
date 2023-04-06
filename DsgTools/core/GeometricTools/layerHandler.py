@@ -2216,7 +2216,7 @@ class LayerHandler(QObject):
             if geographicBoundaryLyr is not None
             else constraintPolygonList
         )
-        multiStepFeedback = QgsProcessingMultiStepFeedback(7, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(8, feedback)
         # 1. Merge Polygon lyrs into one
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
