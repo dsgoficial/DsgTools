@@ -212,7 +212,7 @@ class GenericSelectionTool(QgsMapTool):
                 return True
         return False
 
-    def getPrimitiveDict(self, e, hasControlModifier=False):
+    def getPrimitiveDict(self, e, hasControlModifier=False, hasAltModifier=False):
         """
         Builds a dict with keys as geometryTypes of layer, which are Qgis.Point (value 0), Qgis.Line (value 1) or Qgis.Polygon (value 2),
         and values as layers from self.iface.mapCanvas().layers(). When self.iface.mapCanvas().layers() is called, a list of
@@ -222,7 +222,12 @@ class GenericSelectionTool(QgsMapTool):
         primitiveDict = dict()
         firstGeom = self.checkSelectedLayers()
         visibleLayers = QgsProject.instance().layerTreeRoot().checkedLayers()
-        for lyr in self.iface.mapCanvas().layers():  # ordered layers
+        iterator = (
+            self.iface.mapCanvas().layers()
+            if not hasAltModifier
+            else [self.iface.activeLayer()]
+        )
+        for lyr in iterator:  # ordered layers
             # layer types other than VectorLayer are ignored, as well as layers in black list and layers that are not visible
             if (
                 not isinstance(lyr, QgsVectorLayer)
@@ -731,10 +736,10 @@ class GenericSelectionTool(QgsMapTool):
         if selected:
             firstGeom = self.checkSelectedLayers()
         # setting a list of features to iterate over
-        layerList = (
-            [self.iface.activeLayer()]
-            if QApplication.keyboardModifiers == Qt.AltModifier
-            else self.getPrimitiveDict(e, hasControlModifier=selected)
+        layerList = self.getPrimitiveDict(
+            e,
+            hasControlModifier=selected,
+            hasAltModifier=QApplication.keyboardModifiers() == Qt.AltModifier,
         )
         layers = []
         for key in layerList:
