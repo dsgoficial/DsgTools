@@ -28,6 +28,7 @@ from functools import partial
 from itertools import combinations
 import os
 from typing import List
+from uuid import uuid4
 
 from processing.tools import dataobjects
 
@@ -2824,3 +2825,27 @@ class LayerHandler(QObject):
         layer.beginEditCommand(self.tr("DsgTools adding missing vertexes"))
         list(map(changeGeometryLambda, updateSet))
         layer.endEditCommand()
+
+    def createMemoryLayerForEachFeature(self, layer, context, feedback=None):
+        layerList = []
+        nFeats = layer.featureCount()
+        if nFeats == 0:
+            return layerList
+        stepSize = 100 / nFeats
+        for current, feat in enumerate(layer.getFeatures()):
+            if feedback is not None and feedback.isCanceled():
+                return layerList
+            temp = QgsVectorLayer(
+                f"{QgsWkbTypes.displayString(layer.wkbType())}?crs={layer.crs().authid()}",
+                f"{layer.name()}-{str(uuid4())}",
+                "memory",
+            )
+            temp_data = temp.dataProvider()
+            temp_data.addAttributes(layer.dataProvider().fields().toList())
+            temp.updateFields()
+            temp_data.addFeature(feat)
+            self.algRunner.runCreateSpatialIndex(inputLyr=temp, context=context)
+            layerList.append(temp)
+            if feedback is not None:
+                feedback.setProgress(current * stepSize)
+        return layerList

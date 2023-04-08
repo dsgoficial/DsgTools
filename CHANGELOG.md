@@ -15,6 +15,7 @@ Melhorias:
 - Adicionado o comportamento no seletor genérico de selecionar somente na camada ativa quando a tecla Alt estiver selecionada;
 - Adicionada a opção de rodar a construção de polígonos por polígono de área geográfica (por MI);
 - Melhoria de desempenho na construção de polígonos (adicionado paralelismo em thread);
+- Melhoria de desempenho na identificação de erros de construção do terreno (roda em thread por área geográfica);
 
 Correção de bug:
 - Corrigido o bug de sempre apontar flags quando a geometria tem buraco do processo de identificar geometrias com densidade incorreta de vértices;

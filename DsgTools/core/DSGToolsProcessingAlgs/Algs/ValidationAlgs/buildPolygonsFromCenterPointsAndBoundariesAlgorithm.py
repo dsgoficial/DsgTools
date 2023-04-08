@@ -608,7 +608,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Splitting geographic bounds"))
-        geographicBoundaryLayerList = self.createMemoryLayerForEachFeature(
+        geographicBoundaryLayerList = layerHandler.createMemoryLayerForEachFeature(
             layer=geographicBoundaryLyr, context=context, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(currentStep)
@@ -773,30 +773,6 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             inputLyr=extractedLyr, context=context, feedback=multiStepFeedback
         )
         return extractedLyr
-
-    def createMemoryLayerForEachFeature(self, layer, context, feedback=None):
-        layerList = []
-        nFeats = layer.featureCount()
-        if nFeats == 0:
-            return layerList
-        stepSize = 100 / nFeats
-        for current, feat in enumerate(layer.getFeatures()):
-            if feedback is not None and feedback.isCanceled():
-                return layerList
-            temp = QgsVectorLayer(
-                f"{QgsWkbTypes.displayString(layer.wkbType())}?crs={layer.crs().authid()}",
-                f"{layer.name()}-{str(uuid4())}",
-                "memory",
-            )
-            temp_data = temp.dataProvider()
-            temp_data.addAttributes(layer.dataProvider().fields().toList())
-            temp.updateFields()
-            temp_data.addFeature(feat)
-            self.algRunner.runCreateSpatialIndex(inputLyr=temp, context=context)
-            layerList.append(temp)
-            if feedback is not None:
-                feedback.setProgress(current * stepSize)
-        return layerList
 
     def checkUnusedBoundaries(
         self, boundaryLineLyr, output_polygon_sink_id, feedback=None, context=None
