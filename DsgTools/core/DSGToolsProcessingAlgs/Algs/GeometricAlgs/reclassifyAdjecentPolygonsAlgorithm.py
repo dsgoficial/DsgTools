@@ -20,6 +20,8 @@
  ***************************************************************************/
 """
 
+from collections import defaultdict
+import json
 import os
 
 import concurrent.futures
@@ -43,13 +45,16 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsProcessingFeatureSourceDefinition,
     QgsGeometry,
+    QgsProcessingParameterString,
 )
 
 
 class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     SELECTED = "SELECTED"
+    LABEL_FIELD = "LABEL_FIELD"
     MAX_AREA = "MAX_AREA"
+    LABEL_ORDER = "LABEL_RULES"
     DISSOLVE_ATTRIBUTE_LIST = "DISSOLVE_ATTRIBUTE_LIST"
     DISSOLVE_OUTPUT = "DISSOLVE_OUTPUT"
     OUTPUT = "OUTPUT"
@@ -69,6 +74,27 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.SELECTED, self.tr("Process only selected features")
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.LABEL_FIELD,
+                self.tr("Class label field on input polygons"),
+                None,
+                self.INPUT,
+                QgsProcessingParameterField.Any,
+                allowMultiple=False,
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.LABEL_ORDER,
+                description=self.tr("Label order"),
+                multiLine=False,
+                defaultValue="",
+                optional=True,
             )
         )
 
@@ -123,6 +149,9 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         maxAreaToDissolve = self.parameterAsDouble(parameters, self.MAX_AREA, context)
+        classFieldName = self.parameterAsFields(parameters, self.LABEL_FIELD, context)[0]
+        labelListStr = self.parameterAsString(parameters, self.LABEL_ORDER, context)
+        classOrderList = None if labelListStr == '' else [int(i) for i in labelListStr.split(",")]
         dissolveOutput = self.parameterAsBool(parameters, self.DISSOLVE_OUTPUT, context)
         dissolveFields = self.parameterAsFields(
             parameters, self.DISSOLVE_ATTRIBUTE_LIST, context
@@ -172,7 +201,14 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         fieldNames = [field.name() for field in inputLyr.fields()]
         multiStepFeedback.setProgressText(self.tr("Performing reclassification"))
         featuresToUpdateSet = self.reclassifyPolygons(
-            G, featDict, anchorIdsSet, idSet, dissolveFields, multiStepFeedback
+            G=G,
+            featDict=featDict,
+            anchorIdsSet=anchorIdsSet,
+            candidateIdSet=idSet,
+            fieldNames=dissolveFields, 
+            feedback=multiStepFeedback,
+            classFieldName=classFieldName,
+            classOrderList=classOrderList,
         )
         currentStep += 1
 
@@ -307,11 +343,11 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         return G, featDict, idSet
 
     def reclassifyPolygons(
-        self, G, featDict, anchorIdsSet, idSet, fieldNames, feedback
+        self, G, featDict, anchorIdsSet, candidateIdSet, fieldNames, classFieldName, feedback, classOrderList=None
     ):
         visitedSet = set()
         featuresToUpdateSet = set()
-        nIds = len(idSet)
+        nIds = len(candidateIdSet)
         if nIds == 0:
             return featuresToUpdateSet
         stepSize = 100 / nIds
@@ -321,6 +357,20 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             for fieldName in fieldNames:
                 feat[fieldName] = anchorFeat[fieldName]
             return feat
+
+        def chooseId(G, id, candidateIdSet):
+            if classOrderList is None:
+                return max(candidateIdSet, key=lambda x: G[id][x]["length"])
+            auxDict = defaultdict(list)
+            sortedIdsByLength = sorted(candidateIdSet, key=lambda x:G[id][x]["length"], reverse=True)
+            if len(sortedIdsByLength) == 1:
+                return sortedIdsByLength[0]
+            for i in sortedIdsByLength:
+                auxDict[featDict[i][classFieldName]].append(i)
+            for key in classOrderList:
+                if key not in auxDict or len(auxDict[key]) == 0:
+                    continue
+                return auxDict[key][0]
 
         while True:
             newAnchors = set()
@@ -332,13 +382,13 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
                     if feedback.isCanceled():
                         return featuresToUpdateSet
                     # d = set(G.neighbors(id)) - anchorIdsSet - visitedSet
-                    d = set(G.neighbors(id)).intersection(anchorIdsSet)
-                    if d == set():
+                    candidateIdSet = set(G.neighbors(id)).intersection(anchorIdsSet)
+                    if candidateIdSet == set():
                         continue
                     newAnchors.add(id)
                     visitedSet.add(id)
                     processedFeats += 1
-                    chosenId = max(d, key=lambda x: G[id][x]["length"])
+                    chosenId = chooseId(G, id, candidateIdSet)
                     feat = updateAttributes(featDict[id], featDict[chosenId])
                     featDict[id] = feat
                     featuresToUpdateSet.add(feat)
