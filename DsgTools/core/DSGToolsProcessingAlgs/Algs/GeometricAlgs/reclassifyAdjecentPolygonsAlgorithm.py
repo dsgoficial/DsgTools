@@ -49,13 +49,18 @@ from qgis.core import (
     QgsGeometry,
     QgsProcessingParameterString,
     QgsProcessingParameterNumber,
+    QgsProcessingParameterExpression,
+    QgsFeatureRequest
 )
 
 
 class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     SELECTED = "SELECTED"
+    FILTER_EXPRESSION = "FILTER_EXPRESSION"
+    BUILD_CACHE = "BUILD_CACHE"
     LABEL_FIELD = "LABEL_FIELD"
+    IGNORE_AREA_PARAMETER = "IGNORE_AREA_PARAMETER"
     MAX_AREA = "MAX_AREA"
     LABEL_ORDER = "LABEL_RULES"
     DISSOLVE_ATTRIBUTE_LIST = "DISSOLVE_ATTRIBUTE_LIST"
@@ -82,6 +87,12 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         )
 
         self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.BUILD_CACHE, self.tr("Build local cache")
+            )
+        )
+
+        self.addParameter(
             QgsProcessingParameterField(
                 self.LABEL_FIELD,
                 self.tr("Class label field on input polygons"),
@@ -93,12 +104,28 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         )
 
         self.addParameter(
+            QgsProcessingParameterExpression(
+                self.FILTER_EXPRESSION,
+                self.tr("Filter expression for input"),
+                None,
+                self.INPUT,
+                optional=True
+            )
+        )
+
+        self.addParameter(
             QgsProcessingParameterString(
                 self.LABEL_ORDER,
                 description=self.tr("Label order"),
                 multiLine=False,
                 defaultValue="",
                 optional=True,
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.IGNORE_AREA_PARAMETER, self.tr("Ignore Area Parameter"), defaultValue=False
             )
         )
 
@@ -162,6 +189,11 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
                 self.invalidSourceError(parameters, self.INPUT)
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        buildCache = self.parameterAsBool(parameters, self.BUILD_CACHE, context)
+        ignoreAreaParameter = self.parameterAsBool(parameters, self.IGNORE_AREA_PARAMETER, context)
+        filterExpression = self.parameterAsExpression(parameters, self.FILTER_EXPRESSION, context)
+        if filterExpression == '':
+            filterExpression = None
         maxAreaToDissolve = self.parameterAsDouble(parameters, self.MAX_AREA, context)
         classFieldName = self.parameterAsFields(parameters, self.LABEL_FIELD, context)[0]
         labelListStr = self.parameterAsString(parameters, self.LABEL_ORDER, context)
@@ -187,33 +219,35 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         )
         if output_sink is None:
             raise QgsProcessingException(self.invalidSinkError(parameters, self.OUTPUT))
-        nSteps = 7 if dissolveOutput else 6
+        nSteps = 6 +  (dissolveOutput is True) + 2*(buildCache is True)
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
+        if buildCache:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Creating cache layer"))
+            cacheLyr = algRunner.runCreateFieldWithExpression(
+                inputLyr=inputLyr
+                if not onlySelected
+                else QgsProcessingFeatureSourceDefinition(inputLyr.id(), True),
+                expression="$id",
+                fieldType=1,
+                fieldName="featid",
+                feedback=multiStepFeedback,
+                context=context,
+            )
+            currentStep += 1
 
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Creating cache layer"))
-        cacheLyr = algRunner.runCreateFieldWithExpression(
-            inputLyr=inputLyr
-            if not onlySelected
-            else QgsProcessingFeatureSourceDefinition(inputLyr.id(), True),
-            expression="$id",
-            fieldType=1,
-            fieldName="featid",
-            feedback=multiStepFeedback,
-            context=context,
-        )
-        currentStep += 1
-
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Creating spatial index on cache"))
-        algRunner.runCreateSpatialIndex(cacheLyr, context, feedback=multiStepFeedback)
-        currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Creating spatial index on cache"))
+            algRunner.runCreateSpatialIndex(cacheLyr, context, feedback=multiStepFeedback)
+            currentStep += 1
+        else:
+            cacheLyr = inputLyr
 
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Building aux structures"))
         G, featDict, idSet = self.buildAuxStructures(
-            nx, cacheLyr, maxAreaToDissolve, chunk_size, multiStepFeedback
+            nx, cacheLyr, maxAreaToDissolve, chunk_size, ignoreAreaParameter=ignoreAreaParameter, filterExpression=filterExpression, feedback=multiStepFeedback
         )
         currentStep += 1
 
@@ -297,17 +331,11 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
 
         return {self.OUTPUT: output_sink_id}
 
-    def buildAuxStructures(self, nx, inputLyr, tol, chunk_size, feedback):
+    def buildAuxStructures(self, nx, inputLyr, tol, chunk_size, ignoreAreaParameter=False, filterExpression=None, feedback=None):
         G = nx.Graph()
         featDict = dict()
         idSet = set()
-        nFeats = inputLyr.featureCount()
-        if nFeats == 0:
-            return G, featDict, idSet
-        stepSize = 100 / nFeats
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
-        futures = set()
 
         def compute(feat):
             itemList = []
@@ -317,7 +345,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             engine = QgsGeometry.createGeometryEngine(geom.constGet())
             engine.prepareGeometry()
             for candidateFeat in inputLyr.getFeatures(bbox):
-                if feedback.isCanceled():
+                if multiStepFeedback.isCanceled():
                     return [(None, None, None, -1)]
                 candidateFeatId = candidateFeat.id()
                 if candidateFeatId == featId:
@@ -343,49 +371,109 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             iterator = iter(iterable)
             while chunk := tuple(itertools.islice(iterator, chunk_size)):
                 yield chunk
+        
+        def concurrently(executor, fn, inputs, *, max_concurrency=5):
+            """
+            Calls the function ``fn`` on the values ``inputs``.
 
-        multiStepFeedback.pushInfo("Loading features from cache and submitting them to the thread.")
+            ``fn`` should be a function that takes a single input, which is the
+            individual values in the iterable ``inputs``.
+
+            Generates (input, output) tuples as the calls to ``fn`` complete.
+
+            See https://alexwlchan.net/2019/10/adventures-with-concurrent-futures/ for an explanation
+            of how this function works.
+
+            """
+            # Make sure we get a consistent iterator throughout, rather than
+            # getting the first element repeatedly.
+            fn_inputs = iter(inputs)
+
+            futures = {
+                executor.submit(fn, input): input
+                for input in itertools.islice(fn_inputs, max_concurrency)
+            }
+
+            while futures:
+                if multiStepFeedback.isCanceled():
+                    executor.shutdown(cancel_futures=True)
+                    break
+                done, not_done = concurrent.futures.wait(
+                    futures, return_when=concurrent.futures.FIRST_COMPLETED
+                )
+                if multiStepFeedback.isCanceled():
+                    for future in not_done:
+                        future.cancel()
+
+                for fut in done:
+                    original_input = futures.pop(fut)
+                    if multiStepFeedback.isCanceled():
+                        executor.shutdown(cancel_futures=True)
+                        break
+                    yield original_input, fut.result()
+
+                for input in itertools.islice(fn_inputs, len(done)):
+                    if multiStepFeedback.isCanceled():
+                        executor.shutdown(cancel_futures=True)
+                        break
+                    fut = executor.submit(fn, input)
+                    futures[fut] = input
+
+        multiStepFeedback.pushInfo("Loading features from cache.")
         multiStepFeedback.setCurrentStep(0)
-        for current, feat in enumerate(inputLyr.getFeatures()):
+        if filterExpression is None:
+            iterator = inputLyr.getFeatures()
+        else:
+            request = QgsFeatureRequest()
+            request.setFilterExpression(f"{filterExpression}")
+            iterator = inputLyr.getFeatures(request)
+        featList = list(iterator)
+        nFeats = len(featList)
+        if nFeats == 0:
+            return G, featDict, idSet
+        stepSize = 100 / nFeats
+        for current, feat in enumerate(featList):
             if multiStepFeedback.isCanceled():
                 break
             multiStepFeedback.setProgress(current * stepSize)
-            if feat.geometry().area() > tol:
+            if not ignoreAreaParameter and feat.geometry().area() > tol:
                 continue
             featId = feat.id()
             featDict[featId] = feat
             idSet.add(featId)
-        featList = list(featDict.values())
-        for chunk in batched(featList, chunk_size=chunk_size):
-            futures.add(pool.submit(compute_chunk, chunk))
-
         multiStepFeedback.setCurrentStep(1)
         nFeats = len(featDict)
         stepSize = 100/nFeats
         if nFeats == 0:
             return G, featDict, idSet
 
-        multiStepFeedback.setProgressText(self.tr(f"Building graph with thread results. Evaluating {nFeats:n} features."))
+        multiStepFeedback.setProgressText(self.tr(f"Starting the processess of building graph using parallel computing. Evaluating {nFeats:n} features."))
         candidateCount = 0
-        logInterval = chunk_size // 10 if chunk_size // 10 > 0 else 1
-        current = 0
-        for future in concurrent.futures.as_completed(futures):
-            if multiStepFeedback.isCanceled():
-                break
-            if current % logInterval == 0:
-                multiStepFeedback.setProgressText(self.tr(f"Evaluated {current:n} / {nFeats:n} features."))
-            for item in future.result():
-            # for item in itemList:
-                current += 1
-                featId, candidateFeatId, candidateFeat, intersectionLength = item
-                if featId is None:
-                    multiStepFeedback.setProgress(current * stepSize)
-                    continue
-                if candidateFeatId not in featDict:
-                    featDict[candidateFeatId] = candidateFeat
-                G.add_edge(featId, candidateFeatId)
-                G[featId][candidateFeatId]["length"] = intersectionLength
-                multiStepFeedback.setProgress(current * stepSize)
+        logInterval = 100
+        def build_graph(item):
+            featId, candidateFeatId, candidateFeat, intersectionLength = item
+            if featId is None:
+                return
+            if candidateFeatId not in featDict:
+                featDict[candidateFeatId] = candidateFeat
+            G.add_edge(featId, candidateFeatId)
+            G[featId][candidateFeatId]["length"] = intersectionLength
+        
+        with concurrent.futures.ThreadPoolExecutor(max_workers=chunk_size) as executor:
+            for _, result in concurrently(executor, compute, featList, max_concurrency=32):
+        # for returned_chunk, result in concurrently(executor, compute_chunk, batched(featList, chunk_size=chunk_size), max_concurrency=4):
+        # executor = concurrent.futures.ThreadPoolExecutor()
+        # for batch in batched(featList, chunk_size=chunk_size):
+                if multiStepFeedback.isCanceled():
+                    break
+                candidateCount += 1
+                # candidateCount += len(returned_chunk)
+                # result = future.result()
+                list(map(build_graph, result))
+                if candidateCount % logInterval == 0:
+                    multiStepFeedback.setProgressText(self.tr(f"Evaluated {candidateCount:n} / {nFeats:n} features."))
+                multiStepFeedback.setProgress(candidateCount * stepSize)
+
         multiStepFeedback.pushInfo(self.tr(f"{nFeats:n} evaluated. Found {candidateCount:n} candidates to evaluate in next step."))
         return G, featDict, idSet
 
