@@ -2826,7 +2826,7 @@ class LayerHandler(QObject):
         list(map(changeGeometryLambda, updateSet))
         layer.endEditCommand()
 
-    def createMemoryLayerForEachFeature(self, layer, context, feedback=None):
+    def createMemoryLayerForEachFeature(self, layer, context, returnFeature=False, feedback=None):
         layerList = []
         nFeats = layer.featureCount()
         if nFeats == 0:
@@ -2835,17 +2835,23 @@ class LayerHandler(QObject):
         for current, feat in enumerate(layer.getFeatures()):
             if feedback is not None and feedback.isCanceled():
                 return layerList
-            temp = QgsVectorLayer(
+            temp = self.createMemoryLayerWithFeature(layer, feat, context)
+            item = (feat, temp) if returnFeature else temp
+            layerList.append(item)
+            if feedback is not None:
+                feedback.setProgress(current * stepSize)
+        return layerList
+
+    def createMemoryLayerWithFeature(self, layer, feat, context=None):
+        context = QgsProcessingContext() if context is None else context
+        temp = QgsVectorLayer(
                 f"{QgsWkbTypes.displayString(layer.wkbType())}?crs={layer.crs().authid()}",
                 f"{layer.name()}-{str(uuid4())}",
                 "memory",
             )
-            temp_data = temp.dataProvider()
-            temp_data.addAttributes(layer.dataProvider().fields().toList())
-            temp.updateFields()
-            temp_data.addFeature(feat)
-            self.algRunner.runCreateSpatialIndex(inputLyr=temp, context=context)
-            layerList.append(temp)
-            if feedback is not None:
-                feedback.setProgress(current * stepSize)
-        return layerList
+        temp_data = temp.dataProvider()
+        temp_data.addAttributes(layer.dataProvider().fields().toList())
+        temp.updateFields()
+        temp_data.addFeature(feat)
+        self.algRunner.runCreateSpatialIndex(inputLyr=temp, context=context)
+        return temp
