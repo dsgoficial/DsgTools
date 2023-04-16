@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2023-01-18
+        begin                : 2023-04-15
         git sha              : $Format:%H$
         copyright            : (C) 2023 by Felipe Diniz - Cartographic Engineer @ Brazilian Army
         email                : diniz.felipe@eb.mil.br
@@ -23,15 +23,13 @@
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
-    QgsFeatureSink,
     QgsProcessingAlgorithm,
     QgsProcessingParameterFeatureSource,
     QgsProcessingParameterDistance,
     QgsProcessingParameterFeatureSink,
-    QgsFeatureRequest,
 )
 import math
-from qgis.core import QgsFeature, QgsGeometry, QgsPointXY, QgsWkbTypes, QgsSpatialIndex
+from qgis.core import QgsFeature, QgsGeometry, QgsPointXY, QgsWkbTypes
 from itertools import product
 
 

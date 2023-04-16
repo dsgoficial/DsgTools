@@ -24,6 +24,9 @@
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.pointsInPolygonGridAlgorithm import (
     PointsInPolygonGridAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitPolygonsAlgorithm import (
+    SplitPolygons,
+)
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -511,6 +514,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ReclassifyAdjacentPolygonsAlgorithm(),
             StreamOrder(),
             PointsInPolygonGridAlgorithm(),
+            SplitPolygons(),
         ]
         return algList
 
