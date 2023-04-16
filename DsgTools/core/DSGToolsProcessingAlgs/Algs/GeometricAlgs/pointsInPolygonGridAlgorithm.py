@@ -20,19 +20,18 @@
  ***************************************************************************/
 """
 
-import concurrent.futures
-import os
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
+    QgsFeatureSink,
     QgsProcessingAlgorithm,
     QgsProcessingParameterFeatureSource,
     QgsProcessingParameterDistance,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingMultiStepFeedback,
+    QgsFeatureRequest,
 )
 import math
-from qgis.core import QgsFeature, QgsGeometry, QgsPointXY, QgsWkbTypes
+from qgis.core import QgsFeature, QgsGeometry, QgsPointXY, QgsWkbTypes, QgsSpatialIndex
 from itertools import product
 
 
@@ -49,16 +48,27 @@ class PointsInPolygonGridAlgorithm(QgsProcessingAlgorithm):
         return PointsInPolygonGridAlgorithm()
 
     def name(self):
-        return "points_in_polygon_grid"
+        return "points_in_polygon_grid_old"
 
     def displayName(self):
-        return self.tr("Points In Polygon Grid")
+        return self.tr("Points In Polygon Grid old")
 
     def group(self):
-        return self.tr("Vector geometry")
+        """
+        Returns the name of the group this algorithm belongs to. This string
+        should be localised.
+        """
+        return self.tr("Geometric Algorithms")
 
     def groupId(self):
-        return "vectorgeometry"
+        """
+        Returns the unique ID of the group this algorithm belongs to. This
+        string should be fixed for the algorithm, and must not be localised.
+        The group id should be unique within each provider. Group id should
+        contain lowercase alphanumeric characters only and no spaces or other
+        formatting characters.
+        """
+        return "DSGTools: Geometric Algorithms"
 
     def shortHelpString(self):
         return self.tr(
@@ -104,16 +114,14 @@ class PointsInPolygonGridAlgorithm(QgsProcessingAlgorithm):
 
         total = 100.0 / source.featureCount() if source.featureCount() else 0
 
-        def createNewFeat(point_geom):
-            new_feature = QgsFeature(fields)
-            new_feature.setGeometry(point_geom)
-            new_feature.setAttributes(feature.attributes())
-            return new_feature
+        for current, feature in enumerate(source.getFeatures()):
+            if feedback.isCanceled():
+                break
 
-        def compute(feature):
             geometry = feature.geometry()
             if geometry.isEmpty() or geometry.isNull():
-                return None
+                continue
+
             bbox = geometry.boundingBox()
             x_min, y_min, x_max, y_max = (
                 bbox.xMinimum(),
@@ -121,6 +129,7 @@ class PointsInPolygonGridAlgorithm(QgsProcessingAlgorithm):
                 bbox.xMaximum(),
                 bbox.yMaximum(),
             )
+
             point_coordinates = (
                 QgsGeometry.fromPointXY(
                     QgsPointXY(x_min + i * x_distance, y_min + j * y_distance)
@@ -130,40 +139,14 @@ class PointsInPolygonGridAlgorithm(QgsProcessingAlgorithm):
                     range(int(math.ceil((y_max - y_min) / y_distance)) + 1),
                 )
             )
-            iterator = (
-                point for point in point_coordinates if geometry.contains(point)
-            )
-            return list(map(createNewFeat, iterator))
 
-        nFeats = source.featureCount()
-        if nFeats == 0:
-            return {self.OUTPUT: dest_id}
-        stepSize = 100 / nFeats
-        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
-        futures = set()
+            for point_geom in point_coordinates:
+                if geometry.contains(point_geom):
+                    new_feature = QgsFeature(fields)
+                    new_feature.setGeometry(point_geom)
+                    new_feature.setAttributes(feature.attributes())
+                    sink.addFeature(new_feature)
 
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setCurrentStep(0)
-
-        for current, feature in enumerate(source.getFeatures()):
-            if multiStepFeedback.isCanceled():
-                break
-
-            geometry = feature.geometry()
-
-            futures.add(pool.submit(compute, feature))
-            multiStepFeedback.setProgress(current * stepSize)
-
-        nFutures = len(futures)
-        multiStepFeedback.setCurrentStep(1)
-        sinkLambda = lambda x: sink.addFeature(x)
-        for current, future in enumerate(concurrent.futures.as_completed(futures)):
-            if multiStepFeedback.isCanceled():
-                break
-            result = future.result()
-            multiStepFeedback.setProgress(current * nFutures)
-            if result is None:
-                continue
-            list(map(sinkLambda, result))
+            feedback.setProgress(int(current * total))
 
         return {self.OUTPUT: dest_id}

@@ -21,6 +21,9 @@
  ***************************************************************************/
 """
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.pointsInPolygonGridAlgorithm import (
+    PointsInPolygonGridAlgorithm,
+)
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -507,6 +510,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             SmallHoleRemoverAlgorithm(),
             ReclassifyAdjacentPolygonsAlgorithm(),
             StreamOrder(),
+            PointsInPolygonGridAlgorithm(),
         ]
         return algList
 
