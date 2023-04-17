@@ -119,100 +119,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         nFeats = source.featureCount()
         if nFeats == 0:
             return {self.OUTPUT: dest_id}
-        def compute(feature, neighbour_source_idx):
-            context = QgsProcessingContext()
-            algRunner = AlgRunner()
-            layerHandler = LayerHandler()
-            if feedback.isCanceled():
-                return set()
-            featureLayer = layerHandler.createMemoryLayerWithFeature(source, feature, context=context, isSource=True)
-            if feedback.isCanceled():
-                return set()
-            bbox = feature.geometry().boundingBox()
-            xmin, ymin, xmax, ymax = bbox.toRectF().getCoords()
-            xSpacing = x_distance if abs(xmax-xmin) > x_distance else min(abs(xmax-xmin)/2, abs(ymax-ymin)/2)
-            ySpacing = y_distance if abs(ymax-ymin) > y_distance else min(abs(xmax-xmin)/2, abs(ymax-ymin)/2)
-            gridLayer = algRunner.runCreateGrid(
-                extent=bbox,
-                crs=source.sourceCrs(),
-                hSpacing=xSpacing,
-                vSpacing=ySpacing,
-                context=context
-            )
-            if feedback.isCanceled():
-                return set()
-            algRunner.runCreateSpatialIndex(gridLayer, context=context)
-            if feedback.isCanceled():
-                return set()
-            clippedPolygons = algRunner.runClip(gridLayer, featureLayer, context=context)
-            if feedback.isCanceled():
-                return set()
-            algRunner.runCreateSpatialIndex(clippedPolygons, context=context)
-            nFeats = clippedPolygons.featureCount()
-            if nFeats == 0:
-                return None
-            if feedback.isCanceled():
-                return set()
-            bufferZone = algRunner.runBuffer(featureLayer, distance=max(xSpacing,ySpacing), context=context)
-            if feedback.isCanceled():
-                return set()
-            algRunner.runCreateSpatialIndex(bufferZone, context)
-            if feedback.isCanceled():
-                return set()
-            clippedNeighbors = algRunner.runClip(neighbour_source_idx, bufferZone, context=context)
-            if feedback.isCanceled() or clippedNeighbors.featureCount() == 0:
-                return set()
-            localNeighborVertexes = algRunner.runExtractVertices(clippedNeighbors, context=context)
-            if feedback.isCanceled():
-                return set()
-            neighbour_idx = QgsSpatialIndex(localNeighborVertexes.getFeatures())
-            neighbourFeatDict = {feat.id():feat for feat in localNeighborVertexes.getFeatures()}
-            clippedPolygons.startEditing()
-            clippedPolygons.beginEditCommand("Updating features")
-            clippedPolygonsDataProvider = clippedPolygons.dataProvider()
-            if not any(i.name() == classFieldName for i in clippedPolygons.fields()):
-                clippedPolygonsDataProvider.addAttributes([i for i in neighbour_source.fields() if i.name() == classFieldName])
-                clippedPolygons.updateFields()
-            fieldIdx = clippedPolygons.fields().indexFromName(classFieldName)
-            for feat in clippedPolygons.getFeatures():
-                if feedback.isCanceled():
-                    return set()
-                geom = feat.geometry()
-                nearest_neighbor_id = neighbour_idx.nearestNeighbor(geom.centroid().asPoint(), 1)[0]
-                destinationAttr = neighbourFeatDict[nearest_neighbor_id][classFieldName]
-                clippedPolygonsDataProvider.changeAttributeValues(
-                    {
-                        feat.id(): {
-                            fieldIdx: destinationAttr
-                        }
-                    }
-                )
-            clippedPolygons.endEditCommand()
-            if feedback.isCanceled():
-                return set()
-            snappedToGrid = algRunner.runSnapToGrid(
-                inputLayer=clippedPolygons,
-                tol=1e-15,
-                context=context
-            )
-            if feedback.isCanceled():
-                return set()
-            dissolvedLyr = algRunner.runDissolve(
-                inputLyr=snappedToGrid,
-                field=[classFieldName],
-                context=context,
-            )
-            if feedback.isCanceled():
-                return set()
-            snappedLyr = algRunner.runSnapGeometriesToLayer(
-                dissolvedLyr, localNeighborVertexes, tol=1e-6, context=context, behavior=2
-            )
-            if feedback.isCanceled():
-                return set()
-            retainedFields = algRunner.runRetainFields(
-                snappedLyr, [field.name() for field in source.fields()], context=context
-            )
-            return set(feat for feat in retainedFields.getFeatures())
+        
         stepSize = 100/nFeats
         iterator = sorted(
             source.getFeatures(),
@@ -225,13 +132,13 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
                 if multiStepFeedback.isCanceled():
                     return {self.OUTPUT: dest_id}
                 multiStepFeedback.setCurrentStep(current)
-                outputFeatures = compute(feature, parameters[self.NEIGHBOUR])
+                outputFeatures = self.compute(source, feature, neighbour_source, parameters[self.NEIGHBOUR], x_distance, y_distance, classFieldName, feedback=multiStepFeedback)
                 if outputFeatures is None or outputFeatures == set():
                     continue
                 outputFeaturesSet = outputFeaturesSet.union(outputFeatures)
             sink.addFeatures(list(outputFeaturesSet))
             return {self.OUTPUT: dest_id}
-        computeLambda = lambda x: compute(x, parameters[self.NEIGHBOUR])
+        computeLambda = lambda x: self.compute(source, x, neighbour_source, parameters[self.NEIGHBOUR], x_distance, y_distance, classFieldName)
         for current, outputFeatures in enumerate(concurrently(computeLambda, iterator)):
             if feedback.isCanceled():
                 return {self.OUTPUT: dest_id}
@@ -241,3 +148,96 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
             feedback.setProgress(current * stepSize)
 
         return {self.OUTPUT: dest_id}
+    
+    def compute(self, source, feature, neighbour_source, neighbour_source_idx, x_distance, y_distance, classFieldName, feedback=None):
+            context = QgsProcessingContext()
+            algRunner = AlgRunner()
+            layerHandler = LayerHandler()
+            if feedback is not None and feedback.isCanceled():
+                return set()
+            featureLayer = layerHandler.createMemoryLayerWithFeature(source, feature, context=context, isSource=True)
+            if feedback is not None and feedback.isCanceled():
+                return set()
+            bbox = feature.geometry().boundingBox()
+            xmin, ymin, xmax, ymax = bbox.toRectF().getCoords()
+            xSpacing = x_distance if abs(xmax-xmin) > x_distance else min(abs(xmax-xmin)/2, abs(ymax-ymin)/2)
+            ySpacing = y_distance if abs(ymax-ymin) > y_distance else min(abs(xmax-xmin)/2, abs(ymax-ymin)/2)
+            gridLayer = algRunner.runCreateGrid(
+                extent=bbox,
+                crs=source.sourceCrs(),
+                hSpacing=xSpacing,
+                vSpacing=ySpacing,
+                context=context
+            )
+            if feedback is not None and feedback.isCanceled():
+                return set()
+            algRunner.runCreateSpatialIndex(gridLayer, context=context)
+            if feedback is not None and feedback.isCanceled():
+                return set()
+            clippedPolygons = algRunner.runClip(gridLayer, featureLayer, context=context)
+            if feedback is not None and feedback.isCanceled():
+                return set()
+            algRunner.runCreateSpatialIndex(clippedPolygons, context=context)
+            nFeats = clippedPolygons.featureCount()
+            if nFeats == 0:
+                return None
+            if feedback is not None and feedback.isCanceled():
+                return set()
+            bufferZone = algRunner.runBuffer(featureLayer, distance=max(xSpacing,ySpacing), context=context)
+            if feedback is not None and feedback.isCanceled():
+                return set()
+            algRunner.runCreateSpatialIndex(bufferZone, context)
+            if feedback is not None and feedback.isCanceled():
+                return set()
+            clippedNeighbors = algRunner.runClip(neighbour_source_idx, bufferZone, context=context, is_child_algorithm=True)
+            localNeighborVertexes = algRunner.runExtractVertices(clippedNeighbors, context=context)
+            if (feedback is not None and feedback.isCanceled()) or localNeighborVertexes.featureCount() == 0:
+                return set()
+            neighbour_idx = QgsSpatialIndex(localNeighborVertexes.getFeatures())
+            neighbourFeatDict = {feat.id():feat for feat in localNeighborVertexes.getFeatures()}
+            clippedPolygons.startEditing()
+            clippedPolygons.beginEditCommand("Updating features")
+            clippedPolygonsDataProvider = clippedPolygons.dataProvider()
+            if not any(i.name() == classFieldName for i in clippedPolygons.fields()):
+                clippedPolygonsDataProvider.addAttributes([i for i in neighbour_source.fields() if i.name() == classFieldName])
+                clippedPolygons.updateFields()
+            fieldIdx = clippedPolygons.fields().indexFromName(classFieldName)
+            for feat in clippedPolygons.getFeatures():
+                if feedback is not None and feedback.isCanceled():
+                    return set()
+                geom = feat.geometry()
+                nearest_neighbor_id = neighbour_idx.nearestNeighbor(geom.centroid().asPoint(), 1)[0]
+                destinationAttr = neighbourFeatDict[nearest_neighbor_id][classFieldName]
+                clippedPolygonsDataProvider.changeAttributeValues(
+                    {
+                        feat.id(): {
+                            fieldIdx: destinationAttr
+                        }
+                    }
+                )
+            clippedPolygons.endEditCommand()
+            if feedback is not None and feedback.isCanceled():
+                return set()
+            snappedToGrid = algRunner.runSnapToGrid(
+                inputLayer=clippedPolygons,
+                tol=1e-15,
+                context=context
+            )
+            if feedback is not None and feedback.isCanceled():
+                return set()
+            dissolvedLyr = algRunner.runDissolve(
+                inputLyr=snappedToGrid,
+                field=[classFieldName],
+                context=context,
+            )
+            if feedback is not None and feedback.isCanceled():
+                return set()
+            snappedLyr = algRunner.runSnapGeometriesToLayer(
+                dissolvedLyr, localNeighborVertexes, tol=1e-6, context=context, behavior=2
+            )
+            if feedback is not None and feedback.isCanceled():
+                return set()
+            retainedFields = algRunner.runRetainFields(
+                snappedLyr, [field.name() for field in source.fields()], context=context
+            )
+            return set(feat for feat in retainedFields.getFeatures())
