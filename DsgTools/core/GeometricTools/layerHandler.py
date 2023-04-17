@@ -2842,15 +2842,18 @@ class LayerHandler(QObject):
                 feedback.setProgress(current * stepSize)
         return layerList
 
-    def createMemoryLayerWithFeature(self, layer, feat, context=None):
+    def createMemoryLayerWithFeature(self, layer, feat, context=None, isSource=False):
         context = QgsProcessingContext() if context is None else context
+        crs = layer.crs() if not isSource else layer.sourceCrs()
+        temp_name = f"{layer.name()}-{str(uuid4())}" if not isSource else f"{str(uuid4())}"
         temp = QgsVectorLayer(
-                f"{QgsWkbTypes.displayString(layer.wkbType())}?crs={layer.crs().authid()}",
-                f"{layer.name()}-{str(uuid4())}",
+                f"{QgsWkbTypes.displayString(layer.wkbType())}?crs={crs.authid()}",
+                temp_name,
                 "memory",
             )
         temp_data = temp.dataProvider()
-        temp_data.addAttributes(layer.dataProvider().fields().toList())
+        fields = layer.dataProvider().fields() if not isSource else layer.fields()
+        temp_data.addAttributes(fields.toList())
         temp.updateFields()
         temp_data.addFeature(feat)
         self.algRunner.runCreateSpatialIndex(inputLyr=temp, context=context)

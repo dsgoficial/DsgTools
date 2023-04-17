@@ -504,11 +504,11 @@ class AlgRunner:
         )
         return output["OUTPUT"]
 
-    def runClip(self, inputLayer, overlayLayer, context, feedback=None, outputLyr=None):
+    def runClip(self, inputLayer, overlayLayer, context, feedback=None, outputLyr=None, is_child_algorithm=False):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"INPUT": inputLayer, "OVERLAY": overlayLayer, "OUTPUT": outputLyr}
         output = processing.run(
-            "native:clip", parameters, context=context, feedback=feedback
+            "native:clip", parameters, context=context, feedback=feedback, is_child_algorithm=is_child_algorithm
         )
         return output["OUTPUT"]
 
@@ -1272,6 +1272,7 @@ class AlgRunner:
         outputLyr=None,
         hOverlay=0,
         vOverlay=0,
+        is_child_algorithm=False,
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
@@ -1288,6 +1289,7 @@ class AlgRunner:
             },
             context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -1367,3 +1369,52 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["FLAGS"]
+
+    def runShortestLine(self, sourceLayer, destinationLayer, context, method=0, neighbors=1, maxDistance=None, feedback=None, outputLyr=None, is_child_algorithm=False):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:shortestline",
+            {
+                'SOURCE': sourceLayer,
+                'DESTINATION': destinationLayer,
+                'METHOD': method,
+                'NEIGHBORS': neighbors,
+                'DISTANCE': maxDistance,
+                'OUTPUT': outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output['OUTPUT']
+    
+    def runRetainFields(self, inputLayer, fields, context, feedback=None, outputLyr=None, is_child_algorithm=False):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:retainfields",
+            {
+                'INPUT': inputLayer,
+                'FIELDS': fields,
+                'OUTPUT':'TEMPORARY_OUTPUT'
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output['OUTPUT']
+
+    def runExtractByExtent(self, inputLayer, extent, context, clip=True, feedback=None, outputLyr=None, is_child_algorithm=False):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:extractbyextent",
+            {
+                'INPUT': inputLayer,
+                'EXTENT': extent,
+                'CLIP': clip,
+                'OUTPUT': outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output['OUTPUT']
