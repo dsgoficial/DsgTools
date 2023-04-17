@@ -20,34 +20,30 @@
  ***************************************************************************/
 """
 
-from collections import defaultdict
+import concurrent.futures
+import os
+from DsgTools.core.Utils.threadingTools import concurrently
+
+from qgis.core import (QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingContext, QgsProcessingMultiStepFeedback,
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterDistance,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterField, QgsSpatialIndex)
+from qgis.PyQt.QtCore import QCoreApplication
+
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterDistance,
-                       QgsProcessingParameterField,
-                       QgsProcessingUtils,
-                       QgsPointXY,
-                       QgsGeometry,
-                       QgsRectangle,
-                       QgsFeature,
-                       QgsSpatialIndex,
-                       QgsWkbTypes,
-                       QgsFeatureRequest,
-                       QgsProcessingMultiStepFeedback,
-                       QgsField)
-from qgis.PyQt.QtCore import QCoreApplication
+
 
 class SplitPolygonsByGrid(QgsProcessingAlgorithm):
     INPUT = 'INPUT'
     X_DISTANCE = 'X_DISTANCE'
     Y_DISTANCE = 'Y_DISTANCE'
     NEIGHBOUR = 'NEIGHBOUR'
-    ID_FIELD = 'ID_FIELD'
+    CLASS_FIELD = 'CLASS_FIELD'
+    USE_THREAD = "USE_THREAD"
     OUTPUT = 'OUTPUT'
 
     def tr(self, string):
@@ -97,157 +93,151 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
                 self.NEIGHBOUR, self.tr('Neighbour Polygon Layer'), [QgsProcessing.TypeVectorPolygon]))
         self.addParameter(
             QgsProcessingParameterField(
-                self.ID_FIELD, self.tr('Attribute Field'), parentLayerParameterName=self.NEIGHBOUR, type=QgsProcessingParameterField.Any))
+                self.CLASS_FIELD, self.tr('Class attribute field'), parentLayerParameterName=self.NEIGHBOUR, type=QgsProcessingParameterField.Any))
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.USE_THREAD,
+                self.tr('Use thread'),
+                defaultValue=True,
+            )
+        )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT, self.tr('Output Layer')))
 
     def processAlgorithm(self, parameters, context, feedback):
-        self.layerHandler = LayerHandler()
-        self.algRunner = AlgRunner()
         source = self.parameterAsSource(parameters, self.INPUT, context)
         x_distance = self.parameterAsDouble(parameters, self.X_DISTANCE, context)
         y_distance = self.parameterAsDouble(parameters, self.Y_DISTANCE, context)
         neighbour_source = self.parameterAsSource(parameters, self.NEIGHBOUR, context)
-        class_field = self.parameterAsString(parameters, self.ID_FIELD, context)
+        classFieldName = self.parameterAsString(parameters, self.CLASS_FIELD, context)
+        useThread = self.parameterAsBool(parameters, self.USE_THREAD, context)
 
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT, context,
                                                source.fields(), source.wkbType(), source.sourceCrs())
 
-        # Create a spatial index for the Neighbour layer
-
         nFeats = source.featureCount()
-        features = source.getFeatures()
-        # Create a dictionary to store dissolved geometries
-        multiStepFeedback = QgsProcessingMultiStepFeedback(nFeats, feedback)
-        
-        for current, feature in enumerate(features):
-            multiStepFeedback.setCurrentStep(current)
-            if multiStepFeedback.isCanceled():
-                break
-            outputFeatures = self.runSplitAndDissolve(
-                layer=source,
-                neighborsLayer=parameters[self.NEIGHBOUR],
-                neighborFields=neighbour_source.fields(),
-                feature=feature,
-                x_distance=x_distance,
-                y_distance=y_distance,
-                classFieldName=class_field,
-                context=context,
-                feedback=multiStepFeedback,
+        if nFeats == 0:
+            return {self.OUTPUT: dest_id}
+        def compute(feature, neighbour_source_idx):
+            context = QgsProcessingContext()
+            algRunner = AlgRunner()
+            layerHandler = LayerHandler()
+            if feedback.isCanceled():
+                return set()
+            featureLayer = layerHandler.createMemoryLayerWithFeature(source, feature, context=context, isSource=True)
+            if feedback.isCanceled():
+                return set()
+            bbox = feature.geometry().boundingBox()
+            xmin, ymin, xmax, ymax = bbox.toRectF().getCoords()
+            xSpacing = x_distance if abs(xmax-xmin) > x_distance else min(abs(xmax-xmin)/2, abs(ymax-ymin)/2)
+            ySpacing = y_distance if abs(ymax-ymin) > y_distance else min(abs(xmax-xmin)/2, abs(ymax-ymin)/2)
+            gridLayer = algRunner.runCreateGrid(
+                extent=bbox,
+                crs=source.sourceCrs(),
+                hSpacing=xSpacing,
+                vSpacing=ySpacing,
+                context=context
             )
+            if feedback.isCanceled():
+                return set()
+            algRunner.runCreateSpatialIndex(gridLayer, context=context)
+            if feedback.isCanceled():
+                return set()
+            clippedPolygons = algRunner.runClip(gridLayer, featureLayer, context=context)
+            if feedback.isCanceled():
+                return set()
+            algRunner.runCreateSpatialIndex(clippedPolygons, context=context)
+            nFeats = clippedPolygons.featureCount()
+            if nFeats == 0:
+                return None
+            if feedback.isCanceled():
+                return set()
+            bufferZone = algRunner.runBuffer(featureLayer, distance=max(xSpacing,ySpacing), context=context)
+            if feedback.isCanceled():
+                return set()
+            algRunner.runCreateSpatialIndex(bufferZone, context)
+            if feedback.isCanceled():
+                return set()
+            clippedNeighbors = algRunner.runClip(neighbour_source_idx, bufferZone, context=context)
+            if feedback.isCanceled() or clippedNeighbors.featureCount() == 0:
+                return set()
+            localNeighborVertexes = algRunner.runExtractVertices(clippedNeighbors, context=context)
+            if feedback.isCanceled():
+                return set()
+            neighbour_idx = QgsSpatialIndex(localNeighborVertexes.getFeatures())
+            neighbourFeatDict = {feat.id():feat for feat in localNeighborVertexes.getFeatures()}
+            clippedPolygons.startEditing()
+            clippedPolygons.beginEditCommand("Updating features")
+            clippedPolygonsDataProvider = clippedPolygons.dataProvider()
+            if not any(i.name() == classFieldName for i in clippedPolygons.fields()):
+                clippedPolygonsDataProvider.addAttributes([i for i in neighbour_source.fields() if i.name() == classFieldName])
+                clippedPolygons.updateFields()
+            fieldIdx = clippedPolygons.fields().indexFromName(classFieldName)
+            for feat in clippedPolygons.getFeatures():
+                if feedback.isCanceled():
+                    return set()
+                geom = feat.geometry()
+                nearest_neighbor_id = neighbour_idx.nearestNeighbor(geom.centroid().asPoint(), 1)[0]
+                destinationAttr = neighbourFeatDict[nearest_neighbor_id][classFieldName]
+                clippedPolygonsDataProvider.changeAttributeValues(
+                    {
+                        feat.id(): {
+                            fieldIdx: destinationAttr
+                        }
+                    }
+                )
+            clippedPolygons.endEditCommand()
+            if feedback.isCanceled():
+                return set()
+            snappedToGrid = algRunner.runSnapToGrid(
+                inputLayer=clippedPolygons,
+                tol=1e-15,
+                context=context
+            )
+            if feedback.isCanceled():
+                return set()
+            dissolvedLyr = algRunner.runDissolve(
+                inputLyr=snappedToGrid,
+                field=[classFieldName],
+                context=context,
+            )
+            if feedback.isCanceled():
+                return set()
+            snappedLyr = algRunner.runSnapGeometriesToLayer(
+                dissolvedLyr, localNeighborVertexes, tol=1e-6, context=context, behavior=2
+            )
+            if feedback.isCanceled():
+                return set()
+            retainedFields = algRunner.runRetainFields(
+                snappedLyr, [field.name() for field in source.fields()], context=context
+            )
+            return set(feat for feat in retainedFields.getFeatures())
+        stepSize = 100/nFeats
+        iterator = sorted(
+            source.getFeatures(),
+            key=lambda x: x.geometry().area(), reverse=False
+        )
+        if not useThread:
+            multiStepFeedback = QgsProcessingMultiStepFeedback(nFeats, feedback)
+            outputFeaturesSet = set()
+            for current, feature in enumerate(iterator):
+                if multiStepFeedback.isCanceled():
+                    return {self.OUTPUT: dest_id}
+                multiStepFeedback.setCurrentStep(current)
+                outputFeatures = compute(feature, parameters[self.NEIGHBOUR])
+                if outputFeatures is None or outputFeatures == set():
+                    continue
+                outputFeaturesSet = outputFeaturesSet.union(outputFeatures)
+            sink.addFeatures(list(outputFeaturesSet))
+            return {self.OUTPUT: dest_id}
+        computeLambda = lambda x: compute(x, parameters[self.NEIGHBOUR])
+        for current, outputFeatures in enumerate(concurrently(computeLambda, iterator)):
+            if feedback.isCanceled():
+                return {self.OUTPUT: dest_id}
             if outputFeatures is None:
                 continue
             sink.addFeatures(outputFeatures)
+            feedback.setProgress(current * stepSize)
 
         return {self.OUTPUT: dest_id}
-
-    def runSplitAndDissolve(self, layer, neighborsLayer, neighborFields, feature, x_distance, y_distance, classFieldName, context, feedback):
-        algRunner = AlgRunner()
-        multiStepFeedback = QgsProcessingMultiStepFeedback(14, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        if multiStepFeedback.isCanceled():
-            return []
-        featureLayer = self.layerHandler.createMemoryLayerWithFeature(layer, feature, context=context, isSource=True)
-        multiStepFeedback.setCurrentStep(1)
-        if multiStepFeedback.isCanceled():
-            return []
-        bbox = feature.geometry().boundingBox()
-        xmin, ymin, xmax, ymax = bbox.toRectF().getCoords()
-        xSpacing = x_distance if abs(xmax-xmin) > x_distance else min(abs(xmax-xmin)/2, abs(ymax-ymin)/2)
-        ySpacing = y_distance if abs(ymax-ymin) > y_distance else min(abs(xmax-xmin)/2, abs(ymax-ymin)/2)
-        gridLayer = algRunner.runCreateGrid(
-            extent=bbox,
-            crs=layer.sourceCrs(),
-            hSpacing=xSpacing,
-            vSpacing=ySpacing,
-            context=context
-        )
-        multiStepFeedback.setCurrentStep(2)
-        if multiStepFeedback.isCanceled():
-            return []
-        algRunner.runCreateSpatialIndex(gridLayer, context=context)
-        multiStepFeedback.setCurrentStep(3)
-        if multiStepFeedback.isCanceled():
-            return []
-        clippedPolygons = algRunner.runClip(gridLayer, featureLayer, context=context)
-        multiStepFeedback.setCurrentStep(4)
-        if multiStepFeedback.isCanceled():
-            return []
-        algRunner.runCreateSpatialIndex(clippedPolygons, context=context)
-        nFeats = clippedPolygons.featureCount()
-        if nFeats == 0:
-            return None
-        multiStepFeedback.setCurrentStep(5)
-        if multiStepFeedback.isCanceled():
-            return []
-        bufferZone = algRunner.runBuffer(featureLayer, distance=max(xSpacing,ySpacing), context=context)
-        multiStepFeedback.setCurrentStep(6)
-        if multiStepFeedback.isCanceled():
-            return []
-        algRunner.runCreateSpatialIndex(bufferZone, context)
-        multiStepFeedback.setCurrentStep(7)
-        if multiStepFeedback.isCanceled():
-            return []
-        clippedNeighbors = algRunner.runClip(neighborsLayer, bufferZone, context=context)
-        multiStepFeedback.setCurrentStep(8)
-        if multiStepFeedback.isCanceled():
-            return []
-        localNeighborVertexes = algRunner.runExtractVertices(clippedNeighbors, context=context)
-        multiStepFeedback.setCurrentStep(9)
-        if multiStepFeedback.isCanceled():
-            return []
-        neighbour_idx = QgsSpatialIndex(localNeighborVertexes.getFeatures())
-        neighbourFeatDict = {feat.id():feat for feat in localNeighborVertexes.getFeatures()}
-        stepSize = 100/nFeats
-        clippedPolygons.startEditing()
-        clippedPolygons.beginEditCommand("Updating features")
-        clippedPolygonsDataProvider = clippedPolygons.dataProvider()
-        if not any(i.name() == classFieldName for i in clippedPolygons.fields()):
-            clippedPolygonsDataProvider.addAttributes([i for i in neighborFields if i.name() == classFieldName])
-            clippedPolygons.updateFields()
-        fieldIdx = clippedPolygons.fields().indexFromName(classFieldName)
-        for current, feat in enumerate(clippedPolygons.getFeatures()):
-            if multiStepFeedback.isCanceled():
-                return []
-            geom = feat.geometry()
-            nearest_neighbor_id = neighbour_idx.nearestNeighbor(geom.centroid().asPoint(), 1)[0]
-            destinationAttr = neighbourFeatDict[nearest_neighbor_id][classFieldName]
-            clippedPolygonsDataProvider.changeAttributeValues(
-                {
-                    feat.id(): {
-                        fieldIdx: destinationAttr
-                    }
-                }
-            )
-            multiStepFeedback.setProgress(current * stepSize)
-        clippedPolygons.endEditCommand()
-        multiStepFeedback.setCurrentStep(10)
-        if multiStepFeedback.isCanceled():
-            return []
-        snappedToGrid = algRunner.runSnapToGrid(
-            inputLayer=clippedPolygons,
-            tol=1e-15,
-            context=context
-        )
-        multiStepFeedback.setCurrentStep(11)
-        if multiStepFeedback.isCanceled():
-            return []
-        dissolvedLyr = algRunner.runDissolve(
-            inputLyr=snappedToGrid,
-            field=[classFieldName],
-            context=context,
-        )
-        multiStepFeedback.setCurrentStep(12)
-        if multiStepFeedback.isCanceled():
-            return []
-        snappedLyr = algRunner.runSnapGeometriesToLayer(
-            dissolvedLyr, localNeighborVertexes, tol=1e-6, context=context, behavior=2
-        )
-        multiStepFeedback.setCurrentStep(13)
-        if multiStepFeedback.isCanceled():
-            return []
-        retainedFields = algRunner.runRetainFields(
-            snappedLyr, [field.name() for field in layer.fields()], context=context
-        )
-        return [feat for feat in retainedFields.getFeatures()]
