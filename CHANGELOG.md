@@ -9,6 +9,7 @@ Novas funcionalidades:
 - Novo processo de dissolver polígonos para vizinhos (heurística pelo maior comprimento da intersecção);
 - Novo processo de construir grid de pontos dentro de polígonos;
 - Novo processo de dividir polígonos;
+- Novo processo de dividir polígonos por grid;
 
 Melhorias:
 - Adicionada a opção de dar pan na barra de ferramentas de revisão;
