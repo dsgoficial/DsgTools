@@ -35,6 +35,9 @@ from qgis.core import (
     QgsProcessingParameterField,
     QgsSpatialIndex,
     QgsProcessingParameterNumber,
+    QgsFields,
+    QgsVectorLayer,
+    QgsFeatureRequest
 )
 from qgis.PyQt.QtCore import QCoreApplication
 
@@ -46,6 +49,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
     INPUT = "INPUT"
     X_DISTANCE = "X_DISTANCE"
     Y_DISTANCE = "Y_DISTANCE"
+    MIN_AREA = "MIN_AREA"
     NEIGHBOUR = "NEIGHBOUR"
     CLASS_FIELD = "CLASS_FIELD"
     MAX_CONCURRENCY = "MAX_CONCURRENCY"
@@ -112,6 +116,28 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
             )
         )
         self.addParameter(
+            QgsProcessingParameterDistance(
+                self.Y_DISTANCE,
+                self.tr("Y Distance"),
+                parentParameterName=self.INPUT,
+                minValue=0.0,
+                defaultValue=0.0001,
+            )
+        )
+        param = QgsProcessingParameterDistance(
+            self.MIN_AREA,
+            self.tr(
+                "Minimun area to process. If feature's area is smaller than this value, "
+                "the feature will not be split, but only reclassified to the nearest neighbour."
+            ),
+            parentParameterName=self.INPUT,
+            defaultValue=1e-8,
+        )
+        param.setMetadata( {'widget_wrapper':
+        { 'decimals': 10 }
+        })
+        self.addParameter(param)
+        self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.NEIGHBOUR,
                 self.tr("Neighbour Polygon Layer"),
@@ -140,9 +166,12 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         )
 
     def processAlgorithm(self, parameters, context, feedback):
+        self.algRunner = AlgRunner()
+        self.layerHandler = LayerHandler()
         source = self.parameterAsSource(parameters, self.INPUT, context)
         x_distance = self.parameterAsDouble(parameters, self.X_DISTANCE, context)
         y_distance = self.parameterAsDouble(parameters, self.Y_DISTANCE, context)
+        min_area = self.parameterAsDouble(parameters, self.MIN_AREA, context)
         neighbour_source = self.parameterAsSource(parameters, self.NEIGHBOUR, context)
         classFieldName = self.parameterAsString(parameters, self.CLASS_FIELD, context)
         max_concurrency = self.parameterAsInt(parameters, self.MAX_CONCURRENCY, context)
@@ -159,80 +188,136 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         nFeats = source.featureCount()
         if nFeats == 0:
             return {self.OUTPUT: dest_id}
-
-        stepSize = 100 / nFeats
-        iterator = sorted(
-            source.getFeatures(), key=lambda x: x.geometry().area(), reverse=False
+        request = QgsFeatureRequest()
+        clause = QgsFeatureRequest.OrderByClause('$area')
+        orderby = QgsFeatureRequest.OrderBy([clause])
+        request.setOrderBy(orderby)
+        iterator = source.getFeatures(request)
+        nSteps = nFeats + 2
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.setProgressText(self.tr("Extracting vertexes and creating spatial index."))
+        verticesLyr = self.algRunner.runExtractVertices(
+            inputLyr=parameters[self.NEIGHBOUR],
+            context=context,
+            feedback=multiStepFeedback
         )
+        multiStepFeedback.setCurrentStep(1)
+        self.algRunner.runCreateSpatialIndex(verticesLyr, context=context, feedback=multiStepFeedback)
+        multiStepFeedback.setProgressText(self.tr("Processing features..."))
+        def prepare_data(feature):
+            geom = feature.geometry()
+            bbox = geom.boundingBox()
+            try:
+                featureLayer = self.layerHandler.createMemoryLayerWithFeature(
+                    source, feature, context=context, isSource=True
+                )
+            except:
+                return None, None
+            if bbox.isEmpty() or bbox.isNull() or not bbox.isFinite():
+                return None, None
+            try:
+                localNeighborVertexes = self.algRunner.runExtractByExtent(
+                    inputLayer=verticesLyr,
+                    extent=bbox,
+                    context=context,
+                    clip=True
+                )
+            except:
+                return None, None
+            return featureLayer, localNeighborVertexes
+
         if max_concurrency == 1:
-            multiStepFeedback = QgsProcessingMultiStepFeedback(nFeats, feedback)
             outputFeaturesSet = set()
-            for current, feature in enumerate(iterator):
+            for current, feature in enumerate(iterator, start=2):
                 if multiStepFeedback.isCanceled():
                     return {self.OUTPUT: dest_id}
                 multiStepFeedback.setCurrentStep(current)
+                geom = feature.geometry()
+                if geom.isNull() or geom.isEmpty():
+                    continue
+                featureLayer, localNeighborVertexes = prepare_data(feature)
+                if featureLayer is None:
+                    continue
+                if multiStepFeedback.isCanceled():
+                    return {self.OUTPUT: dest_id}
                 outputFeatures = self.compute(
-                    source,
-                    feature,
-                    neighbour_source,
-                    parameters[self.NEIGHBOUR],
-                    x_distance,
-                    y_distance,
-                    classFieldName,
+                    localNeighborVertexes=localNeighborVertexes,
+                    feature=feature,
+                    featureLayer=featureLayer,
+                    x_distance=x_distance,
+                    y_distance=y_distance,
+                    classFieldName=classFieldName,
+                    source_fields=source.fields(),
+                    min_area=min_area,
                     feedback=multiStepFeedback,
                 )
                 if outputFeatures is None or outputFeatures == set():
                     continue
-                outputFeaturesSet = outputFeaturesSet.union(outputFeatures)
+                sink.addFeatures(list(outputFeatures))
                 if current % 500 == 0:
-                    feedback.pushInfo(self.tr(f"Processed {current}/{nFeats}."))
-            sink.addFeatures(list(outputFeaturesSet))
+                    multiStepFeedback.pushInfo(self.tr(f"Processed {current}/{nFeats}."))
             return {self.OUTPUT: dest_id}
-        computeLambda = lambda x: self.compute(
-            source,
-            x,
-            neighbour_source,
-            parameters[self.NEIGHBOUR],
-            x_distance,
-            y_distance,
-            classFieldName,
-        )
+        
+        def compute_in_paralel(feature):
+            featureLayer, localNeighborVertexes = prepare_data(feature)
+            return self.compute(
+                localNeighborVertexes=localNeighborVertexes,
+                feature=feature,
+                featureLayer=featureLayer,
+                x_distance=x_distance,
+                y_distance=y_distance,
+                classFieldName=classFieldName,
+                source_fields=QgsFields(source.fields()),
+                min_area=min_area,
+                feedback=feedback
+            )
+        
+
+
         for current, outputFeatures in enumerate(
-            concurrently(computeLambda, iterator, max_concurrency=max_concurrency)
+            concurrently(compute_in_paralel, iterator, max_concurrency=max_concurrency),
+            start=2
         ):
-            if feedback.isCanceled():
+            multiStepFeedback.setCurrentStep(current)
+            if multiStepFeedback.isCanceled():
                 return {self.OUTPUT: dest_id}
-            if outputFeatures is None:
+            if outputFeatures is None or outputFeatures == set():
                 continue
-            sink.addFeatures(outputFeatures)
-            feedback.setProgress(current * stepSize)
+            sink.addFeatures(list(outputFeatures))
             if current % 500 == 0:
-                feedback.pushInfo(self.tr(f"Processed {current}/{nFeats}."))
+                multiStepFeedback.pushInfo(self.tr(f"Processed {current}/{nFeats}."))
 
         return {self.OUTPUT: dest_id}
 
     def compute(
         self,
-        source,
+        localNeighborVertexes,
         feature,
-        neighbour_source,
-        neighbour_source_idx,
+        featureLayer,
         x_distance,
         y_distance,
         classFieldName,
+        source_fields,
+        min_area,
         feedback=None,
     ):
         context = QgsProcessingContext()
         algRunner = AlgRunner()
-        layerHandler = LayerHandler()
         if feedback is not None and feedback.isCanceled():
             return set()
-        featureLayer = layerHandler.createMemoryLayerWithFeature(
-            source, feature, context=context, isSource=True
-        )
-        if feedback is not None and feedback.isCanceled():
+        if (
+            feedback is not None and feedback.isCanceled()
+        ) or feature is None or localNeighborVertexes is None or featureLayer is None or isinstance(localNeighborVertexes, str) or localNeighborVertexes.featureCount() == 0:
             return set()
-        bbox = feature.geometry().boundingBox()
+        neighbour_idx = QgsSpatialIndex(localNeighborVertexes.getFeatures())
+        neighbourFeatDict = {
+            feat.id(): feat for feat in localNeighborVertexes.getFeatures()
+        }
+        geometry = feature.geometry()
+        if geometry.isEmpty() or geometry.isNull():
+            return set()
+        bbox = geometry.boundingBox()
         xmin, ymin, xmax, ymax = bbox.toRectF().getCoords()
         xSpacing = (
             x_distance
@@ -244,9 +329,17 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
             if abs(ymax - ymin) > y_distance
             else min(abs(xmax - xmin) / 2, abs(ymax - ymin) / 2)
         )
+        if geometry.area() <= min_area or geometry.area() <= xSpacing * ySpacing:
+            nearest_neighbor_id = neighbour_idx.nearestNeighbor(
+                geometry.centroid().asPoint(), 1
+            )[0]
+            feature[classFieldName] = neighbourFeatDict[nearest_neighbor_id][classFieldName]
+            returnSet = set()
+            returnSet.add(feature)
+            return returnSet
         gridLayer = algRunner.runCreateGrid(
             extent=bbox,
-            crs=source.sourceCrs(),
+            crs=featureLayer.crs(),
             hSpacing=xSpacing,
             vSpacing=ySpacing,
             context=context,
@@ -256,43 +349,32 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         algRunner.runCreateSpatialIndex(gridLayer, context=context)
         if feedback is not None and feedback.isCanceled():
             return set()
-        clippedPolygons = algRunner.runClip(gridLayer, featureLayer, context=context)
+        try:
+            clippedPolygons = algRunner.runClip(gridLayer, featureLayer, context=context)
+        except:
+            clippedPolygons = None
+        if not isinstance(clippedPolygons, QgsVectorLayer) or gridLayer.featureCount() < 4:
+            nearest_neighbor_id = neighbour_idx.nearestNeighbor(
+                geometry.centroid().asPoint(), 1
+            )[0]
+            if nearest_neighbor_id not in neighbourFeatDict:
+                return set()
+            feature[classFieldName] = neighbourFeatDict[nearest_neighbor_id][classFieldName]
+            returnSet = set()
+            returnSet.add(feature)
+            return returnSet
+        clippedPolygons.startEditing()
         if feedback is not None and feedback.isCanceled():
             return set()
         algRunner.runCreateSpatialIndex(clippedPolygons, context=context)
         nFeats = clippedPolygons.featureCount()
         if nFeats == 0:
             return None
-        if feedback is not None and feedback.isCanceled():
-            return set()
-        bufferZone = algRunner.runBuffer(
-            featureLayer, distance=max(xSpacing, ySpacing), context=context
-        )
-        if feedback is not None and feedback.isCanceled():
-            return set()
-        algRunner.runCreateSpatialIndex(bufferZone, context)
-        if feedback is not None and feedback.isCanceled():
-            return set()
-        clippedNeighbors = algRunner.runClip(
-            neighbour_source_idx, bufferZone, context=context, is_child_algorithm=True
-        )
-        localNeighborVertexes = algRunner.runExtractVertices(
-            clippedNeighbors, context=context
-        )
-        if (
-            feedback is not None and feedback.isCanceled()
-        ) or localNeighborVertexes.featureCount() == 0:
-            return set()
-        neighbour_idx = QgsSpatialIndex(localNeighborVertexes.getFeatures())
-        neighbourFeatDict = {
-            feat.id(): feat for feat in localNeighborVertexes.getFeatures()
-        }
-        clippedPolygons.startEditing()
         clippedPolygons.beginEditCommand("Updating features")
         clippedPolygonsDataProvider = clippedPolygons.dataProvider()
         if not any(i.name() == classFieldName for i in clippedPolygons.fields()):
             clippedPolygonsDataProvider.addAttributes(
-                [i for i in neighbour_source.fields() if i.name() == classFieldName]
+                [i for i in source_fields if i.name() == classFieldName]
             )
             clippedPolygons.updateFields()
         fieldIdx = clippedPolygons.fields().indexFromName(classFieldName)
@@ -300,6 +382,8 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
             if feedback is not None and feedback.isCanceled():
                 return set()
             geom = feat.geometry()
+            if geom.isEmpty() or geom.isNull():
+                continue
             nearest_neighbor_id = neighbour_idx.nearestNeighbor(
                 geom.centroid().asPoint(), 1
             )[0]
@@ -328,6 +412,6 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         if feedback is not None and feedback.isCanceled():
             return set()
         retainedFields = algRunner.runRetainFields(
-            snappedLyr, [field.name() for field in source.fields()], context=context
+            snappedLyr, [field.name() for field in source_fields], context=context
         )
         return set(feat for feat in retainedFields.getFeatures())
