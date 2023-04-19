@@ -196,13 +196,14 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         nSteps = nFeats + 2
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.setProgressText(self.tr("Extracting vertexes and creating spatial index."))
+        multiStepFeedback.setProgressText(self.tr("Extracting vertexes..."))
         verticesLyr = self.algRunner.runExtractVertices(
             inputLyr=parameters[self.NEIGHBOUR],
             context=context,
             feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.setProgressText(self.tr("Creating spatial index..."))
         self.algRunner.runCreateSpatialIndex(verticesLyr, context=context, feedback=multiStepFeedback)
         multiStepFeedback.setProgressText(self.tr("Processing features..."))
         def prepare_data(feature):
@@ -228,7 +229,6 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
             return featureLayer, localNeighborVertexes
 
         if max_concurrency == 1:
-            outputFeaturesSet = set()
             for current, feature in enumerate(iterator, start=2):
                 if multiStepFeedback.isCanceled():
                     return {self.OUTPUT: dest_id}
@@ -253,6 +253,8 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
                     feedback=multiStepFeedback,
                 )
                 if outputFeatures is None or outputFeatures == set():
+                    if current % 500 == 0:
+                        multiStepFeedback.pushInfo(self.tr(f"Processed {current}/{nFeats}."))
                     continue
                 sink.addFeatures(list(outputFeatures))
                 if current % 500 == 0:
@@ -353,7 +355,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
             clippedPolygons = algRunner.runClip(gridLayer, featureLayer, context=context)
         except:
             clippedPolygons = None
-        if not isinstance(clippedPolygons, QgsVectorLayer) or gridLayer.featureCount() < 4:
+        if not isinstance(clippedPolygons, QgsVectorLayer) or clippedPolygons.featureCount() < 4:
             nearest_neighbor_id = neighbour_idx.nearestNeighbor(
                 geometry.centroid().asPoint(), 1
             )[0]
@@ -384,9 +386,12 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
             geom = feat.geometry()
             if geom.isEmpty() or geom.isNull():
                 continue
-            nearest_neighbor_id = neighbour_idx.nearestNeighbor(
+            nearest_neighbor_ids = neighbour_idx.nearestNeighbor(
                 geom.centroid().asPoint(), 1
-            )[0]
+            )
+            if nearest_neighbor_ids == []:
+                continue
+            nearest_neighbor_id = nearest_neighbor_ids[0]
             destinationAttr = neighbourFeatDict[nearest_neighbor_id][classFieldName]
             clippedPolygonsDataProvider.changeAttributeValues(
                 {feat.id(): {fieldIdx: destinationAttr}}

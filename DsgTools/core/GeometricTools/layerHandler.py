@@ -2856,5 +2856,5 @@ class LayerHandler(QObject):
         temp_data.addAttributes(fields.toList())
         temp.updateFields()
         temp_data.addFeature(feat)
-        self.algRunner.runCreateSpatialIndex(inputLyr=temp, context=context)
+        self.algRunner.runCreateSpatialIndex(inputLyr=temp, context=context, is_child_algorithm=True)
         return temp
