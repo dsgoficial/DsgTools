@@ -23,6 +23,7 @@ Melhorias:
 Correção de bug:
 - Corrigido o bug de sempre apontar flags quando a geometria tem buraco do processo de identificar geometrias com densidade incorreta de vértices;
 - Correção de bug no processo de adicionar vértice em segmento compartilhado;
+- Correção de bug no processo de dissolver polígonos com mesmo conjunto de atributos quando é passada uma área mínima para o dissolve;
 
 ## 4.6.0
 
