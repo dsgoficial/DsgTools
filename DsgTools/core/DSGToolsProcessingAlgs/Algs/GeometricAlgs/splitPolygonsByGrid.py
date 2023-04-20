@@ -37,7 +37,7 @@ from qgis.core import (
     QgsProcessingParameterNumber,
     QgsFields,
     QgsVectorLayer,
-    QgsFeatureRequest
+    QgsFeatureRequest,
 )
 from qgis.PyQt.QtCore import QCoreApplication
 
@@ -133,9 +133,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
             parentParameterName=self.INPUT,
             defaultValue=1e-8,
         )
-        param.setMetadata( {'widget_wrapper':
-        { 'decimals': 10 }
-        })
+        param.setMetadata({"widget_wrapper": {"decimals": 10}})
         self.addParameter(param)
         self.addParameter(
             QgsProcessingParameterFeatureSource(
@@ -189,7 +187,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         if nFeats == 0:
             return {self.OUTPUT: dest_id}
         request = QgsFeatureRequest()
-        clause = QgsFeatureRequest.OrderByClause('$area')
+        clause = QgsFeatureRequest.OrderByClause("$area")
         orderby = QgsFeatureRequest.OrderBy([clause])
         request.setOrderBy(orderby)
         iterator = source.getFeatures(request)
@@ -200,12 +198,15 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         verticesLyr = self.algRunner.runExtractVertices(
             inputLyr=parameters[self.NEIGHBOUR],
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.setProgressText(self.tr("Creating spatial index..."))
-        self.algRunner.runCreateSpatialIndex(verticesLyr, context=context, feedback=multiStepFeedback)
+        self.algRunner.runCreateSpatialIndex(
+            verticesLyr, context=context, feedback=multiStepFeedback
+        )
         multiStepFeedback.setProgressText(self.tr("Processing features..."))
+
         def prepare_data(feature):
             geom = feature.geometry()
             bbox = geom.boundingBox()
@@ -219,10 +220,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
                 return None, None
             try:
                 localNeighborVertexes = self.algRunner.runExtractByExtent(
-                    inputLayer=verticesLyr,
-                    extent=bbox,
-                    context=context,
-                    clip=True
+                    inputLayer=verticesLyr, extent=bbox, context=context, clip=True
                 )
             except:
                 return None, None
@@ -254,13 +252,17 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
                 )
                 if outputFeatures is None or outputFeatures == set():
                     if current % 500 == 0:
-                        multiStepFeedback.pushInfo(self.tr(f"Processed {current}/{nFeats}."))
+                        multiStepFeedback.pushInfo(
+                            self.tr(f"Processed {current}/{nFeats}.")
+                        )
                     continue
                 sink.addFeatures(list(outputFeatures))
                 if current % 500 == 0:
-                    multiStepFeedback.pushInfo(self.tr(f"Processed {current}/{nFeats}."))
+                    multiStepFeedback.pushInfo(
+                        self.tr(f"Processed {current}/{nFeats}.")
+                    )
             return {self.OUTPUT: dest_id}
-        
+
         def compute_in_paralel(feature):
             featureLayer, localNeighborVertexes = prepare_data(feature)
             return self.compute(
@@ -272,14 +274,12 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
                 classFieldName=classFieldName,
                 source_fields=QgsFields(source.fields()),
                 min_area=min_area,
-                feedback=feedback
+                feedback=feedback,
             )
-        
-
 
         for current, outputFeatures in enumerate(
             concurrently(compute_in_paralel, iterator, max_concurrency=max_concurrency),
-            start=2
+            start=2,
         ):
             multiStepFeedback.setCurrentStep(current)
             if multiStepFeedback.isCanceled():
@@ -309,8 +309,13 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         if feedback is not None and feedback.isCanceled():
             return set()
         if (
-            feedback is not None and feedback.isCanceled()
-        ) or feature is None or localNeighborVertexes is None or featureLayer is None or isinstance(localNeighborVertexes, str) or localNeighborVertexes.featureCount() == 0:
+            (feedback is not None and feedback.isCanceled())
+            or feature is None
+            or localNeighborVertexes is None
+            or featureLayer is None
+            or isinstance(localNeighborVertexes, str)
+            or localNeighborVertexes.featureCount() == 0
+        ):
             return set()
         neighbour_idx = QgsSpatialIndex(localNeighborVertexes.getFeatures())
         neighbourFeatDict = {
@@ -335,7 +340,9 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
             nearest_neighbor_id = neighbour_idx.nearestNeighbor(
                 geometry.centroid().asPoint(), 1
             )[0]
-            feature[classFieldName] = neighbourFeatDict[nearest_neighbor_id][classFieldName]
+            feature[classFieldName] = neighbourFeatDict[nearest_neighbor_id][
+                classFieldName
+            ]
             returnSet = set()
             returnSet.add(feature)
             return returnSet
@@ -352,16 +359,26 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         if feedback is not None and feedback.isCanceled():
             return set()
         try:
-            clippedPolygons = algRunner.runClip(gridLayer, featureLayer, context=context)
+            clippedPolygons = algRunner.runClip(
+                gridLayer, featureLayer, context=context
+            )
         except:
             clippedPolygons = None
-        if not isinstance(clippedPolygons, QgsVectorLayer) or clippedPolygons.featureCount() < 4:
-            nearest_neighbor_id = neighbour_idx.nearestNeighbor(
+        if (
+            not isinstance(clippedPolygons, QgsVectorLayer)
+            or clippedPolygons.featureCount() < 4
+        ):
+            nearest_neighbors = neighbour_idx.nearestNeighbor(
                 geometry.centroid().asPoint(), 1
-            )[0]
+            )
+            if nearest_neighbors == []:
+                return set()
+            nearest_neighbor_id = nearest_neighbors[0]
             if nearest_neighbor_id not in neighbourFeatDict:
                 return set()
-            feature[classFieldName] = neighbourFeatDict[nearest_neighbor_id][classFieldName]
+            feature[classFieldName] = neighbourFeatDict[nearest_neighbor_id][
+                classFieldName
+            ]
             returnSet = set()
             returnSet.add(feature)
             return returnSet
@@ -411,12 +428,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         )
         if feedback is not None and feedback.isCanceled():
             return set()
-        snappedLyr = algRunner.runSnapGeometriesToLayer(
-            dissolvedLyr, localNeighborVertexes, tol=1e-6, context=context, behavior=2
-        )
-        if feedback is not None and feedback.isCanceled():
-            return set()
         retainedFields = algRunner.runRetainFields(
-            snappedLyr, [field.name() for field in source_fields], context=context
+            dissolvedLyr, [field.name() for field in source_fields], context=context
         )
         return set(feat for feat in retainedFields.getFeatures())
