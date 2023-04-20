@@ -564,6 +564,7 @@ class AlgRunner:
         mitterLimit=None,
         feedback=None,
         outputLyr=None,
+        is_child_algorithm=False,
     ):
         endCapStyle = 0 if endCapStyle is None else endCapStyle
         joinStyle = 0 if joinStyle is None else joinStyle
@@ -581,7 +582,7 @@ class AlgRunner:
             "OUTPUT": outputLyr,
         }
         output = processing.run(
-            "native:buffer", parameters, context=context, feedback=feedback
+            "native:buffer", parameters, context=context, feedback=feedback, is_child_algorithm=is_child_algorithm
         )
         return output["OUTPUT"]
 

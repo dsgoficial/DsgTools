@@ -476,6 +476,9 @@ class LayerHandler(QObject):
         idsToRemove, featuresToAdd = set(), set()
         lyr.startEditing()
         lyr.beginEditCommand("Updating layer {0}".format(lyr.name()))
+        nSteps = len(inputDict)
+        if nSteps == 0 or feedback.isCanceled():
+            return
         localTotal = 100 / len(inputDict) if inputDict else 0
         futures = set()
         pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
@@ -525,6 +528,8 @@ class LayerHandler(QObject):
             list(map(changeGeometryLambda, geometriesToChange))
             featuresToAdd = featuresToAdd.union(addedFeatures)
             idsToRemove = idsToRemove.union(deletedIds)
+            if current % 1000 == 0:
+                multiStepFeedback.pushInfo(self.tr(f"Evaluated {current}/{nSteps} results."))
             if feedback is not None:
                 feedback.setProgress(localTotal * current)
         lyr.addFeatures(list(featuresToAdd))
@@ -2856,5 +2861,5 @@ class LayerHandler(QObject):
         temp_data.addAttributes(fields.toList())
         temp.updateFields()
         temp_data.addFeature(feat)
-        self.algRunner.runCreateSpatialIndex(inputLyr=temp, context=context)
+        self.algRunner.runCreateSpatialIndex(inputLyr=temp, context=context, is_child_algorithm=True)
         return temp

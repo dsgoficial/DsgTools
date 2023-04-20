@@ -22,28 +22,16 @@
 """
 from PyQt5.QtCore import QCoreApplication
 
-import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
-    QgsGeometry,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingMultiStepFeedback,
     QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterField,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingUtils,
-    QgsSpatialIndex,
     QgsWkbTypes,
+    QgsProcessingParameterDistance,
 )
 
 from ...algRunner import AlgRunner
@@ -73,11 +61,17 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
                 self.SELECTED, self.tr("Process only selected features")
             )
         )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.MIN_AREA, self.tr("Max dissolve area"), minValue=0, optional=True
-            )
+        param = QgsProcessingParameterDistance(
+            self.MIN_AREA,
+            self.tr("Max dissolve area"),
+            parentParameterName=self.INPUT,
+            minValue=0,
+            optional=True,
         )
+        param.setMetadata( {'widget_wrapper':
+        { 'decimals': 10 }
+        })
+        self.addParameter(param)
         self.addParameter(
             QgsProcessingParameterField(
                 self.ATTRIBUTE_BLACK_LIST,
@@ -138,6 +132,7 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
             attributeBlackList=attributeBlackList,
             onlySelected=onlySelected,
             feedback=multiStepFeedback,
+            attributeTupple=False if tol == -1 else True,
         )
         currentStep += 1
 
