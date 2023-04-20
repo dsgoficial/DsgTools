@@ -52,7 +52,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
     OUTPUT = "OUTPUT"
 
     def tr(self, string):
-        return QCoreApplication.translate("Processing", string)
+        return QCoreApplication.translate("SplitPolygonsByGrid", string)
 
     def createInstance(self):
         return SplitPolygonsByGrid()

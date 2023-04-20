@@ -20,74 +20,87 @@
  ***************************************************************************/
 """
 
-from qgis.core import (QgsProcessing,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterNumber,
-                       QgsGeometry,
-                       QgsFeature,
-                       QgsRectangle,
-                       QgsFeatureRequest,
-                       QgsFeatureSink,
-                       QgsSpatialIndex,
-                       QgsField)
 import math
-from PyQt5.QtCore import QVariant
+from itertools import product
+
+from PyQt5.QtCore import QCoreApplication, QVariant
+from qgis.core import (
+    QgsFeature,
+    QgsFeatureRequest,
+    QgsFeatureSink,
+    QgsField,
+    QgsGeometry,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterNumber,
+    QgsRectangle,
+    QgsSpatialIndex,
+)
 
 
 class SplitPolygons(QgsProcessingAlgorithm):
-    INPUT = 'INPUT'
-    PARAM = 'PARAM'
-    OVERLAP = 'OVERLAP'
-    OUTPUT = 'OUTPUT'
-    SPLIT_FACTORS = ['1/1', '1/4', '1/9', '1/16']
+    INPUT = "INPUT"
+    PARAM = "PARAM"
+    OVERLAP = "OVERLAP"
+    OUTPUT = "OUTPUT"
+    SPLIT_FACTORS = ["1/1", "1/4", "1/9", "1/16"]
 
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
-                self.INPUT,
-                'Input polygon layer',
-                [QgsProcessing.TypeVectorPolygon]))
+                self.INPUT, "Input polygon layer", [QgsProcessing.TypeVectorPolygon]
+            )
+        )
 
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.PARAM,
-                'Splitting factor',
+                "Splitting factor",
                 options=self.SPLIT_FACTORS,
-                defaultValue=0))
+                defaultValue=0,
+            )
+        )
 
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.OVERLAP,
-                'Overlap value',
+                "Overlap value",
                 QgsProcessingParameterNumber.Double,
-                defaultValue=0.002))
+                defaultValue=0.002,
+            )
+        )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.OUTPUT,
-                'Output split polygons'))
+            QgsProcessingParameterFeatureSink(self.OUTPUT, "Output split polygons")
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         source = self.parameterAsSource(parameters, self.INPUT, context)
         split_factor = self.parameterAsEnum(parameters, self.PARAM, context)
         overlap = self.parameterAsDouble(parameters, self.OVERLAP, context)
-        
+
         # Add a new field called "priority" to the output layer's fields
         fields = source.fields()
         fields.append(QgsField("priority", QVariant.Int))
-        
-        (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT, context,
-                                               fields, source.wkbType(), source.sourceCrs())
+
+        (sink, dest_id) = self.parameterAsSink(
+            parameters,
+            self.OUTPUT,
+            context,
+            fields,
+            source.wkbType(),
+            source.sourceCrs(),
+        )
 
         total = 100.0 / source.featureCount() if source.featureCount() else 0
         features = source.getFeatures()
 
         # Create a spatial index
         index = QgsSpatialIndex(source)
-        
+
         parts = [1, 4, 9, 16][split_factor]
         side_length = math.sqrt(1 / parts)
         col_steps = int(math.sqrt(parts))
@@ -111,52 +124,70 @@ class SplitPolygons(QgsProcessingAlgorithm):
             width = xmax - xmin
             height = ymax - ymin
 
-            for i in range(col_steps):
-                for j in range(row_steps):
-                    x1 = xmin + (width * i * side_length)
-                    y1 = ymin + (height * j * side_length)
-                    x2 = xmin + (width * (i + 1) * side_length)
-                    y2 = ymin + (height * (j + 1) * side_length)
+            for i, j in product(range(col_steps), range(row_steps)):
+                if feedback.isCanceled():
+                    break
+                x1 = xmin + (width * i * side_length)
+                y1 = ymin + (height * j * side_length)
+                x2 = xmin + (width * (i + 1) * side_length)
+                y2 = ymin + (height * (j + 1) * side_length)
 
-                    new_geom = QgsGeometry.fromRect(QgsRectangle(x1, y1, x2, y2))
+                new_geom = QgsGeometry.fromRect(QgsRectangle(x1, y1, x2, y2))
 
-                    # Use the spatial index to find intersecting features
-                    candidate_ids = index.intersects(new_geom.boundingBox())
-                    if not candidate_ids:
-                        continue
+                # Use the spatial index to find intersecting features
+                candidate_ids = index.intersects(new_geom.boundingBox())
+                if not candidate_ids:
+                    continue
 
-                    intersected_geom = new_geom.intersection(geometry)
+                intersected_geom = new_geom.intersection(geometry)
 
-                    if intersected_geom.isEmpty():
-                        continue
+                if intersected_geom.isEmpty():
+                    continue
 
-                    # Buffer the new geometry
-                    buffered_geom = intersected_geom.buffer(overlap, 5)  # 5 is the default number of segments per quarter circle
+                # Buffer the new geometry
+                buffered_geom = intersected_geom.buffer(
+                    overlap, 5
+                )  # 5 is the default number of segments per quarter circle
 
+                # Use the spatial index to find intersecting features
+                candidate_ids = index.intersects(buffered_geom.boundingBox())
+                if not candidate_ids:
+                    continue
 
-                    # Use the spatial index to find intersecting features
-                    candidate_ids = index.intersects(buffered_geom.boundingBox())
-                    if not candidate_ids:
-                        continue
+                # Extract intersecting features
+                intersecting_features = [
+                    f
+                    for f in source.getFeatures(
+                        QgsFeatureRequest().setFilterFids(candidate_ids)
+                    )
+                ]
 
-                    # Extract intersecting features
-                    intersecting_features = [f for f in source.getFeatures(QgsFeatureRequest().setFilterFids(candidate_ids))]
+                # Dissolve only intersecting features
+                dissolved_geometry = QgsGeometry.unaryUnion(
+                    [f.geometry() for f in intersecting_features]
+                )
 
-                    # Dissolve only intersecting features
-                    dissolved_geometry = QgsGeometry.unaryUnion([f.geometry() for f in intersecting_features])
+                # Clip the buffered geometry by the dissolved geometry
+                intersected_geom = buffered_geom.intersection(dissolved_geometry)
 
-                    # Clip the buffered geometry by the dissolved geometry
-                    intersected_geom = buffered_geom.intersection(dissolved_geometry)
+                if intersected_geom.isEmpty():
+                    continue
 
-                    if intersected_geom.isEmpty():
-                        continue
-                        
-                    new_feature = QgsFeature(feature)
-                    new_feature.setGeometry(intersected_geom)
-                    new_feature.setFields(fields)
-                    polygons.append(new_feature)
+                new_feature = QgsFeature(feature)
+                new_feature.setGeometry(intersected_geom)
+                new_feature.setFields(fields)
+                polygons.append(new_feature)
+            feedback.setProgress(current * total)
 
-        polygons.sort(key=lambda x: (x.geometry().centroid().asPoint().y(), x.geometry().centroid().asPoint().x()) if not x.geometry().isNull() else (0, 0), reverse=True)
+        polygons.sort(
+            key=lambda x: (
+                x.geometry().centroid().asPoint().y(),
+                x.geometry().centroid().asPoint().x(),
+            )
+            if not x.geometry().isNull()
+            else (0, 0),
+            reverse=True,
+        )
         for priority_counter, polygon in enumerate(polygons, start=1):
             polygon.setAttribute("priority", priority_counter)
             sink.addFeature(polygon, QgsFeatureSink.FastInsert)
@@ -164,10 +195,10 @@ class SplitPolygons(QgsProcessingAlgorithm):
         return {self.OUTPUT: dest_id}
 
     def name(self):
-        return 'splitpolygons'
+        return "splitpolygons"
 
     def displayName(self):
-        return 'Split Polygons'
+        return "Split Polygons"
 
     def group(self):
         """
@@ -185,6 +216,9 @@ class SplitPolygons(QgsProcessingAlgorithm):
         formatting characters.
         """
         return "DSGTools: Geometric Algorithms"
+
+    def tr(self, string):
+        return QCoreApplication.translate("SplitPolygons", string)
 
     def createInstance(self):
         return SplitPolygons()
