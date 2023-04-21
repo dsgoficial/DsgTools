@@ -19,6 +19,8 @@ Melhorias:
 - Adicionada a opção de rodar a construção de polígonos por polígono de área geográfica (por MI);
 - Melhoria de desempenho na construção de polígonos (adicionado paralelismo em thread);
 - Melhoria de desempenho na identificação de erros de construção do terreno (roda em thread por área geográfica);
+- A ferramenta de verificação de erros de relacionamentos espaciais agora permite regras com de9im e relacionamentos espaciais simultaneamente;
+
 
 Correção de bug:
 - Corrigido o bug de sempre apontar flags quando a geometria tem buraco do processo de identificar geometrias com densidade incorreta de vértices;
