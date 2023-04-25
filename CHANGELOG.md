@@ -20,6 +20,7 @@ Melhorias:
 - Melhoria de desempenho na construção de polígonos (adicionado paralelismo em thread);
 - Melhoria de desempenho na identificação de erros de construção do terreno (roda em thread por área geográfica);
 - A ferramenta de verificação de erros de relacionamentos espaciais agora permite regras com de9im e relacionamentos espaciais simultaneamente;
+- Adicionada a opção de desligar todas as imagens ativas na ferramenta de seleção de raster;
 
 
 Correção de bug:
