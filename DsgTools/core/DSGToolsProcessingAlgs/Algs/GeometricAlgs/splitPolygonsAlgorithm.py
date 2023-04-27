@@ -106,18 +106,21 @@ class SplitPolygons(QgsProcessingAlgorithm):
         col_steps = int(math.sqrt(parts))
         row_steps = col_steps
 
-        polygons = []
+        grouped_polygons = {}
         for current, feature in enumerate(features, start=1):
             if feedback.isCanceled():
                 break
 
             geometry = feature.geometry()
+            source_fid = feature.id()
 
             if parts == 0:
                 new_feature = QgsFeature(feature)
                 new_feature.setFields(fields)
                 new_feature.setGeometry(geometry)
-                polygons.append(new_feature)
+                if source_fid not in grouped_polygons:
+                    grouped_polygons[source_fid] = []
+                grouped_polygons[source_fid].append(new_feature)
                 continue
 
             xmin, ymin, xmax, ymax = geometry.boundingBox().toRectF().getCoords()
@@ -176,21 +179,36 @@ class SplitPolygons(QgsProcessingAlgorithm):
                 new_feature = QgsFeature(feature)
                 new_feature.setGeometry(intersected_geom)
                 new_feature.setFields(fields)
-                polygons.append(new_feature)
+                if source_fid not in grouped_polygons:
+                    grouped_polygons[source_fid] = []
+                grouped_polygons[source_fid].append(new_feature)
+            
             feedback.setProgress(current * total)
 
-        polygons.sort(
+        priority = 1
+
+        sorted_source_features = sorted(
+            source.getFeatures(),
             key=lambda x: (
-                x.geometry().centroid().asPoint().y(),
-                x.geometry().centroid().asPoint().x(),
-            )
-            if not x.geometry().isNull()
-            else (0, 0),
+                round(x.geometry().centroid().asPoint().y(),5),
+                -round(x.geometry().centroid().asPoint().x(),5),
+            ),
             reverse=True,
         )
-        for priority_counter, polygon in enumerate(polygons, start=1):
-            polygon.setAttribute("priority", priority_counter)
-            sink.addFeature(polygon, QgsFeatureSink.FastInsert)
+        for feat in sorted_source_features:
+            grouped_polygons[feat.id()].sort(
+                key=lambda x: (
+                    round(x.geometry().centroid().asPoint().y(),5),
+                    -round(x.geometry().centroid().asPoint().x(),5),
+                )
+                if not x.geometry().isNull()
+                else (0, 0),
+                reverse=True,
+            )
+            for polygon in grouped_polygons[feat.id()]:
+                polygon.setAttribute("priority", priority)
+                sink.addFeature(polygon, QgsFeatureSink.FastInsert)
+                priority += 1
 
         return {self.OUTPUT: dest_id}
 
