@@ -2004,7 +2004,7 @@ class LayerHandler(QObject):
                 lyr
                 if not onlySelected
                 else algRunner.runSaveSelectedFeatures(
-                    lineLyr, context, feedback=multiStepFeedback
+                    lyr, context, feedback=multiStepFeedback
                 )
             )
             currentStep += 1

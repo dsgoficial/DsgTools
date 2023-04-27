@@ -768,7 +768,7 @@ class AlgRunner:
 
     def runSaveSelectedFeatures(self, inputLyr, context, feedback=None, outputLyr=None):
         outputLyr = "memory:" if outputLyr is None else outputLyr
-        parameters = {"LAYERS": inputLyr, "OUTPUT": outputLyr}
+        parameters = {"INPUT": inputLyr, "OUTPUT": outputLyr}
         output = processing.run(
             "native:saveselectedfeatures",
             parameters,
