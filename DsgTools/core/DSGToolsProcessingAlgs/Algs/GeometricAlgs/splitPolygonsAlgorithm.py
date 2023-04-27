@@ -38,6 +38,7 @@ from qgis.core import (
     QgsProcessingParameterNumber,
     QgsRectangle,
     QgsSpatialIndex,
+    QgsVectorLayer
 )
 
 
@@ -106,7 +107,7 @@ class SplitPolygons(QgsProcessingAlgorithm):
         col_steps = int(math.sqrt(parts))
         row_steps = col_steps
 
-        grouped_polygons = {}
+        polygons = []
         for current, feature in enumerate(features, start=1):
             if feedback.isCanceled():
                 break
@@ -118,9 +119,7 @@ class SplitPolygons(QgsProcessingAlgorithm):
                 new_feature = QgsFeature(feature)
                 new_feature.setFields(fields)
                 new_feature.setGeometry(geometry)
-                if source_fid not in grouped_polygons:
-                    grouped_polygons[source_fid] = []
-                grouped_polygons[source_fid].append(new_feature)
+                polygons.append(new_feature)
                 continue
 
             xmin, ymin, xmax, ymax = geometry.boundingBox().toRectF().getCoords()
@@ -179,13 +178,24 @@ class SplitPolygons(QgsProcessingAlgorithm):
                 new_feature = QgsFeature(feature)
                 new_feature.setGeometry(intersected_geom)
                 new_feature.setFields(fields)
-                if source_fid not in grouped_polygons:
-                    grouped_polygons[source_fid] = []
-                grouped_polygons[source_fid].append(new_feature)
+                polygons.append(new_feature)
+
             
             feedback.setProgress(current * total)
 
+
+        tile_layer = QgsVectorLayer("Polygon?crs=" + source.sourceCrs().authid(), "tile_polygons", "memory")
+        tile_data_provider = tile_layer.dataProvider()
+        tile_data_provider.addAttributes(fields)
+        tile_layer.updateFields()
+
+        tile_data_provider.addFeatures(polygons)
+        tile_layer.updateExtents()
+
+        index_tile = QgsSpatialIndex(tile_layer)
+
         priority = 1
+        final_features = {}
 
         sorted_source_features = sorted(
             source.getFeatures(),
@@ -196,7 +206,17 @@ class SplitPolygons(QgsProcessingAlgorithm):
             reverse=True,
         )
         for feat in sorted_source_features:
-            grouped_polygons[feat.id()].sort(
+            # Use the spatial index to find intersecting features
+            geometry = feat.geometry()
+            candidate_ids = index_tile.intersects(geometry.boundingBox())
+            intersecting_features = [
+                f
+                for f in tile_layer.getFeatures(
+                    QgsFeatureRequest().setFilterFids(candidate_ids)
+                )
+            ]
+
+            intersecting_features.sort(
                 key=lambda x: (
                     round(x.geometry().centroid().asPoint().y(),5),
                     -round(x.geometry().centroid().asPoint().x(),5),
@@ -205,10 +225,15 @@ class SplitPolygons(QgsProcessingAlgorithm):
                 else (0, 0),
                 reverse=True,
             )
-            for polygon in grouped_polygons[feat.id()]:
+            for polygon in intersecting_features:
+                if polygon.id() in final_features:
+                    continue
                 polygon.setAttribute("priority", priority)
-                sink.addFeature(polygon, QgsFeatureSink.FastInsert)
+                final_features[polygon.id()] = polygon
                 priority += 1
+
+        for polygon in final_features.values():
+            sink.addFeature(polygon, QgsFeatureSink.FastInsert)
 
         return {self.OUTPUT: dest_id}
 
