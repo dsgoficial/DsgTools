@@ -47,7 +47,7 @@ class SplitPolygons(QgsProcessingAlgorithm):
     PARAM = "PARAM"
     OVERLAP = "OVERLAP"
     OUTPUT = "OUTPUT"
-    SPLIT_FACTORS = ["1/1", "1/4", "1/9", "1/16"]
+    SPLIT_FACTORS = ["1/1", "1/4", "1/9", "1/16", "1/25"]
 
     def initAlgorithm(self, config=None):
         self.addParameter(
@@ -102,7 +102,7 @@ class SplitPolygons(QgsProcessingAlgorithm):
         # Create a spatial index
         index = QgsSpatialIndex(source)
 
-        parts = [1, 4, 9, 16][split_factor]
+        parts = [1, 4, 9, 16, 25][split_factor]
         side_length = math.sqrt(1 / parts)
         col_steps = int(math.sqrt(parts))
         row_steps = col_steps
