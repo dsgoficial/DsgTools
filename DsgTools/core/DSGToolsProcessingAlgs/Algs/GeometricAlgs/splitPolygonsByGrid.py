@@ -337,9 +337,14 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
             else min(abs(xmax - xmin) / 2, abs(ymax - ymin) / 2)
         )
         if geometry.area() <= min_area or geometry.area() <= xSpacing * ySpacing:
-            nearest_neighbor_id = neighbour_idx.nearestNeighbor(
+            nearest_neighbor_ids = neighbour_idx.nearestNeighbor(
                 geometry.centroid().asPoint(), 1
-            )[0]
+            )
+            if nearest_neighbor_ids == []:
+                return set()
+            nearest_neighbor_id = nearest_neighbor_ids[0]
+            if nearest_neighbor_id not in neighbourFeatDict:
+                return set()
             feature[classFieldName] = neighbourFeatDict[nearest_neighbor_id][
                 classFieldName
             ]

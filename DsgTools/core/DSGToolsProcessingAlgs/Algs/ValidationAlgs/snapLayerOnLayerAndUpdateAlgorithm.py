@@ -44,6 +44,7 @@ from qgis.core import (
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
+    QgsProcessingParameterFeatureSource,
     QgsProcessingUtils,
     QgsSpatialIndex,
     QgsWkbTypes,
@@ -81,7 +82,7 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterVectorLayer(
+            QgsProcessingParameterFeatureSource(
                 self.REFERENCE_LAYER,
                 self.tr("Reference layer"),
                 [QgsProcessing.TypeVectorAnyGeometry],
@@ -133,7 +134,7 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 self.invalidSourceError(parameters, self.INPUT)
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        refLyr = self.parameterAsVectorLayer(parameters, self.REFERENCE_LAYER, context)
+        refLyr = self.parameterAsSource(parameters, self.REFERENCE_LAYER, context)
         if refLyr is None:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.REFERENCE_LAYER)
@@ -162,19 +163,19 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             multiStepFeedback.setProgressText(self.tr("Building local cache..."))
             multiStepFeedback.setCurrentStep(currentStep)
             refLyr = algRunner.runAddAutoIncrementalField(
-                refLyr, context, multiStepFeedback
+                refLyr, context, multiStepFeedback, is_child_algorithm=True
             )
             currentStep += 1
 
             multiStepFeedback.setCurrentStep(currentStep)
-            algRunner.runCreateSpatialIndex(refLyr, context, multiStepFeedback)
+            algRunner.runCreateSpatialIndex(refLyr, context, multiStepFeedback, is_child_algorithm=True)
             currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Running snap..."))
         snapped = algRunner.runSnapGeometriesToLayer(
             inputLayer=auxLyr,
-            referenceLayer=refLyr,
+            referenceLayer=refLyr if buildLocalCache else parameters[self.REFERENCE_LAYER],
             tol=tol,
             behavior=behavior,
             context=context,
