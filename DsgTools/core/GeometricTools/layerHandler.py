@@ -2037,7 +2037,7 @@ class LayerHandler(QObject):
         context = (
             dataobjects.createContext(feedback=feedback) if context is None else context
         )
-        multiStepFeedback = QgsProcessingMultiStepFeedback(7, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(8, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Getting constraint lines"))
         linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
@@ -2058,14 +2058,16 @@ class LayerHandler(QObject):
             inputLyr, context, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(3)
+        algRunner.runCreateSpatialIndex(edgeLyr, context, feedback=multiStepFeedback)
+        multiStepFeedback.setCurrentStep(4)
         explodedEdges = algRunner.runExplodeLines(
             edgeLyr, context, feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(4)
+        multiStepFeedback.setCurrentStep(5)
         explodedWithoutDuplicates = algRunner.runRemoveDuplicatedGeometries(
             explodedEdges, context, feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(5)
+        multiStepFeedback.setCurrentStep(6)
         self.buildCenterPoints(
             inputLyr,
             outputCenterPointSink,
@@ -2075,7 +2077,7 @@ class LayerHandler(QObject):
             context=context,
             algRunner=algRunner,
         )
-        multiStepFeedback.setCurrentStep(6)
+        multiStepFeedback.setCurrentStep(7)
         self.filterEdges(
             explodedWithoutDuplicates,
             constraintSpatialIdx,
@@ -2089,8 +2091,6 @@ class LayerHandler(QObject):
         self,
         inputLyr,
         outputCenterPointSink,
-        polygonBoundaryLyr,
-        constraintLineLyr=None,
         context=None,
         feedback=None,
         algRunner=None,
@@ -2104,34 +2104,16 @@ class LayerHandler(QObject):
         context = (
             dataobjects.createContext(feedback=feedback) if context is None else context
         )
-        multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
-        mergedLineLyr = (
-            polygonBoundaryLyr
-            if constraintLineLyr is None
-            else algRunner.runMergeVectorLayers(
-                [polygonBoundaryLyr, constraintLineLyr],
-                context,
-                feedback=multiStepFeedback,
-            )
+        outputPolygonLyr = algRunner.runPolygonize(
+            inputLyr, context, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(1)
-        splitSegmentsLyr = algRunner.runExplodeLines(
-            mergedLineLyr, context, feedback=multiStepFeedback
-        )
-        multiStepFeedback.setCurrentStep(2)
-        segmentsWithoutDuplicates = algRunner.runRemoveDuplicatedGeometries(
-            splitSegmentsLyr, context, feedback=multiStepFeedback
-        )
-        multiStepFeedback.setCurrentStep(3)
-        outputPolygonLyr = algRunner.runPolygonize(
-            segmentsWithoutDuplicates, context, feedback=multiStepFeedback
-        )
-        multiStepFeedback.setCurrentStep(4)
         centroidLyr = algRunner.runPointOnSurface(
             outputPolygonLyr, context, feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(5)
+        multiStepFeedback.setCurrentStep(2)
         centroidsWithAttributes = algRunner.runJoinAttributesByLocation(
             centroidLyr, inputLyr, context, feedback=multiStepFeedback
         )
@@ -2150,22 +2132,45 @@ class LayerHandler(QObject):
     ):
         """ """
         notBoundarySet = set()
-        stepSize = 100 / inputLyr.featureCount()
-        featList = [i for i in inputLyr.getFeatures()]
-        for current, feat in enumerate(featList):
-            if feedback is not None and feedback.isCanceled():
-                break
+        nFeats = inputLyr.featureCount()
+        if nFeats == 0:
+            return
+        stepSize = 100 / nFeats
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
+        futures = set()
+        def evaluate(feat):
+            outputSet = set()
             featGeom = feat.geometry()
             featBB = featGeom.boundingBox()
             for candidateId in constraintSpatialIdx.intersects(featBB):
                 if featGeom.within(constraintIdDict[candidateId].geometry()):
-                    notBoundarySet.add(feat)
-                    break
-            if feedback is not None:
-                feedback.setProgress(current * stepSize)
-        for feat in featList:
-            if feat not in notBoundarySet:
+                    outputSet.add(feat)
+                    return outputSet
+            return outputSet
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback is not None else None
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+            multiStepFeedback.setProgressText(self.tr("Submitting tasks to thread"))
+
+        for current, feat in enumerate(inputLyr.getFeatures()):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+            futures.add(pool.submit(evaluate, feat))
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * stepSize)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+            multiStepFeedback.setProgressText(self.tr("Evaluating results"))
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            outputSet = future.result()
+            if outputSet == {}:
+                continue
+            for feat in outputSet:
+                if feat in notBoundarySet:
+                    continue
                 outputBoundarySink.addFeature(feat, QgsFeatureSink.FastInsert)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * stepSize)
 
     def getPolygonsFromCenterPointsAndBoundariesAlt(
         self,
