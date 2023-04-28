@@ -24,6 +24,7 @@
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.pointsInPolygonGridAlgorithm import (
     PointsInPolygonGridAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.selectByDE9IM import SelectByDE9IMAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitPolygonsAlgorithm import (
     SplitPolygons,
 )
@@ -517,6 +518,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             PointsInPolygonGridAlgorithm(),
             SplitPolygons(),
             SplitPolygonsByGrid(),
+            SelectByDE9IMAlgorithm(),
         ]
         return algList
 

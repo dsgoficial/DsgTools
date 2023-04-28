@@ -10,6 +10,7 @@ Novas funcionalidades:
 - Novo processo de construir grid de pontos dentro de polígonos;
 - Novo processo de dividir polígonos;
 - Novo processo de dividir polígonos por grid;
+- Novo processo de selecionar por DE9IM;
 
 Melhorias:
 - Adicionada a opção de dar pan na barra de ferramentas de revisão;
