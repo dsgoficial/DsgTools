@@ -56,16 +56,18 @@ from qgis.core import (
     QgsProcessingContext,
     QgsProcessingAlgorithm,
     QgsProcessingParameterFeatureSource,
-    QgsSpatialIndex
+    QgsSpatialIndex,
 )
 
+
 class ValidationString(QgsProcessingParameterString):
-    '''
+    """
     Auxiliary class for pre validation on measurer's names.
-    '''
+    """
+
     # __init__ not necessary
 
-    def __init__(self, name, description=''):
+    def __init__(self, name, description=""):
         super().__init__(name, description)
 
     def checkValueIsAcceptable(self, value, context=None):
@@ -75,6 +77,7 @@ class ValidationString(QgsProcessingParameterString):
             isinstance(value, str)
             and QRegExpValidator(regex).validate(value, 9)[0] == acceptable
         )
+
 
 class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):
     INPUT = "INPUT"
@@ -101,18 +104,15 @@ class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):
             )
         )
 
-        param = ValidationString(
-            self.DE9IM,
-            description=self.tr("DE9IM")
-        )
+        param = ValidationString(self.DE9IM, description=self.tr("DE9IM"))
         self.addParameter(param)
-
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
         self.layerHandler = LayerHandler()
+        self.algRunner = AlgRunner()
         source = self.parameterAsSource(parameters, self.INPUT, context)
         layer = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         intersectSource = self.parameterAsSource(parameters, self.INTERSECT, context)
@@ -120,29 +120,71 @@ class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):
         nFeats = intersectSource.featureCount()
         if nFeats == 0:
             return {}
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.setCurrentStep(1)
+        if de9im == "FF1FF0102":
+            self.algRunner.runSelectByLocation(
+                inputLyr=parameters[self.INPUT],
+                intersectLyr=parameters[self.INTERSECT],
+                context=context,
+                feedback=feedback,
+                predicate=[2],
+                method=0,
+                is_child_algorithm=True,
+            )
+            return
+        nSteps = 4
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        lyrWithId = self.algRunner.runCreateFieldWithExpression(
+            inputLyr=parameters[self.INPUT],
+            expression="$id",
+            fieldType=1,
+            fieldName="featid",
+            feedback=multiStepFeedback,
+            context=context,
+            is_child_algorithm=False,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(
+            lyrWithId,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        selectedLyr = self.algRunner.runExtractByLocation(
+            inputLyr=lyrWithId,
+            intersectLyr=parameters[self.INTERSECT],
+            context=context,
+            feedback=multiStepFeedback,
+            predicate=[2] if de9im == "FF1FF0102" else [0],
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        nFeats = selectedLyr.featureCount()
+        if nFeats == 0:
+            return {}
         selectedSet = set()
-        stepSize = 100/nFeats
+        stepSize = 100 / nFeats
+
         def compute(feat):
             returnSet = set()
             geom = feat.geometry()
             bbox = geom.boundingBox()
-            request = QgsFeatureRequest()
-            request.setFilterRect(bbox)
             engine = QgsGeometry.createGeometryEngine(geom.constGet())
             engine.prepareGeometry()
-            for f in source.getFeatures(request):
+            for f in selectedLyr.getFeatures(bbox):
                 if multiStepFeedback.isCanceled():
                     return {}
                 intersectGeom = f.geometry()
                 if intersectGeom.isEmpty() or intersectGeom.isNull():
                     continue
                 if engine.relatePattern(intersectGeom.constGet(), de9im):
-                    returnSet.add(f.id())
+                    returnSet.add(f["featid"])
             return returnSet
-            
+
         for current, feat in enumerate(intersectSource.getFeatures()):
             if multiStepFeedback.isCanceled():
                 return {}

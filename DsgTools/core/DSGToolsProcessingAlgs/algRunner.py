@@ -63,12 +63,24 @@ class AlgRunner:
         else:
             return lyr
 
-    def runDissolve(self, inputLyr, context, feedback=None, outputLyr=None, field=None, is_child_algorithm=False):
+    def runDissolve(
+        self,
+        inputLyr,
+        context,
+        feedback=None,
+        outputLyr=None,
+        field=None,
+        is_child_algorithm=False,
+    ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         field = [] if field is None else field
         parameters = {"INPUT": inputLyr, "FIELD": field, "OUTPUT": outputLyr}
         output = processing.run(
-            "native:dissolve", parameters, context=context, feedback=feedback, is_child_algorithm=is_child_algorithm
+            "native:dissolve",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -504,11 +516,23 @@ class AlgRunner:
         )
         return output["OUTPUT"]
 
-    def runClip(self, inputLayer, overlayLayer, context, feedback=None, outputLyr=None, is_child_algorithm=False):
+    def runClip(
+        self,
+        inputLayer,
+        overlayLayer,
+        context,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"INPUT": inputLayer, "OVERLAY": overlayLayer, "OUTPUT": outputLyr}
         output = processing.run(
-            "native:clip", parameters, context=context, feedback=feedback, is_child_algorithm=is_child_algorithm
+            "native:clip",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -582,7 +606,11 @@ class AlgRunner:
             "OUTPUT": outputLyr,
         }
         output = processing.run(
-            "native:buffer", parameters, context=context, feedback=feedback, is_child_algorithm=is_child_algorithm
+            "native:buffer",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -1006,6 +1034,7 @@ class AlgRunner:
         fieldPrecision=0,
         feedback=None,
         outputLyr=None,
+        is_child_algorithm=False,
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
@@ -1020,6 +1049,7 @@ class AlgRunner:
             },
             context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -1371,51 +1401,100 @@ class AlgRunner:
         )
         return output["FLAGS"]
 
-    def runShortestLine(self, sourceLayer, destinationLayer, context, method=0, neighbors=1, maxDistance=None, feedback=None, outputLyr=None, is_child_algorithm=False):
+    def runShortestLine(
+        self,
+        sourceLayer,
+        destinationLayer,
+        context,
+        method=0,
+        neighbors=1,
+        maxDistance=None,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
             "native:shortestline",
             {
-                'SOURCE': sourceLayer,
-                'DESTINATION': destinationLayer,
-                'METHOD': method,
-                'NEIGHBORS': neighbors,
-                'DISTANCE': maxDistance,
-                'OUTPUT': outputLyr,
+                "SOURCE": sourceLayer,
+                "DESTINATION": destinationLayer,
+                "METHOD": method,
+                "NEIGHBORS": neighbors,
+                "DISTANCE": maxDistance,
+                "OUTPUT": outputLyr,
             },
             context=context,
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
-        return output['OUTPUT']
-    
-    def runRetainFields(self, inputLayer, fields, context, feedback=None, outputLyr=None, is_child_algorithm=False):
+        return output["OUTPUT"]
+
+    def runRetainFields(
+        self,
+        inputLayer,
+        fields,
+        context,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
             "native:retainfields",
-            {
-                'INPUT': inputLayer,
-                'FIELDS': fields,
-                'OUTPUT':'TEMPORARY_OUTPUT'
-            },
+            {"INPUT": inputLayer, "FIELDS": fields, "OUTPUT": "TEMPORARY_OUTPUT"},
             context=context,
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
-        return output['OUTPUT']
+        return output["OUTPUT"]
 
-    def runExtractByExtent(self, inputLayer, extent, context, clip=True, feedback=None, outputLyr=None, is_child_algorithm=False):
+    def runExtractByExtent(
+        self,
+        inputLayer,
+        extent,
+        context,
+        clip=True,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
             "native:extractbyextent",
             {
-                'INPUT': inputLayer,
-                'EXTENT': extent,
-                'CLIP': clip,
-                'OUTPUT': outputLyr,
+                "INPUT": inputLayer,
+                "EXTENT": extent,
+                "CLIP": clip,
+                "OUTPUT": outputLyr,
             },
             context=context,
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
-        return output['OUTPUT']
+        return output["OUTPUT"]
+
+    def runSelectByLocation(
+        self,
+        inputLyr,
+        intersectLyr,
+        context,
+        predicate=None,
+        method=None,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        predicate = [0] if predicate is None else predicate
+        method = [0] if method is None else method
+        processing.run(
+            "native:selectbylocation",
+            {
+                "INPUT": inputLyr,
+                "INTERSECT": intersectLyr,
+                "PREDICATE": predicate,
+                "METHOD": method,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
