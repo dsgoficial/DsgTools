@@ -79,10 +79,11 @@ class ValidationString(QgsProcessingParameterString):
         )
 
 
-class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):
+class ExtractByDE9IMAlgorithm(QgsProcessingAlgorithm):
     INPUT = "INPUT"
     INTERSECT = "INTERSECT"
     DE9IM = "DE9IM"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -107,6 +108,10 @@ class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):
         param = ValidationString(self.DE9IM, description=self.tr("DE9IM"))
         self.addParameter(param)
 
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(self.OUTPUT, self.tr("Output"))
+        )
+
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
@@ -117,45 +122,35 @@ class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):
         layer = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         intersectSource = self.parameterAsSource(parameters, self.INTERSECT, context)
         de9im = self.parameterAsString(parameters, self.DE9IM, context)
+
+        (sink, dest_id) = self.parameterAsSink(
+            parameters,
+            self.OUTPUT,
+            context,
+            source.fields(),
+            source.wkbType(),
+            source.sourceCrs(),
+        )
+
         nFeats = intersectSource.featureCount()
         if nFeats == 0:
-            return {}
+            return {self.OUTPUT: dest_id}
         if de9im == "FF1FF0102":
-            self.algRunner.runSelectByLocation(
+            return self.algRunner.runExtractByLocation(
                 inputLyr=parameters[self.INPUT],
                 intersectLyr=parameters[self.INTERSECT],
                 context=context,
                 feedback=feedback,
                 predicate=[2],
                 method=0,
-                is_child_algorithm=True,
+                is_child_algorithm=False,
             )
-            return
-        nSteps = 4
+        nSteps = 2
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
-        lyrWithId = self.algRunner.runCreateFieldWithExpression(
-            inputLyr=parameters[self.INPUT],
-            expression="$id",
-            fieldType=1,
-            fieldName="featid",
-            feedback=multiStepFeedback,
-            context=context,
-            is_child_algorithm=False,
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(
-            lyrWithId,
-            context=context,
-            feedback=multiStepFeedback,
-            is_child_algorithm=True,
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
         selectedLyr = self.algRunner.runExtractByLocation(
-            inputLyr=lyrWithId,
+            inputLyr=parameters[self.INPUT],
             intersectLyr=parameters[self.INTERSECT],
             context=context,
             feedback=multiStepFeedback,
@@ -165,8 +160,7 @@ class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         nFeats = selectedLyr.featureCount()
         if nFeats == 0:
-            return {}
-        selectedSet = set()
+            return {self.OUTPUT: dest_id}
         stepSize = 100 / nFeats
 
         def compute(feat):
@@ -182,17 +176,17 @@ class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):
                 if intersectGeom.isEmpty() or intersectGeom.isNull():
                     continue
                 if engine.relatePattern(intersectGeom.constGet(), de9im):
-                    returnSet.add(f["featid"])
+                    returnSet.add(f)
             return returnSet
 
         for current, feat in enumerate(intersectSource.getFeatures()):
             if multiStepFeedback.isCanceled():
                 return {}
-            selectedSet.update(compute(feat))
+            outputSet = compute(feat)
+            sink.addFeatures(list(outputSet))
             multiStepFeedback.setProgress(current * stepSize)
-        layer.selectByIds(list(selectedSet))
 
-        return {}
+        return {self.OUTPUT: dest_id}
 
     def name(self):
         """
@@ -202,14 +196,14 @@ class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "selectbyde9im"
+        return "extractbyde9im"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Select features by DE9IM")
+        return self.tr("Extract features by DE9IM")
 
     def group(self):
         """
@@ -229,7 +223,7 @@ class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):
         return "DSGTools: Geometric Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate("SelectByDE9IMAlgorithm", string)
+        return QCoreApplication.translate("ExtractByDE9IMAlgorithm", string)
 
     def createInstance(self):
-        return SelectByDE9IMAlgorithm()
+        return ExtractByDE9IMAlgorithm()

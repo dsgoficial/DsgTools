@@ -21,14 +21,21 @@
  ***************************************************************************/
 """
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractByDE9IM import (
+    ExtractByDE9IMAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.pointsInPolygonGridAlgorithm import (
     PointsInPolygonGridAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.selectByDE9IM import SelectByDE9IMAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.selectByDE9IM import (
+    SelectByDE9IMAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitPolygonsAlgorithm import (
     SplitPolygons,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitPolygonsByGrid import SplitPolygonsByGrid
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitPolygonsByGrid import (
+    SplitPolygonsByGrid,
+)
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -519,6 +526,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             SplitPolygons(),
             SplitPolygonsByGrid(),
             SelectByDE9IMAlgorithm(),
+            ExtractByDE9IMAlgorithm(),
         ]
         return algList
 
