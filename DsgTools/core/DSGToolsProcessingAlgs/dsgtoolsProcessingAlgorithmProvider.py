@@ -24,6 +24,9 @@
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractByDE9IM import (
     ExtractByDE9IMAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.line2Multiline import (
+    Line2Multiline,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.pointsInPolygonGridAlgorithm import (
     PointsInPolygonGridAlgorithm,
 )
@@ -527,6 +530,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             SplitPolygonsByGrid(),
             SelectByDE9IMAlgorithm(),
             ExtractByDE9IMAlgorithm(),
+            Line2Multiline(),
         ]
         return algList
 
