@@ -20,44 +20,17 @@
  ***************************************************************************/
 """
 
-from collections import defaultdict
-import itertools
-import json
-import os
 
-import concurrent.futures
-
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
-    ValidationAlgorithm,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-
-from qgis.PyQt.Qt import QVariant
-from PyQt5.QtCore import QCoreApplication, QRegExp, QCoreApplication
+from PyQt5.QtCore import QCoreApplication, QRegExp
+from qgis.core import (QgsGeometry, QgsProcessing,
+                       QgsProcessingAlgorithm, QgsProcessingMultiStepFeedback,
+                       QgsProcessingParameterEnum,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterString, Qgis)
 from qgis.PyQt.QtGui import QRegExpValidator
 
-from qgis.core import (
-    QgsProcessing,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterVectorLayer,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterField,
-    QgsProcessingException,
-    QgsProcessingParameterDistance,
-    QgsProcessingMultiStepFeedback,
-    QgsProcessingFeatureSourceDefinition,
-    QgsGeometry,
-    QgsProcessingParameterString,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterExpression,
-    QgsFeatureRequest,
-    QgsProcessingContext,
-    QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
-    QgsSpatialIndex,
-)
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
 
 class ValidationString(QgsProcessingParameterString):
@@ -83,6 +56,7 @@ class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):
     INPUT = "INPUT"
     INTERSECT = "INTERSECT"
     DE9IM = "DE9IM"
+    METHOD = "METHOD"
 
     def initAlgorithm(self, config):
         """
@@ -106,6 +80,24 @@ class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):
 
         param = ValidationString(self.DE9IM, description=self.tr("DE9IM"))
         self.addParameter(param)
+        self.method = [
+            self.tr("creating new selection"),
+            self.tr("adding to current selection"),
+            self.tr("selecting within current selection"),
+            self.tr("removing from current selection"),
+        ]
+
+        self.addParameter(
+            QgsProcessingParameterEnum(
+                self.METHOD, self.tr("Modify current selection by"), options=self.method, defaultValue=0
+            )
+        )
+        self.selectionIdDict = {
+            0: Qgis.SelectBehavior.SetSelection,
+            1: Qgis.SelectBehavior.AddToSelection,
+            2: Qgis.SelectBehavior.IntersectSelection,
+            3: Qgis.SelectBehavior.RemoveFromSelection,
+        }
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -116,6 +108,7 @@ class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):
         source = self.parameterAsSource(parameters, self.INPUT, context)
         layer = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         intersectSource = self.parameterAsSource(parameters, self.INTERSECT, context)
+        method = self.parameterAsEnum(parameters, self.METHOD, context)
         de9im = self.parameterAsString(parameters, self.DE9IM, context)
         nFeats = intersectSource.featureCount()
         if nFeats == 0:
@@ -127,7 +120,7 @@ class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):
                 context=context,
                 feedback=feedback,
                 predicate=[2],
-                method=0,
+                method=self.selectionIdDict[method],
                 is_child_algorithm=True,
             )
             return
@@ -190,7 +183,7 @@ class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):
                 return {}
             selectedSet.update(compute(feat))
             multiStepFeedback.setProgress(current * stepSize)
-        layer.selectByIds(list(selectedSet))
+        layer.selectByIds(list(selectedSet), self.selectionIdDict[method])
 
         return {}
 
