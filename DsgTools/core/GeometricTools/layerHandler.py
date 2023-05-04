@@ -2443,7 +2443,8 @@ class LayerHandler(QObject):
                 constraintPolygonList, context, feedback=multiStepFeedback
             )
             currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
             (
                 constraintPolygonLyrSpatialIdx,
                 constraintPolygonLyrIdDict,
