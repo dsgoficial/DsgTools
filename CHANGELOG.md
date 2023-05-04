@@ -24,6 +24,7 @@ Melhorias:
 - Melhoria de desempenho na identificação de erros de construção do terreno (roda em thread por área geográfica);
 - A ferramenta de verificação de erros de relacionamentos espaciais agora permite regras com de9im e relacionamentos espaciais simultaneamente;
 - Adicionada a opção de desligar todas as imagens ativas na ferramenta de seleção de raster;
+- Adicionado o id da geometria na flag do identificar geometrias inválidas;
 
 
 Correção de bug:
