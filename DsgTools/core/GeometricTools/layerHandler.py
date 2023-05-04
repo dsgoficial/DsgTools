@@ -529,7 +529,9 @@ class LayerHandler(QObject):
             featuresToAdd = featuresToAdd.union(addedFeatures)
             idsToRemove = idsToRemove.union(deletedIds)
             if current % 1000 == 0:
-                multiStepFeedback.pushInfo(self.tr(f"Evaluated {current}/{nSteps} results."))
+                multiStepFeedback.pushInfo(
+                    self.tr(f"Evaluated {current}/{nSteps} results.")
+                )
             if feedback is not None:
                 feedback.setProgress(localTotal * current)
         lyr.addFeatures(list(featuresToAdd))
@@ -1372,7 +1374,7 @@ class LayerHandler(QObject):
                 self.fixGeometryFromInput(
                     inputLyr, parameterDict, geometryType, _newFeatSet, feat, geom, id
                 )
-            return flagDict, _newFeatSet
+            return flagDict, _newFeatSet, feat
 
         for current, feat in enumerate(iterator):
             if feedback is not None and feedback.isCanceled():
@@ -1383,16 +1385,29 @@ class LayerHandler(QObject):
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(1)
             multiStepFeedback.pushInfo(self.tr("Evaluating results..."))
+        pkFields = inputLyr.primaryKeyAttributes()
+        pkFieldNames = [
+            field.name()
+            for idx, field in enumerate(inputLyr.fields())
+            if idx in pkFields
+        ]
         for current, future in enumerate(concurrent.futures.as_completed(futures)):
             if feedback is not None and feedback.isCanceled():
                 break
-            output, _newFeatSet = future.result()
+            output, _newFeatSet, feat = future.result()
             if output:
+                featIdText = (
+                    f"{feat.id()}"
+                    if pkFields == []
+                    else f"{','.join(feat.attribute(i) for i in pkFields)}"
+                )
+                featIdText = featIdText.replace(",)", "").replace("(", "")
                 for point, errorDict in output.items():
                     if point in flagDict:
                         flagDict[point]["reason"] += errorDict["reason"]
                     else:
                         flagDict[point] = errorDict
+                    flagDict[point]["featid"] = featIdText
             if _newFeatSet:
                 newFeatSet = newFeatSet.union(_newFeatSet)
             if feedback is not None:
@@ -2136,8 +2151,9 @@ class LayerHandler(QObject):
         if nFeats == 0:
             return
         stepSize = 100 / nFeats
-        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
         futures = set()
+
         def evaluate(feat):
             outputSet = set()
             featGeom = feat.geometry()
@@ -2147,7 +2163,12 @@ class LayerHandler(QObject):
                     outputSet.add(feat)
                     return outputSet
             return outputSet
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback is not None else None
+
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(2, feedback)
+            if feedback is not None
+            else None
+        )
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(0)
             multiStepFeedback.setProgressText(self.tr("Submitting tasks to thread"))
@@ -2837,7 +2858,9 @@ class LayerHandler(QObject):
         list(map(changeGeometryLambda, updateSet))
         layer.endEditCommand()
 
-    def createMemoryLayerForEachFeature(self, layer, context, returnFeature=False, feedback=None):
+    def createMemoryLayerForEachFeature(
+        self, layer, context, returnFeature=False, feedback=None
+    ):
         layerList = []
         nFeats = layer.featureCount()
         if nFeats == 0:
@@ -2856,16 +2879,20 @@ class LayerHandler(QObject):
     def createMemoryLayerWithFeature(self, layer, feat, context=None, isSource=False):
         context = QgsProcessingContext() if context is None else context
         crs = layer.crs() if not isSource else layer.sourceCrs()
-        temp_name = f"{layer.name()}-{str(uuid4())}" if not isSource else f"{str(uuid4())}"
+        temp_name = (
+            f"{layer.name()}-{str(uuid4())}" if not isSource else f"{str(uuid4())}"
+        )
         temp = QgsVectorLayer(
-                f"{QgsWkbTypes.displayString(layer.wkbType())}?crs={crs.authid()}",
-                temp_name,
-                "memory",
-            )
+            f"{QgsWkbTypes.displayString(layer.wkbType())}?crs={crs.authid()}",
+            temp_name,
+            "memory",
+        )
         temp_data = temp.dataProvider()
         fields = layer.dataProvider().fields() if not isSource else layer.fields()
         temp_data.addAttributes(fields.toList())
         temp.updateFields()
         temp_data.addFeature(feat)
-        self.algRunner.runCreateSpatialIndex(inputLyr=temp, context=context, is_child_algorithm=True)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=temp, context=context, is_child_algorithm=True
+        )
         return temp

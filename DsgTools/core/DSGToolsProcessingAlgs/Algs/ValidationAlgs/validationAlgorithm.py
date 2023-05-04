@@ -58,13 +58,15 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
         except:
             return [], 0
 
-    def prepareFlagSink(self, parameters, source, wkbType, context):
+    def prepareFlagSink(self, parameters, source, wkbType, context, addFeatId=False):
         (self.flagSink, self.flag_id) = self.prepareAndReturnFlagSink(
-            parameters, source, wkbType, context, self.FLAGS
+            parameters, source, wkbType, context, self.FLAGS, addFeatId=addFeatId
         )
 
-    def prepareAndReturnFlagSink(self, parameters, source, wkbType, context, UI_FIELD):
-        flagFields = self.getFlagFields()
+    def prepareAndReturnFlagSink(
+        self, parameters, source, wkbType, context, UI_FIELD, addFeatId=False
+    ):
+        flagFields = self.getFlagFields(addFeatId=addFeatId)
         (flagSink, flag_id) = self.parameterAsSink(
             parameters,
             UI_FIELD,
@@ -77,20 +79,24 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
             raise QgsProcessingException(self.invalidSinkError(parameters, UI_FIELD))
         return (flagSink, flag_id)
 
-    def getFlagFields(self):
+    def getFlagFields(self, addFeatId=False):
         fields = QgsFields()
         fields.append(QgsField("reason", QVariant.String))
+        if addFeatId:
+            fields.append(QgsField("featid", QVariant.String))
         return fields
 
-    def flagFeature(self, flagGeom, flagText, fromWkb=False, sink=None):
+    def flagFeature(self, flagGeom, flagText, featid=None, fromWkb=False, sink=None):
         """
         Creates and adds to flagSink a new flag with the reason.
         :param flagGeom: (QgsGeometry) geometry of the flag;
         :param flagText: (string) Text of the flag
         """
         flagSink = self.flagSink if sink is None else sink
-        newFeat = QgsFeature(self.getFlagFields())
+        newFeat = QgsFeature(self.getFlagFields(addFeatId=featid is not None))
         newFeat["reason"] = flagText
+        if featid is not None:
+            newFeat["featid"] = featid
         if fromWkb:
             geom = QgsGeometry()
             geom.fromWkb(flagGeom)
