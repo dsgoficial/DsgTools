@@ -20,25 +20,24 @@
  *                                                                         *
  ***************************************************************************/
 """
-from __future__ import absolute_import
+
+import concurrent.futures
 
 from itertools import tee, combinations
 from collections import defaultdict, OrderedDict
+import os
 
 from qgis.core import (
-    Qgis,
-    QgsFeature,
     QgsProject,
     QgsGeometry,
     QgsExpression,
     QgsVectorLayer,
     QgsSpatialIndex,
-    QgsFeatureRequest,
     QgsProcessingContext,
     QgsProcessingFeedback,
     QgsProcessingMultiStepFeedback,
+    QgsFeatureRequest,
 )
-from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
 from qgis.PyQt.Qt import QObject
 from qgis.PyQt.QtCore import QRegExp, QCoreApplication
 from qgis.PyQt.QtGui import QRegExpValidator
