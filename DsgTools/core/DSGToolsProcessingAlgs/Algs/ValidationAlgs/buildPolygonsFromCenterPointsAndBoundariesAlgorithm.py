@@ -66,6 +66,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
     CONSTRAINT_POLYGON_LAYERS = "CONSTRAINT_POLYGON_LAYERS"
     GEOGRAPHIC_BOUNDARY = "GEOGRAPHIC_BOUNDARY"
     SUPPRESS_AREA_WITHOUT_CENTROID_FLAG = "SUPPRESS_AREA_WITHOUT_CENTROID_FLAG"
+    CHECK_UNUSED_BOUDARY_LINES = "CHECK_UNUSED_BOUNDARY_LINES"
     CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS = (
         "CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS"
     )
@@ -146,6 +147,13 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterBoolean(
                 self.CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS,
                 self.tr("Check output polygons for invalid geometries"),
+                defaultValue=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.CHECK_UNUSED_BOUDARY_LINES,
+                self.tr("Check unused boundary lines"),
                 defaultValue=True,
             )
         )
@@ -242,6 +250,9 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         checkInvalidOnOutput = self.parameterAsBool(
             parameters, self.CHECK_INVALID_GEOMETRIES_ON_OUTPUT_POLYGONS, context
         )
+        checkUnusedBoundaries = self.parameterAsBool(
+            parameters, self.CHECK_UNUSED_BOUDARY_LINES, context
+        )
         mergeOutput = self.parameterAsBool(
             parameters, self.MERGE_OUTPUT_POLYGONS, context
         )
@@ -263,7 +274,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             else inputCenterPointLyr.sourceCrs(),
         )
         nSteps = (
-            3 + (mergeOutput + 1) + checkInvalidOnOutput
+            3 + (mergeOutput + 1) + checkInvalidOnOutput + checkUnusedBoundaries
         )  # boolean sum, if true, sums 1 to each term
         currentStep = 0
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
@@ -310,16 +321,17 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         )
         sink.addFeatures(polygonFeatList, QgsFeatureSink.FastInsert)
 
-        multiStepFeedback.setCurrentStep(currentStep)
-        self.checkUnusedBoundariesAndWriteOutput(
-            context,
-            boundaryLineLyr,
-            geographicBoundaryLyr,
-            sink_id,
-            unused_boundary_flag_sink,
-            multiStepFeedback,
-        )
-        currentStep += 1
+        if checkUnusedBoundaries:
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.checkUnusedBoundariesAndWriteOutput(
+                context,
+                boundaryLineLyr,
+                geographicBoundaryLyr,
+                sink_id,
+                unused_boundary_flag_sink,
+                multiStepFeedback,
+            )
+            currentStep += 1
 
         if mergeOutput:
             multiStepFeedback.setCurrentStep(currentStep)
