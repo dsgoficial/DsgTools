@@ -163,24 +163,25 @@ class Line2Multiline(QgsProcessingAlgorithm):
             feedback.setCurrentStep(current * stepSize)
 
     def aggregate(self, featureId, feedback):
-        currentfeature = self.id_to_feature[featureId]
-        currentgeom = currentfeature.geometry()
+        stack = [featureId]
         mls_array = []
-        mls_array.append(currentgeom)
-        if feedback.isCanceled():
-            return mls_array
 
-        matching_features_ids = set(
-            el for el in self.matching_features[featureId] if el in self.ids_in_stack
-        )
+        while stack:
+            current_id = stack.pop()
+            currentfeature = self.id_to_feature[featureId]
+            currentgeom = currentfeature.geometry()
+            mls_array.append(currentgeom)
 
-        self.ids_in_stack = self.ids_in_stack - matching_features_ids
-
-        for match_id in matching_features_ids:
             if feedback.isCanceled():
-                break
-            agg_array = self.aggregate(match_id, feedback=feedback)
-            mls_array = mls_array + agg_array
+                return mls_array
+
+            matching_features_ids = set(
+                el for el in self.matching_features[featureId] if el in self.ids_in_stack
+            )
+
+            self.ids_in_stack = self.ids_in_stack - matching_features_ids
+
+            stack.extend(matching_features_ids)
 
         return mls_array
 
