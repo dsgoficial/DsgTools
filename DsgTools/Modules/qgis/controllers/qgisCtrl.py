@@ -21,6 +21,10 @@ class QgisCtrl:
                 layerName = (
                     l.dataProvider().uri().uri().split("|")[-1].split("=")[-1][1:-1]
                 )
+                if layerName == '':
+                    layerName = l.name()
+            else:
+                layerName = l.name()
             if not layerName:
                 continue
             layerNames.append(layerName)
@@ -38,6 +42,10 @@ class QgisCtrl:
                 layerName = (
                     l.dataProvider().uri().uri().split("|")[-1].split("=")[-1][1:-1]
                 )
+                if layerName == '':
+                    layerName = l.name()
+            else:
+                layerName = l.name()
             if not layerName:
                 continue
             layerNames.append(layerName)
@@ -62,6 +70,10 @@ class QgisCtrl:
                 layerName = (
                     l.dataProvider().uri().uri().split("|")[-1].split("=")[-1][1:-1]
                 )
+                if layerName == '':
+                    layerName = l.name()
+            else:
+                layerName = l.name()
             if not layerName or layerName != name:
                 continue
             layers.append(l)
