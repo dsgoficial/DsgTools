@@ -124,7 +124,7 @@ class Line2Multiline(QgsProcessingAlgorithm):
             if feedback.isCanceled():
                 break
             currentid = self.ids_in_stack.pop()
-            current += 1
+            current = nFeats - len(self.ids_in_stack)
 
             mls_array = self.aggregate(currentid, feedback=feedback)
 
@@ -168,7 +168,7 @@ class Line2Multiline(QgsProcessingAlgorithm):
 
         while stack:
             current_id = stack.pop()
-            currentfeature = self.id_to_feature[featureId]
+            currentfeature = self.id_to_feature[current_id]
             currentgeom = currentfeature.geometry()
             mls_array.append(currentgeom)
 
@@ -176,7 +176,7 @@ class Line2Multiline(QgsProcessingAlgorithm):
                 return mls_array
 
             matching_features_ids = set(
-                el for el in self.matching_features[featureId] if el in self.ids_in_stack
+                el for el in self.matching_features[current_id] if el in self.ids_in_stack
             )
 
             self.ids_in_stack = self.ids_in_stack - matching_features_ids
