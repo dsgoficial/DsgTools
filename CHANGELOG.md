@@ -1,8 +1,15 @@
 # CHANGELOG
 
-## 4.7.0
+## 4.7.1 - 2023-05-10
+
+Correção de bug:
+
+- Correção de bug no menu (filtro de geometria estava quebrado);
+
+## 4.7.0 - 2023-05-09
 
 Novas funcionalidades:
+
 - Novo processo de selecionar feições no canvas de camadas selecionadas;
 - Novo processo de filtrar lista de camadas no processing por tipo geométrico;
 - Novo processo de remover holes pequenos de camadas de cobertura;
@@ -15,6 +22,7 @@ Novas funcionalidades:
 - Processo de converter linha para multilinha portado do ferramentas experimentais;
 
 Melhorias:
+
 - Adicionada a opção de dar pan na barra de ferramentas de revisão;
 - Adicionada mudanca de ferramenta atual nos icones das ferramentas de filtro;
 - Processing de construção do diagrama de elevação portado para o Ferramentas de Edição;
@@ -29,16 +37,17 @@ Melhorias:
 - Adicionado o id da geometria na flag do identificar geometrias inválidas;
 - O menu de aquisição agora permite reclassificação de polígono para ponto (particularmente útil quando se está corrigindo flags de áreas sem centroide na construção de polígonos utilizando linha e centroide);
 
-
 Correção de bug:
+
 - Corrigido o bug de sempre apontar flags quando a geometria tem buraco do processo de identificar geometrias com densidade incorreta de vértices;
 - Correção de bug no processo de adicionar vértice em segmento compartilhado;
 - Correção de bug no processo de dissolver polígonos com mesmo conjunto de atributos quando é passada uma área mínima para o dissolve;
 - Correção de bug no acesso ao BDGEx (a url do serviço mudou e o código teve de ser atualizado, mudando a url do serviço de https para http);
 
-## 4.6.0
+## 4.6.0 - 2022-12-19
 
 Novas funcionalidades:
+
 - Novo processo de estender linhas próximas da moldura;
 - Novo algoritmo de detecção de geometrias nulas;
 - Novo processo de adicionar vértices não compartilhados nas intersecções (processo de correção associado ao processo de Identificar vértices não compartilhados na intersecção);
@@ -51,6 +60,7 @@ Novas funcionalidades:
 - Nova funcionalidade de copiar geometrias selecionadas como WKT (portado do ferramentas experimentais);
 
 Melhorias:
+
 - Adicionada a opção de atribuir um id de atividade para o grid de revisão criado no processo de criar grid de edição;
 - Melhorado o estilo do grid utilizado pela barra de ferramentas de revisão;
 - Adicionada a funcionalidade de resetar o grid na barra ferramentas de revisão;
@@ -58,6 +68,7 @@ Melhorias:
 - Barra de atalhos refatorada. Alguns atalhos não utilizados frequentemente foram retirados e foram criadas novas barras para dar a opção do usuário escolher quais ele quer ativar.
 
 Correção de bug:
+
 - Correção de bug no identificar pontas soltas (o algoritmo estava levantando flag em vértice ocupado dentro do raio de busca);
 - Correção de bug no identificar erros no terreno (o algoritmo estava levantando a geometria da flag confusa);
 - Correção de crash ao rodar o snap hierárquico (o algoritmo agora só transmite as mudanças para o banco ao final do processo, mantendo os cálculos intermediários em camada de cache gravadas em camada temporária do processing do QGIS, ativado por meio da flag is_child_algorithm=True ao rodar o processo);
@@ -65,6 +76,7 @@ Correção de bug:
 ## 4.5.0 - 2022-09-08
 
 Novas funcionalidades:
+
 - Novo processo de identificar undershoot de polígonos;
 - Novo processo de identificar erros de construção de redes (linhas que compartilham vértices não segmentadas dentro da camada, linhas não segmentadas com as camadas de filtro);
 - Novo processo de identificar linhas com mesmo conjunto de atributos não unidas;
@@ -80,12 +92,14 @@ Novas funcionalidades:
 - Novo processo de construir grid de revisão;
 
 Melhorias:
+
 - Melhoria de desempenho no identificar Z;
 - Melhoria de desempenho no identificar geometrias inválidas;
 - Melhoria de desempenho no identificar dangles;
 - Melhoria no processo de validação do terreno (removidos os falso-positivos com a moldura);
 
 Correção de bug:
+
 - Tratamento de geometria nula no Identify Out Of Bounds Angles in Coverage;
 
 ## 4.4.0 - 2022-07-12
@@ -98,6 +112,7 @@ Novas funcionalidades:
 - Novo processo de identificar feições com densidade alta de vértices;
 
 Melhorias:
+
 - Refatoração da interface de carregamento de camadas (remoção de funcionalidades não utilizadas e melhoria no filtro de camadas);
 - Adicionadas flags de delimitador não utilizado no algoritmo Construir Polígonos com Delimitadores e Centroides;
 - Adicionada a opção de verificar geometrias inválidas nos polígonos montados no algoritmo Construir Polígonos com Delimitadores e Centroides;
@@ -124,11 +139,13 @@ Correção de bugs:
 ## 4.3.1 - 2022-05-30
 
 Novas funcionalidades:
+
 - Adicionado processo de verificação de caracteres unicode;
 - Adicionados parâmetros de densidade de pontos na criação de molduras;
 - Adicionados novos casos no processo de identificação de geometrias inválidas (buraco intersectando fronteira de polígono);
 
 Correção de bugs:
+
 - Correção no template da EDGV 3.0;
 - Correção nos endereços do BDGEx;
 - Correção na janela de opções do DSGTools;
@@ -138,9 +155,11 @@ Correção de bugs:
 ## 4.3.0 - 2022-01-20
 
 Novas funcionalidades:
+
 - Novo menu de classificação
 
 Novos algoritmos:
+
 - Corretor ortográfico
 - Verifica o UUID das feições
 - Verifica a sobreposição de curvas de nível
@@ -149,12 +168,14 @@ Novos algoritmos:
 - Carrega um shapefile
 
 Melhorias:
+
 - Adequação dos processings de camadas para ser compatível com o SAP
 - Compatibilidade com QGIS 3.22
 
 Correção de bugs:
+
 - Ferramenta de inspeção de feições, agora mostra a aproximação correta quando utilizado em linha ou áreas em latlong com porcentagem inferior a 100%
 - O problema onde a Ferramenta de Aquisição com Ângulos Retos e a Ferramenta de Aquisição à Mão Livre não atribuíam os valores padrões nos formulários da feição foi corrigido
 - Correção nos processings de geração de MI: remover MI que não existem
 
-Changelog completo: https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.3
+Changelog completo: <https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.3>

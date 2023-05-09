@@ -207,8 +207,8 @@ class AcquisitionMenuCtrl:
     def getLayersForReclassification(self, layerName, geometryType):
         layers = self.qgis.getLoadedVectorLayers()
         geometryFilterDict = {
-            QgsWkbTypes.PointGeometry: (QgsWkbTypes.PointGeometry),
-            QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry),
+            QgsWkbTypes.PointGeometry: (QgsWkbTypes.PointGeometry,),
+            QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry,),
             QgsWkbTypes.PolygonGeometry: (QgsWkbTypes.PointGeometry, QgsWkbTypes.PolygonGeometry)
         }
         return [
