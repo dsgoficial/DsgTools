@@ -222,7 +222,11 @@ class QgisCtrl:
         for feature in features:
             newFeat = core.QgsFeature()
             newFeat.setFields(destinatonLayer.fields())
-            newFeat.setGeometry(feature.geometry())
+            newGeom = feature.geometry().pointOnSurface() \
+                if destinatonLayer.geometryType() == core.QgsWkbTypes.PointGeometry \
+                    and layer.geometryType() == core.QgsWkbTypes.PolygonGeometry \
+                else feature.geometry()
+            newFeat.setGeometry(newGeom)
             self.attributeFeature(newFeat, destinatonLayer, attributes)
             newFeatures.append(newFeat)
         layer.deleteSelectedFeatures()

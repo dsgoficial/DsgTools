@@ -206,17 +206,15 @@ class AcquisitionMenuCtrl:
 
     def getLayersForReclassification(self, layerName, geometryType):
         layers = self.qgis.getLoadedVectorLayers()
-        # geometryFilterDict = {
-        #     QgsWkbTypes.Point: (QgsWkbTypes.Point),
-        #     QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry),
-        #     QgsWkbTypes.PolygonGeometry: _
-        # }
-        # for l in layers:
-        #     if 
+        geometryFilterDict = {
+            QgsWkbTypes.PointGeometry: (QgsWkbTypes.PointGeometry),
+            QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry),
+            QgsWkbTypes.PolygonGeometry: (QgsWkbTypes.PointGeometry, QgsWkbTypes.PolygonGeometry)
+        }
         return [
             l
             for l in layers
-            if l.geometryType() == geometryType and l.selectedFeatureCount() > 0
+            if l.selectedFeatureCount() > 0 and l.geometryType() in geometryFilterDict[l.geometryType()]
         ]
 
     def activeMenuButton(self, buttonConfig):
