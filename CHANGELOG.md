@@ -27,6 +27,7 @@ Melhorias:
 - A ferramenta de verificação de erros de relacionamentos espaciais agora permite regras com de9im e relacionamentos espaciais simultaneamente;
 - Adicionada a opção de desligar todas as imagens ativas na ferramenta de seleção de raster;
 - Adicionado o id da geometria na flag do identificar geometrias inválidas;
+- O menu de aquisição agora permite reclassificação de polígono para ponto (particularmente útil quando se está corrigindo flags de áreas sem centroide na construção de polígonos utilizando linha e centroide);
 
 
 Correção de bug:
