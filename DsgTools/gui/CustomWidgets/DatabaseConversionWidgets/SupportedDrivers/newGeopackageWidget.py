@@ -21,11 +21,16 @@
  ***************************************************************************/
 """
 
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.abstractSelectionWidget import AbstractSelectionWidget
-from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.newDatabaseLineEdit import NewDatabaseLineEdit
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.abstractSelectionWidget import (
+    AbstractSelectionWidget,
+)
+from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.newDatabaseLineEdit import (
+    NewDatabaseLineEdit,
+)
 from DsgTools.core.dsgEnums import DsgEnums
 
 import os
+
 
 class NewGeopackageWidget(AbstractSelectionWidget):
     """
@@ -42,8 +47,8 @@ class NewGeopackageWidget(AbstractSelectionWidget):
         self.source = DsgEnums.NewGeopackage
         # initiate new instance of actual class widget
         self.selectionWidget = self.getNewSelectionWidget(parent=parent)
-        self.selectionWidget.caption = self.tr('Create a Geopackage Database')
-        self.selectionWidget.filter = self.tr('Geopackage Database (*.gpkg)')
+        self.selectionWidget.caption = self.tr("Create a Geopackage Database")
+        self.selectionWidget.filter = self.tr("Geopackage Database (*.gpkg)")
 
     def getNewSelectionWidget(self, parent=None):
         """
@@ -60,8 +65,8 @@ class NewGeopackageWidget(AbstractSelectionWidget):
         """
         n = self.selectionWidget.dsLineEdit.text()
         # n is a path and so it'll be something like /PATH/TO/datasource.sqlite or C:\PATH\TO\datasource.sqlite
-        splitChar = '/' if '/' in n else '\\'
-        ret = n.split(splitChar)[-1].split('.')[0] if n else ''
+        splitChar = "/" if "/" in n else "\\"
+        ret = n.split(splitChar)[-1].split(".")[0] if n else ""
         return ret
 
     def getDatasourcePath(self):
@@ -80,6 +85,6 @@ class NewGeopackageWidget(AbstractSelectionWidget):
     def getDatasource(self):
         """
         Gets the datasource selected on current widget.
-        :return: (AbstractDb) the object representing the target datasource according to its driver. 
+        :return: (AbstractDb) the object representing the target datasource according to its driver.
         """
         return None

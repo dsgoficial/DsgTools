@@ -20,26 +20,30 @@
  *                                                                         *
  ***************************************************************************/
 """
-#General imports
+# General imports
 from osgeo import ogr
 from uuid import uuid4
 import codecs, os, json, binascii
 
-#DSG Tools imports
-from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory 
+# DSG Tools imports
+from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.ServerManagementTools.genericDbManager import GenericDbManager
 from DsgTools.core.Utils.utils import Utils
 
-#qgis.PyQt imports
+# qgis.PyQt imports
 from qgis.PyQt.Qt import QObject
+
 
 class CustomizationManager(GenericDbManager):
     """
     This class manages the customizations on dsgtools databases.
     """
-    def __init__(self, serverAbstractDb, dbDict, edgvVersion, parentWidget = None):
-        super(self.__class__,self).__init__(serverAbstractDb, dbDict, edgvVersion, parentWidget = None)
-    
+
+    def __init__(self, serverAbstractDb, dbDict, edgvVersion, parentWidget=None):
+        super(self.__class__, self).__init__(
+            serverAbstractDb, dbDict, edgvVersion, parentWidget=None
+        )
+
     def installCustomization(self, customizationName):
         """
         1. Get customization from dsgtools_admindb;
@@ -48,7 +52,7 @@ class CustomizationManager(GenericDbManager):
         4. If custom applied, save it on customization table on db and on dsgtools_admindb;
         """
         pass
-    
+
     def removeCustomization(self, customizationName):
         pass
 
@@ -62,9 +66,9 @@ class CustomizationManager(GenericDbManager):
         3. If one piece of json is not valid, returns False.
         This validator does not validate the name of classes or names of categories. It only checks the format of dsgtools json profile.
         """
-        #TODO
+        # TODO
         return True
-    
+
     def getPropertyPerspectiveDict(self, viewType):
         """
         Gets a dict in the format:
@@ -79,12 +83,14 @@ class CustomizationManager(GenericDbManager):
         """
         pass
 
-    def undoMaterializationFromDatabase(self, abstractDb, configName, settingType, edgvVersion):
+    def undoMaterializationFromDatabase(
+        self, abstractDb, configName, settingType, edgvVersion
+    ):
         """
         Method that is reimplemented in each child when uninstalling a property involves changing any sort of database structure
         """
         pass
-    
+
     def hasStructuralChanges(self, dbNameList):
         """
         Method that is reimplemented in each child

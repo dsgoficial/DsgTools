@@ -31,10 +31,12 @@ from qgis.PyQt.QtWidgets import QListWidgetItem, QDialog, QAbstractButton
 from processing.core.Processing import Processing
 from qgis.core import QgsMessageLog
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'models_and_scripts_installer.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "models_and_scripts_installer.ui")
+)
 
 currentPath = os.path.dirname(__file__)
+
 
 class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
     def __init__(self):
@@ -60,7 +62,7 @@ class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
 
     def createItems(self, widget, names):
         """
-        Create items 
+        Create items
         """
         for name in names:
             item = QListWidgetItem(widget)
@@ -74,9 +76,9 @@ class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
         ret = []
         for root, dirs, files in os.walk(folder):
             for file in files:
-                ext = file.split('.')[-1]
+                ext = file.split(".")[-1]
                 if ext == extension:
-                    path = os.path.join(root, file.decode(encoding='UTF-8'))
+                    path = os.path.join(root, file.decode(encoding="UTF-8"))
                     ret.append(path)
 
         return ret
@@ -85,16 +87,16 @@ class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
         """
         Get models in the folder
         """
-        modelspath = os.path.join(currentPath, '..', 'QGIS_Models')
-        extension = 'model'
+        modelspath = os.path.join(currentPath, "..", "QGIS_Models")
+        extension = "model"
         return self.scanFolder(modelspath, extension)
 
     def getScripts(self):
         """
         Get scripts in the folder
         """
-        scriptspath = os.path.join(currentPath, '..', 'QGIS_Scripts')
-        extension = 'py'
+        scriptspath = os.path.join(currentPath, "..", "QGIS_Scripts")
+        extension = "py"
         return self.scanFolder(scriptspath, extension)
 
     def copyFiles(self, widget, files, folder):
@@ -109,7 +111,11 @@ class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
                     try:
                         shutil.copy2(file, destination)
                     except IOError as e:
-                        QgsMessageLog.logMessage(self.tr('Error copying file: ')+text+'\n'+e.strerror, "DSGTools Plugin", QgsMessageLog.INFO)
+                        QgsMessageLog.logMessage(
+                            self.tr("Error copying file: ") + text + "\n" + e.strerror,
+                            "DSGTools Plugin",
+                            QgsMessageLog.INFO,
+                        )
                         continue
 
     @pyqtSlot(QAbstractButton)
@@ -126,7 +132,15 @@ class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
         """
         Copy the files to the correct location
         """
-        self.copyFiles(self.scriptsList, self.scripts, os.path.join(currentPath, '..', '..', '..', '..', 'processing', 'scripts'))
+        self.copyFiles(
+            self.scriptsList,
+            self.scripts,
+            os.path.join(currentPath, "..", "..", "..", "..", "processing", "scripts"),
+        )
         Processing.initialize()
-        self.copyFiles(self.modelsList, self.models, os.path.join(currentPath, '..', '..', '..', '..', 'processing', 'models'))
+        self.copyFiles(
+            self.modelsList,
+            self.models,
+            os.path.join(currentPath, "..", "..", "..", "..", "processing", "models"),
+        )
         Processing.initialize()

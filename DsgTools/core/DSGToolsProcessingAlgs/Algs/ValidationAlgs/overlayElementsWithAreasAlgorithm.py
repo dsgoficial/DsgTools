@@ -24,31 +24,41 @@ from PyQt5.QtCore import QCoreApplication
 
 import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterDistance,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsProject, QgsSpatialIndex, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsGeometry,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterDistance,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingUtils,
+    QgsProject,
+    QgsSpatialIndex,
+    QgsWkbTypes,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
-    OVERLAY = 'OVERLAY'
-    SELECTED_OVERLAY = 'SELECTED_OVERLAY'
-    BEHAVIOR = 'BEHAVIOR'
-    OUTPUT = 'OUTPUT'
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
+    OVERLAY = "OVERLAY"
+    SELECTED_OVERLAY = "SELECTED_OVERLAY"
+    BEHAVIOR = "BEHAVIOR"
+    OUTPUT = "OUTPUT"
     RemoveOutside, RemoveInside, OverlayAndKeep = list(range(3))
 
     def initAlgorithm(self, config):
@@ -58,46 +68,42 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input Layer'),
-                [QgsProcessing.TypeVectorAnyGeometry]
+                self.tr("Input Layer"),
+                [QgsProcessing.TypeVectorAnyGeometry],
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.OVERLAY,
-                self.tr('Polygon overlay Layer'),
-                [QgsProcessing.TypeVectorPolygon]
+                self.tr("Polygon overlay Layer"),
+                [QgsProcessing.TypeVectorPolygon],
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.SELECTED_OVERLAY,
-                self.tr('Use only selected features from overlay layer')
+                self.tr("Use only selected features from overlay layer"),
             )
         )
-        self.modes = [self.tr('Remove outside elements'),
-                      self.tr('Remove inside elements'),
-                      self.tr('Overlay and Keep Elements')
-                      ]
+        self.modes = [
+            self.tr("Remove outside elements"),
+            self.tr("Remove inside elements"),
+            self.tr("Overlay and Keep Elements"),
+        ]
 
         self.addParameter(
             QgsProcessingParameterEnum(
-                self.BEHAVIOR,
-                self.tr('Behavior'),
-                options=self.modes,
-                defaultValue=0
+                self.BEHAVIOR, self.tr("Behavior"), options=self.modes, defaultValue=0
             )
         )
         self.addOutput(
             QgsProcessingOutputVectorLayer(
-                self.OUTPUT,
-                self.tr('Original layer with overlayed elements')
+                self.OUTPUT, self.tr("Original layer with overlayed elements")
             )
         )
 
@@ -108,114 +114,92 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
         layerHandler = LayerHandler()
         self.algRunner = AlgRunner()
 
-        inputLyr = self.parameterAsVectorLayer(
-            parameters,
-            self.INPUT,
-            context
-            )
+        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
-                self.invalidSourceError(
-                    parameters,
-                    self.INPUT
-                    )
-                )
-        overlayLyr = self.parameterAsVectorLayer(
-            parameters,
-            self.OVERLAY,
-            context
+                self.invalidSourceError(parameters, self.INPUT)
             )
+        overlayLyr = self.parameterAsVectorLayer(parameters, self.OVERLAY, context)
         if overlayLyr is None:
             raise QgsProcessingException(
-                self.invalidSourceError(
-                    parameters,
-                    self.OVERLAY
-                    )
-                )
-        onlySelected = self.parameterAsBool(
-            parameters,
-            self.SELECTED,
-            context
+                self.invalidSourceError(parameters, self.OVERLAY)
             )
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         onlySelectedOverlay = self.parameterAsBool(
-            parameters,
-            self.SELECTED_OVERLAY,
-            context
-            )
-        behavior = self.parameterAsEnum(
-            parameters,
-            self.BEHAVIOR,
-            context
-            )
+            parameters, self.SELECTED_OVERLAY, context
+        )
+        behavior = self.parameterAsEnum(parameters, self.BEHAVIOR, context)
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Populating temp layer...'))
+        multiStepFeedback.pushInfo(self.tr("Populating temp layer..."))
         auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
             [inputLyr],
             geomType=inputLyr.wkbType(),
             onlySelected=onlySelected,
-            feedback=multiStepFeedback
-            )
+            feedback=multiStepFeedback,
+        )
         multiStepFeedback.setCurrentStep(1)
         if onlySelectedOverlay:
             overlayLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
                 [overlayLyr],
                 geomType=overlayLyr.wkbType(),
                 onlySelected=onlySelectedOverlay,
-                feedback=multiStepFeedback
-                )
+                feedback=multiStepFeedback,
+            )
             overlayLyr.startEditing()
-            overlayLyr.renameAttribute(0, 'fid')
-            overlayLyr.renameAttribute(1, 'cl')
+            overlayLyr.renameAttribute(0, "fid")
+            overlayLyr.renameAttribute(1, "cl")
             overlayLyr.commitChanges()
+            self.algRunner.runCreateSpatialIndex(overlayLyr, context=context)
         # 1- check method
         # 2- if overlay and keep, use clip and symetric difference
         # 3- if remove outside, use clip
         # 4- if remove inside, use symetric difference
         multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(self.tr('Running overlay...'))
+        multiStepFeedback.pushInfo(self.tr("Running overlay..."))
         outputLyr = self.runOverlay(
-            auxLyr,
-            overlayLyr,
-            behavior,
-            context,
-            multiStepFeedback
-            )
+            auxLyr, overlayLyr, behavior, context, multiStepFeedback
+        )
         multiStepFeedback.setCurrentStep(3)
-        multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
+        multiStepFeedback.pushInfo(self.tr("Updating original layer..."))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
-            [inputLyr],
-            outputLyr,
-            feedback=multiStepFeedback,
-            onlySelected=onlySelected
-            )
+            [inputLyr], outputLyr, feedback=multiStepFeedback, onlySelected=onlySelected
+        )
 
-        return {self.OUTPUT : inputLyr}
-    
+        return {self.OUTPUT: inputLyr}
+
     def runOverlay(self, lyr, overlayLyr, behavior, context, feedback):
         nSteps = 2 if behavior == 2 else 1
         localFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         localFeedback.setCurrentStep(0)
         # Intentional ifs not if else.
-        if behavior in [OverlayElementsWithAreasAlgorithm.RemoveOutside, OverlayElementsWithAreasAlgorithm.OverlayAndKeep]:
-            outputLyr = self.algRunner.runClip(lyr, overlayLyr, context, feedback=localFeedback)
+        if behavior in [
+            OverlayElementsWithAreasAlgorithm.RemoveOutside,
+            OverlayElementsWithAreasAlgorithm.OverlayAndKeep,
+        ]:
+            outputLyr = self.algRunner.runClip(
+                lyr, overlayLyr, context, feedback=localFeedback
+            )
             if behavior == OverlayElementsWithAreasAlgorithm.RemoveOutside:
                 return outputLyr
             localFeedback.setCurrentStep(1)
-        if behavior in [OverlayElementsWithAreasAlgorithm.RemoveInside, OverlayElementsWithAreasAlgorithm.OverlayAndKeep]:
-            outputDiffLyr = self.algRunner.runSymDiff(lyr, overlayLyr, context, feedback=localFeedback)
+        if behavior in [
+            OverlayElementsWithAreasAlgorithm.RemoveInside,
+            OverlayElementsWithAreasAlgorithm.OverlayAndKeep,
+        ]:
+            outputDiffLyr = self.algRunner.runSymDiff(
+                lyr, overlayLyr, context, feedback=localFeedback
+            )
             if behavior == OverlayElementsWithAreasAlgorithm.RemoveInside:
                 return outputDiffLyr
         if behavior == OverlayElementsWithAreasAlgorithm.OverlayAndKeep:
-            outsideFeats = [i for i in outputDiffLyr.getFeatures()]
             outputLyr.startEditing()
-            outputLyr.beginEditCommand('')
-            outputLyr.addFeatures(outsideFeats)
+            outputLyr.beginEditCommand("")
+            outputLyr.addFeatures(outputDiffLyr.getFeatures())
             outputLyr.endEditCommand()
             outputLyr.commitChanges()
             return outputLyr
-
 
     def name(self):
         """
@@ -225,21 +209,21 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'overlayelementswithareas'
+        return "overlayelementswithareas"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Overlay Elements With Areas')
+        return self.tr("Overlay Elements With Areas")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Manipulation Processes)')
+        return self.tr("Quality Assurance Tools (Manipulation Processes)")
 
     def groupId(self):
         """
@@ -249,10 +233,10 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Manipulation Processes)'
+        return "DSGTools: Quality Assurance Tools (Manipulation Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('OverlayElementsWithAreasAlgorithm', string)
+        return QCoreApplication.translate("OverlayElementsWithAreasAlgorithm", string)
 
     def createInstance(self):
         return OverlayElementsWithAreasAlgorithm()

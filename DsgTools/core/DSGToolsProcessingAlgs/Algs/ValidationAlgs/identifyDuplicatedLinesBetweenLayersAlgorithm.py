@@ -22,23 +22,30 @@
 
 from PyQt5.QtCore import QCoreApplication
 
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+)
 
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class IdentifyDuplicatedLinesBetweenLayersAlgorithm(ValidationAlgorithm):
-    FLAGS = 'FLAGS'
-    INPUTLAYERS = 'INPUTLAYERS'
-    SELECTED = 'SELECTED'
+    FLAGS = "FLAGS"
+    INPUTLAYERS = "INPUTLAYERS"
+    SELECTED = "SELECTED"
 
     def initAlgorithm(self, config):
         """
@@ -47,22 +54,20 @@ class IdentifyDuplicatedLinesBetweenLayersAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUTLAYERS,
-                self.tr('Coverage Linestring Layers'),
-                QgsProcessing.TypeVectorLine
+                self.tr("Coverage Linestring Layers"),
+                QgsProcessing.TypeVectorLine,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
 
@@ -73,18 +78,26 @@ class IdentifyDuplicatedLinesBetweenLayersAlgorithm(ValidationAlgorithm):
 
         inputLyrList = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
         if inputLyrList == []:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUTLAYERS))
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.INPUTLAYERS)
+            )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.LineString, context)
+        self.prepareFlagSink(
+            parameters, inputLyrList[0], QgsWkbTypes.LineString, context
+        )
         # Compute the number of steps to display within the progress bar and
         # get features from source
         geomDict = dict()
-        multiStepFeedback = QgsProcessingMultiStepFeedback(len(inputLyrList)+1, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(
+            len(inputLyrList) + 1, feedback
+        )
         for currentLyrIdx, lyr in enumerate(inputLyrList):
             multiStepFeedback.setCurrentStep(currentLyrIdx)
-            featIterator, total = self.getIteratorAndFeatureCount(lyr, onlySelected=onlySelected)
-            size = 100/total if total else 0
-            lyrName = lyr.name()      
+            featIterator, total = self.getIteratorAndFeatureCount(
+                lyr, onlySelected=onlySelected
+            )
+            size = 100 / total if total else 0
+            lyrName = lyr.name()
             for current, feat in enumerate(featIterator):
                 # Stop the algorithm if cancel button has been clicked
                 if multiStepFeedback.isCanceled():
@@ -93,17 +106,24 @@ class IdentifyDuplicatedLinesBetweenLayersAlgorithm(ValidationAlgorithm):
                 geomKey = geom.asWkb()
                 if geomKey not in geomDict:
                     geomDict[geomKey] = []
-                geomDict[geomKey].append({'feat':feat, 'layerName':lyrName})
+                geomDict[geomKey].append({"feat": feat, "layerName": lyrName})
                 # # Update the progress bar
                 multiStepFeedback.setProgress(current * size)
         for v in geomDict.values():
             if multiStepFeedback.isCanceled():
                 break
             if len(v) > 1:
-                flagStrList = ['{lyrName} (id={id})'.format(lyrName=featDict['layerName'], id=featDict['feat'].id()) for featDict in v]
-                flagStr = ', '.join(flagStrList)
-                flagText = self.tr('Features from coverage with same geometry: {0}.').format(flagStr)
-                self.flagFeature(v[0]['feat'].geometry(), flagText)
+                flagStrList = [
+                    "{lyrName} (id={id})".format(
+                        lyrName=featDict["layerName"], id=featDict["feat"].id()
+                    )
+                    for featDict in v
+                ]
+                flagStr = ", ".join(flagStrList)
+                flagText = self.tr(
+                    "Features from coverage with same geometry: {0}."
+                ).format(flagStr)
+                self.flagFeature(v[0]["feat"].geometry(), flagText)
 
         return {self.FLAGS: self.flag_id}
 
@@ -115,21 +135,21 @@ class IdentifyDuplicatedLinesBetweenLayersAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifyduplicatedlinesoncoverage'
+        return "identifyduplicatedlinesoncoverage"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Duplicated Lines Between Layers')
+        return self.tr("Identify Duplicated Lines Between Layers")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -139,10 +159,12 @@ class IdentifyDuplicatedLinesBetweenLayersAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyDuplicatedLinesBetweenLayersAlgorithm', string)
+        return QCoreApplication.translate(
+            "IdentifyDuplicatedLinesBetweenLayersAlgorithm", string
+        )
 
     def createInstance(self):
         return IdentifyDuplicatedLinesBetweenLayersAlgorithm()

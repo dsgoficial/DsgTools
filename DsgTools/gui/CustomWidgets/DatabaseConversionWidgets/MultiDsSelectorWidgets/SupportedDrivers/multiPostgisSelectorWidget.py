@@ -1,4 +1,3 @@
- 
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
@@ -27,29 +26,37 @@ from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtWidgets import QWidget, QCheckBox, QDialog
 
 from .abstractMultiDsSelectorWidget import AbstractMultiDsSelectorWidget
-from DsgTools.gui.CustomWidgets.ConnectionWidgets.ServerConnectionWidgets.exploreServerWidget import ExploreServerWidget
+from DsgTools.gui.CustomWidgets.ConnectionWidgets.ServerConnectionWidgets.exploreServerWidget import (
+    ExploreServerWidget,
+)
 from DsgTools.core.dsgEnums import DsgEnums
 
 import os
 from operator import itemgetter
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'multiPostgisSelectorWidget.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "multiPostgisSelectorWidget.ui")
+)
+
 
 class MultiPostgisSelector(QDialog, FORM_CLASS):
     """
     Class designed to manipulate just the driver selection behavior. Handles reading and inserting data into GUI.
     """
+
     def __init__(self, parent=None):
         """
         Class constructor.
         """
         super(MultiPostgisSelector, self).__init__(parent)
         self.setupUi(self)
-        self.serverName = ''
+        self.serverName = ""
         self.dbList = []
-        self.exploreServerWidget.serversCombo.currentIndexChanged.connect(self.serverUpdated)
+        self.exploreServerWidget.serversCombo.currentIndexChanged.connect(
+            self.serverUpdated
+        )
         self.updateDbList()
-        self.groupBox.setTitle(self.tr('Available Databases'))
+        self.groupBox.setTitle(self.tr("Available Databases"))
 
     def clearGridLayout(self):
         """
@@ -73,13 +80,17 @@ class MultiPostgisSelector(QDialog, FORM_CLASS):
 
     def updateDbList(self):
         """
-        Fills 
+        Fills
         """
         # remove all present widgets
         self.clearGridLayout()
         # get selected server
         serverName = self.exploreServerWidget.serversCombo.currentText()
-        serverName = serverName.split(' ')[0] if self.exploreServerWidget.serversCombo.currentIndex() != 0 else ''
+        serverName = (
+            serverName.split(" ")[0]
+            if self.exploreServerWidget.serversCombo.currentIndex() != 0
+            else ""
+        )
         # get available databases
         if serverName:
             dbList = self.getDbsFromServer(name=serverName)
@@ -147,7 +158,11 @@ class MultiPostgisSelector(QDialog, FORM_CLASS):
         """
         # update server name attribute
         self.serverName = self.exploreServerWidget.serversCombo.currentText()
-        self.serverName = self.serverName.split(' ')[0] if self.serverName != self.tr('Select Server') else ''
+        self.serverName = (
+            self.serverName.split(" ")[0]
+            if self.serverName != self.tr("Select Server")
+            else ""
+        )
         for row in range(self.gridLayout.rowCount()):
             # get checkbox
             item = self.gridLayout.itemAtPosition(row, 0)
@@ -155,14 +170,18 @@ class MultiPostgisSelector(QDialog, FORM_CLASS):
                 checkbox = self.gridLayout.itemAtPosition(row, 0).widget()
                 # update dbList
                 if checkbox.isChecked():
-                    self.dbList.append(checkbox.text().split(' ')[0].replace('&', '')) # again, no idea why an '&' got in there...
+                    self.dbList.append(
+                        checkbox.text().split(" ")[0].replace("&", "")
+                    )  # again, no idea why an '&' got in there...
         self.close()
+
 
 class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
     """
     Class designed to integrate the datasource selector widget to the abstract multi datasource selector widget.
     Handles data manipulation to be delivered to the next conversion step.
     """
+
     def __init__(self, parent=None):
         """
         Class constructor.
@@ -205,7 +224,7 @@ class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
             dbList = self.getAvailableDb(serverName=self.selector.serverName)
         serverInfo = list(self.getDbServerInfo(serverName=self.selector.serverName))
         serverInfo.insert(0, self.selector.serverName)
-        return { dbname : serverInfo for dbname in dbList }
+        return {dbname: serverInfo for dbname in dbList}
 
     def exec_(self):
         """

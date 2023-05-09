@@ -24,12 +24,18 @@ from __future__ import absolute_import
 
 from qgis.PyQt.QtCore import QObject
 
-from DsgTools.gui.DatabaseTools.DbTools.SingleDbCreator.singleDbCreator import CreateSingleDatabase
-from DsgTools.gui.DatabaseTools.DbTools.BatchDbCreator.batchDbCreator import BatchDbCreator
-from DsgTools.gui.DatabaseTools.ConversionTools.datasourceConversion import DatasourceConversion
+from DsgTools.gui.DatabaseTools.DbTools.SingleDbCreator.singleDbCreator import (
+    CreateSingleDatabase,
+)
+from DsgTools.gui.DatabaseTools.DbTools.BatchDbCreator.batchDbCreator import (
+    BatchDbCreator,
+)
+from DsgTools.gui.DatabaseTools.ConversionTools.datasourceConversion import (
+    DatasourceConversion,
+)
+
 
 class DatabaseGuiManager(QObject):
-
     def __init__(self, manager, iface, parentMenu=None, toolbar=None):
         """Constructor.
         :param iface: An interface instance that will be passed to this class
@@ -44,13 +50,17 @@ class DatabaseGuiManager(QObject):
         self.parentMenu = parentMenu
         # self.dbAbstract = dbAbstract
         self.toolbar = toolbar
-        self.menu = self.manager.addMenu(u'databasetools', self.tr('Database Tools'),'database.png')
-        self.stackButton = self.manager.createToolButton(self.toolbar, u'DatabaseTools')
-        self.iconBasePath = ':/plugins/DsgTools/icons/'
+        self.menu = self.manager.addMenu(
+            "databasetools", self.tr("Database Tools"), "database.png"
+        )
+        self.stackButton = self.manager.createToolButton(self.toolbar, "DatabaseTools")
+        self.iconBasePath = ":/plugins/DsgTools/icons/"
         self.singleDbCreator = None
         self.batchCreator = None
-    
-    def addTool(self, text, callback, parentMenu, icon, parentButton=None, defaultButton=False):
+
+    def addTool(
+        self, text, callback, parentMenu, icon, parentButton=None, defaultButton=False
+    ):
         """
         Prepares the funcionalities to be added to both the DSGTools menu and it's shortcut button into QGIS main interface.
         :param text: (str) text to be shown when the action is hovered over.
@@ -58,7 +68,7 @@ class DatabaseGuiManager(QObject):
         :param parentMenu: (QMenu) menu to which action will be added.
         :param parentButton: (QButton) button to which action will be associated.
         :param defaultButton: (bool) considering it is a stack button (button overloaded with >1 actions associated), it indicates
-                              whether the included action will be the default one (e.g. if it will the action representative and 
+                              whether the included action will be the default one (e.g. if it will the action representative and
                               1st to be displayed).
         """
         icon_path = self.iconBasePath + icon
@@ -71,34 +81,36 @@ class DatabaseGuiManager(QObject):
             withShortcut=False,
             parentToolbar=parentMenu,
             isCheckable=False,
-            parentButton=self.stackButton
+            parentButton=self.stackButton,
         )
         if defaultButton:
             self.stackButton.setDefaultAction(action)
 
     def initGui(self):
         """
-        Instantiates all available database creation GUI. 
+        Instantiates all available database creation GUI.
         """
-        callback = lambda : self.createDatabase(isBatchCreation=False)
+        callback = lambda: self.createDatabase(isBatchCreation=False)
         self.addTool(
-            text=self.tr('Create a PostGIS or SpatiaLite Database'),
+            text=self.tr("Create a PostGIS or SpatiaLite Database"),
             callback=callback,
             parentMenu=self.menu,
-            icon='database.png',
+            icon="database.png",
             parentButton=self.stackButton,
-            defaultButton=True
+            defaultButton=True,
         )
-        callback = lambda : self.createDatabase(isBatchCreation=True)
+        callback = lambda: self.createDatabase(isBatchCreation=True)
         self.addTool(
-            text=self.tr('Create batches of PostGIS or SpatiaLite Databases'),
+            text=self.tr("Create batches of PostGIS or SpatiaLite Databases"),
             callback=callback,
             parentMenu=self.menu,
-            icon='batchDatabase.png',
+            icon="batchDatabase.png",
             parentButton=self.stackButton,
-            defaultButton=False
+            defaultButton=False,
         )
-        self.datasourceConversion = DatasourceConversion(manager=self, parentMenu=self.menu, parentButton=self.stackButton)
+        self.datasourceConversion = DatasourceConversion(
+            manager=self, parentMenu=self.menu, parentButton=self.stackButton
+        )
         self.datasourceConversion.initGui()
 
     def unload(self):
@@ -122,11 +134,15 @@ class DatabaseGuiManager(QObject):
             pass
         if not isBatchCreation:
             if self.singleDbCreator is None:
-                self.singleDbCreator = CreateSingleDatabase(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
+                self.singleDbCreator = CreateSingleDatabase(
+                    manager=self, parentButton=self.stackButton, parentMenu=self.menu
+                )
             dlg = self.singleDbCreator
         else:
             if self.batchCreator is None:
-                self.batchCreator = BatchDbCreator(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
+                self.batchCreator = BatchDbCreator(
+                    manager=self, parentButton=self.stackButton, parentMenu=self.menu
+                )
             dlg = self.batchCreator
         if dlg:
             result = dlg.exec_()

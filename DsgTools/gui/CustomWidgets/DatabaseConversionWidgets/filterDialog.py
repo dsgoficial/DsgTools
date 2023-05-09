@@ -31,8 +31,10 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt
 from qgis.PyQt.QtWidgets import QDialog, QCheckBox
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'filterDialog.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "filterDialog.ui")
+)
+
 
 class FilterDialog(QDialog, FORM_CLASS):
     def __init__(self, spatialLayers, complexLayers, abstractDb, parent=None):
@@ -41,7 +43,7 @@ class FilterDialog(QDialog, FORM_CLASS):
         :param spatialLayers: (list-of-QgsVectorLayer) list of spatial layers.
         :param complexLayers: (list-of-QgsVectorLayer) list of complex layers.
         :param complexLayers: (AbstractDb) database object for data handling.
-        :param parent: (QtWidgets) any widget that should be parent to newly 
+        :param parent: (QtWidgets) any widget that should be parent to newly
                        instantiated object.
         """
         super(FilterDialog, self).__init__(parent)
@@ -71,7 +73,7 @@ class FilterDialog(QDialog, FORM_CLASS):
     def layerFromLayerName(self, layerName):
         """
         Gets vector layer object from its name.
-        :param layerName: (str) 
+        :param layerName: (str)
         :return: (QgsVectorLayer) map cointaing layer name to vector layer object.
         """
         l = QgsProject.instance().mapLayersByName(layerName)
@@ -87,7 +89,7 @@ class FilterDialog(QDialog, FORM_CLASS):
             [self.tr("Select a layer...")] + self.layerNamesFromCanvas()
         )
 
-    @pyqtSlot(int, name='on_spatialComboBox_currentIndexChanged')
+    @pyqtSlot(int, name="on_spatialComboBox_currentIndexChanged")
     def setSpatialFilterLayer(self):
         """
         Sets spatial layer to its filter expression widget.
@@ -102,7 +104,7 @@ class FilterDialog(QDialog, FORM_CLASS):
         """
         self.predicateComboBox.clear()
         self.predicateComboBox.addItems(
-            sorted([self.tr('Clip'), self.tr('Buffer'), self.tr('Intersects')])
+            sorted([self.tr("Clip"), self.tr("Buffer"), self.tr("Intersects")])
         )
 
     def fillClipOptions(self):
@@ -110,13 +112,15 @@ class FilterDialog(QDialog, FORM_CLASS):
         Clip options are given by choosing the area to be kept.
         """
         self.comboBox.clear()
-        self.comboBox.addItems([
-            self.tr('Choose a region...'),
-            self.tr('Inside Features'),
-            self.tr('Outside Features')
-        ])
+        self.comboBox.addItems(
+            [
+                self.tr("Choose a region..."),
+                self.tr("Inside Features"),
+                self.tr("Outside Features"),
+            ]
+        )
 
-    @pyqtSlot(int, name='on_predicateComboBox_currentIndexChanged')
+    @pyqtSlot(int, name="on_predicateComboBox_currentIndexChanged")
     def setPredicateWidget(self):
         """
         Sets the widget for capturing the topological relationship comparison parameter.
@@ -150,7 +154,7 @@ class FilterDialog(QDialog, FORM_CLASS):
         Clears the dict to its initial state.
         """
         self._currentSelection = {}
-        
+
     def setupLayerFilters(self):
         """
         Sets all layers to GUI.
@@ -170,25 +174,26 @@ class FilterDialog(QDialog, FORM_CLASS):
         :return: (tuple) spatial filter settings.
         """
         return {
-            self.tr('Clip') : self.comboBox.currentText() if self.comboBox.currentIndex() > 0 else None,
-            self.tr('Buffer') : self.doubleSpinBox.value(),
-            self.tr('Intersects') : None,
-            '' : None
+            self.tr("Clip"): self.comboBox.currentText()
+            if self.comboBox.currentIndex() > 0
+            else None,
+            self.tr("Buffer"): self.doubleSpinBox.value(),
+            self.tr("Intersects"): None,
+            "": None,
         }[predicate]
 
     def setPredicateParameter(self, predicate, parameter):
         """
         Sets given parameter to the GUI.
         :param predicate: (str) predicate to which the parameter refers to.
-        :param parameter: (obj) parameter value to be filled. 
+        :param parameter: (obj) parameter value to be filled.
         """
         actionMap = {
-            self.tr('Clip') : self.comboBox.setCurrentText,
-            self.tr('Buffer') : self.doubleSpinBox.setValue,
-            self.tr('Intersects') : lambda : None
+            self.tr("Clip"): self.comboBox.setCurrentText,
+            self.tr("Buffer"): self.doubleSpinBox.setValue,
+            self.tr("Intersects"): lambda: None,
         }
         return actionMap[predicate](parameter) if parameter in actionMap else None
-
 
     def setupGroupBoxFilters(self, isSpatial=True):
         """
@@ -200,15 +205,24 @@ class FilterDialog(QDialog, FORM_CLASS):
         layers = self.spatialLayers if isSpatial else self.complexLayers
         layout = self.spatialGridLayout if isSpatial else self.complexGridLayout
         for row, (layerName, layerFcMap) in enumerate(layers.items()):
-            checkBoxWidget, fieldExpressionWidget = QCheckBox(), QgsFieldExpressionWidget()
+            checkBoxWidget, fieldExpressionWidget = (
+                QCheckBox(),
+                QgsFieldExpressionWidget(),
+            )
             _, layer = self._abstractDb.getTableSchema(layerName)
             checkBoxWidget.setChecked(True)
             # allow filtering option only when layer is marked to be filtered
             checkBoxWidget.toggled.connect(fieldExpressionWidget.setEnabled)
-            checkBoxWidget.toggled.connect(partial(fieldExpressionWidget.setExpression, ""))
-            msg = self.tr('{0} ({1} features)') if layerFcMap['featureCount'] > 1 else self.tr('{0} ({1} feature)')
-            checkBoxWidget.setText(msg.format(layer, layerFcMap['featureCount']))
-            fieldExpressionWidget.setLayer(layerFcMap['layer'])
+            checkBoxWidget.toggled.connect(
+                partial(fieldExpressionWidget.setExpression, "")
+            )
+            msg = (
+                self.tr("{0} ({1} features)")
+                if layerFcMap["featureCount"] > 1
+                else self.tr("{0} ({1} feature)")
+            )
+            checkBoxWidget.setText(msg.format(layer, layerFcMap["featureCount"]))
+            fieldExpressionWidget.setLayer(layerFcMap["layer"])
             layout.addWidget(checkBoxWidget, row, 0)
             layout.addWidget(fieldExpressionWidget, row, 1)
 
@@ -222,7 +236,7 @@ class FilterDialog(QDialog, FORM_CLASS):
         :return: (bool) whether the set of spatial filter settings may be applied to the dataset.
         """
         if predicate == self.tr("Clip"):
-            return parameter is not None and parameter != self.tr('Choose a region...')
+            return parameter is not None and parameter != self.tr("Choose a region...")
         elif predicate == self.tr("Buffer"):
             return parameter is not None
         return True
@@ -245,25 +259,34 @@ class FilterDialog(QDialog, FORM_CLASS):
                     checkBox = layout.itemAtPosition(row, 0).widget()
                 if checkBox is None or not checkBox.isChecked():
                     continue
-                label = checkBox.text().replace('&', '') # still no idea why the '&' got in there...
-                layer = label.split(' (')[0]
+                label = checkBox.text().replace(
+                    "&", ""
+                )  # still no idea why the '&' got in there...
+                layer = label.split(" (")[0]
                 fieldExpressionWidget = layout.itemAtPosition(row, 1).widget()
                 layerFilters[layer] = dict()
-                layerFilters[layer]['featureCount'] = int(label.split(' (')[1].split(' ')[0])
-                layerFilters[layer]['expression'] = fieldExpressionWidget.currentText()
+                layerFilters[layer]["featureCount"] = int(
+                    label.split(" (")[1].split(" ")[0]
+                )
+                layerFilters[layer]["expression"] = fieldExpressionWidget.currentText()
         # read spatial filtering options
         spatialFilters = dict()
-        spatialFilters['layer'] = self.spatialComboBox.currentText() \
-                                    if self.spatialComboBox.currentIndex() else ""
-        spatialFilters['expression'] = self.mFieldExpressionWidget.currentText()
-        spatialFilters['predicate'] = self.predicateComboBox.currentText()
-        spatialFilters['parameter'] = self.fetchSpatialParameter(spatialFilters['predicate'])
-        return {'layer_filter' : layerFilters, 'spatial_filter' : spatialFilters}
+        spatialFilters["layer"] = (
+            self.spatialComboBox.currentText()
+            if self.spatialComboBox.currentIndex()
+            else ""
+        )
+        spatialFilters["expression"] = self.mFieldExpressionWidget.currentText()
+        spatialFilters["predicate"] = self.predicateComboBox.currentText()
+        spatialFilters["parameter"] = self.fetchSpatialParameter(
+            spatialFilters["predicate"]
+        )
+        return {"layer_filter": layerFilters, "spatial_filter": spatialFilters}
 
     @staticmethod
     def setWidgetToReadOnly(widget, readOnly):
         """
-        Sets (or removes) a widget to read only mode. 
+        Sets (or removes) a widget to read only mode.
         :param readOnly: (bool) whether widget will be read only mode.
         """
         widget.setAttribute(Qt.WA_TransparentForMouseEvents, readOnly)
@@ -287,9 +310,16 @@ class FilterDialog(QDialog, FORM_CLASS):
                 if checkBox is None:
                     continue
                 FilterDialog.setWidgetToReadOnly(checkBox, not enabled)
-                FilterDialog.setWidgetToReadOnly(layout.itemAtPosition(row, 1).widget(), not enabled)
-        for w in [self.spatialComboBox, self.mFieldExpressionWidget, self.predicateComboBox,\
-                    self.comboBox, self.doubleSpinBox]:
+                FilterDialog.setWidgetToReadOnly(
+                    layout.itemAtPosition(row, 1).widget(), not enabled
+                )
+        for w in [
+            self.spatialComboBox,
+            self.mFieldExpressionWidget,
+            self.predicateComboBox,
+            self.comboBox,
+            self.doubleSpinBox,
+        ]:
             FilterDialog.setWidgetToReadOnly(w, not enabled)
 
     def resetSelection(self):
@@ -297,7 +327,7 @@ class FilterDialog(QDialog, FORM_CLASS):
         Resets layer selection to last state preserved into the private attribute holding current
         layer selection.
         """
-        prevLayerFilter = self._currentSelection['layer_filter']
+        prevLayerFilter = self._currentSelection["layer_filter"]
         for layout in [self.spatialGridLayout, self.complexGridLayout]:
             for row in range(layout.rowCount()):
                 if row == 0:
@@ -310,18 +340,30 @@ class FilterDialog(QDialog, FORM_CLASS):
                 if not checkBox:
                     continue
                 fieldExpressionWidget = layout.itemAtPosition(row, 1).widget()
-                label = checkBox.text().replace('&', '') # still no idea why the '&' got in there...
-                layer = label.split(' (')[0]
+                label = checkBox.text().replace(
+                    "&", ""
+                )  # still no idea why the '&' got in there...
+                layer = label.split(" (")[0]
                 checkBox.setChecked(layer in prevLayerFilter)
-                exp = prevLayerFilter[layer]['expression'] if layer in prevLayerFilter else ""
+                exp = (
+                    prevLayerFilter[layer]["expression"]
+                    if layer in prevLayerFilter
+                    else ""
+                )
                 fieldExpressionWidget.setExpression(exp)
         # reset spatial filters
-        self.spatialComboBox.setCurrentText(self._currentSelection['spatial_filter']['layer'])
-        self.mFieldExpressionWidget.setExpression(self._currentSelection['spatial_filter']['expression'])
-        self.predicateComboBox.setCurrentText(self._currentSelection['spatial_filter']['predicate'])
+        self.spatialComboBox.setCurrentText(
+            self._currentSelection["spatial_filter"]["layer"]
+        )
+        self.mFieldExpressionWidget.setExpression(
+            self._currentSelection["spatial_filter"]["expression"]
+        )
+        self.predicateComboBox.setCurrentText(
+            self._currentSelection["spatial_filter"]["predicate"]
+        )
         self.setPredicateParameter(
-            self._currentSelection['spatial_filter']['predicate'],
-            self._currentSelection['spatial_filter']['parameter']
+            self._currentSelection["spatial_filter"]["predicate"],
+            self._currentSelection["spatial_filter"]["parameter"],
         )
 
     def on_okPushButton_clicked(self):

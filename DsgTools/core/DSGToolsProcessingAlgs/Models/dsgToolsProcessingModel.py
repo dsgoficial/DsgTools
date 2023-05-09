@@ -23,39 +23,47 @@
 import os, json
 from time import time, sleep
 
-from qgis.core import (QgsTask,
-                       QgsProject,
-                       QgsMapLayer,
-                       QgsLayerTreeLayer,
-                       QgsProcessingFeedback,
-                       QgsProcessingModelAlgorithm,
-                       QgsVectorLayer,
-                       QgsProcessingUtils)
+from qgis.core import (
+    QgsTask,
+    QgsProject,
+    QgsMapLayer,
+    QgsLayerTreeLayer,
+    QgsProcessingFeedback,
+    QgsProcessingModelAlgorithm,
+    QgsVectorLayer,
+    QgsProcessingUtils,
+)
 from qgis.PyQt.QtCore import pyqtSignal, QCoreApplication
 from processing.tools import dataobjects
 import processing
+
 
 class DsgToolsProcessingModel(QgsTask):
     """
     Handles models and materializes QgsProcessingModels from a DSGTools default
     model parameter set.
     """
+
     # supported input model formats
     MODEL_TYPES = ["xml", "file", "model"]
     # xml: XML string               #
     # file: path to a local file    #
     # model: qgis resgistered model #
     modelFinished = pyqtSignal(QgsTask)
-    
+
     # Appending status flags to the existing ones
-    n = max([
-        QgsTask.Queued,
-        QgsTask.OnHold,
-        QgsTask.Running,
-        QgsTask.Complete,
-        QgsTask.Terminated
-    ])
-    WarningFlags, HaltedOnFlags, HaltedOnPossibleFalsePositiveFlags = range(n + 1, n + 4)
+    n = max(
+        [
+            QgsTask.Queued,
+            QgsTask.OnHold,
+            QgsTask.Running,
+            QgsTask.Complete,
+            QgsTask.Terminated,
+        ]
+    )
+    WarningFlags, HaltedOnFlags, HaltedOnPossibleFalsePositiveFlags = range(
+        n + 1, n + 4
+    )
     del n
 
     def __init__(self, parameters, name, taskName=None, flags=None, feedback=None):
@@ -70,11 +78,12 @@ class DsgToolsProcessingModel(QgsTask):
         """
         super(DsgToolsProcessingModel, self).__init__(
             # "", QgsTask.CanCancel if flags is None else flags
-            taskName or QCoreApplication.translate(
+            taskName
+            or QCoreApplication.translate(
                 "DsgToolsProcessingModel",
-                "DSGTools Quality Assurance Model: {0}".format(name)
+                "DSGTools Quality Assurance Model: {0}".format(name),
             ),
-            QgsTask.CanCancel if flags is None else flags
+            QgsTask.CanCancel if flags is None else flags,
         )
         self._name = name
         self._param = {} if self.validateParameters(parameters) else parameters
@@ -82,11 +91,11 @@ class DsgToolsProcessingModel(QgsTask):
         self.feedback = feedback or QgsProcessingFeedback()
         self.feedback.canceled.connect(self.cancel)
         self.output = {
-            "result" : dict(),
-            "status" : False,
-            "executionTime" : .0,
-            "errorMessage" : self.tr("Thread not started yet."),
-            "finishStatus" : "initial"
+            "result": dict(),
+            "status": False,
+            "executionTime": 0.0,
+            "errorMessage": self.tr("Thread not started yet."),
+            "finishStatus": "initial",
         }
 
     def setTitle(self, title):
@@ -108,19 +117,20 @@ class DsgToolsProcessingModel(QgsTask):
         if "flags" not in parameters or not parameters["flags"]:
             # this is a mandatory item, but it's has a default to be set if missing
             parameters["flags"] = {
-                "onFlagsRaised" : "halt",
-                "enableLocalFlags" : False,
-                "loadOutput" : False,
+                "onFlagsRaised": "halt",
+                "enableLocalFlags": False,
+                "loadOutput": False,
             }
         if "flagLayerNames" not in parameters["flags"]:
             parameters["flags"]["flagLayerNames"] = []
         if "source" not in parameters or not parameters["source"]:
             return self.tr("Model source is not defined.")
-        if "type" not in parameters["source"] or \
-          parameters["source"]["type"] not in self.MODEL_TYPES:
+        if (
+            "type" not in parameters["source"]
+            or parameters["source"]["type"] not in self.MODEL_TYPES
+        ):
             return self.tr("Input model type is not supported (or missing).")
-        if "data" not in parameters["source"] or \
-          not parameters["source"]["data"]:
+        if "data" not in parameters["source"] or not parameters["source"]["data"]:
             return self.tr("Input model source was not identified.")
         return ""
 
@@ -144,8 +154,7 @@ class DsgToolsProcessingModel(QgsTask):
         :return: (QgsProcessingModelAlgorithm) model as a processing algorithm.
         """
         temp = os.path.join(
-            os.path.dirname(__file__),
-            "temp_model_{0}.model3".format(hash(time()))
+            os.path.dirname(__file__), "temp_model_{0}.model3".format(hash(time()))
         )
         with open(temp, "w+", encoding="utf-8") as xmlFile:
             xmlFile.write(xml)
@@ -166,12 +175,7 @@ class DsgToolsProcessingModel(QgsTask):
         :return: (dict) metadata.
         """
         if "metadata" not in self._param:
-            return {
-                "author" : "",
-                "version" : "",
-                "lastModified" : "",
-                "originalName" : ""
-            }
+            return {"author": "", "version": "", "lastModified": "", "originalName": ""}
         return self._param["metadata"]
 
     def author(self):
@@ -214,9 +218,9 @@ class DsgToolsProcessingModel(QgsTask):
         """
         if "metadata" not in self._param:
             return ""
-        return self.tr(
-            "Model {name} v{version} ({lastModified}) by {author}."
-        ).format(name=self.displayName(), **self.metadata())
+        return self.tr("Model {name} v{version} ({lastModified}) by {author}.").format(
+            name=self.displayName(), **self.metadata()
+        )
 
     def isValid(self):
         """
@@ -248,8 +252,11 @@ class DsgToolsProcessingModel(QgsTask):
         """
         if not self.isValid():
             return ""
-        return self._param["displayName"] if "displayName" in self._param else \
-                self.tr("DSGTools Validation Model ({0})").format(self.name())
+        return (
+            self._param["displayName"]
+            if "displayName" in self._param
+            else self.tr("DSGTools Validation Model ({0})").format(self.name())
+        )
 
     def name(self):
         """
@@ -266,11 +273,14 @@ class DsgToolsProcessingModel(QgsTask):
         if not self.isValid():
             return QgsProcessingModelAlgorithm()
         method = {
-            "xml" : DsgToolsProcessingModel.modelFromXml,
-            "file" : DsgToolsProcessingModel.modelFromFile
+            "xml": DsgToolsProcessingModel.modelFromXml,
+            "file": DsgToolsProcessingModel.modelFromFile,
         }
-        return method[self.source()](self.data()) if self.source() in method\
-             else QgsProcessingModelAlgorithm()
+        return (
+            method[self.source()](self.data())
+            if self.source() in method
+            else QgsProcessingModelAlgorithm()
+        )
 
     def flags(self):
         """
@@ -297,7 +307,7 @@ class DsgToolsProcessingModel(QgsTask):
         :return: (str) model behaviour on Workflow.
         """
         return self.flags()["loadOutput"] if self.flags() else False
-    
+
     def flagLayerNames(self):
         """
         Model behaviour when flags are raised. Tells which layers should be checked as flags.
@@ -319,8 +329,8 @@ class DsgToolsProcessingModel(QgsTask):
         :return: (list-of-str) list of all algorithms.
         """
         return [
-            alg.algorithm().displayName() \
-                for alg in (model or self.model()).childAlgorithms().values()
+            alg.algorithm().displayName()
+            for alg in (model or self.model()).childAlgorithms().values()
         ]
 
     def modelParameters(self, model=None):
@@ -328,9 +338,9 @@ class DsgToolsProcessingModel(QgsTask):
         A list of parameters needed to be filled for the model to run.
         :param model: (QgsProcessingModelAlgorithm) model to have its parameters
                       checked.
-        :return: (list-of-str) 
+        :return: (list-of-str)
         """
-        # IMPORTANT: this method seems to be causing QGIS to crash when called 
+        # IMPORTANT: this method seems to be causing QGIS to crash when called
         # from command line. Error is "corrupted double-linked list / Aborted (core dumped)"
         # seems to be a QGIS mishandling, but should be lloked into deeper.
         # It works just fine running on plugin's thread - e.g. does not crash
@@ -340,12 +350,11 @@ class DsgToolsProcessingModel(QgsTask):
         if not self._param:
             return []
         model = model or self.model()
-        return [
-            param.name() \
-                for param in model.parameterDefinitions()
-        ]
+        return [param.name() for param in model.parameterDefinitions()]
 
-    def addLayerToGroup(self, layer, groupname, subgroupname=None, clearGroupBeforeAdding=False):
+    def addLayerToGroup(
+        self, layer, groupname, subgroupname=None, clearGroupBeforeAdding=False
+    ):
         """
         Adds a layer to a group into layer panel.
         :param layer: (QgsMapLayer) layer to be added to canvas.
@@ -355,9 +364,12 @@ class DsgToolsProcessingModel(QgsTask):
         subGroup = self.createGroups(groupname, subgroupname)
         if clearGroupBeforeAdding:
             self.clearGroup(subGroup)
-        layer = layer if isinstance(layer, QgsMapLayer) \
+        layer = (
+            layer
+            if isinstance(layer, QgsMapLayer)
             else QgsProcessingUtils.mapLayerFromString(layer)
-        QgsProject.instance().addMapLayer(layer, addToLegend = False)
+        )
+        QgsProject.instance().addMapLayer(layer, addToLegend=False)
         subGroup.addLayer(layer)
 
     def createGroups(self, groupname, subgroupname):
@@ -365,15 +377,14 @@ class DsgToolsProcessingModel(QgsTask):
         qaGroup = self.createGroup(groupname, root)
         subGroup = self.createGroup(subgroupname, qaGroup)
         return subGroup
-    
+
     def createGroup(self, groupName, rootNode):
         groupNode = rootNode.findGroup(groupName)
         return groupNode if groupNode else rootNode.addGroup(groupName)
-    
+
     def prepareGroup(self, model):
         subGroup = self.createGroups(
-            "DSGTools_QA_Toolbox",
-            self.model().model.displayName()
+            "DSGTools_QA_Toolbox", self.model().model.displayName()
         )
         self.clearGroup(subGroup)
 
@@ -396,13 +407,12 @@ class DsgToolsProcessingModel(QgsTask):
         model = self.model()
         if self.isCanceled():
             return {}
-        context = dataobjects.createContext(
-            feedback=feedback)
+        context = dataobjects.createContext(feedback=feedback)
         out = processing.run(
             model,
-            { param : "memory:" for param in self.modelParameters(model) },
+            {param: "memory:" for param in self.modelParameters(model)},
             feedback=feedback,
-            context=context
+            context=context,
         )
         # not sure exactly when, but on 3.16 LTR output from model runs include
         # new items on it. these new items break our implementation =)
@@ -420,14 +430,10 @@ class DsgToolsProcessingModel(QgsTask):
             vl.setName(name.split(":", 2)[-1])
             if vl.name() in flagLayerNames and vl.featureCount() == 0:
                 continue
-            self.addLayerToGroup(
-                vl,
-                "DSGTools_QA_Toolbox",
-                model.displayName()
-            )
+            self.addLayerToGroup(vl, "DSGTools_QA_Toolbox", model.displayName())
             self.enableFeatureCount(vl)
         return out
-    
+
     def enableFeatureCount(self, lyr):
         root = QgsProject.instance().layerTreeRoot()
         lyrNode = root.findLayer(lyr.id())
@@ -459,11 +465,7 @@ class DsgToolsProcessingModel(QgsTask):
         start = time()
         try:
             if not self.feedback.isCanceled() or not self.isCanceled():
-                self.output = {
-                    "result": dict(),
-                    "status" : True,
-                    "errorMessage" : ""
-                }
+                self.output = {"result": dict(), "status": True, "errorMessage": ""}
                 for paramName, vl in self.runModel(self.feedback).items():
                     baseName = paramName.rsplit(":", 1)[-1]
                     name = baseName
@@ -477,21 +479,25 @@ class DsgToolsProcessingModel(QgsTask):
                     self.output["result"][name] = vl
         except Exception as e:
             self.output = {
-                "result" : {},
-                "status" : False,
-                "errorMessage" : self.tr("Model has failed:\n'{error}'")\
-                                 .format(error=str(e))
+                "result": {},
+                "status": False,
+                "errorMessage": self.tr("Model has failed:\n'{error}'").format(
+                    error=str(e)
+                ),
             }
         self.output["executionTime"] = time() - start
         return self.output["status"]
-    
+
     def hasFlags(self):
         """
         Iterates over the results and finds if there are flags.
         """
-        for key, lyr in self.output['result'].items():
-            if key in self._param['flags']['flagLayerNames'] \
-                and isinstance(lyr, QgsMapLayer) and lyr.featureCount() > 0:    
+        for key, lyr in self.output["result"].items():
+            if (
+                key in self._param["flags"]["flagLayerNames"]
+                and isinstance(lyr, QgsMapLayer)
+                and lyr.featureCount() > 0
+            ):
                 return True
         return False
 
@@ -501,12 +507,12 @@ class DsgToolsProcessingModel(QgsTask):
         always called right after run is finished (read the docs on QgsTask).
         :param result: (bool) run returned valued.
         """
-        if result and self.onFlagsRaised() == 'halt' and self.hasFlags():
+        if result and self.onFlagsRaised() == "halt" and self.hasFlags():
             self.cancel()
             self.feedback.cancel()
-            self.output["finishStatus"] = 'halt'
+            self.output["finishStatus"] = "halt"
         elif not result:
-            self.output["finishStatus"] = 'failed'
+            self.output["finishStatus"] = "failed"
         else:
-            self.output["finishStatus"] = 'finished'
+            self.output["finishStatus"] = "finished"
         self.modelFinished.emit(self)

@@ -22,36 +22,47 @@
 """
 from __future__ import absolute_import
 from qgis.gui import QgsMapTool, QgsMessageBar
-from qgis.core import QgsMapLayer, QgsVectorLayer, QgsMessageLog, QgsFeatureRequest, QgsWkbTypes, Qgis
+from qgis.core import (
+    QgsMapLayer,
+    QgsVectorLayer,
+    QgsMessageLog,
+    QgsFeatureRequest,
+    QgsWkbTypes,
+    Qgis,
+)
 from qgis.PyQt import QtCore, QtGui
 
 from .....core.GeometricTools.geometryHandler import GeometryHandler
+
 
 class FlipLine(QgsMapTool):
     """
     Tool expected behaviour:
     When (valid) line features are selected, it flips them upon tool activation.
     """
+
     def __init__(self, iface):
-        self.iface = iface        
+        self.iface = iface
         self.canvas = self.iface.mapCanvas()
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
         self.DsgGeometryHandler = GeometryHandler(iface)
         self.currentLayer = None
-    
+
     def addTool(self, manager, callback, parentMenu, iconBasePath):
-        icon_path = iconBasePath + '/flipLineTool.png'
-        toolTip = self.tr("DSGTools: Flip Line Tool\nInsert tool tip for Flip Line Tool.")
+        icon_path = iconBasePath + "/flipLineTool.png"
+        toolTip = self.tr(
+            "DSGTools: Flip Line Tool\nInsert tool tip for Flip Line Tool."
+        )
         action = manager.add_action(
             icon_path,
-            text=self.tr('DSGTools: Flip Line Tool'),
+            text=self.tr("DSGTools: Flip Line Tool"),
             callback=callback,
             add_to_menu=False,
             add_to_toolbar=True,
-            withShortcut = True,
-            tooltip = toolTip,
-            parentToolbar =parentMenu
+            withShortcut=True,
+            tooltip=toolTip,
+            parentToolbar=parentMenu,
         )
         self.setAction(action)
 
@@ -63,7 +74,12 @@ class FlipLine(QgsMapTool):
         """
         if not isinstance(layer, QgsVectorLayer):
             layer = self.iface.mapCanvas().currentLayer()
-        if not layer or not isinstance(layer, QgsVectorLayer) or layer.geometryType() != QgsWkbTypes.LineGeometry or not layer.isEditable():
+        if (
+            not layer
+            or not isinstance(layer, QgsVectorLayer)
+            or layer.geometryType() != QgsWkbTypes.LineGeometry
+            or not layer.isEditable()
+        ):
             enabled = False
         else:
             enabled = True
@@ -76,7 +92,7 @@ class FlipLine(QgsMapTool):
         """
         if self.toolAction:
             self.toolAction.setChecked(False)
-    
+
     def setAction(self, action):
         """
         Defines an action for tool.
@@ -101,37 +117,43 @@ class FlipLine(QgsMapTool):
     def flipSelectedLines(self):
         """
         Method for flipping all selected lines. Used for button callback.
-        """        
+        """
         # get all selected features and remove all features that are not lines
         selectedFeatures = self.getAllSelectedLines()
         pop = 0
         for idx, item in enumerate(selectedFeatures):
             if item[2] != 1:
-                selectedFeatures.pop(idx-pop)
+                selectedFeatures.pop(idx - pop)
                 pop += 1
         if not selectedFeatures:
             logMsg = self.getLogMessage(None, None)
-            self.iface.messageBar().pushMessage(self.tr('Error'), logMsg, level=Qgis.Critical, duration=3)
+            self.iface.messageBar().pushMessage(
+                self.tr("Error"), logMsg, level=Qgis.Critical, duration=3
+            )
             # QMessageBox.critical(self, self.tr('Critical!'), logMsg)
             QgsMessageLog.logMessage(logMsg, "DSGTools Plugin", Qgis.Critical)
             return
         # call the method for flipping features from geometry module
-        flippedLines, failedLines = self.DsgGeometryHandler.flipFeatureList(featureList=selectedFeatures, debugging=True)
+        flippedLines, failedLines = self.DsgGeometryHandler.flipFeatureList(
+            featureList=selectedFeatures, debugging=True
+        )
         logMsg = self.getLogMessage(flippedLines, failedLines)
-        self.iface.messageBar().pushMessage(self.tr('Success'), logMsg, level=Qgis.Info, duration=3)
+        self.iface.messageBar().pushMessage(
+            self.tr("Success"), logMsg, level=Qgis.Info, duration=3
+        )
         QgsMessageLog.logMessage(logMsg, "DSGTools Plugin", Qgis.Info)
- 
+
     def getLogMessage(self, flippedLines, failedLines):
         """
         Method for mounting log message to be exposed to user.
         :param flippedLines: list of lines that were selected and were successfully flipped.
         :param failedLines: list of lines that were selected and failed to be flipped.
-        :param success: indicates whether the log is for a failed execution or 
+        :param success: indicates whether the log is for a failed execution or
         """
-        nrFlipped = nrFailed = 0 
-        logMsg = '' 
+        nrFlipped = nrFailed = 0
+        logMsg = ""
         if not flippedLines and not failedLines:
-            return self.tr('There are no (valid) lines selected!')
+            return self.tr("There are no (valid) lines selected!")
         if flippedLines:
             nrFlipped = len(flippedLines)
             logMsg = self.tr("Feature(s) flipped: ")
@@ -144,13 +166,20 @@ class FlipLine(QgsMapTool):
             for item in failedLines:
                 logMsg += "{} (id={}), ".format(item[0].name(), item[1].id())
             logMsg = (logMsg + ")").replace(", )", ".")
-        return logMsg + self.tr("\n{} lines flipped. {} failed to be flipped.").format(nrFlipped, nrFailed)
+        return logMsg + self.tr("\n{} lines flipped. {} failed to be flipped.").format(
+            nrFlipped, nrFailed
+        )
 
     def startFlipLineTool(self):
         if self.canvas.currentLayer() in self.iface.editableLayers():
             self.flipSelectedLines()
         else:
-            self.iface.messageBar().pushMessage(self.tr('Warning'), self.tr('Start editing in current layer!'), level=Qgis.Info, duration=3)
+            self.iface.messageBar().pushMessage(
+                self.tr("Warning"),
+                self.tr("Start editing in current layer!"),
+                level=Qgis.Info,
+                duration=3,
+            )
 
     def deactivate(self):
         QgsMapTool.deactivate(self)

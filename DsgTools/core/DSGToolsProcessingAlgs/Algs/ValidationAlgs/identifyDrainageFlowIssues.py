@@ -25,48 +25,53 @@ import concurrent.futures
 import os
 
 from PyQt5.QtCore import QCoreApplication, QVariant
-from qgis.core import (QgsFeature, QgsFeatureRequest, QgsField, QgsFields,
-                       QgsGeometry, QgsGeometryUtils, QgsPoint, QgsPointXY,
-                       QgsProcessing, QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterNumber, QgsProject, QgsWkbTypes, 
-                       QgsProcessingMultiStepFeedback)
+from qgis.core import (
+    QgsFeature,
+    QgsFeatureRequest,
+    QgsField,
+    QgsFields,
+    QgsGeometry,
+    QgsGeometryUtils,
+    QgsPoint,
+    QgsPointXY,
+    QgsProcessing,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterNumber,
+    QgsProject,
+    QgsWkbTypes,
+    QgsProcessingMultiStepFeedback,
+)
 
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class IdentifyDrainageFlowIssues(ValidationAlgorithm):
-    FLAGS = 'FLAGS'
-    INPUT = 'INPUT'
+    FLAGS = "FLAGS"
+    INPUT = "INPUT"
 
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input'),
+                self.tr("Input"),
                 [
                     QgsProcessing.TypeVectorLine,
-                ]
+                ],
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
 
     def processAlgorithm(self, parameters, context, feedback):
-        lines = self.parameterAsVectorLayer(
-            parameters,
-            'INPUT',
-            context
-        )
+        lines = self.parameterAsVectorLayer(parameters, "INPUT", context)
         self.prepareFlagSink(parameters, lines, QgsWkbTypes.Point, context)
 
         # Dictionary that indicates how many lines enter and how many lines exit a given point:
         pointInAndOutDictionary = {}
-
 
         # Iterate over lines setting the dictionary counters:
         lineCount = lines.featureCount()
@@ -75,7 +80,7 @@ class IdentifyDrainageFlowIssues(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.setProgressText(self.tr("Evaluating line structure..."))
-        stepSize = 100/lineCount
+        stepSize = 100 / lineCount
 
         for current, line in enumerate(lines.getFeatures()):
             if multiStepFeedback.isCanceled():
@@ -87,27 +92,34 @@ class IdentifyDrainageFlowIssues(ValidationAlgorithm):
             last_vertex = geom[-1]
 
             if first_vertex.asWkt() not in pointInAndOutDictionary:
-                pointInAndOutDictionary[first_vertex.asWkt()] = { "incoming": 0, "outgoing": 0}
+                pointInAndOutDictionary[first_vertex.asWkt()] = {
+                    "incoming": 0,
+                    "outgoing": 0,
+                }
 
             if last_vertex.asWkt() not in pointInAndOutDictionary:
-                pointInAndOutDictionary[last_vertex.asWkt()] = { "incoming": 0, "outgoing": 0}
-            
+                pointInAndOutDictionary[last_vertex.asWkt()] = {
+                    "incoming": 0,
+                    "outgoing": 0,
+                }
+
             pointInAndOutDictionary[first_vertex.asWkt()]["outgoing"] += 1
             pointInAndOutDictionary[last_vertex.asWkt()]["incoming"] += 1
             multiStepFeedback.setProgress(current * stepSize)
-        
+
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.setProgressText(self.tr("Raising flags..."))
-        stepSize = 100/len(pointInAndOutDictionary)
+        stepSize = 100 / len(pointInAndOutDictionary)
         # Iterate over dictionary:
-        for current, (pointStr, inAndOutCounters) in enumerate(pointInAndOutDictionary.items()):
+        for current, (pointStr, inAndOutCounters) in enumerate(
+            pointInAndOutDictionary.items()
+        ):
             if multiStepFeedback.isCanceled():
                 break
             errorMsg = self.errorWhenCheckingInAndOut(inAndOutCounters)
-            if errorMsg != '':
+            if errorMsg != "":
                 self.flagFeature(
-                    flagGeom= QgsGeometry.fromWkt(pointStr),
-                    flagText=self.tr(errorMsg)
+                    flagGeom=QgsGeometry.fromWkt(pointStr), flagText=self.tr(errorMsg)
                 )
             multiStepFeedback.setProgress(current * stepSize)
 
@@ -119,17 +131,19 @@ class IdentifyDrainageFlowIssues(ValidationAlgorithm):
         total = incoming + outgoing
 
         if total == 1:
-            return ''
+            return ""
         if total >= 4:
-            return '4 or more lines conected to this point.'
-        
-        if (incoming == 0):
-            return 'There are lines coming from this point, but not lines going in.'
+            return "4 or more lines conected to this point."
 
-        if (outgoing == 0):
-            return 'There are lines going into this point, but not lines coming from it.'
+        if incoming == 0:
+            return "There are lines coming from this point, but not lines going in."
 
-        return ''
+        if outgoing == 0:
+            return (
+                "There are lines going into this point, but not lines coming from it."
+            )
+
+        return ""
 
     def name(self):
         """
@@ -139,21 +153,21 @@ class IdentifyDrainageFlowIssues(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifydrainageflowissues'
+        return "identifydrainageflowissues"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Drainage Flow Issues')
+        return self.tr("Identify Drainage Flow Issues")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -163,10 +177,10 @@ class IdentifyDrainageFlowIssues(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return self.tr('DSGTools: Quality Assurance Tools (Identification Processes)')
+        return self.tr("DSGTools: Quality Assurance Tools (Identification Processes)")
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyDrainageFlowIssues', string)
+        return QCoreApplication.translate("IdentifyDrainageFlowIssues", string)
 
     def createInstance(self):
         return IdentifyDrainageFlowIssues()

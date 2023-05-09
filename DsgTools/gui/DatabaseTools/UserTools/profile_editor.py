@@ -33,11 +33,13 @@ from DsgTools.gui.DatabaseTools.UserTools.create_profile import CreateProfile
 
 import json
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'profile_editor.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "profile_editor.ui")
+)
+
 
 class ProfileEditor(QtWidgets.QDialog, FORM_CLASS):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         """
         Constructor
         """
@@ -49,27 +51,27 @@ class ProfileEditor(QtWidgets.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.treeWidget.setColumnWidth(0, 400)
-        
-        self.folder = os.path.join(os.path.dirname(__file__), 'profiles')
+
+        self.folder = os.path.join(os.path.dirname(__file__), "profiles")
         self.getProfiles()
         self.setInitialState()
-        
-    def getProfiles(self, profileName = None):
+
+    def getProfiles(self, profileName=None):
         """
         Get profile files and insert them in the combo box
         """
         ret = []
         for root, dirs, files in os.walk(self.folder):
             for file in files:
-                ext = file.split('.')[-1]
-                if ext == 'json':
-                    ret.append(file.split('.')[0])
+                ext = file.split(".")[-1]
+                if ext == "json":
+                    ret.append(file.split(".")[0])
 
         ret.sort()
         self.jsonCombo.clear()
-        self.jsonCombo.addItem(self.tr('Select a profile'))
+        self.jsonCombo.addItem(self.tr("Select a profile"))
         self.jsonCombo.addItems(ret)
-        
+
         index = self.jsonCombo.findText(profileName)
         if index != -1:
             self.jsonCombo.setCurrentIndex(index)
@@ -85,33 +87,37 @@ class ProfileEditor(QtWidgets.QDialog, FORM_CLASS):
             self.treeWidget.clear()
             return
         else:
-            profile = os.path.join(self.folder, self.jsonCombo.currentText()+'.json')
+            profile = os.path.join(self.folder, self.jsonCombo.currentText() + ".json")
             self.readJsonFile(profile)
         self.treeWidget.sortByColumn(0, QtCore.Qt.AscendingOrder)
-        
+
     def createItem(self, parent, text):
         """
         Creates tree widget items
         """
         item = QtWidgets.QTreeWidgetItem(parent)
-        item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsTristate | QtCore.Qt.ItemIsUserCheckable)
+        item.setFlags(
+            QtCore.Qt.ItemIsEnabled
+            | QtCore.Qt.ItemIsTristate
+            | QtCore.Qt.ItemIsUserCheckable
+        )
         item.setCheckState(1, QtCore.Qt.Unchecked)
         item.setCheckState(2, QtCore.Qt.Unchecked)
         item.setText(0, text)
         return item
-    
+
     def makeProfileDict(self):
         """
         Makes a dictionary out of the tree widget items
         """
         profileDict = dict()
-        
-        #invisible root item
+
+        # invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
-        #database item
+        # database item
         dbItem = rootItem.child(0)
         permissions = dict()
-        
+
         schema_count = dbItem.childCount()
         for i in range(schema_count):
             schemaItem = dbItem.child(i)
@@ -123,38 +129,40 @@ class ProfileEditor(QtWidgets.QDialog, FORM_CLASS):
                 layer_count = categoryItem.childCount()
                 for k in range(layer_count):
                     layerItem = categoryItem.child(k)
-                    permissions[schemaItem.text(0)][categoryItem.text(0)][layerItem.text(0)] = self.getItemCheckState(layerItem)
-                 
-        profileDict[self.parent] = permissions   
+                    permissions[schemaItem.text(0)][categoryItem.text(0)][
+                        layerItem.text(0)
+                    ] = self.getItemCheckState(layerItem)
+
+        profileDict[self.parent] = permissions
         return profileDict
-    
+
     def readJsonFile(self, filename):
         """
         Reads the profile file, gets a dictionary of it and builds the tree widget
         """
         try:
-            file = open(filename, 'r')
+            file = open(filename, "r")
             data = file.read()
             profileDict = json.loads(data)
             self.parent = list(profileDict.keys())[0]
             file.close()
         except:
             return
-            
-        #invisible root item
+
+        # invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
-        #database item
+        # database item
         dbItem = self.createItem(rootItem, self.parent)
 
         permissions = profileDict[self.parent]
         self.createChildrenItems(dbItem, permissions)
-                                        
+
     def createChildrenItems(self, parent, mydict):
         """
         Creates children item in the tree widget
         """
-        #permissions
-        lista = ['read', 'write']
+        # permissions
+        lista = ["read", "write"]
         for key in list(mydict.keys()):
             if key in lista:
                 self.setItemCheckState(parent, mydict, key)
@@ -162,32 +170,32 @@ class ProfileEditor(QtWidgets.QDialog, FORM_CLASS):
                 itemText = key
                 item = self.createItem(parent, itemText)
                 self.createChildrenItems(item, mydict[key])
-                
+
     def setItemCheckState(self, item, mydict, key):
         """
         Sets the item check state
         """
-        if key == 'read':
+        if key == "read":
             item.setCheckState(1, int(mydict[key]))
-        elif key == 'write':
+        elif key == "write":
             item.setCheckState(2, int(mydict[key]))
-    
+
     def getItemCheckState(self, item):
         """
         Gets the item check state for READ and WRITE columns
         """
         ret = dict()
-        ret['read'] = str(item.checkState(1))
-        ret['write'] = str(item.checkState(2))
+        ret["read"] = str(item.checkState(1))
+        ret["write"] = str(item.checkState(2))
         return ret
-        
+
     @pyqtSlot(int)
     def on_jsonCombo_currentIndexChanged(self):
         """
         Slot to update the initial state
         """
         self.setInitialState()
-    
+
     @pyqtSlot(bool)
     def on_createButton_clicked(self):
         """
@@ -196,49 +204,57 @@ class ProfileEditor(QtWidgets.QDialog, FORM_CLASS):
         dlg = CreateProfile()
         dlg.profileCreated.connect(self.getProfiles)
         dlg.exec_()
-            
+
     @pyqtSlot(bool)
     def on_clearButton_clicked(self):
         """
         Clears the tree widget
         """
-        #invisible root item
+        # invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
-        #database item
+        # database item
         dbItem = rootItem.child(0)
         if dbItem:
             dbItem.setCheckState(1, 0)
             dbItem.setCheckState(2, 0)
-        
+
     @pyqtSlot(bool)
     def on_saveButton_clicked(self):
         """
         Saves the profile file
         """
         if self.jsonCombo.currentIndex() == 0:
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select a profile model!'))
+            QMessageBox.warning(
+                self, self.tr("Warning!"), self.tr("Select a profile model!")
+            )
             return
         else:
             profile = self.jsonCombo.currentText()
-            
-        path = os.path.join(self.folder, profile+'.json')
-        
+
+        path = os.path.join(self.folder, profile + ".json")
+
         try:
-            with open(path, 'w') as outfile:
+            with open(path, "w") as outfile:
                 json.dump(self.makeProfileDict(), outfile, sort_keys=True, indent=4)
         except Exception as e:
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving file! \n')+':'.join(e.args))
+            QMessageBox.warning(
+                self,
+                self.tr("Warning!"),
+                self.tr("Problem saving file! \n") + ":".join(e.args),
+            )
             return
-            
-        QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile saved successfully!'))
-    
+
+        QMessageBox.warning(
+            self, self.tr("Warning!"), self.tr("Profile saved successfully!")
+        )
+
     @pyqtSlot(bool)
     def on_closeButton_clicked(self):
         """
         Closes the dialog
         """
         self.close()
-    
+
     @pyqtSlot(bool)
     def on_deletePushButton_clicked(self):
         """
@@ -247,12 +263,26 @@ class ProfileEditor(QtWidgets.QDialog, FORM_CLASS):
         """
         if self.jsonCombo.currentIndex() != 0:
             profileName = self.jsonCombo.currentText()
-            if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to remove profile ')+profileName+'?', QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
+            if (
+                QMessageBox.question(
+                    self,
+                    self.tr("Question"),
+                    self.tr("Do you really want to remove profile ")
+                    + profileName
+                    + "?",
+                    QMessageBox.Ok | QMessageBox.Cancel,
+                )
+                == QMessageBox.Cancel
+            ):
                 return
             try:
-                os.remove(os.path.join(self.folder,profileName+'.json'))
+                os.remove(os.path.join(self.folder, profileName + ".json"))
             except Exception as e:
-                QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem deleting profile! \n')+':'.join(e.args))
+                QMessageBox.warning(
+                    self,
+                    self.tr("Warning!"),
+                    self.tr("Problem deleting profile! \n") + ":".join(e.args),
+                )
                 return
             self.getProfiles()
             self.setInitialState()

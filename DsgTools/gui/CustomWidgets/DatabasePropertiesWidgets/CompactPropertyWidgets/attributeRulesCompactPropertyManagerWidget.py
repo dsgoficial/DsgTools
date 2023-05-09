@@ -28,32 +28,39 @@ from qgis.PyQt.QtCore import pyqtSlot, Qt, pyqtSignal
 from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QFileDialog
 from qgis.PyQt.QtGui import QCursor
 
-#DsgTools imports
-from DsgTools.core.ServerManagementTools.attributeRulesManager import AttributeRulesManager
-from DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.CompactPropertyWidgets.genericCompactPropertyManagerWidget import GenericCompactPropertyManagerWidget
-from DsgTools.gui.ProductionTools.Toolboxes.ValidationToolbox.attributeRulesEditor import AttributeRulesEditor
+# DsgTools imports
+from DsgTools.core.ServerManagementTools.attributeRulesManager import (
+    AttributeRulesManager,
+)
+from DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.CompactPropertyWidgets.genericCompactPropertyManagerWidget import (
+    GenericCompactPropertyManagerWidget,
+)
+from DsgTools.gui.ProductionTools.Toolboxes.ValidationToolbox.attributeRulesEditor import (
+    AttributeRulesEditor,
+)
 from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.dsgEnums import DsgEnums
 
 from qgis.core import QgsMessageLog
 import json
 
+
 class AttributeRulesCompactPropertyManagerWidget(GenericCompactPropertyManagerWidget):
-    def __init__(self, manager = None, parent = None):
+    def __init__(self, manager=None, parent=None):
         """
         Constructor
         """
-        super(AttributeRulesCompactPropertyManagerWidget, self).__init__(parent = parent)
-    
-    def populateConfigInterface(self, templateDb, jsonDict = None):
-        '''
+        super(AttributeRulesCompactPropertyManagerWidget, self).__init__(parent=parent)
+
+    def populateConfigInterface(self, templateDb, jsonDict=None):
+        """
         Must be reimplemented in each child
-        '''
-        dlg = AttributeRulesEditor(templateDb, parameterDict = jsonDict)
+        """
+        dlg = AttributeRulesEditor(templateDb, parameterDict=jsonDict)
         if dlg.exec_():
             return dlg.getParameterDict()
         else:
             return None
-    
+
     def instantiateManagerObject(self, abstractDb, dbDict, edgvVersion):
         return AttributeRulesManager(abstractDb, dbDict, edgvVersion)

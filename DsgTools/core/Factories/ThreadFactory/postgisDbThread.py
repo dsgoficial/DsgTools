@@ -34,11 +34,12 @@ from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from ..DbFactory.dbFactory import DbFactory
 from DsgTools.core.dsgEnums import DsgEnums
 
+
 class PostgisDbMessages(QObject):
     def __init__(self, thread):
         """
         PostGIS database creation messages constructor
-        :param thread: 
+        :param thread:
         """
         super(PostgisDbMessages, self).__init__()
 
@@ -48,19 +49,28 @@ class PostgisDbMessages(QObject):
         """
         Returns database structure creation error message
         """
-        return self.tr("Problem on database structure creation: ")+'SQL: '+command+'\n'+query.lastError().text()+'\n'
+        return (
+            self.tr("Problem on database structure creation: ")
+            + "SQL: "
+            + command
+            + "\n"
+            + query.lastError().text()
+            + "\n"
+        )
 
     def getProblemFeedbackMessage(self):
         """
         Returns database creation error message
         """
-        return self.tr('Problem creating the database structure!\n Check the Log terminal for details.')
+        return self.tr(
+            "Problem creating the database structure!\n Check the Log terminal for details."
+        )
 
     def getUserCanceledFeedbackMessage(self):
         """
         Returns user canceled error message
         """
-        return self.tr('User canceled the database structure creation!')
+        return self.tr("User canceled the database structure creation!")
 
     def getSuccessFeedbackMessage(self):
         """
@@ -72,15 +82,16 @@ class PostgisDbMessages(QObject):
     def progressCanceled(self):
         self.thread.stopped[0] = True
 
+
 class PostgisDbThread(GenericThread):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         """
         Constructor.
         """
         super(PostgisDbThread, self).__init__()
 
         self.factory = SqlGeneratorFactory()
-        #setting the sql generator
+        # setting the sql generator
         self.gen = self.factory.createSqlGenerator(driver=DsgEnums.DriverPostGIS)
         self.messenger = PostgisDbMessages(self)
         self.dbFactory = DbFactory()
@@ -90,9 +101,9 @@ class PostgisDbThread(GenericThread):
         """
         Sets thread parameters
         """
-        self.abstractDb = abstractDb #database = postgis
+        self.abstractDb = abstractDb  # database = postgis
         self.dbName = dbName
-        self.db = None  
+        self.db = None
         self.version = version
         self.epsg = epsg
         self.stopped = stopped
@@ -105,7 +116,7 @@ class PostgisDbThread(GenericThread):
         (ret, msg) = self.createDatabaseStructure()
         self.signals.processingFinished.emit(ret, msg, self.getId())
 
-    def connectToTemplate(self, setInnerDb = True):
+    def connectToTemplate(self, setInnerDb=True):
         """
         Connects to the template database to speed up database creation
         :return:
@@ -127,15 +138,15 @@ class PostgisDbThread(GenericThread):
         Creates database structure according to the selected edgv version
         """
         currentPath = os.path.dirname(__file__)
-        currentPath = os.path.join(currentPath, '..', '..', 'DbTools', 'PostGISTool')
-        if self.version == '2.1.3':
-            edgvPath = os.path.join(currentPath, 'sqls', '213', 'edgv213.sql')
-        elif self.version == '2.1.3 Pro':
-            edgvPath = os.path.join(currentPath, 'sqls', '213_Pro', 'edgv213_pro.sql')
-        elif self.version == '3.0':
-            edgvPath = os.path.join(currentPath, 'sqls', '3', 'edgv3.sql')
+        currentPath = os.path.join(currentPath, "..", "..", "DbTools", "PostGISTool")
+        if self.version == "2.1.3":
+            edgvPath = os.path.join(currentPath, "sqls", "213", "edgv213.sql")
+        elif self.version == "2.1.3 Pro":
+            edgvPath = os.path.join(currentPath, "sqls", "213_Pro", "edgv213_pro.sql")
+        elif self.version == "3.0":
+            edgvPath = os.path.join(currentPath, "sqls", "3", "edgv3.sql")
         else:
-            edgvPath = ''
+            edgvPath = ""
         return self.loadDatabaseStructure(edgvPath)
 
     def loadDatabaseStructure(self, edgvPath):
@@ -146,22 +157,22 @@ class PostgisDbThread(GenericThread):
         commands = []
         hasTemplate = self.abstractDb.checkTemplate(self.version)
         if hasTemplate:
-            templateDb = self.connectToTemplate(setInnerDb = False)
+            templateDb = self.connectToTemplate(setInnerDb=False)
             mustUpdateTemplate = templateDb.checkTemplateImplementationVersion()
             if mustUpdateTemplate:
                 templateName = templateDb.db.databaseName()
                 templateDb.__del__()
-                self.abstractDb.dropDatabase(templateName, dropTemplate = True)
+                self.abstractDb.dropDatabase(templateName, dropTemplate=True)
                 hasTemplate = False
         if not hasTemplate:
-            file = codecs.open(edgvPath, encoding='utf-8', mode="r")
+            file = codecs.open(edgvPath, encoding="utf-8", mode="r")
             sql = file.read()
-            sql = sql.replace('[epsg]', '4674')
+            sql = sql.replace("[epsg]", "4674")
             file.close()
-            commands = [i for i in sql.split('#') if i != '']
+            commands = [i for i in sql.split("#") if i != ""]
         # Progress bar steps calculated
-        self.signals.rangeCalculated.emit(len(commands)+4, self.getId())
-        
+        self.signals.rangeCalculated.emit(len(commands) + 4, self.getId())
+
         if not hasTemplate:
             try:
                 self.abstractDb.createTemplateDatabase(self.version)
@@ -169,68 +180,117 @@ class PostgisDbThread(GenericThread):
                 self.connectToTemplate()
                 self.signals.stepProcessed.emit(self.getId())
             except Exception as e:
-                return (0, self.messenger.getProblemFeedbackMessage()+'\n'+':'.join(e.args))
+                return (
+                    0,
+                    self.messenger.getProblemFeedbackMessage()
+                    + "\n"
+                    + ":".join(e.args),
+                )
             self.db.open()
             self.db.transaction()
             query = QSqlQuery(self.db)
-    
+
             for command in commands:
                 if not self.stopped[0]:
                     if not query.exec_(command):
-                        QgsMessageLog.logMessage(self.messenger.getProblemMessage(command, query), "DSGTools Plugin", Qgis.Critical)
+                        QgsMessageLog.logMessage(
+                            self.messenger.getProblemMessage(command, query),
+                            "DSGTools Plugin",
+                            Qgis.Critical,
+                        )
                         self.db.rollback()
                         self.db.close()
                         self.dropDatabase(self.db)
                         return (0, self.messenger.getProblemFeedbackMessage())
-    
+
                     # Updating progress
                     self.signals.stepProcessed.emit(self.getId())
                 else:
                     self.db.rollback()
                     self.db.close()
-                    self.dropDatabase(self.db)                
-                    QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSGTools Plugin", Qgis.Info)
+                    self.dropDatabase(self.db)
+                    QgsMessageLog.logMessage(
+                        self.messenger.getUserCanceledFeedbackMessage(),
+                        "DSGTools Plugin",
+                        Qgis.Info,
+                    )
                     return (-1, self.messenger.getUserCanceledFeedbackMessage())
-    
+
             self.db.commit()
-            if self.version == '2.1.3':
-                sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'cb\',\'complexos\',\'dominios\';' % self.db.databaseName()
-            elif self.version == '2.1.3 Pro':
-                sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'edgv\',\'dominios\';' % self.db.databaseName()
-            elif self.version == 'FTer_2a_Ed':
-                sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'pe\',\'ge\',\'complexos\',\'dominios\';' % self.db.databaseName()
-            elif self.version == '3.0':
-                sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'edgv\',\'complexos\',\'dominios\';' % self.db.databaseName()
-            
+            if self.version == "2.1.3":
+                sql = (
+                    "ALTER DATABASE %s SET search_path = \"$user\", public, topology,'cb','complexos','dominios';"
+                    % self.db.databaseName()
+                )
+            elif self.version == "2.1.3 Pro":
+                sql = (
+                    "ALTER DATABASE %s SET search_path = \"$user\", public, topology,'edgv','dominios';"
+                    % self.db.databaseName()
+                )
+            elif self.version == "FTer_2a_Ed":
+                sql = (
+                    "ALTER DATABASE %s SET search_path = \"$user\", public, topology,'pe','ge','complexos','dominios';"
+                    % self.db.databaseName()
+                )
+            elif self.version == "3.0":
+                sql = (
+                    "ALTER DATABASE %s SET search_path = \"$user\", public, topology,'edgv','complexos','dominios';"
+                    % self.db.databaseName()
+                )
+
             if sql:
                 if not query.exec_(sql):
-                    QgsMessageLog.logMessage(self.messenger.getProblemMessage(command, query), "DSGTools Plugin", Qgis.Critical)
+                    QgsMessageLog.logMessage(
+                        self.messenger.getProblemMessage(command, query),
+                        "DSGTools Plugin",
+                        Qgis.Critical,
+                    )
                     return (0, self.messenger.getProblemFeedbackMessage())
-            #this commit was missing, so alter database statement was not commited.
+            # this commit was missing, so alter database statement was not commited.
             self.db.commit()
             self.db.close()
             self.abstractDb.setDbAsTemplate(self.version)
-        #creates from template
+        # creates from template
         if not self.stopped[0]:
             templateName = self.abstractDb.getTemplateName(self.version)
-            self.abstractDb.createDbFromTemplate(self.dbName, templateName, parentWidget = self.parent)
+            self.abstractDb.createDbFromTemplate(
+                self.dbName, templateName, parentWidget=self.parent
+            )
             self.signals.stepProcessed.emit(self.getId())
-            #5. alter spatial structure
+            # 5. alter spatial structure
             createdDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
-            createdDb.connectDatabaseWithParameters(self.abstractDb.db.hostName(), self.abstractDb.db.port(), self.dbName, self.abstractDb.db.userName(), self.abstractDb.db.password())
-            errorTuple = createdDb.updateDbSRID(self.epsg, parentWidget = self.parent, threading = True)
+            createdDb.connectDatabaseWithParameters(
+                self.abstractDb.db.hostName(),
+                self.abstractDb.db.port(),
+                self.dbName,
+                self.abstractDb.db.userName(),
+                self.abstractDb.db.password(),
+            )
+            errorTuple = createdDb.updateDbSRID(
+                self.epsg, parentWidget=self.parent, threading=True
+            )
             # if an error occur during the thread we should pass the message to the main thread
             if errorTuple:
-                QgsMessageLog.logMessage(self.messenger.getProblemMessage(errorTuple[0], errorTuple[1]), "DSGTools Plugin", Qgis.Critical)
-                return (0, self.messenger.getProblemFeedbackMessage())                
+                QgsMessageLog.logMessage(
+                    self.messenger.getProblemMessage(errorTuple[0], errorTuple[1]),
+                    "DSGTools Plugin",
+                    Qgis.Critical,
+                )
+                return (0, self.messenger.getProblemFeedbackMessage())
             self.signals.stepProcessed.emit(self.getId())
         else:
-            QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSGTools Plugin", Qgis.Info)
+            QgsMessageLog.logMessage(
+                self.messenger.getUserCanceledFeedbackMessage(),
+                "DSGTools Plugin",
+                Qgis.Info,
+            )
             return (-1, self.messenger.getUserCanceledFeedbackMessage())
-        QgsMessageLog.logMessage(self.messenger.getSuccessFeedbackMessage(), "DSGTools Plugin", Qgis.Info)
+        QgsMessageLog.logMessage(
+            self.messenger.getSuccessFeedbackMessage(), "DSGTools Plugin", Qgis.Info
+        )
         return (1, self.messenger.getSuccessFeedbackMessage())
 
-    def dropDatabase(self,db):
+    def dropDatabase(self, db):
         """
         Drops the created database case a problem occurs during database creation
         db: QSqlDatabase to be dropped
@@ -239,8 +299,8 @@ class PostgisDbThread(GenericThread):
         port = db.port()
         user = db.userName()
         password = db.password()
-        database = 'postgres'
-        pgDB = QSqlDatabase('QPSQL')
+        database = "postgres"
+        pgDB = QSqlDatabase("QPSQL")
         pgDB.setHostName(host)
         pgDB.setPort(port)
         pgDB.setUserName(user)

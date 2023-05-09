@@ -21,27 +21,33 @@
 """
 
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingException)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingException,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
-    FLAGS = 'FLAGS'
-    INPUT = 'INPUT'
-    OUTPUT = 'OUTPUT'
-    SELECTED = 'SELECTED'
-    TOLERANCE = 'TOLERANCE'
+    FLAGS = "FLAGS"
+    INPUT = "INPUT"
+    OUTPUT = "OUTPUT"
+    SELECTED = "SELECTED"
+    TOLERANCE = "TOLERANCE"
 
     def initAlgorithm(self, config):
         """
@@ -49,33 +55,29 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorLine ]
+                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorLine]
             )
         )
 
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
 
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.TOLERANCE,
-                self.tr('Line length tolerance'),
+                self.tr("Line length tolerance"),
                 type=QgsProcessingParameterNumber.Double,
                 minValue=0,
-                defaultValue=5
+                defaultValue=5,
             )
         )
 
         self.addOutput(
             QgsProcessingOutputVectorLayer(
-                self.OUTPUT,
-                self.tr('Original layer without small lines')
+                self.OUTPUT, self.tr("Original layer without small lines")
             )
         )
 
@@ -88,46 +90,43 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
         if inputLyr is None:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUT)
-                )
+            )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(
-            self.tr(
-                'Identifying small lines in layer {0}...'
-                ).format(inputLyr.name()))
+            self.tr("Identifying small lines in layer {0}...").format(inputLyr.name())
+        )
         flagLyr = algRunner.runIdentifySmallLines(
             inputLyr,
             tol,
             context,
             feedback=multiStepFeedback,
-            onlySelected=onlySelected
-            )
+            onlySelected=onlySelected,
+        )
 
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(
-            self.tr(
-                'Removing small lines from layer {0}...'
-                ).format(inputLyr.name()))
+            self.tr("Removing small lines from layer {0}...").format(inputLyr.name())
+        )
         self.removeFeatures(inputLyr, flagLyr, multiStepFeedback)
 
         return {self.OUTPUT: inputLyr}
-    
-    def removeFeatures(self, inputLyr, flagLyr, feedback, progressDelta = 100):
+
+    def removeFeatures(self, inputLyr, flagLyr, feedback, progressDelta=100):
         featureList, total = self.getIteratorAndFeatureCount(flagLyr)
         currentProgress = feedback.progress()
-        localTotal = progressDelta/total if total else 0
+        localTotal = progressDelta / total if total else 0
         inputLyr.startEditing()
         idRemoveList = []
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
             if feedback.isCanceled():
                 break
-            idRemoveList += [int(feat['reason'].split('=')[-1].split(' ')[0])]
+            idRemoveList += [int(feat["reason"].split("=")[-1].split(" ")[0])]
             feedback.setProgress(currentProgress + (current * localTotal))
         inputLyr.deleteFeatures(idRemoveList)
-        
 
     def name(self):
         """
@@ -137,21 +136,21 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'removesmalllines'
+        return "removesmalllines"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Remove Small Lines')
+        return self.tr("Remove Small Lines")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Correction Processes)')
+        return self.tr("Quality Assurance Tools (Correction Processes)")
 
     def groupId(self):
         """
@@ -161,10 +160,10 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Correction Processes)'
+        return "DSGTools: Quality Assurance Tools (Correction Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('RemoveSmallLinesAlgorithm', string)
+        return QCoreApplication.translate("RemoveSmallLinesAlgorithm", string)
 
     def createInstance(self):
         return RemoveSmallLinesAlgorithm()

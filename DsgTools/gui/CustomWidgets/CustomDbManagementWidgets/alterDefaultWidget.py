@@ -30,15 +30,20 @@ from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtWidgets import QApplication
 from qgis.PyQt.QtGui import QCursor
+
 # DSGTools imports
-from DsgTools.gui.Misc.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
+from DsgTools.gui.Misc.PostgisCustomization.CustomJSONTools.customJSONBuilder import (
+    CustomJSONBuilder,
+)
 from DsgTools.core.Utils.utils import Utils
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'alterDefaultWidget.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "alterDefaultWidget.ui")
+)
+
 
 class AlterDefaultWidget(QtWidgets.QWidget, FORM_CLASS):
-    def __init__(self, abstractDb, uiParameterJsonDict = None, parent = None):
+    def __init__(self, abstractDb, uiParameterJsonDict=None, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.abstractDb = abstractDb
@@ -50,7 +55,7 @@ class AlterDefaultWidget(QtWidgets.QWidget, FORM_CLASS):
         self.domainDict = self.abstractDb.getDbDomainDict(geomDict)
         self.utils = Utils()
         self.populateFromUiParameterJsonDict(uiParameterJsonDict)
-    
+
     def populateFromUiParameterJsonDict(self, uiParameterJsonDict):
         """
         builds a dict with the following format:
@@ -64,27 +69,35 @@ class AlterDefaultWidget(QtWidgets.QWidget, FORM_CLASS):
         }
         """
         if uiParameterJsonDict:
-            if uiParameterJsonDict['allTablesCheckBox']:
+            if uiParameterJsonDict["allTablesCheckBox"]:
                 self.allTablesCheckBox.setCheckState(Qt.Checked)
             else:
-                schemaIdx = self.schemaComboBox.findText(uiParameterJsonDict['schemaComboBox'], flags = Qt.MatchExactly)
+                schemaIdx = self.schemaComboBox.findText(
+                    uiParameterJsonDict["schemaComboBox"], flags=Qt.MatchExactly
+                )
                 self.schemaComboBox.setCurrentIndex(schemaIdx)
-                tableIdx = self.tableComboBox.findText(uiParameterJsonDict['tableComboBox'], flags = Qt.MatchExactly)
+                tableIdx = self.tableComboBox.findText(
+                    uiParameterJsonDict["tableComboBox"], flags=Qt.MatchExactly
+                )
                 self.tableComboBox.setCurrentIndex(tableIdx)
-                if uiParameterJsonDict['allAttributesCheckBox']:
+                if uiParameterJsonDict["allAttributesCheckBox"]:
                     self.allAttributesCheckBox.setCheckState(Qt.Checked)
                 else:
-                    attributeIdx = self.attributeComboBox.findText(uiParameterJsonDict['attributeComboBox'], flags = Qt.MatchExactly)
+                    attributeIdx = self.attributeComboBox.findText(
+                        uiParameterJsonDict["attributeComboBox"], flags=Qt.MatchExactly
+                    )
                     self.attributeComboBox.setCurrentIndex(attributeIdx)
-                idx = self.singleValueComboBox.findText(uiParameterJsonDict['singleValueComboBox'], flags = Qt.MatchExactly)
+                idx = self.singleValueComboBox.findText(
+                    uiParameterJsonDict["singleValueComboBox"], flags=Qt.MatchExactly
+                )
                 self.singleValueComboBox.setCurrentIndex(idx)
 
     def populateSchemaCombo(self):
         self.schemaComboBox.clear()
-        self.schemaComboBox.addItem(self.tr('Select a schema'))
+        self.schemaComboBox.addItem(self.tr("Select a schema"))
         schemaList = self.abstractDb.getGeometricSchemaList()
         for schema in schemaList:
-            if schema not in ['views', 'validation']:
+            if schema not in ["views", "validation"]:
                 self.schemaComboBox.addItem(schema)
 
     @pyqtSlot(int)
@@ -99,7 +112,7 @@ class AlterDefaultWidget(QtWidgets.QWidget, FORM_CLASS):
             schema = self.schemaComboBox.currentText()
             self.tableComboBox.setEnabled(True)
             self.tableComboBox.clear()
-            self.tableComboBox.addItem(self.tr('Select a table'))
+            self.tableComboBox.addItem(self.tr("Select a table"))
             tableList = self.abstractDb.getGeometricTableListFromSchema(schema)
             for table in tableList:
                 self.tableComboBox.addItem(table)
@@ -114,22 +127,26 @@ class AlterDefaultWidget(QtWidgets.QWidget, FORM_CLASS):
             tableName = self.tableComboBox.currentText()
             self.attributeComboBox.setEnabled(True)
             self.attributeComboBox.clear()
-            self.attributeComboBox.addItem(self.tr('Select an attribute'))
+            self.attributeComboBox.addItem(self.tr("Select an attribute"))
             if tableName in list(self.domainDict.keys()):
-                attributeList = list(self.domainDict[tableName]['columns'].keys())
+                attributeList = list(self.domainDict[tableName]["columns"].keys())
                 for attribute in attributeList:
                     self.attributeComboBox.addItem(attribute)
             self.singleValueComboBox.clear()
-    
-    @pyqtSlot(int, name='on_schemaComboBox_currentIndexChanged')
-    @pyqtSlot(int, name='on_tableComboBox_currentIndexChanged')
+
+    @pyqtSlot(int, name="on_schemaComboBox_currentIndexChanged")
+    @pyqtSlot(int, name="on_tableComboBox_currentIndexChanged")
     def populateOnSelectAll(self):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        if self.allTablesCheckBox.checkState() == 2 or (self.allAttributesCheckBox.checkState() == 2 and self.schemaComboBox.currentIndex() != 0 and self.tableComboBox.currentIndex() != 0):
+        if self.allTablesCheckBox.checkState() == 2 or (
+            self.allAttributesCheckBox.checkState() == 2
+            and self.schemaComboBox.currentIndex() != 0
+            and self.tableComboBox.currentIndex() != 0
+        ):
             self.attributeComboBox.clear()
             self.attributeComboBox.setEnabled(False)
             self.singleValueComboBox.clear()
-            self.singleValueComboBox.addItem(self.tr('Select a value to alter'))
+            self.singleValueComboBox.addItem(self.tr("Select a value to alter"))
             if self.allAttributesCheckBox.checkState() == 2:
                 tableList = [self.tableComboBox.currentText()]
             else:
@@ -137,15 +154,23 @@ class AlterDefaultWidget(QtWidgets.QWidget, FORM_CLASS):
             allValueList = []
             idxList = []
             for tableName in tableList:
-                for attrName in list(self.domainDict[tableName]['columns'].keys()):
-                    for code in self.domainDict[tableName]['columns'][attrName]['values']:
-                        value = self.domainDict[tableName]['columns'][attrName]['values'][code]
+                for attrName in list(self.domainDict[tableName]["columns"].keys()):
+                    for code in self.domainDict[tableName]["columns"][attrName][
+                        "values"
+                    ]:
+                        value = self.domainDict[tableName]["columns"][attrName][
+                            "values"
+                        ][code]
                         if value not in allValueList:
                             allValueList.append(value)
             for value in allValueList:
                 for tableName in tableList:
-                    for attrName in list(self.domainDict[tableName]['columns'].keys()):
-                        if value not in list(self.domainDict[tableName]['columns'][attrName]['values'].values()):
+                    for attrName in list(self.domainDict[tableName]["columns"].keys()):
+                        if value not in list(
+                            self.domainDict[tableName]["columns"][attrName][
+                                "values"
+                            ].values()
+                        ):
                             idx = allValueList.index(value)
                             if idx not in idxList:
                                 idxList.append(idx)
@@ -155,7 +180,7 @@ class AlterDefaultWidget(QtWidgets.QWidget, FORM_CLASS):
             for value in allValueList:
                 self.singleValueComboBox.addItem(value)
         QApplication.restoreOverrideCursor()
-    
+
     @pyqtSlot(int)
     def on_attributeComboBox_currentIndexChanged(self, idx):
         if idx == 0:
@@ -167,23 +192,38 @@ class AlterDefaultWidget(QtWidgets.QWidget, FORM_CLASS):
         tableFilter = []
         filterToList = []
         self.singleValueComboBox.clear()
-        self.singleValueComboBox.addItem(self.tr('Select a value to alter'))
+        self.singleValueComboBox.addItem(self.tr("Select a value to alter"))
         tableName = self.tableComboBox.currentText()
         attributeName = self.attributeComboBox.currentText()
         if tableName in list(self.domainDict.keys()):
-            if attributeName in list(self.domainDict[tableName]['columns'].keys()):
-                attrDomainDict = self.domainDict[tableName]['columns'][attributeName]['values']
+            if attributeName in list(self.domainDict[tableName]["columns"].keys()):
+                attrDomainDict = self.domainDict[tableName]["columns"][attributeName][
+                    "values"
+                ]
                 for value in list(attrDomainDict.values()):
                     self.singleValueComboBox.addItem(value)
-                defaultCode = self.abstractDb.getDefaultFromDb(self.schemaComboBox.currentText(),tableName,attributeName)
+                defaultCode = self.abstractDb.getDefaultFromDb(
+                    self.schemaComboBox.currentText(), tableName, attributeName
+                )
                 if defaultCode:
-                    if 'ARRAY' in defaultCode or '@' in defaultCode:
-                        #done to extract value from multi array
-                        defaultCodeInt = int(defaultCode.replace('ARRAY','').replace('(','').replace(')','').replace(']','').replace('[','').replace('@','').replace('<','').split(':')[0])
+                    if "ARRAY" in defaultCode or "@" in defaultCode:
+                        # done to extract value from multi array
+                        defaultCodeInt = int(
+                            defaultCode.replace("ARRAY", "")
+                            .replace("(", "")
+                            .replace(")", "")
+                            .replace("]", "")
+                            .replace("[", "")
+                            .replace("@", "")
+                            .replace("<", "")
+                            .split(":")[0]
+                        )
                     else:
                         defaultCodeInt = int(defaultCode)
                     if defaultCodeInt in list(attrDomainDict.keys()):
-                        comboItem = self.singleValueComboBox.findText(attrDomainDict[defaultCodeInt], flags = Qt.MatchExactly)
+                        comboItem = self.singleValueComboBox.findText(
+                            attrDomainDict[defaultCodeInt], flags=Qt.MatchExactly
+                        )
                         self.singleValueComboBox.setCurrentIndex(comboItem)
         QApplication.restoreOverrideCursor()
 
@@ -224,18 +264,18 @@ class AlterDefaultWidget(QtWidgets.QWidget, FORM_CLASS):
 
     def validate(self):
         if self.allTablesCheckBox.checkState() == 2:
-             if self.singleValueComboBox.currentIndex() == 0:
-                 return False
+            if self.singleValueComboBox.currentIndex() == 0:
+                return False
         elif self.allAttributesCheckBox.checkState() == 2:
-             if self.singleValueComboBox.currentIndex() == 0:
-                 return False
-             if self.schemaComboBox.currentIndex() == 0:
-                 return False
-             if self.tableComboBox.currentIndex() == 0:
-                 return False
+            if self.singleValueComboBox.currentIndex() == 0:
+                return False
+            if self.schemaComboBox.currentIndex() == 0:
+                return False
+            if self.tableComboBox.currentIndex() == 0:
+                return False
         else:
             if self.singleValueComboBox.currentIndex() == 0:
-                 return False
+                return False
             if self.schemaComboBox.currentIndex() == 0:
                 return False
             if self.tableComboBox.currentIndex() == 0:
@@ -245,43 +285,48 @@ class AlterDefaultWidget(QtWidgets.QWidget, FORM_CLASS):
         return True
 
     def validateDiagnosis(self):
-        invalidatedReason = ''
+        invalidatedReason = ""
         if self.allTablesCheckBox.checkState() == 2:
-             if self.singleValueComboBox.currentIndex() == 0:
-                 invalidatedReason += self.tr('A value must be chosen.\n')
-        elif self.allAttributesCheckBox.checkState() == 2:
-             if self.singleValueComboBox.currentIndex() == 0:
-                 invalidatedReason += self.tr('A value must be chosen.\n')
-             if self.schemaComboBox.currentIndex() == 0:
-                 invalidatedReason += self.tr('A schema must be chosen.\n')
-             if self.tableComboBox.currentIndex() == 0:
-                 invalidatedReason += self.tr('A table must be chosen.\n')
-        else:             
             if self.singleValueComboBox.currentIndex() == 0:
-                invalidatedReason += self.tr('A value must be chosen.\n')
+                invalidatedReason += self.tr("A value must be chosen.\n")
+        elif self.allAttributesCheckBox.checkState() == 2:
+            if self.singleValueComboBox.currentIndex() == 0:
+                invalidatedReason += self.tr("A value must be chosen.\n")
             if self.schemaComboBox.currentIndex() == 0:
-                invalidatedReason += self.tr('A schema must be chosen.\n')
+                invalidatedReason += self.tr("A schema must be chosen.\n")
             if self.tableComboBox.currentIndex() == 0:
-                invalidatedReason += self.tr('A table must be chosen.\n')
+                invalidatedReason += self.tr("A table must be chosen.\n")
+        else:
+            if self.singleValueComboBox.currentIndex() == 0:
+                invalidatedReason += self.tr("A value must be chosen.\n")
+            if self.schemaComboBox.currentIndex() == 0:
+                invalidatedReason += self.tr("A schema must be chosen.\n")
+            if self.tableComboBox.currentIndex() == 0:
+                invalidatedReason += self.tr("A table must be chosen.\n")
             if self.attributeComboBox.currentIndex() == 0:
-                invalidatedReason += self.tr('An attribute must be chosen.\n')
+                invalidatedReason += self.tr("An attribute must be chosen.\n")
         return invalidatedReason
 
     def getJSONTag(self):
         if not self.validate():
-            raise Exception(self.tr('Error in default customization ')+ self.title + ' : ' + self.validateDiagnosis())
+            raise Exception(
+                self.tr("Error in default customization ")
+                + self.title
+                + " : "
+                + self.validateDiagnosis()
+            )
         jsonList = []
         inhConstrDict = self.abstractDb.getInheritanceConstraintDict()
         if self.allAttributesCheckBox.checkState() == 2:
             tableName = self.tableComboBox.currentText()
             schema = self.schemaComboBox.currentText()
             if tableName in list(self.domainDict.keys()):
-                for attrName in list(self.domainDict[tableName]['columns'].keys()):
+                for attrName in list(self.domainDict[tableName]["columns"].keys()):
                     self.getJsonTagFromOneTable(schema, tableName, attrName, jsonList)
         elif self.allTablesCheckBox.checkState() == 2:
             for tableName in list(self.domainDict.keys()):
                 schema = self.abstractDb.getTableSchemaFromDb(tableName)
-                for attrName in list(self.domainDict[tableName]['columns'].keys()):
+                for attrName in list(self.domainDict[tableName]["columns"].keys()):
                     self.getJsonTagFromOneTable(schema, tableName, attrName, jsonList)
         else:
             tableName = self.tableComboBox.currentText()
@@ -292,22 +337,43 @@ class AlterDefaultWidget(QtWidgets.QWidget, FORM_CLASS):
 
     def getJsonTagFromOneTable(self, schema, tableName, attrName, jsonList):
         if tableName in list(self.domainDict.keys()):
-            if attrName in list(self.domainDict[tableName]['columns'].keys()):
-                attrDomainDict = self.domainDict[tableName]['columns'][attrName]['values']
-                oldDefaultText = self.abstractDb.getDefaultFromDb(self.schemaComboBox.currentText(),tableName,attrName)
+            if attrName in list(self.domainDict[tableName]["columns"].keys()):
+                attrDomainDict = self.domainDict[tableName]["columns"][attrName][
+                    "values"
+                ]
+                oldDefaultText = self.abstractDb.getDefaultFromDb(
+                    self.schemaComboBox.currentText(), tableName, attrName
+                )
                 if oldDefaultText:
-                    if 'ARRAY' in oldDefaultText or '@' in oldDefaultText:
-                        #done to build multi array
-                        oldDefaultInt = int(oldDefaultText.replace('ARRAY','').replace('(','').replace(')','').replace(']','').replace('[','').replace('@','').replace('<','').split(':')[0])
+                    if "ARRAY" in oldDefaultText or "@" in oldDefaultText:
+                        # done to build multi array
+                        oldDefaultInt = int(
+                            oldDefaultText.replace("ARRAY", "")
+                            .replace("(", "")
+                            .replace(")", "")
+                            .replace("]", "")
+                            .replace("[", "")
+                            .replace("@", "")
+                            .replace("<", "")
+                            .split(":")[0]
+                        )
                     else:
                         oldDefaultInt = int(oldDefaultText)
                 newDefaultText = self.singleValueComboBox.currentText()
-                newDefaultInt = [i for i in list(attrDomainDict.keys()) if attrDomainDict[i] == newDefaultText][0]
+                newDefaultInt = [
+                    i
+                    for i in list(attrDomainDict.keys())
+                    if attrDomainDict[i] == newDefaultText
+                ][0]
                 if oldDefaultText:
-                    newDefault = oldDefaultText.replace(str(oldDefaultInt),str(newDefaultInt))
+                    newDefault = oldDefaultText.replace(
+                        str(oldDefaultInt), str(newDefaultInt)
+                    )
                 else:
                     newDefault = str(newDefaultInt)
-                newElement =  self.jsonBuilder.buildChangeDefaultElement(schema,tableName, attrName, oldDefaultText, newDefault)
+                newElement = self.jsonBuilder.buildChangeDefaultElement(
+                    schema, tableName, attrName, oldDefaultText, newDefault
+                )
                 if newElement not in jsonList:
                     jsonList.append(newElement)
 
@@ -324,10 +390,14 @@ class AlterDefaultWidget(QtWidgets.QWidget, FORM_CLASS):
         }
         """
         uiParameterJsonDict = dict()
-        uiParameterJsonDict['schemaComboBox'] = self.schemaComboBox.currentText()
-        uiParameterJsonDict['tableComboBox'] = self.tableComboBox.currentText()
-        uiParameterJsonDict['allAttributesCheckBox'] = self.allAttributesCheckBox.isChecked()
-        uiParameterJsonDict['allTablesCheckBox'] = self.allTablesCheckBox.isChecked()
-        uiParameterJsonDict['attributeComboBox'] = self.attributeComboBox.currentText()
-        uiParameterJsonDict['singleValueComboBox'] = self.singleValueComboBox.currentText()
+        uiParameterJsonDict["schemaComboBox"] = self.schemaComboBox.currentText()
+        uiParameterJsonDict["tableComboBox"] = self.tableComboBox.currentText()
+        uiParameterJsonDict[
+            "allAttributesCheckBox"
+        ] = self.allAttributesCheckBox.isChecked()
+        uiParameterJsonDict["allTablesCheckBox"] = self.allTablesCheckBox.isChecked()
+        uiParameterJsonDict["attributeComboBox"] = self.attributeComboBox.currentText()
+        uiParameterJsonDict[
+            "singleValueComboBox"
+        ] = self.singleValueComboBox.currentText()
         return uiParameterJsonDict

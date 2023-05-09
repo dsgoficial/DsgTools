@@ -33,13 +33,15 @@ from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 
 import json
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'createProfileWithProfileManager.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "createProfileWithProfileManager.ui")
+)
+
 
 class CreateProfileWithProfileManager(QtWidgets.QDialog, FORM_CLASS):
     profileCreated = pyqtSignal(str, str)
-    
-    def __init__(self, permissionManager, abstractDb, parent = None):
+
+    def __init__(self, permissionManager, abstractDb, parent=None):
         """
         Constructor
         """
@@ -55,7 +57,7 @@ class CreateProfileWithProfileManager(QtWidgets.QDialog, FORM_CLASS):
         self.abstractDbFactory = DbFactory()
 
         self.populateTreeDict()
-        
+
     def __del__(self):
         """
         Destructor
@@ -70,26 +72,30 @@ class CreateProfileWithProfileManager(QtWidgets.QDialog, FORM_CLASS):
         """
         try:
             geomTypeDict = self.abstractDb.getGeomTypeDict()
-            geomDict = self.abstractDb.getGeomDict(geomTypeDict, insertCategory = True)
+            geomDict = self.abstractDb.getGeomDict(geomTypeDict, insertCategory=True)
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), 'DSGTools Plugin', Qgis.Critical)
+            QMessageBox.critical(
+                self,
+                self.tr("Critical!"),
+                self.tr("A problem occurred! Check log for details."),
+            )
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
             return
         version = self.abstractDb.getDatabaseVersion()
         self.profile = dict()
         categories = dict()
         for layerName in list(geomDict.keys()):
-            schema = geomDict[layerName]['schema']
-            category = geomDict[layerName]['category']
+            schema = geomDict[layerName]["schema"]
+            category = geomDict[layerName]["category"]
             if schema not in list(categories.keys()):
                 categories[schema] = dict()
             if category not in list(categories[schema].keys()):
                 categories[schema][category] = dict()
             if layerName not in categories[schema][category]:
                 categories[schema][category][layerName] = dict()
-                categories[schema][category][layerName]['read'] = '0'
-                categories[schema][category][layerName]['write'] = '0'
-        self.profile['database'+'_'+version] = categories
+                categories[schema][category][layerName]["read"] = "0"
+                categories[schema][category][layerName]["write"] = "0"
+        self.profile["database" + "_" + version] = categories
 
     @pyqtSlot()
     def on_buttonBox_accepted(self):
@@ -97,7 +103,9 @@ class CreateProfileWithProfileManager(QtWidgets.QDialog, FORM_CLASS):
         Creates the profile file
         """
         if not self.lineEdit.text():
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Fill the profile name!'))
+            QMessageBox.warning(
+                self, self.tr("Warning!"), self.tr("Fill the profile name!")
+            )
             return
         else:
             profileName = self.lineEdit.text()
@@ -105,7 +113,15 @@ class CreateProfileWithProfileManager(QtWidgets.QDialog, FORM_CLASS):
         edgvVersion = self.versionCombo.currentText()
         if edgvVersion in list(permissionDict.keys()):
             if profileName in permissionDict[edgvVersion]:
-                QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile ') + profileName + self.tr(' for EDGV ') + edgvVersion + self.tr(' already exists!'))
+                QMessageBox.warning(
+                    self,
+                    self.tr("Warning!"),
+                    self.tr("Profile ")
+                    + profileName
+                    + self.tr(" for EDGV ")
+                    + edgvVersion
+                    + self.tr(" already exists!"),
+                )
                 return
         jsonDict = json.dumps(self.profile, sort_keys=True, indent=4)
         self.permissionManager.createSetting(profileName, edgvVersion, jsonDict)

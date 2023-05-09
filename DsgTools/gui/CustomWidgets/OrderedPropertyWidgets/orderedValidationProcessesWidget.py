@@ -22,27 +22,32 @@
 """
 import os
 from collections import OrderedDict
+
 # Qt imports
 from qgis.PyQt import QtGui, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtWidgets import QTableWidgetItem
 
-from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedStructureWidget import OrderedStructureWidget
-from DsgTools.gui.CustomWidgets.ValidationWidgets.validationProcessWidget import ValidationProcessWidget
+from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedStructureWidget import (
+    OrderedStructureWidget,
+)
+from DsgTools.gui.CustomWidgets.ValidationWidgets.validationProcessWidget import (
+    ValidationProcessWidget,
+)
+
 
 class OrderedValidationProcessesWidget(OrderedStructureWidget):
-
     def __init__(self, parent=None):
         """
         Initializates OrderedAttributeRulesWidget
         """
         super(OrderedValidationProcessesWidget, self).__init__(parent)
         self.args = None
-        self.tableWidget.setHorizontalHeaderLabels([self.tr('QGIS Processing Models')])
-        self.widgetKey = 'validationProcessWidgetList'
+        self.tableWidget.setHorizontalHeaderLabels([self.tr("QGIS Processing Models")])
+        self.widgetKey = "validationProcessWidgetList"
         self.parent = parent
         if self.parent:
             self.validationManager = self.parent.parent().parent().validationManager
-    
+
     def instantiateWidgetItem(self):
-        return ValidationProcessWidget(parent = self)
+        return ValidationProcessWidget(parent=self)

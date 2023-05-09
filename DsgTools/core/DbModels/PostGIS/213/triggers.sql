@@ -13,14 +13,14 @@ $BODY$
 		querytext1 := 'INSERT INTO ' || quote_ident(TG_TABLE_SCHEMA) || '.' || quote_ident(TG_TABLE_NAME) || '(';
 		querytext2 := 'geom) SELECT ';
 
-		FOR r IN SELECT (each(hstore(NEW))).* 
+		FOR r IN SELECT (each(hstore(NEW))).*
 		LOOP
 			IF r.key <> 'geom' AND r.key <> 'id' THEN
 				querytext1 := querytext1 || quote_ident(r.key) || ',';
 				IF r.value <> '' THEN
 					querytext2 := querytext2 || quote_literal(r.value) || ',';
 				ELSE
-					querytext2 := querytext2 || 'NULL' || ',';					
+					querytext2 := querytext2 || 'NULL' || ',';
 				END IF;
 			END IF;
 		END LOOP;

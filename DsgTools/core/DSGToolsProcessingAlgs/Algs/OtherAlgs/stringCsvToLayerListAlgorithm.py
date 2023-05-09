@@ -22,16 +22,19 @@
 
 import fnmatch
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsMapLayer, QgsProcessingAlgorithm,
-                       QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterString,
-                       QgsProcessingUtils,
-                       QgsProject)
+from qgis.core import (
+    QgsMapLayer,
+    QgsProcessingAlgorithm,
+    QgsProcessingOutputMultipleLayers,
+    QgsProcessingParameterString,
+    QgsProcessingUtils,
+    QgsProject,
+)
 
 
 class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
-    INPUTLAYERS = 'INPUTLAYERS'
-    OUTPUT = 'OUTPUT'
+    INPUTLAYERS = "INPUTLAYERS"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config=None):
         """
@@ -39,15 +42,13 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterString(
-                self.INPUTLAYERS,
-                self.tr('Comma separated Input Layer Names')
+                self.INPUTLAYERS, self.tr("Comma separated Input Layer Names")
             )
         )
-       
+
         self.addOutput(
             QgsProcessingOutputMultipleLayers(
-                self.OUTPUT,
-                self.tr('Multiple layer list')
+                self.OUTPUT, self.tr("Multiple layer list")
             )
         )
 
@@ -55,17 +56,13 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        layerCsv = self.parameterAsString(
-            parameters,
-            self.INPUTLAYERS,
-            context
-        )
-        layerNameList = layerCsv.split(',')
+        layerCsv = self.parameterAsString(parameters, self.INPUTLAYERS, context)
+        layerNameList = layerCsv.split(",")
         if not len(layerNameList):
-            return {self.OUTPUT : None}
+            return {self.OUTPUT: None}
         layerSet = set()
         layerNamesToLoadSet = self.getLayerNameSetToLoad(layerNameList)
-        progressStep = 100/len(layerNamesToLoadSet)
+        progressStep = 100 / len(layerNamesToLoadSet)
         for idx, layerName in enumerate(layerNamesToLoadSet):
             if feedback.isCanceled():
                 break
@@ -75,11 +72,12 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
             layerSet.add(lyr.id())
             feedback.setProgress(idx * progressStep)
 
-        return { self.OUTPUT : list(layerSet)}
+        return {self.OUTPUT: list(layerSet)}
 
     def getLayerNameSetToLoad(self, layerNameList):
         loadedLayerNamesSet = set(
-            l.name() for l in QgsProject.instance().mapLayers().values() \
+            l.name()
+            for l in QgsProject.instance().mapLayers().values()
             if l.type() == QgsMapLayer.VectorLayer
         )
         wildCardFilterList = [fi for fi in layerNameList if "*" in fi]
@@ -88,28 +86,30 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
             wildCardLayersSet = wildCardLayersSet.union(
                 set(fnmatch.filter(loadedLayerNamesSet, wildCardFilter))
             )
-        layerNamesToLoadSet = set(layerNameList) - set(wildCardFilterList) | wildCardLayersSet
+        layerNamesToLoadSet = (
+            set(layerNameList) - set(wildCardFilterList) | wildCardLayersSet
+        )
         return layerNamesToLoadSet
 
     def name(self):
         """
         Here is where the processing itself takes place.
         """
-        return 'stringcsvtolayerlistalgorithm'
+        return "stringcsvtolayerlistalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('String CSV to Layer List Algorithm')
+        return self.tr("String CSV to Layer List Algorithm")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Other Algorithms')
+        return self.tr("Other Algorithms")
 
     def groupId(self):
         """
@@ -119,10 +119,10 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Other Algorithms'
+        return "DSGTools: Other Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate('StringCsvToLayerListAlgorithm', string)
+        return QCoreApplication.translate("StringCsvToLayerListAlgorithm", string)
 
     def createInstance(self):
         return StringCsvToLayerListAlgorithm()

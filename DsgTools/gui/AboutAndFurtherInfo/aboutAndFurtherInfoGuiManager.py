@@ -21,8 +21,13 @@
 """
 
 from __future__ import absolute_import
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.spellChecker.datasets.ptBR import PalavrasFileConfig, WordDatasetPtBRFileConfig
-from DsgTools.core.NetworkTools.ExternalFilesHandler import ExternalFileDownloadProcessor
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.spellChecker.datasets.ptBR import (
+    PalavrasFileConfig,
+    WordDatasetPtBRFileConfig,
+)
+from DsgTools.core.NetworkTools.ExternalFilesHandler import (
+    ExternalFileDownloadProcessor,
+)
 
 from qgis.PyQt.QtCore import QObject
 from qgis.PyQt.QtWidgets import QToolButton, QMenu, QAction
@@ -30,9 +35,9 @@ from qgis.core import Qgis
 from .Options.options import Options
 from .aboutdialog import AboutDialog
 
-class AboutAndFurtherInfoGuiManager(QObject):
 
-    def __init__(self, manager, iface, parentMenu = None, toolbar = None):
+class AboutAndFurtherInfoGuiManager(QObject):
+    def __init__(self, manager, iface, parentMenu=None, toolbar=None):
         """Constructor.
         :param iface: An interface instance that will be passed to this class
             which provides the hook by which you can manipulate the QGIS
@@ -45,66 +50,69 @@ class AboutAndFurtherInfoGuiManager(QObject):
         self.iface = iface
         self.parentMenu = parentMenu
         self.toolbar = toolbar
-        self.iconBasePath = ':/plugins/DsgTools/icons/'
+        self.iconBasePath = ":/plugins/DsgTools/icons/"
         self.options = Options()
         self.options.firstTimeConfig()
-    
+
     def initGui(self):
         action = self.manager.add_action(
-            self.iconBasePath + 'custom_tools.png',
+            self.iconBasePath + "custom_tools.png",
             text=self.tr("DSGTools' Options"),
             callback=self.showOptions,
             parent=self.iface.mainWindow(),
-            parentMenu = self.parentMenu,
+            parentMenu=self.parentMenu,
             add_to_menu=False,
             add_to_toolbar=False,
-            withShortcut = True
+            withShortcut=True,
         )
         action = self.manager.add_action(
-            self.iconBasePath + 'import.png',
+            self.iconBasePath + "import.png",
             text=self.tr("Download external data"),
             callback=self.checkExternalDownloads,
             parent=self.iface.mainWindow(),
-            parentMenu = self.parentMenu,
+            parentMenu=self.parentMenu,
             add_to_menu=False,
             add_to_toolbar=False,
-            withShortcut = False
+            withShortcut=False,
         )
         # self.parentMenu.addAction(action)
 
-        icon_path = self.iconBasePath + 'bug.png'
+        icon_path = self.iconBasePath + "bug.png"
         action = self.manager.add_action(
             icon_path,
-            text=self.tr('Report bug / Suggest features'),
+            text=self.tr("Report bug / Suggest features"),
             callback=self.showBugTracker,
             parent=self.parentMenu,
             add_to_menu=True,
             add_to_toolbar=False,
-            withShortcut = True)
+            withShortcut=True,
+        )
 
-        icon_path = self.iconBasePath + 'help.png'
+        icon_path = self.iconBasePath + "help.png"
         action = self.manager.add_action(
             icon_path,
-            text=self.tr('Help'),
+            text=self.tr("Help"),
             callback=self.showHelp,
             parent=self.parentMenu,
             add_to_menu=True,
             add_to_toolbar=False,
-            withShortcut = False)
-        
-        icon_path = self.iconBasePath + 'dsg.png'
+            withShortcut=False,
+        )
+
+        icon_path = self.iconBasePath + "dsg.png"
         self.manager.add_action(
             icon_path,
-            text=self.tr('About DSGTools'),
+            text=self.tr("About DSGTools"),
             callback=self.showAbout,
             parent=self.parentMenu,
             add_to_menu=True,
             add_to_toolbar=False,
-            withShortcut = False)
-    
+            withShortcut=False,
+        )
+
     def unload(self):
         pass
-    
+
     def showOptions(self):
         """
         Shows the options
@@ -113,9 +121,11 @@ class AboutAndFurtherInfoGuiManager(QObject):
         self.options.setInterfaceWithParametersFromConfig()
         self.checkExternalDownloads()
         result = self.options.exec_()
-    
+
     def checkExternalDownloads(self):
-        downloadProcessor = ExternalFileDownloadProcessor(parent=self.iface.mainWindow())
+        downloadProcessor = ExternalFileDownloadProcessor(
+            parent=self.iface.mainWindow()
+        )
         output = downloadProcessor.process(
             fileConfigList=[
                 WordDatasetPtBRFileConfig,
@@ -123,13 +133,15 @@ class AboutAndFurtherInfoGuiManager(QObject):
             ]
         )
         if output:
-            message = self.tr('Everyting up to date') if output==1 else self.tr('External files updated')
-            self.iface.messageBar().pushMessage(
-                self.tr('Info'),
-                message,
-                level=Qgis.Info
+            message = (
+                self.tr("Everyting up to date")
+                if output == 1
+                else self.tr("External files updated")
             )
-    
+            self.iface.messageBar().pushMessage(
+                self.tr("Info"), message, level=Qgis.Info
+            )
+
     def showHelp(self):
         """
         Shows the help
@@ -141,7 +153,7 @@ class AboutAndFurtherInfoGuiManager(QObject):
         Shows the bug tracker
         """
         self.iface.openURL("https://github.com/dsgoficial/DsgTools/issues", False)
-    
+
     def showAbout(self):
         """
         Shows the about dialog

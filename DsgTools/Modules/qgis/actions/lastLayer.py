@@ -2,8 +2,8 @@ from qgis import gui, core
 from qgis.utils import iface
 from PyQt5 import QtCore, uic, QtWidgets, QtGui
 
-class LastLayer:
 
+class LastLayer:
     def __init__(self):
         self.layers = []
         self.startSignals()
@@ -19,6 +19,6 @@ class LastLayer:
         self.layers.append(vectorLayer)
 
     def execute(self):
-        if not( len(self.layers) > 0 ):
+        if not (len(self.layers) > 0):
             return
-        iface.layerTreeView().setCurrentLayer( self.layers[0] )
+        iface.layerTreeView().setCurrentLayer(self.layers[0])

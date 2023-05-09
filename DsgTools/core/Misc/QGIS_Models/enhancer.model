@@ -5,176 +5,176 @@
                 "values": {
                     "pos": {
                         "values": {
-                            "y": 60.0, 
+                            "y": 60.0,
                             "x": 123.0
-                        }, 
+                        },
                         "class": "point"
-                    }, 
+                    },
                     "param": {
                         "values": {
-                            "isAdvanced": false, 
-                            "name": "RASTERLAYER_LOWERRESOLUTIONPCTIMAGE", 
-                            "showSublayersDialog": true, 
-                            "value": null, 
-                            "exported": null, 
-                            "hidden": false, 
-                            "optional": false, 
+                            "isAdvanced": false,
+                            "name": "RASTERLAYER_LOWERRESOLUTIONPCTIMAGE",
+                            "showSublayersDialog": true,
+                            "value": null,
+                            "exported": null,
+                            "hidden": false,
+                            "optional": false,
                             "description": "Lower Resolution (PCT Image)"
-                        }, 
+                        },
                         "class": "processing.core.parameters.ParameterRaster"
                     }
-                }, 
+                },
                 "class": "processing.modeler.ModelerAlgorithm.ModelerParameter"
-            }, 
+            },
             "RASTERLAYER_HIGHERRESOLUTION": {
                 "values": {
                     "pos": {
                         "values": {
-                            "y": 128.0, 
+                            "y": 128.0,
                             "x": 125.0
-                        }, 
+                        },
                         "class": "point"
-                    }, 
+                    },
                     "param": {
                         "values": {
-                            "isAdvanced": false, 
-                            "name": "RASTERLAYER_HIGHERRESOLUTION", 
-                            "showSublayersDialog": true, 
-                            "value": null, 
-                            "exported": null, 
-                            "hidden": false, 
-                            "optional": false, 
+                            "isAdvanced": false,
+                            "name": "RASTERLAYER_HIGHERRESOLUTION",
+                            "showSublayersDialog": true,
+                            "value": null,
+                            "exported": null,
+                            "hidden": false,
+                            "optional": false,
                             "description": "Higher Resolution"
-                        }, 
+                        },
                         "class": "processing.core.parameters.ParameterRaster"
                     }
-                }, 
+                },
                 "class": "processing.modeler.ModelerAlgorithm.ModelerParameter"
             }
-        }, 
-        "helpContent": {}, 
-        "group": "DSG", 
-        "name": "enhancer", 
+        },
+        "helpContent": {},
+        "group": "DSG",
+        "name": "enhancer",
         "algs": {
             "SCRIPTHSVFUSION_1": {
                 "values": {
-                    "name": "SCRIPTHSVFUSION_1", 
-                    "paramsFolded": true, 
+                    "name": "SCRIPTHSVFUSION_1",
+                    "paramsFolded": true,
                     "outputs": {
                         "Pansharpened": {
                             "values": {
-                                "description": "pansharpened", 
+                                "description": "pansharpened",
                                 "pos": {
                                     "values": {
-                                        "y": 353.0, 
+                                        "y": 353.0,
                                         "x": 431.0
-                                    }, 
+                                    },
                                     "class": "point"
                                 }
-                            }, 
+                            },
                             "class": "processing.modeler.ModelerAlgorithm.ModelerOutput"
                         }
-                    }, 
-                    "outputsFolded": true, 
+                    },
+                    "outputsFolded": true,
                     "pos": {
                         "values": {
-                            "y": 265.0, 
+                            "y": 265.0,
                             "x": 430.0
-                        }, 
+                        },
                         "class": "point"
-                    }, 
-                    "dependencies": [], 
+                    },
+                    "dependencies": [],
                     "params": {
                         "RGB_Layer": {
                             "values": {
-                                "alg": "OTBSUPERIMPOSESENSOR_1", 
+                                "alg": "OTBSUPERIMPOSESENSOR_1",
                                 "output": "-out"
-                            }, 
+                            },
                             "class": "processing.modeler.ModelerAlgorithm.ValueFromOutput"
-                        }, 
+                        },
                         "Pan_Layer": {
                             "values": {
                                 "name": "RASTERLAYER_HIGHERRESOLUTION"
-                            }, 
+                            },
                             "class": "processing.modeler.ModelerAlgorithm.ValueFromInput"
                         }
-                    }, 
-                    "active": true, 
-                    "consoleName": "script:hsvfusion", 
+                    },
+                    "active": true,
+                    "consoleName": "script:hsvfusion",
                     "description": "HSV fusion"
-                }, 
+                },
                 "class": "processing.modeler.ModelerAlgorithm.Algorithm"
-            }, 
+            },
             "OTBSUPERIMPOSESENSOR_1": {
                 "values": {
-                    "name": "OTBSUPERIMPOSESENSOR_1", 
-                    "paramsFolded": true, 
-                    "outputs": {}, 
-                    "outputsFolded": true, 
+                    "name": "OTBSUPERIMPOSESENSOR_1",
+                    "paramsFolded": true,
+                    "outputs": {},
+                    "outputsFolded": true,
                     "pos": {
                         "values": {
-                            "y": 154.0, 
+                            "y": 154.0,
                             "x": 425.0
-                        }, 
+                        },
                         "class": "point"
-                    }, 
-                    "dependencies": [], 
+                    },
+                    "dependencies": [],
                     "params": {
-                        "-interpolator": 0, 
+                        "-interpolator": 0,
                         "-inm": {
                             "values": {
-                                "alg": "GDALOGRPCTTORGB_1", 
+                                "alg": "GDALOGRPCTTORGB_1",
                                 "output": "OUTPUT"
-                            }, 
+                            },
                             "class": "processing.modeler.ModelerAlgorithm.ValueFromOutput"
-                        }, 
-                        "-ram": 512.0, 
-                        "-interpolator.bco.radius": 2.0, 
-                        "-lms": 4.0, 
+                        },
+                        "-ram": 512.0,
+                        "-interpolator.bco.radius": 2.0,
+                        "-lms": 4.0,
                         "-inr": {
                             "values": {
                                 "name": "RASTERLAYER_HIGHERRESOLUTION"
-                            }, 
+                            },
                             "class": "processing.modeler.ModelerAlgorithm.ValueFromInput"
-                        }, 
+                        },
                         "-elev.default": 0.0
-                    }, 
-                    "active": true, 
-                    "consoleName": "otb:superimposesensor", 
+                    },
+                    "active": true,
+                    "consoleName": "otb:superimposesensor",
                     "description": "Superimpose sensor"
-                }, 
+                },
                 "class": "processing.modeler.ModelerAlgorithm.Algorithm"
-            }, 
+            },
             "GDALOGRPCTTORGB_1": {
                 "values": {
-                    "name": "GDALOGRPCTTORGB_1", 
-                    "paramsFolded": true, 
-                    "outputs": {}, 
-                    "outputsFolded": true, 
+                    "name": "GDALOGRPCTTORGB_1",
+                    "paramsFolded": true,
+                    "outputs": {},
+                    "outputsFolded": true,
                     "pos": {
                         "values": {
-                            "y": 60.0, 
+                            "y": 60.0,
                             "x": 423.0
-                        }, 
+                        },
                         "class": "point"
-                    }, 
-                    "dependencies": [], 
+                    },
+                    "dependencies": [],
                     "params": {
                         "INPUT": {
                             "values": {
                                 "name": "RASTERLAYER_LOWERRESOLUTIONPCTIMAGE"
-                            }, 
+                            },
                             "class": "processing.modeler.ModelerAlgorithm.ValueFromInput"
-                        }, 
+                        },
                         "NBAND": 0
-                    }, 
-                    "active": true, 
-                    "consoleName": "gdalogr:pcttorgb", 
+                    },
+                    "active": true,
+                    "consoleName": "gdalogr:pcttorgb",
                     "description": "PCT to RGB"
-                }, 
+                },
                 "class": "processing.modeler.ModelerAlgorithm.Algorithm"
             }
         }
-    }, 
+    },
     "class": "processing.modeler.ModelerAlgorithm.ModelerAlgorithm"
 }

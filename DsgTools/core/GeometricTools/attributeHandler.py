@@ -22,25 +22,38 @@
 """
 from __future__ import absolute_import
 from builtins import range
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, \
-                      QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, \
-                      QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, \
-                      QgsWkbTypes
+from qgis.core import (
+    QgsMessageLog,
+    QgsVectorLayer,
+    QgsGeometry,
+    QgsField,
+    QgsVectorDataProvider,
+    QgsFeatureRequest,
+    QgsExpression,
+    QgsFeature,
+    QgsSpatialIndex,
+    Qgis,
+    QgsCoordinateTransform,
+    QgsWkbTypes,
+)
 from qgis.PyQt.Qt import QObject
 
+
 class AttributeHandler(QObject):
-    def __init__(self, iface, parent = None):
+    def __init__(self, iface, parent=None):
         super(AttributeHandler, self).__init__()
         self.parent = parent
         self.iface = iface
 
-    def setFeatureAttributes(self, newFeature, attributeDict, editBuffer=None, oldFeat=None):
+    def setFeatureAttributes(
+        self, newFeature, attributeDict, editBuffer=None, oldFeat=None
+    ):
         """
         Changes attribute values according to the reclassification dict using the edit buffer
         newFeature: newly added
         editBuffer: layer edit buffer
         """
-        #setting the attributes using the reclassification dictionary
+        # setting the attributes using the reclassification dictionary
         fields = newFeature.fields()
         for attribute in attributeDict:
             idx = fields.lookupField(attribute)
@@ -49,22 +62,22 @@ class AttributeHandler(QObject):
                 continue
             reclass = attributeDict[attribute]
             if isinstance(reclass, dict):
-                value = reclass['value']
-                if reclass['ignored']: #ignore clause
+                value = reclass["value"]
+                if reclass["ignored"]:  # ignore clause
                     if oldFeat:
                         value = oldFeat[attribute]
                     else:
                         value = None
             else:
                 value = reclass
-            if value == '':
+            if value == "":
                 continue
-            #actual attribute change
+            # actual attribute change
             if editBuffer:
-                #this way we are working with the edit buffer
+                # this way we are working with the edit buffer
                 editBuffer.changeAttributeValue(newFeature.id(), idx, value)
             else:
-                #this way are working with selected features and inserting a new one in the layer
+                # this way are working with selected features and inserting a new one in the layer
                 newFeature.setAttribute(idx, value)
         # if not editBuffer:
         #     # we should return when under the normal behavior
@@ -72,7 +85,15 @@ class AttributeHandler(QObject):
 
     def getTuppleAttribute(self, feature, unifiedLyr, bList=None):
         bList = [] if bList is None else bList
-        attributes = [field.name() for idx, field in enumerate(feature.fields()) if (field.type() != 6 and idx not in unifiedLyr.primaryKeyAttributes() and field.name() not in bList)]
+        attributes = [
+            field.name()
+            for idx, field in enumerate(feature.fields())
+            if (
+                field.type() != 6
+                and idx not in unifiedLyr.primaryKeyAttributes()
+                and field.name() not in bList
+            )
+        ]
         attributes.sort()
-        attributeList = [u'{0}'.format(feature[attribute]) for attribute in attributes]
-        return ','.join(attributeList)
+        attributeList = ["{0}".format(feature[attribute]) for attribute in attributes]
+        return ",".join(attributeList)

@@ -22,14 +22,14 @@
 
 from __future__ import absolute_import
 
-from qgis.PyQt.QtCore import QObject 
+from qgis.PyQt.QtCore import QObject
 from .Toolboxes.toolBoxesGuiManager import ToolBoxesGuiManager
 from .MapTools.mapToolsGuiManager import MapToolsGuiManager
 from .Toolbars.toolBarsGuiManager import ToolbarsGuiManager
 
-class ProductionToolsGuiManager(QObject):
 
-    def __init__(self, manager, iface, parentMenu = None, toolbar = None):
+class ProductionToolsGuiManager(QObject):
+    def __init__(self, manager, iface, parentMenu=None, toolbar=None):
         """Constructor.
         :param iface: An interface instance that will be passed to this class
             which provides the hook by which you can manipulate the QGIS
@@ -42,20 +42,30 @@ class ProductionToolsGuiManager(QObject):
         self.iface = iface
         self.parentMenu = parentMenu
         self.toolbar = toolbar
-        self.menu = self.manager.addMenu(u'productiontools', self.tr('Production Tools'),'productiontools.png')
-        self.stackButton = self.manager.createToolButton(self.toolbar, u'ProductionTools')
-        self.iconBasePath = ':/plugins/DsgTools/icons/'
-    
+        self.menu = self.manager.addMenu(
+            "productiontools", self.tr("Production Tools"), "productiontools.png"
+        )
+        self.stackButton = self.manager.createToolButton(
+            self.toolbar, "ProductionTools"
+        )
+        self.iconBasePath = ":/plugins/DsgTools/icons/"
+
     def initGui(self):
-        self.toolBoxesGuiManager = ToolBoxesGuiManager(self.manager, self.iface, parentMenu=self.menu, stackButton=self.stackButton)
+        self.toolBoxesGuiManager = ToolBoxesGuiManager(
+            self.manager, self.iface, parentMenu=self.menu, stackButton=self.stackButton
+        )
         self.toolBoxesGuiManager.initGui()
         self.menu.addSeparator()
-        self.mapToolsGuiManager = MapToolsGuiManager(self.manager, self.iface, parentMenu=self.menu, toolbar = self.toolbar)
+        self.mapToolsGuiManager = MapToolsGuiManager(
+            self.manager, self.iface, parentMenu=self.menu, toolbar=self.toolbar
+        )
         self.mapToolsGuiManager.initGui()
         self.menu.addSeparator()
-        self.toolbarsGuiManager = ToolbarsGuiManager(self.manager, self.iface, parentMenu=self.menu, toolbar=self.toolbar)
+        self.toolbarsGuiManager = ToolbarsGuiManager(
+            self.manager, self.iface, parentMenu=self.menu, toolbar=self.toolbar
+        )
         self.toolbarsGuiManager.initGui()
-    
+
     def unload(self):
         self.toolBoxesGuiManager.unload()
         self.mapToolsGuiManager.unload()

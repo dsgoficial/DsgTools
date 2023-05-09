@@ -28,16 +28,32 @@ from qgis.core import QgsMessageLog, Qgis
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt
-from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox, QMenu, QApplication, QFileDialog
+from qgis.PyQt.QtWidgets import (
+    QListWidgetItem,
+    QMessageBox,
+    QMenu,
+    QApplication,
+    QFileDialog,
+)
 from qgis.PyQt.QtGui import QCursor
 
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'dbProfileManager.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "dbProfileManager.ui")
+)
+
 
 class DbProfileManager(QtWidgets.QDialog, FORM_CLASS):
-    
-    def __init__(self, grantedProfileList, notGrantedProfileList, permissionManager, userName, dbName, edgvVersion, parent = None):
+    def __init__(
+        self,
+        grantedProfileList,
+        notGrantedProfileList,
+        permissionManager,
+        userName,
+        dbName,
+        edgvVersion,
+        parent=None,
+    ):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.setupUi(self)
@@ -47,54 +63,80 @@ class DbProfileManager(QtWidgets.QDialog, FORM_CLASS):
         self.userName = userName
         self.dbName = dbName
         self.edgvVersion = edgvVersion
-        self.profileCustomSelector.setTitle(self.tr('Manage permissions to user ') + userName + self.tr(' on database ') + dbName)
-        self.profileCustomSelector.setFromList(list(notGrantedProfileList), unique = True) #passes a copy using list(<list object>)
+        self.profileCustomSelector.setTitle(
+            self.tr("Manage permissions to user ")
+            + userName
+            + self.tr(" on database ")
+            + dbName
+        )
+        self.profileCustomSelector.setFromList(
+            list(notGrantedProfileList), unique=True
+        )  # passes a copy using list(<list object>)
         self.profileCustomSelector.setToList(list(grantedProfileList))
-    
+
     @pyqtSlot(bool)
     def on_applyPushButton_clicked(self):
-        permissionsToGrant = [i for i in self.profileCustomSelector.toLs if i not in self.grantedProfileList]
-        profilesToRevoke = [i for i in self.profileCustomSelector.fromLs if i not in self.notGrantedProfileList]
-        #grant operation
-        header = self.tr('Grant / Revoke operation complete: ')
+        permissionsToGrant = [
+            i
+            for i in self.profileCustomSelector.toLs
+            if i not in self.grantedProfileList
+        ]
+        profilesToRevoke = [
+            i
+            for i in self.profileCustomSelector.fromLs
+            if i not in self.notGrantedProfileList
+        ]
+        # grant operation
+        header = self.tr("Grant / Revoke operation complete: ")
         successList = []
         errorDict = dict()
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         for profileName in permissionsToGrant:
             try:
-                self.permissionManager.grantPermission(self.dbName, profileName, self.edgvVersion, self.userName) #TODO: add error treatment
+                self.permissionManager.grantPermission(
+                    self.dbName, profileName, self.edgvVersion, self.userName
+                )  # TODO: add error treatment
                 successList.append(profileName)
             except Exception as e:
                 errorDict[profileName] = str(e.args[0])
         for profileName in profilesToRevoke:
             try:
-                self.permissionManager.revokePermission(self.dbName, profileName, self.userName) #TODO: add error treatment
+                self.permissionManager.revokePermission(
+                    self.dbName, profileName, self.userName
+                )  # TODO: add error treatment
                 successList.append(profileName)
             except Exception as e:
-                errorDict[profileName] = ':'.join(e.args)
+                errorDict[profileName] = ":".join(e.args)
         QApplication.restoreOverrideCursor()
         self.outputMessage(header, successList, errorDict)
         self.close()
-    
+
     @pyqtSlot(bool)
     def on_cancelPushButton_clicked(self):
-        self.close()    
-    
+        self.close()
+
     def outputMessage(self, header, successList, exceptionDict):
         msg = header
         if len(successList) > 0:
-            msg += self.tr('\nSuccessful profiles: ')
-            msg +=', '.join(successList)
+            msg += self.tr("\nSuccessful profiles: ")
+            msg += ", ".join(successList)
         msg += self.logInternalError(exceptionDict)
-        QMessageBox.warning(self, self.tr('Operation Complete!'), msg)
-    
+        QMessageBox.warning(self, self.tr("Operation Complete!"), msg)
+
     def logInternalError(self, exceptionDict):
-        msg = ''
+        msg = ""
         errorDbList = list(exceptionDict.keys())
-        if len(errorDbList)> 0:
-            msg += self.tr('\Profiles with error:')
-            msg+= ', '.join(errorDbList)
-            msg+= self.tr('\nError messages for each profile were output in qgis log.')
+        if len(errorDbList) > 0:
+            msg += self.tr("\Profiles with error:")
+            msg += ", ".join(errorDbList)
+            msg += self.tr("\nError messages for each profile were output in qgis log.")
             for errorDb in errorDbList:
-                QgsMessageLog.logMessage(self.tr('Error for profile ')+ errorDb + ': ' +exceptionDict[errorDb], "DSGTools Plugin", Qgis.Critical)
-        return msg 
+                QgsMessageLog.logMessage(
+                    self.tr("Error for profile ")
+                    + errorDb
+                    + ": "
+                    + exceptionDict[errorDb],
+                    "DSGTools Plugin",
+                    Qgis.Critical,
+                )
+        return msg

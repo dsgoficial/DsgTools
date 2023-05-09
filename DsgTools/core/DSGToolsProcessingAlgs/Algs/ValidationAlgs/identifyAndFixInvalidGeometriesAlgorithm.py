@@ -25,33 +25,36 @@ from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from .validationAlgorithm import ValidationAlgorithm
 import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingException)
+from qgis.core import (
+    QgsProcessing,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFeatureSink,
+    QgsFeature,
+    QgsDataSourceUri,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsGeometry,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingException,
+)
+
 
 class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
-    IGNORE_CLOSED = 'IGNORE_CLOSED'
-    TYPE = 'TYPE'
-    FLAGS = 'FLAGS'
-    OUTPUT = 'OUTPUT'
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
+    IGNORE_CLOSED = "IGNORE_CLOSED"
+    TYPE = "TYPE"
+    FLAGS = "FLAGS"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -60,40 +63,38 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry]
+                self.tr("Input layer"),
+                [QgsProcessing.TypeVectorAnyGeometry],
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.IGNORE_CLOSED,
-                self.tr('Ignore flags on start point or end points of closed linestrings'),
-                defaultValue=False
+                self.tr(
+                    "Ignore flags on start point or end points of closed linestrings"
+                ),
+                defaultValue=False,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.TYPE,
-                self.tr('Fix input geometries'),
-                defaultValue=False
+                self.TYPE, self.tr("Fix input geometries"), defaultValue=False
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
         self.addOutput(
             QgsProcessingOutputVectorLayer(
                 self.OUTPUT,
-                self.tr('Original layer (has fixed geometries if fix mode is chosen)')
+                self.tr("Original layer (has fixed geometries if fix mode is chosen)"),
             )
         )
 
@@ -106,7 +107,9 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         ignoreClosed = self.parameterAsBool(parameters, self.IGNORE_CLOSED, context)
         fixInput = self.parameterAsBool(parameters, self.TYPE, context)
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
+        self.prepareFlagSink(
+            parameters, inputLyr, QgsWkbTypes.Point, context, addFeatId=True
+        )
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         currentStep = 0
@@ -117,19 +120,20 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
             ignoreClosed=ignoreClosed,
             fixInput=fixInput,
             onlySelected=onlySelected,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         currentStep += 1
         multiStepFeedback.setProgressText(self.tr("Raising Flags"))
         multiStepFeedback.setCurrentStep(currentStep)
         itemSize = len(flagDict)
-        progressSize = 100/itemSize if itemSize else 0
+        progressSize = 100 / itemSize if itemSize else 0
         for current, (key, outDict) in enumerate(flagDict.items()):
             if multiStepFeedback.isCanceled():
                 break
             self.flagFeature(
-                flagGeom=outDict['geom'],
-                flagText=outDict['reason']
+                flagGeom=outDict["geom"],
+                flagText=f"""Reason: {outDict["reason"]}""",
+                featid=outDict["featid"],
             )
             multiStepFeedback.setProgress(current * progressSize)
 
@@ -143,21 +147,21 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifyandfixinvalidgeometries'
+        return "identifyandfixinvalidgeometries"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify And Fix Invalid Geometries')
+        return self.tr("Identify And Fix Invalid Geometries")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -167,10 +171,12 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyAndFixInvalidGeometriesAlgorithm', string)
+        return QCoreApplication.translate(
+            "IdentifyAndFixInvalidGeometriesAlgorithm", string
+        )
 
     def createInstance(self):
         return IdentifyAndFixInvalidGeometriesAlgorithm()

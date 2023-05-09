@@ -23,11 +23,16 @@
 
 from qgis.PyQt.QtWidgets import QFileDialog
 
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.abstractSelectionWidget import AbstractSelectionWidget
-from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.databaseFileLineEdit import DatabaseFileLineEdit
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.abstractSelectionWidget import (
+    AbstractSelectionWidget,
+)
+from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.databaseFileLineEdit import (
+    DatabaseFileLineEdit,
+)
 from DsgTools.core.dsgEnums import DsgEnums
 
 import os
+
 
 class ShapefileWidget(AbstractSelectionWidget):
     """
@@ -44,15 +49,22 @@ class ShapefileWidget(AbstractSelectionWidget):
         self.source = DsgEnums.Shapefile
         # initiate new instance of actual class widget
         self.selectionWidget = self.getNewSelectionWidget(parent=parent)
-        self.selectionWidget.connectionSelectorLineEdit.caption = self.tr('Select a Directory Containing Shapefiles')
-        self.selectionWidget.connectionSelectorLineEdit.filter = self.tr('Shapefile Database')
+        self.selectionWidget.connectionSelectorLineEdit.caption = self.tr(
+            "Select a Directory Containing Shapefiles"
+        )
+        self.selectionWidget.connectionSelectorLineEdit.filter = self.tr(
+            "Shapefile Database"
+        )
         # initiate driver for abstract db setting
         self.selectionWidget.driver = DsgEnums.DriverShapefile
         # connect datasource selection to this ones - this part is not great, sucks actually;
         # a refactory should be be executed in here...
-        self.selectionWidget.connectionSelectorLineEdit.selectFilePushButton.clicked.disconnect(\
-            self.selectionWidget.connectionSelectorLineEdit.on_selectFilePushButton_clicked)
-        self.selectionWidget.connectionSelectorLineEdit.selectFilePushButton.clicked.connect(self.selectDatasource)
+        self.selectionWidget.connectionSelectorLineEdit.selectFilePushButton.clicked.disconnect(
+            self.selectionWidget.connectionSelectorLineEdit.on_selectFilePushButton_clicked
+        )
+        self.selectionWidget.connectionSelectorLineEdit.selectFilePushButton.clicked.connect(
+            self.selectDatasource
+        )
 
     def getNewSelectionWidget(self, parent=None):
         """
@@ -68,7 +80,7 @@ class ShapefileWidget(AbstractSelectionWidget):
         :return: (str) datasource connection name.
         """
         abstractDb = self.getDatasource()
-        return abstractDb.getDatabaseName() if abstractDb else ''
+        return abstractDb.getDatabaseName() if abstractDb else ""
 
     def setDatasource(self, newDatasource):
         """
@@ -81,7 +93,7 @@ class ShapefileWidget(AbstractSelectionWidget):
     def getDatasource(self):
         """
         Gets the datasource selected on current widget.
-        :return: (AbstractDb) the object representing the target datasource according to its driver. 
+        :return: (AbstractDb) the object representing the target datasource according to its driver.
         """
         return self.selectionWidget.abstractDb
 
@@ -91,7 +103,7 @@ class ShapefileWidget(AbstractSelectionWidget):
         :return: (str) datasource connection name.
         """
         abstractDb = self.getDatasource()
-        return "shp:{0}".format(abstractDb.databaseName()) if abstractDb else ''
+        return "shp:{0}".format(abstractDb.databaseName()) if abstractDb else ""
 
     def selectDatasource(self):
         """
@@ -101,11 +113,15 @@ class ShapefileWidget(AbstractSelectionWidget):
         fd = QFileDialog()
         fd.setFileMode(QFileDialog.Directory)
         fd.setOption(QFileDialog.ShowDirsOnly, True)
-        directory = fd.getExistingDirectory(caption=self.selectionWidget.connectionSelectorLineEdit.caption)
+        directory = fd.getExistingDirectory(
+            caption=self.selectionWidget.connectionSelectorLineEdit.caption
+        )
         if directory:
             if len(directory) > 4:
                 # datasource connection name for a shape 'database' is its parent folder
-                directory = directory if directory[-4:].lower() != '.shp' else directory[:-4]
+                directory = (
+                    directory if directory[-4:].lower() != ".shp" else directory[:-4]
+                )
             # set only directories as line text
             self.selectionWidget.connectionSelectorLineEdit.lineEdit.setText(directory)
         self.selectionWidget.loadDatabase(currentText=directory)

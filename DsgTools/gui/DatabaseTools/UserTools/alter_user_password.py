@@ -29,11 +29,13 @@ from qgis.PyQt.QtWidgets import QMessageBox
 
 from qgis.core import Qgis, QgsMessageLog
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'alter_user_password.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "alter_user_password.ui")
+)
+
 
 class AlterUserPassword(QtWidgets.QDialog, FORM_CLASS):
-    def __init__(self, user = None, abstractDb = None, userList = None, parent = None):
+    def __init__(self, user=None, abstractDb=None, userList=None, parent=None):
         """
         Constructor
         """
@@ -48,7 +50,7 @@ class AlterUserPassword(QtWidgets.QDialog, FORM_CLASS):
         self.user = user
         self.newPasswordLineEdit.setFocus()
         self.userList = userList
-    
+
     @pyqtSlot(bool)
     def on_alterPasswordButton_clicked(self):
         """
@@ -57,14 +59,18 @@ class AlterUserPassword(QtWidgets.QDialog, FORM_CLASS):
         newpassword = self.newPasswordLineEdit.text()
         newpassword_2 = self.newPasswordLineEdit_2.text()
         if newpassword != newpassword_2:
-            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Password mismatch! Password not altered!'))
+            QMessageBox.critical(
+                self,
+                self.tr("Critical!"),
+                self.tr("Password mismatch! Password not altered!"),
+            )
             return
         if self.user:
             self.alterDatabasePassword(self.user, newpassword)
         if self.userList:
             self.alterServerPassword(self.userList, newpassword)
         self.close()
-    
+
     def alterDatabasePassword(self, user, newpassword):
         """
         Alters the password of a specific user
@@ -72,10 +78,18 @@ class AlterUserPassword(QtWidgets.QDialog, FORM_CLASS):
         try:
             self.abstractDb.alterUserPass(self.user, newpassword)
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QMessageBox.critical(self, self.tr("Critical!"), e.args[0])
             return
-        QMessageBox.warning(self, self.tr('Success!'), self.tr('User ') +self.user+self.tr(' password successfully updated on database ')+self.abstractDb.getDatabaseName()+'!')
-    
+        QMessageBox.warning(
+            self,
+            self.tr("Success!"),
+            self.tr("User ")
+            + self.user
+            + self.tr(" password successfully updated on database ")
+            + self.abstractDb.getDatabaseName()
+            + "!",
+        )
+
     def alterServerPassword(self, userList, newpassword):
         """
         Alters the password of a list of database users
@@ -87,34 +101,45 @@ class AlterUserPassword(QtWidgets.QDialog, FORM_CLASS):
                 self.abstractDb.alterUserPass(user, newpassword)
                 successList.append(user)
             except Exception as e:
-                exceptionDict[user] = ':'.join(e.args)
-        header = self.tr('Alter operation on server ')+self.abstractDb.getHostName()+self.tr(' complete!\n')
+                exceptionDict[user] = ":".join(e.args)
+        header = (
+            self.tr("Alter operation on server ")
+            + self.abstractDb.getHostName()
+            + self.tr(" complete!\n")
+        )
         self.outputMessage(header, successList, exceptionDict)
-    
+
     def outputMessage(self, header, successList, exceptionDict):
         """
         Makes the output message
         """
         msg = header
         if len(successList) > 0:
-            msg += self.tr('\nSuccessful users: ')
-            msg +=', '.join(successList)
+            msg += self.tr("\nSuccessful users: ")
+            msg += ", ".join(successList)
         msg += self.logInternalError(exceptionDict)
-        QMessageBox.warning(self, self.tr('Operation Complete!'), msg)
+        QMessageBox.warning(self, self.tr("Operation Complete!"), msg)
 
     def logInternalError(self, exceptionDict):
         """
         Logs all internal errors into QGIS' log
         """
-        msg = ''
+        msg = ""
         errorDbList = list(exceptionDict.keys())
-        if len(errorDbList)> 0:
-            msg += self.tr('\nUsers with error:')
-            msg+= ', '.join(errorDbList)
-            msg+= self.tr('\nError messages for each user were output in qgis log.')
+        if len(errorDbList) > 0:
+            msg += self.tr("\nUsers with error:")
+            msg += ", ".join(errorDbList)
+            msg += self.tr("\nError messages for each user were output in qgis log.")
             for errorDb in errorDbList:
-                QgsMessageLog.logMessage(self.tr('Error for user ')+ errorDb + ': ' +exceptionDict[errorDb], "DSGTools Plugin", Qgis.Critical)
-        return msg 
+                QgsMessageLog.logMessage(
+                    self.tr("Error for user ")
+                    + errorDb
+                    + ": "
+                    + exceptionDict[errorDb],
+                    "DSGTools Plugin",
+                    Qgis.Critical,
+                )
+        return msg
 
     @pyqtSlot(bool)
     def on_cancelButton_clicked(self):

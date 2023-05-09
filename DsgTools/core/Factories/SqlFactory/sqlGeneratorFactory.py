@@ -37,8 +37,8 @@ class SqlGeneratorFactory(object):
         :return:
         """
         genDict = {
-            DsgEnums.DriverGeopackage : lambda : GeopackageSqlGenerator(),
-            DsgEnums.DriverSpatiaLite : lambda : SpatialiteSqlGenerator(),
-            DsgEnums.DriverPostGIS : lambda : PostGISSqlGenerator()
+            DsgEnums.DriverGeopackage: lambda: GeopackageSqlGenerator(),
+            DsgEnums.DriverSpatiaLite: lambda: SpatialiteSqlGenerator(),
+            DsgEnums.DriverPostGIS: lambda: PostGISSqlGenerator(),
         }
         return genDict[driver]()

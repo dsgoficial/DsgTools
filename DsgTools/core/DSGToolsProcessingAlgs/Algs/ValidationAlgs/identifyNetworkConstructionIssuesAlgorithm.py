@@ -40,20 +40,20 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsFeatureRequest,
     QgsGeometry,
-    QgsPoint
+    QgsPoint,
 )
 
 
 class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
     INPUT_LINES = "INPUT_LINES"
-    SELECTED = 'SELECTED'
+    SELECTED = "SELECTED"
     TOLERANCE = "TOLERANCE"
     LINEFILTERLAYERS = "LINEFILTERLAYERS"
     POLYGONFILTERLAYERS = "POLYGONFILTERLAYERS"
-    IGNORE_DANGLES_ON_UNSEGMENTED_LINES = 'IGNORE_DANGLES_ON_UNSEGMENTED_LINES'
-    INPUT_IS_BOUDARY_LAYER = 'INPUT_IS_BOUDARY_LAYER'
-    GEOGRAPHIC_BOUNDARY = 'GEOGRAPHIC_BOUNDARY'
-    FLAGS = 'FLAGS'
+    IGNORE_DANGLES_ON_UNSEGMENTED_LINES = "IGNORE_DANGLES_ON_UNSEGMENTED_LINES"
+    INPUT_IS_BOUDARY_LAYER = "INPUT_IS_BOUDARY_LAYER"
+    GEOGRAPHIC_BOUNDARY = "GEOGRAPHIC_BOUNDARY"
+    FLAGS = "FLAGS"
 
     def initAlgorithm(self, config):
         """
@@ -69,17 +69,16 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.INPUT_IS_BOUDARY_LAYER,
                 self.tr(
-                    'Input is a boundary layer (every line must be connected '
-                    'to an element of either the input layer or the filters)'
-                )
+                    "Input is a boundary layer (every line must be connected "
+                    "to an element of either the input layer or the filters)"
+                ),
             )
         )
         self.addParameter(
@@ -110,15 +109,17 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.IGNORE_DANGLES_ON_UNSEGMENTED_LINES,
-                self.tr('Ignore dangle on unsegmented lines')
+                self.tr("Ignore dangle on unsegmented lines"),
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
-                self.tr('Geographic Boundary (this layer only filters the output dangles)'),
+                self.tr(
+                    "Geographic Boundary (this layer only filters the output dangles)"
+                ),
                 [QgsProcessing.TypeVectorPolygon],
-                optional=True
+                optional=True,
             )
         )
         self.addParameter(
@@ -133,23 +134,31 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
         """
         self.layerHandler = LayerHandler()
         algRunner = AlgRunner()
-        lineLyrList = self.parameterAsLayerList(
-            parameters, self.INPUT_LINES, context
-        )
+        lineLyrList = self.parameterAsLayerList(parameters, self.INPUT_LINES, context)
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         searchRadius = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        lineFilterLyrList = self.parameterAsLayerList(parameters, self.LINEFILTERLAYERS, context)
-        polygonFilterLyrList = self.parameterAsLayerList(parameters, self.POLYGONFILTERLAYERS, context)
+        lineFilterLyrList = self.parameterAsLayerList(
+            parameters, self.LINEFILTERLAYERS, context
+        )
+        polygonFilterLyrList = self.parameterAsLayerList(
+            parameters, self.POLYGONFILTERLAYERS, context
+        )
         ignoreDanglesOnUnsegmentedLines = self.parameterAsBool(
-            parameters, self.IGNORE_DANGLES_ON_UNSEGMENTED_LINES, context)
+            parameters, self.IGNORE_DANGLES_ON_UNSEGMENTED_LINES, context
+        )
         inputIsBoundaryLayer = self.parameterAsBool(
-            parameters, self.INPUT_IS_BOUDARY_LAYER, context)
-        geographicBoundsLyr = self.parameterAsVectorLayer(parameters, self.GEOGRAPHIC_BOUNDARY, context)
+            parameters, self.INPUT_IS_BOUDARY_LAYER, context
+        )
+        geographicBoundsLyr = self.parameterAsVectorLayer(
+            parameters, self.GEOGRAPHIC_BOUNDARY, context
+        )
         self.prepareFlagSink(parameters, lineLyrList[0], QgsWkbTypes.Point, context)
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Building unified lines layer..."))
-        mergedLines = self.getInputLineLayers(context, algRunner, lineLyrList, onlySelected, multiStepFeedback)
+        mergedLines = self.getInputLineLayers(
+            context, algRunner, lineLyrList, onlySelected, multiStepFeedback
+        )
         multiStepFeedback.setCurrentStep(1)
         outputLyr = algRunner.runIdentifyDangles(
             inputLayer=mergedLines,
@@ -166,38 +175,52 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
         self.flagSink.addFeatures(outputLyr.getFeatures(), QgsFeatureSink.FastInsert)
         multiStepFeedback.setCurrentStep(3)
         self.getUnsegmentedErrors(
-            mergedLines, 
+            mergedLines,
             lineFilter=lineFilterLyrList,
             polygonFilter=polygonFilterLyrList,
             flagSet=set(i.geometry().asWkb() for i in outputLyr.getFeatures()),
-            algRunner=algRunner, context=context, feedback=multiStepFeedback)
-        return {
-            "FLAGS": self.flag_id
-        }
+            algRunner=algRunner,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        return {"FLAGS": self.flag_id}
 
-    def getInputLineLayers(self, context, algRunner, lineLyrList, onlySelected, feedback):
+    def getInputLineLayers(
+        self, context, algRunner, lineLyrList, onlySelected, feedback
+    ):
         nSteps = 2 if not onlySelected else 2 + len(lyrList)
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+
         def getLineLayer(currentStep, lineLyr):
             multiStepFeedback.setCurrentStep(currentStep)
-            return lineLyr if not onlySelected \
+            return (
+                lineLyr
+                if not onlySelected
                 else algRunner.runSaveSelectedFeatures(
-                    lineLyr,
-                    context,
-                    feedback=multiStepFeedback
+                    lineLyr, context, feedback=multiStepFeedback
                 )
-            
+            )
+
         lyrList = [
             getLineLayer(currentStep, lineLyr)
             for currentStep, lineLyr in enumerate(lineLyrList)
         ]
-        multiStepFeedback.setCurrentStep(nSteps-1)
+        multiStepFeedback.setCurrentStep(nSteps - 1)
         mergedLines = algRunner.runMergeVectorLayers(
             inputList=lyrList, feedback=multiStepFeedback, context=context
         )
         return mergedLines
-    
-    def getUnsegmentedErrors(self, mergedLines, lineFilter, polygonFilter, flagSet, algRunner, context, feedback):
+
+    def getUnsegmentedErrors(
+        self,
+        mergedLines,
+        lineFilter,
+        polygonFilter,
+        flagSet,
+        algRunner,
+        context,
+        feedback,
+    ):
         # build spatial index on mergedLines
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
         multiStepFeedback.setCurrentStep(0)
@@ -209,13 +232,16 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(1)
         # run intersect
         # merge and build spatial index on line filters and polygon filters
-        filterLayer = self.getFilterLayers(lineFilter, polygonFilter, algRunner, multiStepFeedback, context)
+        filterLayer = self.getFilterLayers(
+            lineFilter, polygonFilter, algRunner, multiStepFeedback, context
+        )
         multiStepFeedback.setCurrentStep(2)
         nFeats = mergedLines.featureCount()
         if nFeats == 0:
             return
         stepSize = 100 / nFeats
         errorSet = set()
+
         def evaluate(feat):
             outputSet = set()
             if multiStepFeedback.isCanceled():
@@ -227,54 +253,75 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
             request = QgsFeatureRequest().setFilterRect(bbox)
             # inner search
             for candidateFeat in itertools.chain.from_iterable(
-                [mergedLines.getFeatures(request), filterLayer.getFeatures(request)]):
+                [mergedLines.getFeatures(request), filterLayer.getFeatures(request)]
+            ):
                 if multiStepFeedback.isCanceled():
                     return outputSet
                 candidateGeom = candidateFeat.geometry()
                 candidateConstGetGeom = candidateGeom.constGet()
                 if not engine.intersects(candidateConstGetGeom):
                     continue
-                if geom.equals(candidateGeom): #same geom
+                if geom.equals(candidateGeom):  # same geom
                     continue
                 intersection = engine.intersection(candidateConstGetGeom)
-                intersectionPoints = [intersection] if isinstance(intersection, QgsPoint) else intersection.vertices()
+                intersectionPoints = (
+                    [intersection]
+                    if isinstance(intersection, QgsPoint)
+                    else intersection.vertices()
+                )
                 for i in intersectionPoints:
                     wkb = i.asWkb()
-                    if not engine.touches(i) and wkb not in flagSet and wkb not in outputSet:
+                    if (
+                        not engine.touches(i)
+                        and wkb not in flagSet
+                        and wkb not in outputSet
+                    ):
                         outputSet.add(wkb)
             return outputSet
-        
-        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
+
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
         futures = set()
         for current, feat in enumerate(mergedLines.getFeatures()):
             if multiStepFeedback.isCanceled():
                 break
-            #put this into a thread after it is working
+            # put this into a thread after it is working
             futures.add(pool.submit(evaluate, feat))
             multiStepFeedback.setProgress(current * stepSize)
-        concurrent.futures.wait(futures, timeout=None, return_when=concurrent.futures.ALL_COMPLETED)
+        concurrent.futures.wait(
+            futures, timeout=None, return_when=concurrent.futures.ALL_COMPLETED
+        )
         multiStepFeedback.setCurrentStep(3)
-        stepSize = 100/len(futures)
+        stepSize = 100 / len(futures)
         for current, future in enumerate(concurrent.futures.as_completed(futures)):
             if multiStepFeedback.isCanceled():
                 break
             outputSet = future.result()
             errorSet = errorSet.union(outputSet)
             multiStepFeedback.setProgress(current * stepSize)
-        flagLambda = lambda x: self.flagFeature(x, self.tr("Line from input not split on intersection."), fromWkb=True)
+        flagLambda = lambda x: self.flagFeature(
+            x, self.tr("Line from input not split on intersection."), fromWkb=True
+        )
         list(map(flagLambda, errorSet))
-    
+
     def getFilterLayers(self, lineFilter, polygonFilter, algRunner, feedback, context):
         nSteps = len(polygonFilter) + 2
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+
         def makeBoundary(currentStep, layer):
             multiStepFeedback.setCurrentStep(currentStep)
-            return algRunner.runBoundary(layer, feedback=multiStepFeedback, context=context)
-        
-        lineFilterList = lineFilter + [makeBoundary(currentStep, layer) for currentStep, layer in enumerate(polygonFilter)]
+            return algRunner.runBoundary(
+                layer, feedback=multiStepFeedback, context=context
+            )
+
+        lineFilterList = lineFilter + [
+            makeBoundary(currentStep, layer)
+            for currentStep, layer in enumerate(polygonFilter)
+        ]
         currentStep = len(polygonFilter) + 1
         multiStepFeedback.setCurrentStep(currentStep)
-        mergedFilters = algRunner.runMergeVectorLayers(lineFilterList, context=context, feedback=multiStepFeedback)
+        mergedFilters = algRunner.runMergeVectorLayers(
+            lineFilterList, context=context, feedback=multiStepFeedback
+        )
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
@@ -284,8 +331,6 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
         )
         return mergedFilters
-
-
 
     def name(self):
         """

@@ -20,25 +20,29 @@
  *                                                                         *
  ***************************************************************************/
 """
-#General imports
+# General imports
 from osgeo import ogr
 from uuid import uuid4
 import codecs, os, json, binascii
 
-#DSG Tools imports
-from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory 
+# DSG Tools imports
+from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.ServerManagementTools.genericDbManager import GenericDbManager
 from DsgTools.core.Utils.utils import Utils
 
-#qgis.PyQt imports
+# qgis.PyQt imports
 from qgis.PyQt.Qt import QObject
+
 
 class AttributeRulesManager(GenericDbManager):
     """
     This class manages the customizations on dsgtools databases.
     """
-    def __init__(self, serverAbstractDb, dbDict, edgvVersion, parentWidget = None):
-        super(AttributeRulesManager,self).__init__(serverAbstractDb, dbDict, edgvVersion, parentWidget = None)
+
+    def __init__(self, serverAbstractDb, dbDict, edgvVersion, parentWidget=None):
+        super(AttributeRulesManager, self).__init__(
+            serverAbstractDb, dbDict, edgvVersion, parentWidget=None
+        )
 
     def validateJsonProfile(self, inputJsonDict):
         """
@@ -47,5 +51,5 @@ class AttributeRulesManager(GenericDbManager):
         3. If one piece of json is not valid, returns False.
         This validator does not validate the name of classes or names of categories. It only checks the format of dsgtools json profile.
         """
-        #TODO
+        # TODO
         return True

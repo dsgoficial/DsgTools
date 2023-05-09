@@ -22,24 +22,31 @@
 
 from PyQt5.QtCore import QCoreApplication
 
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
-    FLAGS = 'FLAGS'
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
-    OUTPUT = 'OUTPUT'
+    FLAGS = "FLAGS"
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -48,28 +55,25 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry ]
+                self.tr("Input layer"),
+                [QgsProcessing.TypeVectorAnyGeometry],
             )
         )
 
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
         self.addOutput(
             QgsProcessingOutputVectorLayer(
-                self.OUTPUT,
-                self.tr('Original layer without duplicated geometries')
+                self.OUTPUT, self.tr("Original layer without duplicated geometries")
             )
         )
 
@@ -81,41 +85,33 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
-                self.invalidSourceError(
-                    parameters,
-                    self.INPUT
-                    )
-                )
-        onlySelected = self.parameterAsBool(
-            parameters,
-            self.SELECTED,
-            context
+                self.invalidSourceError(parameters, self.INPUT)
             )
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(
-            self.tr(
-                'Identifying duplicated geometries in layer {0}...'
-                ).format(inputLyr.name()))
-        flagLyr = algRunner.runIdentifyDuplicatedGeometries(
-            inputLyr,
-            context,
-            feedback=multiStepFeedback,
-            onlySelected=onlySelected
+            self.tr("Identifying duplicated geometries in layer {0}...").format(
+                inputLyr.name()
             )
+        )
+        flagLyr = algRunner.runIdentifyDuplicatedGeometries(
+            inputLyr, context, feedback=multiStepFeedback, onlySelected=onlySelected
+        )
 
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(
-            self.tr(
-                'Removing duplicated geometries in layer {0}...'
-                ).format(inputLyr.name()))
+            self.tr("Removing duplicated geometries in layer {0}...").format(
+                inputLyr.name()
+            )
+        )
         self.removeFeatures(inputLyr, flagLyr, multiStepFeedback)
 
         return {self.OUTPUT: inputLyr}
-    
+
     def removeFeatures(self, inputLyr, flagLyr, feedback):
         featureList, total = self.getIteratorAndFeatureCount(flagLyr)
-        localTotal = 100/total if total else 0
+        localTotal = 100 / total if total else 0
         inputLyr.beginEditCommand("Removing duplicates")
         inputLyr.startEditing()
         removeSet = set()
@@ -123,7 +119,16 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
             # Stop the algorithm if cancel button has been clicked
             if feedback.isCanceled():
                 break
-            removeSet = removeSet.union(set([i for i in map(int, feat['reason'].split('(')[-1].split(')')[0].split(','))][1::]))
+            removeSet = removeSet.union(
+                set(
+                    [
+                        i
+                        for i in map(
+                            int, feat["reason"].split("(")[-1].split(")")[0].split(",")
+                        )
+                    ][1::]
+                )
+            )
             feedback.setProgress(current * localTotal)
         inputLyr.deleteFeatures(list(removeSet))
         inputLyr.endEditCommand()
@@ -136,21 +141,21 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'removeduplicatedgeometries'
+        return "removeduplicatedgeometries"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Remove Duplicated Geometries')
+        return self.tr("Remove Duplicated Geometries")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Correction Processes)')
+        return self.tr("Quality Assurance Tools (Correction Processes)")
 
     def groupId(self):
         """
@@ -160,10 +165,10 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Correction Processes)'
+        return "DSGTools: Quality Assurance Tools (Correction Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('RemoveDuplicatedGeometriesAlgorithm', string)
+        return QCoreApplication.translate("RemoveDuplicatedGeometriesAlgorithm", string)
 
     def createInstance(self):
         return RemoveDuplicatedGeometriesAlgorithm()

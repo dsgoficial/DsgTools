@@ -20,22 +20,30 @@
  ***************************************************************************/
 """
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+)
 from qgis.PyQt.QtCore import QCoreApplication
 
 from .validationAlgorithm import ValidationAlgorithm
 
+
 class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
-    FLAGS = 'FLAGS'
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
+    FLAGS = "FLAGS"
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
 
     def initAlgorithm(self, config):
         """
@@ -44,22 +52,20 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry]
+                self.tr("Input layer"),
+                [QgsProcessing.TypeVectorAnyGeometry],
             )
         )
 
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
 
@@ -70,7 +76,8 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.INPUT))
+                self.invalidSourceError(parameters, self.INPUT)
+            )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
         # Compute the number of steps to display within the progress bar and
@@ -82,22 +89,22 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
             self.tr("Building duplicated features dictionary...")
         )
         geomDict = layerHandler.getDuplicatedFeaturesDict(
-            inputLyr, onlySelected=onlySelected, feedback=multiStepFeedback)
+            inputLyr, onlySelected=onlySelected, feedback=multiStepFeedback
+        )
         multiStepFeedback.setCurrentStep(1)
-        self.raiseDuplicatedFeaturesFlags(
-            inputLyr, geomDict, multiStepFeedback)
+        self.raiseDuplicatedFeaturesFlags(inputLyr, geomDict, multiStepFeedback)
         return {self.FLAGS: self.flag_id}
 
     def raiseDuplicatedFeaturesFlags(self, inputLyr, geomDict, feedback):
-        size = 100/len(geomDict) if geomDict else 0
+        size = 100 / len(geomDict) if geomDict else 0
         for current, featList in enumerate(geomDict.values()):
             if feedback.isCanceled():
                 break
             if len(featList) > 1:
-                idStrList = ', '.join(
-                    map(str, [feat.id() for feat in featList]))
-                flagText = self.tr('Features from layer {0} with ids=({1}) have the same set of attributes.').format(
-                    inputLyr.name(), idStrList)
+                idStrList = ", ".join(map(str, [feat.id() for feat in featList]))
+                flagText = self.tr(
+                    "Features from layer {0} with ids=({1}) have the same set of attributes."
+                ).format(inputLyr.name(), idStrList)
                 self.flagFeature(featList[0].geometry(), flagText)
             feedback.setProgress(size * current)
 
@@ -109,21 +116,21 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifyduplicatedgeometries'
+        return "identifyduplicatedgeometries"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Duplicated Geometries')
+        return self.tr("Identify Duplicated Geometries")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -133,10 +140,12 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyDuplicatedGeometriesAlgorithm', string)
+        return QCoreApplication.translate(
+            "IdentifyDuplicatedGeometriesAlgorithm", string
+        )
 
     def createInstance(self):
         return IdentifyDuplicatedGeometriesAlgorithm()

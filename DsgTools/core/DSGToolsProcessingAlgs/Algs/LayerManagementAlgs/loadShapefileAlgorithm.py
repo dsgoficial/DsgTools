@@ -23,17 +23,21 @@
 import os
 
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessingAlgorithm,
-                       QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterFile, QgsProject, QgsVectorLayer,
-                       QgsWkbTypes)
+from qgis.core import (
+    QgsProcessingAlgorithm,
+    QgsProcessingOutputMultipleLayers,
+    QgsProcessingParameterFile,
+    QgsProject,
+    QgsVectorLayer,
+    QgsWkbTypes,
+)
 from qgis.utils import iface
 
 
 class LoadShapefileAlgorithm(QgsProcessingAlgorithm):
 
-    FOLDER_SHAPEFILES = 'FOLDER_SHAPEFILES'
-    OUTPUT = 'OUTPUT'
+    FOLDER_SHAPEFILES = "FOLDER_SHAPEFILES"
+    OUTPUT = "OUTPUT"
 
     def __init__(self):
         super().__init__()
@@ -42,61 +46,49 @@ class LoadShapefileAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.FOLDER_SHAPEFILES,
-                self.tr('Pasta com Shapefiles'),
-                behavior = QgsProcessingParameterFile.Folder,
+                self.tr("Pasta com Shapefiles"),
+                behavior=QgsProcessingParameterFile.Folder,
             )
         )
 
         self.addOutput(
-            QgsProcessingOutputMultipleLayers(
-                self.OUTPUT,
-                self.tr('Loaded layers')
-            )
+            QgsProcessingOutputMultipleLayers(self.OUTPUT, self.tr("Loaded layers"))
         )
 
     def processAlgorithm(self, parameters, context, feedback):
-        folderPath = self.parameterAsString(
-            parameters,
-            self.FOLDER_SHAPEFILES,
-            context
-        )
+        folderPath = self.parameterAsString(parameters, self.FOLDER_SHAPEFILES, context)
         output = []
-        shapefileData = [ 
-            {
-                'name': fileName.split('.')[0],
-                'path': os.path.join(folderPath, fileName)
-            }
+        shapefileData = [
+            {"name": fileName.split(".")[0], "path": os.path.join(folderPath, fileName)}
             for fileName in os.listdir(folderPath)
-            if fileName.split('.')[1] == 'shp'
+            if fileName.split(".")[1] == "shp"
         ]
-        shapefileData = sorted(shapefileData, key=lambda k: k['name']) 
+        shapefileData = sorted(shapefileData, key=lambda k: k["name"])
         listSize = len(shapefileData)
-        progressStep = 100/listSize if listSize else 0
-        rootNode = QgsProject.instance().layerTreeRoot().addGroup('shapefiles')
+        progressStep = 100 / listSize if listSize else 0
+        rootNode = QgsProject.instance().layerTreeRoot().addGroup("shapefiles")
         groups = {
-            QgsWkbTypes.PointGeometry: self.createGroup('Ponto', rootNode),
-            QgsWkbTypes.LineGeometry: self.createGroup('Linha', rootNode),
-            QgsWkbTypes.PolygonGeometry: self.createGroup('Area', rootNode),
-            
+            QgsWkbTypes.PointGeometry: self.createGroup("Ponto", rootNode),
+            QgsWkbTypes.LineGeometry: self.createGroup("Linha", rootNode),
+            QgsWkbTypes.PolygonGeometry: self.createGroup("Area", rootNode),
         }
         for step, data in enumerate(shapefileData):
             if feedback.isCanceled():
                 break
             iface.mapCanvas().freeze(True)
             ml = QgsProject.instance().addMapLayer(
-                QgsVectorLayer(data['path'], data['name'], 'ogr'), 
-                addToLegend = False
+                QgsVectorLayer(data["path"], data["name"], "ogr"), addToLegend=False
             )
             groups[QgsWkbTypes.geometryType(ml.wkbType())].addLayer(ml)
             output.append(ml.id())
             iface.mapCanvas().freeze(False)
-            feedback.setProgress(step*progressStep)
+            feedback.setProgress(step * progressStep)
         self.removeEmptyGroups(list(groups.values()), rootNode)
         return {self.OUTPUT: output}
 
     def createGroup(self, groupName, rootNode):
         return rootNode.addGroup(groupName)
-       
+
     def removeEmptyGroups(self, groups, rootNode):
         for group in groups:
             if group.findLayers():
@@ -111,21 +103,21 @@ class LoadShapefileAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'loadshapefilealgorithm'
+        return "loadshapefilealgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Loads a shapefile (.shp)')
+        return self.tr("Loads a shapefile (.shp)")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Layer Management Algorithms')
+        return self.tr("Layer Management Algorithms")
 
     def groupId(self):
         """
@@ -135,13 +127,13 @@ class LoadShapefileAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Layer Management Algorithms'
+        return "DSGTools: Layer Management Algorithms"
 
     def tr(self, string):
         """
         Translates input string.
         """
-        return QCoreApplication.translate('LoadShapefileAlgorithm', string)
+        return QCoreApplication.translate("LoadShapefileAlgorithm", string)
 
     def createInstance(self):
         """

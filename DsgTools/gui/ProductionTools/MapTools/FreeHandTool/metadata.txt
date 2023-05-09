@@ -25,5 +25,3 @@ tags=digitizing
 ; in a future version of the web application it will
 ; be probably possible to create a project on redmine
 ; if they are not filled
-
-

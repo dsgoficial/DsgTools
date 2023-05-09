@@ -24,29 +24,38 @@ from PyQt5.QtCore import QCoreApplication
 
 import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterDistance,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsSpatialIndex, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsGeometry,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterDistance,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterField,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsWkbTypes,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
-    OUTPUT = 'OUTPUT'
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -55,20 +64,18 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry ]
+                self.tr("Input layer"),
+                [QgsProcessing.TypeVectorAnyGeometry],
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
         self.addOutput(
             QgsProcessingOutputVectorLayer(
-                self.OUTPUT,
-                self.tr('Original layer without empty geometries')
+                self.OUTPUT, self.tr("Original layer without empty geometries")
             )
         )
 
@@ -81,44 +88,38 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
-                self.invalidSourceError(
-                    parameters,
-                    self.INPUT
-                    )
-                )
+                self.invalidSourceError(parameters, self.INPUT)
+            )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(
-            self.tr('Populating temp layer...')
-            )
+        multiStepFeedback.pushInfo(self.tr("Populating temp layer..."))
         auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
             [inputLyr],
             geomType=inputLyr.wkbType(),
             onlySelected=onlySelected,
-            feedback=multiStepFeedback
-            )
+            feedback=multiStepFeedback,
+        )
 
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(
-            self.tr(
-                'Removing empty geometries from layer {input}...'
-                ).format(input=inputLyr.name()))
-        notNullLayer = algRunner.runRemoveNull(
-            auxLyr,
-            context,
-            feedback=multiStepFeedback
+            self.tr("Removing empty geometries from layer {input}...").format(
+                input=inputLyr.name()
             )
+        )
+        notNullLayer = algRunner.runRemoveNull(
+            auxLyr, context, feedback=multiStepFeedback
+        )
 
         multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
+        multiStepFeedback.pushInfo(self.tr("Updating original layer..."))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
             [inputLyr],
             notNullLayer,
             feedback=multiStepFeedback,
-            onlySelected=onlySelected
-            )
+            onlySelected=onlySelected,
+        )
 
         return {self.OUTPUT: inputLyr}
 
@@ -130,21 +131,21 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'removeemptyandupdate'
+        return "removeemptyandupdate"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Remove empty and update')
+        return self.tr("Remove empty and update")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Manipulation Processes)')
+        return self.tr("Quality Assurance Tools (Manipulation Processes)")
 
     def groupId(self):
         """
@@ -154,10 +155,10 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Manipulation Processes)'
+        return "DSGTools: Quality Assurance Tools (Manipulation Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('RemoveEmptyAndUpdateAlgorithm', string)
+        return QCoreApplication.translate("RemoveEmptyAndUpdateAlgorithm", string)
 
     def createInstance(self):
         return RemoveEmptyAndUpdateAlgorithm()

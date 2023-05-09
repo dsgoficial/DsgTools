@@ -23,19 +23,21 @@
 
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtGui import QColor, QFont
-from qgis.core import (QgsFeature,
-                       QgsFeatureRequest,
-                       QgsProject,
-                       QgsWkbTypes,
-                       QgsConditionalStyle,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingException,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterType,
-                       QgsProcessingParameterDefinition)
-from qgis.PyQt.QtWidgets import (QMessageBox)
+from qgis.core import (
+    QgsFeature,
+    QgsFeatureRequest,
+    QgsProject,
+    QgsWkbTypes,
+    QgsConditionalStyle,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterType,
+    QgsProcessingParameterDefinition,
+)
+from qgis.PyQt.QtWidgets import QMessageBox
 
 from .validationAlgorithm import ValidationAlgorithm
 
@@ -68,36 +70,31 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
         Parameter setting.
         """
         attributeRulesSetter = ParameterAttributeRulesSet(
-            self.RULES_SET,
-            description=self.tr("Attribute Rules Set")
+            self.RULES_SET, description=self.tr("Attribute Rules Set")
         )
-        attributeRulesSetter.setMetadata({
-            "widget_wrapper": "DsgTools.gui.ProcessingUI.enforceAttributeRulesWrapper.EnforceAttributeRulesWrapper"
-        })
+        attributeRulesSetter.setMetadata(
+            {
+                "widget_wrapper": "DsgTools.gui.ProcessingUI.enforceAttributeRulesWrapper.EnforceAttributeRulesWrapper"
+            }
+        )
         self.addParameter(attributeRulesSetter)
 
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr("Process only selected features")
+                self.SELECTED, self.tr("Process only selected features")
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(self.POINT_FLAGS, self.tr("Point flags"))
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.LINE_FLAGS, self.tr("Linestring flags")
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.POINT_FLAGS,
-                self.tr("Point flags")
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.LINE_FLAGS,
-                self.tr("Linestring flags")
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.POLYGON_FLAGS,
-                self.tr("Polygon flags")
+                self.POLYGON_FLAGS, self.tr("Polygon flags")
             )
         )
 
@@ -125,54 +122,64 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
         :return: (dict) filled flag layers.
         """
 
-        rules = self.parameterAsAttributeRulesSet(
-            parameters, self.RULES_SET, context
-        )
+        rules = self.parameterAsAttributeRulesSet(parameters, self.RULES_SET, context)
 
         if not rules:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.RULES_SET)
             )
 
-        onlySelected = self.parameterAsBool(
-            parameters, self.SELECTED, context)
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
 
         crs = QgsProject.instance().crs()
         pointFlags, ptId = self.parameterAsSink(
-            parameters, self.POINT_FLAGS, context,
-            self.flagFields, QgsWkbTypes.Point, crs)
+            parameters,
+            self.POINT_FLAGS,
+            context,
+            self.flagFields,
+            QgsWkbTypes.Point,
+            crs,
+        )
 
         if not pointFlags:
             raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.POINT_FLAGS))
+                self.invalidSourceError(parameters, self.POINT_FLAGS)
+            )
 
         lineFlags, lId = self.parameterAsSink(
-            parameters, self.LINE_FLAGS, context,
-            self.flagFields, QgsWkbTypes.LineString, crs)
+            parameters,
+            self.LINE_FLAGS,
+            context,
+            self.flagFields,
+            QgsWkbTypes.LineString,
+            crs,
+        )
 
         if not lineFlags:
             raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.LINE_FLAGS))
+                self.invalidSourceError(parameters, self.LINE_FLAGS)
+            )
 
         polygonFlags, polId = self.parameterAsSink(
-            parameters, self.POLYGON_FLAGS, context,
-            self.flagFields, QgsWkbTypes.Polygon, crs)
+            parameters,
+            self.POLYGON_FLAGS,
+            context,
+            self.flagFields,
+            QgsWkbTypes.Polygon,
+            crs,
+        )
 
         if not polygonFlags:
             raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.POLYGON_FLAGS))
+                self.invalidSourceError(parameters, self.POLYGON_FLAGS)
+            )
 
         failedFeatures = self.applyAttrRules(rules, onlySelected)
 
-        self.flagsFromFailedList(failedFeatures,
-                                    pointFlags,
-                                    lineFlags,
-                                    polygonFlags,
-                                    feedback)
-        return {
-            self.POINT_FLAGS: ptId,
-            self.LINE_FLAGS: lId,
-            self.POLYGON_FLAGS: polId}
+        self.flagsFromFailedList(
+            failedFeatures, pointFlags, lineFlags, polygonFlags, feedback
+        )
+        return {self.POINT_FLAGS: ptId, self.LINE_FLAGS: lId, self.POLYGON_FLAGS: polId}
 
     def applyAttrRules(self, attrRulesMap, onlySelected):
         """
@@ -190,16 +197,18 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
             if onlySelected:
                 lyr = proj.mapLayersByName(ruleParam["layerField"][0])[0]
                 request = QgsFeatureRequest().setFilterExpression(
-                    ruleParam["expression"])
+                    ruleParam["expression"]
+                )
                 selectedFeatures = lyr.getSelectedFeatures(request)
-                ruleParam["features"] = [
-                    feature for feature in selectedFeatures]
+                ruleParam["features"] = [feature for feature in selectedFeatures]
             else:
                 lyr = proj.mapLayersByName(ruleParam["layerField"][0])[0]
                 ruleParam["features"] = [
-                    feature for feature in lyr.getFeatures(ruleParam["expression"])]
-            self.applyConditionalStyle(proj.mapLayersByName(
-                ruleParam["layerField"][0])[0], ruleParam)
+                    feature for feature in lyr.getFeatures(ruleParam["expression"])
+                ]
+            self.applyConditionalStyle(
+                proj.mapLayersByName(ruleParam["layerField"][0])[0], ruleParam
+            )
         return attrRulesMap
 
     def flagsFromFailedList(self, attrRulesMap, ptLayer, lLayer, polLayer, feedback):
@@ -216,7 +225,7 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
         layerMap = {
             QgsWkbTypes.PointGeometry: ptLayer,
             QgsWkbTypes.LineGeometry: lLayer,
-            QgsWkbTypes.PolygonGeometry: polLayer
+            QgsWkbTypes.PolygonGeometry: polLayer,
         }
 
         for ruleParam in attrRulesMap.values():
@@ -226,9 +235,7 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
                 newFeature = QgsFeature(self.flagFields)
                 newFeature["reason"] = flagText
                 newFeature.setGeometry(geom)
-                layerMap[geom.type()].addFeature(
-                    newFeature, QgsFeatureSink.FastInsert
-                )
+                layerMap[geom.type()].addFeature(newFeature, QgsFeatureSink.FastInsert)
         self.logResult(attrRulesMap, feedback)
         return (ptLayer, lLayer, polLayer)
 
@@ -248,15 +255,15 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
                 if isinstance(values["color"], (list, tuple)):
                     self.conditionalStyle.setBackgroundColor(
                         QColor(
-                            values["color"][0],
-                            values["color"][1],
-                            values["color"][2]))
+                            values["color"][0], values["color"][1], values["color"][2]
+                        )
+                    )
                 else:
-                    self.conditionalStyle.setBackgroundColor(
-                        QColor(values["color"]))
+                    self.conditionalStyle.setBackgroundColor(QColor(values["color"]))
 
                 lyr.conditionalStyles().setFieldStyles(
-                    field.name(), [self.conditionalStyle])
+                    field.name(), [self.conditionalStyle]
+                )
 
     def logResult(self, attrRulesMap, feedback):
         """
@@ -266,8 +273,7 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
         :param feedback: (QgsProcessingFeedback) QGIS progress tracking
                          component.
         """
-        feedback.pushInfo("{0} {1} {0}\n".format(
-            "===" * 5, self.tr("LOG START")))
+        feedback.pushInfo("{0} {1} {0}\n".format("===" * 5, self.tr("LOG START")))
 
         for ruleParam in attrRulesMap.values():
             if len(ruleParam["features"]) > 0:
@@ -276,13 +282,15 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
                     ruleParam["errorType"],
                     ruleParam["layerField"][0],
                     len(ruleParam["features"]),
-                    self.tr("features") if len(ruleParam["features"]) > 1 else self.tr("feature"))
+                    self.tr("features")
+                    if len(ruleParam["features"]) > 1
+                    else self.tr("feature"),
+                )
                 feedback.pushInfo(row)
             else:
                 pass
 
-        feedback.pushInfo("{0} {1} {0}\n".format(
-            "===" * 5, self.tr("LOG END")))
+        feedback.pushInfo("{0} {1} {0}\n".format("===" * 5, self.tr("LOG END")))
 
     def name(self):
         """
@@ -332,7 +340,6 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
 
 
 class ParameterAttributeRulesSetType(QgsProcessingParameterType):
-
     def __init__(self):
         super().__init__()
 
@@ -340,7 +347,9 @@ class ParameterAttributeRulesSetType(QgsProcessingParameterType):
         return ParameterAttributeRulesSet(name)
 
     def metadata(self):
-        return {"widget_wrapper": "DsgTools.gui.ProcessingUI.validationAttributeRulesWrapper.ValidationAttributeRulesWrapper"}
+        return {
+            "widget_wrapper": "DsgTools.gui.ProcessingUI.validationAttributeRulesWrapper.ValidationAttributeRulesWrapper"
+        }
 
     def name(self):
         return QCoreApplication.translate("Processing", self.tr("Attribute Rules Set"))
@@ -349,11 +358,13 @@ class ParameterAttributeRulesSetType(QgsProcessingParameterType):
         return "attribute_rules_set_type"
 
     def description(self):
-        return QCoreApplication.translate("Processing", self.tr("Set of attribute rules. Used on Attribute Rules Checker."))
+        return QCoreApplication.translate(
+            "Processing",
+            self.tr("Set of attribute rules. Used on Attribute Rules Checker."),
+        )
 
 
 class ParameterAttributeRulesSet(QgsProcessingParameterDefinition):
-
     def __init__(self, name, description=""):
         super().__init__(name, description)
 

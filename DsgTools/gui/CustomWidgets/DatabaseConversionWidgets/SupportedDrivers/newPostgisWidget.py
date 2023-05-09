@@ -21,11 +21,16 @@
  ***************************************************************************/
 """
 
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.abstractSelectionWidget import AbstractSelectionWidget
-from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.newConnectionLineEdit import NewConnectionLineEdit
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.abstractSelectionWidget import (
+    AbstractSelectionWidget,
+)
+from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.newConnectionLineEdit import (
+    NewConnectionLineEdit,
+)
 from DsgTools.core.dsgEnums import DsgEnums
 
 import os
+
 
 class NewPostgisWidget(AbstractSelectionWidget):
     """
@@ -57,7 +62,7 @@ class NewPostgisWidget(AbstractSelectionWidget):
         Gets the datasource connection name.
         :return: (str) datasource connection name.
         """
-        return self.selectionWidget.currentDb() if self.selectionWidget else ''
+        return self.selectionWidget.currentDb() if self.selectionWidget else ""
 
     def getDatasourcePath(self):
         """
@@ -65,9 +70,17 @@ class NewPostgisWidget(AbstractSelectionWidget):
         :return: (str) datasource connection name.
         """
         if self.selectionWidget:
-            _, host, port, user, _ = self.selectionWidget.viewServers.getDefaultConnectionParameters()
-            return 'pg:{2}@{0}:{1}.{3}'.format(host, port, user, self.getDatasourceConnectionName())
-        return ''
+            (
+                _,
+                host,
+                port,
+                user,
+                _,
+            ) = self.selectionWidget.viewServers.getDefaultConnectionParameters()
+            return "pg:{2}@{0}:{1}.{3}".format(
+                host, port, user, self.getDatasourceConnectionName()
+            )
+        return ""
 
     def getDatasourceEdgvVersion(self):
         """
@@ -78,6 +91,6 @@ class NewPostgisWidget(AbstractSelectionWidget):
     def getDatasource(self):
         """
         Gets the datasource selected on current widget.
-        :return: (AbstractDb) the object representing the target datasource according to its driver. 
+        :return: (AbstractDb) the object representing the target datasource according to its driver.
         """
         return None

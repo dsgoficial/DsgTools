@@ -25,10 +25,12 @@ import os
 import requests
 from time import sleep
 
-from qgis.core import (QgsProcessingAlgorithm,
-                       QgsProcessingException,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterType)
+from qgis.core import (
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingParameterDefinition,
+    QgsProcessingParameterType,
+)
 from qgis.PyQt.QtCore import QCoreApplication
 
 
@@ -40,20 +42,27 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
         Parameter setting.
         """
         managerParameter = ParameterFMEManager(
-            self.FME_MANAGER,
-            description=self.tr("FME Manager Parameters")
+            self.FME_MANAGER, description=self.tr("FME Manager Parameters")
         )
-        managerParameter.setMetadata({
-            "widget_wrapper": "DsgTools.gui.ProcessingUI.fmeManagerWrapper.FMEManagerWrapper"
-        })
+        managerParameter.setMetadata(
+            {
+                "widget_wrapper": "DsgTools.gui.ProcessingUI.fmeManagerWrapper.FMEManagerWrapper"
+            }
+        )
         self.addParameter(managerParameter)
 
     def parameterAsFMEManager(self, parameters, name, context):
         return parameters[name]
 
     def getRequestFromServer(
-            self, url, proxyInfo=None, proxyAuth=None, useSsl=False,
-            useProxy=False, timeout=None):
+        self,
+        url,
+        proxyInfo=None,
+        proxyAuth=None,
+        useSsl=False,
+        useProxy=False,
+        timeout=None,
+    ):
         """
         Sends a POST request to the FME Manager server.
         :param url: (str) FME Manager server's URL.
@@ -75,20 +84,29 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
                     proxies=proxyInfo,
                     auth=proxyAuth,
                     verify=useSsl,
-                    timeout=timeout or 15
+                    timeout=timeout or 15,
                 )
             else:
                 resp = requests.get(url, verify=useSsl, timeout=timeout or 15)
         except BaseException as e:
             raise QgsProcessingException(
-                self.tr("Unable to get the routine's output from "
-                        "FME Manager: '{0}'".format(e))
+                self.tr(
+                    "Unable to get the routine's output from "
+                    "FME Manager: '{0}'".format(e)
+                )
             )
         return resp.json()
 
     def postRequestFromServer(
-            self, url, fmeParameters, proxyInfo=None, proxyAuth=None,
-            useSsl=False, useProxy=False, timeout=None):
+        self,
+        url,
+        fmeParameters,
+        proxyInfo=None,
+        proxyAuth=None,
+        useSsl=False,
+        useProxy=False,
+        timeout=None,
+    ):
         """
         Sends a POST request to the FME Manager server.
         :param url: (str) FME Manager server's URL.
@@ -113,19 +131,18 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
                     proxies=proxyInfo,
                     auth=proxyAuth,
                     verify=useSsl,
-                    timeout=timeout or 15
+                    timeout=timeout or 15,
                 )
             else:
                 resp = requests.post(
-                    url,
-                    json=fmeParameters,
-                    verify=useSsl,
-                    timeout=timeout or 15
+                    url, json=fmeParameters, verify=useSsl, timeout=timeout or 15
                 )
         except BaseException as e:
             raise QgsProcessingException(
-                self.tr("Unable to send processing request to "
-                        "FME Manager: '{0}'".format(e))
+                self.tr(
+                    "Unable to send processing request to "
+                    "FME Manager: '{0}'".format(e)
+                )
             )
         return resp.json()
 
@@ -152,22 +169,20 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
         version = fmeDict.get("version")
         if version == "v1":
             url = "{server}/versions/{workspace_id}/jobs".format(
-                server=fmeDict["server"],
-                workspace_id=fmeDict["workspace_id"]
+                server=fmeDict["server"], workspace_id=fmeDict["workspace_id"]
             )
-            url_to_status = "{server}/jobs/{{uuid}}".format(
-                server=fmeDict["server"])
+            url_to_status = "{server}/jobs/{{uuid}}".format(server=fmeDict["server"])
             dataKey = "data"
             jobNameKey = "workspace"
             summaryKey = "log"
             statusKey = "status"
         else:
             url = "{server}/api/rotinas/{workspace_id}/execucao".format(
-                server=fmeDict["server"],
-                workspace_id=fmeDict["workspace_id"]
+                server=fmeDict["server"], workspace_id=fmeDict["workspace_id"]
             )
             url_to_status = "{server}/api/execucoes/{{uuid}}".format(
-                server=fmeDict["server"])
+                server=fmeDict["server"]
+            )
             dataKey = "dados"
             jobNameKey = "rotina"
             summaryKey = "sumario"
@@ -177,16 +192,16 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
             url,
             fmeDict.get("parameters"),
             fmeDict.get("proxy_dict"),
-            fmeDict.get("auth"), 
+            fmeDict.get("auth"),
             fmeDict.get("use_ssl"),
-            fmeDict.get("use_proxy")
+            fmeDict.get("use_proxy"),
         )
         feedback.pushInfo(
-            self.tr("Request successful. Waiting for the workspace to "
-                    "be executed...")
+            self.tr(
+                "Request successful. Waiting for the workspace to " "be executed..."
+            )
         )
-        url_to_status = url_to_status.format(
-            uuid=jobRequest[dataKey]["job_uuid"])
+        url_to_status = url_to_status.format(uuid=jobRequest[dataKey]["job_uuid"])
         while True:
             if feedback.isCanceled():
                 feedback.pushInfo(self.tr("Canceled by user.\n"))
@@ -195,30 +210,32 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
             jobOutput = self.getRequestFromServer(
                 url_to_status,
                 fmeDict.get("proxy_dict"),
-                fmeDict.get("auth"), 
+                fmeDict.get("auth"),
                 fmeDict.get("use_ssl"),
-                fmeDict.get("use_proxy")
+                fmeDict.get("use_proxy"),
             )
             outputData = jobOutput.get(dataKey)
             statusId = outputData.get(statusKey)
             if statusId == 2:
                 feedback.pushInfo(
-                    self.tr("Workspace {0} completed with success.\n")\
-                        .format(outputData[jobNameKey])
+                    self.tr("Workspace {0} completed with success.\n").format(
+                        outputData[jobNameKey]
+                    )
                 )
                 for flags in self.parseLog(outputData[summaryKey], version):
                     if version == "v1":
                         msg = self.tr("Number of flags: {0}\n").format(flags)
                     else:
-                        msg = self.tr("Number of flags in {0}: {1}\n")\
-                                .format(flags["classes"], flags["feicoes"])
+                        msg = self.tr("Number of flags in {0}: {1}\n").format(
+                            flags["classes"], flags["feicoes"]
+                        )
                     feedback.pushInfo(msg)
                 break
             if statusId == 3:
                 feedback.reportError(self.tr("Task completed with error.\n"))
                 break
 
-        return {'result': jobOutput}
+        return {"result": jobOutput}
 
     def name(self):
         """
@@ -262,7 +279,6 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
 
 
 class ParameterFMEManagerType(QgsProcessingParameterType):
-
     def __init__(self):
         super().__init__()
 
@@ -270,7 +286,9 @@ class ParameterFMEManagerType(QgsProcessingParameterType):
         return ParameterFMEManager(name)
 
     def metadata(self):
-        return {"widget_wrapper": "DsgTools.gui.ProcessingUI.fmeManagerWrapper.FMEManagerWrapper"}
+        return {
+            "widget_wrapper": "DsgTools.gui.ProcessingUI.fmeManagerWrapper.FMEManagerWrapper"
+        }
 
     def name(self):
         return QCoreApplication.translate("Processing", "FME Manager Parameters")
@@ -279,11 +297,12 @@ class ParameterFMEManagerType(QgsProcessingParameterType):
         return "fme_manager"
 
     def description(self):
-        return QCoreApplication.translate("Processing", "FME Manager parameters. Used on Run Remote FME Workspace")
+        return QCoreApplication.translate(
+            "Processing", "FME Manager parameters. Used on Run Remote FME Workspace"
+        )
 
 
 class ParameterFMEManager(QgsProcessingParameterDefinition):
-
     def __init__(self, name, description=""):
         super().__init__(name, description)
 

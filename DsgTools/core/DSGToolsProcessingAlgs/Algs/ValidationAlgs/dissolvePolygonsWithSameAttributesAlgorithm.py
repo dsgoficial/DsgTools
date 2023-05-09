@@ -22,34 +22,30 @@
 """
 from PyQt5.QtCore import QCoreApplication
 
-import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsSpatialIndex, QgsWkbTypes)
+from qgis.core import (
+    QgsProcessing,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterField,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingParameterDistance,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
-    MIN_AREA = 'MIN_AREA'
-    ATTRIBUTE_BLACK_LIST = 'ATTRIBUTE_BLACK_LIST'
-    IGNORE_VIRTUAL_FIELDS = 'IGNORE_VIRTUAL_FIELDS'
-    IGNORE_PK_FIELDS = 'IGNORE_PK_FIELDS'
-    OUTPUT = 'OUTPUT'
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
+    MIN_AREA = "MIN_AREA"
+    ATTRIBUTE_BLACK_LIST = "ATTRIBUTE_BLACK_LIST"
+    IGNORE_VIRTUAL_FIELDS = "IGNORE_VIRTUAL_FIELDS"
+    IGNORE_PK_FIELDS = "IGNORE_PK_FIELDS"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -57,54 +53,53 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorPolygon ]
+                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorPolygon]
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.MIN_AREA,
-                self.tr('Max dissolve area'),
-                minValue=0,
-                optional = True
-            )
+        param = QgsProcessingParameterDistance(
+            self.MIN_AREA,
+            self.tr("Max dissolve area"),
+            parentParameterName=self.INPUT,
+            minValue=0,
+            optional=True,
         )
+        param.setMetadata( {'widget_wrapper':
+        { 'decimals': 10 }
+        })
+        self.addParameter(param)
         self.addParameter(
             QgsProcessingParameterField(
-                self.ATTRIBUTE_BLACK_LIST, 
-                self.tr('Fields to ignore'),
-                None, 
-                'INPUT', 
+                self.ATTRIBUTE_BLACK_LIST,
+                self.tr("Fields to ignore"),
+                None,
+                "INPUT",
                 QgsProcessingParameterField.Any,
                 allowMultiple=True,
-                optional = True
+                optional=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.IGNORE_VIRTUAL_FIELDS,
-                self.tr('Ignore virtual fields'),
-                defaultValue=True
+                self.tr("Ignore virtual fields"),
+                defaultValue=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.IGNORE_PK_FIELDS,
-                self.tr('Ignore primary key fields'),
-                defaultValue=True
+                self.tr("Ignore primary key fields"),
+                defaultValue=True,
             )
         )
         self.addOutput(
             QgsProcessingOutputVectorLayer(
-                self.OUTPUT,
-                self.tr('Original layer with dissolved polygons')
+                self.OUTPUT, self.tr("Original layer with dissolved polygons")
             )
         )
 
@@ -117,8 +112,12 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.MIN_AREA, context)
-        attributeBlackList = self.parameterAsFields(parameters, self.ATTRIBUTE_BLACK_LIST, context)
-        ignoreVirtual = self.parameterAsBool(parameters, self.IGNORE_VIRTUAL_FIELDS, context)
+        attributeBlackList = self.parameterAsFields(
+            parameters, self.ATTRIBUTE_BLACK_LIST, context
+        )
+        ignoreVirtual = self.parameterAsBool(
+            parameters, self.IGNORE_VIRTUAL_FIELDS, context
+        )
         ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
 
         tol = -1 if tol is None else tol
@@ -126,20 +125,36 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr('Populating temp layer...\n'))
-        unifiedLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], geomType=QgsWkbTypes.MultiPolygon, attributeBlackList = attributeBlackList, onlySelected=onlySelected, feedback=multiStepFeedback)
+        multiStepFeedback.pushInfo(self.tr("Populating temp layer...\n"))
+        unifiedLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
+            [inputLyr],
+            geomType=QgsWkbTypes.MultiPolygon,
+            attributeBlackList=attributeBlackList,
+            onlySelected=onlySelected,
+            feedback=multiStepFeedback,
+            attributeTupple=False if tol == -1 else True,
+        )
         currentStep += 1
-        
+
         if tol > 0:
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr('Adding size constraint field...\n'))
-            unifiedLyr = layerHandler.addDissolveField(unifiedLyr, tol, feedback = multiStepFeedback)
+            multiStepFeedback.pushInfo(self.tr("Adding size constraint field...\n"))
+            unifiedLyr = layerHandler.addDissolveField(
+                unifiedLyr, tol, feedback=multiStepFeedback
+            )
             currentStep += 1
-    
+
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr('Running dissolve...\n'))
-        dissolvedLyr = algRunner.runDissolve(unifiedLyr, context, feedback=multiStepFeedback, field=['tupple'])
-        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], dissolvedLyr, feedback=multiStepFeedback, onlySelected=onlySelected)
+        multiStepFeedback.pushInfo(self.tr("Running dissolve...\n"))
+        dissolvedLyr = algRunner.runDissolve(
+            unifiedLyr, context, feedback=multiStepFeedback, field=["tupple"]
+        )
+        layerHandler.updateOriginalLayersFromUnifiedLayer(
+            [inputLyr],
+            dissolvedLyr,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected,
+        )
 
         return {self.OUTPUT: inputLyr}
 
@@ -151,21 +166,21 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'dissolvepolygonswithsameattributes'
+        return "dissolvepolygonswithsameattributes"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Dissolve polygons with same attribute set')
+        return self.tr("Dissolve polygons with same attribute set")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Manipulation Processes)')
+        return self.tr("Quality Assurance Tools (Manipulation Processes)")
 
     def groupId(self):
         """
@@ -175,10 +190,12 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Manipulation Processes)'
+        return "DSGTools: Quality Assurance Tools (Manipulation Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('DissolvePolygonsWithSameAttributesAlgorithm', string)
+        return QCoreApplication.translate(
+            "DissolvePolygonsWithSameAttributesAlgorithm", string
+        )
 
     def createInstance(self):
         return DissolvePolygonsWithSameAttributesAlgorithm()

@@ -20,27 +20,34 @@
  ***************************************************************************/
 """
 
+import os
+import concurrent.futures
+
 from collections import defaultdict
-from dataclasses import dataclass
 from PyQt5.QtCore import QCoreApplication
 
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink, QgsProcessing,
-    QgsProcessingAlgorithm, QgsProcessingException, QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer, QgsProcessingParameterBoolean, QgsProcessingParameterDistance,
-    QgsProcessingParameterFeatureSink, QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterField, QgsProcessingParameterVectorLayer, QgsWkbTypes, QgsProcessingFeatureSourceDefinition,
-    QgsFeatureRequest)
+from qgis.core import (
+    QgsProcessing,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterDistance,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingFeatureSourceDefinition,
+    QgsFeatureRequest,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
-    FLAGS = 'FLAGS'
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
-    SEARCH_RADIUS = 'SEARCH_RADIUS'
+    FLAGS = "FLAGS"
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
+    SEARCH_RADIUS = "SEARCH_RADIUS"
 
     def initAlgorithm(self, config):
         """
@@ -49,33 +56,26 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input layer'),
-                [
-                    QgsProcessing.TypeVectorLine,
-                    QgsProcessing.TypeVectorPolygon
-                ]
+                self.tr("Input layer"),
+                [QgsProcessing.TypeVectorLine, QgsProcessing.TypeVectorPolygon],
             )
         )
 
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
 
         self.addParameter(
             QgsProcessingParameterDistance(
-                self.SEARCH_RADIUS,
-                self.tr('Search Radius'),
-                defaultValue = 1.0
+                self.SEARCH_RADIUS, self.tr("Search Radius"), defaultValue=1.0
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
 
@@ -84,26 +84,14 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
         Here is where the processing itself takes place.
         """
         algRunner = AlgRunner()
-        inputLyr = self.parameterAsVectorLayer(
-            parameters,
-            self.INPUT,
-            context
-        )
+        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUT)
             )
-        onlySelected = self.parameterAsBool(
-            parameters,
-            self.SELECTED,
-            context
-        )
-        searchRadius = self.parameterAsDouble(
-            parameters,
-            self.SEARCH_RADIUS,
-            context
-        )
-        # output flag type is a polygon because the flag will be a circle with 
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
+        # output flag type is a polygon because the flag will be a circle with
         # radius tol and center as the vertex
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
         # Compute the number of steps to display within the progress bar and
@@ -111,30 +99,31 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.setProgressText(self.tr("Building aux structure..."))
-        usedInput = inputLyr if not onlySelected else QgsProcessingFeatureSourceDefinition(
-            inputLyr.id(), True)
+        usedInput = (
+            inputLyr
+            if not onlySelected
+            else QgsProcessingFeatureSourceDefinition(inputLyr.id(), True)
+        )
         incrementedLayer = algRunner.runAddAutoIncrementalField(
-            usedInput,
-            context,
-            feedback=multiStepFeedback
+            usedInput, context, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.setProgressText(self.tr("Extracting vertexes..."))
         vertexLayer = algRunner.runExtractVertices(
-            inputLyr=incrementedLayer,
-            context=context,
-            feedback=multiStepFeedback
+            inputLyr=incrementedLayer, context=context, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.setProgressText(self.tr("Building spatial index on extracted vertexes..."))
+        multiStepFeedback.setProgressText(
+            self.tr("Building spatial index on extracted vertexes...")
+        )
         algRunner.runCreateSpatialIndex(
-            inputLyr=vertexLayer,
-            context=context,
-            feedback=multiStepFeedback
+            inputLyr=vertexLayer, context=context, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(3)
         multiStepFeedback.setProgressText(self.tr("Searching close vertexes..."))
-        flagDict = self.getCloseVertexes(vertexLayer, searchRadius, feedback=multiStepFeedback)
+        flagDict = self.getCloseVertexes(
+            vertexLayer, searchRadius, feedback=multiStepFeedback
+        )
         multiStepFeedback.setCurrentStep(4)
         multiStepFeedback.setProgressText(self.tr("Raising flags (if any)..."))
         self.raiseFlags(flagDict, feedback=multiStepFeedback)
@@ -162,25 +151,58 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
                 feedback.setProgress(current * size)
 
     def getCloseVertexes(self, vertexLayer, searchRadius, feedback=None):
-        flagDict = defaultdict(set) # key: featid, value: set of vertexes
+        flagDict = defaultdict(set)  # key: featid, value: set of vertexes
         featCount = vertexLayer.featureCount()
         if featCount == 0:
             return flagDict
         size = 100 / featCount
-        for current, feat in enumerate(vertexLayer.getFeatures()):
-            if feedback is not None and feedback.isCanceled():
-                break
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.setProgressText(self.tr("Submitting to thread"))
+        def compute(feat):
+            outputDict = defaultdict(set)
+            if feedback.isCanceled():
+                return None
             geom = feat.geometry()
             buffer = geom.buffer(searchRadius, -1)
             bufferBB = buffer.boundingBox()
-            request = QgsFeatureRequest().setFilterExpression(f"featid = {feat['featid']}").setFilterRect(bufferBB)
+            request = (
+                QgsFeatureRequest()
+                .setFilterExpression(f"featid = {feat['featid']}")
+                .setFilterRect(bufferBB)
+            )
+            if "vertex_part_ring" in feat:
+                request.setFilterExpression(f"vertex_part_ring = {feat['vertex_part_ring']}")
             for candidateFeat in vertexLayer.getFeatures(request):
-                if candidateFeat.id() == feat.id() or candidateFeat.geometry() in flagDict[feat["featid"]]:
+                if candidateFeat.id() == feat.id():
                     continue
-                if candidateFeat.geometry().intersects(buffer):
-                    flagDict[feat["featid"]].add(geom.asWkb())
-            if feedback is not None:
-                feedback.setProgress(size * current)
+                candidateGeom = candidateFeat.geometry()
+                if candidateFeat.geometry().intersects(
+                    buffer
+                ) and not candidateGeom.equals(geom):
+                    outputDict[feat["featid"]].add(candidateGeom.asWkb())
+            return outputDict
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
+        futures = set()
+
+        for current, feat in enumerate(vertexLayer.getFeatures()):
+            if feedback is not None and feedback.isCanceled():
+                break
+            futures.add(pool.submit(compute, feat))
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(size * current)
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.setProgressText(self.tr("Evaluating Results"))
+
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if feedback.isCanceled():
+                return None
+            output = future.result()
+            if output is None:
+                continue
+            for featid, geomSet in output.items():
+                flagDict[featid] = flagDict[featid].union(geomSet)
+            multiStepFeedback.setProgress(size * current)
         return flagDict
 
     def name(self):
@@ -191,21 +213,21 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifygeometrieswithlargevertexdensityalgorithm'
+        return "identifygeometrieswithlargevertexdensityalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Geometries With Large Vertex Density')
+        return self.tr("Identify Geometries With Large Vertex Density")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -215,10 +237,12 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyGeometriesWithLargeVertexDensityAlgorithm', string)
+        return QCoreApplication.translate(
+            "IdentifyGeometriesWithLargeVertexDensityAlgorithm", string
+        )
 
     def createInstance(self):
         return IdentifyGeometriesWithLargeVertexDensityAlgorithm()

@@ -24,44 +24,61 @@ import json
 
 from qgis.PyQt.Qt import QVariant
 from qgis.PyQt.QtCore import QCoreApplication
-from qgis.core import (QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterEnum,
-                       QgsFeatureSink,
-                       QgsCoordinateReferenceSystem,
-                       QgsFields,
-                       QgsField,
-                       QgsWkbTypes)
+from qgis.core import (
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterEnum,
+    QgsFeatureSink,
+    QgsCoordinateReferenceSystem,
+    QgsFields,
+    QgsField,
+    QgsWkbTypes,
+)
 
 from DsgTools.tests.test_ValidationAlgorithms import Tester
 from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 
+
 class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
-    __description__ = """Runs unit tests for a set of DSGTools algorithms that""" \
-                      """has single output - in-place modified or otherwise."""
+    __description__ = (
+        """Runs unit tests for a set of DSGTools algorithms that"""
+        """has single output - in-place modified or otherwise."""
+    )
     AVAILABLE_ALGS = [
         # identification algs
-        "dsgtools:identifyoutofboundsangles", "dsgtools:identifyoutofboundsanglesincoverage",
-        "dsgtools:identifygaps", "dsgtools:identifyandfixinvalidgeometries",
-        "dsgtools:identifyduplicatedfeatures", "dsgtools:identifyduplicatedgeometries",
-        "dsgtools:identifyduplicatedlinesoncoverage", "dsgtools:identifysmalllines",
-        "dsgtools:identifyduplicatedpolygonsoncoverage", "dsgtools:identifysmallpolygons",
-        "dsgtools:identifydangles", "dsgtools:identifyduplicatedpointsoncoverage",
-        "dsgtools:identifyoverlaps", "dsgtools:identifyvertexnearedges",
+        "dsgtools:identifyoutofboundsangles",
+        "dsgtools:identifyoutofboundsanglesincoverage",
+        "dsgtools:identifygaps",
+        "dsgtools:identifyandfixinvalidgeometries",
+        "dsgtools:identifyduplicatedfeatures",
+        "dsgtools:identifyduplicatedgeometries",
+        "dsgtools:identifyduplicatedlinesoncoverage",
+        "dsgtools:identifysmalllines",
+        "dsgtools:identifyduplicatedpolygonsoncoverage",
+        "dsgtools:identifysmallpolygons",
+        "dsgtools:identifydangles",
+        "dsgtools:identifyduplicatedpointsoncoverage",
+        "dsgtools:identifyoverlaps",
+        "dsgtools:identifyvertexnearedges",
         # correction algs
-        "dsgtools:removeduplicatedfeatures", "dsgtools:removeduplicatedgeometries",
-        "dsgtools:removesmalllines", "dsgtools:removesmallpolygons",
+        "dsgtools:removeduplicatedfeatures",
+        "dsgtools:removeduplicatedgeometries",
+        "dsgtools:removesmalllines",
+        "dsgtools:removesmallpolygons",
         # manipulation algs
-        "dsgtools:lineonlineoverlayer", "dsgtools:mergelineswithsameattributeset",
-        "dsgtools:overlayelementswithareas", "dsgtools:deaggregategeometries",
-        "dsgtools:dissolvepolygonswithsameattributes", "dsgtools:removeemptyandupdate",
+        "dsgtools:lineonlineoverlayer",
+        "dsgtools:mergelineswithsameattributeset",
+        "dsgtools:overlayelementswithareas",
+        "dsgtools:deaggregategeometries",
+        "dsgtools:dissolvepolygonswithsameattributes",
+        "dsgtools:removeemptyandupdate",
         "dsgtools:snaplayeronlayer",
         # network algs
         "dsgtools:adjustnetworkconnectivity",
-        "dsgtools:identifyunsharedvertexonintersectionsalgorithm"
+        "dsgtools:identifyunsharedvertexonintersectionsalgorithm",
     ]
-    INPUT_ALGS = 'INPUT_ALGS'
-    OUTPUT = 'OUTPUT'
+    INPUT_ALGS = "INPUT_ALGS"
+    OUTPUT = "OUTPUT"
 
     def __init__(self):
         super(SingleOutputUnitTestAlgorithm, self).__init__()
@@ -73,43 +90,41 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.INPUT_ALGS,
-                self.tr('Algorithms to be tested'),
+                self.tr("Algorithms to be tested"),
                 options=self.AVAILABLE_ALGS,
                 optional=False,
-                allowMultiple=True
-
+                allowMultiple=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT,
-                self.tr("DSGTools Single Output Algorithms Unit Tests")
+                self.OUTPUT, self.tr("DSGTools Single Output Algorithms Unit Tests")
             )
         )
-        
+
     def name(self):
         """
         Returns the algorithm name, used for identifying the algorithm. This
-        string should be fixed for the algorithm, and must not be localised 
+        string should be fixed for the algorithm, and must not be localised
         (e.g. must be ASCII). The name should be unique within each provider.
-        Names should contain lowercase alphanumeric characters only and no 
+        Names should contain lowercase alphanumeric characters only and no
         spaces or other formatting characters.
         """
-        return 'singleoutputunittest'
+        return "singleoutputunittest"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Single Output Algorithms Unit Test')
+        return self.tr("Single Output Algorithms Unit Test")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Other Algorithms')
+        return self.tr("Other Algorithms")
 
     def groupId(self):
         """
@@ -119,10 +134,10 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Other Algorithms'
+        return "DSGTools: Other Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate('SingleOutputUnitTestAlgorithm', string)
+        return QCoreApplication.translate("SingleOutputUnitTestAlgorithm", string)
 
     def createInstance(self):
         """
@@ -135,9 +150,9 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
         Gets all fields for output layer.
         """
         fields = QgsFields()
-        fields.append(QgsField('algorithm', QVariant.String))
-        fields.append(QgsField('tests_output', QVariant.String))
-        fields.append(QgsField('status', QVariant.String))
+        fields.append(QgsField("algorithm", QVariant.String))
+        fields.append(QgsField("tests_output", QVariant.String))
+        fields.append(QgsField("status", QVariant.String))
         return fields
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -145,8 +160,12 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         algsOutput, dest_id = self.parameterAsSink(
-            parameters, self.OUTPUT, context, self.getFields(),
-            QgsWkbTypes.NoGeometry, QgsCoordinateReferenceSystem('EPSG:4326')
+            parameters,
+            self.OUTPUT,
+            context,
+            self.getFields(),
+            QgsWkbTypes.NoGeometry,
+            QgsCoordinateReferenceSystem("EPSG:4326"),
         )
         tester = Tester()
         featureHandler = FeatureHandler()
@@ -163,7 +182,9 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
             alg = self.AVAILABLE_ALGS[algIdx]
             feedback.pushInfo(self.tr("Testing {alg}'s...").format(alg=alg))
             # decided not to pass feedback to not pollute this alg's log
-            msg = tester.testAlg(alg, context=context) #, feedback=feedback, context=context)
+            msg = tester.testAlg(
+                alg, context=context
+            )  # , feedback=feedback, context=context)
             status = self.tr("Failed") if msg else self.tr("Passed")
             pushMethod = feedback.reportError if msg else feedback.pushDebugInfo
             failCount += 1 if msg else 0
@@ -172,14 +193,20 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
             feats.add(
                 featureHandler.createFeatureFromLayer(
                     algsOutput,
-                    attributes={"algorithm" : alg, "tests_output" : msg, "status" : status},
-                    fields=fields
+                    attributes={
+                        "algorithm": alg,
+                        "tests_output": msg,
+                        "status": status,
+                    },
+                    fields=fields,
                 )
             )
             feedback.setProgress(currentStep * totalProgress)
         algsOutput.addFeatures(feats, QgsFeatureSink.FastInsert)
         if failCount:
-            feedback.reportError(self.tr("{0} algorithms failed their unit tests.").format(failCount))
+            feedback.reportError(
+                self.tr("{0} algorithms failed their unit tests.").format(failCount)
+            )
         else:
             feedback.pushDebugInfo(self.tr("All algorithms passed their unit tests."))
-        return { self.OUTPUT : dest_id }
+        return {self.OUTPUT: dest_id}

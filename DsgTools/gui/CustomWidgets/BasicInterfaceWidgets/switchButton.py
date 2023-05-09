@@ -27,12 +27,14 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt, pyqtSlot, pyqtSignal
 from qgis.PyQt.QtWidgets import QLabel, QWidget, QSlider, QHBoxLayout
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'switchButton.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "switchButton.ui")
+)
+
 
 class SwitchButton(QWidget, FORM_CLASS):
     stateChanged = pyqtSignal(int)
-    
+
     def __init__(self, parent=None, stateA=None, stateB=None):
         """
         Class constructor.
@@ -53,15 +55,15 @@ class SwitchButton(QWidget, FORM_CLASS):
 
     def setStateAName(self, name):
         """
-        Updates the name for state A. 
+        Updates the name for state A.
         :param name: (str) state A's name
         """
         self.stateA = name
         self.stateALabel.setText(name)
-        
+
     def setStateBName(self, name):
         """
-        Updates the name for state B. 
+        Updates the name for state B.
         :param name: (str) state B's name
         """
         self.stateB = name
@@ -72,7 +74,7 @@ class SwitchButton(QWidget, FORM_CLASS):
         Reads state defined by current slider position - read from GUI.
         :return: (int) current state (0 for A, 1 for B).
         """
-        return int(self.slider.value() >= (self.min_ + self.max_)/2)
+        return int(self.slider.value() >= (self.min_ + self.max_) / 2)
 
     def state(self):
         """
@@ -87,10 +89,7 @@ class SwitchButton(QWidget, FORM_CLASS):
         :return: (int) state to be set (0 for A, 1 for B).
         """
         self._state = state
-        self.slider.setValue({
-            0: self.min_,
-            1: self.max_
-        }[state])
+        self.slider.setValue({0: self.min_, 1: self.max_}[state])
 
     def toggleState(self):
         """
@@ -98,16 +97,13 @@ class SwitchButton(QWidget, FORM_CLASS):
         """
         self._state = self.state() ^ 1
         self.setState(self._state)
-        
+
     def stateName(self):
         """
         Retrieves the name for current defined state.
         :return: (str) defined state's name (exposed text on GUI).
         """
-        return {
-            0: self.stateA,
-            1: self.stateB
-        }[self.state()]
+        return {0: self.stateA, 1: self.stateB}[self.state()]
 
     @pyqtSlot()
     def updateState(self):
@@ -120,7 +116,7 @@ class SwitchButton(QWidget, FORM_CLASS):
         self.setState(newState)
         if prevState != newState:
             self.stateChanged.emit(newState)
-    
+
     @pyqtSlot(int)
     def valueChanged(self, value):
         """

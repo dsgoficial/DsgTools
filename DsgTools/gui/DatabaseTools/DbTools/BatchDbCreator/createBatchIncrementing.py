@@ -29,46 +29,65 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QApplication
 from qgis.PyQt.QtGui import QCursor
 from DsgTools.core.Utils.utils import Utils
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
-from DsgTools.gui.CustomWidgets.SelectionWidgets.tabDbSelectorWidget import TabDbSelectorWidget
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import (
+    ProgressWidget,
+)
+from DsgTools.gui.CustomWidgets.SelectionWidgets.tabDbSelectorWidget import (
+    TabDbSelectorWidget,
+)
 from DsgTools.core.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactory
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'createBatchIncrementing.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "createBatchIncrementing.ui")
+)
+
 
 class CreateBatchIncrementing(QtWidgets.QWizardPage, FORM_CLASS):
     parametersSet = pyqtSignal(dict)
+
     def __init__(self, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__()
         self.setupUi(self)
         self.databaseParameterWidget.setDbNameVisible(False)
-        self.tabDbSelectorWidget.serverWidget.serverAbstractDbLoaded.connect(self.databaseParameterWidget.setServerDb)
+        self.tabDbSelectorWidget.serverWidget.serverAbstractDbLoaded.connect(
+            self.databaseParameterWidget.setServerDb
+        )
         self.databaseParameterWidget.comboBoxPostgis.parent = self
         self.databaseParameterWidget.useFrame = False
         self.databaseParameterWidget.setDbNameVisible(True)
-    
+
     def getParameters(self):
-        #Get outputDir, outputList, refSys
+        # Get outputDir, outputList, refSys
         parameterDict = dict()
-        parameterDict['prefix'] = None
-        parameterDict['sufix'] = None
-        parameterDict['srid'] = self.databaseParameterWidget.mQgsProjectionSelectionWidget.crs().authid().split(':')[-1]
-        parameterDict['version'] = self.databaseParameterWidget.getVersion()
-        parameterDict['nonDefaultTemplate'] = self.databaseParameterWidget.getTemplateName()
-        if self.databaseParameterWidget.prefixLineEdit.text() != '':
-            parameterDict['prefix'] = self.databaseParameterWidget.prefixLineEdit.text()
-        if self.databaseParameterWidget.sufixLineEdit.text() != '':
-            parameterDict['sufix'] = self.databaseParameterWidget.sufixLineEdit.text()
-        parameterDict['dbBaseName'] = self.databaseParameterWidget.dbNameLineEdit.text()
-        parameterDict['driverName'] = self.tabDbSelectorWidget.getType()
-        parameterDict['factoryParam'] = self.tabDbSelectorWidget.getFactoryCreationParam()
-        parameterDict['numberOfDatabases'] = self.spinBox.value()
-        parameterDict['templateInfo'] = self.databaseParameterWidget.getTemplateParameters()
+        parameterDict["prefix"] = None
+        parameterDict["sufix"] = None
+        parameterDict["srid"] = (
+            self.databaseParameterWidget.mQgsProjectionSelectionWidget.crs()
+            .authid()
+            .split(":")[-1]
+        )
+        parameterDict["version"] = self.databaseParameterWidget.getVersion()
+        parameterDict[
+            "nonDefaultTemplate"
+        ] = self.databaseParameterWidget.getTemplateName()
+        if self.databaseParameterWidget.prefixLineEdit.text() != "":
+            parameterDict["prefix"] = self.databaseParameterWidget.prefixLineEdit.text()
+        if self.databaseParameterWidget.sufixLineEdit.text() != "":
+            parameterDict["sufix"] = self.databaseParameterWidget.sufixLineEdit.text()
+        parameterDict["dbBaseName"] = self.databaseParameterWidget.dbNameLineEdit.text()
+        parameterDict["driverName"] = self.tabDbSelectorWidget.getType()
+        parameterDict[
+            "factoryParam"
+        ] = self.tabDbSelectorWidget.getFactoryCreationParam()
+        parameterDict["numberOfDatabases"] = self.spinBox.value()
+        parameterDict[
+            "templateInfo"
+        ] = self.databaseParameterWidget.getTemplateParameters()
         return parameterDict
 
     def validatePage(self):
-        #insert validation messages
+        # insert validation messages
         validatedDbParams = self.databaseParameterWidget.validate()
         if not validatedDbParams:
             return False
@@ -77,28 +96,49 @@ class CreateBatchIncrementing(QtWidgets.QWizardPage, FORM_CLASS):
             return False
         parameterDict = self.getParameters()
         dbDict, errorDict = self.createDatabases(parameterDict)
-        creationMsg = ''
+        creationMsg = ""
         if len(list(dbDict.keys())) > 0:
-            creationMsg += self.tr('Database(s) {0} created successfully.').format(', '.join(list(dbDict.keys())))
-        errorMsg = ''
+            creationMsg += self.tr("Database(s) {0} created successfully.").format(
+                ", ".join(list(dbDict.keys()))
+            )
+        errorMsg = ""
         if len(list(errorDict.keys())) > 0:
             frameList = []
             errorList = []
             for key in list(errorDict.keys()):
                 errorList.append(key)
-                QgsMessageLog.logMessage(self.tr('Error on {0}: ').format(key)+errorDict[key], "DSGTools Plugin", Qgis.Critical)
+                QgsMessageLog.logMessage(
+                    self.tr("Error on {0}: ").format(key) + errorDict[key],
+                    "DSGTools Plugin",
+                    Qgis.Critical,
+                )
             if len(errorList) > 0:
-                errorMsg += self.tr('Some errors occurred while trying to create database(s) {0}').format(', '.join(errorList))
-        logMsg = ''
-        if errorMsg != '':
-            logMsg += self.tr('Check log for more details.')
-        msg = [i for i in (creationMsg, errorMsg, logMsg) if i != '']
-        QMessageBox.warning(self, self.tr('Info!'), self.tr('Process finished.')+'\n'+'\n'.join(msg))
+                errorMsg += self.tr(
+                    "Some errors occurred while trying to create database(s) {0}"
+                ).format(", ".join(errorList))
+        logMsg = ""
+        if errorMsg != "":
+            logMsg += self.tr("Check log for more details.")
+        msg = [i for i in (creationMsg, errorMsg, logMsg) if i != ""]
+        QMessageBox.warning(
+            self, self.tr("Info!"), self.tr("Process finished.") + "\n" + "\n".join(msg)
+        )
         return True
-    
+
     def createDatabases(self, parameterDict):
-        dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parentWidget = self)
+        dbCreator = DbCreatorFactory().createDbCreatorFactory(
+            parameterDict["driverName"],
+            parameterDict["factoryParam"],
+            parentWidget=self,
+        )
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        dbDict, errorDict = dbCreator.createDbWithAutoIncrementingName(parameterDict['dbBaseName'], parameterDict['srid'], parameterDict['numberOfDatabases'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'], paramDict = parameterDict['templateInfo'])
+        dbDict, errorDict = dbCreator.createDbWithAutoIncrementingName(
+            parameterDict["dbBaseName"],
+            parameterDict["srid"],
+            parameterDict["numberOfDatabases"],
+            prefix=parameterDict["prefix"],
+            sufix=parameterDict["sufix"],
+            paramDict=parameterDict["templateInfo"],
+        )
         QApplication.restoreOverrideCursor()
         return dbDict, errorDict

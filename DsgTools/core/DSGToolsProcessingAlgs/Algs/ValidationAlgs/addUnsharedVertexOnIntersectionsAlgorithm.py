@@ -24,28 +24,36 @@ from itertools import chain
 from PyQt5.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterDistance,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterDistance,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterField,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
-    INPUT_POINTS = 'INPUT_POINTS'
-    INPUT_LINES = 'INPUT_LINES'
-    INPUT_POLYGONS = 'INPUT_POLYGONS'
-    SELECTED = 'SELECTED'
-    GEOGRAPHIC_BOUNDARY = 'GEOGRAPHIC_BOUNDARY'
+    INPUT_POINTS = "INPUT_POINTS"
+    INPUT_LINES = "INPUT_LINES"
+    INPUT_POLYGONS = "INPUT_POLYGONS"
+    SELECTED = "SELECTED"
+    SEARCH_RADIUS = "SEARCH_RADIUS"
+    GEOGRAPHIC_BOUNDARY = "GEOGRAPHIC_BOUNDARY"
 
     def initAlgorithm(self, config):
         """
@@ -54,44 +62,48 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_POINTS,
-                self.tr('Point Layers'),
+                self.tr("Point Layers"),
                 QgsProcessing.TypeVectorPoint,
-                optional=True
+                optional=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LINES,
-                self.tr('Linestring Layers'),
+                self.tr("Linestring Layers"),
                 QgsProcessing.TypeVectorLine,
-                optional=True
+                optional=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_POLYGONS,
-                self.tr('Polygon Layers'),
+                self.tr("Polygon Layers"),
                 QgsProcessing.TypeVectorPolygon,
-                optional=True
+                optional=True,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
-            )
-        )
-        
-        self.addParameter(
-            QgsProcessingParameterVectorLayer(
-                self.GEOGRAPHIC_BOUNDARY,
-                self.tr('Geographic Boundary'),
-                [QgsProcessing.TypeVectorPolygon],
-                optional=True
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
 
+        param = QgsProcessingParameterDistance(
+            self.SEARCH_RADIUS, self.tr("Search Radius"), defaultValue=1.0
+        )
+        param.setMetadata({"widget_wrapper": {"decimals": 8}})
+        self.addParameter(param)
+
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.GEOGRAPHIC_BOUNDARY,
+                self.tr("Geographic Boundary"),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True,
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -99,37 +111,26 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         """
         algRunner = AlgRunner()
         inputPointLyrList = self.parameterAsLayerList(
-            parameters,
-            self.INPUT_POINTS,
-            context
+            parameters, self.INPUT_POINTS, context
         )
         inputLineLyrList = self.parameterAsLayerList(
-            parameters,
-            self.INPUT_LINES,
-            context
+            parameters, self.INPUT_LINES, context
         )
         inputPolygonLyrList = self.parameterAsLayerList(
-            parameters,
-            self.INPUT_POLYGONS,
-            context
+            parameters, self.INPUT_POLYGONS, context
         )
+        searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
         geographicBoundary = self.parameterAsVectorLayer(
-            parameters,
-            self.GEOGRAPHIC_BOUNDARY,
-            context
+            parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
         if inputPointLyrList + inputLineLyrList + inputPolygonLyrList == []:
-            raise QgsProcessingException(
-                self.tr('Select at least one layer')
-            )
-        onlySelected = self.parameterAsBool(
-            parameters,
-            self.SELECTED,
-            context
-        )
+            raise QgsProcessingException(self.tr("Select at least one layer"))
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         lyrList = list(chain(inputPointLyrList, inputLineLyrList, inputPolygonLyrList))
         nLyrs = len(lyrList)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(nLyrs + 4 + 2 * (geographicBoundary is not None), feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(
+            nLyrs + 4 + 2 * (geographicBoundary is not None), feedback
+        )
         multiStepFeedback.setCurrentStep(0)
         flagsLyr = algRunner.runIdentifyUnsharedVertexOnIntersectionsAlgorithm(
             pointLayerList=inputPointLyrList,
@@ -138,7 +139,7 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
             context=context,
             feedback=multiStepFeedback,
-            is_child_algorithm=True
+            is_child_algorithm=True,
         )
         if geographicBoundary is not None:
             multiStepFeedback.setCurrentStep(1)
@@ -147,22 +148,24 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
                 geographicBoundary,
                 context=context,
                 feedback=multiStepFeedback,
-                is_child_algorithm=True
+                is_child_algorithm=True,
             )
         for current, lyr in enumerate(lyrList):
             if feedback.isCanceled():
                 break
-            multiStepFeedback.setCurrentStep(current + 1 + (geographicBoundary is not None))
+            multiStepFeedback.setCurrentStep(
+                current + 1 + (geographicBoundary is not None)
+            )
             algRunner.runSnapLayerOnLayer(
                 inputLayer=lyr,
                 referenceLayer=flagsLyr,
-                tol=1e-5,
+                tol=searchRadius,
                 context=context,
                 onlySelected=onlySelected,
                 feedback=multiStepFeedback,
                 behavior=1,
                 buildCache=False,
-                is_child_algorithm=True
+                is_child_algorithm=True,
             )
         currentStep = current + 1 + (geographicBoundary is not None)
         multiStepFeedback.setCurrentStep(currentStep)
@@ -172,7 +175,7 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             polygonLayerList=inputPolygonLyrList,
             onlySelected=onlySelected,
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         currentStep += 1
         if geographicBoundary is not None:
@@ -183,7 +186,7 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             currentStep += 1
         if newFlagsLyr.featureCount() == 0:
             return {}
-        
+
         multiStepFeedback.setCurrentStep(currentStep)
         algRunner.runCreateSpatialIndex(newFlagsLyr, context, multiStepFeedback)
         currentStep += 1
@@ -191,8 +194,8 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         LayerHandler().addVertexesToLayers(
             vertexLyr=newFlagsLyr,
             layerList=list(chain(inputLineLyrList, inputPolygonLyrList)),
-            searchRadius=1e-5,
-            feedback=multiStepFeedback
+            searchRadius=searchRadius,
+            feedback=multiStepFeedback,
         )
 
         return {}
@@ -205,21 +208,21 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'addunsharedvertexonintersectionsalgorithm'
+        return "addunsharedvertexonintersectionsalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Add Unshared Vertex on Intersections')
+        return self.tr("Add Unshared Vertex on Intersections")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Correction Processes)')
+        return self.tr("Quality Assurance Tools (Correction Processes)")
 
     def groupId(self):
         """
@@ -229,10 +232,12 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'Quality Assurance Tools (Correction Processes)'
+        return "DSGTools: Quality Assurance Tools (Correction Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('AddUnsharedVertexOnIntersectionsAlgorithm', string)
+        return QCoreApplication.translate(
+            "AddUnsharedVertexOnIntersectionsAlgorithm", string
+        )
 
     def createInstance(self):
         return AddUnsharedVertexOnIntersectionsAlgorithm()

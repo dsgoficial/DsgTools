@@ -1526,9 +1526,9 @@ Usuários com erro:</translation>
     </message>
     <message>
         <location filename="../BDGExTools/BDGExTools.py" line="116"/>
-        <source>Invalid GetCapabilities response: 
+        <source>Invalid GetCapabilities response:
 {0}</source>
-        <translation type="obsolete">Resposta do GetCapabilities Inválida: 
+        <translation type="obsolete">Resposta do GetCapabilities Inválida:
 {0}</translation>
     </message>
 </context>
@@ -1825,9 +1825,9 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.py" line="177"/>
-        <source>Drop operation complete. 
+        <source>Drop operation complete.
 </source>
-        <translation>Operação de deleção concluída. 
+        <translation>Operação de deleção concluída.
 </translation>
     </message>
     <message>
@@ -1837,16 +1837,16 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.py" line="253"/>
-        <source>Import operation complete. 
+        <source>Import operation complete.
 </source>
-        <translation>Operação de importação concluída. 
+        <translation>Operação de importação concluída.
 </translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.py" line="365"/>
-        <source>Delete operation complete. 
+        <source>Delete operation complete.
 </source>
-        <translation>Operação de deleção completa. 
+        <translation>Operação de deleção completa.
 </translation>
     </message>
     <message>
@@ -1861,9 +1861,9 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.py" line="397"/>
-        <source>Customize from SQL file operation complete. 
+        <source>Customize from SQL file operation complete.
 </source>
-        <translation>Operação de cutomização a partir de arquivo SQL completa. 
+        <translation>Operação de cutomização a partir de arquivo SQL completa.
 </translation>
     </message>
     <message>
@@ -1918,9 +1918,9 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.py" line="188"/>
-        <source>Upgrade Posgtis operation complete. 
+        <source>Upgrade Posgtis operation complete.
 </source>
-        <translation>Operação de atualização do PostGIS completa. 
+        <translation>Operação de atualização do PostGIS completa.
 </translation>
     </message>
     <message>
@@ -2858,28 +2858,28 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 camada</translation>
     </message>
     <message>
@@ -5404,11 +5404,11 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/databaseParameterWidget.ui" line="96"/>
-        <source>Select Frame Layer (If this is 
+        <source>Select Frame Layer (If this is
 not checked and frame not selected,
 the frame will not be created</source>
-        <translation type="obsolete">Selecionar camada de moldura 
-(se este item não estiver marcado e uma camada 
+        <translation type="obsolete">Selecionar camada de moldura
+(se este item não estiver marcado e uma camada
 para moldura não for selecionada, a moldura não será criada </translation>
     </message>
     <message>
@@ -5751,7 +5751,7 @@ para moldura não for selecionada, a moldura não será criada </translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceInfoTable.py" line="84"/>
         <source>Geometry Column</source>
-        <translation>Coluna 
+        <translation>Coluna
 geométrica</translation>
     </message>
     <message>
@@ -6051,28 +6051,28 @@ Mensagens de erro para cada perfil foram geradas no log do QGIS.</translation>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="42"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="42"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="42"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="42"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
 </context>
@@ -7142,21 +7142,21 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 camada</translation>
     </message>
     <message>
@@ -8113,9 +8113,9 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="103"/>
-        <source>Update Earth Coverage configuration complete. 
+        <source>Update Earth Coverage configuration complete.
 </source>
-        <translation>Atualização da configuração de cobertura terrestre completa. 
+        <translation>Atualização da configuração de cobertura terrestre completa.
 </translation>
     </message>
     <message>
@@ -8125,16 +8125,16 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="123"/>
-        <source>Uninstall Earth Coverage configuration complete. 
+        <source>Uninstall Earth Coverage configuration complete.
 </source>
-        <translation>Desinstalação configuração de cobertura terrestre completa. 
+        <translation>Desinstalação configuração de cobertura terrestre completa.
 </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="113"/>
-        <source>Install Earth Coverage configuration complete. 
+        <source>Install Earth Coverage configuration complete.
 </source>
-        <translation>Instalação de configuração de cobertura terrestre concluída. 
+        <translation>Instalação de configuração de cobertura terrestre concluída.
 </translation>
     </message>
     <message>
@@ -8144,9 +8144,9 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="118"/>
-        <source>Delete Earth Coverage configuration complete. 
+        <source>Delete Earth Coverage configuration complete.
 </source>
-        <translation>Remoção de configuração de cobertura terrestra completa. 
+        <translation>Remoção de configuração de cobertura terrestra completa.
 </translation>
     </message>
     <message>
@@ -9166,9 +9166,9 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="98"/>
-        <source>Update Field Toolbox configuration complete. 
+        <source>Update Field Toolbox configuration complete.
 </source>
-        <translation type="obsolete">Atualização da configuração da Ferramenta de Classificação completa. 
+        <translation type="obsolete">Atualização da configuração da Ferramenta de Classificação completa.
 </translation>
     </message>
     <message>
@@ -9178,16 +9178,16 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="118"/>
-        <source>Uninstall Field Toolbox configuration complete. 
+        <source>Uninstall Field Toolbox configuration complete.
 </source>
-        <translation type="obsolete">Desinstalação da configuração da Ferramenta de Classificação completa. 
+        <translation type="obsolete">Desinstalação da configuração da Ferramenta de Classificação completa.
 </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="108"/>
-        <source>Install Field Toolbox configuration complete. 
+        <source>Install Field Toolbox configuration complete.
 </source>
-        <translation type="obsolete">Instalação de configurações da Ferramenta de Classificação completa. 
+        <translation type="obsolete">Instalação de configurações da Ferramenta de Classificação completa.
 </translation>
     </message>
     <message>
@@ -9197,9 +9197,9 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="113"/>
-        <source>Delete Field Toolbox configuration complete. 
+        <source>Delete Field Toolbox configuration complete.
 </source>
-        <translation type="obsolete">Remoção da configuração da Ferramenta de Classificação completa. 
+        <translation type="obsolete">Remoção da configuração da Ferramenta de Classificação completa.
 </translation>
     </message>
     <message>
@@ -9773,13 +9773,13 @@ Feição(ões) não invertidas: </translation>
     <message>
         <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="101"/>
         <source>Set Zoom:</source>
-        <translation type="obsolete">Ajustar 
+        <translation type="obsolete">Ajustar
 aproximação:</translation>
     </message>
     <message>
         <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="233"/>
         <source>Initial feat ID</source>
-        <translation type="obsolete">ID iniciação 
+        <translation type="obsolete">ID iniciação
 de feição</translation>
     </message>
     <message>
@@ -9819,7 +9819,7 @@ de feição</translation>
     </message>
     <message>
         <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="308"/>
-        <source>Only on selected 
+        <source>Only on selected
 features</source>
         <translation type="obsolete">Apenas Feições
 Selecionadas</translation>
@@ -9832,7 +9832,7 @@ Selecionadas</translation>
     <message>
         <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="179"/>
         <source>Set Zoom</source>
-        <translation type="obsolete">Selecione 
+        <translation type="obsolete">Selecione
 o Zoom</translation>
     </message>
     <message>
@@ -11349,14 +11349,14 @@ Column</source>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="63"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="63"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
     <message>
@@ -11611,28 +11611,28 @@ Camada</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="43"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="43"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="43"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="43"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
     <message>
@@ -11911,28 +11911,28 @@ Camada</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="46"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="46"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="46"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="46"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
     <message>
@@ -11956,28 +11956,28 @@ Camada</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
     <message>
@@ -12159,28 +12159,28 @@ Camada</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
     <message>
@@ -12390,28 +12390,28 @@ Camada</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
 </context>
@@ -12501,28 +12501,28 @@ Camada</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="46"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="46"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="46"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="46"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
     <message>
@@ -12647,28 +12647,28 @@ Camada</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="46"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="46"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="46"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="46"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
 </context>
@@ -12720,28 +12720,28 @@ Camada</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
     <message>
@@ -12933,28 +12933,28 @@ Camada</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
 </context>
@@ -13114,28 +13114,28 @@ Camada</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="45"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="45"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="45"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="45"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
 </context>
@@ -13416,28 +13416,28 @@ Camada</translation>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="42"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="42"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="42"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="42"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
 </context>
@@ -13888,28 +13888,28 @@ Camada</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="46"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="46"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="46"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="46"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
     <message>
@@ -14563,14 +14563,14 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="125"/>
         <source>Layer Name</source>
-        <translation>Nome da 
+        <translation>Nome da
 camada</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="125"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna 
+        <translation>Coluna
 geométrica</translation>
     </message>
     <message>
@@ -14584,7 +14584,7 @@ geométrico</translation>
         <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="125"/>
         <source>Layer
 Type</source>
-        <translation>Tipo da 
+        <translation>Tipo da
 camada</translation>
     </message>
     <message>
@@ -15080,28 +15080,28 @@ Usuários com erro:</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
     <message>
@@ -16342,28 +16342,28 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="52"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="52"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="52"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="52"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
     <message>
@@ -17911,28 +17911,28 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="134"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 camada</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="134"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 geométrica</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="134"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 geométrico</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="134"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 camada</translation>
     </message>
     <message>
@@ -18094,9 +18094,9 @@ camada</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/profile_editor.py" line="230"/>
-        <source>Problem saving file! 
+        <source>Problem saving file!
 </source>
-        <translation>Problema ao tentar salvar arquivo! 
+        <translation>Problema ao tentar salvar arquivo!
 </translation>
     </message>
     <message>
@@ -18111,9 +18111,9 @@ camada</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/profile_editor.py" line="255"/>
-        <source>Problem deleting profile! 
+        <source>Problem deleting profile!
 </source>
-        <translation>Problema ao tentar deletar perfil! 
+        <translation>Problema ao tentar deletar perfil!
 </translation>
     </message>
 </context>
@@ -18792,28 +18792,28 @@ Versão do modelo: {1}
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="43"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="43"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="43"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="43"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
 </context>
@@ -19094,16 +19094,16 @@ Camada</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.py" line="123"/>
-        <source>Problem reading file! 
+        <source>Problem reading file!
 </source>
-        <translation type="obsolete">Problema lendo arquivo! 
+        <translation type="obsolete">Problema lendo arquivo!
 </translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.py" line="181"/>
-        <source>Problem saving file! 
+        <source>Problem saving file!
 </source>
-        <translation type="obsolete">Problema ao tentar salvar arquivo! 
+        <translation type="obsolete">Problema ao tentar salvar arquivo!
 </translation>
     </message>
     <message>
@@ -19823,7 +19823,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     </message>
     <message>
         <location filename="ValidationTools/setupEarthCoverage.py" line="216"/>
-        <source>Problem saving into database! 
+        <source>Problem saving into database!
 </source>
         <translation type="obsolete">Problema salvando no banco de dados!</translation>
     </message>
@@ -19844,16 +19844,16 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.ui" line="94"/>
-        <source>4- Choose the line classes that, along with the frame, build the areas of earth coverage 
+        <source>4- Choose the line classes that, along with the frame, build the areas of earth coverage
 (only parent classes are listed here).</source>
-        <translation>4- Escolha as classes do tipo linha que, juntamente com a moldura, definem áreas da cobertura terrestre 
+        <translation>4- Escolha as classes do tipo linha que, juntamente com a moldura, definem áreas da cobertura terrestre
 (somente classes pai são listadas aqui).</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.ui" line="109"/>
-        <source>5- For each area class of earth coverage, define which lines are used to build it 
+        <source>5- For each area class of earth coverage, define which lines are used to build it
 (note that frame is always used to close areas)</source>
-        <translation>5- Para cada classe da cobertura terrestre, defina quais linhas são usadas para construí-la 
+        <translation>5- Para cada classe da cobertura terrestre, defina quais linhas são usadas para construí-la
 (note que a moldura é sempre usada para fechar áreas)</translation>
     </message>
     <message>
@@ -20218,28 +20218,28 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
     <message>
@@ -20487,28 +20487,28 @@ Camada</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="47"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="47"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="47"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="47"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
 </context>
@@ -20587,28 +20587,28 @@ Camada</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="50"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="50"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="50"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="50"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
 </context>
@@ -20750,28 +20750,28 @@ Camada</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="43"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="43"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="43"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="43"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
 </context>
@@ -20948,7 +20948,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="173"/>
-        <source>Problem reading file! 
+        <source>Problem reading file!
 </source>
         <translation type="obsolete">Problema lendo arquivo!</translation>
     </message>
@@ -21007,7 +21007,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="56"/>
-        <source>Problem reading file! 
+        <source>Problem reading file!
 </source>
         <translation type="obsolete">Problema lendo arquivo! </translation>
     </message>
@@ -21337,9 +21337,9 @@ Camada</translation>
     <name>StyleManagerWidget</name>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/styleManagerWidget.py" line="73"/>
-        <source>Update Style configuration complete. 
+        <source>Update Style configuration complete.
 </source>
-        <translation>Configuração de atualização de estilo concluída. 
+        <translation>Configuração de atualização de estilo concluída.
 </translation>
     </message>
     <message>
@@ -21349,16 +21349,16 @@ Camada</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/styleManagerWidget.py" line="93"/>
-        <source>Uninstall Style configuration complete. 
+        <source>Uninstall Style configuration complete.
 </source>
-        <translation>Desinstalação de configuração de estilo concluída. 
+        <translation>Desinstalação de configuração de estilo concluída.
 </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/styleManagerWidget.py" line="83"/>
-        <source>Install Style configuration complete. 
+        <source>Install Style configuration complete.
 </source>
-        <translation>Instalação de configuração de estilo concluída. 
+        <translation>Instalação de configuração de estilo concluída.
 </translation>
     </message>
     <message>
@@ -21368,9 +21368,9 @@ Camada</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/styleManagerWidget.py" line="88"/>
-        <source>Delete Style configuration complete. 
+        <source>Delete Style configuration complete.
 </source>
-        <translation>Remoção de configuração de estilo concluída. 
+        <translation>Remoção de configuração de estilo concluída.
 </translation>
     </message>
 </context>
@@ -21681,28 +21681,28 @@ Camada</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
     <message>
@@ -21940,28 +21940,28 @@ Camada</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="obsolete">Nome da
 Camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="obsolete">Coluna
 Geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="obsolete">Tipo
 Geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="obsolete">Tipo da
 Camada</translation>
     </message>
     <message>

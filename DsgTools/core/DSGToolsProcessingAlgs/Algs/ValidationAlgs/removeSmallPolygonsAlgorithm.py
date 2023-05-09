@@ -22,26 +22,33 @@
 
 from PyQt5.QtCore import QCoreApplication
 
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
-    FLAGS = 'FLAGS'
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
-    TOLERANCE = 'TOLERANCE'
-    OUTPUT = 'OUTPUT'
+    FLAGS = "FLAGS"
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
+    TOLERANCE = "TOLERANCE"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -50,31 +57,26 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry ]
+                self.tr("Input layer"),
+                [QgsProcessing.TypeVectorAnyGeometry],
             )
         )
 
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
 
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.TOLERANCE,
-                self.tr('Area tolerance'),
-                minValue=0,
-                defaultValue=625
+                self.TOLERANCE, self.tr("Area tolerance"), minValue=0, defaultValue=625
             )
         )
 
         self.addOutput(
             QgsProcessingOutputVectorLayer(
-                self.OUTPUT,
-                self.tr('Original layer without small polygons')
+                self.OUTPUT, self.tr("Original layer without small polygons")
             )
         )
 
@@ -86,32 +88,29 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
-                self.invalidSourceError(
-                    parameters,
-                    self.INPUT
-                    )
-                )
+                self.invalidSourceError(parameters, self.INPUT)
+            )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(
-            self.tr(
-                'Identifying small polygons in layer {0}...'
-                ).format(inputLyr.name()))
+            self.tr("Identifying small polygons in layer {0}...").format(
+                inputLyr.name()
+            )
+        )
         flagLyr = algRunner.runIdentifySmallPolygons(
             inputLyr,
             tol,
             context,
             feedback=multiStepFeedback,
-            onlySelected=onlySelected
-            )
+            onlySelected=onlySelected,
+        )
 
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(
-            self.tr(
-                'Removing small polygons from layer {0}...'
-                ).format(inputLyr.name()))
+            self.tr("Removing small polygons from layer {0}...").format(inputLyr.name())
+        )
         self.removeFeatures(inputLyr, flagLyr, multiStepFeedback)
 
         return {self.OUTPUT: inputLyr}
@@ -121,17 +120,16 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
         Parses features from flagLyr to get ids from inputLyr to remove.
         """
         featureList, total = self.getIteratorAndFeatureCount(flagLyr)
-        localTotal = 100/total if total else 0
+        localTotal = 100 / total if total else 0
         inputLyr.startEditing()
         idRemoveList = []
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
             if feedback.isCanceled():
                 break
-            idRemoveList += [int(feat['reason'].split('=')[-1].split(' ')[0])]
+            idRemoveList += [int(feat["reason"].split("=")[-1].split(" ")[0])]
             feedback.setProgress(current * localTotal)
         inputLyr.deleteFeatures(idRemoveList)
-        
 
     def name(self):
         """
@@ -141,21 +139,21 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'removesmallpolygons'
+        return "removesmallpolygons"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Remove Small Polygons')
+        return self.tr("Remove Small Polygons")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Correction Processes)')
+        return self.tr("Quality Assurance Tools (Correction Processes)")
 
     def groupId(self):
         """
@@ -165,10 +163,10 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Correction Processes)'
+        return "DSGTools: Quality Assurance Tools (Correction Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('RemoveSmallPolygonsAlgorithm', string)
+        return QCoreApplication.translate("RemoveSmallPolygonsAlgorithm", string)
 
     def createInstance(self):
         return RemoveSmallPolygonsAlgorithm()

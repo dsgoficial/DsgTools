@@ -31,10 +31,14 @@ from qgis.core import QgsMessageLog, Qgis
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.core.dsgEnums import DsgEnums
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceInfoTable import DatasourceInfoTable
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceInfoTable import (
+    DatasourceInfoTable,
+)
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'databaseFileLineEdit.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "databaseFileLineEdit.ui")
+)
+
 
 class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
     connectionChanged = pyqtSignal()
@@ -53,9 +57,15 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
         self.abstractDb = None
         self.abstractDbFactory = DbFactory()
         self.serverAbstractDb = None
-        self.displayDict = {'2.1.3':'EDGV 2.1.3', '2.1.3 Pro':'EDGV 2.1.3 Pro', 'FTer_2a_Ed':'EDGV FTer 2a Ed', 'Non_EDGV':self.tr('Other database model'), '3.0':'EDGV 3.0'}
+        self.displayDict = {
+            "2.1.3": "EDGV 2.1.3",
+            "2.1.3 Pro": "EDGV 2.1.3 Pro",
+            "FTer_2a_Ed": "EDGV FTer 2a Ed",
+            "Non_EDGV": self.tr("Other database model"),
+            "3.0": "EDGV 3.0",
+        }
         self.instantiateAbstractDb = False
-        self.connectionSelectorLineEdit.lineEdit.setText(self.tr('Select datasource'))
+        self.connectionSelectorLineEdit.lineEdit.setText(self.tr("Select datasource"))
         self.connectionSelectorLineEdit.lineEdit.setReadOnly(True)
 
     def closeDatabase(self):
@@ -70,20 +80,20 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
         Unsets any selected database and clears db directory, if necessary.
         """
         self.connectionSelectorLineEdit.lineEdit.clear()
-        self.connectionSelectorLineEdit.lineEdit.setText(self.tr('Select datasource'))
+        self.connectionSelectorLineEdit.lineEdit.setText(self.tr("Select datasource"))
         self.closeDatabase()
-    
+
     def currentDb(self):
         """
         Returns current loaded datasource name, if any.
         :return: (str) current loaded datasource name; an empty string if no ds is selected.
         """
         text = self.connectionSelectorLineEdit.lineEdit.text()
-        if text == self.tr('Select datasource'):
+        if text == self.tr("Select datasource"):
             return None
         else:
-            dirSplit = '/' if '/' in text else '\\'
-            text = text.split(dirSplit)[-1].split('.')[0] if text else ''
+            dirSplit = "/" if "/" in text else "\\"
+            text = text.split(dirSplit)[-1].split(".")[0] if text else ""
             return text
 
     def serverIsValid(self):
@@ -100,7 +110,7 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
         # for files, it is only necessary to check if file exists and is not empty.
         return bool(self.abstractDb)
 
-    @pyqtSlot(str, name = 'on_lineEdit_textChanged')
+    @pyqtSlot(str, name="on_lineEdit_textChanged")
     def loadDatabase(self, currentText):
         """
         Loads the selected database
@@ -117,8 +127,10 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
                 self.connectionChanged.emit()
         except Exception as e:
             self.closeDatabase()
-            self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
+            self.problemOccurred.emit(
+                self.tr("A problem occurred! Check log for details.")
+            )
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
 
     def validate(self):
         """
@@ -130,23 +142,23 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
         # check a valid server name
         # check if datasource is a valid name and if it already exists into selected server
         if not self.currentDb() or not self.abstractDb:
-            return self.tr('Invalid datasource.')
+            return self.tr("Invalid datasource.")
         else:
             # check if the connection is a valid connection
             if not self.serverIsValid():
-                return self.tr('Invalid connection to server.')
+                return self.tr("Invalid connection to server.")
             # check if it exists
             if not self.databaseExists():
-                return self.tr('Database {0} does not exist.').format(self.currentDb())
+                return self.tr("Database {0} does not exist.").format(self.currentDb())
         # if all tests were positive, widget has a valid selection
-        return ''
+        return ""
 
     def isValid(self):
         """
         Validates selection.
         :return: (bool) validation status.
         """
-        return self.validate() == ''
+        return self.validate() == ""
 
     @pyqtSlot(bool)
     def on_infoPushButton_clicked(self):

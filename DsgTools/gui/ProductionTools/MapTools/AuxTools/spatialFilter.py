@@ -22,32 +22,50 @@
 """
 
 from qgis import gui, core
+from qgis.gui import QgsMapTool
 from qgis.utils import iface
 from PyQt5 import QtGui, QtCore
 
-class SpatialFilter:
 
-    def __init__(self):
+class SpatialFilter(QgsMapTool):
+    def __init__(self, stackButton):
+        self.stackButton = stackButton
         self.previousMapTool = iface.mapCanvas().mapTool()
-        self.myMapTool = gui.QgsMapToolEmitPoint( iface.mapCanvas() )
+        self.myMapTool = gui.QgsMapToolEmitPoint(iface.mapCanvas())
         self.coordinates = []
         self.isEditing = 0
         self.isActive = False
-        self.myMapTool.canvasClicked.connect( self.mouseClick )
-        self.myMapTool.keyReleaseEvent = lambda event: self.disconnect() if event.key() == QtCore.Qt.Key_Escape else ''
+        self.myMapTool.canvasClicked.connect(self.mouseClick)
+        self.myMapTool.keyReleaseEvent = (
+            lambda event: self.disconnect()
+            if event.key() == QtCore.Qt.Key_Escape
+            else ""
+        )
+        self.iface = iface
+        self.canvas = self.iface.mapCanvas()
+        super(SpatialFilter, self).__init__(self.canvas)
+    
+    def setCurrentActionOnStackButton(self):
+        try:
+            self.stackButton.setDefaultAction(self.sender())
+        except:
+            pass
 
     def start(self):
+        self.setCurrentActionOnStackButton()
         self.isActive = not self.isActive
         if self.isActive:
-            self.myRubberBand = gui.QgsRubberBand( iface.mapCanvas(), core.QgsWkbTypes.PolygonGeometry )
+            self.myRubberBand = gui.QgsRubberBand(
+                iface.mapCanvas(), core.QgsWkbTypes.PolygonGeometry
+            )
             color = QtGui.QColor(78, 97, 114)
             color.setAlpha(190)
             self.myRubberBand.setColor(color)
             self.myRubberBand.setFillColor(QtGui.QColor(255, 0, 0, 40))
-            
+
             # Set MapTool
-            iface.mapCanvas().setMapTool( self.myMapTool )
-            iface.mapCanvas().xyCoordinates.connect( self.mouseMove )
+            iface.mapCanvas().setMapTool(self.myMapTool)
+            iface.mapCanvas().xyCoordinates.connect(self.mouseMove)
         else:
             self.disconnect()
 
@@ -56,7 +74,7 @@ class SpatialFilter:
         self.coordinates = []
         iface.mapCanvas().unsetMapTool(self.myMapTool)
         try:
-            iface.mapCanvas().xyCoordinates.disconnect (self.mouseMove)
+            iface.mapCanvas().xyCoordinates.disconnect(self.mouseMove)
         except:
             pass
 
@@ -65,54 +83,64 @@ class SpatialFilter:
         except:
             pass
 
-    def mouseClick( self, currentPos, clickedButton ):
-        if clickedButton == QtCore.Qt.LeftButton:# and myRubberBand.numberOfVertices() == 0: 
-            self.myRubberBand.addPoint( core.QgsPointXY(currentPos))
-            self.coordinates.append( core.QgsPointXY(currentPos))
+    def mouseClick(self, currentPos, clickedButton):
+        if (
+            clickedButton == QtCore.Qt.LeftButton
+        ):  # and myRubberBand.numberOfVertices() == 0:
+            self.myRubberBand.addPoint(core.QgsPointXY(currentPos))
+            self.coordinates.append(core.QgsPointXY(currentPos))
             self.isEditing = 1
-            
-        elif clickedButton == QtCore.Qt.RightButton and self.myRubberBand.numberOfVertices() > 2:
+
+        elif (
+            clickedButton == QtCore.Qt.RightButton
+            and self.myRubberBand.numberOfVertices() > 2
+        ):
             self.isEditing = 0
 
             # create feature and set geometry.
-                    
-            poly = core.QgsFeature() 
+
+            poly = core.QgsFeature()
             geomP = self.myRubberBand.asGeometry()
             poly.setGeometry(geomP)
-            g = geomP.asWkt() # Get WKT coordenates.
+            g = geomP.asWkt()  # Get WKT coordenates.
 
-            canvas=iface.mapCanvas()
+            canvas = iface.mapCanvas()
 
-            c = canvas.mapSettings().destinationCrs().authid() # Get EPSG.
-            rep = c.replace("EPSG:","")
-  
-            vlyr = core.QgsVectorLayer("?query=SELECT geom_from_wkt('%s') as geometry&geometry=geometry:3:%s"%(g,rep), "Polygon_Reference", "virtual")
-            
+            c = canvas.mapSettings().destinationCrs().authid()  # Get EPSG.
+            rep = c.replace("EPSG:", "")
+
+            vlyr = core.QgsVectorLayer(
+                "?query=SELECT geom_from_wkt('%s') as geometry&geometry=geometry:3:%s"
+                % (g, rep),
+                "Polygon_Reference",
+                "virtual",
+            )
+
             core.QgsProject.instance().addMapLayer(vlyr)
             self.myRubberBand.reset(core.QgsWkbTypes.PolygonGeometry)
             string = f"(geom && ST_GEOMFROMEWKT('SRID={rep};{g}')) AND ST_INTERSECTS(geom, ST_GEOMFROMEWKT('SRID={rep};{g}'))"
             layers = core.QgsProject.instance().mapLayers().values()
-            
+
             layersBacklist = self.getLayersBacklist()
-            
+
             for layer in layers:
-                if not isinstance(layer, core.QgsVectorLayer) or \
-                    layer.dataProvider().name() != 'postgres' or \
-                    layer.dataProvider().uri().table() in layersBacklist:
+                if (
+                    not isinstance(layer, core.QgsVectorLayer)
+                    or layer.dataProvider().name() != "postgres"
+                    or layer.dataProvider().uri().table() in layersBacklist
+                ):
                     continue
                 try:
                     layer.setSubsetString(string)
                 except Exception:
                     pass
-            
+
             self.myRubberBand.reset(core.QgsWkbTypes.PolygonGeometry)
             self.disconnect()
 
     def getLayersBacklist(self):
-        return [
-            'aux_moldura_a'
-        ]
+        return ["aux_moldura_a"]
 
-    def mouseMove( self, currentPos ):
+    def mouseMove(self, currentPos):
         if self.isEditing == 1:
             self.myRubberBand.movePoint(core.QgsPointXY(currentPos))

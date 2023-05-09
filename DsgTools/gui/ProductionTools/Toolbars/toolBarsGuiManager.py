@@ -34,67 +34,60 @@ from .DsgRasterInfoTool.dsgRasterInfoTool import DsgRasterInfoTool
 from .DataValidationTool.dataValidationTool import DataValidationTool
 from qgis.PyQt.QtCore import QObject
 
-class ToolbarsGuiManager(QObject):
 
-    def __init__(self, manager, iface, parentMenu = None, toolbar = None):
-        """Constructor.
-        """
+class ToolbarsGuiManager(QObject):
+    def __init__(self, manager, iface, parentMenu=None, toolbar=None):
+        """Constructor."""
         super(ToolbarsGuiManager, self).__init__()
         self.manager = manager
         self.iface = iface
         self.parentMenu = parentMenu
         self.toolbar = toolbar
         self.toolbarList = []
-        self.iconBasePath = ':/plugins/DsgTools/icons/'
-    
+        self.iconBasePath = ":/plugins/DsgTools/icons/"
+
     def initGui(self):
-        #adding minimum area tool
-        self.minimumAreaTool = MinimumAreaTool(self.iface, parent = self.parentMenu)
+        # adding minimum area tool
+        self.minimumAreaTool = MinimumAreaTool(self.iface, parent=self.parentMenu)
         self.createToolbarAndAddWidget(
-            name=u'DSGTools_Minimum_Area_Tool',
-            widget=self.minimumAreaTool
+            name="DSGTools_Minimum_Area_Tool", widget=self.minimumAreaTool
         )
-        #adding inspect feature tool
-        self.inspectFeaturesTool = InspectFeatures(self.iface, parent = self.parentMenu)
+        # adding inspect feature tool
+        self.inspectFeaturesTool = InspectFeatures(self.iface, parent=self.parentMenu)
         self.createToolbarAndAddWidget(
-            name=u'DSGTools_Inspect_Features',
-            widget=self.inspectFeaturesTool
+            name="DSGTools_Inspect_Features", widget=self.inspectFeaturesTool
         )
-        #adding review tool
-        self.reviewTool = ReviewToolbar(self.iface, parent = self.parentMenu)
+        # adding review tool
+        self.reviewTool = ReviewToolbar(self.iface, parent=self.parentMenu)
         self.createToolbarAndAddWidget(
-            name=u'DSGTools_Review_Toolbar',
-            widget=self.reviewTool
+            name="DSGTools_Review_Toolbar", widget=self.reviewTool
         )
-        #adding style tools
-        self.styleManagerTool = StyleManagerTool(self.iface, parent = self.parentMenu)
+        # adding style tools
+        self.styleManagerTool = StyleManagerTool(self.iface, parent=self.parentMenu)
         self.createToolbarAndAddWidget(
-            name=u'DSGTools_Style_Manager',
-            widget=self.styleManagerTool
+            name="DSGTools_Style_Manager", widget=self.styleManagerTool
         )
-        #adding raster info tool
-        self.rasterInfoTool = DsgRasterInfoTool(self.iface, parent = self.parentMenu)
+        # adding raster info tool
+        self.rasterInfoTool = DsgRasterInfoTool(self.iface, parent=self.parentMenu)
         self.createToolbarAndAddWidget(
-            name=u'DSGTools_Raster_Info',
-            widget=self.rasterInfoTool
+            name="DSGTools_Raster_Info", widget=self.rasterInfoTool
         )
-        #adding raster info tool
-        self.dataValidationTool = DataValidationTool(self.iface, parent = self.parentMenu)
+        # adding raster info tool
+        self.dataValidationTool = DataValidationTool(self.iface, parent=self.parentMenu)
         self.createToolbarAndAddWidget(
-            name=u'DSGTools_Data_Validation',
-            widget=self.dataValidationTool
+            name="DSGTools_Data_Validation", widget=self.dataValidationTool
         )
-    
+
     def createToolbar(self, name):
         toolbar = self.iface.addToolBar(name)
         toolbar.setObjectName(name)
         self.toolbarList.append(toolbar)
         return toolbar
-    
+
     def createToolbarAndAddWidget(self, name, widget):
         toolbar = self.createToolbar(name)
         toolbar.addWidget(widget)
-    
+
     def unload(self):
         self.minimumAreaTool.unload()
         self.inspectFeaturesTool.unload()

@@ -28,14 +28,18 @@ from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QWizard
 from fileinput import filename
 from DsgTools.core.Utils.utils import Utils
 
-from DsgTools.gui.DatabaseTools.UserTools.PermissionManagerWizard.permissionWizardProfile import PermissionWizardProfile
+from DsgTools.gui.DatabaseTools.UserTools.PermissionManagerWizard.permissionWizardProfile import (
+    PermissionWizardProfile,
+)
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'permissionWizard.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "permissionWizard.ui")
+)
+
 
 class PermissionWizard(QtWidgets.QWizard, FORM_CLASS):
     def __init__(self, serverAbstractDb, dbsDict, parent=None):
-        '''Constructor.'''
+        """Constructor."""
         super(self.__class__, self).__init__()
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -45,21 +49,21 @@ class PermissionWizard(QtWidgets.QWizard, FORM_CLASS):
         self.parent = parent
         self.setupUi(self)
         self.serverAbstractDb = serverAbstractDb
-        self.userCustomSelector.setTitle(self.tr('Select users to be managed'))
+        self.userCustomSelector.setTitle(self.tr("Select users to be managed"))
         userList = [i[0] for i in self.serverAbstractDb.getUsersFromServer()]
         self.userCustomSelector.setInitialState(userList)
-        self.sequenceDict = {'PermissionWizardProfile':1}
-        
-        self.setPage(self.sequenceDict['PermissionWizardProfile'],PermissionWizardProfile())
-        #self.setPage(self.sequenceDict['CreateBatchIncrementing'],CreateBatchIncrementing())
+        self.sequenceDict = {"PermissionWizardProfile": 1}
+
+        self.setPage(
+            self.sequenceDict["PermissionWizardProfile"], PermissionWizardProfile()
+        )
+        # self.setPage(self.sequenceDict['CreateBatchIncrementing'],CreateBatchIncrementing())
 
     def nextId(self):
         if self.currentId() == 0:
             if len(self.userCustomSelector.toLs) != 0:
-                return self.sequenceDict['PermissionWizardProfile']
+                return self.sequenceDict["PermissionWizardProfile"]
             else:
                 return -1
         else:
             return self.currentId()
-    
-    

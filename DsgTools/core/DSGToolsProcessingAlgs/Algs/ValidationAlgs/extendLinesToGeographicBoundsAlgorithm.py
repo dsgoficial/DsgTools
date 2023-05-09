@@ -23,24 +23,28 @@
 from PyQt5.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsProcessing, QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterDistance,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterVectorLayer,
-                       QgsProcessingParameterFeatureSource)
+from qgis.core import (
+    QgsProcessing,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterDistance,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingParameterFeatureSource,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
-    GEOGRAPHIC_BOUNDS_LAYER = 'GEOGRAPHIC_BOUNDS_LAYER'
-    EXTEND_LENGTH = 'EXTEND_LENGTH'
-    OUTPUT = 'OUTPUT'
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
+    GEOGRAPHIC_BOUNDS_LAYER = "GEOGRAPHIC_BOUNDS_LAYER"
+    EXTEND_LENGTH = "EXTEND_LENGTH"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -49,39 +53,37 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry ]
+                self.tr("Input layer"),
+                [QgsProcessing.TypeVectorAnyGeometry],
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.GEOGRAPHIC_BOUNDS_LAYER,
-                self.tr('Geographic bounds'),
+                self.tr("Geographic bounds"),
                 [QgsProcessing.TypeVectorPolygon],
-                optional=False
+                optional=False,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterDistance(
-                self.EXTEND_LENGTH, 
-                self.tr('Extend length'), 
-                parentParameterName=self.INPUT,                                         
-                minValue=0, 
-                defaultValue=0.0001
+                self.EXTEND_LENGTH,
+                self.tr("Extend length"),
+                parentParameterName=self.INPUT,
+                minValue=0,
+                defaultValue=0.0001,
             )
         )
         self.addOutput(
             QgsProcessingOutputVectorLayer(
-                self.OUTPUT,
-                self.tr('Original layer with snapped features')
+                self.OUTPUT, self.tr("Original layer with snapped features")
             )
         )
 
@@ -94,35 +96,19 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
-                self.invalidSourceError(
-                    parameters,
-                    self.INPUT
-                )
+                self.invalidSourceError(parameters, self.INPUT)
             )
-        onlySelected = self.parameterAsBool(
-            parameters,
-            self.SELECTED,
-            context
-            )
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         refSource = self.parameterAsSource(
-            parameters,
-            self.GEOGRAPHIC_BOUNDS_LAYER,
-            context
-            )
+            parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context
+        )
         if refSource is None:
             raise QgsProcessingException(
-                self.invalidSourceError(
-                    parameters,
-                    self.GEOGRAPHIC_BOUNDS_LAYER
-                    )
-                )
+                self.invalidSourceError(parameters, self.GEOGRAPHIC_BOUNDS_LAYER)
+            )
         if refSource.featureCount() == 0:
             return {self.OUTPUT: inputLyr}
-        tol = self.parameterAsDouble(
-            parameters,
-            self.EXTEND_LENGTH,
-            context
-            )
+        tol = self.parameterAsDouble(parameters, self.EXTEND_LENGTH, context)
 
         nSteps = 5
         currentStep = 0
@@ -133,7 +119,7 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
             layerList=[inputLyr],
             geomType=inputLyr.wkbType(),
             onlySelected=onlySelected,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         currentStep += 1
 
@@ -150,7 +136,7 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
             tol=tol,
             context=context,
             feedback=multiStepFeedback,
-            startPoint=True
+            startPoint=True,
         )
         currentStep += 1
 
@@ -161,7 +147,7 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
             tol=tol,
             context=context,
             feedback=multiStepFeedback,
-            startPoint=False
+            startPoint=False,
         )
         currentStep += 1
 
@@ -171,13 +157,10 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Updating original layer..."))
         self.layerHandler.updateOriginalLayersFromUnifiedLayer(
-            [inputLyr],
-            auxLyr,
-            feedback=multiStepFeedback,
-            onlySelected=onlySelected
+            [inputLyr], auxLyr, feedback=multiStepFeedback, onlySelected=onlySelected
         )
         return {self.OUTPUT: inputLyr}
-    
+
     def extractGeographicBoundaryLines(self, tol, parameters, context, feedback):
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         multiStepFeedback.setCurrentStep(0)
@@ -210,15 +193,17 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
             bufferAroundBoundsLines, context, feedback=multiStepFeedback
         )
         return bufferAroundBoundsLines
-    
-    def extendLinesByStartOrEndPoints(self, inputLyr, boundsBuffer, tol, context, feedback, startPoint=True):
+
+    def extendLinesByStartOrEndPoints(
+        self, inputLyr, boundsBuffer, tol, context, feedback, startPoint=True
+    ):
         multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
         multiStepFeedback.setCurrentStep(0)
         lineExtremityPointLyr = self.algRunner.runExtractSpecificVertices(
             inputLyr=inputLyr,
-            vertices='0' if startPoint else '-1',
+            vertices="0" if startPoint else "-1",
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         multiStepFeedback.setCurrentStep(1)
         self.algRunner.runCreateSpatialIndex(
@@ -226,10 +211,15 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         )
         multiStepFeedback.setCurrentStep(2)
         extractedPoints = self.algRunner.runExtractByLocation(
-            lineExtremityPointLyr, boundsBuffer, context=context, feedback=multiStepFeedback
+            lineExtremityPointLyr,
+            boundsBuffer,
+            context=context,
+            feedback=multiStepFeedback,
         )
         multiStepFeedback.setCurrentStep(3)
-        expression = f"featid in {tuple(i['featid'] for i in extractedPoints.getFeatures())}"
+        expression = (
+            f"featid in {tuple(i['featid'] for i in extractedPoints.getFeatures())}"
+        )
         linesToExtend = self.algRunner.runFilterExpression(
             inputLyr=inputLyr,
             expression=expression,
@@ -248,20 +238,23 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         nFeats = extendedLines.featureCount()
         if nFeats == 0:
             return
-        stepSize = 100/nFeats
+        stepSize = 100 / nFeats
         originalFeaturesToUpdateDict = {
-            feat['featid']: feat for feat in inputLyr.getFeatures(expression)
+            feat["featid"]: feat for feat in inputLyr.getFeatures(expression)
         }
         inputLyr.startEditing()
-        editText = 'Extending lines from start points.' if startPoint \
-            else 'Extending lines from end points.'
+        editText = (
+            "Extending lines from start points."
+            if startPoint
+            else "Extending lines from end points."
+        )
         inputLyr.beginEditCommand(editText)
         for current, feat in enumerate(extendedLines.getFeatures()):
             if multiStepFeedback.isCanceled():
                 return
-            
+
             inputLyr.changeGeometry(
-                originalFeaturesToUpdateDict[feat['featid']].id(),
+                originalFeaturesToUpdateDict[feat["featid"]].id(),
                 feat.geometry(),
                 skipDefaultValue=True,
             )
@@ -276,21 +269,21 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'extendlinestogeographicbounds'
+        return "extendlinestogeographicbounds"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Extend Lines To Geographic Bounds Algorithm')
+        return self.tr("Extend Lines To Geographic Bounds Algorithm")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Manipulation Processes)')
+        return self.tr("Quality Assurance Tools (Manipulation Processes)")
 
     def groupId(self):
         """
@@ -300,10 +293,12 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Manipulation Processes)'
+        return "DSGTools: Quality Assurance Tools (Manipulation Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('ExtendLinesToGeographicBoundsAlgorithm', string)
+        return QCoreApplication.translate(
+            "ExtendLinesToGeographicBoundsAlgorithm", string
+        )
 
     def createInstance(self):
         return ExtendLinesToGeographicBoundsAlgorithm()

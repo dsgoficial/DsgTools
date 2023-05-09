@@ -3,15 +3,13 @@ from PyQt5 import QtCore, uic, QtWidgets, QtGui
 import json
 from DsgTools.Modules.utils.factories.utilsFactory import UtilsFactory
 
-class MenuEditorDialog( QtWidgets.QDialog ):
 
+class MenuEditorDialog(QtWidgets.QDialog):
     def __init__(
-            self, 
-            controller,
-            messageFactory=UtilsFactory().createMessageFactory()
-        ):
+        self, controller, messageFactory=UtilsFactory().createMessageFactory()
+    ):
         super(MenuEditorDialog, self).__init__()
-        uic.loadUi( self.getUiPath(), self )
+        uic.loadUi(self.getUiPath(), self)
         self.controller = controller
         self.messageFactory = messageFactory
         self.previewMenu.setAcceptDrops(True)
@@ -24,8 +22,8 @@ class MenuEditorDialog( QtWidgets.QDialog ):
     def previewDropEvent(self, e):
         pos = e.pos()
         widget = e.source()
-        tabLayout = self.menuWidget.getTabLayout( widget.buttonConfig[ 'buttonTabId' ] )     
-        buttonIndexs = range(tabLayout.count()) 
+        tabLayout = self.menuWidget.getTabLayout(widget.buttonConfig["buttonTabId"])
+        buttonIndexs = range(tabLayout.count())
         isUpper = widget.y() > pos.y()
         widgetIndex = None
         selectedIndex = None
@@ -36,9 +34,13 @@ class MenuEditorDialog( QtWidgets.QDialog ):
                 widgetIndex = n
                 continue
             if selectedY:
-                valid = ( isUpper and pos.y() < w.y() and w.y() < selectedY ) or ( not isUpper and pos.y() > w.y() and w.y() > selectedY )
+                valid = (isUpper and pos.y() < w.y() and w.y() < selectedY) or (
+                    not isUpper and pos.y() > w.y() and w.y() > selectedY
+                )
             else:
-                valid = ( isUpper and pos.y() < w.y() ) or ( not isUpper and pos.y() > w.y() )
+                valid = (isUpper and pos.y() < w.y()) or (
+                    not isUpper and pos.y() > w.y()
+                )
             if not valid:
                 continue
             selectedIndex = n
@@ -46,7 +48,9 @@ class MenuEditorDialog( QtWidgets.QDialog ):
         if selectedIndex is None or widgetIndex is None:
             e.accept()
             return
-        if (isUpper and widgetIndex < selectedIndex) or (not isUpper and widgetIndex > selectedIndex):
+        if (isUpper and widgetIndex < selectedIndex) or (
+            not isUpper and widgetIndex > selectedIndex
+        ):
             pass
         else:
             tabLayout.insertWidget(selectedIndex, widget)
@@ -54,11 +58,11 @@ class MenuEditorDialog( QtWidgets.QDialog ):
         e.accept()
 
     def showError(self, title, message):
-        errorMessageBox = self.messageFactory.createMessage('ErrorMessageBox')
+        errorMessageBox = self.messageFactory.createMessage("ErrorMessageBox")
         errorMessageBox.show(self, title, message)
 
     def showInfo(self, title, message):
-        infoMessageBox = self.messageFactory.createMessage('InfoMessageBox')
+        infoMessageBox = self.messageFactory.createMessage("InfoMessageBox")
         infoMessageBox.show(self, title, message)
 
     def getController(self):
@@ -66,34 +70,34 @@ class MenuEditorDialog( QtWidgets.QDialog ):
 
     def clearLayout(self, layout):
         for idx in list(range(layout.count())):
-            item = layout.takeAt( idx )
+            item = layout.takeAt(idx)
             widget = item.widget()
             if widget:
                 widget.deleteLater()
             layout = item.layout()
             if layout:
-                self.clearLayout( layout )
+                self.clearLayout(layout)
             del item
 
     def setMenuWidget(self, menuWidget):
         self.menuWidget = menuWidget
         self.menuWidget.setMovable(True)
-        self.menuLayout.addWidget( self.menuWidget )  
+        self.menuLayout.addWidget(self.menuWidget)
 
     def setTabEditorWidget(self, tabEditorWidget):
         self.tabEditorWidget = tabEditorWidget
-        self.tabLayout.addWidget( self.tabEditorWidget )
+        self.tabLayout.addWidget(self.tabEditorWidget)
 
     def setButtonEditorWidget(self, buttonEditorWidget):
         self.buttonEditorWidget = buttonEditorWidget
-        self.buttonLayout.addWidget( self.buttonEditorWidget ) 
+        self.buttonLayout.addWidget(self.buttonEditorWidget)
 
     def getUiPath(self):
         return os.path.join(
             os.path.abspath(os.path.dirname(__file__)),
-            '..',
-            'uis', 
-            "menuEditorDialog.ui"
+            "..",
+            "uis",
+            "menuEditorDialog.ui",
         )
 
     def showTopLevel(self):
@@ -102,76 +106,77 @@ class MenuEditorDialog( QtWidgets.QDialog ):
         self.activateWindow()
 
     def addPreviewTab(self, tabId, tabName):
-        self.menuWidget.addTabContainer( tabId, tabName )
+        self.menuWidget.addTabContainer(tabId, tabName)
 
     def updatePreviewTab(self, tabId, tabName):
-        self.menuWidget.updateTabContainer( tabId, tabName )
+        self.menuWidget.updateTabContainer(tabId, tabName)
 
     def deletePreviewTab(self, tabId):
-        self.menuWidget.deleteTabContainer( tabId )
+        self.menuWidget.deleteTabContainer(tabId)
 
     def getPreviewTabNames(self):
         return self.menuWidget.getTabContainerNames()
 
     def addButtonPreviewMenu(self, buttonConfig, callback):
-        self.menuWidget.addButton( buttonConfig, callback)
+        self.menuWidget.addButton(buttonConfig, callback)
 
     def updateButtonPreviewMenu(self, newButtonConfig, oldButtonConfig, callback):
-        self.menuWidget.updateButton( newButtonConfig, oldButtonConfig, callback)
+        self.menuWidget.updateButton(newButtonConfig, oldButtonConfig, callback)
 
     def deleteButtonPreviewMenu(self, buttonConfig):
-        self.menuWidget.deleteButton( buttonConfig )
+        self.menuWidget.deleteButton(buttonConfig)
 
     @QtCore.pyqtSlot(bool)
     def on_importMenuBtn_clicked(self):
-        filePath = QtWidgets.QFileDialog.getOpenFileName(self, 
-                                                   '',
-                                                   "Desktop",
-                                                  '*.json')
+        filePath = QtWidgets.QFileDialog.getOpenFileName(self, "", "Desktop", "*.json")
         if not filePath[0]:
             return
-        with open( filePath[0], 'r') as f:
-            menuConfig = json.load( f )
+        with open(filePath[0], "r") as f:
+            menuConfig = json.load(f)
         menuName = menuConfig["menuName"]
-        self.menuNameLe.setText( menuName )
-        self.menuWidget.setMenuName( menuName )
+        self.menuNameLe.setText(menuName)
+        self.menuWidget.setMenuName(menuName)
         for tabData in menuConfig["setup"]:
-            self.tabEditorWidget.addRow( tabData['tabId'], tabData['tabName'] )
-            self.menuWidget.addTabContainer( tabData['tabId'], tabData['tabName'] )
-            for buttonData in tabData['tabButtons']:
-                self.buttonEditorWidget.addRow( buttonData['buttonId'], buttonData['buttonTabName'], buttonData['buttonName'], buttonData )
-                self.menuWidget.addButton( buttonData, self.buttonEditorWidget.showEditButton )
+            self.tabEditorWidget.addRow(tabData["tabId"], tabData["tabName"])
+            self.menuWidget.addTabContainer(tabData["tabId"], tabData["tabName"])
+            for buttonData in tabData["tabButtons"]:
+                self.buttonEditorWidget.addRow(
+                    buttonData["buttonId"],
+                    buttonData["buttonTabName"],
+                    buttonData["buttonName"],
+                    buttonData,
+                )
+                self.menuWidget.addButton(
+                    buttonData, self.buttonEditorWidget.showEditButton
+                )
 
     @QtCore.pyqtSlot(bool)
     def on_exportMenuBtn_clicked(self):
         menuName = self.menuNameLe.text()
         if not menuName:
-            self.showError('Erro', 'Informe o nome do menu!')
+            self.showError("Erro", "Informe o nome do menu!")
             return
         filePath = QtWidgets.QFileDialog.getSaveFileName(
-            self, 
-            '',
-            "{0}.json".format( menuName ),
-            '*.json'
+            self, "", "{0}.json".format(menuName), "*.json"
         )
         if not filePath[0]:
             return
-        self.menuWidget.setMenuName( menuName )
-        with open( filePath[0], 'w') as f:
-            json.dump( self.menuWidget.dump(), f )
+        self.menuWidget.setMenuName(menuName)
+        with open(filePath[0], "w") as f:
+            json.dump(self.menuWidget.dump(), f)
 
     @QtCore.pyqtSlot(bool)
     def on_createMenuBtn_clicked(self):
         menuName = self.menuNameLe.text()
         if not menuName:
-            self.showError('Erro', 'Informe o nome do menu!')
+            self.showError("Erro", "Informe o nome do menu!")
             return
-        self.menuWidget.setMenuName( menuName )
-        self.getController().createMenuDock( [ self.menuWidget.dump() ] )
+        self.menuWidget.setMenuName(menuName)
+        self.getController().createMenuDock([self.menuWidget.dump()])
 
     @QtCore.pyqtSlot(bool)
     def on_deleteMenuBtn_clicked(self):
-        self.menuWidget.setMenuName( "" )
+        self.menuWidget.setMenuName("")
         self.menuWidget.clean()
         self.tabEditorWidget.clearAllItems()
         self.buttonEditorWidget.clearAllItems()

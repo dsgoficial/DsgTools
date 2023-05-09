@@ -24,45 +24,49 @@ import os, json
 from PyQt5.QtCore import QCoreApplication
 from qgis.PyQt.Qt import QVariant
 from qgis.PyQt.QtXml import QDomDocument
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterExpression,
-                       QgsProcessingException,
-                       QgsProcessingParameterString,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterType,
-                       QgsProcessingParameterCrs,
-                       QgsCoordinateTransform,
-                       QgsProject,
-                       QgsCoordinateReferenceSystem,
-                       QgsField,
-                       QgsFields,
-                       QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterString)
+from qgis.core import (
+    QgsProcessing,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFeatureSink,
+    QgsFeature,
+    QgsDataSourceUri,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsGeometry,
+    QgsProcessingParameterField,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterFile,
+    QgsProcessingParameterExpression,
+    QgsProcessingException,
+    QgsProcessingParameterString,
+    QgsProcessingParameterDefinition,
+    QgsProcessingParameterType,
+    QgsProcessingParameterCrs,
+    QgsCoordinateTransform,
+    QgsProject,
+    QgsCoordinateReferenceSystem,
+    QgsField,
+    QgsFields,
+    QgsProcessingOutputMultipleLayers,
+    QgsProcessingParameterString,
+)
+
 
 class MatchAndApplyQmlStylesToLayersAlgorithm(QgsProcessingAlgorithm):
-    INPUT_LAYERS = 'INPUT_LAYERS'
-    QML_FOLDER = 'QML_FOLDER'
-    QML_MAP = 'QML_MAP'
-    OUTPUT = 'OUTPUT'
+    INPUT_LAYERS = "INPUT_LAYERS"
+    QML_FOLDER = "QML_FOLDER"
+    QML_MAP = "QML_MAP"
+    OUTPUT = "OUTPUT"
+
     def initAlgorithm(self, config):
         """
         Parameter setting.
@@ -70,33 +74,34 @@ class MatchAndApplyQmlStylesToLayersAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LAYERS,
-                self.tr('Input Layers'),
-                QgsProcessing.TypeVectorAnyGeometry
+                self.tr("Input Layers"),
+                QgsProcessing.TypeVectorAnyGeometry,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFile(
                 self.QML_FOLDER,
-                self.tr('Input QML Folder'),
-                behavior = QgsProcessingParameterFile.Folder,
-                defaultValue = "/path/to/qmlFolder"
+                self.tr("Input QML Folder"),
+                behavior=QgsProcessingParameterFile.Folder,
+                defaultValue="/path/to/qmlFolder",
             )
         )
 
         self.addParameter(
             QgsProcessingParameterString(
                 self.QML_MAP,
-                description =  self.tr('QML json map (e.g., [{"camada": "...", "qml": "..."}])'),
-                multiLine = True,
-                defaultValue = '[]'
+                description=self.tr(
+                    'QML json map (e.g., [{"camada": "...", "qml": "..."}])'
+                ),
+                multiLine=True,
+                defaultValue="[]",
             )
         )
 
         self.addOutput(
             QgsProcessingOutputMultipleLayers(
-                self.OUTPUT,
-                self.tr('Original layers with measure column')
+                self.OUTPUT, self.tr("Original layers with measure column")
             )
         )
 
@@ -106,22 +111,10 @@ class MatchAndApplyQmlStylesToLayersAlgorithm(QgsProcessingAlgorithm):
 
         This process matches the layer name to the qml name.
         """
-        inputLyrList = self.parameterAsLayerList(
-            parameters,
-            self.INPUT_LAYERS,
-            context
-        )
-        inputDirectory = self.parameterAsFile(
-            parameters,
-            self.QML_FOLDER,
-            context
-        )
+        inputLyrList = self.parameterAsLayerList(parameters, self.INPUT_LAYERS, context)
+        inputDirectory = self.parameterAsFile(parameters, self.QML_FOLDER, context)
         inputJSONMap = json.loads(
-            self.parameterAsString(
-                parameters,
-                self.QML_MAP,
-                context
-            )
+            self.parameterAsString(parameters, self.QML_MAP, context)
         )
         if os.path.exists(inputDirectory):
             self.loadQMlFromFolder(inputDirectory, inputLyrList, feedback)
@@ -133,7 +126,7 @@ class MatchAndApplyQmlStylesToLayersAlgorithm(QgsProcessingAlgorithm):
 
     def loadQMlFromFolder(self, inputDirectory, inputLyrList, feedback):
         listSize = len(inputLyrList)
-        progressStep = 100/listSize if listSize else 0
+        progressStep = 100 / listSize if listSize else 0
         qmlDict = self.buildQmlDict(inputDirectory)
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
@@ -141,36 +134,43 @@ class MatchAndApplyQmlStylesToLayersAlgorithm(QgsProcessingAlgorithm):
             if lyr.dataProvider().uri().table() in qmlDict:
                 lyr.loadNamedStyle(qmlDict[lyr.dataProvider().uri().table()], True)
                 lyr.triggerRepaint()
-            feedback.setProgress(current*progressStep)
-    
+            feedback.setProgress(current * progressStep)
+
     def loadQMlFromJSONMap(self, inputJSONMap, inputLyrList, feedback):
         listSize = len(inputLyrList)
         layerNames = [item["camada"] for item in inputJSONMap]
-        progressStep = 100/listSize if listSize else 0
+        progressStep = 100 / listSize if listSize else 0
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
-            if lyr.dataProvider().uri().table() in layerNames and inputJSONMap[layerNames.index(lyr.dataProvider().uri().table())]["qml"]:
+            if (
+                lyr.dataProvider().uri().table() in layerNames
+                and inputJSONMap[layerNames.index(lyr.dataProvider().uri().table())][
+                    "qml"
+                ]
+            ):
                 doc = QDomDocument()
-                doc.setContent(inputJSONMap[layerNames.index(lyr.dataProvider().uri().table())]["qml"])
+                doc.setContent(
+                    inputJSONMap[layerNames.index(lyr.dataProvider().uri().table())][
+                        "qml"
+                    ]
+                )
                 lyr.importNamedStyle(doc)
                 lyr.triggerRepaint()
-            feedback.setProgress(current*progressStep)
+            feedback.setProgress(current * progressStep)
 
-    
     def buildQmlDict(self, inputDir):
         """
-        Builds a dict with the format 
+        Builds a dict with the format
         {'fileName':'filePath'}
         """
         qmlDict = dict()
         for fileNameWithExtension in os.listdir(inputDir):
-            if '.qml' not in fileNameWithExtension:
+            if ".qml" not in fileNameWithExtension:
                 continue
-            fileName = fileNameWithExtension.split('.')[0]
+            fileName = fileNameWithExtension.split(".")[0]
             qmlDict[fileName] = os.path.join(inputDir, fileNameWithExtension)
         return qmlDict
-
 
     def name(self):
         """
@@ -180,21 +180,21 @@ class MatchAndApplyQmlStylesToLayersAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'matchandapplyqmlstylestolayersalgorithm'
+        return "matchandapplyqmlstylestolayersalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Match and Apply QML Styles to Layers')
+        return self.tr("Match and Apply QML Styles to Layers")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Layer Management Algorithms')
+        return self.tr("Layer Management Algorithms")
 
     def groupId(self):
         """
@@ -204,10 +204,12 @@ class MatchAndApplyQmlStylesToLayersAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Layer Management Algorithms'
+        return "DSGTools: Layer Management Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate('MatchAndApplyQmlStylesToLayersAlgorithm', string)
+        return QCoreApplication.translate(
+            "MatchAndApplyQmlStylesToLayersAlgorithm", string
+        )
 
     def createInstance(self):
         return MatchAndApplyQmlStylesToLayersAlgorithm()

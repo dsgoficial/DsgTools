@@ -29,10 +29,12 @@ from DsgTools.core.dsgEnums import DsgEnums
 
 import os
 
+
 class MultiShapefileSelectorWidget(AbstractMultiDsSelectorWidget):
     """
     Class designed to retrieve a Shapefile database list (list of folders containing shapefiles).
     """
+
     def __init__(self, parent=None):
         """
         Class constructor.
@@ -60,8 +62,10 @@ class MultiShapefileSelectorWidget(AbstractMultiDsSelectorWidget):
         """
         # clear datasources
         self.datasources = {}
-        dbList = self.selector.getOpenFileNames(caption=self.tr("Select Folders with Shapefiles"), \
-                                                filter=self.tr('Shapefiles (*.shp)'))[0]
+        dbList = self.selector.getOpenFileNames(
+            caption=self.tr("Select Folders with Shapefiles"),
+            filter=self.tr("Shapefiles (*.shp)"),
+        )[0]
         for db in dbList:
             self.datasources[db] = os.path.dirname(db)
-        return int(not self.datasources) # execution code
+        return int(not self.datasources)  # execution code

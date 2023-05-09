@@ -24,16 +24,22 @@
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal
 
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceContainerWidget import DatasourceContainerWidget
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceContainerWidget import (
+    DatasourceContainerWidget,
+)
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.core.dsgEnums import DsgEnums
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.MultiDsSelectorWidgets.multiDsWidgetFactory import MultiDsWidgetFactory
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.MultiDsSelectorWidgets.multiDsWidgetFactory import (
+    MultiDsWidgetFactory,
+)
 
 import os
 from functools import partial
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'datasourceManagementWidget.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "datasourceManagementWidget.ui")
+)
+
 
 class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
     """
@@ -42,6 +48,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
     2- prepare the conversion mapping structure using the table as a means to translate user's intentions; and
     3- read filtering info to be applied to data.
     """
+
     # setting signal to alert conversion tool about any active widgets change
     activeWidgetAdded = pyqtSignal(DatasourceContainerWidget)
     activeWidgetRemoved = pyqtSignal(DatasourceContainerWidget)
@@ -50,7 +57,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
     widgetUpdated = pyqtSignal(DatasourceContainerWidget)
     # filtering settings from widget container has changed signal
     containerFilterSettingsChanged = pyqtSignal(DatasourceContainerWidget)
-    
+
     def __init__(self, parent=None):
         """
         Class constructor.
@@ -59,11 +66,11 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         super(DatasourceManagementWidget, self).__init__()
         # define mapping from GUI to enum
         self.sourceNameDict = {
-            self.tr('Select a datasource driver') : DsgEnums.NoDriver,
-            'PostGIS' : DsgEnums.PostGIS,
-            self.tr('PostGIS (create new database)') : DsgEnums.NewPostGIS,
-            'SpatiaLite' : DsgEnums.SpatiaLite,
-            self.tr('SpatiaLite (create new database)') : DsgEnums.NewSpatiaLite,
+            self.tr("Select a datasource driver"): DsgEnums.NoDriver,
+            "PostGIS": DsgEnums.PostGIS,
+            self.tr("PostGIS (create new database)"): DsgEnums.NewPostGIS,
+            "SpatiaLite": DsgEnums.SpatiaLite,
+            self.tr("SpatiaLite (create new database)"): DsgEnums.NewSpatiaLite,
             # 'Shapefile' : DsgEnums.Shapefile,
             # self.tr('Shapefile (create new database)') : DsgEnums.NewShapefile,
             # 'Geopackage' : DsgEnums.Geopackage,
@@ -74,8 +81,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         self.fillSupportedDatasources()
         # keep track of all (in)active widgets on input/output GUI
         self.activeDrivers = dict()
-        self.addSourcePushButton.setToolTip(self.tr('Add single datasource'))
-        self.addMultiSourcePushButton.setToolTip(self.tr('Add multiple datasource'))
+        self.addSourcePushButton.setToolTip(self.tr("Add single datasource"))
+        self.addMultiSourcePushButton.setToolTip(self.tr("Add multiple datasource"))
         # centralize all tool signals in order to keep track of all non-standard signals used
         self.connectClassSignals()
 
@@ -99,7 +106,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
             # if it's an input page, items should not include the option for a new datasource
             items = []
             for ds in self.sourceNameDict:
-                if self.tr('new') in ds:
+                if self.tr("new") in ds:
                     continue
                 else:
                     items.append(ds)
@@ -133,7 +140,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         # get current text on datasource techonology selection combobox
         currentDbSource = self.datasourceComboBox.currentText()
         # identify if it's an input or output page call
-        inputPage = (self.objectName() == 'datasourceManagementWidgetIn')
+        inputPage = self.objectName() == "datasourceManagementWidgetIn"
         if currentDbSource:
             # in case a valid driver is selected, add its widget to the interface
             source = self.sourceNameDict[currentDbSource]
@@ -142,19 +149,26 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
                 # connect removal widget signal to new widget
                 container.removeWidget.connect(self.removeWidget)
                 # connect datasource change signal to this class datasource signal change
-                emitWidgetAlias = lambda newAbstract : self.datasourceChanged(
-                                                            newAbstract=newAbstract,
-                                                            containerWidget=container
-                                                        )
-                container.connectionWidget.selectionWidget.dbChanged.connect(emitWidgetAlias)
+                emitWidgetAlias = lambda newAbstract: self.datasourceChanged(
+                    newAbstract=newAbstract, containerWidget=container
+                )
+                container.connectionWidget.selectionWidget.dbChanged.connect(
+                    emitWidgetAlias
+                )
                 # connect datasource change signal to its filters reset method
-                container.connectionWidget.selectionWidget.dbChanged.connect(container.clearFilters)
+                container.connectionWidget.selectionWidget.dbChanged.connect(
+                    container.clearFilters
+                )
                 # connect filtering settings changed signal to this class signal on filtering settings change
-                container.filterSettingsChanged.connect(self.containerFilterSettingsChanged)
-                # add new driver container to GUI 
+                container.filterSettingsChanged.connect(
+                    self.containerFilterSettingsChanged
+                )
+                # add new driver container to GUI
                 self.datasourceLayout.addWidget(container)
                 # update dict of active widgets
-                self.addElementToDict(k=currentDbSource, e=container, d=self.activeDrivers)
+                self.addElementToDict(
+                    k=currentDbSource, e=container, d=self.activeDrivers
+                )
                 # reset all driver's groupboxes names
                 self.resetWidgetsTitle()
                 # emit active widget that has been added
@@ -177,13 +191,13 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
                     # add new widget container for it
                     container = self.addDatasourceWidget()
                     # set datasource to it
-                    container.setDatasource({ds : dsPath})
+                    container.setDatasource({ds: dsPath})
 
     def resetWidgetsTitle(self):
         """
         Resets all widgets containers titles.
         """
-        hideAlias = lambda w : w.hide()
+        hideAlias = lambda w: w.hide()
         for driverName, widgetList in self.activeDrivers.items():
             if not widgetList:
                 # if there are no active widgets for current driver, there's nothing to be updated
@@ -192,12 +206,12 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
             for idx, w in enumerate(widgetList):
                 # if there are widgets from chosen driver, reset it's group box name
                 w.show()
-                w.setGroupWidgetName(name='{0} #{1}'.format(driverName, idx + 1))
+                w.setGroupWidgetName(name="{0} #{1}".format(driverName, idx + 1))
 
     def removeWidget(self, w):
         """
         Removes driver widget from GUI.
-        :param w: (QWidget) driver container widget to be removed. 
+        :param w: (QWidget) driver container widget to be removed.
         """
         # disconnect all widget connected signals
         w.blockSignals(True)
@@ -229,16 +243,18 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         Validates container GUI parameters.
         :return: (str) invalidation reason.
         """
-        if self.objectName() == 'datasourceManagementWidgetIn':
-            pageError = self.tr('Input Error!')
+        if self.objectName() == "datasourceManagementWidgetIn":
+            pageError = self.tr("Input Error!")
         else:
-            pageError = self.tr('Output Error!')
+            pageError = self.tr("Output Error!")
         for containers in self.activeDrivers.values():
             for container in containers:
                 if not container.isValid():
-                    return '{0} {1}: {2}'.format(pageError, container.groupBox.title(), container.validate())
+                    return "{0} {1}: {2}".format(
+                        pageError, container.groupBox.title(), container.validate()
+                    )
         # validate selection widget
-        return ''
+        return ""
 
     def isValid(self):
         """

@@ -24,4 +24,4 @@ jobs:
       - name: Tests
         run: ./exec.sh
       - name: Stop the environment
-        run: docker-compose down 
+        run: docker-compose down

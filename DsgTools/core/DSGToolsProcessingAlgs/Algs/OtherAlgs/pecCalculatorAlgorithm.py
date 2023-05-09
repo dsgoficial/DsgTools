@@ -27,35 +27,38 @@ import functools
 from ...algRunner import AlgRunner
 import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterExpression,
-                       QgsProcessingException,
-                       QgsFeatureRequest,
-                       QgsRectangle)
+from qgis.core import (
+    QgsProcessing,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFeatureSink,
+    QgsFeature,
+    QgsDataSourceUri,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsGeometry,
+    QgsProcessingParameterField,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterFile,
+    QgsProcessingParameterExpression,
+    QgsProcessingException,
+    QgsFeatureRequest,
+    QgsRectangle,
+)
+
 
 class PecCalculatorAlgorithm(QgsProcessingAlgorithm):
-    INPUT = 'INPUT'
-    REFERENCE = 'REFERENCE'
-    TOLERANCE = 'TOLERANCE'
+    INPUT = "INPUT"
+    REFERENCE = "REFERENCE"
+    TOLERANCE = "TOLERANCE"
     # OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
@@ -64,51 +67,36 @@ class PecCalculatorAlgorithm(QgsProcessingAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorPoint]
+                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorPoint]
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.REFERENCE,
-                self.tr('Reference layer'),
-                [QgsProcessing.TypeVectorPoint]
+                self.tr("Reference layer"),
+                [QgsProcessing.TypeVectorPoint],
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.TOLERANCE,
-                self.tr('Max distance'),
+                self.tr("Max distance"),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Double,
-                defaultValue=2
+                defaultValue=2,
             )
         )
-        
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
-        inputLyr = self.parameterAsVectorLayer(
-            parameters,
-            self.INPUT,
-            context
-            )
-        referenceLyr = self.parameterAsVectorLayer(
-            parameters,
-            self.REFERENCE,
-            context
-            )
-        tol = self.parameterAsDouble(
-            parameters,
-            self.TOLERANCE,
-            context
-            )
+        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        referenceLyr = self.parameterAsVectorLayer(parameters, self.REFERENCE, context)
+        tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         distanceDict = dict()
         featList = [i for i in inputLyr.getFeatures()]
-        step = 100/len(featList) if featList else 0
+        step = 100 / len(featList) if featList else 0
         for current, feat in enumerate(featList):
             if feedback.isCanceled():
                 break
@@ -118,12 +106,7 @@ class PecCalculatorAlgorithm(QgsProcessingAlgorithm):
             geom = feat.geometry().asGeometryCollection()[0].asPoint()
             x = geom.x()
             y = geom.y()
-            bbox = QgsRectangle(
-                    x-tol,
-                    y-tol,
-                    x+tol,
-                    y+tol
-                )
+            bbox = QgsRectangle(x - tol, y - tol, x + tol, y + tol)
             request = QgsFeatureRequest()
             request.setFilterRect(bbox)
             minDistance = 0
@@ -139,26 +122,25 @@ class PecCalculatorAlgorithm(QgsProcessingAlgorithm):
                     candidateId = candidateFeat.id()
             if candidateId is not None:
                 distanceDict[id] = {
-                    'minDistance' : minDistance,
-                    'candidateId' : candidateId
+                    "minDistance": minDistance,
+                    "candidateId": candidateId,
                 }
-            feedback.setProgress(current*step)
-            
-            
-        distanceList = [i['minDistance'] for i in distanceDict.values()]
+            feedback.setProgress(current * step)
+
+        distanceList = [i["minDistance"] for i in distanceDict.values()]
         n = len(distanceList)
-        distanceSquared = [i['minDistance']**2 for i in distanceDict.values()]
-        rms = math.sqrt(sum(distanceSquared)/n)
+        distanceSquared = [i["minDistance"] ** 2 for i in distanceDict.values()]
+        rms = math.sqrt(sum(distanceSquared) / n)
         percFunc = functools.partial(self.percentile, frequency=0.9)
         perc = percFunc(distanceList)
-        mean = sum(distanceList)/n
-        feedback.pushInfo('MEAN: {mean}'.format(mean=mean))
-        feedback.pushInfo('RMS: {rms}'.format(rms=rms))
-        feedback.pushInfo('PERC: {perc}'.format(perc=perc))
+        mean = sum(distanceList) / n
+        feedback.pushInfo("MEAN: {mean}".format(mean=mean))
+        feedback.pushInfo("RMS: {rms}".format(rms=rms))
+        feedback.pushInfo("PERC: {perc}".format(perc=perc))
 
         return {}
-    
-    def percentile(self, N, frequency, key=lambda x:x):
+
+    def percentile(self, N, frequency, key=lambda x: x):
         """
         Find the percentile of a list of values.
 
@@ -173,7 +155,7 @@ class PecCalculatorAlgorithm(QgsProcessingAlgorithm):
         sortedN = sorted(N)
         if len(sortedN) < 1:
             return 0 if not sortedN else 1
-        if frequency <= 0 :
+        if frequency <= 0:
             return sortedN[0]
         elif frequency >= 1:
             return sortedN[-1]
@@ -183,8 +165,9 @@ class PecCalculatorAlgorithm(QgsProcessingAlgorithm):
         top = math.ceil(position)
         if top == bottom:
             return sortedN[top]
-        return (sortedN[bottom] * (1. + bottom - position) + sortedN[top] * (1. + position - top) )
-
+        return sortedN[bottom] * (1.0 + bottom - position) + sortedN[top] * (
+            1.0 + position - top
+        )
 
     def name(self):
         """
@@ -194,21 +177,21 @@ class PecCalculatorAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'peccalculator'
+        return "peccalculator"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Calculate RMS and Percentile 90 of Layer')
+        return self.tr("Calculate RMS and Percentile 90 of Layer")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Data Quality')
+        return self.tr("Data Quality")
 
     def groupId(self):
         """
@@ -216,10 +199,10 @@ class PecCalculatorAlgorithm(QgsProcessingAlgorithm):
         string should be fixed for the algorithm, and must not be localised.
         The group id should be unique within each provider.
         """
-        return 'DSGTools: Data Quality'
+        return "DSGTools: Data Quality"
 
     def tr(self, string):
-        return QCoreApplication.translate('PecCalculatorAlgorithm', string)
+        return QCoreApplication.translate("PecCalculatorAlgorithm", string)
 
     def createInstance(self):
         return PecCalculatorAlgorithm()

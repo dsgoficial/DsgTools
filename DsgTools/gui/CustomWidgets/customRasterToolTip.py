@@ -25,8 +25,10 @@ import os
 
 from qgis.PyQt import QtWidgets, uic
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'createDatabaseCustomization.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "createDatabaseCustomization.ui")
+)
+
 
 class CreateDatabaseCustomization(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, iface):

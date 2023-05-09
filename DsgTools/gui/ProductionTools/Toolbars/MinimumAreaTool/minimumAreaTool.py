@@ -36,8 +36,10 @@ from qgis.utils import iface
 from .shapeTool import ShapeTool
 from .customSizeSetter import CustomSizeSetter
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'minimumAreaTool.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "minimumAreaTool.ui")
+)
+
 
 class MinimumAreaTool(QWidget, FORM_CLASS):
     def __init__(self, iface, parent=None):
@@ -49,20 +51,24 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
         self.parent = parent
         self.splitter.hide()
         self.iface = iface
-        self.mScaleWidget.setScaleString('1:100000')
+        self.mScaleWidget.setScaleString("1:100000")
         self.scale = None
         self.shape = None
         self.size = None
         self.populateSizesComboBox()
-        icon_path = ':/plugins/DsgTools/icons/minAreaTool.png'
-        text = self.tr('DSGTools: Minimum Area Tool')
-        self.showAction = self.add_action(icon_path, text, self.showPushButton.toggle, parent = self.parent)
-        self.iface.registerMainWindowAction(self.showAction, '')
-        icon_path = ':/plugins/DsgTools/icons/areaTool.png'
-        text = self.tr('DSGTools: Draw Shape')
-        self.shapeAction = self.add_action(icon_path, text, self.drawShape.click, parent = self.parent)
-        self.iface.registerMainWindowAction(self.shapeAction, '')
-    
+        icon_path = ":/plugins/DsgTools/icons/minAreaTool.png"
+        text = self.tr("DSGTools: Minimum Area Tool")
+        self.showAction = self.add_action(
+            icon_path, text, self.showPushButton.toggle, parent=self.parent
+        )
+        self.iface.registerMainWindowAction(self.showAction, "")
+        icon_path = ":/plugins/DsgTools/icons/areaTool.png"
+        text = self.tr("DSGTools: Draw Shape")
+        self.shapeAction = self.add_action(
+            icon_path, text, self.drawShape.click, parent=self.parent
+        )
+        self.iface.registerMainWindowAction(self.shapeAction, "")
+
     def add_action(self, icon_path, text, callback, parent=None):
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
@@ -70,41 +76,41 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
         if parent:
             parent.addAction(action)
         return action
-    
+
     def initGui(self):
         """
         Adds the tool bar in QGIS
         """
         self.iface.addToolBarWidget(self.splitter)
-        
-    def createDict(self, customDict = None):
+
+    def createDict(self, customDict=None):
         """
         Creates the dictionary used to create the geometry templates
         """
         self.sizes = {}
-        self.sizes[u"25mm²"] = {'value': 25, 'shape': 'area'}
-        self.sizes[u"4mm²"] = {'value': 4, 'shape': 'area'}
-        self.sizes[u"1x1mm²"] = {'value': 1, 'shape': 'area'}
-        self.sizes[u"0.8x0.8mm²"] = {'value': 0.64, 'shape': 'area'}
-        self.sizes[u"0.8mm"] = {'value': 0.8,'shape': 'distance'}
+        self.sizes["25mm²"] = {"value": 25, "shape": "area"}
+        self.sizes["4mm²"] = {"value": 4, "shape": "area"}
+        self.sizes["1x1mm²"] = {"value": 1, "shape": "area"}
+        self.sizes["0.8x0.8mm²"] = {"value": 0.64, "shape": "area"}
+        self.sizes["0.8mm"] = {"value": 0.8, "shape": "distance"}
         if customDict:
             for key in customDict:
                 self.sizes[key] = customDict[key]
-        
+
     def shapeComboSetter(self):
         """
         Sets the correct index for the shapes combo box according to the text select in the sizes combo box
         """
         if self.sizesComboBox.currentText() in list(self.sizes.keys()):
-            if self.sizes[self.sizesComboBox.currentText()]['shape'] == 'distance':
-                #In this case we should force the use of circle, due to the measurement shape = distance and set the shape combo box enabled(False)
+            if self.sizes[self.sizesComboBox.currentText()]["shape"] == "distance":
+                # In this case we should force the use of circle, due to the measurement shape = distance and set the shape combo box enabled(False)
                 self.shapesComboBox.setCurrentIndex(2)
                 self.shapesComboBox.setEnabled(False)
             else:
                 self.shapesComboBox.setEnabled(True)
         else:
             self.shapesComboBox.setEnabled(True)
-    
+
     @pyqtSlot(int)
     def on_sizesComboBox_currentIndexChanged(self):
         """
@@ -113,7 +119,7 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
         """
         if self.sizesComboBox.currentIndex() != 0:
             self.shapeComboSetter()
-    
+
     @pyqtSlot(int)
     def on_shapesComboBox_currentIndexChanged(self):
         """
@@ -122,39 +128,53 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
         """
         if self.shapesComboBox.currentIndex() != 0:
             self.shapeComboSetter()
-    
+
     @pyqtSlot(bool)
     def on_drawShape_clicked(self):
         """
         Draws the select template shape on the map canvas
         """
         scaleText = self.mScaleWidget.scaleString()
-        scale = int(scaleText.split(':')[-1].replace('.','').replace(',',''))/1000
+        scale = int(scaleText.split(":")[-1].replace(".", "").replace(",", "")) / 1000
         size = self.sizesComboBox.currentText()
         shape = self.shapesComboBox.currentText()
-        validated = self.validateCombos(self.sizesComboBox.currentIndex(), self.shapesComboBox.currentIndex())
+        validated = self.validateCombos(
+            self.sizesComboBox.currentIndex(), self.shapesComboBox.currentIndex()
+        )
         if validated:
             self.run(scale, size, shape)
         else:
-            QMessageBox.warning(self.iface.mainWindow(), self.tr(u"Error!"), self.tr(u"<font color=red>Shape value not defined :</font><br><font color=blue>Define all values to activate tool!</font>"), QMessageBox.Close)              
-    
+            QMessageBox.warning(
+                self.iface.mainWindow(),
+                self.tr("Error!"),
+                self.tr(
+                    "<font color=red>Shape value not defined :</font><br><font color=blue>Define all values to activate tool!</font>"
+                ),
+                QMessageBox.Close,
+            )
+
     def run(self, scale, size, shape):
         """
         Runs the ShapeTool and set it as the current map tool
         """
-        #checking the selected type
-        if (self.sizes[size]['shape'] == 'area'):
-            param = (float(scale)**2)*float(self.sizes[size]['value'])
+        # checking the selected type
+        if self.sizes[size]["shape"] == "area":
+            param = (float(scale) ** 2) * float(self.sizes[size]["value"])
         else:
-            param = float(scale)*float(self.sizes[size]['value'])
+            param = float(scale) * float(self.sizes[size]["value"])
         color = self.mColorButton.color()
         color.setAlpha(63)
-        tool = ShapeTool(self.iface.mapCanvas(), shape, param, self.sizes[size]['shape'], color )
+        tool = ShapeTool(
+            self.iface.mapCanvas(), shape, param, self.sizes[size]["shape"], color
+        )
         tool.toolFinished.connect(self.refreshCombo)
         # draw the figure instantly, no need for move event at first
         me = QMouseEvent(
-            QEvent.MouseMove, iface.mapCanvas().mouseLastXY(),
-            Qt.NoButton, Qt.NoButton, Qt.NoModifier
+            QEvent.MouseMove,
+            iface.mapCanvas().mouseLastXY(),
+            Qt.NoButton,
+            Qt.NoButton,
+            Qt.NoModifier,
         )
         # this maps the global positioning to canvas pos correctly and matches
         # the canvasMoveEvent slot/method signal.
@@ -167,8 +187,8 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
         Re-enables the shapes combo
         """
         self.shapesComboBox.setEnabled(True)
-    
-    def validateCombos(self,size,shape):
+
+    def validateCombos(self, size, shape):
         """
         Checks if all combos correctly selected
         """
@@ -177,7 +197,7 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
         else:
             return False
 
-    @pyqtSlot(bool, name = 'on_showPushButton_toggled')
+    @pyqtSlot(bool, name="on_showPushButton_toggled")
     def toggleBar(self, toggled=None):
         """
         Slot to show/hide the tool bar
@@ -188,61 +208,63 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
             self.splitter.show()
         else:
             self.splitter.hide()
-    
+
     def getCustomSizesDict(self):
-        #get custom sizes from qsettings
+        # get custom sizes from qsettings
         settings = QSettings()
-        settings.beginGroup('DSGTools/CustomSizes/')
+        settings.beginGroup("DSGTools/CustomSizes/")
         currentSettings = settings.childGroups()
         settings.endGroup()
         customSizesDict = dict()
-        #get each parameter
+        # get each parameter
         for settingName in currentSettings:
             customSizesDict[settingName] = dict()
             settings = QSettings()
-            settings.beginGroup('DSGTools/CustomSizes/'+settingName)
-            customSizesDict[settingName]['shape'] = settings.value('shape')
-            customSizesDict[settingName]['value'] = settings.value('value')
+            settings.beginGroup("DSGTools/CustomSizes/" + settingName)
+            customSizesDict[settingName]["shape"] = settings.value("shape")
+            customSizesDict[settingName]["value"] = settings.value("value")
             settings.endGroup()
         return customSizesDict
-    
+
     def addValueToCustomSizesDict(self, newValueDict):
         settings = QSettings()
-        if not settings.contains('DSGTools/CustomSizes/'+newValueDict['comboText']+'/shape'):
-            settings.beginGroup('DSGTools/CustomSizes/'+newValueDict['comboText'])
-            settings.setValue('shape', newValueDict['shape'])
-            settings.setValue('value', newValueDict['value'])
+        if not settings.contains(
+            "DSGTools/CustomSizes/" + newValueDict["comboText"] + "/shape"
+        ):
+            settings.beginGroup("DSGTools/CustomSizes/" + newValueDict["comboText"])
+            settings.setValue("shape", newValueDict["shape"])
+            settings.setValue("value", newValueDict["value"])
             settings.endGroup()
         self.populateSizesComboBox()
-    
+
     def populateSizesComboBox(self):
         self.sizesComboBox.clear()
-        self.sizesComboBox.addItem(self.tr('SIZES'))
-        self.sizesComboBox.addItem(u'25mm²')
-        self.sizesComboBox.addItem(u'4mm²')
-        self.sizesComboBox.addItem(u'0.8x0.8mm²')
-        self.sizesComboBox.addItem(u'1x1mm²')
-        self.sizesComboBox.addItem(u'0.8mm')
+        self.sizesComboBox.addItem(self.tr("SIZES"))
+        self.sizesComboBox.addItem("25mm²")
+        self.sizesComboBox.addItem("4mm²")
+        self.sizesComboBox.addItem("0.8x0.8mm²")
+        self.sizesComboBox.addItem("1x1mm²")
+        self.sizesComboBox.addItem("0.8mm")
         customSizesDict = self.getCustomSizesDict()
-        self.createDict(customDict = customSizesDict)
+        self.createDict(customDict=customSizesDict)
         self.populateComboWithCustomSizes(customSizesDict)
-    
+
     def updateAndPopulateSizes(self, sizeDict):
         self.size = sizeDict
         self.populateSizeComboBoxWithDict()
-    
+
     def populateSizeComboBoxWithDict(self):
         self.sizesComboBox.clear()
-        self.sizesComboBox.addItem(self.tr('SIZES'))
+        self.sizesComboBox.addItem(self.tr("SIZES"))
         for key in self.sizes:
             self.sizesComboBox.addItem(key)
-    
+
     def populateComboWithCustomSizes(self, customSizesDict):
         """
-        Add to sizesComboBox values from customSizesDict and adds values to self.sizes 
+        Add to sizesComboBox values from customSizesDict and adds values to self.sizes
         """
         for size in list(customSizesDict.keys()):
-            #add item to comboBox
+            # add item to comboBox
             self.sizesComboBox.addItem(size)
 
     @pyqtSlot(bool)
@@ -254,7 +276,7 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
         dlg = CustomSizeSetter(customSizesDict)
         dlg.sizeCreated.connect(self.addValueToCustomSizesDict)
         dlg.exec_()
-    
+
     def unload(self):
         try:
             self.iface.unregisterMainWindowAction(self.showAction)

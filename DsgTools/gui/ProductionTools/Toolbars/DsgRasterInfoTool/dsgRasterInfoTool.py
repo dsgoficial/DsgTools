@@ -30,7 +30,7 @@ from qgis.core import (
     QgsVectorLayer,
     QgsRasterLayer,
     QgsWkbTypes,
-    Qgis
+    Qgis,
 )
 
 from qgis.PyQt import QtGui, uic
@@ -48,6 +48,7 @@ from DsgTools.gui.ProductionTools.Toolbars.DsgRasterInfoTool.assignBandValueTool
 
 # FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'dsgRasterInfoTool.ui'))
 from .dsgRasterInfoTool_ui import Ui_DsgRasterInfoTool
+
 
 class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
     """

@@ -23,27 +23,34 @@
 from PyQt5.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterField,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class IdentifyDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
-    FLAGS = 'FLAGS'
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
-    ATTRIBUTE_BLACK_LIST = 'ATTRIBUTE_BLACK_LIST'
-    IGNORE_VIRTUAL_FIELDS = 'IGNORE_VIRTUAL_FIELDS'
-    IGNORE_PK_FIELDS = 'IGNORE_PK_FIELDS'
+    FLAGS = "FLAGS"
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
+    ATTRIBUTE_BLACK_LIST = "ATTRIBUTE_BLACK_LIST"
+    IGNORE_VIRTUAL_FIELDS = "IGNORE_VIRTUAL_FIELDS"
+    IGNORE_PK_FIELDS = "IGNORE_PK_FIELDS"
 
     def initAlgorithm(self, config):
         """
@@ -52,48 +59,46 @@ class IdentifyDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry ]
+                self.tr("Input layer"),
+                [QgsProcessing.TypeVectorAnyGeometry],
             )
         )
 
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
 
         self.addParameter(
             QgsProcessingParameterField(
-                self.ATTRIBUTE_BLACK_LIST, 
-                self.tr('Fields to ignore'),
-                None, 
-                'INPUT', 
+                self.ATTRIBUTE_BLACK_LIST,
+                self.tr("Fields to ignore"),
+                None,
+                "INPUT",
                 QgsProcessingParameterField.Any,
                 allowMultiple=True,
-                optional = True
+                optional=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.IGNORE_VIRTUAL_FIELDS,
-                self.tr('Ignore virtual fields'),
-                defaultValue=True
+                self.tr("Ignore virtual fields"),
+                defaultValue=True,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.IGNORE_PK_FIELDS,
-                self.tr('Ignore primary key fields'),
-                defaultValue=True
+                self.tr("Ignore primary key fields"),
+                defaultValue=True,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
 
@@ -104,10 +109,16 @@ class IdentifyDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
         layerHandler = LayerHandler()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.INPUT)
+            )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        attributeBlackList = self.parameterAsFields(parameters, self.ATTRIBUTE_BLACK_LIST, context)
-        ignoreVirtual = self.parameterAsBool(parameters, self.IGNORE_VIRTUAL_FIELDS, context)
+        attributeBlackList = self.parameterAsFields(
+            parameters, self.ATTRIBUTE_BLACK_LIST, context
+        )
+        ignoreVirtual = self.parameterAsBool(
+            parameters, self.IGNORE_VIRTUAL_FIELDS, context
+        )
         ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
         # Compute the number of steps to display within the progress bar and
@@ -115,27 +126,29 @@ class IdentifyDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         geomDict = layerHandler.getDuplicatedFeaturesDict(
-                    inputLyr,
-                    onlySelected=onlySelected,
-                    attributeBlackList=attributeBlackList,
-                    excludePrimaryKeys=ignorePK,
-                    ignoreVirtualFields=ignoreVirtual,
-                    useAttributes=True,
-                    feedback=multiStepFeedback
-                )
+            inputLyr,
+            onlySelected=onlySelected,
+            attributeBlackList=attributeBlackList,
+            excludePrimaryKeys=ignorePK,
+            ignoreVirtualFields=ignoreVirtual,
+            useAttributes=True,
+            feedback=multiStepFeedback,
+        )
         multiStepFeedback.setCurrentStep(1)
         self.raiseDuplicatedFeaturesFlags(inputLyr, geomDict, multiStepFeedback)
 
         return {self.FLAGS: self.flag_id}
 
     def raiseDuplicatedFeaturesFlags(self, inputLyr, geomDict, feedback):
-        size = 100/len(geomDict) if geomDict else 0
+        size = 100 / len(geomDict) if geomDict else 0
         for current, featList in enumerate(geomDict.values()):
             if feedback.isCanceled():
                 break
             if len(featList) > 1:
-                idStrList = ', '.join(map(str, [feat.id() for feat in featList]))
-                flagText = self.tr('Features from layer {0} with ids=({1}) have the same set of attributes.').format(inputLyr.name(), idStrList)
+                idStrList = ", ".join(map(str, [feat.id() for feat in featList]))
+                flagText = self.tr(
+                    "Features from layer {0} with ids=({1}) have the same set of attributes."
+                ).format(inputLyr.name(), idStrList)
                 self.flagFeature(featList[0].geometry(), flagText)
             feedback.setProgress(size * current)
 
@@ -147,21 +160,21 @@ class IdentifyDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifyduplicatedfeatures'
+        return "identifyduplicatedfeatures"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Duplicated Features')
+        return self.tr("Identify Duplicated Features")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -171,10 +184,10 @@ class IdentifyDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyDuplicatedFeaturesAlgorithm', string)
+        return QCoreApplication.translate("IdentifyDuplicatedFeaturesAlgorithm", string)
 
     def createInstance(self):
         return IdentifyDuplicatedFeaturesAlgorithm()

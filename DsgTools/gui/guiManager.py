@@ -34,11 +34,13 @@ from .LayerTools.layerToolsGuiManager import LayerToolsGuiManager
 from .ProductionTools.productionToolsGuiManager import ProductionToolsGuiManager
 from .DatabaseTools.databaseManager import DatabaseGuiManager
 from .ServerTools.serverToolsGuiManager import ServerToolsGuiManager
-from .AboutAndFurtherInfo.aboutAndFurtherInfoGuiManager import AboutAndFurtherInfoGuiManager
+from .AboutAndFurtherInfo.aboutAndFurtherInfoGuiManager import (
+    AboutAndFurtherInfoGuiManager,
+)
+
 
 class GuiManager(QObject):
-
-    def __init__(self, iface, parentMenu = None, toolbar = None):
+    def __init__(self, iface, parentMenu=None, toolbar=None):
         """Constructor.
         :param iface: An interface instance that will be passed to this class
             which provides the hook by which you can manipulate the QGIS
@@ -49,20 +51,20 @@ class GuiManager(QObject):
         super(GuiManager, self).__init__()
         self.iface = iface
         self.menu = parentMenu
-        self.iconBasePath = ':/plugins/DsgTools/icons/'
+        self.iconBasePath = ":/plugins/DsgTools/icons/"
         self.actions = []
         self.managerList = []
         self.menuList = []
         self.toolbar = toolbar
 
-    def addMenu(self, name, title, icon_file, parentMenu = None):
+    def addMenu(self, name, title, icon_file, parentMenu=None):
         """
         Adds a QMenu
         """
         child = QMenu(self.menu)
         child.setObjectName(name)
         child.setTitle(self.tr(title))
-        child.setIcon(QIcon(self.iconBasePath+icon_file))
+        child.setIcon(QIcon(self.iconBasePath + icon_file))
         if parentMenu:
             parentMenu.addMenu(child)
         else:
@@ -81,7 +83,7 @@ class GuiManager(QObject):
         parent.addWidget(button)
         self.actions.append(button)
         return button
-    
+
     def add_action(
         self,
         icon_path,
@@ -93,12 +95,13 @@ class GuiManager(QObject):
         status_tip=None,
         whats_this=None,
         parent=None,
-        parentMenu = None,
+        parentMenu=None,
         withShortcut=False,
-        tooltip = None,
-        parentToolbar = None,
-        parentButton = None,
-        isCheckable = False):
+        tooltip=None,
+        parentToolbar=None,
+        parentButton=None,
+        isCheckable=False,
+    ):
         """Add a toolbar icon to the InaSAFE toolbar.
         :param icon_path: Path to the icon for this action. Can be a resource
             path (e.g. ':/plugins/foo/bar.png') or a normal file system path.
@@ -144,7 +147,7 @@ class GuiManager(QObject):
         if parentMenu:
             parentMenu.addAction(action)
         if withShortcut:
-            self.iface.registerMainWindowAction(action, '')
+            self.iface.registerMainWindowAction(action, "")
         if isCheckable:
             action.setCheckable(True)
         if tooltip:
@@ -155,26 +158,38 @@ class GuiManager(QObject):
             parentButton.addAction(action)
         self.actions.append(action)
         return action
-    
+
     def instantiateManagers(self):
-        self.serverToolsGuiManager = ServerToolsGuiManager(self, self.iface, parentMenu=self.menu, toolbar=self.toolbar)
+        self.serverToolsGuiManager = ServerToolsGuiManager(
+            self, self.iface, parentMenu=self.menu, toolbar=self.toolbar
+        )
         self.managerList.append(self.serverToolsGuiManager)
-        self.databaseGuiManager = DatabaseGuiManager(self, self.iface, parentMenu=self.menu, toolbar=self.toolbar)
+        self.databaseGuiManager = DatabaseGuiManager(
+            self, self.iface, parentMenu=self.menu, toolbar=self.toolbar
+        )
         self.managerList.append(self.databaseGuiManager)
-        self.layerToolsGuiManager = LayerToolsGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
+        self.layerToolsGuiManager = LayerToolsGuiManager(
+            self, self.iface, parentMenu=self.menu, toolbar=self.toolbar
+        )
         self.managerList.append(self.layerToolsGuiManager)
-        self.productionToolsGuiManager = ProductionToolsGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
+        self.productionToolsGuiManager = ProductionToolsGuiManager(
+            self, self.iface, parentMenu=self.menu, toolbar=self.toolbar
+        )
         self.managerList.append(self.productionToolsGuiManager)
-        self.bdgexGuiManager = BDGExGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
+        self.bdgexGuiManager = BDGExGuiManager(
+            self, self.iface, parentMenu=self.menu, toolbar=self.toolbar
+        )
         self.managerList.append(self.bdgexGuiManager)
-        self.aboutAndFurtherGuiManager = AboutAndFurtherInfoGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
+        self.aboutAndFurtherGuiManager = AboutAndFurtherInfoGuiManager(
+            self, self.iface, parentMenu=self.menu, toolbar=self.toolbar
+        )
         self.managerList.append(self.aboutAndFurtherGuiManager)
-    
+
     def initGui(self):
         self.instantiateManagers()
         for manager in self.managerList:
             manager.initGui()
-    
+
     def unload(self):
         for manager in self.managerList:
             manager.unload()

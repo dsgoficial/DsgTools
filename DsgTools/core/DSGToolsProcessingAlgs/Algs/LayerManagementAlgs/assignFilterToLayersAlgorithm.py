@@ -21,46 +21,50 @@
  ***************************************************************************/
 """
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterExpression,
-                       QgsProcessingException,
-                       QgsProcessingParameterString,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterType,
-                       QgsProcessingParameterCrs,
-                       QgsCoordinateTransform,
-                       QgsProject,
-                       QgsCoordinateReferenceSystem,
-                       QgsField,
-                       QgsFields,
-                       QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterString)
+from qgis.core import (
+    QgsProcessing,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFeatureSink,
+    QgsFeature,
+    QgsDataSourceUri,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsGeometry,
+    QgsProcessingParameterField,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterFile,
+    QgsProcessingParameterExpression,
+    QgsProcessingException,
+    QgsProcessingParameterString,
+    QgsProcessingParameterDefinition,
+    QgsProcessingParameterType,
+    QgsProcessingParameterCrs,
+    QgsCoordinateTransform,
+    QgsProject,
+    QgsCoordinateReferenceSystem,
+    QgsField,
+    QgsFields,
+    QgsProcessingOutputMultipleLayers,
+    QgsProcessingParameterString,
+)
+
 
 class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
-    INPUT_LAYERS = 'INPUT_LAYERS'
-    FILTER = 'FILTER'
-    BEHAVIOR = 'BEHAVIOR'
-    OUTPUT = 'OUTPUT'
+    INPUT_LAYERS = "INPUT_LAYERS"
+    FILTER = "FILTER"
+    BEHAVIOR = "BEHAVIOR"
+    OUTPUT = "OUTPUT"
     AndMode, OrMode, ReplaceMode = list(range(3))
+
     def initAlgorithm(self, config):
         """
         Parameter setting.
@@ -68,36 +72,28 @@ class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LAYERS,
-                self.tr('Input Layers'),
-                QgsProcessing.TypeVectorAnyGeometry
+                self.tr("Input Layers"),
+                QgsProcessing.TypeVectorAnyGeometry,
             )
         )
 
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.FILTER,
-                self.tr('Filter')
-            )
-        )
+        self.addParameter(QgsProcessingParameterString(self.FILTER, self.tr("Filter")))
 
-        self.modes = [self.tr('Append to existing filter with AND clause'),
-                      self.tr('Append to existing filter with OR clause'),
-                      self.tr('Replace filter')
-                      ]
+        self.modes = [
+            self.tr("Append to existing filter with AND clause"),
+            self.tr("Append to existing filter with OR clause"),
+            self.tr("Replace filter"),
+        ]
 
         self.addParameter(
             QgsProcessingParameterEnum(
-                self.BEHAVIOR,
-                self.tr('Behavior'),
-                options=self.modes,
-                defaultValue=0
+                self.BEHAVIOR, self.tr("Behavior"), options=self.modes, defaultValue=0
             )
         )
 
         self.addOutput(
             QgsProcessingOutputMultipleLayers(
-                self.OUTPUT,
-                self.tr('Original layers with assigned styles')
+                self.OUTPUT, self.tr("Original layers with assigned styles")
             )
         )
 
@@ -105,23 +101,11 @@ class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        inputLyrList = self.parameterAsLayerList(
-            parameters,
-            self.INPUT_LAYERS,
-            context
-        )
-        inputFilterExpression = self.parameterAsString(
-            parameters,
-            self.FILTER,
-            context
-        )
-        behavior = self.parameterAsEnum(
-            parameters,
-            self.BEHAVIOR,
-            context
-            )
+        inputLyrList = self.parameterAsLayerList(parameters, self.INPUT_LAYERS, context)
+        inputFilterExpression = self.parameterAsString(parameters, self.FILTER, context)
+        behavior = self.parameterAsEnum(parameters, self.BEHAVIOR, context)
         listSize = len(inputLyrList)
-        stepSize = 100/listSize if listSize else 0
+        stepSize = 100 / listSize if listSize else 0
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
@@ -136,11 +120,15 @@ class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
         Adapts filter according to the selected mode
         """
         originalFilter = lyr.subsetString()
-        if behavior == AssignFilterToLayersAlgorithm.ReplaceMode or originalFilter == '':
+        if (
+            behavior == AssignFilterToLayersAlgorithm.ReplaceMode
+            or originalFilter == ""
+        ):
             return inputFilter
-        clause = ' AND ' if behavior == AssignFilterToLayersAlgorithm.AndMode else ' OR '
+        clause = (
+            " AND " if behavior == AssignFilterToLayersAlgorithm.AndMode else " OR "
+        )
         return clause.join([originalFilter, inputFilter])
-
 
     def name(self):
         """
@@ -150,21 +138,21 @@ class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'assignfiltertolayers'
+        return "assignfiltertolayers"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Assign Filter to Layers')
+        return self.tr("Assign Filter to Layers")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Layer Management Algorithms')
+        return self.tr("Layer Management Algorithms")
 
     def groupId(self):
         """
@@ -174,10 +162,10 @@ class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Layer Management Algorithms'
+        return "DSGTools: Layer Management Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate('AssignFilterToLayersAlgorithm', string)
+        return QCoreApplication.translate("AssignFilterToLayersAlgorithm", string)
 
     def createInstance(self):
         return AssignFilterToLayersAlgorithm()

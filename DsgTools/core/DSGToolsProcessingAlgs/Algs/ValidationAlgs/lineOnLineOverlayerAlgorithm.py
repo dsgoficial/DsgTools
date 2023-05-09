@@ -24,30 +24,38 @@ from PyQt5.QtCore import QCoreApplication
 
 import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterDistance,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsSpatialIndex, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsGeometry,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterDistance,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterField,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsWkbTypes,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
-    TOLERANCE = 'TOLERANCE'
-    OUTPUT = 'OUTPUT'
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
+    TOLERANCE = "TOLERANCE"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -55,30 +63,26 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorLine ]
+                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorLine]
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
         self.addParameter(
             QgsProcessingParameterDistance(
-                self.TOLERANCE, 
-                self.tr('Snap radius'), 
-                parentParameterName=self.INPUT,                                         
-                minValue=-1.0, 
-                defaultValue=1.0
+                self.TOLERANCE,
+                self.tr("Snap radius"),
+                parentParameterName=self.INPUT,
+                minValue=-1.0,
+                defaultValue=1.0,
             )
         )
         self.addOutput(
             QgsProcessingOutputVectorLayer(
-                self.OUTPUT,
-                self.tr('Original layer with overlayed lines')
+                self.OUTPUT, self.tr("Original layer with overlayed lines")
             )
         )
 
@@ -97,50 +101,47 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
 
         if tol > 0:
             multiStepFeedback.pushInfo(
-                self.tr(
-                    'Identifying dangles on {layer}...'
-                    ).format(layer=inputLyr.name()))
+                self.tr("Identifying dangles on {layer}...").format(
+                    layer=inputLyr.name()
+                )
+            )
             dangleLyr = algRunner.runIdentifyDangles(
                 inputLyr,
                 tol,
                 context,
                 feedback=multiStepFeedback,
-                onlySelected=onlySelected
-                )
+                onlySelected=onlySelected,
+            )
 
             multiStepFeedback.setCurrentStep(1)
-            layerHandler.filterDangles(
-                dangleLyr,
-                tol,
-                feedback=multiStepFeedback
-                )
+            layerHandler.filterDangles(dangleLyr, tol, feedback=multiStepFeedback)
 
             multiStepFeedback.setCurrentStep(2)
             multiStepFeedback.pushInfo(
-                self.tr(
-                    'Snapping layer {layer} to dangles...'
-                    ).format(layer=inputLyr.name()))
+                self.tr("Snapping layer {layer} to dangles...").format(
+                    layer=inputLyr.name()
+                )
+            )
             algRunner.runSnapLayerOnLayer(
                 inputLyr,
                 dangleLyr,
                 tol,
                 context,
                 feedback=multiStepFeedback,
-                onlySelected=onlySelected
-                )
+                onlySelected=onlySelected,
+            )
 
         multiStepFeedback.setCurrentStep(3)
         multiStepFeedback.pushInfo(
-            self.tr(
-                'Cleanning layer {layer}...'
-                ).format(layer=inputLyr.name()))
+            self.tr("Cleanning layer {layer}...").format(layer=inputLyr.name())
+        )
         algRunner.runDsgToolsClean(
             inputLyr,
             context,
             snap=tol,
             feedback=multiStepFeedback,
-            onlySelected=onlySelected
-            )
+            onlySelected=onlySelected,
+        )
 
         return {self.OUTPUT: inputLyr}
 
@@ -152,21 +153,21 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'lineonlineoverlayer'
+        return "lineonlineoverlayer"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Line on line overlayer')
+        return self.tr("Line on line overlayer")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Manipulation Processes)')
+        return self.tr("Quality Assurance Tools (Manipulation Processes)")
 
     def groupId(self):
         """
@@ -176,10 +177,10 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Manipulation Processes)'
+        return "DSGTools: Quality Assurance Tools (Manipulation Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('LineOnLineOverlayerAlgorithm', string)
+        return QCoreApplication.translate("LineOnLineOverlayerAlgorithm", string)
 
     def createInstance(self):
         return LineOnLineOverlayerAlgorithm()

@@ -30,6 +30,7 @@ import sip
 
 from DsgTools.core.Factories.ThreadFactory.threadFactory import ThreadFactory
 
+
 class ProcessManager(QObject):
     def __init__(self, iface):
         """
@@ -83,8 +84,8 @@ class ProcessManager(QObject):
         if not sip.isdeleted(progressBar):
             progressBar.setValue(progressBar.value() + 1)
 
-    @pyqtSlot(int,str,str)
-    def processFinished( self, feedback, message, uuid):
+    @pyqtSlot(int, str, str)
+    def processFinished(self, feedback, message, uuid):
         """
         Finalizes the process
         feedback: feedback code
@@ -101,7 +102,7 @@ class ProcessManager(QObject):
 
         if feedback == 1:
             progressBar.setValue(progressBar.maximum())
-        QMessageBox.information(self.iface.mainWindow(), 'DSG Tools', message)
+        QMessageBox.information(self.iface.mainWindow(), "DSG Tools", message)
 
     def prepareProcess(self, process, message):
         """
@@ -112,67 +113,98 @@ class ProcessManager(QObject):
         # Setting the progress bar
         progressMessageBar = self.iface.messageBar().createMessage(message)
         progressBar = QProgressBar()
-        progressBar.setAlignment(Qt.AlignLeft|Qt.AlignVCenter)
+        progressBar.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         progressMessageBar.layout().addWidget(progressBar)
-        self.iface.messageBar().pushWidget(progressMessageBar, self.iface.messageBar().INFO)
+        self.iface.messageBar().pushWidget(
+            progressMessageBar, self.iface.messageBar().INFO
+        )
 
-        #connecting the destroyed signal
+        # connecting the destroyed signal
         progressMessageBar.destroyed.connect(process.messenger.progressCanceled)
 
-        #storing the process and its related progressBar
+        # storing the process and its related progressBar
         self.processDict[process] = progressBar
 
-        #initiating processing
+        # initiating processing
         QThreadPool.globalInstance().start(process)
 
     def createPostgisDatabaseProcess(self, dbName, abstractDb, version, epsg):
         """
         Create the postgis databsae process
         """
-        #creating process
-        process = self.threadFactory.makeProcess('pgdb')
+        # creating process
+        process = self.threadFactory.makeProcess("pgdb")
         stopped = [False]
-        process.setParameters(abstractDb,dbName,version,epsg,stopped)
-        #connecting signal/slots
+        process.setParameters(abstractDb, dbName, version, epsg, stopped)
+        # connecting signal/slots
         process.signals.rangeCalculated.connect(self.setProgressRange)
         process.signals.stepProcessed.connect(self.stepProcessed)
         process.signals.processingFinished.connect(self.processFinished)
-        #preparing the progressBar that will be created
+        # preparing the progressBar that will be created
         self.prepareProcess(process, self.tr("Creating database structure..."))
 
-    def createDpiProcess(self, filesList, rasterType, minOutValue, maxOutValue, outDir, percent, epsg):
+    def createDpiProcess(
+        self, filesList, rasterType, minOutValue, maxOutValue, outDir, percent, epsg
+    ):
         """
         Creates the digital image process
         """
-        #creating process
-        process = self.threadFactory.makeProcess('dpi')
+        # creating process
+        process = self.threadFactory.makeProcess("dpi")
         stopped = [False]
-        process.setParameters(filesList, rasterType, minOutValue, maxOutValue, outDir, percent, epsg, stopped)
+        process.setParameters(
+            filesList,
+            rasterType,
+            minOutValue,
+            maxOutValue,
+            outDir,
+            percent,
+            epsg,
+            stopped,
+        )
 
-        #connecting signal/slots
+        # connecting signal/slots
         process.signals.rangeCalculated.connect(self.setProgressRange)
         process.signals.stepProcessed.connect(self.stepProcessed)
         process.signals.processingFinished.connect(self.processFinished)
 
-        #preparing the progressBar that will be created
+        # preparing the progressBar that will be created
         self.prepareProcess(process, self.tr("Processing images..."))
 
-    def createInventoryProcess(self, parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, isOnlyGeo):
+    def createInventoryProcess(
+        self,
+        parentFolder,
+        outputFile,
+        makeCopy,
+        destinationFolder,
+        formatsList,
+        isWhitelist,
+        isOnlyGeo,
+    ):
         """
         Creates the inventory process
         """
-        #creating process
-        process = self.threadFactory.makeProcess('inventory')
+        # creating process
+        process = self.threadFactory.makeProcess("inventory")
         stopped = [False]
-        process.setParameters(parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, isOnlyGeo, stopped)
+        process.setParameters(
+            parentFolder,
+            outputFile,
+            makeCopy,
+            destinationFolder,
+            formatsList,
+            isWhitelist,
+            isOnlyGeo,
+            stopped,
+        )
 
-        #connecting signal/slots
+        # connecting signal/slots
         process.signals.rangeCalculated.connect(self.setProgressRange)
         process.signals.stepProcessed.connect(self.stepProcessed)
         process.signals.processingFinished.connect(self.processFinished)
         process.signals.loadFile.connect(self.loadInventoryFile)
 
-        #preparing the progressBar that will be created
+        # preparing the progressBar that will be created
         self.prepareProcess(process, self.tr("Making inventory, please wait..."))
 
     @pyqtSlot(str, bool)
@@ -183,16 +215,24 @@ class ProcessManager(QObject):
         if not isOnlyGeo:
             # Adding the layer and making it active
             url = QUrl.fromLocalFile(outputFile)
-            url.addQueryItem('delimiter', ',')
+            url.addQueryItem("delimiter", ",")
             layer_uri = str(url.toEncoded())
-            layer = self.iface.addVectorLayer(layer_uri, 'Inventory', 'delimitedtext')
+            layer = self.iface.addVectorLayer(layer_uri, "Inventory", "delimitedtext")
         else:
-            layer = self.iface.addVectorLayer(outputFile, 'Inventory', 'ogr')
+            layer = self.iface.addVectorLayer(outputFile, "Inventory", "ogr")
 
         if layer:
-            self.iface.setActiveLayer(layer)            
+            self.iface.setActiveLayer(layer)
             # Creating and Attribute Action to load the inventoried file
             actions = layer.actions()
             field = '[% "fileName" %]'
-            actions.addAction(QgsAction.GenericPython, 'Load Vector Layer', 'qgis.utils.iface.addVectorLayer(r\'%s\', \'File\', \'ogr\')' % field)
-            actions.addAction(QgsAction.GenericPython, 'Load Raster Layer', 'qgis.utils.iface.addRasterLayer(r\'%s\', \'File\')' % field)            
+            actions.addAction(
+                QgsAction.GenericPython,
+                "Load Vector Layer",
+                "qgis.utils.iface.addVectorLayer(r'%s', 'File', 'ogr')" % field,
+            )
+            actions.addAction(
+                QgsAction.GenericPython,
+                "Load Raster Layer",
+                "qgis.utils.iface.addRasterLayer(r'%s', 'File')" % field,
+            )

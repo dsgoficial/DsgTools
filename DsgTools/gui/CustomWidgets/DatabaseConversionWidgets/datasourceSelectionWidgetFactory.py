@@ -23,17 +23,34 @@
 
 from qgis.PyQt.QtWidgets import QWidget
 
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.postgisWidget import PostgisWidget
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.newPostgisWidget import NewPostgisWidget
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.spatialiteWidget import SpatialiteWidget
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.newSpatialiteWidget import NewSpatialiteWidget
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.shapefileWidget import ShapefileWidget
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.newShapefileWidget import NewShapefileWidget
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.geopackageWidget import GeopackageWidget
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.newGeopackageWidget import NewGeopackageWidget
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.postgisWidget import (
+    PostgisWidget,
+)
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.newPostgisWidget import (
+    NewPostgisWidget,
+)
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.spatialiteWidget import (
+    SpatialiteWidget,
+)
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.newSpatialiteWidget import (
+    NewSpatialiteWidget,
+)
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.shapefileWidget import (
+    ShapefileWidget,
+)
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.newShapefileWidget import (
+    NewShapefileWidget,
+)
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.geopackageWidget import (
+    GeopackageWidget,
+)
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.newGeopackageWidget import (
+    NewGeopackageWidget,
+)
 from DsgTools.core.dsgEnums import DsgEnums
 
-class DatasourceSelectionWidgetFactory():
+
+class DatasourceSelectionWidgetFactory:
     """
     Class designed to prepare each selection widget to be added to a widget container.
     """
@@ -46,14 +63,14 @@ class DatasourceSelectionWidgetFactory():
         :return: (QWidget) selection widget for selected driver.
         """
         sourceDict = {
-            DsgEnums.NoDriver : lambda : QWidget(), # returns a parent class empty object, to minimize standard distorsion
-            DsgEnums.PostGIS : lambda : PostgisWidget(parent=parent),
-            DsgEnums.NewPostGIS : lambda : NewPostgisWidget(parent=parent),
-            DsgEnums.SpatiaLite : lambda : SpatialiteWidget(parent=parent),
-            DsgEnums.NewSpatiaLite : lambda : NewSpatialiteWidget(parent=parent),
-            DsgEnums.Shapefile : lambda : ShapefileWidget(parent=parent),
-            DsgEnums.NewShapefile : lambda : NewShapefileWidget(parent=parent),
-            DsgEnums.Geopackage : lambda : GeopackageWidget(parent=parent),
-            DsgEnums.NewGeopackage : lambda : NewGeopackageWidget(parent=parent)
+            DsgEnums.NoDriver: lambda: QWidget(),  # returns a parent class empty object, to minimize standard distorsion
+            DsgEnums.PostGIS: lambda: PostgisWidget(parent=parent),
+            DsgEnums.NewPostGIS: lambda: NewPostgisWidget(parent=parent),
+            DsgEnums.SpatiaLite: lambda: SpatialiteWidget(parent=parent),
+            DsgEnums.NewSpatiaLite: lambda: NewSpatialiteWidget(parent=parent),
+            DsgEnums.Shapefile: lambda: ShapefileWidget(parent=parent),
+            DsgEnums.NewShapefile: lambda: NewShapefileWidget(parent=parent),
+            DsgEnums.Geopackage: lambda: GeopackageWidget(parent=parent),
+            DsgEnums.NewGeopackage: lambda: NewGeopackageWidget(parent=parent),
         }
         return sourceDict[source]()

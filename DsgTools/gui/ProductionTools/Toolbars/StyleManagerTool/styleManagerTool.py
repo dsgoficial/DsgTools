@@ -28,7 +28,14 @@ from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt
 from qgis.PyQt import QtGui, uic, QtCore
 from qgis.PyQt.Qt import QWidget, QObject
 
-from qgis.core import QgsMapLayer, Qgis, QgsDataSourceUri, QgsMessageLog, QgsVectorLayer, QgsProcessingContext
+from qgis.core import (
+    QgsMapLayer,
+    Qgis,
+    QgsDataSourceUri,
+    QgsMessageLog,
+    QgsVectorLayer,
+    QgsProcessingContext,
+)
 
 from .....core.Factories.DbFactory.dbFactory import DbFactory
 from .....core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
@@ -37,11 +44,13 @@ from .....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import Progress
 from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'styleManagerTool.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "styleManagerTool.ui")
+)
 
-class StyleManagerTool(QWidget, FORM_CLASS): 
-    def __init__(self, iface, parent = None):
+
+class StyleManagerTool(QWidget, FORM_CLASS):
+    def __init__(self, iface, parent=None):
         """
         Constructor
         """
@@ -54,7 +63,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
         # self.applyPushButton.setEnabled(False)
         self.utils = Utils()
         self.algRunner = AlgRunner()
-        
+
     @pyqtSlot(bool)
     def on_layerPushButton_toggled(self, toggled):
         """
@@ -65,16 +74,16 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             self.splitter.show()
         else:
             self.splitter.hide()
-    
-    @pyqtSlot(bool, name = 'on_refreshPushButton_clicked')
+
+    @pyqtSlot(bool, name="on_refreshPushButton_clicked")
     def refreshDb(self):
         self.dbComboBox.clear()
-        self.dbComboBox.addItem(self.tr('Select Database'))
-        #populate database list
+        self.dbComboBox.addItem(self.tr("Select Database"))
+        # populate database list
         for dbName in self.getDatabaseList():
             self.dbComboBox.addItem(dbName)
 
-    @pyqtSlot(int, name = 'on_styleComboBox_currentIndexChanged')
+    @pyqtSlot(int, name="on_styleComboBox_currentIndexChanged")
     def enableApply(self):
         dbIdx = self.dbComboBox.currentIndex()
         stylesIdx = self.styleComboBox.currentIndex()
@@ -94,21 +103,20 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             dbVersion = abstractDb.getDatabaseVersion()
             stylesDict = abstractDb.getStyleDict(dbVersion)
             selectedStyle = stylesDict[styleName]
-            if 'db:' in selectedStyle:
+            if "db:" in selectedStyle:
                 self.algRunner.runApplStylesFromDatabaseToLayers(
                     inputList=lyrList,
                     context=QgsProcessingContext(),
-                    styleName=selectedStyle.split(':')[-1]
+                    styleName=selectedStyle.split(":")[-1],
                 )
             else:
                 stylePath = os.path.join(
-                    abstractDb.getStyleDirectory(dbVersion),
-                    selectedStyle
+                    abstractDb.getStyleDirectory(dbVersion), selectedStyle
                 )
                 self.algRunner.runMatchAndApplyQmlStylesToLayer(
                     inputList=lyrList,
                     qmlFolder=stylePath,
-                    context=QgsProcessingContext()
+                    context=QgsProcessingContext(),
                 )
             # localProgress = ProgressWidget(1, len(lyrList) - 1, self.tr('Loading style {0}').format(styleName), parent=self.iface.mapCanvas())
             # for lyr in lyrList:
@@ -127,20 +135,31 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             # self.iface.mapCanvas().refreshAllLayers()
             QApplication.restoreOverrideCursor()
         except Exception as e:
-            QgsMessageLog.logMessage(self.tr('Error setting style ') + styleName + ': ' +':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(
+                self.tr("Error setting style ") + styleName + ": " + ":".join(e.args),
+                "DSGTools Plugin",
+                Qgis.Critical,
+            )
             QApplication.restoreOverrideCursor()
 
-    
     def getLayers(self, dbName):
         lyrList = []
         for lyr in self.iface.mapCanvas().layers():
             if isinstance(lyr, QgsVectorLayer):
                 candidateUri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
-                if (candidateUri.database() == dbName and lyr.providerType() in ['postgres', 'spatialite']) \
-                    or (os.path.splitext(os.path.basename(candidateUri.uri().split('|')[0]))[0] == dbName and lyr.providerType() == 'ogr'):
+                if (
+                    candidateUri.database() == dbName
+                    and lyr.providerType() in ["postgres", "spatialite"]
+                ) or (
+                    os.path.splitext(
+                        os.path.basename(candidateUri.uri().split("|")[0])
+                    )[0]
+                    == dbName
+                    and lyr.providerType() == "ogr"
+                ):
                     lyrList.append(lyr)
         return lyrList
-    
+
     def getDatabaseList(self):
         # dbList = list()
         dbSet = set()
@@ -149,14 +168,18 @@ class StyleManagerTool(QWidget, FORM_CLASS):
                 candidateUri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
                 dbName = candidateUri.database()
                 # if dbName not in dbList and lyr.providerType() in ['postgres', 'spatialite']:
-                if lyr.providerType() in ['postgres', 'spatialite']:
+                if lyr.providerType() in ["postgres", "spatialite"]:
                     dbSet.add(dbName)
-                elif lyr.providerType() == 'ogr':
-                    dbName = os.path.splitext(os.path.basename(lyr.dataProvider().dataSourceUri().split('|')[0]))[0]
+                elif lyr.providerType() == "ogr":
+                    dbName = os.path.splitext(
+                        os.path.basename(
+                            lyr.dataProvider().dataSourceUri().split("|")[0]
+                        )
+                    )[0]
                     # if db not in dbList:
                     dbSet.add(dbName)
         return dbSet
-    
+
     def loadStylesCombo(self, abstractDb):
         dbVersion = abstractDb.getDatabaseVersion()
         styleDict = abstractDb.getStyleDict(dbVersion)
@@ -164,53 +187,66 @@ class StyleManagerTool(QWidget, FORM_CLASS):
         styleList = list(styleDict.keys())
         numberOfStyles = len(styleList)
         if numberOfStyles > 0:
-            self.styleComboBox.addItem(self.tr('Select Style'))
+            self.styleComboBox.addItem(self.tr("Select Style"))
             for i in range(numberOfStyles):
                 self.styleComboBox.addItem(styleList[i])
         else:
-            self.styleComboBox.addItem(self.tr('No available styles'))
-    
+            self.styleComboBox.addItem(self.tr("No available styles"))
+
     def getParametersFromLyr(self, dbName):
         for lyr in self.iface.mapCanvas().layers():
-          if isinstance(lyr, QgsVectorLayer):
-            candidateUri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
-            if candidateUri.database() == dbName or \
-                    os.path.splitext(os.path.basename(candidateUri.uri().split('|')[0]))[0] == dbName:
-                currLyr = lyr
-                break
+            if isinstance(lyr, QgsVectorLayer):
+                candidateUri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
+                if (
+                    candidateUri.database() == dbName
+                    or os.path.splitext(
+                        os.path.basename(candidateUri.uri().split("|")[0])
+                    )[0]
+                    == dbName
+                ):
+                    currLyr = lyr
+                    break
         dbParameters = dict()
-        if currLyr.providerType() == 'postgres':
-            dbParameters['host'] = candidateUri.host()
-            dbParameters['port'] = candidateUri.port()
-            dbParameters['user'] = candidateUri.username()
-            dbParameters['password'] = candidateUri.password()
+        if currLyr.providerType() == "postgres":
+            dbParameters["host"] = candidateUri.host()
+            dbParameters["port"] = candidateUri.port()
+            dbParameters["user"] = candidateUri.username()
+            dbParameters["password"] = candidateUri.password()
             return dbParameters, DsgEnums.DriverPostGIS
-        elif currLyr.providerType() == 'spatialite':
-            dbParameters['dbPath'] = candidateUri.database()
+        elif currLyr.providerType() == "spatialite":
+            dbParameters["dbPath"] = candidateUri.database()
             return dbParameters, DsgEnums.DriverSpatiaLite
-        elif currLyr.providerType() == 'ogr':
+        elif currLyr.providerType() == "ogr":
             # geopackage provider type is ogr
-            dbParameters['dbPath'] = candidateUri.database()
+            dbParameters["dbPath"] = candidateUri.database()
             return dbParameters, DsgEnums.DriverGeopackage
         else:
-            raise Exception(self.tr('Feature only implemented for PostGIS and Spatialite'))
-    
+            raise Exception(
+                self.tr("Feature only implemented for PostGIS and Spatialite")
+            )
+
     def getAbstractDb(self, dbName):
         dbParameters, driverName = self.getParametersFromLyr(dbName)
         abstractDb = self.dbFactory.createDbFactory(driverName)
-        if 'host' in list(dbParameters.keys()):
-            abstractDb.connectDatabaseWithParameters(dbParameters['host'], dbParameters['port'], dbName, dbParameters['user'], dbParameters['password'])
+        if "host" in list(dbParameters.keys()):
+            abstractDb.connectDatabaseWithParameters(
+                dbParameters["host"],
+                dbParameters["port"],
+                dbName,
+                dbParameters["user"],
+                dbParameters["password"],
+            )
         else:
-            abstractDb.connectDatabase(dbParameters['dbPath'])
+            abstractDb.connectDatabase(dbParameters["dbPath"])
         return abstractDb
 
     @pyqtSlot(int)
     def on_dbComboBox_currentIndexChanged(self, idx):
         self.enableApply()
-        if self.sender().objectName() == 'dbComboBox':
+        if self.sender().objectName() == "dbComboBox":
             if idx <= 0:
                 self.styleComboBox.clear()
-                self.styleComboBox.addItem(self.tr('Select Style'))
+                self.styleComboBox.addItem(self.tr("Select Style"))
                 self.styleComboBox.setEnabled(False)
             elif idx > 0:
                 self.styleComboBox.setEnabled(True)

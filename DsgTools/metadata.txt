@@ -10,7 +10,7 @@
 name=DSG Tools
 qgisMinimumVersion=3.22
 description=Brazilian Army Cartographic Production Tools
-version=4.6.0
+version=4.7.0
 author=Brazilian Army Geographic Service
 email=suporte.dsgtools@dsg.eb.mil.br
 about=
@@ -44,6 +44,40 @@ about=
 
 # Uncomment the following line and add your changelog:
 changelog=
+	4.7.0:
+		Novas funcionalidades:
+			- Novo processo de selecionar feições no canvas de camadas selecionadas;
+			- Novo processo de filtrar lista de camadas no processing por tipo geométrico;
+			- Novo processo de remover holes pequenos de camadas de cobertura;
+			- Novo processo de dissolver polígonos para vizinhos (heurística pelo maior comprimento da intersecção);
+			- Novo processo de construir grid de pontos dentro de polígonos;
+			- Novo processo de dividir polígonos;
+			- Novo processo de dividir polígonos por grid;
+			- Novo processo de selecionar por DE9IM;
+			- Novo processo de extrair feições por DE9IM;
+			- Processo de converter linha para multilinha portado do ferramentas experimentais;
+
+		Melhorias:
+			- Adicionada a opção de dar pan na barra de ferramentas de revisão;
+			- Adicionada mudanca de ferramenta atual nos icones das ferramentas de filtro;
+			- Processing de construção do diagrama de elevação portado para o Ferramentas de Edição;
+			- Adicionado o comportamento no seletor genérico de selecionar somente na camada ativa quando a tecla Alt estiver selecionada;
+			- Adicionada a opção de rodar a construção de polígonos por polígono de área geográfica (por MI);
+			- Melhoria de desempenho na construção de polígonos (adicionado paralelismo em thread);
+			- Melhoria de desempenho na verificação de delimitadores não utilizados no processo de construção de polígonos;
+			- Adicionada a opção de verificar ou não delimitadores não utilizados no processo de construção de polígonos;
+			- Melhoria de desempenho na identificação de erros de construção do terreno (roda em thread por área geográfica);
+			- A ferramenta de verificação de erros de relacionamentos espaciais agora permite regras com de9im e relacionamentos espaciais simultaneamente;
+			- Adicionada a opção de desligar todas as imagens ativas na ferramenta de seleção de raster;
+			- Adicionado o id da geometria na flag do identificar geometrias inválidas;
+			- O menu de aquisição agora permite reclassificação de polígono para ponto (particularmente útil quando se está corrigindo flags de áreas sem centroide na construção de polígonos utilizando linha e centroide);
+
+
+		Correção de bug:
+			- Corrigido o bug de sempre apontar flags quando a geometria tem buraco do processo de identificar geometrias com densidade incorreta de vértices;
+			- Correção de bug no processo de adicionar vértice em segmento compartilhado;
+			- Correção de bug no processo de dissolver polígonos com mesmo conjunto de atributos quando é passada uma área mínima para o dissolve;
+			- Correção de bug no acesso ao BDGEx (a url do serviço mudou e o código teve de ser atualizado, mudando a url do serviço de https para http);
 	4.6.0:
 		Novas funcionalidades:
 			- Novo processo de estender linhas próximas da moldura;
@@ -141,4 +175,3 @@ experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
-

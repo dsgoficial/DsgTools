@@ -1,10 +1,8 @@
-from ..datasets.ptBR import PtBR 
+from ..datasets.ptBR import PtBR
 from ..structures.ternarySearchTree import Trie
 
-class DatasetFactory:
 
+class DatasetFactory:
     def getDataset(self, dataset):
-        methods = {
-            'pt-BR': PtBR
-        }
+        methods = {"pt-BR": PtBR}
         return methods[dataset]()

@@ -27,19 +27,28 @@ from qgis.gui import QgsFieldExpressionWidget, QgsCollapsibleGroupBox
 from qgis.utils import iface
 from qgis.core import QgsProject
 
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.filterDialog import FilterDialog
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceSelectionWidgetFactory import DatasourceSelectionWidgetFactory
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import (
+    GenericDialogLayout,
+)
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.filterDialog import (
+    FilterDialog,
+)
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceSelectionWidgetFactory import (
+    DatasourceSelectionWidgetFactory,
+)
 
 import os
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'datasourceContainerWidget.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "datasourceContainerWidget.ui")
+)
+
 
 class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
     """
     Widget resposinble for adequating GUI to chosen data driver.
     """
+
     # signal to be emitted when deletion button is clicked - emits itself (QWidget)
     removeWidget = pyqtSignal(QtWidgets.QWidget)
     # signal emitted to advise about filtering options change
@@ -61,24 +70,30 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             self.filterPushButton.hide()
         # set filtering config
         self.filterDlg = None
-        self.filterPushButton.setToolTip(self.tr('Click to set datasource filter options'))
-        self.removePushButton.setToolTip(self.tr('Remove this datasource widget'))
+        self.filterPushButton.setToolTip(
+            self.tr("Click to set datasource filter options")
+        )
+        self.removePushButton.setToolTip(self.tr("Remove this datasource widget"))
 
     def setGroupWidgetName(self, name=None):
         """
         Sets the name to the group added.
         :param name: (str) name for the group.
         """
-        self.groupBox.setTitle('{0}'.format(name))
+        self.groupBox.setTitle("{0}".format(name))
 
     def addDatasourceSelectionWidget(self):
         """
         Adds the widget according to selected datasource on datasource combobox on first page.
         """
         # in case a valid driver is selected, add its widget to the interface
-        self.connectionWidget = DatasourceSelectionWidgetFactory.getSelectionWidget(source=self.source)
+        self.connectionWidget = DatasourceSelectionWidgetFactory.getSelectionWidget(
+            source=self.source
+        )
         self.driverLayout.addWidget(self.connectionWidget.selectionWidget)
-        self.connectionWidget.selectionWidget.dbChanged.connect(lambda : self.refreshFilterDialog)
+        self.connectionWidget.selectionWidget.dbChanged.connect(
+            lambda: self.refreshFilterDialog
+        )
 
     def getDatasourceConnectionName(self):
         """
@@ -91,7 +106,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
     def getDatasource(self):
         """
         Gets the datasource selected on current widget.
-        :return: (object) the object representing the target datasource according to its driver. 
+        :return: (object) the object representing the target datasource according to its driver.
         """
         return self.connectionWidget.getDatasource() if self.connectionWidget else None
 
@@ -122,16 +137,28 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             del self.filterDlg
             self.filterDlg = None
         self.filterDlg = FilterDialog(
-                {l : {'layer' : self.connectionWidget.getLayerByName(l), 'featureCount' : fc} for l, fc in self.connectionWidget.getLayersDict().items()},
-                {l : {'layer' : self.connectionWidget.getComplexLayerByName(l), 'featureCount' : fc} for l, fc in self.connectionWidget.getComplexDict().items()},
-                self.connectionWidget.getDatasource(),
-            )
+            {
+                l: {
+                    "layer": self.connectionWidget.getLayerByName(l),
+                    "featureCount": fc,
+                }
+                for l, fc in self.connectionWidget.getLayersDict().items()
+            },
+            {
+                l: {
+                    "layer": self.connectionWidget.getComplexLayerByName(l),
+                    "featureCount": fc,
+                }
+                for l, fc in self.connectionWidget.getComplexDict().items()
+            },
+            self.connectionWidget.getDatasource(),
+        )
         self.filterDlg.setWindowTitle(
-            '{0}: {2} ({1})'.format(
-                    self.groupBox.title(),
-                    self.connectionWidget.getDatasourcePath(),
-                    self.connectionWidget.getDatasourceConnectionName()
-                )
+            "{0}: {2} ({1})".format(
+                self.groupBox.title(),
+                self.connectionWidget.getDatasourcePath(),
+                self.connectionWidget.getDatasourceConnectionName(),
+            )
         )
 
     @pyqtSlot(bool)
@@ -139,7 +166,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         Opens filter dialog. Filters are updated as Ok push button on this dialog is clicked. If cancel is pressed,
         no update to filters contents will be made. This dialog is repopulated as filter push button from container
-        is pressed. 
+        is pressed.
         """
         # filter dialog is only built on the first execution
         if self.filterDlg is None:
@@ -163,8 +190,11 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         is returned.
         :return: (dict) a map to current filters applied.
         """
-        return self.filterDlg.filters() if self.filterDlg is not None \
-                else {'layer_filter' : dict(), 'spatial_filter' : dict()}
+        return (
+            self.filterDlg.filters()
+            if self.filterDlg is not None
+            else {"layer_filter": dict(), "spatial_filter": dict()}
+        )
 
     def driver(self):
         """
@@ -193,4 +223,4 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         Validates selection widgets contents.
         :return: (bool) invalidation status.
         """
-        return self.validate() == ''
+        return self.validate() == ""

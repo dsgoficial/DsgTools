@@ -27,24 +27,33 @@ import processing
 import concurrent.futures
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsProject, QgsWkbTypes, QgsProcessingFeatureSourceDefinition)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingUtils,
+    QgsProject,
+    QgsWkbTypes,
+    QgsProcessingFeatureSourceDefinition,
+)
 
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
-    FLAGS = 'FLAGS'
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
+    FLAGS = "FLAGS"
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
 
     def initAlgorithm(self, config):
         """
@@ -53,25 +62,23 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input layer'),
+                self.tr("Input layer"),
                 [
                     QgsProcessing.TypeVectorLine,
                     QgsProcessing.TypeVectorPolygon,
-                ]
+                ],
             )
         )
 
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
 
@@ -84,7 +91,9 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.INPUT)
+            )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
         # Compute the number of steps to display within the progress bar and
@@ -92,7 +101,9 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.setProgressText(self.tr("Building aux structure..."))
-        joinLyr, idDict = self.prepareAuxStructure(context, multiStepFeedback, algRunner, inputLyr, onlySelected)
+        joinLyr, idDict = self.prepareAuxStructure(
+            context, multiStepFeedback, algRunner, inputLyr, onlySelected
+        )
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.setProgressText(self.tr("Finding overlaps..."))
         geometrySet = self.findOverlaps(joinLyr, idDict, feedback)
@@ -102,7 +113,9 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         for current, geom in enumerate(geometrySet):
             if multiStepFeedback.isCanceled():
                 break
-            self.flagFeature(geom, self.tr('Overlap on layer {0}').format(inputLyr.name()))
+            self.flagFeature(
+                geom, self.tr("Overlap on layer {0}").format(inputLyr.name())
+            )
             multiStepFeedback.setProgress(current * total)
 
         return {self.FLAGS: self.flag_id}
@@ -110,36 +123,42 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
     def prepareAuxStructure(self, context, feedback, algRunner, inputLyr, onlySelected):
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.setProgressText(self.tr("Building aux structure: creating incremental field layer..."))
+        multiStepFeedback.setProgressText(
+            self.tr("Building aux structure: creating incremental field layer...")
+        )
         incrementedLyr = algRunner.runAddAutoIncrementalField(
-            inputLyr=inputLyr if not onlySelected else QgsProcessingFeatureSourceDefinition(
-            inputLyr.id(), True),
+            inputLyr=inputLyr
+            if not onlySelected
+            else QgsProcessingFeatureSourceDefinition(inputLyr.id(), True),
             context=context,
             feedback=multiStepFeedback,
             start=0,
             sortAscending=False,
-            sortNullsFirst=False
+            sortNullsFirst=False,
         )
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.setProgressText(self.tr("Building aux structure: spatial index..."))
+        multiStepFeedback.setProgressText(
+            self.tr("Building aux structure: spatial index...")
+        )
         algRunner.runCreateSpatialIndex(
-            inputLyr=incrementedLyr,
-            context=context,
-            feedback=multiStepFeedback
+            inputLyr=incrementedLyr, context=context, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.setProgressText(self.tr("Building aux structure: feature dict..."))
-        idDict = {feat['featid']: feat for feat in incrementedLyr.getFeatures()}
+        multiStepFeedback.setProgressText(
+            self.tr("Building aux structure: feature dict...")
+        )
+        idDict = {feat["featid"]: feat for feat in incrementedLyr.getFeatures()}
         multiStepFeedback.setCurrentStep(3)
-        multiStepFeedback.setProgressText(self.tr("Building aux structure: Running spatial join..."))
+        multiStepFeedback.setProgressText(
+            self.tr("Building aux structure: Running spatial join...")
+        )
         joinLyr = algRunner.runJoinAttributesByLocation(
             inputLyr=incrementedLyr,
             joinLyr=incrementedLyr,
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
-        
-        
+
         return joinLyr, idDict
 
     def findOverlaps(self, inputLyr, idDict, feedback=None):
@@ -147,22 +166,35 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         geomType = inputLyr.geometryType()
         if not total:
             return set()
+
         def _processFeature(feat, feedback):
             outputSet = set()
-            if (feedback is not None and feedback.isCanceled()) or feat["featid_2"] not in idDict or feat['featid_2'] <= feat['featid']:
+            if (
+                (feedback is not None and feedback.isCanceled())
+                or feat["featid_2"] not in idDict
+                or feat["featid_2"] <= feat["featid"]
+            ):
                 return outputSet
             geom1 = feat.geometry()
-            geom2 = idDict[feat['featid_2']].geometry()
+            geom2 = idDict[feat["featid_2"]].geometry()
             if not geom1.intersects(geom2):
                 return outputSet
             intersects = geom1.intersection(geom2)
-            return outputSet.union(
-                set(intersects.asGeometryCollection()) if intersects.isMultipart() else {intersects}
-            ) if intersects.type() == geomType else outputSet 
-        
+            return (
+                outputSet.union(
+                    set(intersects.asGeometryCollection())
+                    if intersects.isMultipart()
+                    else {intersects}
+                )
+                if intersects.type() == geomType
+                else outputSet
+            )
+
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.setProgressText(self.tr("Finding overlaps: submitting to thread..."))
+        multiStepFeedback.setProgressText(
+            self.tr("Finding overlaps: submitting to thread...")
+        )
         processLambda = lambda x: _processFeature(x, multiStepFeedback)
         pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count())
         futures = set()
@@ -171,9 +203,11 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
             futures.add(pool.submit(processLambda, feat))
-        
+
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.setProgressText(self.tr("Finding overlaps: processing thread outputs..."))
+        multiStepFeedback.setProgressText(
+            self.tr("Finding overlaps: processing thread outputs...")
+        )
         outputSet = set()
         for current, future in enumerate(concurrent.futures.as_completed(futures)):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
@@ -191,21 +225,21 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifyoverlaps'
+        return "identifyoverlaps"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Overlaps')
+        return self.tr("Identify Overlaps")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -215,10 +249,10 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyOverlapsAlgorithm', string)
+        return QCoreApplication.translate("IdentifyOverlapsAlgorithm", string)
 
     def createInstance(self):
         return IdentifyOverlapsAlgorithm()

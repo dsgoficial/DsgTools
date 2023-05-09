@@ -23,21 +23,23 @@
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtGui import QColor
 from qgis.PyQt.Qt import QVariant
-from qgis.core import (QgsProcessingAlgorithm,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsField,
-                       QgsVectorLayer,
-                       QgsConditionalStyle,
-                       QgsExpression)
+from qgis.core import (
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterMultipleLayers,
+    QgsField,
+    QgsVectorLayer,
+    QgsConditionalStyle,
+    QgsExpression,
+)
+
 
 class DetectNullGeometriesAlgorithm(QgsProcessingAlgorithm):
-    INPUT_LAYERS = 'INPUT_LAYERS'
+    INPUT_LAYERS = "INPUT_LAYERS"
 
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
-                self.INPUT_LAYERS,
-                self.tr("Input layers")
+                self.INPUT_LAYERS, self.tr("Input layers")
             )
         )
 
@@ -45,17 +47,13 @@ class DetectNullGeometriesAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        inputLyrList = self.parameterAsLayerList(
-            parameters,
-            self.INPUT_LAYERS,
-            context
-        )
-        
+        inputLyrList = self.parameterAsLayerList(parameters, self.INPUT_LAYERS, context)
+
         if not inputLyrList:
             return {}
-        
+
         listSize = len(inputLyrList)
-        stepSize = 100/listSize if listSize else 0
+        stepSize = 100 / listSize if listSize else 0
 
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
@@ -65,12 +63,10 @@ class DetectNullGeometriesAlgorithm(QgsProcessingAlgorithm):
             feedback.setProgress(current * stepSize)
         return {}
 
-    def addRuleToLayer(self, lyr:QgsVectorLayer, feedback=None):
+    def addRuleToLayer(self, lyr: QgsVectorLayer, feedback=None):
         conditionalStyle = self.createConditionalStyle()
 
-        lyr.conditionalStyles().setRowStyles(
-            [conditionalStyle]
-        )
+        lyr.conditionalStyles().setRowStyles([conditionalStyle])
 
     def createConditionalStyle(self) -> QgsConditionalStyle:
         """
@@ -79,34 +75,23 @@ class DetectNullGeometriesAlgorithm(QgsProcessingAlgorithm):
         conditionalStyle = QgsConditionalStyle()
         conditionalStyle.setName("Geometria nula")
         conditionalStyle.setRule("is_empty_or_null($geometry)")
-        conditionalStyle.setBackgroundColor(
-            QColor(255,0,0) 
-        )
-        conditionalStyle.setTextColor(
-            QColor(255,255,255)
-        )
+        conditionalStyle.setBackgroundColor(QColor(255, 0, 0))
+        conditionalStyle.setTextColor(QColor(255, 255, 255))
 
         return conditionalStyle
-    
+
     def createRuleVirtualField(self, lyr):
         expressionString = """CASE\n"""
         expressionString += """WHEN {condition} THEN '{result}'\n""".format(
-                condition="is_empty_or_null($geometry)",
-                result="EMPTY/NULL GEOMETRY"
-            )
+            condition="is_empty_or_null($geometry)", result="EMPTY/NULL GEOMETRY"
+        )
         expressionString += """ELSE ''\nEND"""
 
         expression = QgsExpression(expressionString)
         if expression.hasParserError():
-            raise Exception(
-                f"Invalid expression: \n{expressionString}"
-            )
+            raise Exception(f"Invalid expression: \n{expressionString}")
         lyr.addExpressionField(
-            expressionString,
-            QgsField(
-                'geometry_error',
-                QVariant.String
-            )
+            expressionString, QgsField("geometry_error", QVariant.String)
         )
 
     def name(self):
@@ -117,21 +102,21 @@ class DetectNullGeometriesAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'detectnullgeometriesalgorithm'
+        return "detectnullgeometriesalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Detect Null Geometries')
+        return self.tr("Detect Null Geometries")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Layer Management Algorithms')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -141,10 +126,10 @@ class DetectNullGeometriesAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Layer Management Algorithms'
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('DetectNullGeometriesAlgorithm', string)
+        return QCoreApplication.translate("DetectNullGeometriesAlgorithm", string)
 
     def createInstance(self):
         return DetectNullGeometriesAlgorithm()

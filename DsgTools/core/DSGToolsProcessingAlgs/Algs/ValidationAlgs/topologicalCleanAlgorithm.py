@@ -24,29 +24,39 @@ from PyQt5.QtCore import QCoreApplication
 
 import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsProject, QgsSpatialIndex, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsGeometry,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingUtils,
+    QgsProject,
+    QgsSpatialIndex,
+    QgsWkbTypes,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class TopologicalCleanAlgorithm(ValidationAlgorithm):
-    INPUTLAYERS = 'INPUTLAYERS'
-    SELECTED = 'SELECTED'
-    TOLERANCE = 'TOLERANCE'
-    MINAREA = 'MINAREA'
-    FLAGS = 'FLAGS'
+    INPUTLAYERS = "INPUTLAYERS"
+    SELECTED = "SELECTED"
+    TOLERANCE = "TOLERANCE"
+    MINAREA = "MINAREA"
+    FLAGS = "FLAGS"
 
     def initAlgorithm(self, config):
         """
@@ -55,38 +65,36 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUTLAYERS,
-                self.tr('Polygon Layers'),
-                QgsProcessing.TypeVectorPolygon
+                self.tr("Polygon Layers"),
+                QgsProcessing.TypeVectorPolygon,
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.TOLERANCE,
-                self.tr('Snap radius'),
+                self.tr("Snap radius"),
                 minValue=0,
                 defaultValue=1,
-                type=QgsProcessingParameterNumber.Double
+                type=QgsProcessingParameterNumber.Double,
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.MINAREA,
-                self.tr('Minimum area'),
+                self.tr("Minimum area"),
                 minValue=0,
                 defaultValue=0.0001,
-                type=QgsProcessingParameterNumber.Double
+                type=QgsProcessingParameterNumber.Double,
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
 
@@ -100,11 +108,8 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
         inputLyrList = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
         if inputLyrList is None or inputLyrList == []:
             raise QgsProcessingException(
-                self.invalidSourceError(
-                    parameters,
-                    self.INPUTLAYERS
-                    )
-                )
+                self.invalidSourceError(parameters, self.INPUTLAYERS)
+            )
         for layer in inputLyrList:
             if layer.featureCount() > 0:
                 geomType = next(layer.getFeatures()).geometry().wkbType()
@@ -112,68 +117,44 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
         else:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUTLAYERS),
-                self.tr("Provided layers have no features in it.")
+                self.tr("Provided layers have no features in it."),
             )
-        onlySelected = self.parameterAsBool(
-            parameters,
-            self.SELECTED,
-            context
-        )
-        snap = self.parameterAsDouble(
-            parameters,
-            self.TOLERANCE,
-            context
-        )
-        minArea = self.parameterAsDouble(
-            parameters,
-            self.MINAREA,
-            context
-        )
-        self.prepareFlagSink(
-            parameters,
-            inputLyrList[0],
-            geomType,
-            context
-        )
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        snap = self.parameterAsDouble(parameters, self.TOLERANCE, context)
+        minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
+        self.prepareFlagSink(parameters, inputLyrList[0], geomType, context)
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Building unified layer...'))
+        multiStepFeedback.pushInfo(self.tr("Building unified layer..."))
         # in order to check the topology of all layers as a whole, all features
         # are handled as if they formed a single layer
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
             inputLyrList,
             geomType=geomType,
             onlySelected=onlySelected,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(self.tr('Running clean on unified layer...'))
+        multiStepFeedback.pushInfo(self.tr("Running clean on unified layer..."))
         cleanedCoverage, error = algRunner.runClean(
             coverage,
-            [
-                algRunner.RMSA,
-                algRunner.Break,
-                algRunner.RmDupl,
-                algRunner.RmDangle
-                ],
+            [algRunner.RMSA, algRunner.Break, algRunner.RmDupl, algRunner.RmDangle],
             context,
             returnError=True,
             snap=snap,
             minArea=minArea,
-            feedback=multiStepFeedback
-            )
+            feedback=multiStepFeedback,
+        )
 
         multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
+        multiStepFeedback.pushInfo(self.tr("Updating original layer..."))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
-            inputLyrList,
-            cleanedCoverage,
-            feedback=multiStepFeedback
-            )
+            inputLyrList, cleanedCoverage, feedback=multiStepFeedback
+        )
         self.flagCoverageIssues(cleanedCoverage, error, feedback)
 
-        return {self.INPUTLAYERS : inputLyrList, self.FLAGS : self.flagSink}
+        return {self.INPUTLAYERS: inputLyrList, self.FLAGS: self.flagSink}
 
     def flagCoverageIssues(self, cleanedCoverage, error, feedback):
         overlapDict = dict()
@@ -191,22 +172,26 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
             if len(featList) > 1:
                 txtList = []
                 for i in featList:
-                    txtList += ['{0} (id={1})'.format(i['layer'], i['featid'])]
-                txt = ', '.join(txtList)
+                    txtList += ["{0} (id={1})".format(i["layer"], i["featid"])]
+                txt = ", ".join(txtList)
                 self.flagFeature(
-                    featList[0].geometry(), self.tr('Features from {0} overlap').format(txt))
+                    featList[0].geometry(),
+                    self.tr("Features from {0} overlap").format(txt),
+                )
             elif len(featList) == 1:
                 attrList = featList[0].attributes()
-                if attrList == len(attrList)*[None]:
+                if attrList == len(attrList) * [None]:
                     self.flagFeature(
-                        featList[0].geometry(), self.tr('Gap in coverage.'))
+                        featList[0].geometry(), self.tr("Gap in coverage.")
+                    )
 
         if error:
             for feat in error.getFeatures():
                 if feedback.isCanceled():
                     break
                 self.flagFeature(
-                    feat.geometry(), self.tr('Clean error on unified layer.'))
+                    feat.geometry(), self.tr("Clean error on unified layer.")
+                )
 
     def name(self):
         """
@@ -216,21 +201,21 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'topologicalclean'
+        return "topologicalclean"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Topological Clean Polygons')
+        return self.tr("Topological Clean Polygons")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Topological Processes)')
+        return self.tr("Quality Assurance Tools (Topological Processes)")
 
     def groupId(self):
         """
@@ -240,10 +225,10 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Topological Processes)'
+        return "DSGTools: Quality Assurance Tools (Topological Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('TopologicalCleanAlgorithm', string)
+        return QCoreApplication.translate("TopologicalCleanAlgorithm", string)
 
     def createInstance(self):
         return TopologicalCleanAlgorithm()

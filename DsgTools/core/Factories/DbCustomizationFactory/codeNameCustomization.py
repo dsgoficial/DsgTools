@@ -20,26 +20,33 @@
  *                                                                         *
  ***************************************************************************/
 """
-#DsgTools Imports
-from DsgTools.core.Factories.DbCustomizationFactory.dbCustomization import DbCustomization
+# DsgTools Imports
+from DsgTools.core.Factories.DbCustomizationFactory.dbCustomization import (
+    DbCustomization,
+)
+
 
 class CodeNameCustomization(DbCustomization):
     def __init__(self, customJson):
         super(CodeNameCustomization, self).__init__(customJson)
-    
+
     def buildSql(self):
-        '''
+        """
         {'domainTable':domainTable, 'codeValue':codeValue, 'oldCodeName':oldCodeName, 'newCodeName':newCodeName}
-        '''
-        #Abstract method. Must be reimplemented in each child.
-        sql = ''
-        for modItem in self.customJson['CodeNameToChange']:
-            sql += '''UPDATE dominios."{0}" SET code_name = '{1}' where code = {2};\n'''.format(modItem['domainTable'], modItem['newCodeName'], modItem['codeValue'])
+        """
+        # Abstract method. Must be reimplemented in each child.
+        sql = ""
+        for modItem in self.customJson["CodeNameToChange"]:
+            sql += """UPDATE dominios."{0}" SET code_name = '{1}' where code = {2};\n""".format(
+                modItem["domainTable"], modItem["newCodeName"], modItem["codeValue"]
+            )
         return sql
-    
+
     def buildUndoSql(self):
-        #Abstract method. Must be reimplemented in each child.
-        sql = ''
-        for modItem in self.customJson['CodeNameToChange']:
-            sql += '''UPDATE dominios."{0}" SET code_name = '{1}' where code = {2};\n'''.format(modItem['domainTable'], modItem['oldCodeName'], modItem['codeValue'])
+        # Abstract method. Must be reimplemented in each child.
+        sql = ""
+        for modItem in self.customJson["CodeNameToChange"]:
+            sql += """UPDATE dominios."{0}" SET code_name = '{1}' where code = {2};\n""".format(
+                modItem["domainTable"], modItem["oldCodeName"], modItem["codeValue"]
+            )
         return sql

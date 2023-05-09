@@ -26,68 +26,76 @@ from functools import partial
 from qgis.gui import QgsMapTool
 from qgis.core import QgsProject, QgsVectorLayer
 
+
 class LabelTogglingTool(QgsMapTool):
     AllLayers, SelectedLayers, ActiveLayer = range(3)
+
     def __init__(self, iface):
         """
         Hides or show active layers labels.
         """
-        self.iface = iface       
+        self.iface = iface
         self.canvas = self.iface.mapCanvas()
         super(LabelTogglingTool, self).__init__(self.canvas)
-    
+
     def addTool(self, manager, callback, parentToolbar, stackButton, iconBasePath):
         self.stackButton = stackButton
 
-        icon_path = iconBasePath + '/toggleAllLabels.png'
+        icon_path = iconBasePath + "/toggleAllLabels.png"
         toolTip = self.tr("DSGTools: Toggle all labels visibility")
         action = manager.add_action(
             icon_path,
-            text=self.tr('DSGTools: Toggle all labels visibility'),
-            callback=partial(self.run, mode=LabelTogglingTool.AllLayers, iface=self.iface),
+            text=self.tr("DSGTools: Toggle all labels visibility"),
+            callback=partial(
+                self.run, mode=LabelTogglingTool.AllLayers, iface=self.iface
+            ),
             add_to_menu=False,
             add_to_toolbar=False,
             withShortcut=True,
             tooltip=toolTip,
             parentButton=self.stackButton,
-            isCheckable=False
+            isCheckable=False,
         )
         self.setAction(action)
         self.stackButton.setDefaultAction(action)
 
-        icon_path = iconBasePath + '/toggleSelectedLayersLabel.png'
+        icon_path = iconBasePath + "/toggleSelectedLayersLabel.png"
         toolTip = self.tr("DSGTools: Toggle selected layers' labels visibility")
         action = manager.add_action(
             icon_path,
             text=self.tr("DSGTools: Toggle selected layers' label visibility"),
-            callback=partial(self.run, mode=LabelTogglingTool.SelectedLayers, iface=self.iface),
+            callback=partial(
+                self.run, mode=LabelTogglingTool.SelectedLayers, iface=self.iface
+            ),
             add_to_menu=False,
             add_to_toolbar=False,
             withShortcut=True,
             tooltip=toolTip,
             parentButton=self.stackButton,
-            isCheckable=False
+            isCheckable=False,
         )
-        self.setAction(action) 
+        self.setAction(action)
 
-        icon_path = iconBasePath + '/toggleActiveLayerLabel.png'
+        icon_path = iconBasePath + "/toggleActiveLayerLabel.png"
         toolTip = self.tr("DSGTools: Toggle active layer' label visibility")
         action = manager.add_action(
             icon_path,
             text=self.tr("DSGTools: Toggle active layer' label visibility"),
-            callback=partial(self.run, mode=LabelTogglingTool.ActiveLayer, iface=self.iface),
+            callback=partial(
+                self.run, mode=LabelTogglingTool.ActiveLayer, iface=self.iface
+            ),
             add_to_menu=False,
             add_to_toolbar=False,
             withShortcut=True,
             tooltip=toolTip,
             parentButton=self.stackButton,
-            isCheckable=False
+            isCheckable=False,
         )
         self.setAction(action)
 
     def setAction(self, action):
         self.toolAction = action
-            
+
     def deactivate(self):
         """
         Deactivate tool.
@@ -107,7 +115,7 @@ class LabelTogglingTool(QgsMapTool):
             self.stackButton.setDefaultAction(self.sender())
         except:
             pass
-        for lyr in self.getLayers(iface, mode): #ordered layers
+        for lyr in self.getLayers(iface, mode):  # ordered layers
             if not isinstance(lyr, QgsVectorLayer):
                 continue
             lyr.setLabelsEnabled(not lyr.labelsEnabled())

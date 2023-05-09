@@ -32,4 +32,5 @@ def classFactory(iface):  # pylint: disable=invalid-name
     """
     #
     from .dsg_tools import DsgTools
+
     return DsgTools(iface)

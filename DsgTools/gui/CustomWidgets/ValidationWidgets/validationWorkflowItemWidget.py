@@ -30,31 +30,39 @@ from qgis.core import QgsMessageLog
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
-from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox, QMenu, QApplication, QFileDialog
+from qgis.PyQt.QtWidgets import (
+    QListWidgetItem,
+    QMessageBox,
+    QMenu,
+    QApplication,
+    QFileDialog,
+)
 from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'validationWorkflowItemWidget.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "validationWorkflowItemWidget.ui")
+)
+
 
 class ValidationWorkflowItemWidget(QtWidgets.QWidget, FORM_CLASS):
-    def __init__(self, parameterDict = {}, parent = None):
+    def __init__(self, parameterDict={}, parent=None):
         """Constructor."""
-        super(ValidationWorkflowItemWidget, self).__init__(parent = parent)
+        super(ValidationWorkflowItemWidget, self).__init__(parent=parent)
         self.setupUi(self)
-        self.validKeys = ['name', 'validationProcessList']
+        self.validKeys = ["name", "validationProcessList"]
         self.parent = parent
         if self.parent:
             self.validationManager = parent.validationManager
         if parameterDict != {}:
             self.populateInterface(parameterDict)
-    
+
     def clearAll(self):
         """
         Clears all widget information
         """
         pass
-    
+
     def getParameterDict(self):
         """
         Components:
@@ -66,8 +74,10 @@ class ValidationWorkflowItemWidget(QtWidgets.QWidget, FORM_CLASS):
         if not self.validate():
             raise Exception(self.invalidatedReason())
         parameterDict = dict()
-        parameterDict['attributeRuleType'] = self.attributeRuleTypeLineEdit.text()
-        parameterDict['ruleColor'] = ','.join(map(str,self.mColorButton.color().getRgb()))
+        parameterDict["attributeRuleType"] = self.attributeRuleTypeLineEdit.text()
+        parameterDict["ruleColor"] = ",".join(
+            map(str, self.mColorButton.color().getRgb())
+        )
         return parameterDict
 
     def populateInterface(self, parameterDict):
@@ -76,12 +86,16 @@ class ValidationWorkflowItemWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         if parameterDict:
             if not self.validateJson(parameterDict):
-                raise Exception(self.tr('Invalid Attribute Rule Type Widget json config!'))
-            #set layer combo
-            self.attributeRuleTypeLineEdit.setText(parameterDict['attributeRuleType'])
-            R,G,B,A = list(map(int,parameterDict['ruleColor'].split(','))) #QColor only accepts int values
-            self.mColorButton.setColor(QColor(R,G,B,A))
-    
+                raise Exception(
+                    self.tr("Invalid Attribute Rule Type Widget json config!")
+                )
+            # set layer combo
+            self.attributeRuleTypeLineEdit.setText(parameterDict["attributeRuleType"])
+            R, G, B, A = list(
+                map(int, parameterDict["ruleColor"].split(","))
+            )  # QColor only accepts int values
+            self.mColorButton.setColor(QColor(R, G, B, A))
+
     def validateJson(self, inputJson):
         """
         Validates input json
@@ -97,24 +111,24 @@ class ValidationWorkflowItemWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         Validates fields. Returns True if all information are filled correctly.
         """
-        if self.attributeRuleTypeLineEdit.text() == '':
+        if self.attributeRuleTypeLineEdit.text() == "":
             return False
         return True
-    
+
     def invalidatedReason(self):
         """
         Error reason
         """
-        msg = ''
-        if self.attributeRuleTypeLineEdit.text() == '':
-            msg += self.tr('Invalid rule name!\n')
+        msg = ""
+        if self.attributeRuleTypeLineEdit.text() == "":
+            msg += self.tr("Invalid rule name!\n")
         return msg
-    
+
     @pyqtSlot(bool)
     def on_mGroupBox_collapsedStateChanged(self):
         for i in range(self.parent.tableWidget.rowCount()):
             self.parent.tableWidget.resizeRowToContents(i)
-    
+
     @pyqtSlot(str)
     def on_workspaceItemLineEdit_textEdited(self, text):
         self.mGroupBox.setTitle(text)

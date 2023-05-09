@@ -12,7 +12,7 @@
 -- CREATE DATABASE dsgtools_admindb
 -- ;
 -- -- ddl-end --
--- 
+--
 
 -- object: topology | type: SCHEMA --
 -- DROP SCHEMA IF EXISTS topology CASCADE;

@@ -2548,8 +2548,8 @@ ALTER TABLE cb.adm_edif_pub_civil_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_edif_pub_civil_a
-	 ADD CONSTRAINT adm_edif_pub_civil_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT adm_edif_pub_civil_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.adm_edif_pub_civil_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.adm_edif_pub_civil_a
 	 ADD CONSTRAINT adm_edif_pub_civil_a_operacional_fk FOREIGN KEY (operacional)
@@ -2561,8 +2561,8 @@ ALTER TABLE cb.adm_edif_pub_civil_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_edif_pub_civil_a
-	 ADD CONSTRAINT adm_edif_pub_civil_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT adm_edif_pub_civil_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.adm_edif_pub_civil_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.adm_edif_pub_civil_a
 	 ADD CONSTRAINT adm_edif_pub_civil_a_tipoedifcivil_fk FOREIGN KEY (tipoedifcivil)
@@ -2599,8 +2599,8 @@ ALTER TABLE cb.adm_edif_pub_civil_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_edif_pub_civil_p
-	 ADD CONSTRAINT adm_edif_pub_civil_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT adm_edif_pub_civil_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.adm_edif_pub_civil_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.adm_edif_pub_civil_p
 	 ADD CONSTRAINT adm_edif_pub_civil_p_operacional_fk FOREIGN KEY (operacional)
@@ -2612,8 +2612,8 @@ ALTER TABLE cb.adm_edif_pub_civil_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_edif_pub_civil_p
-	 ADD CONSTRAINT adm_edif_pub_civil_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT adm_edif_pub_civil_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.adm_edif_pub_civil_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.adm_edif_pub_civil_p
 	 ADD CONSTRAINT adm_edif_pub_civil_p_tipoedifcivil_fk FOREIGN KEY (tipoedifcivil)
@@ -2650,8 +2650,8 @@ ALTER TABLE cb.adm_edif_pub_militar_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_edif_pub_militar_a
-	 ADD CONSTRAINT adm_edif_pub_militar_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT adm_edif_pub_militar_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.adm_edif_pub_militar_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.adm_edif_pub_militar_a
 	 ADD CONSTRAINT adm_edif_pub_militar_a_operacional_fk FOREIGN KEY (operacional)
@@ -2663,8 +2663,8 @@ ALTER TABLE cb.adm_edif_pub_militar_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_edif_pub_militar_a
-	 ADD CONSTRAINT adm_edif_pub_militar_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT adm_edif_pub_militar_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.adm_edif_pub_militar_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.adm_edif_pub_militar_a
 	 ADD CONSTRAINT adm_edif_pub_militar_a_tipoedifmil_fk FOREIGN KEY (tipoedifmil)
@@ -2701,8 +2701,8 @@ ALTER TABLE cb.adm_edif_pub_militar_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_edif_pub_militar_p
-	 ADD CONSTRAINT adm_edif_pub_militar_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT adm_edif_pub_militar_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.adm_edif_pub_militar_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.adm_edif_pub_militar_p
 	 ADD CONSTRAINT adm_edif_pub_militar_p_operacional_fk FOREIGN KEY (operacional)
@@ -2714,8 +2714,8 @@ ALTER TABLE cb.adm_edif_pub_militar_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_edif_pub_militar_p
-	 ADD CONSTRAINT adm_edif_pub_militar_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT adm_edif_pub_militar_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.adm_edif_pub_militar_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.adm_edif_pub_militar_p
 	 ADD CONSTRAINT adm_edif_pub_militar_p_tipoedifmil_fk FOREIGN KEY (tipoedifmil)
@@ -2755,8 +2755,8 @@ ALTER TABLE cb.adm_posto_fiscal_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_posto_fiscal_a
-	 ADD CONSTRAINT adm_posto_fiscal_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT adm_posto_fiscal_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.adm_posto_fiscal_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.adm_posto_fiscal_a
 	 ADD CONSTRAINT adm_posto_fiscal_a_tipopostofisc_fk FOREIGN KEY (tipopostofisc)
@@ -2791,8 +2791,8 @@ ALTER TABLE cb.adm_posto_fiscal_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_posto_fiscal_p
-	 ADD CONSTRAINT adm_posto_fiscal_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT adm_posto_fiscal_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.adm_posto_fiscal_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.adm_posto_fiscal_p
 	 ADD CONSTRAINT adm_posto_fiscal_p_tipopostofisc_fk FOREIGN KEY (tipopostofisc)
@@ -2827,8 +2827,8 @@ ALTER TABLE cb.adm_posto_pol_rod_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_posto_pol_rod_a
-	 ADD CONSTRAINT adm_posto_pol_rod_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT adm_posto_pol_rod_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.adm_posto_pol_rod_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.adm_posto_pol_rod_a
 	 ADD CONSTRAINT adm_posto_pol_rod_a_tipopostopol_fk FOREIGN KEY (tipopostopol)
@@ -2863,8 +2863,8 @@ ALTER TABLE cb.adm_posto_pol_rod_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.adm_posto_pol_rod_p
-	 ADD CONSTRAINT adm_posto_pol_rod_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT adm_posto_pol_rod_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.adm_posto_pol_rod_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.adm_posto_pol_rod_p
 	 ADD CONSTRAINT adm_posto_pol_rod_p_tipopostopol_fk FOREIGN KEY (tipopostopol)
@@ -2973,16 +2973,16 @@ ALTER TABLE cb.asb_dep_abast_agua_a
 	 REFERENCES dominios.construcao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_abast_agua_a
-	 ADD CONSTRAINT asb_dep_abast_agua_a_construcao_check 
-	 CHECK (construcao = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_dep_abast_agua_a_construcao_check
+	 CHECK (construcao = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_dep_abast_agua_a ALTER COLUMN construcao SET DEFAULT 999#
 ALTER TABLE cb.asb_dep_abast_agua_a
 	 ADD CONSTRAINT asb_dep_abast_agua_a_finalidade_fk FOREIGN KEY (finalidade)
 	 REFERENCES dominios.finalidade_asb (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_abast_agua_a
-	 ADD CONSTRAINT asb_dep_abast_agua_a_finalidade_check 
-	 CHECK (finalidade = ANY(ARRAY[2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_dep_abast_agua_a_finalidade_check
+	 CHECK (finalidade = ANY(ARRAY[2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_dep_abast_agua_a ALTER COLUMN finalidade SET DEFAULT 999#
 ALTER TABLE cb.asb_dep_abast_agua_a
 	 ADD CONSTRAINT asb_dep_abast_agua_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -2994,8 +2994,8 @@ ALTER TABLE cb.asb_dep_abast_agua_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_abast_agua_a
-	 ADD CONSTRAINT asb_dep_abast_agua_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_dep_abast_agua_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_dep_abast_agua_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.asb_dep_abast_agua_a
 	 ADD CONSTRAINT asb_dep_abast_agua_a_operacional_fk FOREIGN KEY (operacional)
@@ -3012,8 +3012,8 @@ ALTER TABLE cb.asb_dep_abast_agua_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_abast_agua_a
-	 ADD CONSTRAINT asb_dep_abast_agua_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_dep_abast_agua_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_dep_abast_agua_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.asb_dep_abast_agua_a
 	 ADD CONSTRAINT asb_dep_abast_agua_a_tipodepabast_fk FOREIGN KEY (tipodepabast)
@@ -3042,16 +3042,16 @@ ALTER TABLE cb.asb_dep_abast_agua_p
 	 REFERENCES dominios.construcao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_abast_agua_p
-	 ADD CONSTRAINT asb_dep_abast_agua_p_construcao_check 
-	 CHECK (construcao = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_dep_abast_agua_p_construcao_check
+	 CHECK (construcao = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_dep_abast_agua_p ALTER COLUMN construcao SET DEFAULT 999#
 ALTER TABLE cb.asb_dep_abast_agua_p
 	 ADD CONSTRAINT asb_dep_abast_agua_p_finalidade_fk FOREIGN KEY (finalidade)
 	 REFERENCES dominios.finalidade_asb (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_abast_agua_p
-	 ADD CONSTRAINT asb_dep_abast_agua_p_finalidade_check 
-	 CHECK (finalidade = ANY(ARRAY[2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_dep_abast_agua_p_finalidade_check
+	 CHECK (finalidade = ANY(ARRAY[2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_dep_abast_agua_p ALTER COLUMN finalidade SET DEFAULT 999#
 ALTER TABLE cb.asb_dep_abast_agua_p
 	 ADD CONSTRAINT asb_dep_abast_agua_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -3063,8 +3063,8 @@ ALTER TABLE cb.asb_dep_abast_agua_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_abast_agua_p
-	 ADD CONSTRAINT asb_dep_abast_agua_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_dep_abast_agua_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_dep_abast_agua_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.asb_dep_abast_agua_p
 	 ADD CONSTRAINT asb_dep_abast_agua_p_operacional_fk FOREIGN KEY (operacional)
@@ -3081,8 +3081,8 @@ ALTER TABLE cb.asb_dep_abast_agua_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_abast_agua_p
-	 ADD CONSTRAINT asb_dep_abast_agua_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_dep_abast_agua_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_dep_abast_agua_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.asb_dep_abast_agua_p
 	 ADD CONSTRAINT asb_dep_abast_agua_p_tipodepabast_fk FOREIGN KEY (tipodepabast)
@@ -3117,8 +3117,8 @@ ALTER TABLE cb.asb_dep_saneamento_a
 	 REFERENCES dominios.finalidade_asb (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_saneamento_a
-	 ADD CONSTRAINT asb_dep_saneamento_a_finalidade_check 
-	 CHECK (finalidade = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 8 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_dep_saneamento_a_finalidade_check
+	 CHECK (finalidade = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 8 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_dep_saneamento_a ALTER COLUMN finalidade SET DEFAULT 999#
 ALTER TABLE cb.asb_dep_saneamento_a
 	 ADD CONSTRAINT asb_dep_saneamento_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -3130,8 +3130,8 @@ ALTER TABLE cb.asb_dep_saneamento_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_saneamento_a
-	 ADD CONSTRAINT asb_dep_saneamento_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_dep_saneamento_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_dep_saneamento_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.asb_dep_saneamento_a
 	 ADD CONSTRAINT asb_dep_saneamento_a_operacional_fk FOREIGN KEY (operacional)
@@ -3148,8 +3148,8 @@ ALTER TABLE cb.asb_dep_saneamento_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_saneamento_a
-	 ADD CONSTRAINT asb_dep_saneamento_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_dep_saneamento_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_dep_saneamento_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.asb_dep_saneamento_a
 	 ADD CONSTRAINT asb_dep_saneamento_a_tipodepsaneam_fk FOREIGN KEY (tipodepsaneam)
@@ -3189,8 +3189,8 @@ ALTER TABLE cb.asb_dep_saneamento_p
 	 REFERENCES dominios.finalidade_asb (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_saneamento_p
-	 ADD CONSTRAINT asb_dep_saneamento_p_finalidade_check 
-	 CHECK (finalidade = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 8 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_dep_saneamento_p_finalidade_check
+	 CHECK (finalidade = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 8 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_dep_saneamento_p ALTER COLUMN finalidade SET DEFAULT 999#
 ALTER TABLE cb.asb_dep_saneamento_p
 	 ADD CONSTRAINT asb_dep_saneamento_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -3202,8 +3202,8 @@ ALTER TABLE cb.asb_dep_saneamento_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_saneamento_p
-	 ADD CONSTRAINT asb_dep_saneamento_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_dep_saneamento_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_dep_saneamento_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.asb_dep_saneamento_p
 	 ADD CONSTRAINT asb_dep_saneamento_p_operacional_fk FOREIGN KEY (operacional)
@@ -3220,8 +3220,8 @@ ALTER TABLE cb.asb_dep_saneamento_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_dep_saneamento_p
-	 ADD CONSTRAINT asb_dep_saneamento_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_dep_saneamento_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_dep_saneamento_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.asb_dep_saneamento_p
 	 ADD CONSTRAINT asb_dep_saneamento_p_tipodepsaneam_fk FOREIGN KEY (tipodepsaneam)
@@ -3296,8 +3296,8 @@ ALTER TABLE cb.asb_edif_abast_agua_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_edif_abast_agua_a
-	 ADD CONSTRAINT asb_edif_abast_agua_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_edif_abast_agua_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_edif_abast_agua_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.asb_edif_abast_agua_a
 	 ADD CONSTRAINT asb_edif_abast_agua_a_operacional_fk FOREIGN KEY (operacional)
@@ -3338,8 +3338,8 @@ ALTER TABLE cb.asb_edif_abast_agua_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_edif_abast_agua_p
-	 ADD CONSTRAINT asb_edif_abast_agua_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_edif_abast_agua_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_edif_abast_agua_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.asb_edif_abast_agua_p
 	 ADD CONSTRAINT asb_edif_abast_agua_p_operacional_fk FOREIGN KEY (operacional)
@@ -3380,8 +3380,8 @@ ALTER TABLE cb.asb_edif_saneamento_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_edif_saneamento_a
-	 ADD CONSTRAINT asb_edif_saneamento_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_edif_saneamento_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_edif_saneamento_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.asb_edif_saneamento_a
 	 ADD CONSTRAINT asb_edif_saneamento_a_operacional_fk FOREIGN KEY (operacional)
@@ -3422,8 +3422,8 @@ ALTER TABLE cb.asb_edif_saneamento_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.asb_edif_saneamento_p
-	 ADD CONSTRAINT asb_edif_saneamento_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT asb_edif_saneamento_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.asb_edif_saneamento_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.asb_edif_saneamento_p
 	 ADD CONSTRAINT asb_edif_saneamento_p_operacional_fk FOREIGN KEY (operacional)
@@ -3528,8 +3528,8 @@ ALTER TABLE cb.eco_deposito_geral_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_deposito_geral_a
-	 ADD CONSTRAINT eco_deposito_geral_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_deposito_geral_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_deposito_geral_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.eco_deposito_geral_a
 	 ADD CONSTRAINT eco_deposito_geral_a_operacional_fk FOREIGN KEY (operacional)
@@ -3541,8 +3541,8 @@ ALTER TABLE cb.eco_deposito_geral_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_deposito_geral_a
-	 ADD CONSTRAINT eco_deposito_geral_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_deposito_geral_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_deposito_geral_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.eco_deposito_geral_a
 	 ADD CONSTRAINT eco_deposito_geral_a_tipoconteudo_fk FOREIGN KEY (tipoconteudo)
@@ -3564,8 +3564,8 @@ ALTER TABLE cb.eco_deposito_geral_a
 	 REFERENCES dominios.tipoprodutoresiduo (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_deposito_geral_a
-	 ADD CONSTRAINT eco_deposito_geral_a_tipoprodutoresiduo_check 
-	 CHECK (tipoprodutoresiduo = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 16 :: SMALLINT, 17 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 30 :: SMALLINT, 31 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 34 :: SMALLINT, 35 :: SMALLINT, 36 :: SMALLINT, 41 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_deposito_geral_a_tipoprodutoresiduo_check
+	 CHECK (tipoprodutoresiduo = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 16 :: SMALLINT, 17 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 30 :: SMALLINT, 31 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 34 :: SMALLINT, 35 :: SMALLINT, 36 :: SMALLINT, 41 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_deposito_geral_a ALTER COLUMN tipoprodutoresiduo SET DEFAULT 999#
 ALTER TABLE cb.eco_deposito_geral_a
 	 ADD CONSTRAINT eco_deposito_geral_a_tratamento_fk FOREIGN KEY (tratamento)
@@ -3607,8 +3607,8 @@ ALTER TABLE cb.eco_deposito_geral_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_deposito_geral_p
-	 ADD CONSTRAINT eco_deposito_geral_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_deposito_geral_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_deposito_geral_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.eco_deposito_geral_p
 	 ADD CONSTRAINT eco_deposito_geral_p_operacional_fk FOREIGN KEY (operacional)
@@ -3620,8 +3620,8 @@ ALTER TABLE cb.eco_deposito_geral_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_deposito_geral_p
-	 ADD CONSTRAINT eco_deposito_geral_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_deposito_geral_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_deposito_geral_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.eco_deposito_geral_p
 	 ADD CONSTRAINT eco_deposito_geral_p_tipoconteudo_fk FOREIGN KEY (tipoconteudo)
@@ -3643,8 +3643,8 @@ ALTER TABLE cb.eco_deposito_geral_p
 	 REFERENCES dominios.tipoprodutoresiduo (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_deposito_geral_p
-	 ADD CONSTRAINT eco_deposito_geral_p_tipoprodutoresiduo_check 
-	 CHECK (tipoprodutoresiduo = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 16 :: SMALLINT, 17 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 30 :: SMALLINT, 31 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 34 :: SMALLINT, 35 :: SMALLINT, 36 :: SMALLINT, 41 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_deposito_geral_p_tipoprodutoresiduo_check
+	 CHECK (tipoprodutoresiduo = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 16 :: SMALLINT, 17 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 30 :: SMALLINT, 31 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 34 :: SMALLINT, 35 :: SMALLINT, 36 :: SMALLINT, 41 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_deposito_geral_p ALTER COLUMN tipoprodutoresiduo SET DEFAULT 999#
 ALTER TABLE cb.eco_deposito_geral_p
 	 ADD CONSTRAINT eco_deposito_geral_p_tratamento_fk FOREIGN KEY (tratamento)
@@ -3719,8 +3719,8 @@ ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a
-	 ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a
 	 ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_a_operacional_fk FOREIGN KEY (operacional)
@@ -3732,8 +3732,8 @@ ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a
-	 ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_a
 	 ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_a_tipoedifagropec_fk FOREIGN KEY (tipoedifagropec)
@@ -3764,8 +3764,8 @@ ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_p
-	 ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_p
 	 ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_p_operacional_fk FOREIGN KEY (operacional)
@@ -3777,8 +3777,8 @@ ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_p
-	 ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.eco_edif_agrop_ext_veg_pesca_p
 	 ADD CONSTRAINT eco_edif_agrop_ext_veg_pesca_p_tipoedifagropec_fk FOREIGN KEY (tipoedifagropec)
@@ -3815,8 +3815,8 @@ ALTER TABLE cb.eco_edif_comerc_serv_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_comerc_serv_a
-	 ADD CONSTRAINT eco_edif_comerc_serv_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_comerc_serv_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_comerc_serv_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.eco_edif_comerc_serv_a
 	 ADD CONSTRAINT eco_edif_comerc_serv_a_operacional_fk FOREIGN KEY (operacional)
@@ -3828,8 +3828,8 @@ ALTER TABLE cb.eco_edif_comerc_serv_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_comerc_serv_a
-	 ADD CONSTRAINT eco_edif_comerc_serv_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_comerc_serv_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_comerc_serv_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.eco_edif_comerc_serv_a
 	 ADD CONSTRAINT eco_edif_comerc_serv_a_tipoedifcomercserv_fk FOREIGN KEY (tipoedifcomercserv)
@@ -3866,8 +3866,8 @@ ALTER TABLE cb.eco_edif_comerc_serv_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_comerc_serv_p
-	 ADD CONSTRAINT eco_edif_comerc_serv_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_comerc_serv_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_comerc_serv_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.eco_edif_comerc_serv_p
 	 ADD CONSTRAINT eco_edif_comerc_serv_p_operacional_fk FOREIGN KEY (operacional)
@@ -3879,8 +3879,8 @@ ALTER TABLE cb.eco_edif_comerc_serv_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_comerc_serv_p
-	 ADD CONSTRAINT eco_edif_comerc_serv_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_comerc_serv_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_comerc_serv_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.eco_edif_comerc_serv_p
 	 ADD CONSTRAINT eco_edif_comerc_serv_p_tipoedifcomercserv_fk FOREIGN KEY (tipoedifcomercserv)
@@ -3911,8 +3911,8 @@ ALTER TABLE cb.eco_edif_ext_mineral_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_ext_mineral_a
-	 ADD CONSTRAINT eco_edif_ext_mineral_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_ext_mineral_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_ext_mineral_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.eco_edif_ext_mineral_a
 	 ADD CONSTRAINT eco_edif_ext_mineral_a_operacional_fk FOREIGN KEY (operacional)
@@ -3924,16 +3924,16 @@ ALTER TABLE cb.eco_edif_ext_mineral_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_ext_mineral_a
-	 ADD CONSTRAINT eco_edif_ext_mineral_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_ext_mineral_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_ext_mineral_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.eco_edif_ext_mineral_a
 	 ADD CONSTRAINT eco_edif_ext_mineral_a_tipodivisaocnae_fk FOREIGN KEY (tipodivisaocnae)
 	 REFERENCES dominios.tipodivisaocnae (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_ext_mineral_a
-	 ADD CONSTRAINT eco_edif_ext_mineral_a_tipodivisaocnae_check 
-	 CHECK (tipodivisaocnae = ANY(ARRAY[0 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_ext_mineral_a_tipodivisaocnae_check
+	 CHECK (tipodivisaocnae = ANY(ARRAY[0 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_ext_mineral_a ALTER COLUMN tipodivisaocnae SET DEFAULT 999#
 CREATE TABLE cb.eco_edif_ext_mineral_p(
 	 id serial NOT NULL,
@@ -3959,8 +3959,8 @@ ALTER TABLE cb.eco_edif_ext_mineral_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_ext_mineral_p
-	 ADD CONSTRAINT eco_edif_ext_mineral_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_ext_mineral_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_ext_mineral_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.eco_edif_ext_mineral_p
 	 ADD CONSTRAINT eco_edif_ext_mineral_p_operacional_fk FOREIGN KEY (operacional)
@@ -3972,16 +3972,16 @@ ALTER TABLE cb.eco_edif_ext_mineral_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_ext_mineral_p
-	 ADD CONSTRAINT eco_edif_ext_mineral_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_ext_mineral_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_ext_mineral_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.eco_edif_ext_mineral_p
 	 ADD CONSTRAINT eco_edif_ext_mineral_p_tipodivisaocnae_fk FOREIGN KEY (tipodivisaocnae)
 	 REFERENCES dominios.tipodivisaocnae (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_ext_mineral_p
-	 ADD CONSTRAINT eco_edif_ext_mineral_p_tipodivisaocnae_check 
-	 CHECK (tipodivisaocnae = ANY(ARRAY[0 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_ext_mineral_p_tipodivisaocnae_check
+	 CHECK (tipodivisaocnae = ANY(ARRAY[0 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_ext_mineral_p ALTER COLUMN tipodivisaocnae SET DEFAULT 999#
 CREATE TABLE cb.eco_edif_industrial_a(
 	 id serial NOT NULL,
@@ -4013,8 +4013,8 @@ ALTER TABLE cb.eco_edif_industrial_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_industrial_a
-	 ADD CONSTRAINT eco_edif_industrial_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_industrial_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_industrial_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.eco_edif_industrial_a
 	 ADD CONSTRAINT eco_edif_industrial_a_operacional_fk FOREIGN KEY (operacional)
@@ -4026,16 +4026,16 @@ ALTER TABLE cb.eco_edif_industrial_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_industrial_a
-	 ADD CONSTRAINT eco_edif_industrial_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_industrial_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_industrial_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.eco_edif_industrial_a
 	 ADD CONSTRAINT eco_edif_industrial_a_tipodivisaocnae_fk FOREIGN KEY (tipodivisaocnae)
 	 REFERENCES dominios.tipodivisaocnae (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_industrial_a
-	 ADD CONSTRAINT eco_edif_industrial_a_tipodivisaocnae_check 
-	 CHECK (tipodivisaocnae = ANY(ARRAY[0 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 17 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 30 :: SMALLINT, 31 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 34 :: SMALLINT, 35 :: SMALLINT, 36 :: SMALLINT, 37 :: SMALLINT, 45 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_industrial_a_tipodivisaocnae_check
+	 CHECK (tipodivisaocnae = ANY(ARRAY[0 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 17 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 30 :: SMALLINT, 31 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 34 :: SMALLINT, 35 :: SMALLINT, 36 :: SMALLINT, 37 :: SMALLINT, 45 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_industrial_a ALTER COLUMN tipodivisaocnae SET DEFAULT 999#
 CREATE TABLE cb.eco_edif_industrial_p(
 	 id serial NOT NULL,
@@ -4067,8 +4067,8 @@ ALTER TABLE cb.eco_edif_industrial_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_industrial_p
-	 ADD CONSTRAINT eco_edif_industrial_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_industrial_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_industrial_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.eco_edif_industrial_p
 	 ADD CONSTRAINT eco_edif_industrial_p_operacional_fk FOREIGN KEY (operacional)
@@ -4080,16 +4080,16 @@ ALTER TABLE cb.eco_edif_industrial_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_industrial_p
-	 ADD CONSTRAINT eco_edif_industrial_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_industrial_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_industrial_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.eco_edif_industrial_p
 	 ADD CONSTRAINT eco_edif_industrial_p_tipodivisaocnae_fk FOREIGN KEY (tipodivisaocnae)
 	 REFERENCES dominios.tipodivisaocnae (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_edif_industrial_p
-	 ADD CONSTRAINT eco_edif_industrial_p_tipodivisaocnae_check 
-	 CHECK (tipodivisaocnae = ANY(ARRAY[0 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 17 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 30 :: SMALLINT, 31 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 34 :: SMALLINT, 35 :: SMALLINT, 36 :: SMALLINT, 37 :: SMALLINT, 45 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_edif_industrial_p_tipodivisaocnae_check
+	 CHECK (tipodivisaocnae = ANY(ARRAY[0 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 17 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 30 :: SMALLINT, 31 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 34 :: SMALLINT, 35 :: SMALLINT, 36 :: SMALLINT, 37 :: SMALLINT, 45 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_edif_industrial_p ALTER COLUMN tipodivisaocnae SET DEFAULT 999#
 CREATE TABLE cb.eco_equip_agropec_a(
 	 id serial NOT NULL,
@@ -4115,8 +4115,8 @@ ALTER TABLE cb.eco_equip_agropec_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_equip_agropec_a
-	 ADD CONSTRAINT eco_equip_agropec_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_equip_agropec_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_equip_agropec_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.eco_equip_agropec_a
 	 ADD CONSTRAINT eco_equip_agropec_a_operacional_fk FOREIGN KEY (operacional)
@@ -4128,8 +4128,8 @@ ALTER TABLE cb.eco_equip_agropec_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_equip_agropec_a
-	 ADD CONSTRAINT eco_equip_agropec_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_equip_agropec_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_equip_agropec_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.eco_equip_agropec_a
 	 ADD CONSTRAINT eco_equip_agropec_a_tipoequipagropec_fk FOREIGN KEY (tipoequipagropec)
@@ -4160,8 +4160,8 @@ ALTER TABLE cb.eco_equip_agropec_l
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_equip_agropec_l
-	 ADD CONSTRAINT eco_equip_agropec_l_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_equip_agropec_l_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_equip_agropec_l ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.eco_equip_agropec_l
 	 ADD CONSTRAINT eco_equip_agropec_l_operacional_fk FOREIGN KEY (operacional)
@@ -4173,8 +4173,8 @@ ALTER TABLE cb.eco_equip_agropec_l
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_equip_agropec_l
-	 ADD CONSTRAINT eco_equip_agropec_l_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_equip_agropec_l_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_equip_agropec_l ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.eco_equip_agropec_l
 	 ADD CONSTRAINT eco_equip_agropec_l_tipoequipagropec_fk FOREIGN KEY (tipoequipagropec)
@@ -4205,8 +4205,8 @@ ALTER TABLE cb.eco_equip_agropec_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_equip_agropec_p
-	 ADD CONSTRAINT eco_equip_agropec_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_equip_agropec_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_equip_agropec_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.eco_equip_agropec_p
 	 ADD CONSTRAINT eco_equip_agropec_p_operacional_fk FOREIGN KEY (operacional)
@@ -4218,8 +4218,8 @@ ALTER TABLE cb.eco_equip_agropec_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_equip_agropec_p
-	 ADD CONSTRAINT eco_equip_agropec_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_equip_agropec_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_equip_agropec_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.eco_equip_agropec_p
 	 ADD CONSTRAINT eco_equip_agropec_p_tipoequipagropec_fk FOREIGN KEY (tipoequipagropec)
@@ -4275,8 +4275,8 @@ ALTER TABLE cb.eco_ext_mineral_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_ext_mineral_a
-	 ADD CONSTRAINT eco_ext_mineral_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_ext_mineral_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_ext_mineral_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.eco_ext_mineral_a
 	 ADD CONSTRAINT eco_ext_mineral_a_tipoextmin_fk FOREIGN KEY (tipoextmin)
@@ -4293,16 +4293,16 @@ ALTER TABLE cb.eco_ext_mineral_a
 	 REFERENCES dominios.tipoprodutoresiduo (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_ext_mineral_a
-	 ADD CONSTRAINT eco_ext_mineral_a_tipoprodutoresiduo_check 
-	 CHECK (tipoprodutoresiduo = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 18 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 34 :: SMALLINT, 35 :: SMALLINT, 37 :: SMALLINT, 38 :: SMALLINT, 39 :: SMALLINT, 40 :: SMALLINT, 42 :: SMALLINT, 43 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_ext_mineral_a_tipoprodutoresiduo_check
+	 CHECK (tipoprodutoresiduo = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 18 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 34 :: SMALLINT, 35 :: SMALLINT, 37 :: SMALLINT, 38 :: SMALLINT, 39 :: SMALLINT, 40 :: SMALLINT, 42 :: SMALLINT, 43 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_ext_mineral_a ALTER COLUMN tipoprodutoresiduo SET DEFAULT 999#
 ALTER TABLE cb.eco_ext_mineral_a
 	 ADD CONSTRAINT eco_ext_mineral_a_tiposecaocnae_fk FOREIGN KEY (tiposecaocnae)
 	 REFERENCES dominios.tiposecaocnae (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_ext_mineral_a
-	 ADD CONSTRAINT eco_ext_mineral_a_tiposecaocnae_check 
-	 CHECK (tiposecaocnae = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_ext_mineral_a_tiposecaocnae_check
+	 CHECK (tiposecaocnae = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_ext_mineral_a ALTER COLUMN tiposecaocnae SET DEFAULT 999#
 CREATE TABLE cb.eco_ext_mineral_p(
 	 id serial NOT NULL,
@@ -4353,8 +4353,8 @@ ALTER TABLE cb.eco_ext_mineral_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_ext_mineral_p
-	 ADD CONSTRAINT eco_ext_mineral_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_ext_mineral_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_ext_mineral_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.eco_ext_mineral_p
 	 ADD CONSTRAINT eco_ext_mineral_p_tipoextmin_fk FOREIGN KEY (tipoextmin)
@@ -4371,16 +4371,16 @@ ALTER TABLE cb.eco_ext_mineral_p
 	 REFERENCES dominios.tipoprodutoresiduo (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_ext_mineral_p
-	 ADD CONSTRAINT eco_ext_mineral_p_tipoprodutoresiduo_check 
-	 CHECK (tipoprodutoresiduo = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 18 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 34 :: SMALLINT, 35 :: SMALLINT, 37 :: SMALLINT, 38 :: SMALLINT, 39 :: SMALLINT, 40 :: SMALLINT, 42 :: SMALLINT, 43 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_ext_mineral_p_tipoprodutoresiduo_check
+	 CHECK (tipoprodutoresiduo = ANY(ARRAY[0 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 18 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 34 :: SMALLINT, 35 :: SMALLINT, 37 :: SMALLINT, 38 :: SMALLINT, 39 :: SMALLINT, 40 :: SMALLINT, 42 :: SMALLINT, 43 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_ext_mineral_p ALTER COLUMN tipoprodutoresiduo SET DEFAULT 999#
 ALTER TABLE cb.eco_ext_mineral_p
 	 ADD CONSTRAINT eco_ext_mineral_p_tiposecaocnae_fk FOREIGN KEY (tiposecaocnae)
 	 REFERENCES dominios.tiposecaocnae (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.eco_ext_mineral_p
-	 ADD CONSTRAINT eco_ext_mineral_p_tiposecaocnae_check 
-	 CHECK (tiposecaocnae = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT eco_ext_mineral_p_tiposecaocnae_check
+	 CHECK (tiposecaocnae = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.eco_ext_mineral_p ALTER COLUMN tiposecaocnae SET DEFAULT 999#
 CREATE TABLE cb.eco_plataforma_a(
 	 id serial NOT NULL,
@@ -4503,8 +4503,8 @@ ALTER TABLE cb.edu_arquibancada_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_arquibancada_a
-	 ADD CONSTRAINT edu_arquibancada_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_arquibancada_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_arquibancada_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.edu_arquibancada_p(
 	 id serial NOT NULL,
@@ -4533,8 +4533,8 @@ ALTER TABLE cb.edu_arquibancada_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_arquibancada_p
-	 ADD CONSTRAINT edu_arquibancada_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_arquibancada_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_arquibancada_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.edu_campo_quadra_a(
 	 id serial NOT NULL,
@@ -4564,8 +4564,8 @@ ALTER TABLE cb.edu_campo_quadra_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_campo_quadra_a
-	 ADD CONSTRAINT edu_campo_quadra_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_campo_quadra_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_campo_quadra_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.edu_campo_quadra_a
 	 ADD CONSTRAINT edu_campo_quadra_a_tipocampoquadra_fk FOREIGN KEY (tipocampoquadra)
@@ -4600,8 +4600,8 @@ ALTER TABLE cb.edu_campo_quadra_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_campo_quadra_p
-	 ADD CONSTRAINT edu_campo_quadra_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_campo_quadra_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_campo_quadra_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.edu_campo_quadra_p
 	 ADD CONSTRAINT edu_campo_quadra_p_tipocampoquadra_fk FOREIGN KEY (tipocampoquadra)
@@ -4635,8 +4635,8 @@ ALTER TABLE cb.edu_coreto_tribuna_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_coreto_tribuna_a
-	 ADD CONSTRAINT edu_coreto_tribuna_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_coreto_tribuna_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_coreto_tribuna_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.edu_coreto_tribuna_p(
 	 id serial NOT NULL,
@@ -4665,8 +4665,8 @@ ALTER TABLE cb.edu_coreto_tribuna_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_coreto_tribuna_p
-	 ADD CONSTRAINT edu_coreto_tribuna_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_coreto_tribuna_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_coreto_tribuna_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.edu_descontinuidade_geometrica_a(
 	 id serial NOT NULL,
@@ -4731,8 +4731,8 @@ ALTER TABLE cb.edu_edif_const_lazer_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_const_lazer_a
-	 ADD CONSTRAINT edu_edif_const_lazer_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_const_lazer_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_const_lazer_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.edu_edif_const_lazer_a
 	 ADD CONSTRAINT edu_edif_const_lazer_a_operacional_fk FOREIGN KEY (operacional)
@@ -4744,8 +4744,8 @@ ALTER TABLE cb.edu_edif_const_lazer_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_const_lazer_a
-	 ADD CONSTRAINT edu_edif_const_lazer_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_const_lazer_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_const_lazer_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.edu_edif_const_lazer_a
 	 ADD CONSTRAINT edu_edif_const_lazer_a_tipoediflazer_fk FOREIGN KEY (tipoediflazer)
@@ -4776,8 +4776,8 @@ ALTER TABLE cb.edu_edif_const_lazer_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_const_lazer_p
-	 ADD CONSTRAINT edu_edif_const_lazer_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_const_lazer_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_const_lazer_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.edu_edif_const_lazer_p
 	 ADD CONSTRAINT edu_edif_const_lazer_p_operacional_fk FOREIGN KEY (operacional)
@@ -4789,8 +4789,8 @@ ALTER TABLE cb.edu_edif_const_lazer_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_const_lazer_p
-	 ADD CONSTRAINT edu_edif_const_lazer_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_const_lazer_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_const_lazer_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.edu_edif_const_lazer_p
 	 ADD CONSTRAINT edu_edif_const_lazer_p_tipoediflazer_fk FOREIGN KEY (tipoediflazer)
@@ -4822,8 +4822,8 @@ ALTER TABLE cb.edu_edif_const_turistica_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_const_turistica_a
-	 ADD CONSTRAINT edu_edif_const_turistica_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_const_turistica_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_const_turistica_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.edu_edif_const_turistica_a
 	 ADD CONSTRAINT edu_edif_const_turistica_a_operacional_fk FOREIGN KEY (operacional)
@@ -4840,8 +4840,8 @@ ALTER TABLE cb.edu_edif_const_turistica_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_const_turistica_a
-	 ADD CONSTRAINT edu_edif_const_turistica_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_const_turistica_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_const_turistica_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.edu_edif_const_turistica_a
 	 ADD CONSTRAINT edu_edif_const_turistica_a_tipoedifturist_fk FOREIGN KEY (tipoedifturist)
@@ -4873,8 +4873,8 @@ ALTER TABLE cb.edu_edif_const_turistica_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_const_turistica_p
-	 ADD CONSTRAINT edu_edif_const_turistica_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_const_turistica_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_const_turistica_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.edu_edif_const_turistica_p
 	 ADD CONSTRAINT edu_edif_const_turistica_p_operacional_fk FOREIGN KEY (operacional)
@@ -4891,8 +4891,8 @@ ALTER TABLE cb.edu_edif_const_turistica_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_const_turistica_p
-	 ADD CONSTRAINT edu_edif_const_turistica_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_const_turistica_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_const_turistica_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.edu_edif_const_turistica_p
 	 ADD CONSTRAINT edu_edif_const_turistica_p_tipoedifturist_fk FOREIGN KEY (tipoedifturist)
@@ -4923,8 +4923,8 @@ ALTER TABLE cb.edu_edif_ensino_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_ensino_a
-	 ADD CONSTRAINT edu_edif_ensino_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_ensino_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_ensino_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.edu_edif_ensino_a
 	 ADD CONSTRAINT edu_edif_ensino_a_operacional_fk FOREIGN KEY (operacional)
@@ -4936,16 +4936,16 @@ ALTER TABLE cb.edu_edif_ensino_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_ensino_a
-	 ADD CONSTRAINT edu_edif_ensino_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_ensino_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_ensino_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.edu_edif_ensino_a
 	 ADD CONSTRAINT edu_edif_ensino_a_tipoclassecnae_fk FOREIGN KEY (tipoclassecnae)
 	 REFERENCES dominios.tipoclassecnae (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_ensino_a
-	 ADD CONSTRAINT edu_edif_ensino_a_tipoclassecnae_check 
-	 CHECK (tipoclassecnae = ANY(ARRAY[0 :: SMALLINT, 16 :: SMALLINT, 17 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_ensino_a_tipoclassecnae_check
+	 CHECK (tipoclassecnae = ANY(ARRAY[0 :: SMALLINT, 16 :: SMALLINT, 17 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_ensino_a ALTER COLUMN tipoclassecnae SET DEFAULT 999#
 CREATE TABLE cb.edu_edif_ensino_p(
 	 id serial NOT NULL,
@@ -4971,8 +4971,8 @@ ALTER TABLE cb.edu_edif_ensino_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_ensino_p
-	 ADD CONSTRAINT edu_edif_ensino_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_ensino_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_ensino_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.edu_edif_ensino_p
 	 ADD CONSTRAINT edu_edif_ensino_p_operacional_fk FOREIGN KEY (operacional)
@@ -4984,16 +4984,16 @@ ALTER TABLE cb.edu_edif_ensino_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_ensino_p
-	 ADD CONSTRAINT edu_edif_ensino_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_ensino_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_ensino_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.edu_edif_ensino_p
 	 ADD CONSTRAINT edu_edif_ensino_p_tipoclassecnae_fk FOREIGN KEY (tipoclassecnae)
 	 REFERENCES dominios.tipoclassecnae (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_ensino_p
-	 ADD CONSTRAINT edu_edif_ensino_p_tipoclassecnae_check 
-	 CHECK (tipoclassecnae = ANY(ARRAY[0 :: SMALLINT, 16 :: SMALLINT, 17 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_ensino_p_tipoclassecnae_check
+	 CHECK (tipoclassecnae = ANY(ARRAY[0 :: SMALLINT, 16 :: SMALLINT, 17 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 23 :: SMALLINT, 24 :: SMALLINT, 25 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_ensino_p ALTER COLUMN tipoclassecnae SET DEFAULT 999#
 CREATE TABLE cb.edu_edif_religiosa_a(
 	 id serial NOT NULL,
@@ -5026,8 +5026,8 @@ ALTER TABLE cb.edu_edif_religiosa_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_religiosa_a
-	 ADD CONSTRAINT edu_edif_religiosa_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_religiosa_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_religiosa_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.edu_edif_religiosa_a
 	 ADD CONSTRAINT edu_edif_religiosa_a_operacional_fk FOREIGN KEY (operacional)
@@ -5039,8 +5039,8 @@ ALTER TABLE cb.edu_edif_religiosa_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_religiosa_a
-	 ADD CONSTRAINT edu_edif_religiosa_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_religiosa_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_religiosa_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.edu_edif_religiosa_a
 	 ADD CONSTRAINT edu_edif_religiosa_a_tipoedifrelig_fk FOREIGN KEY (tipoedifrelig)
@@ -5078,8 +5078,8 @@ ALTER TABLE cb.edu_edif_religiosa_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_religiosa_p
-	 ADD CONSTRAINT edu_edif_religiosa_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_religiosa_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_religiosa_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.edu_edif_religiosa_p
 	 ADD CONSTRAINT edu_edif_religiosa_p_operacional_fk FOREIGN KEY (operacional)
@@ -5091,8 +5091,8 @@ ALTER TABLE cb.edu_edif_religiosa_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_edif_religiosa_p
-	 ADD CONSTRAINT edu_edif_religiosa_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_edif_religiosa_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_edif_religiosa_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.edu_edif_religiosa_p
 	 ADD CONSTRAINT edu_edif_religiosa_p_tipoedifrelig_fk FOREIGN KEY (tipoedifrelig)
@@ -5126,8 +5126,8 @@ ALTER TABLE cb.edu_piscina_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_piscina_a
-	 ADD CONSTRAINT edu_piscina_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_piscina_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_piscina_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.edu_pista_competicao_l(
 	 id serial NOT NULL,
@@ -5157,16 +5157,16 @@ ALTER TABLE cb.edu_pista_competicao_l
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_pista_competicao_l
-	 ADD CONSTRAINT edu_pista_competicao_l_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_pista_competicao_l_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_pista_competicao_l ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.edu_pista_competicao_l
 	 ADD CONSTRAINT edu_pista_competicao_l_tipopista_fk FOREIGN KEY (tipopista)
 	 REFERENCES dominios.tipopista (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.edu_pista_competicao_l
-	 ADD CONSTRAINT edu_pista_competicao_l_tipopista_check 
-	 CHECK (tipopista = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT edu_pista_competicao_l_tipopista_check
+	 CHECK (tipopista = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.edu_pista_competicao_l ALTER COLUMN tipopista SET DEFAULT 999#
 CREATE TABLE cb.edu_ruina_a(
 	 id serial NOT NULL,
@@ -5309,8 +5309,8 @@ ALTER TABLE cb.enc_edif_comunic_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_edif_comunic_a
-	 ADD CONSTRAINT enc_edif_comunic_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_edif_comunic_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_edif_comunic_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.enc_edif_comunic_a
 	 ADD CONSTRAINT enc_edif_comunic_a_modalidade_fk FOREIGN KEY (modalidade)
@@ -5327,8 +5327,8 @@ ALTER TABLE cb.enc_edif_comunic_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_edif_comunic_a
-	 ADD CONSTRAINT enc_edif_comunic_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_edif_comunic_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_edif_comunic_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.enc_edif_comunic_a
 	 ADD CONSTRAINT enc_edif_comunic_a_tipoedifcomunic_fk FOREIGN KEY (tipoedifcomunic)
@@ -5360,8 +5360,8 @@ ALTER TABLE cb.enc_edif_comunic_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_edif_comunic_p
-	 ADD CONSTRAINT enc_edif_comunic_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_edif_comunic_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_edif_comunic_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.enc_edif_comunic_p
 	 ADD CONSTRAINT enc_edif_comunic_p_modalidade_fk FOREIGN KEY (modalidade)
@@ -5378,8 +5378,8 @@ ALTER TABLE cb.enc_edif_comunic_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_edif_comunic_p
-	 ADD CONSTRAINT enc_edif_comunic_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_edif_comunic_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_edif_comunic_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.enc_edif_comunic_p
 	 ADD CONSTRAINT enc_edif_comunic_p_tipoedifcomunic_fk FOREIGN KEY (tipoedifcomunic)
@@ -5410,8 +5410,8 @@ ALTER TABLE cb.enc_edif_energia_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_edif_energia_a
-	 ADD CONSTRAINT enc_edif_energia_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_edif_energia_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_edif_energia_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.enc_edif_energia_a
 	 ADD CONSTRAINT enc_edif_energia_a_operacional_fk FOREIGN KEY (operacional)
@@ -5423,8 +5423,8 @@ ALTER TABLE cb.enc_edif_energia_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_edif_energia_a
-	 ADD CONSTRAINT enc_edif_energia_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_edif_energia_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_edif_energia_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.enc_edif_energia_a
 	 ADD CONSTRAINT enc_edif_energia_a_tipoedifenergia_fk FOREIGN KEY (tipoedifenergia)
@@ -5455,8 +5455,8 @@ ALTER TABLE cb.enc_edif_energia_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_edif_energia_p
-	 ADD CONSTRAINT enc_edif_energia_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_edif_energia_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_edif_energia_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.enc_edif_energia_p
 	 ADD CONSTRAINT enc_edif_energia_p_operacional_fk FOREIGN KEY (operacional)
@@ -5468,8 +5468,8 @@ ALTER TABLE cb.enc_edif_energia_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_edif_energia_p
-	 ADD CONSTRAINT enc_edif_energia_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_edif_energia_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_edif_energia_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.enc_edif_energia_p
 	 ADD CONSTRAINT enc_edif_energia_p_tipoedifenergia_fk FOREIGN KEY (tipoedifenergia)
@@ -5513,8 +5513,8 @@ ALTER TABLE cb.enc_est_gerad_energia_eletr_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_est_gerad_energia_eletr_a
-	 ADD CONSTRAINT enc_est_gerad_energia_eletr_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_est_gerad_energia_eletr_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_est_gerad_energia_eletr_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.enc_est_gerad_energia_eletr_a
 	 ADD CONSTRAINT enc_est_gerad_energia_eletr_a_tipoestgerad_fk FOREIGN KEY (tipoestgerad)
@@ -5558,8 +5558,8 @@ ALTER TABLE cb.enc_est_gerad_energia_eletr_l
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_est_gerad_energia_eletr_l
-	 ADD CONSTRAINT enc_est_gerad_energia_eletr_l_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_est_gerad_energia_eletr_l_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_est_gerad_energia_eletr_l ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.enc_est_gerad_energia_eletr_l
 	 ADD CONSTRAINT enc_est_gerad_energia_eletr_l_tipoestgerad_fk FOREIGN KEY (tipoestgerad)
@@ -5603,8 +5603,8 @@ ALTER TABLE cb.enc_est_gerad_energia_eletr_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_est_gerad_energia_eletr_p
-	 ADD CONSTRAINT enc_est_gerad_energia_eletr_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_est_gerad_energia_eletr_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_est_gerad_energia_eletr_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.enc_est_gerad_energia_eletr_p
 	 ADD CONSTRAINT enc_est_gerad_energia_eletr_p_tipoestgerad_fk FOREIGN KEY (tipoestgerad)
@@ -5678,8 +5678,8 @@ ALTER TABLE cb.enc_hidreletrica_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_hidreletrica_a
-	 ADD CONSTRAINT enc_hidreletrica_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_hidreletrica_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_hidreletrica_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.enc_hidreletrica_l(
 	 id serial NOT NULL,
@@ -5718,8 +5718,8 @@ ALTER TABLE cb.enc_hidreletrica_l
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_hidreletrica_l
-	 ADD CONSTRAINT enc_hidreletrica_l_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_hidreletrica_l_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_hidreletrica_l ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.enc_hidreletrica_p(
 	 id serial NOT NULL,
@@ -5758,8 +5758,8 @@ ALTER TABLE cb.enc_hidreletrica_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_hidreletrica_p
-	 ADD CONSTRAINT enc_hidreletrica_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_hidreletrica_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_hidreletrica_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.enc_ponto_trecho_energia_p(
 	 id serial NOT NULL,
@@ -5830,8 +5830,8 @@ ALTER TABLE cb.enc_termeletrica_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_termeletrica_a
-	 ADD CONSTRAINT enc_termeletrica_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_termeletrica_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_termeletrica_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.enc_termeletrica_a
 	 ADD CONSTRAINT enc_termeletrica_a_tipocombustivel_fk FOREIGN KEY (tipocombustivel)
@@ -5893,8 +5893,8 @@ ALTER TABLE cb.enc_termeletrica_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_termeletrica_p
-	 ADD CONSTRAINT enc_termeletrica_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_termeletrica_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_termeletrica_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.enc_termeletrica_p
 	 ADD CONSTRAINT enc_termeletrica_p_tipocombustivel_fk FOREIGN KEY (tipocombustivel)
@@ -5946,8 +5946,8 @@ ALTER TABLE cb.enc_torre_comunic_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_torre_comunic_p
-	 ADD CONSTRAINT enc_torre_comunic_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_torre_comunic_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_torre_comunic_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.enc_torre_energia_p(
 	 id serial NOT NULL,
@@ -5985,8 +5985,8 @@ ALTER TABLE cb.enc_torre_energia_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_torre_energia_p
-	 ADD CONSTRAINT enc_torre_energia_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_torre_energia_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_torre_energia_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.enc_torre_energia_p
 	 ADD CONSTRAINT enc_torre_energia_p_tipotorre_fk FOREIGN KEY (tipotorre)
@@ -6024,8 +6024,8 @@ ALTER TABLE cb.enc_trecho_comunic_l
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_trecho_comunic_l
-	 ADD CONSTRAINT enc_trecho_comunic_l_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_trecho_comunic_l_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 25 :: SMALLINT, 26 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_trecho_comunic_l ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.enc_trecho_comunic_l
 	 ADD CONSTRAINT enc_trecho_comunic_l_operacional_fk FOREIGN KEY (operacional)
@@ -6037,16 +6037,16 @@ ALTER TABLE cb.enc_trecho_comunic_l
 	 REFERENCES dominios.posicaorelativa (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_trecho_comunic_l
-	 ADD CONSTRAINT enc_trecho_comunic_l_posicaorelativa_check 
-	 CHECK (posicaorelativa = ANY(ARRAY[2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_trecho_comunic_l_posicaorelativa_check
+	 CHECK (posicaorelativa = ANY(ARRAY[2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_trecho_comunic_l ALTER COLUMN posicaorelativa SET DEFAULT 999#
 ALTER TABLE cb.enc_trecho_comunic_l
 	 ADD CONSTRAINT enc_trecho_comunic_l_situacaofisica_fk FOREIGN KEY (situacaofisica)
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_trecho_comunic_l
-	 ADD CONSTRAINT enc_trecho_comunic_l_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_trecho_comunic_l_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_trecho_comunic_l ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.enc_trecho_comunic_l
 	 ADD CONSTRAINT enc_trecho_comunic_l_tipotrechocomunic_fk FOREIGN KEY (tipotrechocomunic)
@@ -6095,16 +6095,16 @@ ALTER TABLE cb.enc_trecho_energia_l
 	 REFERENCES dominios.posicaorelativa (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_trecho_energia_l
-	 ADD CONSTRAINT enc_trecho_energia_l_posicaorelativa_check 
-	 CHECK (posicaorelativa = ANY(ARRAY[2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_trecho_energia_l_posicaorelativa_check
+	 CHECK (posicaorelativa = ANY(ARRAY[2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_trecho_energia_l ALTER COLUMN posicaorelativa SET DEFAULT 999#
 ALTER TABLE cb.enc_trecho_energia_l
 	 ADD CONSTRAINT enc_trecho_energia_l_situacaofisica_fk FOREIGN KEY (situacaofisica)
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.enc_trecho_energia_l
-	 ADD CONSTRAINT enc_trecho_energia_l_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT enc_trecho_energia_l_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.enc_trecho_energia_l ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.enc_zona_linhas_energia_com_a(
 	 id serial NOT NULL,
@@ -6182,8 +6182,8 @@ ALTER TABLE cb.hid_banco_areia_a
 	 REFERENCES dominios.materialpredominante (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.hid_banco_areia_a
-	 ADD CONSTRAINT hid_banco_areia_a_materialpredominante_check 
-	 CHECK (materialpredominante = ANY(ARRAY[0 :: SMALLINT, 12 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 24 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_banco_areia_a_materialpredominante_check
+	 CHECK (materialpredominante = ANY(ARRAY[0 :: SMALLINT, 12 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 24 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.hid_banco_areia_a ALTER COLUMN materialpredominante SET DEFAULT 999#
 ALTER TABLE cb.hid_banco_areia_a
 	 ADD CONSTRAINT hid_banco_areia_a_situacaoemagua_fk FOREIGN KEY (situacaoemagua)
@@ -6218,8 +6218,8 @@ ALTER TABLE cb.hid_banco_areia_l
 	 REFERENCES dominios.materialpredominante (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.hid_banco_areia_l
-	 ADD CONSTRAINT hid_banco_areia_l_materialpredominante_check 
-	 CHECK (materialpredominante = ANY(ARRAY[0 :: SMALLINT, 12 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 24 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_banco_areia_l_materialpredominante_check
+	 CHECK (materialpredominante = ANY(ARRAY[0 :: SMALLINT, 12 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 24 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.hid_banco_areia_l ALTER COLUMN materialpredominante SET DEFAULT 999#
 ALTER TABLE cb.hid_banco_areia_l
 	 ADD CONSTRAINT hid_banco_areia_l_situacaoemagua_fk FOREIGN KEY (situacaoemagua)
@@ -6255,8 +6255,8 @@ ALTER TABLE cb.hid_barragem_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.hid_barragem_a
-	 ADD CONSTRAINT hid_barragem_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_barragem_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.hid_barragem_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.hid_barragem_a
 	 ADD CONSTRAINT hid_barragem_a_operacional_fk FOREIGN KEY (operacional)
@@ -6297,8 +6297,8 @@ ALTER TABLE cb.hid_barragem_l
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.hid_barragem_l
-	 ADD CONSTRAINT hid_barragem_l_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_barragem_l_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.hid_barragem_l ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.hid_barragem_l
 	 ADD CONSTRAINT hid_barragem_l_operacional_fk FOREIGN KEY (operacional)
@@ -6339,8 +6339,8 @@ ALTER TABLE cb.hid_barragem_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.hid_barragem_p
-	 ADD CONSTRAINT hid_barragem_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_barragem_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 23 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.hid_barragem_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.hid_barragem_p
 	 ADD CONSTRAINT hid_barragem_p_operacional_fk FOREIGN KEY (operacional)
@@ -6538,8 +6538,8 @@ ALTER TABLE cb.hid_fonte_dagua_p
 	 REFERENCES dominios.regime (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.hid_fonte_dagua_p
-	 ADD CONSTRAINT hid_fonte_dagua_p_regime_check 
-	 CHECK (regime = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 3 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_fonte_dagua_p_regime_check
+	 CHECK (regime = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 3 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.hid_fonte_dagua_p ALTER COLUMN regime SET DEFAULT 999#
 ALTER TABLE cb.hid_fonte_dagua_p
 	 ADD CONSTRAINT hid_fonte_dagua_p_tipofontedagua_fk FOREIGN KEY (tipofontedagua)
@@ -6676,8 +6676,8 @@ ALTER TABLE cb.hid_limite_massa_dagua_l
 	 REFERENCES dominios.materialpredominante (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.hid_limite_massa_dagua_l
-	 ADD CONSTRAINT hid_limite_massa_dagua_l_materialpredominante_check 
-	 CHECK (materialpredominante = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 50 :: SMALLINT, 97 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_limite_massa_dagua_l_materialpredominante_check
+	 CHECK (materialpredominante = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 50 :: SMALLINT, 97 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.hid_limite_massa_dagua_l ALTER COLUMN materialpredominante SET DEFAULT 999#
 ALTER TABLE cb.hid_limite_massa_dagua_l
 	 ADD CONSTRAINT hid_limite_massa_dagua_l_tipolimmassa_fk FOREIGN KEY (tipolimmassa)
@@ -6707,8 +6707,8 @@ ALTER TABLE cb.hid_massa_dagua_a
 	 REFERENCES dominios.regime (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.hid_massa_dagua_a
-	 ADD CONSTRAINT hid_massa_dagua_a_regime_check 
-	 CHECK (regime = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_massa_dagua_a_regime_check
+	 CHECK (regime = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.hid_massa_dagua_a ALTER COLUMN regime SET DEFAULT 999#
 ALTER TABLE cb.hid_massa_dagua_a
 	 ADD CONSTRAINT hid_massa_dagua_a_salinidade_fk FOREIGN KEY (salinidade)
@@ -6747,8 +6747,8 @@ ALTER TABLE cb.hid_natureza_fundo_a
 	 REFERENCES dominios.materialpredominante (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.hid_natureza_fundo_a
-	 ADD CONSTRAINT hid_natureza_fundo_a_materialpredominante_check 
-	 CHECK (materialpredominante = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 50 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_natureza_fundo_a_materialpredominante_check
+	 CHECK (materialpredominante = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 50 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.hid_natureza_fundo_a ALTER COLUMN materialpredominante SET DEFAULT 999#
 CREATE TABLE cb.hid_natureza_fundo_l(
 	 id serial NOT NULL,
@@ -6777,8 +6777,8 @@ ALTER TABLE cb.hid_natureza_fundo_l
 	 REFERENCES dominios.materialpredominante (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.hid_natureza_fundo_l
-	 ADD CONSTRAINT hid_natureza_fundo_l_materialpredominante_check 
-	 CHECK (materialpredominante = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 50 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_natureza_fundo_l_materialpredominante_check
+	 CHECK (materialpredominante = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 50 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.hid_natureza_fundo_l ALTER COLUMN materialpredominante SET DEFAULT 999#
 CREATE TABLE cb.hid_natureza_fundo_p(
 	 id serial NOT NULL,
@@ -6807,8 +6807,8 @@ ALTER TABLE cb.hid_natureza_fundo_p
 	 REFERENCES dominios.materialpredominante (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.hid_natureza_fundo_p
-	 ADD CONSTRAINT hid_natureza_fundo_p_materialpredominante_check 
-	 CHECK (materialpredominante = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 50 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_natureza_fundo_p_materialpredominante_check
+	 CHECK (materialpredominante = ANY(ARRAY[0 :: SMALLINT, 4 :: SMALLINT, 12 :: SMALLINT, 13 :: SMALLINT, 14 :: SMALLINT, 15 :: SMALLINT, 16 :: SMALLINT, 18 :: SMALLINT, 19 :: SMALLINT, 20 :: SMALLINT, 21 :: SMALLINT, 22 :: SMALLINT, 50 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.hid_natureza_fundo_p ALTER COLUMN materialpredominante SET DEFAULT 999#
 CREATE TABLE cb.hid_ponto_drenagem_p(
 	 id serial NOT NULL,
@@ -6875,8 +6875,8 @@ ALTER TABLE cb.hid_quebramar_molhe_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.hid_quebramar_molhe_a
-	 ADD CONSTRAINT hid_quebramar_molhe_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_quebramar_molhe_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.hid_quebramar_molhe_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.hid_quebramar_molhe_a
 	 ADD CONSTRAINT hid_quebramar_molhe_a_operacional_fk FOREIGN KEY (operacional)
@@ -6923,8 +6923,8 @@ ALTER TABLE cb.hid_quebramar_molhe_l
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.hid_quebramar_molhe_l
-	 ADD CONSTRAINT hid_quebramar_molhe_l_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_quebramar_molhe_l_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 4 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.hid_quebramar_molhe_l ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.hid_quebramar_molhe_l
 	 ADD CONSTRAINT hid_quebramar_molhe_l_operacional_fk FOREIGN KEY (operacional)
@@ -7277,8 +7277,8 @@ ALTER TABLE cb.hid_trecho_drenagem_l
 	 REFERENCES dominios.regime (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.hid_trecho_drenagem_l
-	 ADD CONSTRAINT hid_trecho_drenagem_l_regime_check 
-	 CHECK (regime = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_trecho_drenagem_l_regime_check
+	 CHECK (regime = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.hid_trecho_drenagem_l ALTER COLUMN regime SET DEFAULT 999#
 CREATE TABLE cb.hid_trecho_massa_dagua_a(
 	 id serial NOT NULL,
@@ -7303,8 +7303,8 @@ ALTER TABLE cb.hid_trecho_massa_dagua_a
 	 REFERENCES dominios.regime (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.hid_trecho_massa_dagua_a
-	 ADD CONSTRAINT hid_trecho_massa_dagua_a_regime_check 
-	 CHECK (regime = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT hid_trecho_massa_dagua_a_regime_check
+	 CHECK (regime = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.hid_trecho_massa_dagua_a ALTER COLUMN regime SET DEFAULT 999#
 ALTER TABLE cb.hid_trecho_massa_dagua_a
 	 ADD CONSTRAINT hid_trecho_massa_dagua_a_salinidade_fk FOREIGN KEY (salinidade)
@@ -7465,8 +7465,8 @@ ALTER TABLE cb.lim_delimitacao_fisica_l
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.lim_delimitacao_fisica_l
-	 ADD CONSTRAINT lim_delimitacao_fisica_l_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT lim_delimitacao_fisica_l_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.lim_delimitacao_fisica_l ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.lim_delimitacao_fisica_l
 	 ADD CONSTRAINT lim_delimitacao_fisica_l_tipodelimfis_fk FOREIGN KEY (tipodelimfis)
@@ -7767,8 +7767,8 @@ ALTER TABLE cb.lim_outras_unid_protegidas_a
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.lim_outras_unid_protegidas_a
-	 ADD CONSTRAINT lim_outras_unid_protegidas_a_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT lim_outras_unid_protegidas_a_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.lim_outras_unid_protegidas_a ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.lim_outras_unid_protegidas_a
 	 ADD CONSTRAINT lim_outras_unid_protegidas_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -7801,8 +7801,8 @@ ALTER TABLE cb.lim_outras_unid_protegidas_p
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.lim_outras_unid_protegidas_p
-	 ADD CONSTRAINT lim_outras_unid_protegidas_p_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT lim_outras_unid_protegidas_p_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.lim_outras_unid_protegidas_p ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.lim_outras_unid_protegidas_p
 	 ADD CONSTRAINT lim_outras_unid_protegidas_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -7998,8 +7998,8 @@ ALTER TABLE cb.lim_unidade_conserv_nao_snuc_a
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.lim_unidade_conserv_nao_snuc_a
-	 ADD CONSTRAINT lim_unidade_conserv_nao_snuc_a_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT lim_unidade_conserv_nao_snuc_a_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.lim_unidade_conserv_nao_snuc_a ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.lim_unidade_conserv_nao_snuc_a
 	 ADD CONSTRAINT lim_unidade_conserv_nao_snuc_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -8027,8 +8027,8 @@ ALTER TABLE cb.lim_unidade_conserv_nao_snuc_p
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.lim_unidade_conserv_nao_snuc_p
-	 ADD CONSTRAINT lim_unidade_conserv_nao_snuc_p_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT lim_unidade_conserv_nao_snuc_p_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.lim_unidade_conserv_nao_snuc_p ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.lim_unidade_conserv_nao_snuc_p
 	 ADD CONSTRAINT lim_unidade_conserv_nao_snuc_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -8073,8 +8073,8 @@ ALTER TABLE cb.lim_unidade_protecao_integral_a
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.lim_unidade_protecao_integral_a
-	 ADD CONSTRAINT lim_unidade_protecao_integral_a_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT lim_unidade_protecao_integral_a_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.lim_unidade_protecao_integral_a ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.lim_unidade_protecao_integral_a
 	 ADD CONSTRAINT lim_unidade_protecao_integral_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -8107,8 +8107,8 @@ ALTER TABLE cb.lim_unidade_protecao_integral_p
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.lim_unidade_protecao_integral_p
-	 ADD CONSTRAINT lim_unidade_protecao_integral_p_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT lim_unidade_protecao_integral_p_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.lim_unidade_protecao_integral_p ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.lim_unidade_protecao_integral_p
 	 ADD CONSTRAINT lim_unidade_protecao_integral_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -8141,8 +8141,8 @@ ALTER TABLE cb.lim_unidade_uso_sustentavel_a
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.lim_unidade_uso_sustentavel_a
-	 ADD CONSTRAINT lim_unidade_uso_sustentavel_a_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT lim_unidade_uso_sustentavel_a_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.lim_unidade_uso_sustentavel_a ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.lim_unidade_uso_sustentavel_a
 	 ADD CONSTRAINT lim_unidade_uso_sustentavel_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -8175,8 +8175,8 @@ ALTER TABLE cb.lim_unidade_uso_sustentavel_p
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.lim_unidade_uso_sustentavel_p
-	 ADD CONSTRAINT lim_unidade_uso_sustentavel_p_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT lim_unidade_uso_sustentavel_p_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.lim_unidade_uso_sustentavel_p ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.lim_unidade_uso_sustentavel_p
 	 ADD CONSTRAINT lim_unidade_uso_sustentavel_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -8385,8 +8385,8 @@ ALTER TABLE cb.loc_edif_habitacional_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.loc_edif_habitacional_a
-	 ADD CONSTRAINT loc_edif_habitacional_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT loc_edif_habitacional_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.loc_edif_habitacional_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.loc_edif_habitacional_a
 	 ADD CONSTRAINT loc_edif_habitacional_a_operacional_fk FOREIGN KEY (operacional)
@@ -8398,8 +8398,8 @@ ALTER TABLE cb.loc_edif_habitacional_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.loc_edif_habitacional_a
-	 ADD CONSTRAINT loc_edif_habitacional_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT loc_edif_habitacional_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.loc_edif_habitacional_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.loc_edif_habitacional_p(
 	 id serial NOT NULL,
@@ -8424,8 +8424,8 @@ ALTER TABLE cb.loc_edif_habitacional_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.loc_edif_habitacional_p
-	 ADD CONSTRAINT loc_edif_habitacional_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT loc_edif_habitacional_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.loc_edif_habitacional_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.loc_edif_habitacional_p
 	 ADD CONSTRAINT loc_edif_habitacional_p_operacional_fk FOREIGN KEY (operacional)
@@ -8437,8 +8437,8 @@ ALTER TABLE cb.loc_edif_habitacional_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.loc_edif_habitacional_p
-	 ADD CONSTRAINT loc_edif_habitacional_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT loc_edif_habitacional_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.loc_edif_habitacional_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.loc_edificacao_a(
 	 id serial NOT NULL,
@@ -8463,8 +8463,8 @@ ALTER TABLE cb.loc_edificacao_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.loc_edificacao_a
-	 ADD CONSTRAINT loc_edificacao_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT loc_edificacao_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.loc_edificacao_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.loc_edificacao_a
 	 ADD CONSTRAINT loc_edificacao_a_operacional_fk FOREIGN KEY (operacional)
@@ -8476,8 +8476,8 @@ ALTER TABLE cb.loc_edificacao_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.loc_edificacao_a
-	 ADD CONSTRAINT loc_edificacao_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT loc_edificacao_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.loc_edificacao_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.loc_edificacao_p(
 	 id serial NOT NULL,
@@ -8502,8 +8502,8 @@ ALTER TABLE cb.loc_edificacao_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.loc_edificacao_p
-	 ADD CONSTRAINT loc_edificacao_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT loc_edificacao_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.loc_edificacao_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.loc_edificacao_p
 	 ADD CONSTRAINT loc_edificacao_p_operacional_fk FOREIGN KEY (operacional)
@@ -8515,8 +8515,8 @@ ALTER TABLE cb.loc_edificacao_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.loc_edificacao_p
-	 ADD CONSTRAINT loc_edificacao_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT loc_edificacao_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.loc_edificacao_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.loc_hab_indigena_a(
 	 id serial NOT NULL,
@@ -8680,8 +8680,8 @@ ALTER TABLE cb.pto_edif_constr_est_med_fen_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.pto_edif_constr_est_med_fen_a
-	 ADD CONSTRAINT pto_edif_constr_est_med_fen_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT pto_edif_constr_est_med_fen_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.pto_edif_constr_est_med_fen_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.pto_edif_constr_est_med_fen_a
 	 ADD CONSTRAINT pto_edif_constr_est_med_fen_a_operacional_fk FOREIGN KEY (operacional)
@@ -8693,8 +8693,8 @@ ALTER TABLE cb.pto_edif_constr_est_med_fen_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.pto_edif_constr_est_med_fen_a
-	 ADD CONSTRAINT pto_edif_constr_est_med_fen_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT pto_edif_constr_est_med_fen_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.pto_edif_constr_est_med_fen_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.pto_edif_constr_est_med_fen_p(
 	 id serial NOT NULL,
@@ -8719,8 +8719,8 @@ ALTER TABLE cb.pto_edif_constr_est_med_fen_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.pto_edif_constr_est_med_fen_p
-	 ADD CONSTRAINT pto_edif_constr_est_med_fen_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT pto_edif_constr_est_med_fen_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.pto_edif_constr_est_med_fen_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.pto_edif_constr_est_med_fen_p
 	 ADD CONSTRAINT pto_edif_constr_est_med_fen_p_operacional_fk FOREIGN KEY (operacional)
@@ -8732,8 +8732,8 @@ ALTER TABLE cb.pto_edif_constr_est_med_fen_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.pto_edif_constr_est_med_fen_p
-	 ADD CONSTRAINT pto_edif_constr_est_med_fen_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT pto_edif_constr_est_med_fen_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.pto_edif_constr_est_med_fen_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.pto_pto_controle_p(
 	 id serial NOT NULL,
@@ -8788,8 +8788,8 @@ ALTER TABLE cb.pto_pto_controle_p
 	 REFERENCES dominios.tiporef (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.pto_pto_controle_p
-	 ADD CONSTRAINT pto_pto_controle_p_tiporef_check 
-	 CHECK (tiporef = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT pto_pto_controle_p_tiporef_check
+	 CHECK (tiporef = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.pto_pto_controle_p ALTER COLUMN tiporef SET DEFAULT 999#
 CREATE TABLE cb.pto_pto_est_med_fenomenos_p(
 	 id serial NOT NULL,
@@ -9356,8 +9356,8 @@ ALTER TABLE cb.sau_edif_saude_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_edif_saude_a
-	 ADD CONSTRAINT sau_edif_saude_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT sau_edif_saude_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.sau_edif_saude_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.sau_edif_saude_a
 	 ADD CONSTRAINT sau_edif_saude_a_nivelatencao_fk FOREIGN KEY (nivelatencao)
@@ -9374,16 +9374,16 @@ ALTER TABLE cb.sau_edif_saude_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_edif_saude_a
-	 ADD CONSTRAINT sau_edif_saude_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT sau_edif_saude_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.sau_edif_saude_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.sau_edif_saude_a
 	 ADD CONSTRAINT sau_edif_saude_a_tipoclassecnae_fk FOREIGN KEY (tipoclassecnae)
 	 REFERENCES dominios.tipoclassecnae (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_edif_saude_a
-	 ADD CONSTRAINT sau_edif_saude_a_tipoclassecnae_check 
-	 CHECK (tipoclassecnae = ANY(ARRAY[0 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 30 :: SMALLINT, 31 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT sau_edif_saude_a_tipoclassecnae_check
+	 CHECK (tipoclassecnae = ANY(ARRAY[0 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 30 :: SMALLINT, 31 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.sau_edif_saude_a ALTER COLUMN tipoclassecnae SET DEFAULT 999#
 CREATE TABLE cb.sau_edif_saude_p(
 	 id serial NOT NULL,
@@ -9410,8 +9410,8 @@ ALTER TABLE cb.sau_edif_saude_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_edif_saude_p
-	 ADD CONSTRAINT sau_edif_saude_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT sau_edif_saude_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.sau_edif_saude_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.sau_edif_saude_p
 	 ADD CONSTRAINT sau_edif_saude_p_nivelatencao_fk FOREIGN KEY (nivelatencao)
@@ -9428,16 +9428,16 @@ ALTER TABLE cb.sau_edif_saude_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_edif_saude_p
-	 ADD CONSTRAINT sau_edif_saude_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT sau_edif_saude_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.sau_edif_saude_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.sau_edif_saude_p
 	 ADD CONSTRAINT sau_edif_saude_p_tipoclassecnae_fk FOREIGN KEY (tipoclassecnae)
 	 REFERENCES dominios.tipoclassecnae (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_edif_saude_p
-	 ADD CONSTRAINT sau_edif_saude_p_tipoclassecnae_check 
-	 CHECK (tipoclassecnae = ANY(ARRAY[0 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 30 :: SMALLINT, 31 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT sau_edif_saude_p_tipoclassecnae_check
+	 CHECK (tipoclassecnae = ANY(ARRAY[0 :: SMALLINT, 26 :: SMALLINT, 27 :: SMALLINT, 28 :: SMALLINT, 29 :: SMALLINT, 30 :: SMALLINT, 31 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.sau_edif_saude_p ALTER COLUMN tipoclassecnae SET DEFAULT 999#
 CREATE TABLE cb.sau_edif_servico_social_a(
 	 id serial NOT NULL,
@@ -9463,8 +9463,8 @@ ALTER TABLE cb.sau_edif_servico_social_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_edif_servico_social_a
-	 ADD CONSTRAINT sau_edif_servico_social_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT sau_edif_servico_social_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.sau_edif_servico_social_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.sau_edif_servico_social_a
 	 ADD CONSTRAINT sau_edif_servico_social_a_operacional_fk FOREIGN KEY (operacional)
@@ -9476,16 +9476,16 @@ ALTER TABLE cb.sau_edif_servico_social_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_edif_servico_social_a
-	 ADD CONSTRAINT sau_edif_servico_social_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT sau_edif_servico_social_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.sau_edif_servico_social_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.sau_edif_servico_social_a
 	 ADD CONSTRAINT sau_edif_servico_social_a_tipoclassecnae_fk FOREIGN KEY (tipoclassecnae)
 	 REFERENCES dominios.tipoclassecnae (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_edif_servico_social_a
-	 ADD CONSTRAINT sau_edif_servico_social_a_tipoclassecnae_check 
-	 CHECK (tipoclassecnae = ANY(ARRAY[0 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT sau_edif_servico_social_a_tipoclassecnae_check
+	 CHECK (tipoclassecnae = ANY(ARRAY[0 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.sau_edif_servico_social_a ALTER COLUMN tipoclassecnae SET DEFAULT 999#
 CREATE TABLE cb.sau_edif_servico_social_p(
 	 id serial NOT NULL,
@@ -9511,8 +9511,8 @@ ALTER TABLE cb.sau_edif_servico_social_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_edif_servico_social_p
-	 ADD CONSTRAINT sau_edif_servico_social_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT sau_edif_servico_social_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 97 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.sau_edif_servico_social_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.sau_edif_servico_social_p
 	 ADD CONSTRAINT sau_edif_servico_social_p_operacional_fk FOREIGN KEY (operacional)
@@ -9524,16 +9524,16 @@ ALTER TABLE cb.sau_edif_servico_social_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_edif_servico_social_p
-	 ADD CONSTRAINT sau_edif_servico_social_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT sau_edif_servico_social_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.sau_edif_servico_social_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.sau_edif_servico_social_p
 	 ADD CONSTRAINT sau_edif_servico_social_p_tipoclassecnae_fk FOREIGN KEY (tipoclassecnae)
 	 REFERENCES dominios.tipoclassecnae (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.sau_edif_servico_social_p
-	 ADD CONSTRAINT sau_edif_servico_social_p_tipoclassecnae_check 
-	 CHECK (tipoclassecnae = ANY(ARRAY[0 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT sau_edif_servico_social_p_tipoclassecnae_check
+	 CHECK (tipoclassecnae = ANY(ARRAY[0 :: SMALLINT, 32 :: SMALLINT, 33 :: SMALLINT, 98 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.sau_edif_servico_social_p ALTER COLUMN tipoclassecnae SET DEFAULT 999#
 CREATE TABLE cb.tra_area_duto_a(
 	 id serial NOT NULL,
@@ -9627,8 +9627,8 @@ ALTER TABLE cb.tra_atracadouro_a
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_atracadouro_a
-	 ADD CONSTRAINT tra_atracadouro_a_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_atracadouro_a_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_atracadouro_a ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_atracadouro_a
 	 ADD CONSTRAINT tra_atracadouro_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -9640,8 +9640,8 @@ ALTER TABLE cb.tra_atracadouro_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_atracadouro_a
-	 ADD CONSTRAINT tra_atracadouro_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_atracadouro_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_atracadouro_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_atracadouro_a
 	 ADD CONSTRAINT tra_atracadouro_a_operacional_fk FOREIGN KEY (operacional)
@@ -9678,8 +9678,8 @@ ALTER TABLE cb.tra_atracadouro_l
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_atracadouro_l
-	 ADD CONSTRAINT tra_atracadouro_l_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_atracadouro_l_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_atracadouro_l ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_atracadouro_l
 	 ADD CONSTRAINT tra_atracadouro_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -9691,8 +9691,8 @@ ALTER TABLE cb.tra_atracadouro_l
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_atracadouro_l
-	 ADD CONSTRAINT tra_atracadouro_l_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_atracadouro_l_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_atracadouro_l ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_atracadouro_l
 	 ADD CONSTRAINT tra_atracadouro_l_operacional_fk FOREIGN KEY (operacional)
@@ -9729,8 +9729,8 @@ ALTER TABLE cb.tra_atracadouro_p
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_atracadouro_p
-	 ADD CONSTRAINT tra_atracadouro_p_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_atracadouro_p_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_atracadouro_p ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_atracadouro_p
 	 ADD CONSTRAINT tra_atracadouro_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -9742,8 +9742,8 @@ ALTER TABLE cb.tra_atracadouro_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_atracadouro_p
-	 ADD CONSTRAINT tra_atracadouro_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_atracadouro_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_atracadouro_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_atracadouro_p
 	 ADD CONSTRAINT tra_atracadouro_p_operacional_fk FOREIGN KEY (operacional)
@@ -9789,8 +9789,8 @@ ALTER TABLE cb.tra_caminho_aereo_l
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_caminho_aereo_l
-	 ADD CONSTRAINT tra_caminho_aereo_l_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_caminho_aereo_l_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_caminho_aereo_l ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.tra_caminho_aereo_l
 	 ADD CONSTRAINT tra_caminho_aereo_l_tipocaminhoaereo_fk FOREIGN KEY (tipocaminhoaereo)
@@ -9822,8 +9822,8 @@ ALTER TABLE cb.tra_ciclovia_l
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_ciclovia_l
-	 ADD CONSTRAINT tra_ciclovia_l_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 6 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_ciclovia_l_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 6 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_ciclovia_l ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_ciclovia_l
 	 ADD CONSTRAINT tra_ciclovia_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -9879,16 +9879,16 @@ ALTER TABLE cb.tra_condutor_hidrico_l
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_condutor_hidrico_l
-	 ADD CONSTRAINT tra_condutor_hidrico_l_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_condutor_hidrico_l_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_condutor_hidrico_l ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_condutor_hidrico_l
 	 ADD CONSTRAINT tra_condutor_hidrico_l_mattransp_fk FOREIGN KEY (mattransp)
 	 REFERENCES dominios.mattransp (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_condutor_hidrico_l
-	 ADD CONSTRAINT tra_condutor_hidrico_l_mattransp_check 
-	 CHECK (mattransp = ANY(ARRAY[1 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_condutor_hidrico_l_mattransp_check
+	 CHECK (mattransp = ANY(ARRAY[1 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_condutor_hidrico_l ALTER COLUMN mattransp SET DEFAULT 999#
 ALTER TABLE cb.tra_condutor_hidrico_l
 	 ADD CONSTRAINT tra_condutor_hidrico_l_operacional_fk FOREIGN KEY (operacional)
@@ -9905,8 +9905,8 @@ ALTER TABLE cb.tra_condutor_hidrico_l
 	 REFERENCES dominios.setor (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_condutor_hidrico_l
-	 ADD CONSTRAINT tra_condutor_hidrico_l_setor_check 
-	 CHECK (setor = ANY(ARRAY[1 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_condutor_hidrico_l_setor_check
+	 CHECK (setor = ANY(ARRAY[1 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_condutor_hidrico_l ALTER COLUMN setor SET DEFAULT 999#
 ALTER TABLE cb.tra_condutor_hidrico_l
 	 ADD CONSTRAINT tra_condutor_hidrico_l_situacaoespacial_fk FOREIGN KEY (situacaoespacial)
@@ -9918,8 +9918,8 @@ ALTER TABLE cb.tra_condutor_hidrico_l
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_condutor_hidrico_l
-	 ADD CONSTRAINT tra_condutor_hidrico_l_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_condutor_hidrico_l_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_condutor_hidrico_l ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.tra_condutor_hidrico_l
 	 ADD CONSTRAINT tra_condutor_hidrico_l_tipocondutor_fk FOREIGN KEY (tipocondutor)
@@ -10046,8 +10046,8 @@ ALTER TABLE cb.tra_eclusa_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_eclusa_a
-	 ADD CONSTRAINT tra_eclusa_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_eclusa_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_eclusa_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_eclusa_a
 	 ADD CONSTRAINT tra_eclusa_a_operacional_fk FOREIGN KEY (operacional)
@@ -10059,8 +10059,8 @@ ALTER TABLE cb.tra_eclusa_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_eclusa_a
-	 ADD CONSTRAINT tra_eclusa_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_eclusa_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_eclusa_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.tra_eclusa_l(
 	 id serial NOT NULL,
@@ -10089,8 +10089,8 @@ ALTER TABLE cb.tra_eclusa_l
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_eclusa_l
-	 ADD CONSTRAINT tra_eclusa_l_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_eclusa_l_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_eclusa_l ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_eclusa_l
 	 ADD CONSTRAINT tra_eclusa_l_operacional_fk FOREIGN KEY (operacional)
@@ -10102,8 +10102,8 @@ ALTER TABLE cb.tra_eclusa_l
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_eclusa_l
-	 ADD CONSTRAINT tra_eclusa_l_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_eclusa_l_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_eclusa_l ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.tra_eclusa_p(
 	 id serial NOT NULL,
@@ -10132,8 +10132,8 @@ ALTER TABLE cb.tra_eclusa_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_eclusa_p
-	 ADD CONSTRAINT tra_eclusa_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_eclusa_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_eclusa_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_eclusa_p
 	 ADD CONSTRAINT tra_eclusa_p_operacional_fk FOREIGN KEY (operacional)
@@ -10145,8 +10145,8 @@ ALTER TABLE cb.tra_eclusa_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_eclusa_p
-	 ADD CONSTRAINT tra_eclusa_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_eclusa_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_eclusa_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.tra_edif_constr_aeroportuaria_a(
 	 id serial NOT NULL,
@@ -10168,8 +10168,8 @@ ALTER TABLE cb.tra_edif_constr_aeroportuaria_a
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_constr_aeroportuaria_a
-	 ADD CONSTRAINT tra_edif_constr_aeroportuaria_a_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_constr_aeroportuaria_a_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_constr_aeroportuaria_a ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_constr_aeroportuaria_a
 	 ADD CONSTRAINT tra_edif_constr_aeroportuaria_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -10181,8 +10181,8 @@ ALTER TABLE cb.tra_edif_constr_aeroportuaria_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_constr_aeroportuaria_a
-	 ADD CONSTRAINT tra_edif_constr_aeroportuaria_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_constr_aeroportuaria_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_constr_aeroportuaria_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_constr_aeroportuaria_a
 	 ADD CONSTRAINT tra_edif_constr_aeroportuaria_a_operacional_fk FOREIGN KEY (operacional)
@@ -10219,8 +10219,8 @@ ALTER TABLE cb.tra_edif_constr_aeroportuaria_p
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_constr_aeroportuaria_p
-	 ADD CONSTRAINT tra_edif_constr_aeroportuaria_p_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_constr_aeroportuaria_p_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_constr_aeroportuaria_p ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_constr_aeroportuaria_p
 	 ADD CONSTRAINT tra_edif_constr_aeroportuaria_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -10232,8 +10232,8 @@ ALTER TABLE cb.tra_edif_constr_aeroportuaria_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_constr_aeroportuaria_p
-	 ADD CONSTRAINT tra_edif_constr_aeroportuaria_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_constr_aeroportuaria_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_constr_aeroportuaria_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_constr_aeroportuaria_p
 	 ADD CONSTRAINT tra_edif_constr_aeroportuaria_p_operacional_fk FOREIGN KEY (operacional)
@@ -10270,8 +10270,8 @@ ALTER TABLE cb.tra_edif_constr_portuaria_a
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_constr_portuaria_a
-	 ADD CONSTRAINT tra_edif_constr_portuaria_a_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_constr_portuaria_a_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_constr_portuaria_a ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_constr_portuaria_a
 	 ADD CONSTRAINT tra_edif_constr_portuaria_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -10283,8 +10283,8 @@ ALTER TABLE cb.tra_edif_constr_portuaria_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_constr_portuaria_a
-	 ADD CONSTRAINT tra_edif_constr_portuaria_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_constr_portuaria_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_constr_portuaria_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_constr_portuaria_a
 	 ADD CONSTRAINT tra_edif_constr_portuaria_a_operacional_fk FOREIGN KEY (operacional)
@@ -10321,8 +10321,8 @@ ALTER TABLE cb.tra_edif_constr_portuaria_p
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_constr_portuaria_p
-	 ADD CONSTRAINT tra_edif_constr_portuaria_p_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_constr_portuaria_p_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_constr_portuaria_p ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_constr_portuaria_p
 	 ADD CONSTRAINT tra_edif_constr_portuaria_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -10334,8 +10334,8 @@ ALTER TABLE cb.tra_edif_constr_portuaria_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_constr_portuaria_p
-	 ADD CONSTRAINT tra_edif_constr_portuaria_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_constr_portuaria_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_constr_portuaria_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_constr_portuaria_p
 	 ADD CONSTRAINT tra_edif_constr_portuaria_p_operacional_fk FOREIGN KEY (operacional)
@@ -10373,8 +10373,8 @@ ALTER TABLE cb.tra_edif_metro_ferroviaria_a
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_metro_ferroviaria_a
-	 ADD CONSTRAINT tra_edif_metro_ferroviaria_a_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_metro_ferroviaria_a_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_metro_ferroviaria_a ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_metro_ferroviaria_a
 	 ADD CONSTRAINT tra_edif_metro_ferroviaria_a_funcaoedifmetroferrov_fk FOREIGN KEY (funcaoedifmetroferrov)
@@ -10391,8 +10391,8 @@ ALTER TABLE cb.tra_edif_metro_ferroviaria_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_metro_ferroviaria_a
-	 ADD CONSTRAINT tra_edif_metro_ferroviaria_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_metro_ferroviaria_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_metro_ferroviaria_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_metro_ferroviaria_a
 	 ADD CONSTRAINT tra_edif_metro_ferroviaria_a_multimodal_fk FOREIGN KEY (multimodal)
@@ -10430,8 +10430,8 @@ ALTER TABLE cb.tra_edif_metro_ferroviaria_p
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_metro_ferroviaria_p
-	 ADD CONSTRAINT tra_edif_metro_ferroviaria_p_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_metro_ferroviaria_p_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_metro_ferroviaria_p ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_metro_ferroviaria_p
 	 ADD CONSTRAINT tra_edif_metro_ferroviaria_p_funcaoedifmetroferrov_fk FOREIGN KEY (funcaoedifmetroferrov)
@@ -10448,8 +10448,8 @@ ALTER TABLE cb.tra_edif_metro_ferroviaria_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_metro_ferroviaria_p
-	 ADD CONSTRAINT tra_edif_metro_ferroviaria_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_metro_ferroviaria_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_metro_ferroviaria_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_metro_ferroviaria_p
 	 ADD CONSTRAINT tra_edif_metro_ferroviaria_p_multimodal_fk FOREIGN KEY (multimodal)
@@ -10486,8 +10486,8 @@ ALTER TABLE cb.tra_edif_rodoviaria_a
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_rodoviaria_a
-	 ADD CONSTRAINT tra_edif_rodoviaria_a_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_rodoviaria_a_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_rodoviaria_a ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_rodoviaria_a
 	 ADD CONSTRAINT tra_edif_rodoviaria_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -10499,8 +10499,8 @@ ALTER TABLE cb.tra_edif_rodoviaria_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_rodoviaria_a
-	 ADD CONSTRAINT tra_edif_rodoviaria_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_rodoviaria_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_rodoviaria_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_rodoviaria_a
 	 ADD CONSTRAINT tra_edif_rodoviaria_a_operacional_fk FOREIGN KEY (operacional)
@@ -10512,8 +10512,8 @@ ALTER TABLE cb.tra_edif_rodoviaria_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_rodoviaria_a
-	 ADD CONSTRAINT tra_edif_rodoviaria_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_rodoviaria_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_rodoviaria_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_rodoviaria_a
 	 ADD CONSTRAINT tra_edif_rodoviaria_a_tipoedifrod_fk FOREIGN KEY (tipoedifrod)
@@ -10540,8 +10540,8 @@ ALTER TABLE cb.tra_edif_rodoviaria_p
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_rodoviaria_p
-	 ADD CONSTRAINT tra_edif_rodoviaria_p_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_rodoviaria_p_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_rodoviaria_p ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_rodoviaria_p
 	 ADD CONSTRAINT tra_edif_rodoviaria_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -10553,8 +10553,8 @@ ALTER TABLE cb.tra_edif_rodoviaria_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_rodoviaria_p
-	 ADD CONSTRAINT tra_edif_rodoviaria_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_rodoviaria_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_rodoviaria_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_rodoviaria_p
 	 ADD CONSTRAINT tra_edif_rodoviaria_p_operacional_fk FOREIGN KEY (operacional)
@@ -10566,8 +10566,8 @@ ALTER TABLE cb.tra_edif_rodoviaria_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_edif_rodoviaria_p
-	 ADD CONSTRAINT tra_edif_rodoviaria_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_edif_rodoviaria_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_edif_rodoviaria_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.tra_edif_rodoviaria_p
 	 ADD CONSTRAINT tra_edif_rodoviaria_p_tipoedifrod_fk FOREIGN KEY (tipoedifrod)
@@ -10627,8 +10627,8 @@ ALTER TABLE cb.tra_fundeadouro_a
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_fundeadouro_a
-	 ADD CONSTRAINT tra_fundeadouro_a_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_fundeadouro_a_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_fundeadouro_a ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_fundeadouro_a
 	 ADD CONSTRAINT tra_fundeadouro_a_destinacaofundeadouro_fk FOREIGN KEY (destinacaofundeadouro)
@@ -10657,8 +10657,8 @@ ALTER TABLE cb.tra_fundeadouro_l
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_fundeadouro_l
-	 ADD CONSTRAINT tra_fundeadouro_l_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_fundeadouro_l_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_fundeadouro_l ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_fundeadouro_l
 	 ADD CONSTRAINT tra_fundeadouro_l_destinacaofundeadouro_fk FOREIGN KEY (destinacaofundeadouro)
@@ -10687,8 +10687,8 @@ ALTER TABLE cb.tra_fundeadouro_p
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_fundeadouro_p
-	 ADD CONSTRAINT tra_fundeadouro_p_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_fundeadouro_p_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_fundeadouro_p ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_fundeadouro_p
 	 ADD CONSTRAINT tra_fundeadouro_p_destinacaofundeadouro_fk FOREIGN KEY (destinacaofundeadouro)
@@ -10778,8 +10778,8 @@ ALTER TABLE cb.tra_galeria_bueiro_l
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_galeria_bueiro_l
-	 ADD CONSTRAINT tra_galeria_bueiro_l_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_galeria_bueiro_l_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_galeria_bueiro_l ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_galeria_bueiro_l
 	 ADD CONSTRAINT tra_galeria_bueiro_l_operacional_fk FOREIGN KEY (operacional)
@@ -10791,8 +10791,8 @@ ALTER TABLE cb.tra_galeria_bueiro_l
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_galeria_bueiro_l
-	 ADD CONSTRAINT tra_galeria_bueiro_l_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_galeria_bueiro_l_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_galeria_bueiro_l ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.tra_galeria_bueiro_p(
 	 id serial NOT NULL,
@@ -10818,8 +10818,8 @@ ALTER TABLE cb.tra_galeria_bueiro_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_galeria_bueiro_p
-	 ADD CONSTRAINT tra_galeria_bueiro_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_galeria_bueiro_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_galeria_bueiro_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_galeria_bueiro_p
 	 ADD CONSTRAINT tra_galeria_bueiro_p_operacional_fk FOREIGN KEY (operacional)
@@ -10831,8 +10831,8 @@ ALTER TABLE cb.tra_galeria_bueiro_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_galeria_bueiro_p
-	 ADD CONSTRAINT tra_galeria_bueiro_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_galeria_bueiro_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_galeria_bueiro_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.tra_girador_ferroviario_p(
 	 id serial NOT NULL,
@@ -10852,8 +10852,8 @@ ALTER TABLE cb.tra_girador_ferroviario_p
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_girador_ferroviario_p
-	 ADD CONSTRAINT tra_girador_ferroviario_p_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_girador_ferroviario_p_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_girador_ferroviario_p ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_girador_ferroviario_p
 	 ADD CONSTRAINT tra_girador_ferroviario_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -11059,16 +11059,16 @@ ALTER TABLE cb.tra_passag_elevada_viaduto_l
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_passag_elevada_viaduto_l
-	 ADD CONSTRAINT tra_passag_elevada_viaduto_l_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_passag_elevada_viaduto_l_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_passag_elevada_viaduto_l ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_passag_elevada_viaduto_l
 	 ADD CONSTRAINT tra_passag_elevada_viaduto_l_modaluso_fk FOREIGN KEY (modaluso)
 	 REFERENCES dominios.modaluso (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_passag_elevada_viaduto_l
-	 ADD CONSTRAINT tra_passag_elevada_viaduto_l_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_passag_elevada_viaduto_l_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_passag_elevada_viaduto_l ALTER COLUMN modaluso SET DEFAULT 999#
 ALTER TABLE cb.tra_passag_elevada_viaduto_l
 	 ADD CONSTRAINT tra_passag_elevada_viaduto_l_operacional_fk FOREIGN KEY (operacional)
@@ -11125,16 +11125,16 @@ ALTER TABLE cb.tra_passag_elevada_viaduto_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_passag_elevada_viaduto_p
-	 ADD CONSTRAINT tra_passag_elevada_viaduto_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_passag_elevada_viaduto_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_passag_elevada_viaduto_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_passag_elevada_viaduto_p
 	 ADD CONSTRAINT tra_passag_elevada_viaduto_p_modaluso_fk FOREIGN KEY (modaluso)
 	 REFERENCES dominios.modaluso (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_passag_elevada_viaduto_p
-	 ADD CONSTRAINT tra_passag_elevada_viaduto_p_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_passag_elevada_viaduto_p_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_passag_elevada_viaduto_p ALTER COLUMN modaluso SET DEFAULT 999#
 ALTER TABLE cb.tra_passag_elevada_viaduto_p
 	 ADD CONSTRAINT tra_passag_elevada_viaduto_p_operacional_fk FOREIGN KEY (operacional)
@@ -11190,8 +11190,8 @@ ALTER TABLE cb.tra_patio_a
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_patio_a
-	 ADD CONSTRAINT tra_patio_a_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_patio_a_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_patio_a ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_patio_a
 	 ADD CONSTRAINT tra_patio_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -11203,8 +11203,8 @@ ALTER TABLE cb.tra_patio_a
 	 REFERENCES dominios.modaluso (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_patio_a
-	 ADD CONSTRAINT tra_patio_a_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9 :: SMALLINT, 14 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_patio_a_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9 :: SMALLINT, 14 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_patio_a ALTER COLUMN modaluso SET DEFAULT 999#
 ALTER TABLE cb.tra_patio_a
 	 ADD CONSTRAINT tra_patio_a_operacional_fk FOREIGN KEY (operacional)
@@ -11235,8 +11235,8 @@ ALTER TABLE cb.tra_patio_p
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_patio_p
-	 ADD CONSTRAINT tra_patio_p_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_patio_p_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_patio_p ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_patio_p
 	 ADD CONSTRAINT tra_patio_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -11248,8 +11248,8 @@ ALTER TABLE cb.tra_patio_p
 	 REFERENCES dominios.modaluso (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_patio_p
-	 ADD CONSTRAINT tra_patio_p_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9 :: SMALLINT, 14 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_patio_p_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 9 :: SMALLINT, 14 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_patio_p ALTER COLUMN modaluso SET DEFAULT 999#
 ALTER TABLE cb.tra_patio_p
 	 ADD CONSTRAINT tra_patio_p_operacional_fk FOREIGN KEY (operacional)
@@ -11309,8 +11309,8 @@ ALTER TABLE cb.tra_pista_ponto_pouso_a
 	 REFERENCES dominios.tipopista (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_pista_ponto_pouso_a
-	 ADD CONSTRAINT tra_pista_ponto_pouso_a_tipopista_check 
-	 CHECK (tipopista = ANY(ARRAY[9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_pista_ponto_pouso_a_tipopista_check
+	 CHECK (tipopista = ANY(ARRAY[9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_pista_ponto_pouso_a ALTER COLUMN tipopista SET DEFAULT 999#
 ALTER TABLE cb.tra_pista_ponto_pouso_a
 	 ADD CONSTRAINT tra_pista_ponto_pouso_a_usopista_fk FOREIGN KEY (usopista)
@@ -11365,8 +11365,8 @@ ALTER TABLE cb.tra_pista_ponto_pouso_l
 	 REFERENCES dominios.tipopista (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_pista_ponto_pouso_l
-	 ADD CONSTRAINT tra_pista_ponto_pouso_l_tipopista_check 
-	 CHECK (tipopista = ANY(ARRAY[9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_pista_ponto_pouso_l_tipopista_check
+	 CHECK (tipopista = ANY(ARRAY[9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_pista_ponto_pouso_l ALTER COLUMN tipopista SET DEFAULT 999#
 ALTER TABLE cb.tra_pista_ponto_pouso_l
 	 ADD CONSTRAINT tra_pista_ponto_pouso_l_usopista_fk FOREIGN KEY (usopista)
@@ -11421,8 +11421,8 @@ ALTER TABLE cb.tra_pista_ponto_pouso_p
 	 REFERENCES dominios.tipopista (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_pista_ponto_pouso_p
-	 ADD CONSTRAINT tra_pista_ponto_pouso_p_tipopista_check 
-	 CHECK (tipopista = ANY(ARRAY[9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_pista_ponto_pouso_p_tipopista_check
+	 CHECK (tipopista = ANY(ARRAY[9 :: SMALLINT, 10 :: SMALLINT, 11 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_pista_ponto_pouso_p ALTER COLUMN tipopista SET DEFAULT 999#
 ALTER TABLE cb.tra_pista_ponto_pouso_p
 	 ADD CONSTRAINT tra_pista_ponto_pouso_p_usopista_fk FOREIGN KEY (usopista)
@@ -11462,16 +11462,16 @@ ALTER TABLE cb.tra_ponte_l
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_ponte_l
-	 ADD CONSTRAINT tra_ponte_l_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_ponte_l_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_ponte_l ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_ponte_l
 	 ADD CONSTRAINT tra_ponte_l_modaluso_fk FOREIGN KEY (modaluso)
 	 REFERENCES dominios.modaluso (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_ponte_l
-	 ADD CONSTRAINT tra_ponte_l_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_ponte_l_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_ponte_l ALTER COLUMN modaluso SET DEFAULT 999#
 ALTER TABLE cb.tra_ponte_l
 	 ADD CONSTRAINT tra_ponte_l_operacional_fk FOREIGN KEY (operacional)
@@ -11526,16 +11526,16 @@ ALTER TABLE cb.tra_ponte_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_ponte_p
-	 ADD CONSTRAINT tra_ponte_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_ponte_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_ponte_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_ponte_p
 	 ADD CONSTRAINT tra_ponte_p_modaluso_fk FOREIGN KEY (modaluso)
 	 REFERENCES dominios.modaluso (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_ponte_p
-	 ADD CONSTRAINT tra_ponte_p_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_ponte_p_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 8 :: SMALLINT, 9 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_ponte_p ALTER COLUMN modaluso SET DEFAULT 999#
 ALTER TABLE cb.tra_ponte_p
 	 ADD CONSTRAINT tra_ponte_p_operacional_fk FOREIGN KEY (operacional)
@@ -11633,8 +11633,8 @@ ALTER TABLE cb.tra_posto_combustivel_a
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_posto_combustivel_a
-	 ADD CONSTRAINT tra_posto_combustivel_a_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_posto_combustivel_a_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_posto_combustivel_a ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_posto_combustivel_a
 	 ADD CONSTRAINT tra_posto_combustivel_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -11646,8 +11646,8 @@ ALTER TABLE cb.tra_posto_combustivel_a
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_posto_combustivel_a
-	 ADD CONSTRAINT tra_posto_combustivel_a_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_posto_combustivel_a_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_posto_combustivel_a ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_posto_combustivel_a
 	 ADD CONSTRAINT tra_posto_combustivel_a_operacional_fk FOREIGN KEY (operacional)
@@ -11659,8 +11659,8 @@ ALTER TABLE cb.tra_posto_combustivel_a
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_posto_combustivel_a
-	 ADD CONSTRAINT tra_posto_combustivel_a_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_posto_combustivel_a_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_posto_combustivel_a ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.tra_posto_combustivel_p(
 	 id serial NOT NULL,
@@ -11681,8 +11681,8 @@ ALTER TABLE cb.tra_posto_combustivel_p
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_posto_combustivel_p
-	 ADD CONSTRAINT tra_posto_combustivel_p_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_posto_combustivel_p_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_posto_combustivel_p ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_posto_combustivel_p
 	 ADD CONSTRAINT tra_posto_combustivel_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
@@ -11694,8 +11694,8 @@ ALTER TABLE cb.tra_posto_combustivel_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_posto_combustivel_p
-	 ADD CONSTRAINT tra_posto_combustivel_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_posto_combustivel_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_posto_combustivel_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_posto_combustivel_p
 	 ADD CONSTRAINT tra_posto_combustivel_p_operacional_fk FOREIGN KEY (operacional)
@@ -11707,8 +11707,8 @@ ALTER TABLE cb.tra_posto_combustivel_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_posto_combustivel_p
-	 ADD CONSTRAINT tra_posto_combustivel_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_posto_combustivel_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_posto_combustivel_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 CREATE TABLE cb.tra_sinalizacao_p(
 	 id serial NOT NULL,
@@ -11811,8 +11811,8 @@ ALTER TABLE cb.tra_travessia_pedestre_l
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_travessia_pedestre_l
-	 ADD CONSTRAINT tra_travessia_pedestre_l_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_travessia_pedestre_l_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_travessia_pedestre_l ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_travessia_pedestre_l
 	 ADD CONSTRAINT tra_travessia_pedestre_l_operacional_fk FOREIGN KEY (operacional)
@@ -11824,8 +11824,8 @@ ALTER TABLE cb.tra_travessia_pedestre_l
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_travessia_pedestre_l
-	 ADD CONSTRAINT tra_travessia_pedestre_l_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_travessia_pedestre_l_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_travessia_pedestre_l ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.tra_travessia_pedestre_l
 	 ADD CONSTRAINT tra_travessia_pedestre_l_tipotravessiaped_fk FOREIGN KEY (tipotravessiaped)
@@ -11858,8 +11858,8 @@ ALTER TABLE cb.tra_travessia_pedestre_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_travessia_pedestre_p
-	 ADD CONSTRAINT tra_travessia_pedestre_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_travessia_pedestre_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_travessia_pedestre_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_travessia_pedestre_p
 	 ADD CONSTRAINT tra_travessia_pedestre_p_operacional_fk FOREIGN KEY (operacional)
@@ -11871,8 +11871,8 @@ ALTER TABLE cb.tra_travessia_pedestre_p
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_travessia_pedestre_p
-	 ADD CONSTRAINT tra_travessia_pedestre_p_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_travessia_pedestre_p_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_travessia_pedestre_p ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.tra_travessia_pedestre_p
 	 ADD CONSTRAINT tra_travessia_pedestre_p_tipotravessiaped_fk FOREIGN KEY (tipotravessiaped)
@@ -11908,8 +11908,8 @@ ALTER TABLE cb.tra_trecho_duto_l
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_trecho_duto_l
-	 ADD CONSTRAINT tra_trecho_duto_l_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_trecho_duto_l_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 4 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_trecho_duto_l ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_trecho_duto_l
 	 ADD CONSTRAINT tra_trecho_duto_l_mattransp_fk FOREIGN KEY (mattransp)
@@ -11941,8 +11941,8 @@ ALTER TABLE cb.tra_trecho_duto_l
 	 REFERENCES dominios.situacaofisica (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_trecho_duto_l
-	 ADD CONSTRAINT tra_trecho_duto_l_situacaofisica_check 
-	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_trecho_duto_l_situacaofisica_check
+	 CHECK (situacaofisica = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_trecho_duto_l ALTER COLUMN situacaofisica SET DEFAULT 999#
 ALTER TABLE cb.tra_trecho_duto_l
 	 ADD CONSTRAINT tra_trecho_duto_l_tipotrechoduto_fk FOREIGN KEY (tipotrechoduto)
@@ -11977,8 +11977,8 @@ ALTER TABLE cb.tra_trecho_ferroviario_l
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_trecho_ferroviario_l
-	 ADD CONSTRAINT tra_trecho_ferroviario_l_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 97 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_trecho_ferroviario_l_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 97 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_trecho_ferroviario_l ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_trecho_ferroviario_l
 	 ADD CONSTRAINT tra_trecho_ferroviario_l_bitola_fk FOREIGN KEY (bitola)
@@ -12005,8 +12005,8 @@ ALTER TABLE cb.tra_trecho_ferroviario_l
 	 REFERENCES dominios.jurisdicao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_trecho_ferroviario_l
-	 ADD CONSTRAINT tra_trecho_ferroviario_l_jurisdicao_check 
-	 CHECK (jurisdicao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_trecho_ferroviario_l_jurisdicao_check
+	 CHECK (jurisdicao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_trecho_ferroviario_l ALTER COLUMN jurisdicao SET DEFAULT 999#
 ALTER TABLE cb.tra_trecho_ferroviario_l
 	 ADD CONSTRAINT tra_trecho_ferroviario_l_nrlinhas_fk FOREIGN KEY (nrlinhas)
@@ -12023,8 +12023,8 @@ ALTER TABLE cb.tra_trecho_ferroviario_l
 	 REFERENCES dominios.posicaorelativa (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_trecho_ferroviario_l
-	 ADD CONSTRAINT tra_trecho_ferroviario_l_posicaorelativa_check 
-	 CHECK (posicaorelativa = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_trecho_ferroviario_l_posicaorelativa_check
+	 CHECK (posicaorelativa = ANY(ARRAY[0 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_trecho_ferroviario_l ALTER COLUMN posicaorelativa SET DEFAULT 999#
 ALTER TABLE cb.tra_trecho_ferroviario_l
 	 ADD CONSTRAINT tra_trecho_ferroviario_l_situacaofisica_fk FOREIGN KEY (situacaofisica)
@@ -12066,8 +12066,8 @@ ALTER TABLE cb.tra_trecho_hidroviario_l
 	 REFERENCES dominios.regime (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_trecho_hidroviario_l
-	 ADD CONSTRAINT tra_trecho_hidroviario_l_regime_check 
-	 CHECK (regime = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 6 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_trecho_hidroviario_l_regime_check
+	 CHECK (regime = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 6 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_trecho_hidroviario_l ALTER COLUMN regime SET DEFAULT 999#
 ALTER TABLE cb.tra_trecho_hidroviario_l
 	 ADD CONSTRAINT tra_trecho_hidroviario_l_situacaofisica_fk FOREIGN KEY (situacaofisica)
@@ -12100,8 +12100,8 @@ ALTER TABLE cb.tra_trecho_rodoviario_l
 	 REFERENCES dominios.administracao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_trecho_rodoviario_l
-	 ADD CONSTRAINT tra_trecho_rodoviario_l_administracao_check 
-	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_trecho_rodoviario_l_administracao_check
+	 CHECK (administracao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_trecho_rodoviario_l ALTER COLUMN administracao SET DEFAULT 999#
 ALTER TABLE cb.tra_trecho_rodoviario_l
 	 ADD CONSTRAINT tra_trecho_rodoviario_l_canteirodivisorio_fk FOREIGN KEY (canteirodivisorio)
@@ -12118,8 +12118,8 @@ ALTER TABLE cb.tra_trecho_rodoviario_l
 	 REFERENCES dominios.jurisdicao (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_trecho_rodoviario_l
-	 ADD CONSTRAINT tra_trecho_rodoviario_l_jurisdicao_check 
-	 CHECK (jurisdicao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 8 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_trecho_rodoviario_l_jurisdicao_check
+	 CHECK (jurisdicao = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 8 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_trecho_rodoviario_l ALTER COLUMN jurisdicao SET DEFAULT 999#
 ALTER TABLE cb.tra_trecho_rodoviario_l
 	 ADD CONSTRAINT tra_trecho_rodoviario_l_operacional_fk FOREIGN KEY (operacional)
@@ -12192,16 +12192,16 @@ ALTER TABLE cb.tra_tunel_l
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_tunel_l
-	 ADD CONSTRAINT tra_tunel_l_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_tunel_l_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_tunel_l ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_tunel_l
 	 ADD CONSTRAINT tra_tunel_l_modaluso_fk FOREIGN KEY (modaluso)
 	 REFERENCES dominios.modaluso (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_tunel_l
-	 ADD CONSTRAINT tra_tunel_l_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_tunel_l_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_tunel_l ALTER COLUMN modaluso SET DEFAULT 999#
 ALTER TABLE cb.tra_tunel_l
 	 ADD CONSTRAINT tra_tunel_l_operacional_fk FOREIGN KEY (operacional)
@@ -12254,16 +12254,16 @@ ALTER TABLE cb.tra_tunel_p
 	 REFERENCES dominios.matconstr (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_tunel_p
-	 ADD CONSTRAINT tra_tunel_p_matconstr_check 
-	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_tunel_p_matconstr_check
+	 CHECK (matconstr = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 3 :: SMALLINT, 5 :: SMALLINT, 99 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_tunel_p ALTER COLUMN matconstr SET DEFAULT 999#
 ALTER TABLE cb.tra_tunel_p
 	 ADD CONSTRAINT tra_tunel_p_modaluso_fk FOREIGN KEY (modaluso)
 	 REFERENCES dominios.modaluso (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_tunel_p
-	 ADD CONSTRAINT tra_tunel_p_modaluso_check 
-	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT tra_tunel_p_modaluso_check
+	 CHECK (modaluso = ANY(ARRAY[4 :: SMALLINT, 5 :: SMALLINT, 6 :: SMALLINT, 7 :: SMALLINT, 8 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.tra_tunel_p ALTER COLUMN modaluso SET DEFAULT 999#
 ALTER TABLE cb.tra_tunel_p
 	 ADD CONSTRAINT tra_tunel_p_operacional_fk FOREIGN KEY (operacional)
@@ -12310,8 +12310,8 @@ ALTER TABLE cb.veg_brejo_pantano_a
 	 REFERENCES dominios.classificacaoporte (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.veg_brejo_pantano_a
-	 ADD CONSTRAINT veg_brejo_pantano_a_classificacaoporte_check 
-	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT veg_brejo_pantano_a_classificacaoporte_check
+	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.veg_brejo_pantano_a ALTER COLUMN classificacaoporte SET DEFAULT 999#
 ALTER TABLE cb.veg_brejo_pantano_a
 	 ADD CONSTRAINT veg_brejo_pantano_a_denso_fk FOREIGN KEY (denso)
@@ -12352,8 +12352,8 @@ ALTER TABLE cb.veg_caatinga_a
 	 REFERENCES dominios.classificacaoporte (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.veg_caatinga_a
-	 ADD CONSTRAINT veg_caatinga_a_classificacaoporte_check 
-	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT veg_caatinga_a_classificacaoporte_check
+	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.veg_caatinga_a ALTER COLUMN classificacaoporte SET DEFAULT 999#
 ALTER TABLE cb.veg_caatinga_a
 	 ADD CONSTRAINT veg_caatinga_a_denso_fk FOREIGN KEY (denso)
@@ -12389,8 +12389,8 @@ ALTER TABLE cb.veg_campinarana_a
 	 REFERENCES dominios.classificacaoporte (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.veg_campinarana_a
-	 ADD CONSTRAINT veg_campinarana_a_classificacaoporte_check 
-	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT veg_campinarana_a_classificacaoporte_check
+	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.veg_campinarana_a ALTER COLUMN classificacaoporte SET DEFAULT 999#
 ALTER TABLE cb.veg_campinarana_a
 	 ADD CONSTRAINT veg_campinarana_a_denso_fk FOREIGN KEY (denso)
@@ -12454,8 +12454,8 @@ ALTER TABLE cb.veg_cerrado_cerradao_a
 	 REFERENCES dominios.classificacaoporte (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.veg_cerrado_cerradao_a
-	 ADD CONSTRAINT veg_cerrado_cerradao_a_classificacaoporte_check 
-	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT veg_cerrado_cerradao_a_classificacaoporte_check
+	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.veg_cerrado_cerradao_a ALTER COLUMN classificacaoporte SET DEFAULT 999#
 ALTER TABLE cb.veg_cerrado_cerradao_a
 	 ADD CONSTRAINT veg_cerrado_cerradao_a_denso_fk FOREIGN KEY (denso)
@@ -12570,8 +12570,8 @@ ALTER TABLE cb.veg_floresta_a
 	 REFERENCES dominios.classificacaoporte (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.veg_floresta_a
-	 ADD CONSTRAINT veg_floresta_a_classificacaoporte_check 
-	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT veg_floresta_a_classificacaoporte_check
+	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.veg_floresta_a ALTER COLUMN classificacaoporte SET DEFAULT 999#
 ALTER TABLE cb.veg_floresta_a
 	 ADD CONSTRAINT veg_floresta_a_denso_fk FOREIGN KEY (denso)
@@ -12613,8 +12613,8 @@ ALTER TABLE cb.veg_macega_chavascal_a
 	 REFERENCES dominios.classificacaoporte (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.veg_macega_chavascal_a
-	 ADD CONSTRAINT veg_macega_chavascal_a_classificacaoporte_check 
-	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT veg_macega_chavascal_a_classificacaoporte_check
+	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.veg_macega_chavascal_a ALTER COLUMN classificacaoporte SET DEFAULT 999#
 ALTER TABLE cb.veg_macega_chavascal_a
 	 ADD CONSTRAINT veg_macega_chavascal_a_denso_fk FOREIGN KEY (denso)
@@ -12655,8 +12655,8 @@ ALTER TABLE cb.veg_mangue_a
 	 REFERENCES dominios.classificacaoporte (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.veg_mangue_a
-	 ADD CONSTRAINT veg_mangue_a_classificacaoporte_check 
-	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT veg_mangue_a_classificacaoporte_check
+	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.veg_mangue_a ALTER COLUMN classificacaoporte SET DEFAULT 999#
 ALTER TABLE cb.veg_mangue_a
 	 ADD CONSTRAINT veg_mangue_a_denso_fk FOREIGN KEY (denso)
@@ -12692,8 +12692,8 @@ ALTER TABLE cb.veg_veg_area_contato_a
 	 REFERENCES dominios.classificacaoporte (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.veg_veg_area_contato_a
-	 ADD CONSTRAINT veg_veg_area_contato_a_classificacaoporte_check 
-	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT veg_veg_area_contato_a_classificacaoporte_check
+	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.veg_veg_area_contato_a ALTER COLUMN classificacaoporte SET DEFAULT 999#
 ALTER TABLE cb.veg_veg_area_contato_a
 	 ADD CONSTRAINT veg_veg_area_contato_a_denso_fk FOREIGN KEY (denso)
@@ -12783,8 +12783,8 @@ ALTER TABLE cb.veg_veg_restinga_a
 	 REFERENCES dominios.classificacaoporte (code) MATCH FULL
 	 ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.veg_veg_restinga_a
-	 ADD CONSTRAINT veg_veg_restinga_a_classificacaoporte_check 
-	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))# 
+	 ADD CONSTRAINT veg_veg_restinga_a_classificacaoporte_check
+	 CHECK (classificacaoporte = ANY(ARRAY[0 :: SMALLINT, 1 :: SMALLINT, 2 :: SMALLINT, 98 :: SMALLINT, 999 :: SMALLINT]))#
 ALTER TABLE cb.veg_veg_restinga_a ALTER COLUMN classificacaoporte SET DEFAULT 999#
 ALTER TABLE cb.veg_veg_restinga_a
 	 ADD CONSTRAINT veg_veg_restinga_a_denso_fk FOREIGN KEY (denso)

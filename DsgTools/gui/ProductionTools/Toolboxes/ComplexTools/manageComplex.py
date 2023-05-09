@@ -31,15 +31,25 @@ from qgis.core import QgsMessageLog
 # Import the PyQt and QGIS libraries
 from qgis.PyQt import uic, QtGui, QtCore
 from qgis.PyQt.QtCore import Qt, pyqtSignal
-from qgis.PyQt.QtWidgets import QStyledItemDelegate, QComboBox, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem
+from qgis.PyQt.QtWidgets import (
+    QStyledItemDelegate,
+    QComboBox,
+    QItemDelegate,
+    QDialog,
+    QMessageBox,
+    QListWidget,
+    QListWidgetItem,
+)
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 
-#DsgTools imports
+# DsgTools imports
 from DsgTools.core.Misc.QmlTools.qmlParser import QmlParser
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'ui_manageComplex.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "ui_manageComplex.ui")
+)
+
 
 class CustomTableModel(QSqlTableModel):
     def __init__(self, domainDict, parent=None, db=QSqlDatabase):
@@ -56,11 +66,17 @@ class CustomTableModel(QSqlTableModel):
         """
         ret = dict()
 
-        in_clause = '(%s)' % ",".join(map(str, codes))
-        if self.db.driverName() == 'QPSQL':
-            sql = 'select code, code_name from dominios.%s where code in %s' % (table, in_clause)
-        elif self.db.driverName() == 'QSQLITE':
-            sql = 'select code, code_name from dominios_%s where code in %s' % (table, in_clause)
+        in_clause = "(%s)" % ",".join(map(str, codes))
+        if self.db.driverName() == "QPSQL":
+            sql = "select code, code_name from dominios.%s where code in %s" % (
+                table,
+                in_clause,
+            )
+        elif self.db.driverName() == "QSQLITE":
+            sql = "select code, code_name from dominios_%s where code in %s" % (
+                table,
+                in_clause,
+            )
 
         query = QSqlQuery(sql, self.db)
         while next(query):
@@ -96,7 +112,7 @@ class CustomTableModel(QSqlTableModel):
             elif isinstance(self.dict[column], tuple):
                 tupla = self.dict[column]
                 valueMap = self.makeValueRelationDict(tupla[0], tupla[1])
-                codes = str(dbdata)[1:-1].split(',')
+                codes = str(dbdata)[1:-1].split(",")
                 code_names = list()
                 for c in codes:
                     if str(c) in list(valueMap.values()):
@@ -104,7 +120,7 @@ class CustomTableModel(QSqlTableModel):
                         code_name = list(valueMap.keys())[id]
                         code_names.append(code_name)
                 if len(code_names) > 0:
-                    return '{%s}' % ','.join(code_names)
+                    return "{%s}" % ",".join(code_names)
         return dbdata
 
     def setData(self, index, value, role=Qt.EditRole):
@@ -127,14 +143,15 @@ class CustomTableModel(QSqlTableModel):
             elif isinstance(self.dict[column], tuple):
                 tupla = self.dict[column]
                 valueMap = self.makeValueRelationDict(tupla[0], tupla[1])
-                code_names = value[1:-1].split(',')
+                code_names = value[1:-1].split(",")
                 codes = []
                 for code_name in code_names:
                     code = valueMap[code_name]
                     codes.append(code)
                 if len(codes) > 0:
-                    newValue = '{%s}' % ','.join(map(str, codes))
+                    newValue = "{%s}" % ",".join(map(str, codes))
         return QSqlTableModel.setData(self, index, newValue, role)
+
 
 class ComboBoxDelegate(QStyledItemDelegate):
     def __init__(self, parent, itemsDict, column):
@@ -182,6 +199,7 @@ class ComboBoxDelegate(QStyledItemDelegate):
             # use default
             QItemDelegate.setModelData(self, editor, model, index)
 
+
 class ListWidgetDelegate(QStyledItemDelegate):
     def __init__(self, parent, itemsDict, column):
         """
@@ -213,10 +231,12 @@ class ListWidgetDelegate(QStyledItemDelegate):
         try:
             if index.column() == self.column:
                 txt = m.data(index, Qt.DisplayRole)
-                checkList = txt[1:-1].split(',')
+                checkList = txt[1:-1].split(",")
                 for i in range(editor.count()):
                     item = editor.item(i)
-                    item.setCheckState(Qt.Checked if item.text() in checkList else Qt.Unchecked)
+                    item.setCheckState(
+                        Qt.Checked if item.text() in checkList else Qt.Unchecked
+                    )
             else:
                 # use default
                 QItemDelegate.setEditorData(self, editor, index)
@@ -233,55 +253,65 @@ class ListWidgetDelegate(QStyledItemDelegate):
                 item = editor.item(i)
                 if item.checkState() == Qt.Checked:
                     checkedItems.append(item.text())
-            model.setData(index, '{%s}' % ','.join(checkedItems))
+            model.setData(index, "{%s}" % ",".join(checkedItems))
         else:
             # use default
             QItemDelegate.setModelData(self, editor, model, index)
 
+
 class ManageComplexDialog(QDialog, FORM_CLASS):
     tableUpdated = pyqtSignal()
     markedToRemove = pyqtSignal(list)
+
     def __init__(self, iface, abstractDb, table):
         """
         Constructor.
         """
-        QDialog.__init__( self )
-        self.setupUi( self )
+        QDialog.__init__(self)
+        self.setupUi(self)
 
-        #qgis interface
+        # qgis interface
         self.iface = iface
 
-        #database conenction
+        # database conenction
         if not abstractDb:
-            QMessageBox.critical(self.iface.mainWindow(), self.tr("Critical!"), self.tr('Select a database before managing a complex!'))
+            QMessageBox.critical(
+                self.iface.mainWindow(),
+                self.tr("Critical!"),
+                self.tr("Select a database before managing a complex!"),
+            )
             return
         self.db = abstractDb.db
-        #table name
+        # table name
         self.table = table
-        #rows that are marked for removal
+        # rows that are marked for removal
         self.toBeRemoved = []
 
-        #adjusting the table name to match the correspondent qml file
-        fileName = table.replace('complexos_', '')
-        fileName = fileName.split('.')[-1]+'.qml'
+        # adjusting the table name to match the correspondent qml file
+        fileName = table.replace("complexos_", "")
+        fileName = fileName.split(".")[-1] + ".qml"
 
-        #obtaining the qml file path
-        qmlDirPath = ''
+        # obtaining the qml file path
+        qmlDirPath = ""
         try:
             qmlDirPath = abstractDb.getQmlDir()
         except Exception as e:
-            QMessageBox.critical(self.iface.mainWindow(), self.tr("Critical!"), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), 'DSGTools Plugin', Qgis.Critical)
+            QMessageBox.critical(
+                self.iface.mainWindow(),
+                self.tr("Critical!"),
+                self.tr("A problem occurred! Check log for details."),
+            )
+            QgsMessageLog.logMessage(":".join(e.args), "DSGTools Plugin", Qgis.Critical)
         qmlPath = os.path.join(qmlDirPath, fileName)
 
-        #getting the domain dictionary that will be used to generate the comboboxes
+        # getting the domain dictionary that will be used to generate the comboboxes
         try:
             parser = QmlParser(qmlPath)
             self.domainDict = parser.getDomainDict()
         except:
             self.domainDict = dict()
             pass
-        
+
         self.addRow.clicked.connect(self.addComplex)
         self.removeRow.clicked.connect(self.removeComplex)
         self.updateButton.clicked.connect(self.updateTable)
@@ -296,42 +326,56 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         """
         for key in self.domainDict:
             if isinstance(self.domainDict[key], dict):
-                #self.domainDict[key] in this case is a dict
+                # self.domainDict[key] in this case is a dict
                 self.generateCombo(key, self.domainDict[key])
             elif isinstance(self.domainDict[key], tuple):
-                #self.domainDict[key] in this case is a tuple where index 0 is the domain table and index 1 are the codes
+                # self.domainDict[key] in this case is a tuple where index 0 is the domain table and index 1 are the codes
                 self.generateList(key, self.domainDict[key])
 
     def generateCombo(self, column, domainValues):
         """
         Generates a combo box delegate
         """
-        #creating the delegate
-        combo = ComboBoxDelegate(self, domainValues, self.projectModel.fieldIndex(column))
-        self.tableView.setItemDelegateForColumn(self.projectModel.fieldIndex(column), combo)
+        # creating the delegate
+        combo = ComboBoxDelegate(
+            self, domainValues, self.projectModel.fieldIndex(column)
+        )
+        self.tableView.setItemDelegateForColumn(
+            self.projectModel.fieldIndex(column), combo
+        )
 
     def generateList(self, column, tupla):
         """
         Generates a lit widget delegate
         """
-        #making a dict in the same way used for the Combobox delegate
+        # making a dict in the same way used for the Combobox delegate
         valueRelation = self.makeValueRelationDict(tupla[0], tupla[1])
-        #creating the delagate
-        list = ListWidgetDelegate(self, valueRelation, self.projectModel.fieldIndex(column))
-        self.tableView.setItemDelegateForColumn(self.projectModel.fieldIndex(column), list)
+        # creating the delagate
+        list = ListWidgetDelegate(
+            self, valueRelation, self.projectModel.fieldIndex(column)
+        )
+        self.tableView.setItemDelegateForColumn(
+            self.projectModel.fieldIndex(column), list
+        )
 
     def makeValueRelationDict(self, table, codes):
         """
         Makes the value relation dictionary
         """
-        #query to obtain the dict with code names and related codes
+        # query to obtain the dict with code names and related codes
         ret = dict()
 
-        in_clause = '(%s)' % ",".join(map(str, codes))
-        if self.db.driverName() == 'QPSQL':
-            sql = 'select code, code_name from dominios.%s where code in %s' % (table, in_clause)
-        elif self.db.driverName() == 'QSQLITE':
-            sql = 'select code, code_name from dominios_%s where code in %s' % (table, in_clause)
+        in_clause = "(%s)" % ",".join(map(str, codes))
+        if self.db.driverName() == "QPSQL":
+            sql = "select code, code_name from dominios.%s where code in %s" % (
+                table,
+                in_clause,
+            )
+        elif self.db.driverName() == "QSQLITE":
+            sql = "select code, code_name from dominios_%s where code in %s" % (
+                table,
+                in_clause,
+            )
 
         query = QSqlQuery(sql, self.db)
         while next(query):
@@ -345,19 +389,19 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         """
         Updates the table view
         """
-        #setting the model in the view
+        # setting the model in the view
         self.projectModel = CustomTableModel(self.domainDict, None, self.db)
-        #adjusting the table
+        # adjusting the table
         self.projectModel.setTable(self.table)
-        #manual commit rule
+        # manual commit rule
         self.projectModel.setEditStrategy(QSqlTableModel.OnManualSubmit)
-        #selecting all item from the table
+        # selecting all item from the table
         self.projectModel.select()
-        #creating the comboboxes and listwidgets to map the domain values
+        # creating the comboboxes and listwidgets to map the domain values
         self.generateDelegates()
 
-        #case the first record is null we make some adjustments
-        #this is not supposed to happen
+        # case the first record is null we make some adjustments
+        # this is not supposed to happen
         record = self.projectModel.record(0)
         if not record.value("id"):
             adjustedRecord = self.adjustRecord(record)
@@ -365,10 +409,10 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
 
         self.tableView.setModel(self.projectModel)
 
-        #Hiding columns that point to other complexes so that the user can't change them
+        # Hiding columns that point to other complexes so that the user can't change them
         for i in range(self.projectModel.columnCount()):
             columnName = self.projectModel.headerData(i, Qt.Horizontal)
-            if 'id_' in columnName:
+            if "id_" in columnName:
                 self.tableView.hideColumn(i)
 
         self.tableView.show()
@@ -381,12 +425,12 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         adjustedRecord = self.adjustRecord(record)
         self.projectModel.insertRecord(self.projectModel.rowCount(), adjustedRecord)
 
-    def adjustRecord(self,record):
+    def adjustRecord(self, record):
         """
         Updates a existing record
         """
-        #insert a new record with an already determined uuid value
-        record.setValue("id",str(uuid4()))
+        # insert a new record with an already determined uuid value
+        record.setValue("id", str(uuid4()))
         record.setValue("nome", self.tr("edit this field"))
         for i in range(self.projectModel.columnCount()):
             columnName = self.projectModel.headerData(i, Qt.Horizontal)
@@ -398,11 +442,11 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         """
         Removes a complex from the complex table
         """
-        #getting the selected rows
+        # getting the selected rows
         selectionModel = self.tableView.selectionModel()
         selectedRows = selectionModel.selectedRows()
         for row in selectedRows:
-            #storing the complex to be removed
+            # storing the complex to be removed
             record = self.projectModel.record(row.row())
             uuid = str(record.value("id"))
             if uuid not in self.toBeRemoved:
@@ -422,8 +466,14 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         count = self.projectModel.rowCount()
         for i in range(count):
             record = self.projectModel.record(i)
-            if record.isNull('nome'):
-                QMessageBox.warning(self.iface.mainWindow(), self.tr("Warning!"), self.tr('The field: \'nome\' must be filled in all rows. Please, check and try again.'))
+            if record.isNull("nome"):
+                QMessageBox.warning(
+                    self.iface.mainWindow(),
+                    self.tr("Warning!"),
+                    self.tr(
+                        "The field: 'nome' must be filled in all rows. Please, check and try again."
+                    ),
+                )
                 return False
         return True
 
@@ -431,15 +481,19 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         """
         Updates the complex table
         """
-        #checking if the name field is filled
-        #Now the database checks the field "nome", therefore the method checkComplexNameField() is no longer needed
+        # checking if the name field is filled
+        # Now the database checks the field "nome", therefore the method checkComplexNameField() is no longer needed
 
-        #emit the signal to disassocite all features from the complexes marked for removal
+        # emit the signal to disassocite all features from the complexes marked for removal
         self.markedToRemove.emit(self.toBeRemoved)
-        #commmiting all pending changes
+        # commmiting all pending changes
         if not self.projectModel.submitAll():
-            #In case something went wrong we show the message to the user
-            QMessageBox.warning(self.iface.mainWindow(), self.tr("Error!"), self.projectModel.lastError().text())
+            # In case something went wrong we show the message to the user
+            QMessageBox.warning(
+                self.iface.mainWindow(),
+                self.tr("Error!"),
+                self.projectModel.lastError().text(),
+            )
 
-        #Emit the signal to update the complex tree
+        # Emit the signal to update the complex tree
         self.tableUpdated.emit()

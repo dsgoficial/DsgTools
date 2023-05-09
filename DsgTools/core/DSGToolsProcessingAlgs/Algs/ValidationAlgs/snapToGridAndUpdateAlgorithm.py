@@ -24,30 +24,39 @@ from PyQt5.QtCore import QCoreApplication
 
 import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterDistance,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsSpatialIndex, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsGeometry,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterDistance,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterField,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsWkbTypes,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
-    TOLERANCE = 'TOLERANCE'
-    OUTPUT = 'OUTPUT'
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
+    TOLERANCE = "TOLERANCE"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -56,30 +65,27 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry]
+                self.tr("Input layer"),
+                [QgsProcessing.TypeVectorAnyGeometry],
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
-
-        self.addParameter(
-            QgsProcessingParameterDistance(
-                self.TOLERANCE,
-                self.tr('Tolerance'),
-                parentParameterName=self.INPUT,
-                minValue=0,
-                defaultValue=0.001
-            )
+        param = QgsProcessingParameterDistance(
+            self.TOLERANCE,
+            self.tr("Tolerance"),
+            parentParameterName=self.INPUT,
+            minValue=0,
+            defaultValue=1e-10,
         )
+        param.setMetadata({'widget_wrapper':{'decimals': 12}})
+        self.addParameter(param)
         self.addOutput(
             QgsProcessingOutputVectorLayer(
-                self.OUTPUT,
-                self.tr('Original layer with features snapped to grid')
+                self.OUTPUT, self.tr("Original layer with features snapped to grid")
             )
         )
 
@@ -92,53 +98,39 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
-                self.invalidSourceError(
-                    parameters,
-                    self.INPUT
-                    )
-                )
-        onlySelected = self.parameterAsBool(
-            parameters,
-            self.SELECTED,
-            context
+                self.invalidSourceError(parameters, self.INPUT)
             )
-        tol = self.parameterAsDouble(
-            parameters,
-            self.TOLERANCE,
-            context
-            )
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Populating temp layer...'))
+        multiStepFeedback.pushInfo(self.tr("Populating temp layer..."))
         auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
             [inputLyr],
             geomType=inputLyr.wkbType(),
             onlySelected=onlySelected,
-            feedback=multiStepFeedback
-            )
+            feedback=multiStepFeedback,
+        )
 
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(
             self.tr(
-                'Snapping geometries from layer {input} to grid with size {tol}...'
-                ).format(input=inputLyr.name(), tol=tol)
-            )
+                "Snapping geometries from layer {input} to grid with size {tol}..."
+            ).format(input=inputLyr.name(), tol=tol)
+        )
         snappedLayer = algRunner.runSnapToGrid(
-            auxLyr,
-            tol,
-            context,
-            feedback=multiStepFeedback
-            )
+            auxLyr, tol, context, feedback=multiStepFeedback
+        )
 
         multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
+        multiStepFeedback.pushInfo(self.tr("Updating original layer..."))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
             [inputLyr],
             snappedLayer,
             feedback=multiStepFeedback,
-            onlySelected=onlySelected
-            )
+            onlySelected=onlySelected,
+        )
 
         return {self.OUTPUT: inputLyr}
 
@@ -150,21 +142,21 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'snaptogridandupdate'
+        return "snaptogridandupdate"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Snap to grid and update')
+        return self.tr("Snap to grid and update")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Manipulation Processes)')
+        return self.tr("Quality Assurance Tools (Manipulation Processes)")
 
     def groupId(self):
         """
@@ -174,10 +166,10 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Manipulation Processes)'
+        return "DSGTools: Quality Assurance Tools (Manipulation Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('SnapToGridAndUpdateAlgorithm', string)
+        return QCoreApplication.translate("SnapToGridAndUpdateAlgorithm", string)
 
     def createInstance(self):
         return SnapToGridAndUpdateAlgorithm()

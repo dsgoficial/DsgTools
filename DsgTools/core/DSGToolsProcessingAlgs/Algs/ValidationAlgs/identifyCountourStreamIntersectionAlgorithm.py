@@ -23,11 +23,18 @@ import concurrent.futures
 import os
 
 import processing
-from qgis.core import (QgsFeature, QgsFeatureSink, QgsField, QgsFields,
-                       QgsProcessing, QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+from qgis.core import (
+    QgsFeature,
+    QgsFeatureSink,
+    QgsField,
+    QgsFields,
+    QgsProcessing,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+)
 from qgis.PyQt.QtCore import QCoreApplication, QVariant
 from qgis.utils import iface
 
@@ -36,75 +43,88 @@ from .validationAlgorithm import ValidationAlgorithm
 
 class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
 
-    INPUT_STREAM = 'INPUT_STREAM'
-    INPUT_CONTOUR_LINES = 'INPUT_CONTOUR_LINES'
-    OUTPUT = 'OUTPUT'
-    RUNNING_INSIDE_MODEL = 'RUNNING_INSIDE_MODEL'
+    INPUT_STREAM = "INPUT_STREAM"
+    INPUT_CONTOUR_LINES = "INPUT_CONTOUR_LINES"
+    OUTPUT = "OUTPUT"
+    RUNNING_INSIDE_MODEL = "RUNNING_INSIDE_MODEL"
 
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                'INPUT_STREAM',
-                self.tr('Drainage layer'),
-                types=[QgsProcessing.TypeVectorLine]
+                "INPUT_STREAM",
+                self.tr("Drainage layer"),
+                types=[QgsProcessing.TypeVectorLine],
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                'INPUT_COUNTOUR_LINES',
-                self.tr('Contour levels layer'),
-                types=[QgsProcessing.TypeVectorLine]
+                "INPUT_COUNTOUR_LINES",
+                self.tr("Contour levels layer"),
+                types=[QgsProcessing.TypeVectorLine],
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.RUNNING_INSIDE_MODEL,
-                self.tr('Process is running inside model'),
+                self.tr("Process is running inside model"),
                 defaultValue=False,
             )
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.OUTPUT,
-                self.tr('Flags')
-            )
+            QgsProcessingParameterFeatureSink(self.OUTPUT, self.tr("Flags"))
         )
 
     def processAlgorithm(self, parameters, context, feedback):
 
-        streamLayerInput = self.parameterAsVectorLayer( parameters,'INPUT_STREAM', context )
-        
-        outputLinesSet, outputPointsSet = set(), set()
-        countourLayer = self.parameterAsVectorLayer( parameters,'INPUT_COUNTOUR_LINES', context )
-        runningInsideModel = self.parameterAsBool(parameters, self.RUNNING_INSIDE_MODEL, context)
+        streamLayerInput = self.parameterAsVectorLayer(
+            parameters, "INPUT_STREAM", context
+        )
 
-        feedback.setProgressText(self.tr('Verifying inconsistency'))
-        
+        outputLinesSet, outputPointsSet = set(), set()
+        countourLayer = self.parameterAsVectorLayer(
+            parameters, "INPUT_COUNTOUR_LINES", context
+        )
+        runningInsideModel = self.parameterAsBool(
+            parameters, self.RUNNING_INSIDE_MODEL, context
+        )
+
+        feedback.setProgressText(self.tr("Verifying inconsistency"))
+
         multiStepFeedback = QgsProcessingMultiStepFeedback(7, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Building intermediary structures'))
+        multiStepFeedback.pushInfo(self.tr("Building intermediary structures"))
 
-        auxStreamLayerInput = self.runAddCount(streamLayerInput, feedback=multiStepFeedback)
+        auxStreamLayerInput = self.runAddCount(
+            streamLayerInput, feedback=multiStepFeedback
+        )
         multiStepFeedback.setCurrentStep(1)
         self.runCreateSpatialIndex(auxStreamLayerInput, feedback=multiStepFeedback)
-        
+
         multiStepFeedback.setCurrentStep(2)
         auxCountourLayer = self.runAddCount(countourLayer, feedback=multiStepFeedback)
         multiStepFeedback.setCurrentStep(3)
         self.runCreateSpatialIndex(auxCountourLayer, feedback=multiStepFeedback)
         multiStepFeedback.setCurrentStep(4)
-        idDict = {feat['AUTO']: feat for feat in auxCountourLayer.getFeatures()}
-        
+        idDict = {feat["AUTO"]: feat for feat in auxCountourLayer.getFeatures()}
+
         multiStepFeedback.setCurrentStep(5)
-        multiStepFeedback.pushInfo(self.tr('Doing spatial join'))
-        spatialJoinOutput = self.runSpatialJoin(auxStreamLayerInput, auxCountourLayer, feedback=multiStepFeedback)
-        
+        multiStepFeedback.pushInfo(self.tr("Doing spatial join"))
+        spatialJoinOutput = self.runSpatialJoin(
+            auxStreamLayerInput, auxCountourLayer, feedback=multiStepFeedback
+        )
+
         multiStepFeedback.setCurrentStep(6)
-        multiStepFeedback.pushInfo(self.tr('Finding flags'))
-        
-        self.findProblems(multiStepFeedback, outputPointsSet, outputLinesSet, spatialJoinOutput, idDict)
+        multiStepFeedback.pushInfo(self.tr("Finding flags"))
+
+        self.findProblems(
+            multiStepFeedback,
+            outputPointsSet,
+            outputLinesSet,
+            spatialJoinOutput,
+            idDict,
+        )
 
         if outputPointsSet == set() and outputLinesSet == set():
             if runningInsideModel:
@@ -114,88 +134,91 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
                     context,
                     streamLayerInput.fields(),
                     QgsWkbTypes.Point,
-                    streamLayerInput.sourceCrs()
+                    streamLayerInput.sourceCrs(),
                 )
             else:
-                sink_id = self.tr('No flags found')
-                
-            return {self.OUTPUT: sink_id}  
-            
-        if outputPointsSet != set() :
-            sink_id = self.outLayer(parameters, context, outputPointsSet, streamLayerInput, 1)
+                sink_id = self.tr("No flags found")
+
+            return {self.OUTPUT: sink_id}
+
+        if outputPointsSet != set():
+            sink_id = self.outLayer(
+                parameters, context, outputPointsSet, streamLayerInput, QgsWkbTypes.Point
+            )
         if outputLinesSet != set():
-            sink_id = self.outLayer(parameters, context, outputLinesSet, streamLayerInput, 2)
+            sink_id = self.outLayer(
+                parameters, context, outputLinesSet, streamLayerInput, QgsWkbTypes.LineString
+            )
         return {self.OUTPUT: sink_id}
 
     def runSpatialJoin(self, streamLayerInput, countourLayer, feedback):
         output = processing.run(
-            'native:joinattributesbylocation',
+            "native:joinattributesbylocation",
             {
-                'INPUT': streamLayerInput,
-                'JOIN': countourLayer,
-                'PREDICATE': [0],
-                'JOIN_FIELDS': [],
-                'METHOD': 0,
-                'DISCARD_NONMATCHING': True,
-                'PREFIX': '',
-                'OUTPUT': 'TEMPORARY_OUTPUT' 
+                "INPUT": streamLayerInput,
+                "JOIN": countourLayer,
+                "PREDICATE": [0],
+                "JOIN_FIELDS": [],
+                "METHOD": 0,
+                "DISCARD_NONMATCHING": True,
+                "PREFIX": "",
+                "OUTPUT": "TEMPORARY_OUTPUT",
             },
-            feedback=feedback
+            feedback=feedback,
         )
-        return output['OUTPUT']
-    
+        return output["OUTPUT"]
+
     def runAddCount(self, inputLyr, feedback):
         output = processing.run(
             "native:addautoincrementalfield",
             {
-                'INPUT':inputLyr,
-                'FIELD_NAME':'AUTO',
-                'START':0,
-                'GROUP_FIELDS':[],
-                'SORT_EXPRESSION':'',
-                'SORT_ASCENDING':False,
-                'SORT_NULLS_FIRST':False,
-                'OUTPUT':'TEMPORARY_OUTPUT'
+                "INPUT": inputLyr,
+                "FIELD_NAME": "AUTO",
+                "START": 0,
+                "GROUP_FIELDS": [],
+                "SORT_EXPRESSION": "",
+                "SORT_ASCENDING": False,
+                "SORT_NULLS_FIRST": False,
+                "OUTPUT": "TEMPORARY_OUTPUT",
             },
-            feedback=feedback
+            feedback=feedback,
         )
-        return output['OUTPUT']
+        return output["OUTPUT"]
 
     def runCreateSpatialIndex(self, inputLyr, feedback):
         processing.run(
-            "native:createspatialindex",
-            {'INPUT':inputLyr},
-            feedback=feedback
+            "native:createspatialindex", {"INPUT": inputLyr}, feedback=feedback
         )
 
     def findProblems(self, feedback, outputPointsSet, outputLinesSet, inputLyr, idDict):
         total = 100.0 / inputLyr.featureCount() if inputLyr.featureCount() else 0
+
         def buildOutputs(riverFeat, feedback):
             if feedback.isCanceled():
                 return
             riverGeom = riverFeat.geometry()
-            if riverFeat['AUTO_2'] not in idDict:
+            if riverFeat["AUTO_2"] not in idDict:
                 return
-            countourGeom = idDict[riverFeat['AUTO_2']].geometry()
+            countourGeom = idDict[riverFeat["AUTO_2"]].geometry()
             intersection = countourGeom.intersection(riverGeom)
-            if intersection.isEmpty() or intersection.wkbType() == 1:
+            if intersection.isEmpty() or intersection.wkbType() == QgsWkbTypes.Point:
                 return
-            if intersection.wkbType() == 4:
+            if intersection.wkbType() == QgsWkbTypes.MultiPoint:
                 outputPointsSet.add(intersection)
-            if intersection.wkbType() in [2, 5]:
+            if intersection.wkbType() in [QgsWkbTypes.LineString, QgsWkbTypes.MultiLineString]:
                 outputLinesSet.add(intersection)
-        
+
         buildOutputsLambda = lambda x: buildOutputs(x, feedback)
-        
+
         pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count())
         futures = set()
         current_idx = 0
-        
+
         for feat in inputLyr.getFeatures():
             if feedback is not None and feedback.isCanceled():
                 break
             futures.add(pool.submit(buildOutputsLambda, feat))
-        
+
         for x in concurrent.futures.as_completed(futures):
             if feedback is not None and feedback.isCanceled():
                 break
@@ -204,7 +227,7 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
 
     def outLayer(self, parameters, context, geometry, streamLayer, geomtype):
         newFields = QgsFields()
-        newFields.append(QgsField('id', QVariant.Int))
+        newFields.append(QgsField("id", QVariant.Int))
 
         (sink, sink_id) = self.parameterAsSink(
             parameters,
@@ -212,13 +235,13 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
             context,
             newFields,
             geomtype,
-            streamLayer.sourceCrs()
+            streamLayer.sourceCrs(),
         )
         for idcounter, geom in enumerate(geometry):
             newFeat = QgsFeature()
             newFeat.setGeometry(geom)
             newFeat.setFields(newFields)
-            newFeat['id'] = idcounter
+            newFeat["id"] = idcounter
             sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
         return sink_id
 
@@ -230,21 +253,23 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifycountourstreamintersection'
+        return "identifycountourstreamintersection"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identifies intersections between contour lines and drainage lines')
+        return self.tr(
+            "Identifies intersections between contour lines and drainage lines"
+        )
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -254,10 +279,12 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyCountourStreamIntersectionAlgorithm', string)
+        return QCoreApplication.translate(
+            "IdentifyCountourStreamIntersectionAlgorithm", string
+        )
 
     def createInstance(self):
         return IdentifyCountourStreamIntersectionAlgorithm()

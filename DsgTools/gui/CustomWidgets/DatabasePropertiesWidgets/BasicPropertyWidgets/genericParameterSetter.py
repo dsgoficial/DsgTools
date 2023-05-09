@@ -28,11 +28,13 @@ from qgis.PyQt.QtCore import pyqtSlot, Qt
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'genericParameterSetter.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "genericParameterSetter.ui")
+)
+
 
 class GenericParameterSetter(QtWidgets.QDialog, FORM_CLASS):
-    def __init__(self, parent = None, nameList = None, hideDbUi = False):
+    def __init__(self, parent=None, nameList=None, hideDbUi=False):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.nameList = nameList
@@ -42,12 +44,12 @@ class GenericParameterSetter(QtWidgets.QDialog, FORM_CLASS):
             self.connectionWidget.hide()
         else:
             self.connectionWidget.tabWidget.removeTab(1)
-        regex = QtCore.QRegExp('[a-z][a-z\_0-9]*')
+        regex = QtCore.QRegExp("[a-z][a-z\_0-9]*")
         validator = QtGui.QRegExpValidator(regex, self.customNameLineEdit)
         self.customNameLineEdit.setValidator(validator)
-    
+
     def validateUi(self):
-        if self.customNameLineEdit.text() == '':
+        if self.customNameLineEdit.text() == "":
             return False
         if self.nameList:
             if self.customNameLineEdit.text() in self.nameList:
@@ -56,33 +58,39 @@ class GenericParameterSetter(QtWidgets.QDialog, FORM_CLASS):
             if self.connectionWidget.abstractDb == None:
                 return False
         return True
-    
+
     def validateUiReason(self):
-        validateReason = ''
-        if self.customNameLineEdit.text() == '':
-            validateReason += self.tr('Enter a parameter name!\n')
+        validateReason = ""
+        if self.customNameLineEdit.text() == "":
+            validateReason += self.tr("Enter a parameter name!\n")
         if self.nameList:
             if self.customNameLineEdit.text() in self.nameList:
-                validateReason += self.tr('Parameter already exists! Choose another name!\n')
+                validateReason += self.tr(
+                    "Parameter already exists! Choose another name!\n"
+                )
         if not self.isHidden:
             if self.connectionWidget.abstractDb == None:
-                validateReason += self.tr('Select a template database!\n')
+                validateReason += self.tr("Select a template database!\n")
         return validateReason
-    
+
     @pyqtSlot(bool)
     def on_okPushButton_clicked(self):
         if not self.validateUi():
             reason = self.validateUiReason()
-            QMessageBox.warning(self, self.tr('Warning!'), reason)
+            QMessageBox.warning(self, self.tr("Warning!"), reason)
         else:
             self.done(1)
-    
+
     @pyqtSlot(bool)
-    def on_cancelPushButton_clicked(self):   
+    def on_cancelPushButton_clicked(self):
         self.done(0)
 
     def getParameters(self):
         if self.isHidden:
             return self.customNameLineEdit.text()
         else:
-            return (self.connectionWidget.abstractDb , self.customNameLineEdit.text(), self.connectionWidget.abstractDb.getDatabaseVersion())
+            return (
+                self.connectionWidget.abstractDb,
+                self.customNameLineEdit.text(),
+                self.connectionWidget.abstractDb.getDatabaseVersion(),
+            )

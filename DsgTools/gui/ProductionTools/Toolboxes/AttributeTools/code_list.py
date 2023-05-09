@@ -29,8 +29,8 @@ from qgis.PyQt.QtWidgets import QTableWidgetItem, QDockWidget
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.core import QgsVectorLayer, QgsProject
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'code_list.ui'))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), "code_list.ui"))
+
 
 class CodeList(QDockWidget, FORM_CLASS):
     def __init__(self, iface):
@@ -53,7 +53,7 @@ class CodeList(QDockWidget, FORM_CLASS):
         """
         Gets all layers with value maps.
         :param preferEdgvMapping: (bool) whether edgv mapping should be preferred, if exists.
-        :return: (dict) a map from layer to list of fields with a value map. 
+        :return: (dict) a map from layer to list of fields with a value map.
         """
         classFieldMap = defaultdict(dict)
         for layer in self.iface.mapCanvas().layers():
@@ -68,23 +68,26 @@ class CodeList(QDockWidget, FORM_CLASS):
             for field in layer.fields():
                 fieldName = field.name()
                 fieldConfig = field.editorWidgetSetup().config()
-                if 'map' not in fieldConfig or fieldName in ('UseHtml', 'IsMultiline'):
+                if "map" not in fieldConfig or fieldName in ("UseHtml", "IsMultiline"):
                     continue
-                if isinstance(fieldConfig['map'], list):
-                    for map_ in fieldConfig['map']:
+                if isinstance(fieldConfig["map"], list):
+                    for map_ in fieldConfig["map"]:
                         if fieldName not in classFieldMap[layername]:
                             classFieldMap[layername][fieldName] = map_
                         else:
                             classFieldMap[layername][fieldName].update(map_)
                 else:
+
                     def sortingMethod(item):
                         try:
                             return int(item[1])
                         except:
                             return item[1]
+
                     classFieldMap[layername][fieldName] = {
-                        k: v for k, v in sorted(
-                            fieldConfig['map'].items(), key=sortingMethod
+                        k: v
+                        for k, v in sorted(
+                            fieldConfig["map"].items(), key=sortingMethod
                         )
                     }
         return classFieldMap
@@ -118,16 +121,16 @@ class CodeList(QDockWidget, FORM_CLASS):
         Sets current class-fields map data to combo boxes.
         """
         self.classComboBox.clear()
-        self.classComboBox.addItem(self.tr('Select a layer...'))
+        self.classComboBox.addItem(self.tr("Select a layer..."))
         self.classComboBox.addItems(self.availableLayers())
 
-    @pyqtSlot(int, name='on_classComboBox_currentIndexChanged')
+    @pyqtSlot(int, name="on_classComboBox_currentIndexChanged")
     def resetFields(self):
         """
         Resets current available fields
         """
         self.comboBox.clear()
-        self.comboBox.addItem(self.tr('Select a field...'))
+        self.comboBox.addItem(self.tr("Select a field..."))
         self.comboBox.addItems(self.availableFields())
 
     def layerByName(self, layerName):
@@ -144,20 +147,24 @@ class CodeList(QDockWidget, FORM_CLASS):
         Gets current selected layer name.
         :return: (str) current layer's name.
         """
-        return self.classComboBox.currentText().split(': ')[-1]
+        return self.classComboBox.currentText().split(": ")[-1]
 
     def availableFieldsFromLayerName(self, layerName):
         """
         Gets all available fields that have value maps.
         :param layerName: (str) layer to have its layers checked.
-        :return: (list-of-str) list of field names available. 
+        :return: (list-of-str) list of field names available.
         """
-        return [] if layerName not in self._classFieldMap else list(self._classFieldMap[layerName].keys())
+        return (
+            []
+            if layerName not in self._classFieldMap
+            else list(self._classFieldMap[layerName].keys())
+        )
 
     def availableFields(self):
         """
         Gets all available fields that have value maps from current layer selection.
-        :return: (list-of-str) list of field names available. 
+        :return: (list-of-str) list of field names available.
         """
         return self.availableFieldsFromLayerName(self.currentLayerName())
 
@@ -175,7 +182,10 @@ class CodeList(QDockWidget, FORM_CLASS):
         :param layerName: (str) field name to have its map retrieved.
         :return: (dict) field map.
         """
-        if layerName in self._classFieldMap and fieldName in self._classFieldMap[layerName]:
+        if (
+            layerName in self._classFieldMap
+            and fieldName in self._classFieldMap[layerName]
+        ):
             return self._classFieldMap[layerName][fieldName]
         return dict()
 
@@ -185,7 +195,7 @@ class CodeList(QDockWidget, FORM_CLASS):
         :return: (str) field name.
         """
         ct = self.comboBox.currentText()
-        return '' if ct == self.tr('Select a field...') else ct
+        return "" if ct == self.tr("Select a field...") else ct
 
     def currentFieldMap(self):
         """
@@ -194,7 +204,7 @@ class CodeList(QDockWidget, FORM_CLASS):
         """
         return self.fieldMapFromFieldName(self.currentField(), self.currentLayerName())
 
-    @pyqtSlot(bool, name='on_refreshButton_clicked')
+    @pyqtSlot(bool, name="on_refreshButton_clicked")
     def setInitialState(self):
         """
         Sets interface components to its initial state.
@@ -212,10 +222,10 @@ class CodeList(QDockWidget, FORM_CLASS):
         :return: (str) current EDGV version.
         """
         # this method is not supposed to be here and must be crossed out on
-        # future database abstraction refactor.  
+        # future database abstraction refactor.
         sql = {
             "QSQLITE": "SELECT edgvversion FROM public_db_metadata;",
-            "QPSQL": "SELECT edgvversion FROM public.db_metadata;"
+            "QPSQL": "SELECT edgvversion FROM public.db_metadata;",
         }.pop(db.driverName(), "")
         query = QSqlQuery(sql, db)
         return query.value(0) if query.next() else ""
@@ -230,40 +240,47 @@ class CodeList(QDockWidget, FORM_CLASS):
         :return: (dict) value map for all attributes that have one.
         """
         ret = defaultdict(dict)
-        currentLayer = table if isinstance(table, QgsVectorLayer) else self.layerByName(table)
+        currentLayer = (
+            table if isinstance(table, QgsVectorLayer) else self.layerByName(table)
+        )
         if currentLayer.isValid():
             try:
                 uri = currentLayer.dataProvider().uri()
-                if uri.host() == '':
-                    db = QSqlDatabase('QSQLITE')
+                if uri.host() == "":
+                    db = QSqlDatabase("QSQLITE")
                     db.setDatabaseName(
-                        uri.uri().split("|")[0].strip() if uri.uri().split("|")[0].strip().endswith(".gpkg") \
-                            else uri.database()
+                        uri.uri().split("|")[0].strip()
+                        if uri.uri().split("|")[0].strip().endswith(".gpkg")
+                        else uri.database()
                     )
-                    sql = 'select code, code_name from dominios_{field} order by code'
+                    sql = "select code, code_name from dominios_{field} order by code"
                 else:
-                    db = QSqlDatabase('QPSQL')
+                    db = QSqlDatabase("QPSQL")
                     db.setHostName(uri.host())
                     db.setPort(int(uri.port()))
                     db.setDatabaseName(uri.database())
                     db.setUserName(uri.username())
                     db.setPassword(uri.password())
-                    sql = 'select code, code_name from dominios.{field} order by code'
+                    sql = "select code, code_name from dominios.{field} order by code"
                 if not db.open():
                     db.close()
                     return ret
                 for field in currentLayer.fields():
                     fieldName = field.name()
                     if fieldName in self.specialEdgvAttributes():
-                        # EDGV "special" attributes that are have different domains depending on 
+                        # EDGV "special" attributes that are have different domains depending on
                         # which class it belongs to
                         if self.edgvVersion(db) in ("2.1.3 Pro", "3.0 Pro"):
                             cat = table if isinstance(table, str) else table.name()
                             # Pro versions now follow the logic "{attribute}_{CLASS_NAME}"
                             cat = cat.rsplit("_", 1)[0].split("_", 1)[-1]
                         else:
-                            cat = (table if isinstance(table, str) else table.name()).split("_")[0]
-                        fieldN = "{attribute}_{cat}".format(attribute=fieldName, cat=cat)
+                            cat = (
+                                table if isinstance(table, str) else table.name()
+                            ).split("_")[0]
+                        fieldN = "{attribute}_{cat}".format(
+                            attribute=fieldName, cat=cat
+                        )
                         query = QSqlQuery(sql.format(field=fieldN), db)
                     else:
                         query = QSqlQuery(sql.format(field=fieldName), db)
@@ -272,7 +289,7 @@ class CodeList(QDockWidget, FORM_CLASS):
                     while query.next():
                         code = str(query.value(0))
                         code_name = query.value(1)
-                        ret[fieldName][code_name] = code    
+                        ret[fieldName][code_name] = code
                 db.close()
             except:
                 pass
@@ -282,7 +299,7 @@ class CodeList(QDockWidget, FORM_CLASS):
         """
         Gets the list of attributes shared by many EDGV classes and have a different domain
         depending on which category the EDGV class belongs to.
-        :return: (list-of-str) list of "special" EDGV classes. 
+        :return: (list-of-str) list of "special" EDGV classes.
         """
         return ["finalidade", "relacionado", "coincidecomdentrode", "tipo"]
 
@@ -295,31 +312,38 @@ class CodeList(QDockWidget, FORM_CLASS):
         :return: (dict) value map.
         """
         ret = dict()
-        currentLayer = table if isinstance(table, QgsVectorLayer) else self.layerByName(table)
+        currentLayer = (
+            table if isinstance(table, QgsVectorLayer) else self.layerByName(table)
+        )
         if currentLayer.isValid():
             try:
                 uri = currentLayer.dataProvider().uri()
                 field = field or self.currentField()
                 if field in self.specialEdgvAttributes():
-                    # EDGV "special" attributes that are have different domains depending on 
+                    # EDGV "special" attributes that are have different domains depending on
                     # which class it belongs to
                     category = self.currentLayerName().split("_")[0]
                     field = "{attribute}_{cat}".format(attribute=field, cat=category)
-                if uri.host() == '':
-                    db = QSqlDatabase('QSQLITE')
+                if uri.host() == "":
+                    db = QSqlDatabase("QSQLITE")
                     db.setDatabaseName(
-                        uri.uri().split("|")[0].strip() if uri.uri().split("|")[0].strip().endswith(".gpkg") \
-                            else uri.database()
+                        uri.uri().split("|")[0].strip()
+                        if uri.uri().split("|")[0].strip().endswith(".gpkg")
+                        else uri.database()
                     )
-                    sql = 'select code, code_name from dominios_{field} order by code'.format(field=field)
+                    sql = "select code, code_name from dominios_{field} order by code".format(
+                        field=field
+                    )
                 else:
-                    db = QSqlDatabase('QPSQL')
+                    db = QSqlDatabase("QPSQL")
                     db.setHostName(uri.host())
                     db.setPort(int(uri.port()))
                     db.setDatabaseName(uri.database())
                     db.setUserName(uri.username())
                     db.setPassword(uri.password())
-                    sql = 'select code, code_name from dominios.{field} order by code'.format(field=field)    
+                    sql = "select code, code_name from dominios.{field} order by code".format(
+                        field=field
+                    )
                 if not db.open():
                     db.close()
                     return ret
@@ -342,7 +366,7 @@ class CodeList(QDockWidget, FORM_CLASS):
         """
         return self.getEdgvDomainsFromTableName(self.currentLayerName())
 
-    @pyqtSlot(int, name='on_comboBox_currentIndexChanged')
+    @pyqtSlot(int, name="on_comboBox_currentIndexChanged")
     def populateFieldsTable(self):
         """
         Populates field map to codelist table.

@@ -27,44 +27,47 @@ import processing, os, requests
 from time import sleep
 from qgis.PyQt.Qt import QVariant
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterExpression,
-                       QgsProcessingException,
-                       QgsProcessingParameterString,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterType,
-                       QgsProcessingParameterCrs,
-                       QgsCoordinateTransform,
-                       QgsProject,
-                       QgsCoordinateReferenceSystem,
-                       QgsField,
-                       QgsFields)
+from qgis.core import (
+    QgsProcessing,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFeatureSink,
+    QgsFeature,
+    QgsDataSourceUri,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsGeometry,
+    QgsProcessingParameterField,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterFile,
+    QgsProcessingParameterExpression,
+    QgsProcessingException,
+    QgsProcessingParameterString,
+    QgsProcessingParameterDefinition,
+    QgsProcessingParameterType,
+    QgsProcessingParameterCrs,
+    QgsCoordinateTransform,
+    QgsProject,
+    QgsCoordinateReferenceSystem,
+    QgsField,
+    QgsFields,
+)
+
 
 class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
-    INPUT = 'INPUT'
-    STOP_SCALE = 'STOP_SCALE'
-    XSUBDIVISIONS = 'XSUBDIVISIONS'
-    YSUBDIVISIONS = 'YSUBDIVISIONS'
-    OUTPUT = 'OUTPUT'
+    INPUT = "INPUT"
+    STOP_SCALE = "STOP_SCALE"
+    XSUBDIVISIONS = "XSUBDIVISIONS"
+    YSUBDIVISIONS = "YSUBDIVISIONS"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -74,45 +77,45 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input Polygon Layer'),
-                [QgsProcessing.TypeVectorPolygon]
+                self.tr("Input Polygon Layer"),
+                [QgsProcessing.TypeVectorPolygon],
             )
         )
 
         self.scales = [
-            '1000k',
-            '500k',
-            '250k',
-            '100k',
-            '50k',
-            '25k',
-            '10k',
-            '5k',
-            '2k',
-            '1k'
+            "1000k",
+            "500k",
+            "250k",
+            "100k",
+            "50k",
+            "25k",
+            "10k",
+            "5k",
+            "2k",
+            "1k",
         ]
 
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.STOP_SCALE,
-                self.tr('Desired scale'),
+                self.tr("Desired scale"),
                 options=self.scales,
-                defaultValue=0
+                defaultValue=0,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.XSUBDIVISIONS,
-                self.tr('Number of subdivisions on x-axis'),
-                defaultValue=3
+                self.tr("Number of subdivisions on x-axis"),
+                defaultValue=3,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.YSUBDIVISIONS,
-                self.tr('Number of subdivisions on y-axis'),
+                self.tr("Number of subdivisions on y-axis"),
                 defaultValue=3,
                 minValue=0,
                 type=QgsProcessingParameterNumber.Integer,
@@ -120,10 +123,7 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.OUTPUT,
-                self.tr('Created Frames')
-            )
+            QgsProcessingParameterFeatureSink(self.OUTPUT, self.tr("Created Frames"))
         )
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -131,44 +131,29 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         featureHandler = FeatureHandler()
-        inputLyr = self.parameterAsVectorLayer(
-            parameters,
-            self.INPUT,
-            context
-        )
+        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
-                self.invalidSourceError(
-                    parameters, self.INPUT
-                )
+                self.invalidSourceError(parameters, self.INPUT)
             )
-        stopScaleIdx = self.parameterAsEnum(
-            parameters,
-            self.STOP_SCALE,
-            context
-        )
+        stopScaleIdx = self.parameterAsEnum(parameters, self.STOP_SCALE, context)
         stopScale = self.scales[stopScaleIdx]
-        stopScale = int(stopScale.replace('k', ''))
+        stopScale = int(stopScale.replace("k", ""))
         fields = QgsFields()
-        fields.append(QgsField('inom', QVariant.String))
-        fields.append(QgsField('mi', QVariant.String))
+        fields.append(QgsField("inom", QVariant.String))
+        fields.append(QgsField("mi", QVariant.String))
         crs = inputLyr.crs()
         xSubdivisions = self.parameterAsInt(parameters, self.XSUBDIVISIONS, context)
         ySubdivisions = self.parameterAsInt(parameters, self.YSUBDIVISIONS, context)
         (output_sink, output_sink_id) = self.parameterAsSink(
-            parameters,
-            self.OUTPUT,
-            context,
-            fields,
-            QgsWkbTypes.Polygon,
-            crs
+            parameters, self.OUTPUT, context, fields, QgsWkbTypes.Polygon, crs
         )
         featureList = []
         coordinateTransformer = QgsCoordinateTransform(
             QgsCoordinateReferenceSystem(crs.geographicCrsAuthId()),
             crs,
-            QgsProject.instance()
-            )
+            QgsProject.instance(),
+        )
         featureHandler.getSystematicGridFeaturesWithConstraint(
             featureList,
             inputLyr,
@@ -177,19 +162,16 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
             fields,
             xSubdivisions=xSubdivisions,
             ySubdivisions=ySubdivisions,
-            feedback=feedback
+            feedback=feedback,
         )
         list(
             map(
-                lambda x: output_sink.addFeature(
-                    x,
-                    QgsFeatureSink.FastInsert)
-                ,
-                featureList
+                lambda x: output_sink.addFeature(x, QgsFeatureSink.FastInsert),
+                featureList,
             )
         )
 
-        return {'OUTPUT':output_sink_id}
+        return {"OUTPUT": output_sink_id}
 
     def name(self):
         """
@@ -199,21 +181,21 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'createframeswithconstraintalgorithm'
+        return "createframeswithconstraintalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Generate Systematic Grid Related to Layer')
+        return self.tr("Generate Systematic Grid Related to Layer")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Other Algorithms')
+        return self.tr("Other Algorithms")
 
     def groupId(self):
         """
@@ -223,10 +205,10 @@ class CreateFramesWithConstraintAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Other Algorithms'
+        return "DSGTools: Other Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate('CreateFramesWithConstraintAlgorithm', string)
+        return QCoreApplication.translate("CreateFramesWithConstraintAlgorithm", string)
 
     def createInstance(self):
         return CreateFramesWithConstraintAlgorithm()

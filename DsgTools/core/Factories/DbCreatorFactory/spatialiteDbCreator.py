@@ -29,35 +29,60 @@ from DsgTools.core.Factories.DbCreatorFactory.dbCreator import DbCreator
 from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 from DsgTools.core.dsgEnums import DsgEnums
 
+
 class SpatialiteDbCreator(DbCreator):
-    
-    def __init__(self, createParam, parentWidget = None):
-        super(self.__class__,self).__init__(createParam)
+    def __init__(self, createParam, parentWidget=None):
+        super(self.__class__, self).__init__(createParam)
         self.parentWidget = parentWidget
-    
+
     def instantiateNewDb(self, dbPath):
         newDb = self.dbFactory.createDbFactory(DsgEnums.DriverSpatiaLite)
         newDb.connectDatabase(dbPath)
         return newDb
-    
+
     def getTemplateLocation(self, version):
         currentPath = os.path.dirname(__file__)
-        if version == '2.1.3':
-            edgvPath = os.path.join(currentPath,'..','..','..','core','DbModels','SpatiaLite', '213', 'seed_edgv213.sqlite')
-        elif version == '3.0':
-            edgvPath = os.path.join(currentPath,'..','..','..','core','DbModels','SpatiaLite', '3', 'seed_edgv3.sqlite')
+        if version == "2.1.3":
+            edgvPath = os.path.join(
+                currentPath,
+                "..",
+                "..",
+                "..",
+                "core",
+                "DbModels",
+                "SpatiaLite",
+                "213",
+                "seed_edgv213.sqlite",
+            )
+        elif version == "3.0":
+            edgvPath = os.path.join(
+                currentPath,
+                "..",
+                "..",
+                "..",
+                "core",
+                "DbModels",
+                "SpatiaLite",
+                "3",
+                "seed_edgv3.sqlite",
+            )
         return edgvPath
-    
-    def createDb(self, dbName, srid, paramDict = dict(), parentWidget = None):
-        destination = os.path.join(self.outputDir,dbName+'.sqlite')
-        if 'version' not in list(paramDict.keys()):
-            raise Exception('Undefined database version')
-        edgvPath = self.getTemplateLocation(paramDict['version'])
-        f = open(edgvPath,'rb')
-        g = open(destination,'wb')
+
+    def createDb(self, dbName, srid, paramDict=dict(), parentWidget=None):
+        destination = os.path.join(self.outputDir, dbName + ".sqlite")
+        if "version" not in list(paramDict.keys()):
+            raise Exception("Undefined database version")
+        edgvPath = self.getTemplateLocation(paramDict["version"])
+        f = open(edgvPath, "rb")
+        g = open(destination, "wb")
         x = f.readlines()
         if parentWidget:
-            progress = ProgressWidget(1,len(x)+2,self.tr('Creating Spatialite {0}... ').format(dbName), parent = parentWidget)
+            progress = ProgressWidget(
+                1,
+                len(x) + 2,
+                self.tr("Creating Spatialite {0}... ").format(dbName),
+                parent=parentWidget,
+            )
             progress.initBar()
         for i in x:
             g.write(i)
@@ -65,7 +90,7 @@ class SpatialiteDbCreator(DbCreator):
                 progress.step()
         g.close()
         f.close()
-        #TODO: put defineSrid into AbstractDb
+        # TODO: put defineSrid into AbstractDb
         self.defineSrid(destination, srid)
         if parentWidget:
             progress.step()
@@ -73,11 +98,11 @@ class SpatialiteDbCreator(DbCreator):
         if parentWidget:
             progress.step()
         return newDb
-    
+
     def defineSrid(self, destination, srid):
         con = sqlite3.connect(destination)
         cursor = con.cursor()
         srid_sql = (srid,)
-        cursor.execute("UPDATE geometry_columns SET srid=?",srid_sql)
+        cursor.execute("UPDATE geometry_columns SET srid=?", srid_sql)
         con.commit()
         con.close()

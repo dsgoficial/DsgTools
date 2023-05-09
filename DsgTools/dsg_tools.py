@@ -39,8 +39,11 @@ from qgis.utils import showPluginHelp
 from qgis.core import QgsApplication
 
 from .gui.guiManager import GuiManager
-from .core.DSGToolsProcessingAlgs.dsgtoolsProcessingAlgorithmProvider import DSGToolsProcessingAlgorithmProvider
+from .core.DSGToolsProcessingAlgs.dsgtoolsProcessingAlgorithmProvider import (
+    DSGToolsProcessingAlgorithmProvider,
+)
 from .Modules.acquisitionMenu.controllers.acquisitionMenuCtrl import AcquisitionMenuCtrl
+
 
 class DsgTools(object):
     """QGIS Plugin Implementation."""
@@ -56,25 +59,24 @@ class DsgTools(object):
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
         # initialize locale
-        locale = QSettings().value('locale/userLocale')[0:2]
+        locale = QSettings().value("locale/userLocale")[0:2]
         locale_path = os.path.join(
-            self.plugin_dir,
-            'i18n',
-            'DsgTools_{}.qm'.format(locale))
+            self.plugin_dir, "i18n", "DsgTools_{}.qm".format(locale)
+        )
 
         if os.path.exists(locale_path):
             self.translator = QTranslator()
             self.translator.load(locale_path)
 
-            if qVersion() > '4.3.3':
+            if qVersion() > "4.3.3":
                 QCoreApplication.installTranslator(self.translator)
 
         # Create the dialog (after translation) and keep reference
         # Declare instance attributes
         self.actions = []
-        self.menu = '&DSGTools'
-        self.toolbar = self.iface.addToolBar(u'DsgTools')
-        self.toolbar.setObjectName(u'DsgTools')
+        self.menu = "&DSGTools"
+        self.toolbar = self.iface.addToolBar("DsgTools")
+        self.toolbar.setObjectName("DsgTools")
 
         self.dsgTools = None
         self.menuBar = self.iface.mainWindow().menuBar()
@@ -90,7 +92,7 @@ class DsgTools(object):
         :rtype: QString
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('DsgTools', message)
+        return QCoreApplication.translate("DsgTools", message)
 
     def unload(self):
         """
@@ -98,9 +100,7 @@ class DsgTools(object):
         """
         self.guiManager.unload()
         for action in self.actions:
-            self.iface.removePluginMenu(
-                '&DSGTools',
-                action)
+            self.iface.removePluginMenu("&DSGTools", action)
             self.iface.removeToolBarIcon(action)
             self.iface.unregisterMainWindowAction(action)
 
@@ -117,13 +117,17 @@ class DsgTools(object):
         """
 
         self.dsgTools = QMenu(self.iface.mainWindow())
-        self.dsgTools.setObjectName(u'DsgTools')
-        self.dsgTools.setTitle(u'DSGTools')
-        self.menuBar.insertMenu(self.iface.firstRightStandardMenu().menuAction(), self.dsgTools)
-        #GuiManager
-        self.guiManager = GuiManager(self.iface, parentMenu = self.dsgTools, toolbar = self.toolbar)
+        self.dsgTools.setObjectName("DsgTools")
+        self.dsgTools.setTitle("DSGTools")
+        self.menuBar.insertMenu(
+            self.iface.firstRightStandardMenu().menuAction(), self.dsgTools
+        )
+        # GuiManager
+        self.guiManager = GuiManager(
+            self.iface, parentMenu=self.dsgTools, toolbar=self.toolbar
+        )
         self.guiManager.initGui()
-        #provider
+        # provider
         QgsApplication.processingRegistry().addProvider(self.provider)
 
     def getAcquisitionMenu(self):

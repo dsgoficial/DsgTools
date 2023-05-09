@@ -29,29 +29,37 @@ from qgis.utils import iface
 from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QIcon, QColor, QKeySequence
 from qgis.PyQt.QtCore import Qt, QSize, pyqtSlot, QSettings, pyqtSignal
-from qgis.PyQt.QtWidgets import (QWidget,
-                                 QSpinBox,
-                                 QLineEdit,
-                                 QCheckBox,
-                                 QComboBox,
-                                 QPushButton,
-                                 QHBoxLayout,
-                                 QMessageBox,
-                                 QDoubleSpinBox)
+from qgis.PyQt.QtWidgets import (
+    QWidget,
+    QSpinBox,
+    QLineEdit,
+    QCheckBox,
+    QComboBox,
+    QPushButton,
+    QHBoxLayout,
+    QMessageBox,
+    QDoubleSpinBox,
+)
 
 from DsgTools.core.Utils.utils import Utils, MessageRaiser
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from DsgTools.gui.ProductionTools.Toolboxes.CustomFeatureToolBox.customButtonSetup import CustomButtonSetup, CustomFeatureButton
+from DsgTools.gui.ProductionTools.Toolboxes.CustomFeatureToolBox.customButtonSetup import (
+    CustomButtonSetup,
+    CustomFeatureButton,
+)
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'buttonPropWidget.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "buttonPropWidget.ui")
+)
 
 utils = Utils()
+
 
 class ButtonPropWidget(QWidget, FORM_CLASS):
     # col enum
     COL_COUNT = 5
     ATTR_COL, VAL_COL, PK_COL, EDIT_COL, IGNORED_COL = range(COL_COUNT)
+
     def __init__(self, parent=None, button=None):
         """
         Class constructor.
@@ -61,8 +69,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         super(ButtonPropWidget, self).__init__(parent)
         self.setupUi(self)
         self.mMapLayerComboBox.setFilters(
-            QgsMapLayerProxyModel.HasGeometry|
-            QgsMapLayerProxyModel.WritableLayer
+            QgsMapLayerProxyModel.HasGeometry | QgsMapLayerProxyModel.WritableLayer
         )
         self.button = button or CustomFeatureButton()
         self.fillToolComboBox()
@@ -72,10 +79,15 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         self.keywordCheckBox.toggled.connect(self.keywordLineEdit.setEnabled)
         self.shortcutCheckBox.toggled.connect(self.shortcutWidget.setEnabled)
         self.mMapLayerComboBox.layerChanged.connect(self.updateFieldTable)
-        self.attributeTableWidget.setHorizontalHeaderLabels([
-            self.tr("Attribute"), self.tr("Value"), self.tr("PK"),
-            self.tr("Editable"), self.tr("Ignored")
-        ])
+        self.attributeTableWidget.setHorizontalHeaderLabels(
+            [
+                self.tr("Attribute"),
+                self.tr("Value"),
+                self.tr("PK"),
+                self.tr("Editable"),
+                self.tr("Ignored"),
+            ]
+        )
         header = self.attributeTableWidget.verticalHeader()
         header.setSectionResizeMode(header.ResizeToContents)
         self.updateFieldTable()
@@ -90,12 +102,14 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         mb = QMessageBox()
         title = title or self.tr("Confirm action")
         if showNo:
-            return QMessageBox.question(
-                self, title, msg, QMessageBox.Yes | QMessageBox.No
-            ) == QMessageBox.Yes
+            return (
+                QMessageBox.question(self, title, msg, QMessageBox.Yes | QMessageBox.No)
+                == QMessageBox.Yes
+            )
         else:
-            return QMessageBox.question(
-                self, title, msg, QMessageBox.Ok) == QMessageBox.Ok
+            return (
+                QMessageBox.question(self, title, msg, QMessageBox.Ok) == QMessageBox.Ok
+            )
 
     def fillToolComboBox(self):
         """
@@ -106,12 +120,15 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         # method, from CustomFeatureButton
         tools = {
             self.tr("QGIS default feature extraction tool"): QIcon(""),
-            self.tr("DSGTools: Free Hand Acquisition"): \
-                QIcon(':/plugins/DsgTools/icons/free_hand.png'),
-            self.tr("QGIS Circle extraction tool"): \
-                QIcon(':/plugins/DsgTools/icons/circle.png'),
-            self.tr("DSGTools: Right Degree Angle Digitizing"): \
-                QIcon(':/plugins/DsgTools/icons/home.png')
+            self.tr("DSGTools: Free Hand Acquisition"): QIcon(
+                ":/plugins/DsgTools/icons/free_hand.png"
+            ),
+            self.tr("QGIS Circle extraction tool"): QIcon(
+                ":/plugins/DsgTools/icons/circle.png"
+            ),
+            self.tr("DSGTools: Right Degree Angle Digitizing"): QIcon(
+                ":/plugins/DsgTools/icons/home.png"
+            ),
         }
         for idx, (tool, icon) in enumerate(tools.items()):
             self.toolComboBox.insertItem(idx, tool)
@@ -131,7 +148,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         :return: (str) button name read from GUI.
         """
         return self.nameLineEdit.text().strip()
-    
+
     def setDigitizingTool(self, tool):
         """
         Sets button's digitizing tool to GUI.
@@ -145,8 +162,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         Reads current digitizing tool.
         :return: (str) current digitizing tool.
         """
-        tools = {v: k for k, v in \
-                    CustomFeatureButton().supportedTools().items()}
+        tools = {v: k for k, v in CustomFeatureButton().supportedTools().items()}
         return tools[self.toolComboBox.currentText()]
 
     def setUseColor(self, useColor):
@@ -291,8 +307,10 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         if s == "":
             return ""
         for m in dir(iface):
-            if m.startswith("action") and \
-               getattr(iface, m)().shortcut().toString().lower() == s.lower():
+            if (
+                m.startswith("action")
+                and getattr(iface, m)().shortcut().toString().lower() == s.lower()
+            ):
                 return getattr(iface, m)().text()
         return ""
 
@@ -306,8 +324,10 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         s = s.replace(" ", "")
         action = self.checkShortcut(s)
         if not autoReplace and action != "":
-            txt = self.tr("Shortcut {s} is already assigned to {a}, would you "
-                        "like to replace it?").format(s=s, a=action)
+            txt = self.tr(
+                "Shortcut {s} is already assigned to {a}, would you "
+                "like to replace it?"
+            ).format(s=s, a=action)
             if not self.confirmAction(txt, self.tr("Replace shortcut")):
                 return
         self.shortcutWidget.setShortcut(QKeySequence.fromString(s))
@@ -339,7 +359,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
     def setAttributeMap(self, attrMap):
         """
         Sets the attribute value map for current button to GUI.
-        :param attrMap: (dict) a map from each field and its value to be set. 
+        :param attrMap: (dict) a map from each field and its value to be set.
         """
         self.updateFieldTable()
         table = self.attributeTableWidget
@@ -350,18 +370,21 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         if vl is not None:
             for fName, vMap in LayerHandler().valueMaps(vl).items():
                 valueMaps[fName] = {v: k for k, v in vMap.items()}
+
         def setMappedValue(cb, field, value):
             if value is None:
                 return
             if not (value in valueMaps[field]):
-                msg = self.tr("'{0}' is an invalid value for field {1}. (Is "
-                              "the layer style generated from the current data"
-                              " model?")\
-                          .format(value, field)
+                msg = self.tr(
+                    "'{0}' is an invalid value for field {1}. (Is "
+                    "the layer style generated from the current data"
+                    " model?"
+                ).format(value, field)
                 title = self.tr("DSGTools Custom Feature Tool Box")
                 MessageRaiser().raiseIfaceMessage(title, msg, Qgis.Warning, 5)
                 value = None
             cb.setCurrentText(valueMaps[field][value])
+
         pkIdxList = vl.primaryKeyAttributes() if vl else []
         for row in range(table.rowCount()):
             attr = table.cellWidget(row, self.ATTR_COL).text().replace("&", "")
@@ -371,23 +394,26 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                 attrMap[attr] = {
                     "value": None,
                     "editable": False,
-                    "ignored": isPk, # default is False unless it's a PK attr
-                    "isPk": isPk
+                    "ignored": isPk,  # default is False unless it's a PK attr
+                    "isPk": isPk,
                 }
             {
                 QWidget: lambda v: valueWidget.cb.setChecked(v or False),
                 QLineEdit: lambda v: valueWidget.setText(v or ""),
                 QSpinBox: lambda v: valueWidget.setValue(v or 0),
                 QDoubleSpinBox: lambda v: valueWidget.setValue(v or 0.0),
-                QComboBox: lambda v: setMappedValue(valueWidget, attr, v)
+                QComboBox: lambda v: setMappedValue(valueWidget, attr, v),
             }[type(valueWidget)](attrMap[attr]["value"])
             valueWidget.setEnabled(not attrMap[attr]["ignored"])
             table.cellWidget(row, self.EDIT_COL).cb.setChecked(
-                attrMap[attr]["editable"])
+                attrMap[attr]["editable"]
+            )
             table.cellWidget(row, self.IGNORED_COL).cb.setChecked(
-                attrMap[attr]["ignored"])
-            table.setCellWidget(row, self.PK_COL,
-                self.pkWidget() if isPk else QWidget())
+                attrMap[attr]["ignored"]
+            )
+            table.setCellWidget(
+                row, self.PK_COL, self.pkWidget() if isPk else QWidget()
+            )
 
     def attributeMap(self):
         """
@@ -396,26 +422,30 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         """
         attrMap = dict()
         table = self.attributeTableWidget
-        vMaps = LayerHandler().valueMaps(self.vectorLayer()) \
-                    if self.vectorLayer() else {}
+        vMaps = (
+            LayerHandler().valueMaps(self.vectorLayer()) if self.vectorLayer() else {}
+        )
         for row in range(table.rowCount()):
             attr = table.cellWidget(row, self.ATTR_COL).text().replace("&", "")
             attrMap[attr] = dict()
             valueWidget = table.cellWidget(row, self.VAL_COL)
-            attrMap[attr]["ignored"] = table.cellWidget(row, self.IGNORED_COL)\
-                                            .cb.isChecked()
+            attrMap[attr]["ignored"] = table.cellWidget(
+                row, self.IGNORED_COL
+            ).cb.isChecked()
             # "ignored" still allows the value to be set as last priority
             attrMap[attr]["value"] = {
                 QWidget: lambda: valueWidget.cb.isChecked(),
                 QLineEdit: lambda: valueWidget.text(),
                 QSpinBox: lambda: valueWidget.value(),
                 QDoubleSpinBox: lambda: valueWidget.value(),
-                QComboBox: lambda: vMaps[attr][valueWidget.currentText()]
+                QComboBox: lambda: vMaps[attr][valueWidget.currentText()],
             }[type(valueWidget)]()
             attrMap[attr]["isPk"] = isinstance(
-                table.cellWidget(row, self.PK_COL), QPushButton)
-            attrMap[attr]["editable"] = table.cellWidget(row, self.EDIT_COL)\
-                                             .cb.isChecked()
+                table.cellWidget(row, self.PK_COL), QPushButton
+            )
+            attrMap[attr]["editable"] = table.cellWidget(
+                row, self.EDIT_COL
+            ).cb.isChecked()
         return attrMap
 
     def setLayer(self, layer):
@@ -463,7 +493,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         used on rows associated with primary key attributes.
         """
         pb = QPushButton()
-        pb.setIcon(QIcon(':/plugins/DsgTools/icons/key.png'))
+        pb.setIcon(QIcon(":/plugins/DsgTools/icons/key.png"))
         pb.setFlat(True)
         pb.blockSignals(True)
         pb.setObjectName("pkWidget")
@@ -483,7 +513,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         pb.setEnabled(False)
         if isNotNull:
             pb.setStyleSheet(
-                "*{ color:rgb(150, 10, 25); "\
+                "*{ color:rgb(150, 10, 25); "
                 "background-color:rgba(255, 88, 116, 1.00); }"
             )
             pb.setToolTip(self.tr("Field cannot be empty"))
@@ -519,7 +549,8 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         else:
             vWidget = QLineEdit()
             vWidget.setPlaceholderText(
-                self.tr("Type the value for {0}").format(field.name()))
+                self.tr("Type the value for {0}").format(field.name())
+            )
             if data is not None:
                 vWidget.setText(data)
         return vWidget
@@ -551,8 +582,10 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             if fields.fieldOrigin(idx) == fields.OriginExpression:
                 virtualFields.append(f.name())
         self.attributeTableWidget.setRowCount(len(fields) - len(virtualFields))
+
         def setDisabled(w, status):
             w.setEnabled(not status)
+
         for row, field in enumerate(fields):
             fName = field.name()
             if fName in virtualFields:
@@ -561,13 +594,14 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             isPk = row in pkIdxList
             notNull = not utils.fieldIsNullable(field)
             self.attributeTableWidget.setCellWidget(
-                row, self.ATTR_COL, self.attributeNameWidget(fName, notNull))
+                row, self.ATTR_COL, self.attributeNameWidget(fName, notNull)
+            )
             if fName not in attrMap:
                 attrMap[fName] = {
                     "value": None,
                     "editable": False,
-                    "ignored": isPk, # default is False unless it's a PK attr
-                    "isPk": isPk
+                    "ignored": isPk,  # default is False unless it's a PK attr
+                    "isPk": isPk,
                 }
             value = attrMap[fName]["value"]
             if fName in valueMaps:
@@ -583,13 +617,12 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
             self.attributeTableWidget.setCellWidget(row, self.VAL_COL, vWidget)
             ccbEdit = self.centeredCheckBox()
             ccbEdit.cb.setChecked(attrMap[fName]["editable"])
-            self.attributeTableWidget.setCellWidget(
-                row, self.EDIT_COL, ccbEdit)
+            self.attributeTableWidget.setCellWidget(row, self.EDIT_COL, ccbEdit)
             ccbIgnore = self.centeredCheckBox()
             ccbIgnore.cb.setChecked(attrMap[fName]["ignored"])
             ccbIgnore.cb.toggled.connect(partial(setDisabled, vWidget))
-            self.attributeTableWidget.setCellWidget(
-                row, self.IGNORED_COL, ccbIgnore)
+            self.attributeTableWidget.setCellWidget(row, self.IGNORED_COL, ccbIgnore)
+
             def checkExclusiveCB(ccb1, ccb2):
                 """
                 Method to make two CB to be mutually exclusive (like radio buttons.
@@ -603,13 +636,15 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
                     ccb1 = cb
                 if ccb1.cb.isChecked() and ccb2.cb.isChecked():
                     ccb2.cb.setChecked(False)
+
             exclusiveCb = partial(checkExclusiveCB, ccbEdit, ccbIgnore)
             ccbIgnore.cb.toggled.connect(exclusiveCb)
             ccbEdit.cb.toggled.connect(exclusiveCb)
             ccbIgnore.cb.toggled.emit(ccbEdit.cb.isChecked())
             # since row is from an enum of fields, field idx = row
-            self.attributeTableWidget.setCellWidget(row, self.PK_COL,
-                self.pkWidget() if isPk else QWidget())
+            self.attributeTableWidget.setCellWidget(
+                row, self.PK_COL, self.pkWidget() if isPk else QWidget()
+            )
 
     def setButton(self, button):
         """
@@ -665,7 +700,7 @@ class ButtonPropWidget(QWidget, FORM_CLASS):
         :return: (CustomFeatureButton) button read from the setup object.
         """
         return self.button.name()
-    
+
     def currentButton(self):
         """
         Retrieves currently SAVED button.

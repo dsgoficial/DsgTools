@@ -25,8 +25,8 @@ from qgis.PyQt.QtCore import QObject
 
 from DsgTools.gui.ServerTools.batchDbManager import BatchDbManager
 
+
 class BatchDbManagerGui(QObject):
-    
     def __init__(self, manager, parentMenu):
         """
         Class constructor.
@@ -43,13 +43,13 @@ class BatchDbManagerGui(QObject):
         """
         Sets server tools to DSGTools/QGIS interface.
         """
-        icon_path = ':/plugins/DsgTools/icons/server.png'
+        icon_path = ":/plugins/DsgTools/icons/server.png"
         action = self.manager.addTool(
-            text=self.tr('Manage Databases from Server'),
+            text=self.tr("Manage Databases from Server"),
             callback=self.openBatchDbManager,
             parentMenu=self.parentMenu,
-            icon='server.png'
-            )
+            icon="server.png",
+        )
 
     def openBatchDbManager(self):
         """

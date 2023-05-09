@@ -30,15 +30,17 @@ from qgis.PyQt.QtWidgets import QMessageBox
 # QGIS imports
 from qgis.core import QgsVectorLayer, QgsGeometry, Qgis, QgsProject, QgsWkbTypes
 
-#DSGTools imports
+# DSGTools imports
 from DsgTools.gui.ProductionTools.Toolboxes.ContourTool.dsg_line_tool import DsgLineTool
 from DsgTools.gui.ProductionTools.Toolboxes.ContourTool.contour_tool import ContourTool
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'calc_contour.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "calc_contour.ui")
+)
+
 
 class CalcContour(QtWidgets.QDockWidget, FORM_CLASS):
-    def __init__(self, iface, parent = None):
+    def __init__(self, iface, parent=None):
         """
         Constructor
         """
@@ -49,24 +51,24 @@ class CalcContour(QtWidgets.QDockWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        
+
         self.iface = iface
 
-        #insert layers into the combobox
+        # insert layers into the combobox
         self.populateLayers()
 
-        #instance of the QgsMapTool derived class (line tool)
+        # instance of the QgsMapTool derived class (line tool)
         self.tool = DsgLineTool(self.iface.mapCanvas())
         self.tool.lineCreated.connect(self.updateLayer)
 
-        #instance of the class responsible to update layer features
+        # instance of the class responsible to update layer features
         self.contourTool = ContourTool()
 
-        #Connecting slot to deal with adition/removal of layers
+        # Connecting slot to deal with adition/removal of layers
         QgsProject.instance().layersAdded.connect(self.addLayers)
         QgsProject.instance().layersRemoved.connect(self.populateLayers)
 
-    @pyqtSlot(bool, name = 'on_reactivatePushButton_clicked')
+    @pyqtSlot(bool, name="on_reactivatePushButton_clicked")
     def activateTool(self):
         """
         Sets this tool as the current active qgis tool
@@ -89,12 +91,15 @@ class CalcContour(QtWidgets.QDockWidget, FORM_CLASS):
         Populates the layer combo box
         """
         self.layerCombo.clear()
-        
-        self.layerCombo.addItem(self.tr('Select a Layer'))
-        
+
+        self.layerCombo.addItem(self.tr("Select a Layer"))
+
         layers = self.iface.mapCanvas().layers()
         for layer in layers:
-            if isinstance(layer, QgsVectorLayer) and layer.geometryType() == QgsWkbTypes.LineGeometry:
+            if (
+                isinstance(layer, QgsVectorLayer)
+                and layer.geometryType() == QgsWkbTypes.LineGeometry
+            ):
                 self.layerCombo.addItem(layer.name())
 
     def getLayer(self):
@@ -116,31 +121,75 @@ class CalcContour(QtWidgets.QDockWidget, FORM_CLASS):
         Updates the layer
         """
         if self.layerCombo.currentIndex() == 0:
-            self.iface.messageBar().pushMessage(self.tr('Information'), self.tr('A layer must be selected!'), level=Qgis.Info, duration=3)
+            self.iface.messageBar().pushMessage(
+                self.tr("Information"),
+                self.tr("A layer must be selected!"),
+                level=Qgis.Info,
+                duration=3,
+            )
             return
 
         if self.attributeCombo.currentIndex() == 0:
-            self.iface.messageBar().pushMessage(self.tr('Information'), self.tr('A field must be selected!'), level=Qgis.Info, duration=3)
+            self.iface.messageBar().pushMessage(
+                self.tr("Information"),
+                self.tr("A field must be selected!"),
+                level=Qgis.Info,
+                duration=3,
+            )
             return
 
-        #canvas crs to be used in case a reprojection is needed
+        # canvas crs to be used in case a reprojection is needed
         canvasCrs = self.iface.mapCanvas().mapSettings().destinationCrs()
         if self.ascendingRadioButton.isChecked():
             signal = 1
         else:
             signal = -1
-        ret = self.contourTool.assignValues(self.attributeCombo.currentText(), signal*self.spinBox.value(), geom, canvasCrs)
+        ret = self.contourTool.assignValues(
+            self.attributeCombo.currentText(),
+            signal * self.spinBox.value(),
+            geom,
+            canvasCrs,
+        )
         self.iface.mapCanvas().refresh()
         if ret == 1:
-            self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('Layer successfully updated!'), level=Qgis.Info, duration=3)
+            self.iface.messageBar().pushMessage(
+                self.tr("Information!"),
+                self.tr("Layer successfully updated!"),
+                level=Qgis.Info,
+                duration=3,
+            )
         elif ret == 0:
-            self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('Could not update features!'), level=Qgis.Critical, duration=3)
+            self.iface.messageBar().pushMessage(
+                self.tr("Critical!"),
+                self.tr("Could not update features!"),
+                level=Qgis.Critical,
+                duration=3,
+            )
         elif ret == -1:
-            self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('Problem ordering the features!'), level=Qgis.Critical, duration=3)
+            self.iface.messageBar().pushMessage(
+                self.tr("Critical!"),
+                self.tr("Problem ordering the features!"),
+                level=Qgis.Critical,
+                duration=3,
+            )
         elif ret == -2:
-            self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('The line created does not cross any features in the selected layer!'), level=Qgis.Critical, duration=3)
+            self.iface.messageBar().pushMessage(
+                self.tr("Critical!"),
+                self.tr(
+                    "The line created does not cross any features in the selected layer!"
+                ),
+                level=Qgis.Critical,
+                duration=3,
+            )
         elif ret == -3:
-            self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('Assign a value for the selected attribute of the first crossed feature!'), level=Qgis.Critical, duration=3)
+            self.iface.messageBar().pushMessage(
+                self.tr("Critical!"),
+                self.tr(
+                    "Assign a value for the selected attribute of the first crossed feature!"
+                ),
+                level=Qgis.Critical,
+                duration=3,
+            )
 
     @pyqtSlot(int)
     def on_layerCombo_currentIndexChanged(self):
@@ -149,16 +198,16 @@ class CalcContour(QtWidgets.QDockWidget, FORM_CLASS):
         """
         if self.layerCombo.currentIndex() == 0:
             return
-        
+
         currentLayer = self.getLayer()
         if not currentLayer:
             return
 
-        #updating the reference layer
+        # updating the reference layer
         self.contourTool.updateReference(self.getLayer())
 
         fields = currentLayer.fields()
         field_names = [field.name() for field in fields]
         self.attributeCombo.clear()
-        self.attributeCombo.addItem('Select a field')
+        self.attributeCombo.addItem("Select a field")
         self.attributeCombo.addItems(field_names)

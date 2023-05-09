@@ -21,29 +21,39 @@
  ***************************************************************************/
 """
 
+from collections import defaultdict
 from PyQt5.QtCore import QCoreApplication
 
 import processing
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsProject, QgsWkbTypes)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingUtils,
+    QgsProject,
+    QgsWkbTypes,
+    QgsProcessingMultiStepFeedback
+)
 
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
-    FLAGS = 'FLAGS'
-    INPUTLAYERS = 'INPUTLAYERS'
-    FRAMELAYER = 'FRAMELAYER'
-    SELECTED = 'SELECTED'
+    FLAGS = "FLAGS"
+    INPUTLAYERS = "INPUTLAYERS"
+    FRAMELAYER = "FRAMELAYER"
+    SELECTED = "SELECTED"
 
     def initAlgorithm(self, config):
         """
@@ -52,31 +62,29 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUTLAYERS,
-                self.tr('Coverage Polygon Layers'),
-                QgsProcessing.TypeVectorPolygon
+                self.tr("Coverage Polygon Layers"),
+                QgsProcessing.TypeVectorPolygon,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
 
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.FRAMELAYER,
-                self.tr('Frame Layer'),
+                self.tr("Frame Layer"),
                 [QgsProcessing.TypeVectorPolygon],
-                optional = True
+                optional=True,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
 
@@ -88,52 +96,77 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
         layerHandler = LayerHandler()
         inputLyrList = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
         if inputLyrList == []:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUTLAYERS))
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.INPUTLAYERS)
+            )
         frameLyr = self.parameterAsVectorLayer(parameters, self.FRAMELAYER, context)
         if frameLyr and frameLyr in inputLyrList:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.FRAMELAYER))
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.FRAMELAYER)
+            )
         isMulti = True
         for inputLyr in inputLyrList:
-            isMulti &= QgsWkbTypes.isMultiType(int(inputLyr.wkbType()))
+            isMulti &= QgsWkbTypes.isMultiType(inputLyr.wkbType())
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.Polygon, context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        
-        coverage = layerHandler.createAndPopulateUnifiedVectorLayer(inputLyrList, QgsWkbTypes.Polygon, onlySelected = onlySelected)
-        lyr = self.overlayCoverage(coverage, context)
+        nSteps = 4 if not frameLyr else 5
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Creating unified layer"))
+        coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
+            inputLyrList, QgsWkbTypes.Polygon, onlySelected=onlySelected, feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Overlaying coverage"))
+        lyr = self.overlayCoverage(coverage, context, feedback=multiStepFeedback)
+        currentStep += 1
         if frameLyr:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Getting gaps with geographic bounds"))
             self.getGapsOfCoverageWithFrame(lyr, frameLyr, context)
-        featureList, total = self.getIteratorAndFeatureCount(lyr) #only selected is not applied because we are using an inner layer, not the original ones
-        geomDict = self.getGeomDict(featureList, isMulti, feedback, total)
-        self.raiseFlags(geomDict, feedback)
+            currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        featureList, total = self.getIteratorAndFeatureCount(
+            lyr
+        )  # only selected is not applied because we are using an inner layer, not the original ones
+        multiStepFeedback.setProgressText(self.tr("Raising flags"))
+        geomDict = self.getGeomDict(featureList, isMulti, multiStepFeedback, total)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.raiseFlags(geomDict, multiStepFeedback)
         QgsProject.instance().removeMapLayer(lyr)
         return {self.FLAGS: self.flag_id}
 
-    def overlayCoverage(self, coverage, context):
-        output = QgsProcessingUtils.generateTempFilename('output.shp')
+    def overlayCoverage(self, coverage, context, feedback):
+        output = QgsProcessingUtils.generateTempFilename("output.shp")
         parameters = {
-            'ainput':coverage,
-            'atype':0,
-            'binput':coverage,
-            'btype':0,
-            'operator':0,
-            'snap':0,
-            '-t':False,
-            'output':output,
-            'GRASS_REGION_PARAMETER':None,
-            'GRASS_SNAP_TOLERANCE_PARAMETER':-1,
-            'GRASS_MIN_AREA_PARAMETER':0.0001,
-            'GRASS_OUTPUT_TYPE_PARAMETER':0,
-            'GRASS_VECTOR_DSCO':'',
-            'GRASS_VECTOR_LCO':''
-            }
-        x = processing.run('grass7:v.overlay', parameters, context = context)
-        lyr = QgsProcessingUtils.mapLayerFromString(x['output'], context)
+            "ainput": coverage,
+            "atype": 0,
+            "binput": coverage,
+            "btype": 0,
+            "operator": 0,
+            "snap": 0,
+            "-t": False,
+            "output": output,
+            "GRASS_REGION_PARAMETER": None,
+            "GRASS_SNAP_TOLERANCE_PARAMETER": -1,
+            "GRASS_MIN_AREA_PARAMETER": 0.0001,
+            "GRASS_OUTPUT_TYPE_PARAMETER": 0,
+            "GRASS_VECTOR_DSCO": "",
+            "GRASS_VECTOR_LCO": "",
+        }
+        x = processing.run("grass7:v.overlay", parameters, context=context, feedback=feedback)
+        lyr = QgsProcessingUtils.mapLayerFromString(x["output"], context)
         lyr.setCrs(coverage.crs())
         return lyr
-    
-    def getGapsOfCoverageWithFrame(self, coverage, frameLyr, context, feedback=None, onFinish=None):
+
+    def getGapsOfCoverageWithFrame(
+        self, coverage, frameLyr, context, feedback=None, onFinish=None
+    ):
         """
         Identifies all gaps inside coverage layer and between coverage and frame layer.
         :param coverage: (QgsVectorLayer) unified coverage layer.
@@ -143,22 +176,22 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
         :param onFinish: (list-of-str) list of alg names to be executed after difference alg.
         """
         # identify all holes in coverage layer first
-        coverageHolesParam = {
-            'INPUT' : coverage,
-            'FLAGS':'memory:',
-            'SELECTED': False
-        }
-        coverageHoles = processing.run('dsgtools:identifygaps', coverageHolesParam, None, feedback, context)['FLAGS']
+        coverageHolesParam = {"INPUT": coverage, "FLAGS": "memory:", "SELECTED": False}
+        coverageHoles = processing.run(
+            "dsgtools:identifygaps", coverageHolesParam, None, feedback, context
+        )["FLAGS"]
         geometryHandler = GeometryHandler()
         gapSet = set()
         for feat in coverageHoles.getFeatures():
             for geom in geometryHandler.deaggregateGeometry(feat.geometry()):
-                self.flagFeature(geom, self.tr('Gap in coverage layer'))
+                self.flagFeature(geom, self.tr("Gap in coverage layer"))
                 gapSet.add(geom)
         # missing possible holes between coverage and frame, but gaps in coverage may cause invalid geometries
         # while executing difference alg. Since its already identified, "add" them to the coverage
         layerHandler = LayerHandler()
-        filledCoverage = layerHandler.createAndPopulateUnifiedVectorLayer([coverage, coverageHoles], QgsWkbTypes.Polygon)
+        filledCoverage = layerHandler.createAndPopulateUnifiedVectorLayer(
+            [coverage, coverageHoles], QgsWkbTypes.Polygon
+        )
         # dissolveParameters = {
         #     'INPUT' : filledCoverage,
         #     'FIELD':[],
@@ -167,18 +200,20 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
         # dissolveOutput = processing.run('native:dissolve', dissolveParameters, context = context)['OUTPUT']
         dissolveOutput = LayerHandler().runGrassDissolve(filledCoverage, context)
         differenceParameters = {
-            'INPUT' : frameLyr,
-            'OVERLAY' : dissolveOutput,
-            'OUTPUT':'memory:'
+            "INPUT": frameLyr,
+            "OVERLAY": dissolveOutput,
+            "OUTPUT": "memory:",
         }
-        differenceOutput = processing.run('native:difference', differenceParameters, onFinish, feedback, context)
-        for feat in differenceOutput['OUTPUT'].getFeatures():
+        differenceOutput = processing.run(
+            "native:difference", differenceParameters, onFinish, feedback, context
+        )
+        for feat in differenceOutput["OUTPUT"].getFeatures():
             for geom in geometryHandler.deaggregateGeometry(feat.geometry()):
                 if geom not in gapSet:
-                    self.flagFeature(geom, self.tr('Gap in coverage with frame'))
+                    self.flagFeature(geom, self.tr("Gap in coverage with frame"))
 
     def getGeomDict(self, featureList, isMulti, feedback, total):
-        geomDict = dict()
+        geomDict = defaultdict(list)
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
             if feedback.isCanceled():
@@ -187,14 +222,12 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
             if isMulti and not geom.isMultipart():
                 geom.convertToMultiType()
             geomKey = geom.asWkb()
-            if geomKey not in geomDict:
-                geomDict[geomKey] = []
             geomDict[geomKey].append(feat)
             # # Update the progress bar
             attrList = feat.attributes()
-            if attrList == len(attrList)*[None]:
-                self.flagFeature(geom, self.tr('Gap in coverage layer.'))
-            feedback.setProgress(int(current * total)) 
+            if attrList == len(attrList) * [None]:
+                self.flagFeature(geom, self.tr("Gap in coverage layer."))
+            feedback.setProgress(int(current * total))
         return geomDict
 
     def raiseFlags(self, geomDict, feedback):
@@ -204,9 +237,11 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
             if len(v) > 1:
                 textList = []
                 for feat in v:
-                    textList += ['({0},{1})'.format(feat['a_featid'], feat['a_layer'])]
-                flagText = self.tr('Overlapping features (id,layer): {0}').format(', '.join(set(textList)))
-                self.flagFeature(v[0].geometry(), flagText) 
+                    textList += ["({0},{1})".format(feat["a_featid"], feat["a_layer"])]
+                flagText = self.tr("Overlapping features (id,layer): {0}").format(
+                    ", ".join(set(textList))
+                )
+                self.flagFeature(v[0].geometry(), flagText)
 
     def name(self):
         """
@@ -216,21 +251,21 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifygapsandoverlaps'
+        return "identifygapsandoverlaps"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Gaps and Overlaps in Coverage Layers')
+        return self.tr("Identify Gaps and Overlaps in Coverage Layers")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -240,10 +275,12 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyGapsAndOverlapsInCoverageAlgorithm', string)
+        return QCoreApplication.translate(
+            "IdentifyGapsAndOverlapsInCoverageAlgorithm", string
+        )
 
     def createInstance(self):
         return IdentifyGapsAndOverlapsInCoverageAlgorithm()

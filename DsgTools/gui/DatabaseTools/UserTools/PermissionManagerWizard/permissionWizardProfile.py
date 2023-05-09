@@ -30,12 +30,14 @@ from fileinput import filename
 from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactory
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'permissionWizardProfile.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "permissionWizardProfile.ui")
+)
+
 
 class PermissionWizardProfile(QtWidgets.QWizardPage, FORM_CLASS):
     def __init__(self, parent=None):
-        '''Constructor.'''
+        """Constructor."""
         super(self.__class__, self).__init__()
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
@@ -43,18 +45,18 @@ class PermissionWizardProfile(QtWidgets.QWizardPage, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.profileCustomSelector.setTitle(self.tr('Select profiles to be installed'))
+        self.profileCustomSelector.setTitle(self.tr("Select profiles to be installed"))
         profiles = self.getModelProfiles()
         self.profileCustomSelector.setInitialState(profiles)
-    
+
     def getModelProfiles(self):
         ret = []
-        folder = os.path.join(os.path.dirname(__file__),'..', 'profiles')
+        folder = os.path.join(os.path.dirname(__file__), "..", "profiles")
         for root, dirs, files in os.walk(folder):
             for file in files:
-                ext = file.split('.')[-1]
-                if ext == 'json':
-                    ret.append(file.split('.')[0])
+                ext = file.split(".")[-1]
+                if ext == "json":
+                    ret.append(file.split(".")[0])
         ret.sort()
         return ret
 

@@ -25,13 +25,16 @@ from qgis.PyQt import QtWidgets, uic
 
 import os
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'genericDialogLayout.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "genericDialogLayout.ui")
+)
+
 
 class GenericDialogLayout(QtWidgets.QDialog, FORM_CLASS):
     """
-    Widget composed by an empty layout. It is supposed to be used as based for dynamic GUI. 
+    Widget composed by an empty layout. It is supposed to be used as based for dynamic GUI.
     """
+
     def __init__(self, parent=None):
         """
         Class constructor.

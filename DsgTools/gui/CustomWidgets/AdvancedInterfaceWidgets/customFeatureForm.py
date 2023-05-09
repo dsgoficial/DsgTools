@@ -26,23 +26,27 @@ from qgis.core import Qgis
 from qgis.gui import QgsMessageBar
 from qgis.PyQt.QtCore import Qt, QSize, pyqtSlot
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import (QLabel,
-                                 QDialog,
-                                 QSpinBox,
-                                 QLineEdit,
-                                 QComboBox,
-                                 QCheckBox,
-                                 QGridLayout,
-                                 QSpacerItem,
-                                 QSizePolicy,
-                                 QDoubleSpinBox)
+from qgis.PyQt.QtWidgets import (
+    QLabel,
+    QDialog,
+    QSpinBox,
+    QLineEdit,
+    QComboBox,
+    QCheckBox,
+    QGridLayout,
+    QSpacerItem,
+    QSizePolicy,
+    QDoubleSpinBox,
+)
 from qgis.PyQt import uic, QtWidgets, QtGui
 
 from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'customFeatureForm.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "customFeatureForm.ui")
+)
+
 
 class CustomFeatureForm(QDialog, FORM_CLASS):
     """
@@ -50,6 +54,7 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
     Feature Tool Box. This form was copied from `Ferramentas de Produção` and
     modified for the DSGTools plugin.
     """
+
     def __init__(self, layer, layerMap, attributeMap=None, valueMaps=None):
         """
         Class constructor.
@@ -61,7 +66,7 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
                              (reclassified) value.
         :param valueMaps: (dict) map of all value/relations maps set to layer's
                           fields. These maps will be used for domain checking
-                          operations. 
+                          operations.
         """
         super(CustomFeatureForm, self).__init__()
         self.setupUi(self)
@@ -86,7 +91,7 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
         self.messageBar.resize(
             QSize(
                 self.geometry().size().width(),
-                40 # this felt nicer than the original height (30)
+                40,  # this felt nicer than the original height (30)
             )
         )
 
@@ -133,17 +138,21 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
         inverseDomain = {v: k for k, v in domain.items()}
         if not domain:
             raise ValueError(
-                self.tr("Field {0} does not have a value/relations map")\
-                    .format(field.name())
+                self.tr("Field {0} does not have a value/relations map").format(
+                    field.name()
+                )
             )
         cb.addItems(list(domain.keys()))
+
         def setValue(val):
             """val: field's real value"""
             if val not in domain.values():
                 return
             cb.setCurrentText(inverseDomain[val])
+
         def value():
             return domain[cb.currentText()]
+
         cb.setValue = setValue
         cb.value = value
         return cb
@@ -162,7 +171,7 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
         map.
         """
         utils = Utils()
-        row = 0 # in case no fields are provided
+        row = 0  # in case no fields are provided
         for row, f in enumerate(self.layer().fields()):
             fName = f.name()
             fMap = self.attributeMap.get(fName, None)
@@ -178,8 +187,10 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
                     enabled = fMap["editable"]
                 if fMap["isPk"]:
                     # visually identify primary key attributes
-                    text = '<p>{0} <img src=":/plugins/DsgTools/icons/key.png" '\
-                           'width="16" height="16"></p>'.format(fName)
+                    text = (
+                        '<p>{0} <img src=":/plugins/DsgTools/icons/key.png" '
+                        'width="16" height="16"></p>'.format(fName)
+                    )
                 else:
                     text = fName
             else:
@@ -215,10 +226,12 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
             self.widgetsLayout.addWidget(label, row, 0)
             self.widgetsLayout.addWidget(w, row, 1)
         self.widgetsLayout.addItem(
-            QSpacerItem(
-                20, 40, QSizePolicy.Expanding, QSizePolicy.Expanding
-            ), row + 1, 1, 1, 2
-        ) # row, col, rowSpan, colSpan
+            QSpacerItem(20, 40, QSizePolicy.Expanding, QSizePolicy.Expanding),
+            row + 1,
+            1,
+            1,
+            2,
+        )  # row, col, rowSpan, colSpan
 
     def updateAttributeMap(self):
         """
@@ -286,8 +299,8 @@ class CustomFeatureForm(QDialog, FORM_CLASS):
             self.done(1)
         else:
             self.messageBar.pushMessage(
-                self.tr('Invalid layer selection'),
+                self.tr("Invalid layer selection"),
                 self.tr("select at least one layer for reclassification!"),
                 level=Qgis.Warning,
-                duration=5
+                duration=5,
             )

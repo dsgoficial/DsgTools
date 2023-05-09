@@ -25,6 +25,7 @@ from .postgisDbThread import PostgisDbThread
 from .dpiThread import DpiThread
 from .inventoryThread import InventoryThread
 
+
 class ThreadFactory(object):
     def makeProcess(self, name):
         """
@@ -32,11 +33,11 @@ class ThreadFactory(object):
         :param name:
         :return:
         """
-        if name == 'pgdb':
+        if name == "pgdb":
             return PostgisDbThread()
-        elif name == 'dpi':
+        elif name == "dpi":
             return DpiThread()
-        elif name == 'inventory':
+        elif name == "inventory":
             return InventoryThread()
         else:
             return None

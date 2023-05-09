@@ -25,53 +25,56 @@ from time import sleep
 from qgis.PyQt.Qt import QVariant
 from PyQt5.QtCore import QCoreApplication
 from ....EditingTools.gridAndLabelCreator import GridAndLabelCreator
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterExpression,
-                       QgsProcessingException,
-                       QgsProcessingParameterString,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterType,
-                       QgsProcessingParameterCrs,
-                       QgsCoordinateTransform,
-                       QgsProject,
-                       QgsCoordinateReferenceSystem,
-                       QgsField,
-                       QgsFields)
+from qgis.core import (
+    QgsProcessing,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFeatureSink,
+    QgsFeature,
+    QgsDataSourceUri,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsGeometry,
+    QgsProcessingParameterField,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterFile,
+    QgsProcessingParameterExpression,
+    QgsProcessingException,
+    QgsProcessingParameterString,
+    QgsProcessingParameterDefinition,
+    QgsProcessingParameterType,
+    QgsProcessingParameterCrs,
+    QgsCoordinateTransform,
+    QgsProject,
+    QgsCoordinateReferenceSystem,
+    QgsField,
+    QgsFields,
+)
+
 
 class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
-    INPUT = 'INPUT'
-    ATTRIBUTE_INDEX = 'ATTRIBUTE_INDEX'
-    ATTRIBUTE_ID = 'ATTRIBUTE_ID'
-    ID_VALUE = 'ID_VALUE'
-    CROSSES_X = 'CROSSES_X'
-    CROSSES_Y = 'CROSSES_Y'
-    SPACING = 'SPACING'
-    MAP_SCALE = 'MAP_SCALE'
-    COLOR = 'COLOR'
-    FONT = 'FONT'
-    FONT_SIZE = 'FONT_SIZE'
-    FONT_LL = 'FONT_LL'
-    COLOR_LL = 'COLOR_LL'
-    OUTPUT = 'OUTPUT'
+    INPUT = "INPUT"
+    ATTRIBUTE_INDEX = "ATTRIBUTE_INDEX"
+    ATTRIBUTE_ID = "ATTRIBUTE_ID"
+    ID_VALUE = "ID_VALUE"
+    CROSSES_X = "CROSSES_X"
+    CROSSES_Y = "CROSSES_Y"
+    SPACING = "SPACING"
+    MAP_SCALE = "MAP_SCALE"
+    COLOR = "COLOR"
+    FONT = "FONT"
+    FONT_SIZE = "FONT_SIZE"
+    FONT_LL = "FONT_LL"
+    COLOR_LL = "COLOR_LL"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -79,141 +82,139 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT,
-                self.tr('Input Layer'),
-                [QgsProcessing.TypeVectorPolygon]
+                self.INPUT, self.tr("Input Layer"), [QgsProcessing.TypeVectorPolygon]
             )
         )
 
         self.addParameter(
             QgsProcessingParameterField(
-                self.ATTRIBUTE_INDEX, 
-                self.tr('INOM Field'),
-                None, 
-                'INPUT', 
-                QgsProcessingParameterField.Any
+                self.ATTRIBUTE_INDEX,
+                self.tr("INOM Field"),
+                None,
+                "INPUT",
+                QgsProcessingParameterField.Any,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterField(
-                self.ATTRIBUTE_ID, 
-                self.tr('ID Field'),
-                None, 
-                'INPUT', 
-                QgsProcessingParameterField.Any
+                self.ATTRIBUTE_ID,
+                self.tr("ID Field"),
+                None,
+                "INPUT",
+                QgsProcessingParameterField.Any,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.ID_VALUE,
-                self.tr('ID Field Value'),
+                self.tr("ID Field Value"),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Integer,
-                defaultValue=1
+                defaultValue=1,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.CROSSES_X,
-                self.tr('Number of horizontal crosses'),
+                self.tr("Number of horizontal crosses"),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Integer,
-                defaultValue=4
+                defaultValue=4,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.CROSSES_Y,
-                self.tr('Number of vertical crosses'),
+                self.tr("Number of vertical crosses"),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Integer,
-                defaultValue=4
+                defaultValue=4,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.SPACING,
-                self.tr('UTM Grid Spacing'),
+                self.tr("UTM Grid Spacing"),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Integer,
-                defaultValue=4000
+                defaultValue=4000,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.MAP_SCALE,
-                self.tr('Map scale (in thousands)'),
+                self.tr("Map scale (in thousands)"),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Double,
-                defaultValue=25
+                defaultValue=25,
             )
         )
 
-        colorParameter = ParameterColor(
-            self.COLOR,
-            description=self.tr('Color')
-            )
-        colorParameter.setMetadata({
-            'widget_wrapper' : 'DsgTools.gui.ProcessingUI.colorWidgetWrapper.ColorWidgetWrapper'
-        })
+        colorParameter = ParameterColor(self.COLOR, description=self.tr("Color"))
+        colorParameter.setMetadata(
+            {
+                "widget_wrapper": "DsgTools.gui.ProcessingUI.colorWidgetWrapper.ColorWidgetWrapper"
+            }
+        )
         self.addParameter(colorParameter)
 
         fontParameter = ParameterFont(
-            self.FONT,
-            description=self.tr('Font of the label')
-            )
-        fontParameter.setMetadata({
-            'widget_wrapper' : 'DsgTools.gui.ProcessingUI.fontWidgetWrapper.FontWidgetWrapper'
-        })
+            self.FONT, description=self.tr("Font of the label")
+        )
+        fontParameter.setMetadata(
+            {
+                "widget_wrapper": "DsgTools.gui.ProcessingUI.fontWidgetWrapper.FontWidgetWrapper"
+            }
+        )
         self.addParameter(fontParameter)
 
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.FONT_SIZE,
-                self.tr('Font Size'),
+                self.tr("Font Size"),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Double,
-                defaultValue=1.5
+                defaultValue=1.5,
             )
         )
 
         fontParameter = ParameterFont(
-            self.FONT_LL,
-            description=self.tr('Font of the LatLong label')
-            )
-        fontParameter.setMetadata({
-            'widget_wrapper' : 'DsgTools.gui.ProcessingUI.fontWidgetWrapper.FontWidgetWrapper'
-        })
+            self.FONT_LL, description=self.tr("Font of the LatLong label")
+        )
+        fontParameter.setMetadata(
+            {
+                "widget_wrapper": "DsgTools.gui.ProcessingUI.fontWidgetWrapper.FontWidgetWrapper"
+            }
+        )
         self.addParameter(fontParameter)
 
         colorParameter = ParameterColor(
-            self.COLOR_LL,
-            description=self.tr('Lat Long Color')
-            )
-        colorParameter.setMetadata({
-            'widget_wrapper' : 'DsgTools.gui.ProcessingUI.colorWidgetWrapper.ColorWidgetWrapper'
-        })
+            self.COLOR_LL, description=self.tr("Lat Long Color")
+        )
+        colorParameter.setMetadata(
+            {
+                "widget_wrapper": "DsgTools.gui.ProcessingUI.colorWidgetWrapper.ColorWidgetWrapper"
+            }
+        )
         self.addParameter(colorParameter)
 
         self.addOutput(
             QgsProcessingOutputVectorLayer(
-                self.OUTPUT,
-                self.tr('Original layer with assigned styles')
+                self.OUTPUT, self.tr("Original layer with assigned styles")
             )
         )
-    
+
     def parameterAsColor(self, parameters, name, context):
         return parameters[name]
-    
+
     def parameterAsFont(self, parameters, name, context):
         return parameters[name]
-
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -232,7 +233,21 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
         font = self.parameterAsFont(parameters, self.FONT, context)
         fontLL = self.parameterAsFont(parameters, self.FONT_LL, context)
         llcolor = self.parameterAsColor(parameters, self.COLOR_LL, context)
-        GridAndLabelCreator().geo_test(inputLyr, attribute, id_attribute, id_value, spacing, crossX, crossY, scale, color, fontSize, font, fontLL, llcolor)
+        GridAndLabelCreator().geo_test(
+            inputLyr,
+            attribute,
+            id_attribute,
+            id_value,
+            spacing,
+            crossX,
+            crossY,
+            scale,
+            color,
+            fontSize,
+            font,
+            fontLL,
+            llcolor,
+        )
 
         return {self.OUTPUT: inputLyr}
 
@@ -244,21 +259,21 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'createeditinggrid'
+        return "createeditinggrid"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Create Editing Grid')
+        return self.tr("Create Editing Grid")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Editing Algorithms')
+        return self.tr("Editing Algorithms")
 
     def groupId(self):
         """
@@ -268,17 +283,16 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Editing Algorithms'
+        return "DSGTools: Editing Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate('CreateEditingGridAlgorithm', string)
+        return QCoreApplication.translate("CreateEditingGridAlgorithm", string)
 
     def createInstance(self):
         return CreateEditingGridAlgorithm()
 
 
 class ParameterFontType(QgsProcessingParameterType):
-
     def __init__(self):
         super().__init__()
 
@@ -286,20 +300,22 @@ class ParameterFontType(QgsProcessingParameterType):
         return ParameterFont(name)
 
     def metadata(self):
-        return {'widget_wrapper': 'DsgTools.gui.ProcessingUI.fontWidgetWrapper.FontWidgetWrapper'}
+        return {
+            "widget_wrapper": "DsgTools.gui.ProcessingUI.fontWidgetWrapper.FontWidgetWrapper"
+        }
 
     def name(self):
-        return QCoreApplication.translate('Processing', 'Font Parameter')
+        return QCoreApplication.translate("Processing", "Font Parameter")
 
     def id(self):
-        return 'font'
+        return "font"
 
     def description(self):
-        return QCoreApplication.translate('Processing', 'Font parameter.')
+        return QCoreApplication.translate("Processing", "Font parameter.")
+
 
 class ParameterFont(QgsProcessingParameterDefinition):
-
-    def __init__(self, name, description=''):
+    def __init__(self, name, description=""):
         super().__init__(name, description)
 
     def clone(self):
@@ -311,7 +327,7 @@ class ParameterFont(QgsProcessingParameterDefinition):
 
     @staticmethod
     def typeName():
-        return 'font'
+        return "font"
 
     def checkValueIsAcceptable(self, value, context=None):
         return True
@@ -326,8 +342,8 @@ class ParameterFont(QgsProcessingParameterDefinition):
     def fromScriptCode(cls, name, description, isOptional, definition):
         raise NotImplementedError()
 
-class ParameterColorType(QgsProcessingParameterType):
 
+class ParameterColorType(QgsProcessingParameterType):
     def __init__(self):
         super().__init__()
 
@@ -335,20 +351,22 @@ class ParameterColorType(QgsProcessingParameterType):
         return ParameterColor(name)
 
     def metadata(self):
-        return {'widget_wrapper': 'DsgTools.gui.ProcessingUI.fontWidgetWrapper.ColorWidgetWrapper'}
+        return {
+            "widget_wrapper": "DsgTools.gui.ProcessingUI.fontWidgetWrapper.ColorWidgetWrapper"
+        }
 
     def name(self):
-        return QCoreApplication.translate('Processing', 'Color Parameter')
+        return QCoreApplication.translate("Processing", "Color Parameter")
 
     def id(self):
-        return 'color'
+        return "color"
 
     def description(self):
-        return QCoreApplication.translate('Processing', 'Color parameter.')
+        return QCoreApplication.translate("Processing", "Color parameter.")
+
 
 class ParameterColor(QgsProcessingParameterDefinition):
-
-    def __init__(self, name, description=''):
+    def __init__(self, name, description=""):
         super().__init__(name, description)
 
     def clone(self):
@@ -360,7 +378,7 @@ class ParameterColor(QgsProcessingParameterDefinition):
 
     @staticmethod
     def typeName():
-        return 'color'
+        return "color"
 
     def checkValueIsAcceptable(self, value, context=None):
         return True

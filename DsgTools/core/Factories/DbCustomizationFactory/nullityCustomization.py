@@ -20,37 +20,44 @@
  *                                                                         *
  ***************************************************************************/
 """
-#DsgTools Imports
-from DsgTools.core.Factories.DbCustomizationFactory.dbCustomization import DbCustomization
+# DsgTools Imports
+from DsgTools.core.Factories.DbCustomizationFactory.dbCustomization import (
+    DbCustomization,
+)
+
 
 class NullityCustomization(DbCustomization):
     def __init__(self, customJson):
         super(NullityCustomization, self).__init__(customJson)
-    
+
     def buildSql(self):
         """
         {'schema':schema, 'table':table, 'attrName':attrName, 'notNull':notNull}
         """
-        #Abstract method. Must be reimplemented in each child.
+        # Abstract method. Must be reimplemented in each child.
         sql = """"""
-        for modItem in self.customJson['ChangeNullity']:
-            if modItem['notNull']:
-                nullClause = 'SET'
+        for modItem in self.customJson["ChangeNullity"]:
+            if modItem["notNull"]:
+                nullClause = "SET"
             else:
-                nullClause = 'DROP'
-            sql += """ALTER TABLE ONLY "{0}"."{1}" ALTER COLUMN "{2}" {3} NOT NULL;\n""".format(modItem['schema'], modItem['table'], modItem['attrName'], nullClause)
+                nullClause = "DROP"
+            sql += """ALTER TABLE ONLY "{0}"."{1}" ALTER COLUMN "{2}" {3} NOT NULL;\n""".format(
+                modItem["schema"], modItem["table"], modItem["attrName"], nullClause
+            )
         return sql
-    
+
     def buildUndoSql(self):
         """
         {'schema':schema, 'table':table, 'attrName':attrName, 'notNull':notNull}
         """
-        #Abstract method. Must be reimplemented in each child.
+        # Abstract method. Must be reimplemented in each child.
         sql = """"""
-        for modItem in self.customJson['ChangeNullity']:
-            if not modItem['notNull']:
-                nullClause = 'SET'
+        for modItem in self.customJson["ChangeNullity"]:
+            if not modItem["notNull"]:
+                nullClause = "SET"
             else:
-                nullClause = 'DROP'
-            sql += """ALTER TABLE ONLY "{0}"."{1}" ALTER COLUMN "{2}" {3} NOT NULL;\n""".format(modItem['schema'], modItem['table'], modItem['attrName'], nullClause)
+                nullClause = "DROP"
+            sql += """ALTER TABLE ONLY "{0}"."{1}" ALTER COLUMN "{2}" {3} NOT NULL;\n""".format(
+                modItem["schema"], modItem["table"], modItem["attrName"], nullClause
+            )
         return sql

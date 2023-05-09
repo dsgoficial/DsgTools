@@ -24,30 +24,39 @@ from PyQt5.QtCore import QCoreApplication
 
 import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
-                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterDistance,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
-                       QgsSpatialIndex, QgsWkbTypes, QgsProject)
+from qgis.core import (
+    QgsDataSourceUri,
+    QgsFeature,
+    QgsFeatureSink,
+    QgsGeometry,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterDistance,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterField,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsWkbTypes,
+    QgsProject,
+)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
-    INPUT = 'INPUT'
-    SELECTED = 'SELECTED'
-    TOLERANCE = 'TOLERANCE'
-    OUTPUT = 'OUTPUT'
+    INPUT = "INPUT"
+    SELECTED = "SELECTED"
+    TOLERANCE = "TOLERANCE"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -55,30 +64,26 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorLine ]
+                self.INPUT, self.tr("Input layer"), [QgsProcessing.TypeVectorLine]
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
-                self.SELECTED,
-                self.tr('Process only selected features')
+                self.SELECTED, self.tr("Process only selected features")
             )
         )
         self.addParameter(
             QgsProcessingParameterDistance(
                 self.TOLERANCE,
-                self.tr('Snap radius'),
+                self.tr("Snap radius"),
                 parentParameterName=self.INPUT,
                 minValue=0,
-                defaultValue=1.0
+                defaultValue=1.0,
             )
         )
         self.addOutput(
             QgsProcessingOutputVectorLayer(
-                self.OUTPUT,
-                self.tr('Adjusted original network layer')
+                self.OUTPUT, self.tr("Adjusted original network layer")
             )
         )
 
@@ -94,14 +99,26 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Identifying dangles on {layer}...').format(layer=inputLyr.name()))
-        dangleLyr = algRunner.runIdentifyDangles(inputLyr, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected)
+        multiStepFeedback.pushInfo(
+            self.tr("Identifying dangles on {layer}...").format(layer=inputLyr.name())
+        )
+        dangleLyr = algRunner.runIdentifyDangles(
+            inputLyr,
+            tol,
+            context,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected,
+        )
 
         multiStepFeedback.setCurrentStep(1)
         layerHandler.filterDangles(dangleLyr, tol, feedback=multiStepFeedback)
 
         multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(self.tr('Snapping layer {layer} to dangles...').format(layer=inputLyr.name()))
+        multiStepFeedback.pushInfo(
+            self.tr("Snapping layer {layer} to dangles...").format(
+                layer=inputLyr.name()
+            )
+        )
         algRunner.runSnapLayerOnLayer(
             inputLayer=inputLyr,
             referenceLayer=dangleLyr,
@@ -109,7 +126,7 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback,
             onlySelected=onlySelected,
-            behavior=0
+            behavior=0,
         )
         QgsProject.instance().removeMapLayer(dangleLyr.id())
         return {self.OUTPUT: inputLyr}
@@ -122,21 +139,21 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'adjustnetworkconnectivity'
+        return "adjustnetworkconnectivity"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Adjust Network Connectivity')
+        return self.tr("Adjust Network Connectivity")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Network Processes)')
+        return self.tr("Quality Assurance Tools (Network Processes)")
 
     def groupId(self):
         """
@@ -146,10 +163,10 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Network Processes)'
+        return "DSGTools: Quality Assurance Tools (Network Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('AdjustNetworkConnectivityAlgorithm', string)
+        return QCoreApplication.translate("AdjustNetworkConnectivityAlgorithm", string)
 
     def createInstance(self):
         return AdjustNetworkConnectivityAlgorithm()

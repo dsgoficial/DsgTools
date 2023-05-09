@@ -27,28 +27,37 @@ from qgis.core import QgsMessageLog
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt
-from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox, QMenu, QApplication, QFileDialog
+from qgis.PyQt.QtWidgets import (
+    QListWidgetItem,
+    QMessageBox,
+    QMenu,
+    QApplication,
+    QFileDialog,
+)
 from qgis.PyQt.QtGui import QCursor
 
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'listSelector.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "listSelector.ui")
+)
+
 
 class ListSelector(QtWidgets.QDialog, FORM_CLASS):
-    
-    def __init__(self, originList, destinationList, parent = None):
+    def __init__(self, originList, destinationList, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.setupUi(self)
         self.originList = originList
         self.destinationList = destinationList
-        self.listCustomSelector.setTitle(self.tr('Select'))
-        self.listCustomSelector.setFromList(list(originList), unique = True) #passes a copy using list(<list object>)
+        self.listCustomSelector.setTitle(self.tr("Select"))
+        self.listCustomSelector.setFromList(
+            list(originList), unique=True
+        )  # passes a copy using list(<list object>)
         self.listCustomSelector.setToList(list(destinationList))
-    
+
     def getSelected(self):
         return self.listCustomSelector.toLs
-    
+
     def getInputAndOutputLists(self):
         return (self.listCustomSelector.fromLs, self.listCustomSelector.toLs)
 

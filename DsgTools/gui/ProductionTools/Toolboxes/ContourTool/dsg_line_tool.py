@@ -26,6 +26,7 @@ from qgis.PyQt.QtGui import QColor
 from qgis.gui import QgsMapTool, QgsRubberBand
 from qgis.core import QgsGeometry, QgsWkbTypes
 
+
 class DsgLineTool(QgsMapTool):
 
     lineCreated = pyqtSignal(QgsGeometry)
@@ -35,7 +36,7 @@ class DsgLineTool(QgsMapTool):
         Constructor
         """
         super(DsgLineTool, self).__init__(canvas)
-        
+
         self.canvas = canvas
         self.rubberBand = None
         self.reset()
@@ -46,7 +47,7 @@ class DsgLineTool(QgsMapTool):
         """
         self.canvas.scene().removeItem(self.rubberBand)
         super(DsgLineTool, self).deactivate()
-        
+
     def defineRubberBand(self):
         """
         Defines the rubber band style
@@ -59,7 +60,7 @@ class DsgLineTool(QgsMapTool):
         self.rubberBand = QgsRubberBand(self.canvas)
         self.rubberBand.setColor(QColor(myRed, myGreen, myBlue, 100))
         self.rubberBand.setWidth(3)
-        
+
     def reset(self):
         """
         Resets the tool
@@ -80,7 +81,7 @@ class DsgLineTool(QgsMapTool):
             self.reset()
 
         self.isEmittingPoint = True
-        
+
     def canvasReleaseEvent(self, e):
         """
         Reimplementation to add a vertex to the rubber band or to finish the rubber band according to the button used
@@ -92,7 +93,7 @@ class DsgLineTool(QgsMapTool):
             self.lineCreated.emit(geom)
         elif e.button() == Qt.LeftButton:
             self.isEmittingPoint = True
-            
+
         self.rubberBand.addPoint(point, True)
 
     def canvasMoveEvent(self, e):
@@ -101,10 +102,10 @@ class DsgLineTool(QgsMapTool):
         """
         if not self.isEmittingPoint:
             return
-        
+
         point = self.snapPoint(e.pos())
         self.rubberBand.movePoint(point)
-        
+
     def snapPoint(self, p):
         """
         Reimplementation to make use of the snap
@@ -113,4 +114,4 @@ class DsgLineTool(QgsMapTool):
         if m.isValid():
             return m.point()
         else:
-            return self.canvas.getCoordinateTransform().toMapCoordinates(p)  
+            return self.canvas.getCoordinateTransform().toMapCoordinates(p)

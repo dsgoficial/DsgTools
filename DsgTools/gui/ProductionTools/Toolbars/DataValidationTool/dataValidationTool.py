@@ -22,19 +22,17 @@ from shutil import copy
 
 import processing
 from processing.modeler.ModelerUtils import ModelerUtils
-from qgis.core import (QgsProject,
-                       QgsMapLayer,
-                       QgsProcessingModelAlgorithm,
-                       QgsProcessingContext,
-                       QgsProcessingFeedback,
-                       QgsLayerTreeLayer,
-                       QgsMessageLog,
-                       Qgis)
-from qgis.PyQt.QtWidgets import (QApplication,
-                                 QWidget,
-                                 QMessageBox,
-                                 QFileDialog,
-                                 QAction)
+from qgis.core import (
+    QgsProject,
+    QgsMapLayer,
+    QgsProcessingModelAlgorithm,
+    QgsProcessingContext,
+    QgsProcessingFeedback,
+    QgsLayerTreeLayer,
+    QgsMessageLog,
+    Qgis,
+)
+from qgis.PyQt.QtWidgets import QApplication, QWidget, QMessageBox, QFileDialog, QAction
 from qgis.PyQt.QtGui import QCursor, QIcon
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
@@ -42,16 +40,18 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 from DsgTools.gui.AboutAndFurtherInfo.Options.options import Options
 
 FORM_CLASS, _ = uic.loadUiType(
-    os.path.join(os.path.dirname(__file__), 'dataValidationTool.ui')
+    os.path.join(os.path.dirname(__file__), "dataValidationTool.ui")
 )
+
 
 class DataValidationTool(QWidget, FORM_CLASS):
     """
     Toolbar for fast usage of processing methods. It is assumed that the models
-    have all of its child algorithm's variable's well defined and the only 
-    variables expected on input are the output layers, whenever needed and as 
-    many as it may be. 
+    have all of its child algorithm's variable's well defined and the only
+    variables expected on input are the output layers, whenever needed and as
+    many as it may be.
     """
+
     __dsgToolsModelPath__ = os.path.join(
         os.path.dirname(__file__), "..", "..", "..", "..", "core", "Misc", "QGIS_Models"
     )
@@ -89,7 +89,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
             self.addModelPushButton,
             self.removeModelPushButton,
             self.runModelPushButton,
-            self.splitter
+            self.splitter,
         ]
 
     def options(self):
@@ -133,12 +133,12 @@ class DataValidationTool(QWidget, FORM_CLASS):
         self.modelComboBox.addItem(self.tr("Select a model..."))
         models = []
         for file_ in os.listdir(self.defaultModelPath()):
-            if file_.endswith('.model') or file_.endswith('.model3'):
+            if file_.endswith(".model") or file_.endswith(".model3"):
                 models.append(file_)
         if models:
             self.modelComboBox.addItems(models)
 
-    @pyqtSlot(bool, name='on_validationPushButton_toggled')
+    @pyqtSlot(bool, name="on_validationPushButton_toggled")
     def activateTool(self, toggled=None):
         """
         Shows/hides the toolbar.
@@ -159,15 +159,22 @@ class DataValidationTool(QWidget, FORM_CLASS):
         :return: (bool) whether action was confirmed.
         """
         if showCancel:
-            return QMessageBox.question(
-                self, self.tr('Confirm Action'), msg,
-                QMessageBox.Ok|QMessageBox.Cancel
-            ) == QMessageBox.Ok
+            return (
+                QMessageBox.question(
+                    self,
+                    self.tr("Confirm Action"),
+                    msg,
+                    QMessageBox.Ok | QMessageBox.Cancel,
+                )
+                == QMessageBox.Ok
+            )
         else:
-            return QMessageBox.question(
-                self, self.tr('Confirm Action'), msg,
-                QMessageBox.Ok
-            ) == QMessageBox.Ok
+            return (
+                QMessageBox.question(
+                    self, self.tr("Confirm Action"), msg, QMessageBox.Ok
+                )
+                == QMessageBox.Ok
+            )
 
     def modelExists(self, modelName):
         """
@@ -191,7 +198,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
             return True
         return False
 
-    @pyqtSlot(int, name='on_modelComboBox_currentIndexChanged')
+    @pyqtSlot(int, name="on_modelComboBox_currentIndexChanged")
     def modelIsValid(self, idx):
         """
         Checks if a model is valid and sets GUI buttons enabled if so.
@@ -226,7 +233,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
         QgsProject.instance().addMapLayer(layer, False)
         subgroup.insertChildNode(1, QgsLayerTreeLayer(layer))
 
-    @pyqtSlot(bool, name='on_updatePushButton_clicked')
+    @pyqtSlot(bool, name="on_updatePushButton_clicked")
     def updateModelList(self):
         """
         Checks current default path for models and refreshes current displayed
@@ -238,7 +245,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
         self.setActiveModel(currentModel)
         QApplication.restoreOverrideCursor()
 
-    @pyqtSlot(bool, name='on_addModelPushButton_clicked')
+    @pyqtSlot(bool, name="on_addModelPushButton_clicked")
     def registerModel(self, modelPath=None):
         """
         Registers a model to the model runner. This application register all
@@ -248,23 +255,22 @@ class DataValidationTool(QWidget, FORM_CLASS):
         if modelPath is None or not isinstance(modelPath, str):
             fd = QFileDialog()
             modelPathList = fd.getOpenFileNames(
-                caption=self.tr('Select a QGIS processing model to be added'),
-                filter=self.tr('QGIS Processing Model (*.model *.model3)')
+                caption=self.tr("Select a QGIS processing model to be added"),
+                filter=self.tr("QGIS Processing Model (*.model *.model3)"),
             )
             modelPathList = modelPathList[0] if modelPathList else modelPathList
             if modelPathList == []:
                 return
         msg = self.tr(
-            "Model seems to be already registered, would you like to overwrite"
-            " it?"
+            "Model seems to be already registered, would you like to overwrite" " it?"
         )
         for modelPath in modelPathList:
             modelName = os.path.basename(modelPath)
             if self.modelExists(modelName) and not self.confirmAction(msg):
                 QgsMessageLog.logMessage(
                     self.tr("Model {model} was not imported.").format(model=modelName),
-                    'DSGTools Plugin',
-                    Qgis.Info
+                    "DSGTools Plugin",
+                    Qgis.Info,
                 )
                 return
             dest = os.path.join(self.defaultModelPath(), modelName)
@@ -275,16 +281,17 @@ class DataValidationTool(QWidget, FORM_CLASS):
                 self.setActiveModel(modelName)
                 self.modelAdded.emit(modelName)
                 QgsMessageLog.logMessage(
-                    self.tr("Model {model} imported to {dest}.").format(model=modelName, dest=dest),
-                    'DSGTools Plugin',
-                    Qgis.Info
+                    self.tr("Model {model} imported to {dest}.").format(
+                        model=modelName, dest=dest
+                    ),
+                    "DSGTools Plugin",
+                    Qgis.Info,
                 )
 
-
-    @pyqtSlot(bool, name='on_removeModelPushButton_clicked')
+    @pyqtSlot(bool, name="on_removeModelPushButton_clicked")
     def unregisterModel(self, modelName=None):
         """
-        Unregisters a model to the model runner. Removes the model from the 
+        Unregisters a model to the model runner. Removes the model from the
         default directory.
         :param modelName: (str) basename for the model to be removed.
         """
@@ -300,7 +307,9 @@ class DataValidationTool(QWidget, FORM_CLASS):
             try:
                 os.remove(modelPath)
                 if not os.path.exists(modelPath):
-                    self.modelComboBox.removeItem(self.modelComboBox.findText(modelName))
+                    self.modelComboBox.removeItem(
+                        self.modelComboBox.findText(modelName)
+                    )
                     self.modelRemoved.emit(modelName)
             except Exception as e:
                 msg = self.tr("Unable to remove '{model}':\n{error}.").format(
@@ -308,7 +317,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
                 )
                 self.confirmAction(msg, showCancel=False)
 
-    @pyqtSlot(bool, name='on_runModelPushButton_clicked')
+    @pyqtSlot(bool, name="on_runModelPushButton_clicked")
     def runModel(self, modelName=None):
         """
         Executes chosen model, if possible.
@@ -325,36 +334,38 @@ class DataValidationTool(QWidget, FORM_CLASS):
         if not self.modelExists(modelName):
             # if model was manually removed and combo box was not refreshed
             self.iface.messageBar().pushMessage(
-                self.tr('Failed'), 
-                self.tr("model {model} seems to have been deleted.").format(model=modelName),
+                self.tr("Failed"),
+                self.tr("model {model} seems to have been deleted.").format(
+                    model=modelName
+                ),
                 level=Qgis.Critical,
-                duration=5
+                duration=5,
             )
             return
         alg.fromFile(modelPath)
         alg.initAlgorithm()
         # as this tool assumes that every parameter is pre-set, only output shall
         # be passed on - ALL outputs from this tool is set to memory layers.
-        param = {vl.name() : "memory:" for vl in alg.parameterDefinitions()}
+        param = {vl.name(): "memory:" for vl in alg.parameterDefinitions()}
         msg = self.tr("Would you like to run {model}").format(model=modelName)
         if self.options()["checkBeforeRunModel"] and not self.confirmAction(msg):
             return
         try:
             out = processing.run(alg, param)
             self.iface.messageBar().pushMessage(
-                self.tr('Sucess'), 
+                self.tr("Sucess"),
                 self.tr("model {model} finished.").format(model=modelName),
                 level=Qgis.Info,
-                duration=5
+                duration=5,
             )
             QgsMessageLog.logMessage(
-                    self.tr(
-                        "Model {model} finished running with no errors. You may"
-                        " check model output on Processing log tab."
-                    ).format(model=modelName),
-                    'DSGTools Plugin',
-                    Qgis.Info
-                )
+                self.tr(
+                    "Model {model} finished running with no errors. You may"
+                    " check model output on Processing log tab."
+                ).format(model=modelName),
+                "DSGTools Plugin",
+                Qgis.Info,
+            )
             if not self.options()["loadModelOutput"]:
                 return
             for var, value in out.items():
@@ -371,12 +382,12 @@ class DataValidationTool(QWidget, FORM_CLASS):
                 "execution log) {model}:\n{error}"
             ).format(model=modelName, error=str(e))
             self.iface.messageBar().pushMessage(
-                self.tr("Model {model} failed").format(model=modelName), 
+                self.tr("Model {model} failed").format(model=modelName),
                 self.tr("check log for more information."),
                 level=Qgis.Critical,
-                duration=5
+                duration=5,
             )
-            QgsMessageLog.logMessage(msg, 'DSGTools Plugin',Qgis.Info)
+            QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.Info)
 
     def unload(self):
         """
@@ -390,18 +401,18 @@ class DataValidationTool(QWidget, FORM_CLASS):
         for w in self._widgets():
             w.blockSignals(True)
             del w
-        self.iface.unregisterMainWindowAction(self.runAction)    
+        self.iface.unregisterMainWindowAction(self.runAction)
 
     def addShortcut(self):
         """
         Adds the action to main menu allowing QGIS to assign a shortcut for run.
         """
         self.runAction = QAction(
-            QIcon(':/plugins/DsgTools/icons/runModel.png'),
-            self.tr('DSGTools: Validation Toolbar - Run Processing Model'),
-            self.parent
+            QIcon(":/plugins/DsgTools/icons/runModel.png"),
+            self.tr("DSGTools: Validation Toolbar - Run Processing Model"),
+            self.parent,
         )
         self.runAction.triggered.connect(self.runModel)
         if self.parent:
             self.parent.addAction(self.runAction)
-        self.iface.registerMainWindowAction(self.runAction, '')
+        self.iface.registerMainWindowAction(self.runAction, "")

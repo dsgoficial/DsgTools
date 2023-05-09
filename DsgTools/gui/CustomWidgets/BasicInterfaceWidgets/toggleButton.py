@@ -1,15 +1,18 @@
-from qgis.PyQt.QtCore import (Qt,
-                              QSize,
-                              QPoint,
-                              QRectF,
-                              QPointF,
-                              pyqtSlot,
-                              QEasingCurve,
-                              pyqtProperty,
-                              QPropertyAnimation,
-                              QSequentialAnimationGroup)
+from qgis.PyQt.QtCore import (
+    Qt,
+    QSize,
+    QPoint,
+    QRectF,
+    QPointF,
+    pyqtSlot,
+    QEasingCurve,
+    pyqtProperty,
+    QPropertyAnimation,
+    QSequentialAnimationGroup,
+)
 from qgis.PyQt.QtWidgets import QCheckBox
 from qgis.PyQt.QtGui import QPen, QColor, QBrush, QPainter, QPaintEvent
+
 
 class Toggle(QCheckBox):
     # This widget was originally implemented by Martin Fitzpatrick
@@ -18,12 +21,14 @@ class Toggle(QCheckBox):
     _transparent_pen = QPen(Qt.transparent)
     _light_grey_pen = QPen(Qt.lightGray)
 
-    def __init__(self,
-                 parent=None,
-                 bar_color=Qt.gray,
-                 checked_color="#00B0FF",
-                 handle_color=Qt.white,
-                 labels=None):
+    def __init__(
+        self,
+        parent=None,
+        bar_color=Qt.gray,
+        checked_color="#00B0FF",
+        handle_color=Qt.white,
+        labels=None,
+    ):
         super().__init__(parent)
         self.setLabels(labels)
         # Save our properties on the object via self, so we can access them later
@@ -62,7 +67,7 @@ class Toggle(QCheckBox):
         """
         Gets the label to be displyed on the button accordingly to its state.
         :param state: (bool) whether this button is toggle (checked).
-        :return: (str) label to be displayed 
+        :return: (str) label to be displayed
         """
         if self._labels is None:
             return ""
@@ -78,8 +83,7 @@ class Toggle(QCheckBox):
 
         p.setPen(self._transparent_pen)
         barRect = QRectF(
-            0, 0,
-            contRect.width() - handleRadius, 0.40 * contRect.height()
+            0, 0, contRect.width() - handleRadius, 0.40 * contRect.height()
         )
         barRect.moveCenter(contRect.center())
         rounding = barRect.height() / 2
@@ -100,9 +104,7 @@ class Toggle(QCheckBox):
             p.setPen(self._light_grey_pen)
             p.setBrush(self._handle_brush)
 
-        p.drawEllipse(
-            QPointF(xPos, barRect.center().y()),
-            handleRadius, handleRadius)
+        p.drawEllipse(QPointF(xPos, barRect.center().y()), handleRadius, handleRadius)
 
         p.end()
 

@@ -25,47 +25,50 @@ from ...algRunner import AlgRunner
 import processing, os, requests
 from time import sleep
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterExpression,
-                       QgsProcessingException,
-                       QgsProcessingParameterString,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterType)
+from qgis.core import (
+    QgsProcessing,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFeatureSink,
+    QgsFeature,
+    QgsDataSourceUri,
+    QgsProcessingOutputVectorLayer,
+    QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessingUtils,
+    QgsSpatialIndex,
+    QgsGeometry,
+    QgsProcessingParameterField,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterFile,
+    QgsProcessingParameterExpression,
+    QgsProcessingException,
+    QgsProcessingParameterString,
+    QgsProcessingParameterDefinition,
+    QgsProcessingParameterType,
+)
+
 
 class SpatialRulesCheckerAlgorithm(QgsProcessingAlgorithm):
-    RULES_SET = 'RULES_SET'
-
+    RULES_SET = "RULES_SET"
 
     def initAlgorithm(self, config):
         """
         Parameter setting.
         """
         spatialRulesSet = ParameterSpatialRulesSet(
-            self.RULES_SET,
-            description=self.tr('Spatial Rules Set')
-            )
-        managerParameter.setMetadata({
-            'widget_wrapper' : 'DsgTools.gui.ProcessingUI.spatialRulesSetWrapper.SpatialRulesSetWrapper'
-        })
+            self.RULES_SET, description=self.tr("Spatial Rules Set")
+        )
+        managerParameter.setMetadata(
+            {
+                "widget_wrapper": "DsgTools.gui.ProcessingUI.spatialRulesSetWrapper.SpatialRulesSetWrapper"
+            }
+        )
         self.addParameter(managerParameter)
 
     def parameterAsSpatialRulesSet(self, parameters, name, context):
@@ -87,21 +90,21 @@ class SpatialRulesCheckerAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'spatialruleschecker'
+        return "spatialruleschecker"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Spatial Rules Checker')
+        return self.tr("Spatial Rules Checker")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Quality Assurance Tools (Identification Processes)')
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -111,16 +114,16 @@ class SpatialRulesCheckerAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate('RunRemoteFMEAlgorithm', string)
+        return QCoreApplication.translate("RunRemoteFMEAlgorithm", string)
 
     def createInstance(self):
         return RunRemoteFMEAlgorithm()
 
-class ParameterSpatialRulesSetType(QgsProcessingParameterType):
 
+class ParameterSpatialRulesSetType(QgsProcessingParameterType):
     def __init__(self):
         super().__init__()
 
@@ -128,20 +131,24 @@ class ParameterSpatialRulesSetType(QgsProcessingParameterType):
         return ParameterSpatialRulesSet(name)
 
     def metadata(self):
-        return {'widget_wrapper': 'DsgTools.gui.ProcessingUI.spatialRulesSetWrapper.SpatialRulesSetWrapper'}
+        return {
+            "widget_wrapper": "DsgTools.gui.ProcessingUI.spatialRulesSetWrapper.SpatialRulesSetWrapper"
+        }
 
     def name(self):
-        return QCoreApplication.translate('Processing', 'Spatial Rules Set')
+        return QCoreApplication.translate("Processing", "Spatial Rules Set")
 
     def id(self):
-        return 'spatial_rules_set_type'
+        return "spatial_rules_set_type"
 
     def description(self):
-        return QCoreApplication.translate('Processing', 'Set of spatial rules. Used on Spatial Rules Checker.')
+        return QCoreApplication.translate(
+            "Processing", "Set of spatial rules. Used on Spatial Rules Checker."
+        )
+
 
 class ParameterSpatialRulesSet(QgsProcessingParameterDefinition):
-
-    def __init__(self, name, description=''):
+    def __init__(self, name, description=""):
         super().__init__(name, description)
 
     def clone(self):
@@ -153,7 +160,7 @@ class ParameterSpatialRulesSet(QgsProcessingParameterDefinition):
 
     @staticmethod
     def typeName():
-        return 'spatial_rules_set'
+        return "spatial_rules_set"
 
     def checkValueIsAcceptable(self, value, context=None):
         return True
