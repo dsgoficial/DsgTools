@@ -6,6 +6,10 @@ Melhorias:
 
 - Adicionada a opção de suprimir o formulário de feição no modo reclassificação do menu de aquisição (particularmente útil quando se está corrigindo flags de áreas sem centroide na construção de polígonos utilizando linha e centroide);
 
+Correção de bug:
+
+- Corrigido bug na construção do texto da flag de identificar geometria inválida, quando a chave primária tem tipo inteiro;
+
 ## 4.7.1 - 2023-05-10
 
 Correção de bug:
