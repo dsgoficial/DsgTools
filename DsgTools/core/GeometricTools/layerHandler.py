@@ -1399,7 +1399,7 @@ class LayerHandler(QObject):
                 featIdText = (
                     f"{feat.id()}"
                     if pkFields == []
-                    else f"{','.join(feat.attribute(i) for i in pkFields)}"
+                    else f"{','.join(str(feat.attribute(i)) for i in pkFields)}"
                 )
                 featIdText = featIdText.replace(",)", "").replace("(", "")
                 for point, errorDict in output.items():
