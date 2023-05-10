@@ -44,6 +44,8 @@ about=
 
 # Uncomment the following line and add your changelog:
 changelog=
+	4.7.1:
+		
 	4.7.0:
 		Novas funcionalidades:
 			- Novo processo de selecionar feições no canvas de camadas selecionadas;

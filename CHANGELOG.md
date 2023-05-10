@@ -12,7 +12,6 @@ Correção de bug:
 
 - Correção de bug no menu (filtro de geometria estava quebrado);
 
-
 ## 4.7.0 - 2023-05-09
 
 Novas funcionalidades:
@@ -43,7 +42,6 @@ Melhorias:
 - Adicionada a opção de desligar todas as imagens ativas na ferramenta de seleção de raster;
 - Adicionado o id da geometria na flag do identificar geometrias inválidas;
 - O menu de aquisição agora permite reclassificação de polígono para ponto (particularmente útil quando se está corrigindo flags de áreas sem centroide na construção de polígonos utilizando linha e centroide);
-
 
 Correção de bug:
 
@@ -186,4 +184,4 @@ Correção de bugs:
 - O problema onde a Ferramenta de Aquisição com Ângulos Retos e a Ferramenta de Aquisição à Mão Livre não atribuíam os valores padrões nos formulários da feição foi corrigido
 - Correção nos processings de geração de MI: remover MI que não existem
 
-Changelog completo: https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.3
+Changelog completo: <https://github.com/dsgoficial/DsgTools/wiki/Changelog-4.3>
