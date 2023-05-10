@@ -6,14 +6,14 @@ Melhorias:
 
 - Adicionada a opção de suprimir o formulário de feição no modo reclassificação do menu de aquisição (particularmente útil quando se está corrigindo flags de áreas sem centroide na construção de polígonos utilizando linha e centroide);
 
-## 4.7.1
+## 4.7.1 - 2023-05-10
 
 Correção de bug:
 
 - Correção de bug no menu (filtro de geometria estava quebrado);
 
 
-## 4.7.0
+## 4.7.0 - 2023-05-09
 
 Novas funcionalidades:
 
@@ -52,7 +52,7 @@ Correção de bug:
 - Correção de bug no processo de dissolver polígonos com mesmo conjunto de atributos quando é passada uma área mínima para o dissolve;
 - Correção de bug no acesso ao BDGEx (a url do serviço mudou e o código teve de ser atualizado, mudando a url do serviço de https para http);
 
-## 4.6.0
+## 4.6.0 - 2022-12-19
 
 Novas funcionalidades:
 
