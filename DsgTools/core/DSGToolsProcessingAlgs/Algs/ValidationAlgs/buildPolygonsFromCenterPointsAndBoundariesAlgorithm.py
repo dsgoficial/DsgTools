@@ -292,7 +292,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 suppressPolygonWithoutCenterPointFlag,
                 multiStepFeedback,
             )
-            if not groupBySpatialPartition or geographicBoundaryLyr.featureCount() <= 1
+            if geographicBoundaryLyr is None or not groupBySpatialPartition or geographicBoundaryLyr.featureCount() <= 1
             else self.computePolygonsFromCenterPointAndBoundariesGroupingBySpatialPartition(
                 context,
                 inputCenterPointLyr,
