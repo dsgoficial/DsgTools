@@ -181,6 +181,7 @@ class AcquisitionMenuCtrl:
         self.reclassifyDialog = self.widgetFactory.createWidget(
             "ReclassifyDialog", self
         )
+        suppressReclassificationDialog = buttonConfig.get("buttonSuppressReclassificationForm", False)
         self.reclassifyDialog.setAttributeTableWidget(self.getAttributeTableWidget())
         self.reclassifyDialog.loadAttributes(
             self.getAttributesConfigByLayerName(buttonConfig["buttonLayer"])
@@ -188,6 +189,10 @@ class AcquisitionMenuCtrl:
         self.reclassifyDialog.setAttributesValues(buttonConfig["buttonAttributes"])
         self.reclassifyDialog.loadLayersStatus(layersToReclassification)
         self.reclassifyDialog.success.connect(callback)
+        if suppressReclassificationDialog:
+            self.reclassifyDialog.hide()
+            self.reclassifyDialog.on_saveBtn_clicked()
+            return
         self.reclassifyDialog.showTopLevel()
 
     def reclassify(self, buttonConfig, reclassifyData):
