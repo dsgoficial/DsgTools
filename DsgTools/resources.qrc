@@ -91,5 +91,6 @@
         <file>icons/tempLayer.png</file>
         <file>icons/copywkt.png</file>
         <file>icons/spatialFilter.png</file>
+        <file>icons/layer-landcover-24.png</file>
     </qresource>
 </RCC>
