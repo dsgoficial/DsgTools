@@ -23,6 +23,8 @@
 import os
 from typing import List, Optional
 
+from processing.gui.MultipleInputDialog import MultipleInputDialog
+
 from qgis.core import (
     Qgis,
     QgsCoordinateReferenceSystem,
@@ -90,9 +92,6 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
         return action
 
     def enableTool(self, enabled: bool = True) -> None:
-        allowed = False if self.lineLayerDict == dict() else True
-        toggled = self.runPushButton.isChecked()
-        enabled = allowed and toggled
         self.runPushButton.setEnabled(enabled)
 
     @pyqtSlot(bool, name="on_centerPointPushButton_toggled")
@@ -117,11 +116,38 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_runPushButton_clicked(self) -> None:
-        pass
+        print(self.lineLayerDict)
 
     @pyqtSlot(bool)
     def on_configPushButton_clicked(self) -> None:
-        pass
+        lineLyrs = sorted(
+            [
+                i
+                for i in QgsProject.instance().mapLayers().values()
+                if isinstance(i, QgsVectorLayer)
+                and i.geometryType() == QgsWkbTypes.LineGeometry
+            ],
+            key=lambda x: x.id(),
+        )
+        dlg = MultipleInputDialog(
+            [i.name() for i in lineLyrs if i.id()],
+            [
+                idx
+                for idx, lyrName in enumerate(lineLyrs)
+                if lyrName in self.lineLayerDict.values()
+            ],
+        )
+        dlg.exec()
+        if dlg.selectedoptions is None:
+            self.enableTool(enabled=self.lineLayerDict != dict())
+            return
+        selectedDict = {lineLyrs[i].id(): lineLyrs[i] for i in dlg.selectedoptions}
+        self.lineLayerDict.update(selectedDict)
+
+        keysToRemove = [k for k in self.lineLayerDict.keys() if k not in selectedDict]
+        for key in keysToRemove:
+            self.lineLayerDict.pop(key)
+        self.enableTool(enabled=self.lineLayerDict != dict())
 
     def unload(self) -> None:
         self.iface.unregisterMainWindowAction(self.runPushButtonAction)
