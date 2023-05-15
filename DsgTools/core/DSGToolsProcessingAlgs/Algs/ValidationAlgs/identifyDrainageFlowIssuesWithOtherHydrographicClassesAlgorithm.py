@@ -581,9 +581,10 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 drainageGeom = drainageFeat.geometry()
                 if not geomEngine.intersects(drainageGeom.constGet()):
                     continue
-                # if geomEngine.relatePattern(drainageGeom.constGet(), 'FF2FF1102'):
-
-                #     continue
+                if geomEngine.relatePattern(drainageGeom.constGet(), '102F*1FF2'):
+                    continue
+                if geomEngine.contains(drainageGeom.constGet()):
+                    continue
                 intersection = geomEngine.intersection(drainageGeom.constGet())
                 if (
                     QgsWkbTypes.geometryType(intersection.wkbType())
@@ -621,15 +622,6 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 break
             intersectionSet, polygonWithProblem = future.result()
             # intersectionSet, polygonWithProblem =  evaluate(feat)
-            for wkt in intersectionSet:
-                flagLineLambda(QgsGeometry.fromWkt(wkt))
-            if intersectionSet != set():
-                list(
-                    map(
-                        flagLineLambda,
-                        list(map(lambda x: QgsGeometry.fromWkt(x), intersectionSet)),
-                    )
-                )
             if polygonWithProblem is not None:
                 flagPolygonLambda(polygonWithProblem)
             multiStepFeedback.setProgress(current * stepSize)

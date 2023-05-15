@@ -2,10 +2,13 @@
 
 ## 4.8.0
 
+Novas Funcionalidades:
+
+- Novo processo de identificar inconsistências entre os elementos da rede de drenagem;
+
 Melhorias:
 
 - Adicionada a opção de suprimir o formulário de feição no modo reclassificação do menu de aquisição (particularmente útil quando se está corrigindo flags de áreas sem centroide na construção de polígonos utilizando linha e centroide);
-- Novo processo de identificar inconsistências entre os elementos da rede de drenagem;
 
 Correção de bug:
 
