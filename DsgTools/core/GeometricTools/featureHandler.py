@@ -298,6 +298,7 @@ class FeatureHandler(QObject):
         feat = QgsFeature(fields)
         feat["inom"] = index
         feat["mi"] = self.utmGrid.get_MI_MIR_from_inom(index)
+        geom.removeDuplicateNodes()
         feat.setGeometry(geom)
         return feat
 
