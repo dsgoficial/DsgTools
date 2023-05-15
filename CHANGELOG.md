@@ -14,6 +14,7 @@ Correção de bug:
 
 - Corrigido bug na construção do texto da flag de identificar geometria inválida, quando a chave primária tem tipo inteiro;
 - Corrigido bug de feições geradas com vértices duplicados na ferramenta de criação de grid sistemático;
+- Corrigido bug de erro na precisão dos vértices gerados na ferramenta de criação de grid sistemático;
 
 ## 4.7.1 - 2023-05-10
 
