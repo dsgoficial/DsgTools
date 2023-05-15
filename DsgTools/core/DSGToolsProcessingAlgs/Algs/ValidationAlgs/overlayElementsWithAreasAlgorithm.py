@@ -151,6 +151,7 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
             overlayLyr.renameAttribute(0, "fid")
             overlayLyr.renameAttribute(1, "cl")
             overlayLyr.commitChanges()
+            self.algRunner.runCreateSpatialIndex(overlayLyr, context=context)
         # 1- check method
         # 2- if overlay and keep, use clip and symetric difference
         # 3- if remove outside, use clip
@@ -193,10 +194,9 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
             if behavior == OverlayElementsWithAreasAlgorithm.RemoveInside:
                 return outputDiffLyr
         if behavior == OverlayElementsWithAreasAlgorithm.OverlayAndKeep:
-            outsideFeats = [i for i in outputDiffLyr.getFeatures()]
             outputLyr.startEditing()
             outputLyr.beginEditCommand("")
-            outputLyr.addFeatures(outsideFeats)
+            outputLyr.addFeatures(outputDiffLyr.getFeatures())
             outputLyr.endEditCommand()
             outputLyr.commitChanges()
             return outputLyr

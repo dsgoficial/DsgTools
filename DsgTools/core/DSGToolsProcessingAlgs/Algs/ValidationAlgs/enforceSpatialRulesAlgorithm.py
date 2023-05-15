@@ -148,7 +148,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
                         newFeature = QgsFeature(fields)
                         newFeature["reason"] = flagText.format(text=flag["text"])
                         newFeature.setGeometry(g)
-                        layerMap[geom.type()].addFeature(
+                        layerMap[g.type()].addFeature(
                             newFeature, QgsFeatureSink.FastInsert
                         )
         return (ptLayer, lLayer, polLayer)

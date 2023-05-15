@@ -107,7 +107,9 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         ignoreClosed = self.parameterAsBool(parameters, self.IGNORE_CLOSED, context)
         fixInput = self.parameterAsBool(parameters, self.TYPE, context)
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
+        self.prepareFlagSink(
+            parameters, inputLyr, QgsWkbTypes.Point, context, addFeatId=True
+        )
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         currentStep = 0
@@ -128,7 +130,11 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
         for current, (key, outDict) in enumerate(flagDict.items()):
             if multiStepFeedback.isCanceled():
                 break
-            self.flagFeature(flagGeom=outDict["geom"], flagText=outDict["reason"])
+            self.flagFeature(
+                flagGeom=outDict["geom"],
+                flagText=f"""Reason: {outDict["reason"]}""",
+                featid=outDict["featid"],
+            )
             multiStepFeedback.setProgress(current * progressSize)
 
         return {self.FLAGS: self.flag_id, self.OUTPUT: inputLyr}

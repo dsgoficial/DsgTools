@@ -20,6 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
+import concurrent.futures
+import os
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
     QgsGeometry,
@@ -31,6 +33,9 @@ from qgis.core import (
     QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingFeatureSourceDefinition,
+    QgsProcessingContext,
 )
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
@@ -46,6 +51,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
     CONTOUR_INTERVAL = "CONTOUR_INTERVAL"
     GEOGRAPHIC_BOUNDS = "GEOGRAPHIC_BOUNDS"
     CONTOUR_ATTR = "CONTOUR_ATTR"
+    GROUP_BY_SPATIAL_PARTITION = "GROUP_BY_SPATIAL_PARTITION"
     POINT_FLAGS = "POINT_FLAGS"
     LINE_FLAGS = "LINE_FLAGS"
 
@@ -87,7 +93,12 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 optional=False,
             )
         )
-
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.GROUP_BY_SPATIAL_PARTITION,
+                self.tr("Run algothimn grouping by spatial partition"),
+            )
+        )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.POINT_FLAGS, self.tr("{0} Point Flags").format(self.displayName())
@@ -103,7 +114,9 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        spatialRealtionsHandler = SpatialRelationsHandler()
+        self.spatialRealtionsHandler = SpatialRelationsHandler()
+        self.algRunner = AlgRunner()
+        self.layerHandler = LayerHandler()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
@@ -117,6 +130,9 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         geoBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDS, context
         )
+        groupBySpatialPartition = self.parameterAsBool(
+            parameters, self.GROUP_BY_SPATIAL_PARTITION, context
+        )
         point_flagSink, point_flag_id = self.prepareAndReturnFlagSink(
             parameters, inputLyr, QgsWkbTypes.Point, context, self.POINT_FLAGS
         )
@@ -124,16 +140,30 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             parameters, inputLyr, QgsWkbTypes.LineString, context, self.LINE_FLAGS
         )
 
-        invalidDict = spatialRealtionsHandler.validateTerrainModel(
-            contourLyr=inputLyr,
-            onlySelected=onlySelected,
-            heightFieldName=heightFieldName,
-            threshold=threshold,
-            geoBoundsLyr=geoBoundsLyr,
-            feedback=feedback,
+        invalidDict = (
+            self.spatialRealtionsHandler.validateTerrainModel(
+                contourLyr=inputLyr,
+                onlySelected=onlySelected,
+                heightFieldName=heightFieldName,
+                threshold=threshold,
+                geoBoundsLyr=geoBoundsLyr,
+                feedback=feedback,
+            )
+            if not groupBySpatialPartition
+            else self.validateTerrainModelInParalel(
+                contourLyr=inputLyr,
+                onlySelected=onlySelected,
+                heightFieldName=heightFieldName,
+                threshold=threshold,
+                geoBoundsLyr=geoBoundsLyr,
+                context=context,
+                feedback=feedback,
+            )
         )
 
         for flagGeom, text in invalidDict.items():
+            if feedback.isCanceled():
+                break
             geom = QgsGeometry()
             geom.fromWkb(flagGeom)
             flagSink = (
@@ -144,6 +174,123 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             self.flagFeature(geom, text, fromWkb=False, sink=flagSink)
 
         return {self.POINT_FLAGS: point_flag_id, self.LINE_FLAGS: line_flag_id}
+
+    def validateTerrainModelInParalel(
+        self,
+        contourLyr,
+        onlySelected,
+        heightFieldName,
+        threshold,
+        geoBoundsLyr,
+        context,
+        feedback,
+    ):
+        flagDict = dict()
+        nSteps = 3
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Splitting geographic bounds"))
+        geographicBoundaryLayerList = self.layerHandler.createMemoryLayerForEachFeature(
+            layer=geoBoundsLyr, context=context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+
+        def compute(localGeographicBoundsLyr):
+            localContext = QgsProcessingContext()
+            if multiStepFeedback.isCanceled():
+                return {}
+            bufferedBounds = self.algRunner.runBuffer(
+                inputLayer=localGeographicBoundsLyr,
+                distance=1e-6,
+                context=localContext,
+                feedback=None,
+            )
+            if multiStepFeedback.isCanceled():
+                return {}
+            clippedContours = self.algRunner.runClip(
+                inputLayer=contourLyr
+                if not onlySelected
+                else QgsProcessingFeatureSourceDefinition(contourLyr.id(), True),
+                overlayLayer=bufferedBounds,
+                context=localContext,
+                feedback=None,
+            )
+            if multiStepFeedback.isCanceled():
+                return {}
+            singlePartContours = self.algRunner.runMultipartToSingleParts(
+                inputLayer=clippedContours, context=localContext, feedback=None
+            )
+            if multiStepFeedback.isCanceled():
+                return {}
+            return self.spatialRealtionsHandler.validateTerrainModel(
+                contourLyr=singlePartContours,
+                onlySelected=False,
+                heightFieldName=heightFieldName,
+                threshold=threshold,
+                geoBoundsLyr=localGeographicBoundsLyr,
+                feedback=None,
+            )
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        nRegions = len(geographicBoundaryLayerList)
+        if nRegions == 0:
+            return flagDict
+        stepSize = 100 / nRegions
+        futures = set()
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
+        multiStepFeedback.pushInfo(
+            self.tr(
+                "Submitting terrain model problem identification by region tasks to thread..."
+            )
+        )
+        for current, localGeographicBoundsLyr in enumerate(
+            geographicBoundaryLayerList, start=0
+        ):
+            if multiStepFeedback.isCanceled():
+                break
+            futures.add(pool.submit(compute, localGeographicBoundsLyr))
+            multiStepFeedback.setProgress(current * stepSize)
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        multiStepFeedback.pushInfo(self.tr("Evaluating results..."))
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback.isCanceled():
+                break
+            localFlagDict = future.result()
+            multiStepFeedback.pushInfo(
+                self.tr(f"Identification of region {current+1}/{nRegions} is done.")
+            )
+            multiStepFeedback.setProgress(current * stepSize)
+            flagDict.update(localFlagDict)
+        return flagDict
+
+    def extractFeaturesUsingBufferedGeographicBounds(
+        self, inputLyr, geographicBounds, context, onlySelected=False, feedback=None
+    ):
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(2, feedback)
+            if feedback is not None
+            else None
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+        extractedLyr = self.algRunner.runExtractByLocation(
+            inputLyr=inputLyr
+            if not onlySelected
+            else QgsProcessingFeatureSourceDefinition(inputLyr.id(), True),
+            intersectLyr=geographicBounds,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=extractedLyr, context=context, feedback=multiStepFeedback
+        )
+        return extractedLyr
 
     def name(self):
         """

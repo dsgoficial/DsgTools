@@ -20,25 +20,24 @@
  *                                                                         *
  ***************************************************************************/
 """
-from __future__ import absolute_import
+
+import concurrent.futures
 
 from itertools import tee, combinations
 from collections import defaultdict, OrderedDict
+import os
 
 from qgis.core import (
-    Qgis,
-    QgsFeature,
     QgsProject,
     QgsGeometry,
     QgsExpression,
     QgsVectorLayer,
     QgsSpatialIndex,
-    QgsFeatureRequest,
     QgsProcessingContext,
     QgsProcessingFeedback,
     QgsProcessingMultiStepFeedback,
+    QgsFeatureRequest,
 )
-from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
 from qgis.PyQt.Qt import QObject
 from qgis.PyQt.QtCore import QRegExp, QCoreApplication
 from qgis.PyQt.QtGui import QRegExpValidator
@@ -68,6 +67,7 @@ class SpatialRelationsHandler(QObject):
         QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not overlap"),
         QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "contains"),
         QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not contain"),
+        QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "de9im"),
     )
     (
         EQUALS,
@@ -85,6 +85,7 @@ class SpatialRelationsHandler(QObject):
         NOTOVERLAPS,
         CONTAINS,
         NOTCONTAINS,
+        DE9IM,
     ) = range(len(__predicates))
 
     def __init__(self, iface=None, parent=None):
@@ -112,16 +113,20 @@ class SpatialRelationsHandler(QObject):
         Does several validation procedures with terrain elements.
         """
         invalidDict = OrderedDict()
-        multiStepFeedback = QgsProcessingMultiStepFeedback(
-            7, feedback
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(7, feedback)
+            if feedback is not None
+            else None
         )  # ajustar depois
-        multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.setProgressText(self.tr("Splitting lines..."))
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+            multiStepFeedback.setProgressText(self.tr("Splitting lines..."))
         splitLinesLyr = self.algRunner.runSplitLinesWithLines(
             contourLyr, contourLyr, context=context, feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.setProgressText(self.tr("Building aux structure..."))
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+            multiStepFeedback.setProgressText(self.tr("Building aux structure..."))
         (
             contourSpatialIdx,
             contourIdDict,
@@ -132,7 +137,8 @@ class SpatialRelationsHandler(QObject):
             attributeName=heightFieldName,
             feedback=multiStepFeedback,
         )
-        multiStepFeedback.setCurrentStep(2)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(2)
         geoBoundsGeomEngine, geoBoundsPolygonEngine = (
             (None, None)
             if geoBoundsLyr is None
@@ -140,8 +146,11 @@ class SpatialRelationsHandler(QObject):
                 geoBoundsLyr, context=context, feedback=multiStepFeedback
             )
         )
-        multiStepFeedback.setCurrentStep(3)
-        multiStepFeedback.setProgressText(self.tr("Validating contour relations..."))
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(3)
+            multiStepFeedback.setProgressText(
+                self.tr("Validating contour relations...")
+            )
         contourFlags = self.validateContourRelations(
             contourNodeDict,
             heightFieldName,
@@ -149,18 +158,20 @@ class SpatialRelationsHandler(QObject):
             geoBoundsPolygonEngine=geoBoundsPolygonEngine,
         )
         invalidDict.update(contourFlags)
-        multiStepFeedback.setCurrentStep(4)
-        multiStepFeedback.setProgressText(
-            self.tr("Finding contour out of threshold...")
-        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(4)
+            multiStepFeedback.setProgressText(
+                self.tr("Finding contour out of threshold...")
+            )
         contourOutOfThresholdDict = self.findContourOutOfThreshold(
             heightsDict, threshold, feedback=multiStepFeedback
         )
         invalidDict.update(contourOutOfThresholdDict)
         if len(invalidDict) > 0:
             return invalidDict
-        multiStepFeedback.setCurrentStep(5)
-        multiStepFeedback.setProgressText(self.tr("Building contour area dict.."))
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(5)
+            multiStepFeedback.setProgressText(self.tr("Building contour area dict.."))
         contourAreaDict = self.buildContourAreaDict(
             inputLyr=splitLinesLyr,
             geoBoundsLyr=geoBoundsLyr,
@@ -171,8 +182,9 @@ class SpatialRelationsHandler(QObject):
             context=context,
             feedback=multiStepFeedback,
         )
-        multiStepFeedback.setCurrentStep(6)
-        multiStepFeedback.setProgressText(self.tr("Finding missing contours..."))
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(6)
+            multiStepFeedback.setProgressText(self.tr("Finding missing contours..."))
         misingContourDict = self.findMissingContours(
             contourAreaDict, threshold, context=context, feedback=multiStepFeedback
         )
@@ -185,12 +197,18 @@ class SpatialRelationsHandler(QObject):
         """
         if geoBoundsLyr is None:
             return None, None
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(2, feedback)
+            if feedback is not None
+            else None
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
         mergedPolygonLyr = self.algRunner.runAggregate(
             geoBoundsLyr, context=context, feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(1)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
         mergedPolygonGeom = (
             [i for i in mergedPolygonLyr.getFeatures()][0].geometry()
             if mergedPolygonLyr.featureCount() != 0
@@ -238,8 +256,13 @@ class SpatialRelationsHandler(QObject):
             "areaIdDict": {},
             "areaContourRelations": {},
         }
-        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
-        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(4, feedback)
+            if feedback is not None
+            else None
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
         boundsLineLyr = (
             self.algRunner.runPolygonsToLines(
                 geoBoundsLyr, context, feedback=multiStepFeedback
@@ -248,15 +271,18 @@ class SpatialRelationsHandler(QObject):
             else None
         )
         lineLyrList = [inputLyr] if boundsLineLyr is None else [inputLyr, boundsLineLyr]
-        multiStepFeedback.setCurrentStep(1)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
         linesLyr = self.algRunner.runMergeVectorLayers(
             lineLyrList, context, feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(2)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(2)
         polygonLyr = self.algRunner.runPolygonize(
             linesLyr, context, feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(3)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(3)
         self.populateContourAreaDict(
             polygonLyr,
             geoBoundsLyr,
