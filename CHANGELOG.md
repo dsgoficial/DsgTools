@@ -5,6 +5,7 @@
 Melhorias:
 
 - Adicionada a opção de suprimir o formulário de feição no modo reclassificação do menu de aquisição (particularmente útil quando se está corrigindo flags de áreas sem centroide na construção de polígonos utilizando linha e centroide);
+- Novo processo de identificar inconsistências entre os elementos da rede de drenagem;
 
 Correção de bug:
 
@@ -30,6 +31,7 @@ Novas funcionalidades:
 - Novo processo de selecionar por DE9IM;
 - Novo processo de extrair feições por DE9IM;
 - Processo de converter linha para multilinha portado do ferramentas experimentais;
+
 
 Melhorias:
 
