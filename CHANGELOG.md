@@ -9,6 +9,7 @@ Novas Funcionalidades:
 Melhorias:
 
 - Adicionada a opção de suprimir o formulário de feição no modo reclassificação do menu de aquisição (particularmente útil quando se está corrigindo flags de áreas sem centroide na construção de polígonos utilizando linha e centroide);
+- Adicionada a melhoria de verificar pontos cotados fora da equidistância na ferramenta de validação do terreno;
 
 Correção de bug:
 

@@ -1,0 +1,21 @@
+{
+"type": "FeatureCollection",
+"name": "elevation_points_test8_",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "height": 291 }, "geometry": { "type": "Point", "coordinates": [ -1.213705616600473, 0.467686175796488 ] } },
+{ "type": "Feature", "properties": { "height": 280 }, "geometry": { "type": "Point", "coordinates": [ 1.480262571021167, -0.739942479294018 ] } },
+{ "type": "Feature", "properties": { "height": 292 }, "geometry": { "type": "Point", "coordinates": [ -1.138086073454606, 0.224835931036866 ] } },
+{ "type": "Feature", "properties": { "height": 1000 }, "geometry": { "type": "Point", "coordinates": [ -0.900829804768318, 0.269595510503548 ] } },
+{ "type": "Feature", "properties": { "height": 745 }, "geometry": { "type": "Point", "coordinates": [ -1.440153317091162, -0.020270096392947 ] } },
+{ "type": "Feature", "properties": { "height": 236 }, "geometry": { "type": "Point", "coordinates": [ 0.865317035475637, 0.903657784983739 ] } },
+{ "type": "Feature", "properties": { "height": 220 }, "geometry": { "type": "Point", "coordinates": [ 1.99431116926325, 0.401858734820465 ] } },
+{ "type": "Feature", "properties": { "height": 262 }, "geometry": { "type": "Point", "coordinates": [ 1.157459804848574, -0.264431528287157 ] } },
+{ "type": "Feature", "properties": { "height": 250 }, "geometry": { "type": "Point", "coordinates": [ 1.222307209993852, -0.176470766897147 ] } },
+{ "type": "Feature", "properties": { "height": 255 }, "geometry": { "type": "Point", "coordinates": [ 1.281722424497984, 0.028723962726 ] } },
+{ "type": "Feature", "properties": { "height": 210 }, "geometry": { "type": "Point", "coordinates": [ 0.923313778298927, -0.351259776893203 ] } },
+{ "type": "Feature", "properties": { "height": 240 }, "geometry": { "type": "Point", "coordinates": [ 1.106664560673634, 0.393760715127821 ] } },
+{ "type": "Feature", "properties": { "height": 262 }, "geometry": { "type": "Point", "coordinates": [ -0.250182093622017, -0.272861962635448 ] } },
+{ "type": "Feature", "properties": { "height": 255 }, "geometry": { "type": "Point", "coordinates": [ -0.718550136186661, -0.321335915022111 ] } }
+]
+}
