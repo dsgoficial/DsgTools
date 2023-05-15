@@ -104,6 +104,7 @@ class SpatialRelationsHandler(QObject):
         contourLyr,
         heightFieldName,
         threshold,
+        terrainPoints=None,
         onlySelected=False,
         geoBoundsLyr=None,
         context=None,
