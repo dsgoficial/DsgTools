@@ -379,9 +379,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unbuildPolygonsAlg
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unicodeFilterAlgorithm import (
     UnicodeFilterAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyCountourStackingAlgorithm import (
-    VerifyCountourStackingAlgorihtm,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import (
     VerifyNetworkDirectioningAlgorithm,
 )
@@ -495,7 +492,6 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             identifyZAnglesBetweenFeaturesAlgorithm(),
             IdentifySmallHolesAlgorithm(),
             IdentifyInvalidUUIDsAlgorithm(),
-            VerifyCountourStackingAlgorihtm(),
             LoadShapefileAlgorithm(),
             IdentifyCountourStreamIntersectionAlgorithm(),
             SpellCheckerAlgorithm(),
