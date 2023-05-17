@@ -83,6 +83,24 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
             parameters, "INPUT_COUNTOUR_LINES", context
         )
 
+        (point_flag_sink, point_flag_sink_id) = self.parameterAsSink(
+            parameters,
+            self.POINT_FLAGS,
+            context,
+            streamLayerInput.fields(),
+            QgsWkbTypes.Point,
+            streamLayerInput.sourceCrs(),
+        )
+
+        (line_flag_sink, line_flag_sink_id) = self.parameterAsSink(
+            parameters,
+            self.LINE_FLAGS,
+            context,
+            streamLayerInput.fields(),
+            QgsWkbTypes.Line,
+            streamLayerInput.sourceCrs(),
+        )
+
         feedback.setProgressText(self.tr("Verifying inconsistency"))
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(7, feedback)
@@ -119,14 +137,7 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
             idDict,
         )
 
-        (sink, sink_id) = self.parameterAsSink(
-            parameters,
-            self.POINT_FLAGS,
-            context,
-            streamLayerInput.fields(),
-            QgsWkbTypes.Point,
-            streamLayerInput.sourceCrs(),
-        )
+        
         if outputPointsSet == set() and outputLinesSet == set():
             return {self.POINT_FLAGS: sink_id}
 
