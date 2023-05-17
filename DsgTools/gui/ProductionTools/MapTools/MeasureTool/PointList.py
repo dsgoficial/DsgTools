@@ -9,6 +9,8 @@ class PointList(list):
         self[:] = []
 
     def newPoint(self):
+        if self == []:
+            return
         self.insert(0, self[0])
 
     def updateCurrentPoint(self, point):
