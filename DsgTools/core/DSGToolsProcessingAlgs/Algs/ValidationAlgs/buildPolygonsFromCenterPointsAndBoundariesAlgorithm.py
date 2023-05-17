@@ -475,7 +475,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             {
                 'INPUT':segments,
                 'PREDICATE':[2,5],
-                'JOIN':polygonLines,
+                'JOIN':explodedPolygonLines,
                 'JOIN_FIELDS':[],
                 'METHOD':0,
                 'DISCARD_NONMATCHING':False,
@@ -796,13 +796,6 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(
-            inputLyr=polygonLyr, context=context, feedback=multiStepFeedback
-        )
-        currentStep += 1
-
-
-        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Splitting geographic bounds"))
         geographicBoundaryLayerList = self.layerHandler.createMemoryLayerForEachFeature(
             layer=geographicBoundaryLyr, context=context, feedback=multiStepFeedback
@@ -810,14 +803,14 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         currentStep += 1
 
         def compute(localGeographicBoundsLyr):
-            context = QgsProcessingContext()
+            localContext = QgsProcessingContext()
             algRunner = AlgRunner()
             if multiStepFeedback.isCanceled():
                 return
             localBoundaries = algRunner.runClip(
                 boundaryLineLyr,
                 localGeographicBoundsLyr,
-                context=context,
+                context=localContext,
                 feedback=None,
                 is_child_algorithm=True,
             )
@@ -826,22 +819,26 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             localBoundaries = algRunner.runAddAutoIncrementalField(
                 inputLyr=localBoundaries,
                 fieldName="local_featid",
-                context=context,
+                context=localContext,
                 feedback=None
             )
             if multiStepFeedback.isCanceled():
                 return
             segments = self.algRunner.runExplodeLines(
-                localBoundaries, context, feedback=None, is_child_algorithm=True
+                localBoundaries, localContext, feedback=None, is_child_algorithm=True
             )
             if multiStepFeedback.isCanceled():
                 return
             segments = algRunner.runAddAutoIncrementalField(
                 inputLyr=segments,
                 fieldName="seg_featid",
-                context=context,
+                context=localContext,
                 feedback=None
             )
+            algRunner.runCreateSpatialIndex(inputLyr=segments, context=localContext, feedback=None)
+            if multiStepFeedback.isCanceled():
+                return
+            
             if multiStepFeedback.isCanceled():
                 return
             flags = SpatialRelationsHandler().checkDE9IM(
@@ -850,7 +847,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 mask="*1*******",
                 cardinality="1..*",
                 feedback=None,
-                ctx=context,
+                ctx=localContext,
             )
             if multiStepFeedback.isCanceled():
                 return
@@ -867,7 +864,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             segmentedFlags = algRunner.runFilterExpression(
                 segments,
                 expression=expressionStr,
-                context=context,
+                context=localContext,
                 feedback=None,
             )
             if multiStepFeedback.isCanceled():
@@ -875,13 +872,13 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             mergedSegments = processing.run(
                 "native:dissolve",
                 {"INPUT": segmentedFlags, "OUTPUT": "memory:"},
-                context=context,
+                context=localContext,
                 feedback=None,
             )["OUTPUT"]
             if multiStepFeedback.isCanceled():
                 return
             flagLyr = algRunner.runMultipartToSingleParts(
-                mergedSegments, context, feedback=None
+                mergedSegments, localContext, feedback=None
             )
             return flagLyr
 
