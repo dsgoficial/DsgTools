@@ -125,6 +125,7 @@ class AddButtonDialog(QtWidgets.QDialog):
         self.keyWordsLe.setText(buttonConfig["buttonKeyWords"])
         self.tooltipLe.setText(buttonConfig["buttonTooltip"])
         self.suppressFormCkb.setChecked(buttonConfig["buttonSuppressForm"])
+        self.suppressReclassificationFormCkb.setChecked(buttonConfig.get("buttonSuppressReclassificationForm", False))
 
         self.previewBtn.setText(buttonConfig["buttonName"])
         self.setColorPreviewButton(
@@ -160,6 +161,7 @@ class AddButtonDialog(QtWidgets.QDialog):
             "buttonKeyWords": self.keyWordsLe.text(),
             "buttonTooltip": self.tooltipLe.text(),
             "buttonSuppressForm": self.suppressFormCkb.isChecked(),
+            "buttonSuppressReclassificationForm": self.suppressReclassificationFormCkb.isChecked(),
         }
 
     def validData(self):

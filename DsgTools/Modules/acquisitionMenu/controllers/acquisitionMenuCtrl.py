@@ -2,6 +2,7 @@ from DsgTools.Modules.acquisitionMenu.factories.widgetFactory import WidgetFacto
 from PyQt5 import QtCore, uic, QtWidgets, QtGui
 from DsgTools.Modules.qgis.controllers.qgisCtrl import QgisCtrl
 import json
+from qgis.core import QgsWkbTypes
 
 
 class AcquisitionMenuCtrl:
@@ -169,7 +170,7 @@ class AcquisitionMenuCtrl:
         if len(layers) > 1:
             raise Exception("Há camadas repetidas!")
         layer = layers[0]
-        layerName = layer.dataProvider().uri().table()
+        layerName = layer.dataProvider().uri().table() if layer.providerType() == "postgres" else layer.name()
         layersToReclassification = self.getLayersForReclassification(
             layerName, layer.geometryType()
         )
@@ -180,6 +181,7 @@ class AcquisitionMenuCtrl:
         self.reclassifyDialog = self.widgetFactory.createWidget(
             "ReclassifyDialog", self
         )
+        suppressReclassificationDialog = buttonConfig.get("buttonSuppressReclassificationForm", False)
         self.reclassifyDialog.setAttributeTableWidget(self.getAttributeTableWidget())
         self.reclassifyDialog.loadAttributes(
             self.getAttributesConfigByLayerName(buttonConfig["buttonLayer"])
@@ -187,6 +189,10 @@ class AcquisitionMenuCtrl:
         self.reclassifyDialog.setAttributesValues(buttonConfig["buttonAttributes"])
         self.reclassifyDialog.loadLayersStatus(layersToReclassification)
         self.reclassifyDialog.success.connect(callback)
+        if suppressReclassificationDialog:
+            self.reclassifyDialog.hide()
+            self.reclassifyDialog.on_saveBtn_clicked()
+            return
         self.reclassifyDialog.showTopLevel()
 
     def reclassify(self, buttonConfig, reclassifyData):
@@ -205,10 +211,15 @@ class AcquisitionMenuCtrl:
 
     def getLayersForReclassification(self, layerName, geometryType):
         layers = self.qgis.getLoadedVectorLayers()
+        geometryFilterDict = {
+            QgsWkbTypes.PointGeometry: (QgsWkbTypes.PointGeometry,),
+            QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry,),
+            QgsWkbTypes.PolygonGeometry: (QgsWkbTypes.PointGeometry, QgsWkbTypes.PolygonGeometry)
+        }
         return [
             l
             for l in layers
-            if l.geometryType() == geometryType and l.selectedFeatureCount() > 0
+            if l.selectedFeatureCount() > 0 and l.geometryType() in geometryFilterDict[l.geometryType()]
         ]
 
     def activeMenuButton(self, buttonConfig):

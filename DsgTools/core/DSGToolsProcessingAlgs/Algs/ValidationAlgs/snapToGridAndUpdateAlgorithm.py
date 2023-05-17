@@ -74,16 +74,15 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
                 self.SELECTED, self.tr("Process only selected features")
             )
         )
-
-        self.addParameter(
-            QgsProcessingParameterDistance(
-                self.TOLERANCE,
-                self.tr("Tolerance"),
-                parentParameterName=self.INPUT,
-                minValue=0,
-                defaultValue=0.001,
-            )
+        param = QgsProcessingParameterDistance(
+            self.TOLERANCE,
+            self.tr("Tolerance"),
+            parentParameterName=self.INPUT,
+            minValue=0,
+            defaultValue=1e-10,
         )
+        param.setMetadata({'widget_wrapper':{'decimals': 12}})
+        self.addParameter(param)
         self.addOutput(
             QgsProcessingOutputVectorLayer(
                 self.OUTPUT, self.tr("Original layer with features snapped to grid")

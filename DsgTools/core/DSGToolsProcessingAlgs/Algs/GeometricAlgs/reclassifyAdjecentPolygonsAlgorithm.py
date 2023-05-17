@@ -20,6 +20,9 @@
  ***************************************************************************/
 """
 
+from collections import defaultdict
+import itertools
+import json
 import os
 
 import concurrent.futures
@@ -29,7 +32,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorith
 )
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
+from qgis.PyQt.Qt import QVariant
 from PyQt5.QtCore import QCoreApplication
 
 from qgis.core import (
@@ -43,13 +48,20 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsProcessingFeatureSourceDefinition,
     QgsGeometry,
+    QgsProcessingParameterString,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterExpression,
+    QgsFeatureRequest,
+    QgsProcessingContext
 )
 
 
 class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     SELECTED = "SELECTED"
-    MAX_AREA = "MAX_AREA"
+    FILTER_EXPRESSION = "FILTER_EXPRESSION"
+    LABEL_FIELD = "LABEL_FIELD"
+    LABEL_ORDER = "LABEL_RULES"
     DISSOLVE_ATTRIBUTE_LIST = "DISSOLVE_ATTRIBUTE_LIST"
     DISSOLVE_OUTPUT = "DISSOLVE_OUTPUT"
     OUTPUT = "OUTPUT"
@@ -72,14 +84,36 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             )
         )
 
-        param = QgsProcessingParameterDistance(
-            self.MAX_AREA,
-            self.tr("Maximum area"),
-            parentParameterName=self.INPUT,
-            defaultValue=0.0001,
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.LABEL_FIELD,
+                self.tr("Class label field on input polygons"),
+                None,
+                self.INPUT,
+                QgsProcessingParameterField.Any,
+                allowMultiple=False,
+            )
         )
-        param.setMetadata({"widget_wrapper": {"decimals": 10}})
-        self.addParameter(param)
+
+        self.addParameter(
+            QgsProcessingParameterExpression(
+                self.FILTER_EXPRESSION,
+                self.tr("Filter expression for input"),
+                None,
+                self.INPUT,
+                optional=True
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.LABEL_ORDER,
+                description=self.tr("Label order"),
+                multiLine=False,
+                defaultValue="",
+                optional=True,
+            )
+        )
 
         self.addParameter(
             QgsProcessingParameterBoolean(
@@ -98,7 +132,6 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
                 optional=True,
             )
         )
-
         self.addParameter(
             QgsProcessingParameterFeatureSink(self.OUTPUT, self.tr("Output"))
         )
@@ -115,18 +148,30 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
                     "This algorithm requires the Python networkx library. Please install this library and try again."
                 )
             )
-        algRunner = AlgRunner()
+        self.algRunner = AlgRunner()
+        self.layerHandler = LayerHandler()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUT)
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        maxAreaToDissolve = self.parameterAsDouble(parameters, self.MAX_AREA, context)
+        filterExpression = self.parameterAsExpression(parameters, self.FILTER_EXPRESSION, context)
+        if filterExpression == '':
+            filterExpression = None
+        classFieldName = self.parameterAsFields(parameters, self.LABEL_FIELD, context)[0]
+        labelListStr = self.parameterAsString(parameters, self.LABEL_ORDER, context)
+        classOrderList = None if labelListStr == '' else labelListStr.split(",")
+        field = [f for f in inputLyr.fields() if f.name() == classFieldName][0]
+        if field.type() == QVariant.Int:
+            classOrderList = list(map(int, classOrderList))
+        elif field.type() == QVariant.Double:
+            classOrderList = list(map(float, classOrderList))
         dissolveOutput = self.parameterAsBool(parameters, self.DISSOLVE_OUTPUT, context)
         dissolveFields = self.parameterAsFields(
             parameters, self.DISSOLVE_ATTRIBUTE_LIST, context
         )
+        dissolveFields = list(set(dissolveFields).union({classFieldName}))
         (output_sink, output_sink_id) = self.parameterAsSink(
             parameters,
             self.OUTPUT,
@@ -137,13 +182,12 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         )
         if output_sink is None:
             raise QgsProcessingException(self.invalidSinkError(parameters, self.OUTPUT))
-        nSteps = 7 if dissolveOutput else 6
+        nSteps = 6 +  (dissolveOutput is True)
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
-
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Creating cache layer"))
-        cacheLyr = algRunner.runCreateFieldWithExpression(
+        cacheLyr = self.algRunner.runCreateFieldWithExpression(
             inputLyr=inputLyr
             if not onlySelected
             else QgsProcessingFeatureSourceDefinition(inputLyr.id(), True),
@@ -157,13 +201,13 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
 
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Creating spatial index on cache"))
-        algRunner.runCreateSpatialIndex(cacheLyr, context, feedback=multiStepFeedback)
+        self.algRunner.runCreateSpatialIndex(cacheLyr, context, feedback=multiStepFeedback)
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Building aux structures"))
         G, featDict, idSet = self.buildAuxStructures(
-            nx, cacheLyr, maxAreaToDissolve, multiStepFeedback
+            nx, cacheLyr, context, filterExpression=filterExpression, feedback=multiStepFeedback
         )
         currentStep += 1
 
@@ -171,33 +215,35 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         anchorIdsSet = set(featDict.keys()).difference(idSet)
         fieldNames = [field.name() for field in inputLyr.fields()]
         multiStepFeedback.setProgressText(self.tr("Performing reclassification"))
-        featuresToUpdateSet = self.reclassifyPolygons(
-            G, featDict, anchorIdsSet, idSet, dissolveFields, multiStepFeedback
+        featureIdsToUpdateSet = self.reclassifyPolygons(
+            G=G,
+            featDict=featDict,
+            anchorIdsSet=anchorIdsSet,
+            candidateIdSet=idSet,
+            fieldNames=dissolveFields, 
+            feedback=multiStepFeedback,
+            classFieldName=classFieldName,
+            classOrderList=classOrderList,
         )
         currentStep += 1
 
         multiStepFeedback.setProgressText(self.tr("Changing attributes from cache"))
         multiStepFeedback.setCurrentStep(currentStep)
-        nFeatsToUpdate = len(featuresToUpdateSet)
+        nFeatsToUpdate = len(featureIdsToUpdateSet)
         if nFeatsToUpdate == 0:
             return {self.OUTPUT: output_sink_id}
         stepSize = 100 / nFeatsToUpdate
         cacheLyr.startEditing()
         cacheLyr.beginEditCommand("Updating features")
         cacheLyrDataProvider = cacheLyr.dataProvider()
-        indexDict = {
-            fieldName: cacheLyrDataProvider.fields().indexFromName(fieldName)
-            for fieldName in fieldNames
-        }
-        for current, featid in enumerate(idSet):
+        fieldIdx = cacheLyrDataProvider.fields().indexFromName(classFieldName)
+        for current, (featid, classValue) in enumerate(featureIdsToUpdateSet):
             if multiStepFeedback.isCanceled():
                 break
-            # featid = feat['featid']
             cacheLyrDataProvider.changeAttributeValues(
                 {
                     featid: {
-                        indexDict[fieldName]: featDict[featid][fieldName]
-                        for fieldName in dissolveFields
+                        fieldIdx: classValue
                     }
                 }
             )
@@ -208,7 +254,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         if dissolveOutput:
             multiStepFeedback.setProgressText(self.tr("Dissolving Polygons"))
-            mergedLyr = algRunner.runDissolve(
+            mergedLyr = self.algRunner.runDissolve(
                 inputLyr=cacheLyr,
                 context=context,
                 feedback=multiStepFeedback,
@@ -217,7 +263,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             )
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            mergedLyr = algRunner.runMultipartToSingleParts(
+            mergedLyr = self.algRunner.runMultipartToSingleParts(
                 inputLayer=mergedLyr, context=context, feedback=multiStepFeedback
             )
             currentStep += 1
@@ -240,114 +286,172 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
 
         return {self.OUTPUT: output_sink_id}
 
-    def buildAuxStructures(self, nx, inputLyr, tol, feedback):
+    def buildAuxStructures(self, nx, inputLyr, context, filterExpression=None, feedback=None):
         G = nx.Graph()
         featDict = dict()
         idSet = set()
-        nFeats = inputLyr.featureCount()
-        if nFeats == 0:
-            return G, featDict, idSet
-        stepSize = 100 / nFeats
-
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.setProgressText(self.tr("Submiting processes to thread"))
-        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
-        futures = set()
+        candidatesLayer = self.algRunner.runFilterExpression(
+            inputLyr=inputLyr, expression=filterExpression, context=context, feedback=multiStepFeedback
+        )
+        nFeats = candidatesLayer.featureCount()
+        multiStepFeedback.setCurrentStep(1)
 
-        def compute(feat):
-            itemList = []
-            geom = feat.geometry()
-            featId = feat.id()
-            bbox = geom.boundingBox()
-            engine = QgsGeometry.createGeometryEngine(geom.constGet())
-            engine.prepareGeometry()
-            for candidateFeat in inputLyr.getFeatures(bbox):
-                candidateFeatId = candidateFeat.id()
+        def compute(feat, featLayer):
+            context = QgsProcessingContext()
+            algRunner = AlgRunner()
+            itemSet = set()
+            featId = feat['featid']
+            if multiStepFeedback.isCanceled():
+                return itemSet
+            extractedFeaturesLayer = algRunner.runExtractByLocation(
+                inputLyr=inputLyr,
+                intersectLyr=featLayer,
+                context=context,
+                is_child_algorithm=True
+            )
+            if multiStepFeedback.isCanceled():
+                return itemSet
+            extractedBoundariesLayer = algRunner.runPolygonsToLines(
+                inputLyr=extractedFeaturesLayer, context=context
+            )
+            if multiStepFeedback.isCanceled():
+                return itemSet
+            algRunner.runCreateSpatialIndex(
+                inputLyr=extractedBoundariesLayer,
+                context=context
+            )
+            if multiStepFeedback.isCanceled():
+                return itemSet
+            splitBounds = algRunner.runClip(extractedBoundariesLayer, featLayer, context=context)
+            if multiStepFeedback.isCanceled():
+                return itemSet
+            for candidateFeat in splitBounds.getFeatures():
+                if multiStepFeedback.isCanceled():
+                    return set((None, None, None, -1))
+                candidateFeatId = candidateFeat['featid']
                 if candidateFeatId == featId:
                     continue
-                candidateGeom = candidateFeat.geometry()
-                candidateGeomConstGet = candidateGeom.constGet()
-                if not engine.intersects(candidateGeomConstGet):
+                candidateLength = candidateFeat.geometry().length()
+                if candidateLength <= 0:
                     continue
-                intersectionGeom = engine.intersection(candidateGeomConstGet)
-                if intersectionGeom.length() <= 0:
-                    continue
-                itemList.append(
-                    (featId, candidateFeatId, candidateFeat, intersectionGeom.length())
+                itemSet.add(
+                    (featId, candidateFeatId, candidateFeat, candidateLength)
                 )
-            return itemList
+            return itemSet
 
-        for current, feat in enumerate(inputLyr.getFeatures()):
+        def build_graph(item):
+            featId, candidateFeatId, candidateFeat, intersectionLength = item
+            if featId is None:
+                return
+            if candidateFeatId not in featDict:
+                featDict[candidateFeatId] = candidateFeat
+            G.add_edge(featId, candidateFeatId)
+            G[featId][candidateFeatId]["length"] = intersectionLength
+
+        if nFeats == 0:
+            return G, featDict, idSet
+        multiStepFeedback.pushInfo(f"Submitting {nFeats} features to thread.")
+        stepSize = 100 / nFeats
+        logInterval = 1000
+        futures = set()
+        executor = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-1)
+        for current, feat in enumerate(candidatesLayer.getFeatures()):
             if multiStepFeedback.isCanceled():
                 break
-            if feat.geometry().area() > tol:
-                continue
-            featId = feat.id()
+            featId = feat['featid']
             featDict[featId] = feat
             idSet.add(featId)
-            futures.add(pool.submit(compute, feat))
+            featLayer = self.layerHandler.createMemoryLayerWithFeature(inputLyr, feat, context)
+            # result = compute(feat, featLayer)
+            # list(map(build_graph, result))
+            futures.add(executor.submit(compute, feat, featLayer))
             multiStepFeedback.setProgress(current * stepSize)
-
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.setProgressText(self.tr("Building graph with thread results"))
-        nFeats = len(futures)
-        stepSize = 100 / nFeats
-        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+        nFeats = len(featDict)
+        stepSize = 100/nFeats
+        if nFeats == 0:
+            return G, featDict, idSet
+
+        multiStepFeedback.setProgressText(self.tr(f"Starting the processess of building graph using parallel computing. Evaluating {nFeats:n} features."))
+        candidateCount = 0
+        for candidateCount, future in enumerate(concurrent.futures.as_completed(futures)):
             if multiStepFeedback.isCanceled():
                 break
-            for item in future.result():
-                featId, candidateFeatId, candidateFeat, intersectionLength = item
-                if candidateFeatId not in featDict:
-                    featDict[candidateFeatId] = candidateFeat
-                G.add_edge(featId, candidateFeatId)
-                G[featId][candidateFeatId]["length"] = intersectionLength
-            multiStepFeedback.setProgress(current * stepSize)
+            result = future.result()
+            list(map(build_graph, result))
+            if candidateCount % logInterval == 0:
+                multiStepFeedback.setProgressText(self.tr(f"Evaluated {candidateCount:n} / {nFeats:n} features."))
+            multiStepFeedback.setProgress(candidateCount * stepSize)
 
+        multiStepFeedback.pushInfo(self.tr(f"{nFeats:n} evaluated. Found {candidateCount:n} candidates to evaluate in next step."))
         return G, featDict, idSet
 
     def reclassifyPolygons(
-        self, G, featDict, anchorIdsSet, idSet, fieldNames, feedback
+        self, G, featDict, anchorIdsSet, candidateIdSet, fieldNames, classFieldName, feedback, classOrderList=None
     ):
         visitedSet = set()
-        featuresToUpdateSet = set()
-        nIds = len(idSet)
+        featureIdsToUpdateSet = set()
+        nIds = len(candidateIdSet)
         if nIds == 0:
-            return featuresToUpdateSet
+            return featureIdsToUpdateSet
         stepSize = 100 / nIds
         processedFeats = 0
 
-        def updateAttributes(feat, anchorFeat):
-            for fieldName in fieldNames:
-                feat[fieldName] = anchorFeat[fieldName]
-            return feat
-
+        def chooseId(G, id, candidateIdSet):
+            if classOrderList is None:
+                return max(candidateIdSet, key=lambda x: G[id][x]["length"])
+            auxDict = defaultdict(list)
+            sortedIdsByLength = sorted(candidateIdSet, key=lambda x:G[id][x]["length"], reverse=True)
+            if len(sortedIdsByLength) == 1:
+                return sortedIdsByLength[0]
+            for i in sortedIdsByLength:
+                auxDict[featDict[i][classFieldName]].append(i)
+            for key in classOrderList:
+                if key not in auxDict or len(auxDict[key]) == 0:
+                    continue
+                return auxDict[key][0]
+        for id in set(node for node in G.nodes if G.degree(node) == 1) - anchorIdsSet:
+            if feedback.isCanceled():
+                return featureIdsToUpdateSet
+            anchorId = set(G.neighbors(id)).pop()
+            featDict[id][classFieldName] = featDict[anchorId][classFieldName]
+            featureIdsToUpdateSet.add((id, featDict[id][classFieldName]))
+            visitedSet.add(id)
+            processedFeats += 1
+            feedback.setProgress(processedFeats * stepSize)
+        visitedHolesSet = set(visitedSet)
+        originalAnchorIdSet = anchorIdsSet
         while True:
             newAnchors = set()
             for anchorId in anchorIdsSet:
+                if feedback.isCanceled():
+                    return featureIdsToUpdateSet
+                anchorNeighborIdsSet = set(G.neighbors(anchorId)) - originalAnchorIdSet
                 for id in sorted(
-                    set(G.neighbors(anchorId)) - visitedSet,
+                    anchorNeighborIdsSet - visitedSet - anchorIdsSet - originalAnchorIdSet,
                     key=lambda x: featDict[x].geometry().area(),
                 ):
                     if feedback.isCanceled():
-                        return featuresToUpdateSet
+                        return featureIdsToUpdateSet
                     # d = set(G.neighbors(id)) - anchorIdsSet - visitedSet
-                    d = set(G.neighbors(id)).intersection(anchorIdsSet)
-                    if d == set():
+                    candidateIdSet = set(G.neighbors(id)).intersection(anchorIdsSet)
+                    if candidateIdSet == set():
                         continue
-                    newAnchors.add(id)
+                    if len(candidateIdSet) > 1:
+                        newAnchors.add(id)
                     visitedSet.add(id)
                     processedFeats += 1
-                    chosenId = max(d, key=lambda x: G[id][x]["length"])
-                    feat = updateAttributes(featDict[id], featDict[chosenId])
-                    featDict[id] = feat
-                    featuresToUpdateSet.add(feat)
+                    chosenId = chooseId(G, id, candidateIdSet)
+                    featDict[id][classFieldName] = featDict[chosenId][classFieldName]
+                    featureIdsToUpdateSet.add((id, featDict[chosenId][classFieldName]))
                     newAnchors.add(id)
                     feedback.setProgress(processedFeats * stepSize)
             anchorIdsSet = newAnchors
             if anchorIdsSet == set():
                 break
-        return featuresToUpdateSet
+        return featureIdsToUpdateSet
 
     def getAttributesFromFeature(self, newFeat, originalFeat):
         pass

@@ -69,7 +69,6 @@ class GenericSelectionTool(QgsMapTool):
         self.reset()
         self.blackList = self.getBlackList()
         self.cursorChanged = False
-        self.cursorChangingHotkey = Qt.Key_Alt
         self.menuHovered = False  # indicates hovering actions over context menu
         self.geometryHandler = GeometryHandler(iface=self.iface)
 
@@ -91,17 +90,6 @@ class GenericSelectionTool(QgsMapTool):
         )
         self.setAction(action)
 
-    def keyPressEvent(self, e):
-        """
-        Reimplemetation of keyPressEvent() in order to handle cursor changing hotkey (Alt).
-        """
-        if e.key() == self.cursorChangingHotkey and not self.cursorChanged:
-            self.cursorChanged = True
-            QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
-        else:
-            self.cursorChanged = False
-            QApplication.restoreOverrideCursor()
-
     def getBlackList(self):
         settings = QSettings()
         settings.beginGroup("PythonPlugins/DsgTools/Options")
@@ -119,17 +107,6 @@ class GenericSelectionTool(QgsMapTool):
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
         self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
-
-    def keyPressEvent(self, e):
-        """
-        Reimplemetation of keyPressEvent() in order to handle cursor changing hotkey (F2).
-        """
-        if e.key() == self.cursorChangingHotkey and not self.cursorChanged:
-            self.cursorChanged = True
-            QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
-        else:
-            self.cursorChanged = False
-            QApplication.restoreOverrideCursor()
 
     def canvasMoveEvent(self, e):
         """
@@ -235,7 +212,7 @@ class GenericSelectionTool(QgsMapTool):
                 return True
         return False
 
-    def getPrimitiveDict(self, e, hasControlModifier=False):
+    def getPrimitiveDict(self, e, hasControlModifier=False, hasAltModifier=False):
         """
         Builds a dict with keys as geometryTypes of layer, which are Qgis.Point (value 0), Qgis.Line (value 1) or Qgis.Polygon (value 2),
         and values as layers from self.iface.mapCanvas().layers(). When self.iface.mapCanvas().layers() is called, a list of
@@ -245,7 +222,12 @@ class GenericSelectionTool(QgsMapTool):
         primitiveDict = dict()
         firstGeom = self.checkSelectedLayers()
         visibleLayers = QgsProject.instance().layerTreeRoot().checkedLayers()
-        for lyr in self.iface.mapCanvas().layers():  # ordered layers
+        iterator = (
+            self.iface.mapCanvas().layers()
+            if not hasAltModifier
+            else [self.iface.activeLayer()]
+        )
+        for lyr in iterator:  # ordered layers
             # layer types other than VectorLayer are ignored, as well as layers in black list and layers that are not visible
             if (
                 not isinstance(lyr, QgsVectorLayer)
@@ -738,19 +720,6 @@ class GenericSelectionTool(QgsMapTool):
                         notSelectedFeaturesDict[cl].append(feat)
         return selectedFeaturesDict, notSelectedFeaturesDict
 
-    def getSelectedRasters(self, e):
-        rasters = []
-        rect = self.getCursorRect(e)
-        layers = self.iface.mapCanvas().layers()
-        for layer in self.iface.mapCanvas().layers():
-            if not isinstance(layer, QgsRasterLayer):
-                continue
-            bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, rect)
-            if not layer.extent().intersects(bbRect):
-                continue
-            rasters.append(layer)
-        return rasters
-
     def addRasterMenu(self, menu, rasters):
         rasterMenu = QMenu(title="Rasters", parent=menu)
         for raster in rasters:
@@ -767,84 +736,82 @@ class GenericSelectionTool(QgsMapTool):
         if selected:
             firstGeom = self.checkSelectedLayers()
         # setting a list of features to iterate over
-        layerList = self.getPrimitiveDict(e, hasControlModifier=selected)
+        layerList = self.getPrimitiveDict(
+            e,
+            hasControlModifier=selected,
+            hasAltModifier=QApplication.keyboardModifiers() == Qt.AltModifier,
+        )
         layers = []
         for key in layerList:
             layers += layerList[key]
-        if layers:
-            rect = self.getCursorRect(e)
-            lyrFeatDict = dict()
-            for layer in layers:
-                if not isinstance(layer, QgsVectorLayer):
+        if not layers:
+            return
+        rect = self.getCursorRect(e)
+        lyrFeatDict = dict()
+        for layer in layers:
+            if not isinstance(layer, QgsVectorLayer):
+                continue
+            geomType = layer.geometryType()
+            # iterate over features inside the mouse bounding box
+            bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, rect)
+            for feature in layer.getFeatures(QgsFeatureRequest(bbRect)):
+                geom = feature.geometry()
+                if not geom:
                     continue
-                geomType = layer.geometryType()
-                # iterate over features inside the mouse bounding box
-                bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, rect)
-                for feature in layer.getFeatures(QgsFeatureRequest(bbRect)):
-                    geom = feature.geometry()
-                    if geom:
-                        searchRect = self.geometryHandler.reprojectSearchArea(
-                            layer, rect
-                        )
-                        if selected:
-                            # if Control was held, appending behaviour is different
-                            if not firstGeom:
-                                firstGeom = geomType
-                            elif firstGeom > geomType:
-                                firstGeom = geomType
-                            if geomType == firstGeom and geom.intersects(searchRect):
-                                # only appends features if it has the same geometry as first selected feature
-                                if layer in lyrFeatDict:
-                                    lyrFeatDict[layer].append(feature)
-                                else:
-                                    lyrFeatDict[layer] = [feature]
+                searchRect = self.geometryHandler.reprojectSearchArea(layer, rect)
+                if selected:
+                    # if Control was held, appending behaviour is different
+                    if not firstGeom:
+                        firstGeom = geomType
+                    elif firstGeom > geomType:
+                        firstGeom = geomType
+                    if geomType == firstGeom and geom.intersects(searchRect):
+                        # only appends features if it has the same geometry as first selected feature
+                        if layer in lyrFeatDict:
+                            lyrFeatDict[layer].append(feature)
                         else:
-                            if geom.intersects(searchRect):
-                                if layer in lyrFeatDict:
-                                    lyrFeatDict[layer].append(feature)
-                                else:
-                                    lyrFeatDict[layer] = [feature]
-            lyrFeatDict = self.filterStrongestGeometry(lyrFeatDict)
-            # rasters = self.getSelectedRasters(e)
-            if lyrFeatDict:
-                moreThanOneFeat = (
-                    len(list(lyrFeatDict.values())) > 1
-                    or len(list(lyrFeatDict.values())[0]) > 1
-                )
-                if moreThanOneFeat:
-                    # if there are overlapping features (valid candidates only)
-                    (
-                        selectedFeaturesDict,
-                        notSelectedFeaturesDict,
-                    ) = self.checkSelectedFeaturesOnDict(menuDict=lyrFeatDict)
-                    self.setContextMenuStyle(
-                        e=e,
-                        dictMenuSelected=selectedFeaturesDict,
-                        dictMenuNotSelected=notSelectedFeaturesDict,
-                    )
+                            lyrFeatDict[layer] = [feature]
                 else:
-                    layer = list(lyrFeatDict.keys())[0]
-                    feature = lyrFeatDict[layer][0]
-                    selected = QApplication.keyboardModifiers() == Qt.ControlModifier
-                    if e.button() == Qt.LeftButton:
-                        # if feature is selected, we want it to be de-selected
-                        self.setSelectionFeature(
-                            layer=layer,
-                            feature=feature,
-                            selectAll=False,
-                            setActiveLayer=True,
-                        )
-                    elif selected:
-                        self.iface.setActiveLayer(layer)
+                    if not geom.intersects(searchRect):
+                        continue
+                    if layer in lyrFeatDict:
+                        lyrFeatDict[layer].append(feature)
                     else:
-                        self.iface.openFeatureForm(layer, feature, showModal=False)
-            # elif rasters and e.button() == Qt.LeftButton:
-            #    self.openRastersMenu(e, rasters)
-
-    def openRastersMenu(self, e, rasters):
-        menu = QMenu()
-        self.addRasterMenu(menu, rasters)
-        menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
+                        lyrFeatDict[layer] = [feature]
+        lyrFeatDict = self.filterStrongestGeometry(lyrFeatDict)
+        if not lyrFeatDict:
+            return
+        moreThanOneFeat = (
+            len(list(lyrFeatDict.values())) > 1
+            or len(list(lyrFeatDict.values())[0]) > 1
+        )
+        if moreThanOneFeat:
+            # if there are overlapping features (valid candidates only)
+            (
+                selectedFeaturesDict,
+                notSelectedFeaturesDict,
+            ) = self.checkSelectedFeaturesOnDict(menuDict=lyrFeatDict)
+            self.setContextMenuStyle(
+                e=e,
+                dictMenuSelected=selectedFeaturesDict,
+                dictMenuNotSelected=notSelectedFeaturesDict,
+            )
+        else:
+            layer = list(lyrFeatDict.keys())[0]
+            feature = lyrFeatDict[layer][0]
+            selected = QApplication.keyboardModifiers() == Qt.ControlModifier
+            if e.button() == Qt.LeftButton:
+                # if feature is selected, we want it to be de-selected
+                self.setSelectionFeature(
+                    layer=layer,
+                    feature=feature,
+                    selectAll=False,
+                    setActiveLayer=True,
+                )
+            elif selected:
+                self.iface.setActiveLayer(layer)
+            else:
+                self.iface.openFeatureForm(layer, feature, showModal=False)
 
     def unload(self):
         self.deactivate()
