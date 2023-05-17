@@ -474,7 +474,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             "native:joinattributesbylocation",
             {
                 'INPUT':segments,
-                'PREDICATE':[2],
+                'PREDICATE':[2,5],
                 'JOIN':polygonLines,
                 'JOIN_FIELDS':[],
                 'METHOD':0,
