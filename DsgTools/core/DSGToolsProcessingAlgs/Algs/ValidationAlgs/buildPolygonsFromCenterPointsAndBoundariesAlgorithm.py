@@ -838,47 +838,70 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             algRunner.runCreateSpatialIndex(inputLyr=segments, context=localContext, feedback=None)
             if multiStepFeedback.isCanceled():
                 return
-            
-            if multiStepFeedback.isCanceled():
-                return
-            flags = SpatialRelationsHandler().checkDE9IM(
-                layerA=segments,
-                layerB=polygonLyr,
-                mask="*1*******",
-                cardinality="1..*",
-                feedback=None,
-                ctx=localContext,
-            )
-            if multiStepFeedback.isCanceled():
-                return
-            featidList = list(
-                set(i["seg_featid"] for i in segments.getFeatures(list(flags.keys())))
-            )
-            if multiStepFeedback.isCanceled():
-                return
-            if len(featidList) == 0:
-                return
-            expressionStr = f"seg_featid in {tuple(featidList)}"
-            if ",)" in expressionStr:
-                expressionStr = expressionStr.replace(",)", ")")
-            segmentedFlags = algRunner.runFilterExpression(
-                segments,
-                expression=expressionStr,
+            builtPolygonsLyr = algRunner.runClip(
+                inputLayer=polygonLyr,
+                overlayLayer=localGeographicBoundsLyr,
                 context=localContext,
                 feedback=None,
             )
             if multiStepFeedback.isCanceled():
                 return
+            polygonLines = algRunner.runPolygonsToLines(
+                inputLyr=builtPolygonsLyr,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
+            )
+            if multiStepFeedback.isCanceled():
+                return
+            explodedPolygonLines = algRunner.runExplodeLines(
+                inputLyr=polygonLines,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
+            )
+
+            algRunner.runCreateSpatialIndex(
+                inputLyr=explodedPolygonLines,
+                context=context,
+                feedback=None,
+                is_child_algorithm=True,
+            )
+
+            unmatchedLines = processing.run(
+            "native:joinattributesbylocation",
+                {
+                    'INPUT':segments,
+                    'PREDICATE':[2,5],
+                    'JOIN':explodedPolygonLines,
+                    'JOIN_FIELDS':[],
+                    'METHOD':0,
+                    'DISCARD_NONMATCHING':False,
+                    'PREFIX':'',
+                    'NON_MATCHING':'memory:',
+                },
+                context=localContext,
+                is_child_algorithm=True
+            )['NON_MATCHING']
+
+            if multiStepFeedback.isCanceled():
+                return
+            algRunner.runCreateSpatialIndex(
+                inputLyr=unmatchedLines,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
+            )
+
             mergedSegments = processing.run(
                 "native:dissolve",
-                {"INPUT": segmentedFlags, "OUTPUT": "memory:"},
-                context=localContext,
-                feedback=None,
+                {"INPUT": unmatchedLines, "OUTPUT": "memory:"},
+                context=context,
+                feedback=multiStepFeedback,
             )["OUTPUT"]
-            if multiStepFeedback.isCanceled():
-                return
+
             flagLyr = algRunner.runMultipartToSingleParts(
-                mergedSegments, localContext, feedback=None
+                mergedSegments, context, feedback=multiStepFeedback
             )
             return flagLyr
 
