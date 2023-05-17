@@ -5,6 +5,7 @@
 Novas Funcionalidades:
 
 - Novo processo de identificar inconsistências entre os elementos da rede de drenagem;
+- Nova funcionalidade de mostrar o comprimento da linha ou a área enquanto se digitaliza (portado do DSGTools OP);
 
 Melhorias:
 
