@@ -45,8 +45,8 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
 
     INPUT_STREAM = "INPUT_STREAM"
     INPUT_CONTOUR_LINES = "INPUT_CONTOUR_LINES"
-    OUTPUT = "OUTPUT"
-    RUNNING_INSIDE_MODEL = "RUNNING_INSIDE_MODEL"
+    POINT_FLAGS = "POINT_FLAGS"
+    LINE_FLAGS = "LINE_FLAGS"
 
     def initAlgorithm(self, config=None):
         self.addParameter(
@@ -65,15 +65,11 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.RUNNING_INSIDE_MODEL,
-                self.tr("Process is running inside model"),
-                defaultValue=False,
-            )
+            QgsProcessingParameterFeatureSink(self.POINT_FLAGS, self.tr("Point Flags"))
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSink(self.OUTPUT, self.tr("Flags"))
+            QgsProcessingParameterFeatureSink(self.LINE_FLAGS, self.tr("Line Flags"))
         )
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -85,9 +81,6 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
         outputLinesSet, outputPointsSet = set(), set()
         countourLayer = self.parameterAsVectorLayer(
             parameters, "INPUT_COUNTOUR_LINES", context
-        )
-        runningInsideModel = self.parameterAsBool(
-            parameters, self.RUNNING_INSIDE_MODEL, context
         )
 
         feedback.setProgressText(self.tr("Verifying inconsistency"))
@@ -126,20 +119,16 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
             idDict,
         )
 
+        (sink, sink_id) = self.parameterAsSink(
+            parameters,
+            self.POINT_FLAGS,
+            context,
+            streamLayerInput.fields(),
+            QgsWkbTypes.Point,
+            streamLayerInput.sourceCrs(),
+        )
         if outputPointsSet == set() and outputLinesSet == set():
-            if runningInsideModel:
-                (sink, sink_id) = self.parameterAsSink(
-                    parameters,
-                    self.OUTPUT,
-                    context,
-                    streamLayerInput.fields(),
-                    QgsWkbTypes.Point,
-                    streamLayerInput.sourceCrs(),
-                )
-            else:
-                sink_id = self.tr("No flags found")
-
-            return {self.OUTPUT: sink_id}
+            return {self.POINT_FLAGS: sink_id}
 
         if outputPointsSet != set():
             sink_id = self.outLayer(
@@ -149,7 +138,7 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
             sink_id = self.outLayer(
                 parameters, context, outputLinesSet, streamLayerInput, QgsWkbTypes.LineString
             )
-        return {self.OUTPUT: sink_id}
+        return {self.POINT_FLAGS: sink_id}
 
     def runSpatialJoin(self, streamLayerInput, countourLayer, feedback):
         output = processing.run(
@@ -231,7 +220,7 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
 
         (sink, sink_id) = self.parameterAsSink(
             parameters,
-            self.OUTPUT,
+            self.POINT_FLAGS,
             context,
             newFields,
             geomtype,
