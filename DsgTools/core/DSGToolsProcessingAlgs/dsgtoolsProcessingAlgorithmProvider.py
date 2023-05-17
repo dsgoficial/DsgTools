@@ -319,6 +319,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyVertexNear
 )
 
 # from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
+
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWrongBuildingAnglesAlgorithm import (
     IdentifyWrongBuildingAnglesAlgorithm,
 )
@@ -388,7 +389,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.streamOrder import
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createReviewGridAlgorithm import (
     CreateReviewGridAlgorithm,
 )
-
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
     """

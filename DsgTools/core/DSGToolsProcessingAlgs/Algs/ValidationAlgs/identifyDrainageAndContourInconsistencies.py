@@ -20,38 +20,73 @@
  ***************************************************************************/
 """
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
+    ValidationAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from qgis.PyQt.QtCore import QCoreApplication, QVariant
 from qgis.core import (
     QgsProcessing,
+    QgsFeatureSink,
     QgsProcessingAlgorithm,
     QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterVectorLayer,
     QgsFeature,
     QgsField,
+    QgsGeometry,
+    QgsPointXY,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSource,
+    QgsVectorLayerUtils,
+    QgsProcessingParameterField,
+    QgsWkbTypes,
 )
 from DsgTools.core.GeometricTools import graphHandler
 
 
-class StreamOrder(QgsProcessingAlgorithm):
+class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
 
-    INPUT = "INPUT"
-    OUTPUT = "OUTPUT"
+    INPUT_DRAINAGES = "INPUT_DRAINAGES"
+    INPUT_CONTOURS = "INPUT_CONTOURS"
+
+    FLAGS = "FLAGS"
 
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
-                self.INPUT,
-                self.tr("Input network"),
+                self.INPUT_DRAINAGES,
+                self.tr("Input drainages"),
                 [QgsProcessing.TypeVectorLine],
                 optional=False,
+                defaultValue="elemnat_trecho_drenagem_l",
             )
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSink(self.OUTPUT, self.tr("Output"))
+            QgsProcessingParameterFeatureSource(
+                self.INPUT_CONTOURS,
+                self.tr("Input contours"),
+                [QgsProcessing.TypeVectorLine],
+                optional=False,
+                defaultValue="elemnat_curva_nivel_l",
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.CONTOUR_ATTR,
+                self.tr("Contour value field"),
+                None,
+                self.INPUT_CONTOURS,
+                QgsProcessingParameterField.Any,
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
+            )
         )
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -65,22 +100,21 @@ class StreamOrder(QgsProcessingAlgorithm):
                 )
             )
         algRunner = AlgRunner()
-        networkLayer = self.parameterAsSource(parameters, self.INPUT, context)
-        fields = networkLayer.fields()
-        fields.append(QgsField("stream_order", QVariant.Int))
-        (sink, sink_id) = self.parameterAsSink(
-            parameters,
-            self.OUTPUT,
-            context,
-            fields,
-            networkLayer.wkbType(),
-            networkLayer.sourceCrs(),
-        )
         multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
-        localCache = algRunner.runCreateFieldWithExpression(
-            inputLyr=parameters[self.INPUT],
+        inputDrainagesLyr = algRunner.runCreateFieldWithExpression(
+            inputLyr=parameters[self.INPUT_DRAINAGES],
+            expression="$id",
+            fieldName="featid",
+            fieldType=1,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        inputContoursLyr = algRunner.runCreateFieldWithExpression(
+            inputLyr=parameters[self.INPUT_CONTOURS],
             expression="$id",
             fieldName="featid",
             fieldType=1,
@@ -90,70 +124,42 @@ class StreamOrder(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         algRunner.runCreateSpatialIndex(
-            inputLyr=localCache, context=context, feedback=multiStepFeedback
+            inputLyr=inputContoursLyr, context=context, feedback=multiStepFeedback
         )
+        self.prepareFlagSink(parameters, inputDrainagesLyr, QgsWkbTypes.Point, context)
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         nodesLayer = algRunner.runExtractSpecificVertices(
-            inputLyr=localCache,
+            inputLyr=inputDrainagesLyr,
             vertices="0,-1",
             context=context,
             feedback=multiStepFeedback,
         )
         currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        (
-            nodeDict,
-            nodeIdDict,
-            edgeDict,
-            hashDict,
-            networkBidirectionalGraph,
-        ) = graphHandler.buildAuxStructures(
-            nx,
-            nodesLayer=nodesLayer,
-            edgesLayer=localCache,
+        intersectionNodesLayer = algRunner.runLineIntersections(
+            inputLyr=inputDrainagesLyr,
+            intersectLyr=inputContoursLyr,
+            context=context,
             feedback=multiStepFeedback,
-            directed=True,
         )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        G_copy = graphHandler.evaluateStreamOrder(
-            networkBidirectionalGraph, feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        if len(G_copy.edges) == 0:
-            return {self.OUTPUT: sink_id}
-        stepSize = 100 / len(G_copy.edges)
-        for current, (n0, n1) in enumerate(G_copy.edges):
-            if multiStepFeedback.isCanceled():
-                break
-            newFeat = QgsFeature(fields)
-            oldFeat = edgeDict[G_copy[n0][n1]["featid"]]
-            newFeat.setGeometry(oldFeat.geometry())
-            for idx, attrValue in enumerate(oldFeat.attributes()):
-                newFeat.setAttribute(idx, attrValue)
-            newFeat["stream_order"] = G_copy[n0][n1]["stream_order"]
 
-            sink.addFeature(newFeat)
-            multiStepFeedback.setProgress(current * stepSize)
-        return {self.OUTPUT: sink_id}
+        return {self.FLAGS: self.flag_id}
 
     def tr(self, string):
         return QCoreApplication.translate("Processing", string)
 
     def createInstance(self):
-        return StreamOrder()
+        return IdentifyDrainageAndContourInconsistencies()
 
     def name(self):
-        return "streamorder"
+        return "identifydrainageandcontourinconsistencies"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Stream Order")
+        return self.tr("Identify Drainage and Contour Inconsistencies")
 
     def group(self):
         """
