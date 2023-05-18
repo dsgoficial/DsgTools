@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "FLAGS",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "reason": "Invalid intercection between drainage and contour lines. This drainage intercepted twice the countour with height 20" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -0.560089335566722, -0.433848408710218 ], [ -0.318927652041986, -0.712850371896615 ] ] } },
+{ "type": "Feature", "properties": { "reason": "Drainage line going uphill. This drainage already intercepted countour with height 60 after intercepting contour with height 40" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -0.335459841186798, 0.070468560541401 ], [ -0.280106610799657, 0.285622765568855 ] ] } },
+{ "type": "Feature", "properties": { "reason": "Drainage line intercepted countour with height 60 after intercepting contour with height 100. Check the contours for missing features." }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -0.553293810220717, 0.710657724051903 ], [ -0.604649554691294, 0.277339917080055 ] ] } }
+]
+}
