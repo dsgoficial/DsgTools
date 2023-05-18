@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "contour3",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "height": 20 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 1.129618499587388, 0.033361514589064 ], [ 1.4387934607159, 0.077529366178851 ], [ 1.586019632681859, 0.283646006931193 ] ] ] } },
+{ "type": "Feature", "properties": { "height": 40 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 1.803178236331648, 0.360939747213321 ], [ 1.806858890630797, 0.15482310646098 ], [ 1.876791322314627, 0.026000205990766 ], [ 2.042420765776329, -0.091780731582001 ] ] ] } },
+{ "type": "Feature", "properties": { "height": 60 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 2.101311234562713, -0.220603632052214 ], [ 2.138117777554203, -0.404636347009662 ], [ 2.244856752229523, -0.544501210377322 ], [ 2.458334701580162, -0.643878876454344 ] ] ] } }
+]
+}

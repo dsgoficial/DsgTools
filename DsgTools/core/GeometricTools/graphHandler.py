@@ -173,7 +173,6 @@ def evaluateStreamOrder(G, feedback=None):
         # firstOrderNodes = [node for node in G.nodes if G.degree(node) == 1 and node not in visitedNodes]
     return G_copy
 
-
 # def evaluateStreamOrder(nx, G, feedback=None):
 #     G = G.copy()
 #     firstOrderNodes = set(node for node in G.nodes if G.degree(node) == 1 and len(list(G.successors(node))) > 0)

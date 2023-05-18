@@ -910,7 +910,7 @@ class AlgRunner:
         return output["OUTPUT"]
 
     def runLineIntersections(
-        self, inputLyr, intersectLyr, context, feedback=None, outputLyr=None
+        self, inputLyr, intersectLyr, context, feedback=None, outputLyr=None, is_child_algorithm=False
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {
@@ -921,7 +921,11 @@ class AlgRunner:
             "OUTPUT": outputLyr,
         }
         output = processing.run(
-            "native:lineintersections", parameters, context=context, feedback=feedback
+            "native:lineintersections",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
         )
         return output["OUTPUT"]
 

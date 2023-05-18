@@ -39,6 +39,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitPolygonsAlgori
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitPolygonsByGrid import (
     SplitPolygonsByGrid,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDrainageAndContourInconsistencies import IdentifyDrainageAndContourInconsistencies
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -527,6 +528,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             SelectByDE9IMAlgorithm(),
             ExtractByDE9IMAlgorithm(),
             Line2Multiline(),
+            IdentifyDrainageAndContourInconsistencies(),
         ]
         return algList
 
