@@ -20,6 +20,7 @@
  ***************************************************************************/
 """
 
+from collections import defaultdict
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
     ValidationAlgorithm,
 )
@@ -49,7 +50,7 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
 
     INPUT_DRAINAGES = "INPUT_DRAINAGES"
     INPUT_CONTOURS = "INPUT_CONTOURS"
-
+    CONTOUR_ATTR = "CONTOUR_ATTR"
     FLAGS = "FLAGS"
 
     def initAlgorithm(self, config=None):
@@ -101,22 +102,26 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             )
         algRunner = AlgRunner()
         multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
+        contourAttr = self.parameterAsFields(
+            parameters, self.CONTOUR_ATTR, context
+        )[0]
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         inputDrainagesLyr = algRunner.runCreateFieldWithExpression(
             inputLyr=parameters[self.INPUT_DRAINAGES],
             expression="$id",
-            fieldName="featid",
+            fieldName="d_featid",
             fieldType=1,
             context=context,
             feedback=multiStepFeedback,
         )
+        drainageDict = {feat["d_featid"]:feat for feat in inputDrainagesLyr.getFeatures()}
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         inputContoursLyr = algRunner.runCreateFieldWithExpression(
             inputLyr=parameters[self.INPUT_CONTOURS],
             expression="$id",
-            fieldName="featid",
+            fieldName="c_featid",
             fieldType=1,
             context=context,
             feedback=multiStepFeedback,
@@ -136,14 +141,45 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             feedback=multiStepFeedback,
         )
         currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         intersectionNodesLayer = algRunner.runLineIntersections(
             inputLyr=inputDrainagesLyr,
             intersectLyr=inputContoursLyr,
             context=context,
             feedback=multiStepFeedback,
         )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        intersectionDict = self.buildIntersectionSearchStructure(
+            intersectionNodesLayer, drainageDict, feedback=multiStepFeedback)
+        currentStep += 1
 
         return {self.FLAGS: self.flag_id}
+    
+    def buildIntersectionSearchStructure(self, intersectionNodesLayer, drainageDict, feedback):
+        intersectionDict = defaultdict(list)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        nFeats = intersectionNodesLayer.featureCount()
+        if nFeats == 0:
+            return intersectionDict
+        stepSize = 100/nFeats
+        for current, feat in enumerate(intersectionNodesLayer.getFeatures()):
+            if multiStepFeedback.isCanceled():
+                return intersectionDict
+            intersectionDict[feat["d_featid"]].append(feat)
+            multiStepFeedback.setProgress(current * stepSize)
+        multiStepFeedback.setCurrentStep(1)
+        nKeys = len(intersectionDict)
+        stepSize = 100/nKeys
+        for current, (d_featid, featList) in enumerate(intersectionDict.items()):
+            if multiStepFeedback.isCanceled():
+                return intersectionDict
+            drainageGeom = drainageDict[d_featid].geometry()
+            sortedList = sorted(featList, key=lambda feat: drainageGeom.lineLocatePoint(feat.geometry()))
+            intersectionDict[d_featid] = sortedList
+            multiStepFeedback.setProgress(current * stepSize)
+        return intersectionDict
 
     def tr(self, string):
         return QCoreApplication.translate("Processing", string)
