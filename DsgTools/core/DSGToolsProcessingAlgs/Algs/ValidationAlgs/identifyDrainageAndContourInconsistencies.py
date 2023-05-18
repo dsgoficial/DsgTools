@@ -82,8 +82,8 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.CONTOUR_INTERVAL,
-                self.tr('Contour interval'), 
-                type=QgsProcessingParameterNumber.Double, 
+                self.tr("Contour interval"),
+                type=QgsProcessingParameterNumber.Double,
                 minValue=0,
                 defaultValue=10,
             )
@@ -107,12 +107,14 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             )
         algRunner = AlgRunner()
         multiStepFeedback = QgsProcessingMultiStepFeedback(12, feedback)
-        contourAttr = self.parameterAsFields(
-            parameters, self.CONTOUR_ATTR, context
-        )[0]
-        contourInterval = self.parameterAsDouble(parameters, self.CONTOUR_INTERVAL, context)
+        contourAttr = self.parameterAsFields(parameters, self.CONTOUR_ATTR, context)[0]
+        contourInterval = self.parameterAsDouble(
+            parameters, self.CONTOUR_INTERVAL, context
+        )
         currentStep = 0
-        multiStepFeedback.setProgressText(self.tr("Building local caches and spatial indexes..."))
+        multiStepFeedback.setProgressText(
+            self.tr("Building local caches and spatial indexes...")
+        )
         multiStepFeedback.setCurrentStep(currentStep)
         inputDrainagesLyr = algRunner.runCreateFieldWithExpression(
             inputLyr=parameters[self.INPUT_DRAINAGES],
@@ -122,8 +124,12 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        drainageDict = {feat["d_featid"]:feat for feat in inputDrainagesLyr.getFeatures()}
-        self.prepareFlagSink(parameters, inputDrainagesLyr, QgsWkbTypes.MultiPoint, context)
+        drainageDict = {
+            feat["d_featid"]: feat for feat in inputDrainagesLyr.getFeatures()
+        }
+        self.prepareFlagSink(
+            parameters, inputDrainagesLyr, QgsWkbTypes.MultiPoint, context
+        )
         if len(drainageDict) == 0:
             return {self.FLAGS: self.flag_id}
         currentStep += 1
@@ -140,12 +146,18 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         algRunner.runCreateSpatialIndex(
-            inputLyr=inputDrainagesLyr, context=context, feedback=multiStepFeedback, is_child_algorithm=True,
+            inputLyr=inputDrainagesLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         algRunner.runCreateSpatialIndex(
-            inputLyr=inputContoursLyr, context=context, feedback=multiStepFeedback, is_child_algorithm=True,
+            inputLyr=inputContoursLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         currentStep += 1
         multiStepFeedback.setProgressText(self.tr("Running line intersections..."))
@@ -166,15 +178,20 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Building Intersection search structure..."))
+        multiStepFeedback.setProgressText(
+            self.tr("Building Intersection search structure...")
+        )
         intersectionDict = self.buildIntersectionSearchStructure(
-            intersectionNodesLayer, drainageDict, feedback=multiStepFeedback)
+            intersectionNodesLayer, drainageDict, feedback=multiStepFeedback
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         flagDict = self.findIntersectionErrors(
             intersectionDict, contourAttr, contourInterval, feedback=multiStepFeedback
         )
-        flagLambda = lambda x: self.flagFeature(flagGeom=x[0], flagText=x[1], fromWkb=True)
+        flagLambda = lambda x: self.flagFeature(
+            flagGeom=x[0], flagText=x[1], fromWkb=True
+        )
         if len(flagDict) > 0:
             list(map(flagLambda, flagDict.items()))
             return {self.FLAGS: self.flag_id}
@@ -193,27 +210,33 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             nodesLayer=nodesLayer,
             intersectionDict=intersectionDict,
             contourAttr=contourAttr,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        flagDict = self.findContinuityErrorsOnGraph(nx, nodesDict, G, contourInterval, feedback=multiStepFeedback)
+        flagDict = self.findContinuityErrorsOnGraph(
+            nx, nodesDict, G, contourInterval, feedback=multiStepFeedback
+        )
         if len(flagDict) > 0:
             list(map(flagLambda, flagDict.items()))
             return {self.FLAGS: self.flag_id}
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        flagDict = self.findMissingErrorsOnGraphConsideringRamificationsAndConfluences(nx, nodesDict, G, contourInterval, feedback=multiStepFeedback)
+        flagDict = self.findMissingErrorsOnGraphConsideringRamificationsAndConfluences(
+            nx, nodesDict, G, contourInterval, feedback=multiStepFeedback
+        )
         return {self.FLAGS: self.flag_id}
-    
-    def buildIntersectionSearchStructure(self, intersectionNodesLayer, drainageDict, feedback):
+
+    def buildIntersectionSearchStructure(
+        self, intersectionNodesLayer, drainageDict, feedback
+    ):
         intersectionDict = defaultdict(list)
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         nFeats = intersectionNodesLayer.featureCount()
         if nFeats == 0:
             return intersectionDict
-        stepSize = 100/nFeats
+        stepSize = 100 / nFeats
         for current, feat in enumerate(intersectionNodesLayer.getFeatures()):
             if multiStepFeedback.isCanceled():
                 return intersectionDict
@@ -221,22 +244,27 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             multiStepFeedback.setProgress(current * stepSize)
         multiStepFeedback.setCurrentStep(1)
         nKeys = len(intersectionDict)
-        stepSize = 100/nKeys
+        stepSize = 100 / nKeys
         for current, (d_featid, featList) in enumerate(intersectionDict.items()):
             if multiStepFeedback.isCanceled():
                 return intersectionDict
             drainageGeom = drainageDict[d_featid].geometry()
-            sortedList = sorted(featList, key=lambda feat: drainageGeom.lineLocatePoint(feat.geometry()))
+            sortedList = sorted(
+                featList, key=lambda feat: drainageGeom.lineLocatePoint(feat.geometry())
+            )
             intersectionDict[d_featid] = sortedList
             multiStepFeedback.setProgress(current * stepSize)
         return intersectionDict
 
-    def findIntersectionErrors(self, intersectionDict, contourAttr, contourInterval, feedback):
+    def findIntersectionErrors(
+        self, intersectionDict, contourAttr, contourInterval, feedback
+    ):
         nItems = len(intersectionDict)
         flagDict = dict()
         if nItems == 0:
             return flagDict
-        stepSize = 100/nItems
+        stepSize = 100 / nItems
+
         def findError(featList):
             if feedback.isCanceled():
                 return None
@@ -247,19 +275,30 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                 if diff == contourInterval:
                     continue
                 if diff < 0:
-                    flagText = self.tr(f"Drainage line going uphill. This drainage already intercepted countour with height {f2[contourAttr]} after intercepting contour with height {f1[contourAttr]}.")
+                    flagText = self.tr(
+                        f"Drainage line going uphill. This drainage already intercepted countour with height {f2[contourAttr]} after intercepting contour with height {f1[contourAttr]}."
+                    )
                 elif diff == 0:
-                    flagText = self.tr(f"Invalid intercection between drainage and contour lines. This drainage intercepted twice the countour with height {f2[contourAttr]}.")
+                    flagText = self.tr(
+                        f"Invalid intercection between drainage and contour lines. This drainage intercepted twice the countour with height {f2[contourAttr]}."
+                    )
                 else:
-                    flagText = self.tr(f"Drainage line intercepted countour with height {f2[contourAttr]} after intercepting contour with height {f1[contourAttr]}. Since the contour interval is {contourInterval}, there are missing contours in this region. Check the contours for missing features.")
+                    flagText = self.tr(
+                        f"Drainage line intercepted countour with height {f2[contourAttr]} after intercepting contour with height {f1[contourAttr]}. Since the contour interval is {contourInterval}, there are missing contours in this region. Check the contours for missing features."
+                    )
                 g1 = f1.geometry()
                 g2 = f2.geometry()
                 flagGeom = g1.combine(g2)
                 return {flagGeom.asWkb(): flagText}
             return None
+
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.setProgressText(self.tr("Building Intersection search structure: Submitting features to thread..."))
+        multiStepFeedback.setProgressText(
+            self.tr(
+                "Building Intersection search structure: Submitting features to thread..."
+            )
+        )
         pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count())
         futures = set()
         for current, featList in enumerate(intersectionDict.values()):
@@ -269,7 +308,9 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             futures.add(pool.submit(findError, featList))
             multiStepFeedback.setProgress(current * stepSize)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.setProgressText(self.tr("Building Intersection search structure: Evaluating results..."))
+        multiStepFeedback.setProgressText(
+            self.tr("Building Intersection search structure: Evaluating results...")
+        )
         for current, future in enumerate(concurrent.futures.as_completed(futures)):
             if multiStepFeedback.isCanceled():
                 pool.shutdown(wait=False)
@@ -280,12 +321,14 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             flagDict.update(result)
             multiStepFeedback.setProgress(current * stepSize)
         return flagDict
-    
-    def buildGraphSeachStructures(self, nx, nodesLayer, intersectionDict, contourAttr, feedback):
+
+    def buildGraphSeachStructures(
+        self, nx, nodesLayer, intersectionDict, contourAttr, feedback
+    ):
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         multiStepFeedback.setCurrentStep(0)
         nNodes = nodesLayer.featureCount()
-        stepSize = 100/nNodes
+        stepSize = 100 / nNodes
         nodesDict = dict()
         nodesWkbToIdDict = dict()
         drainageNodeDict = defaultdict(dict)
@@ -294,11 +337,13 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                 break
             nodesDict[feat.id()] = feat
             nodesWkbToIdDict[feat.geometry().asWkb()] = feat.id()
-            drainageNodeDict[feat["d_featid"]][feat["vertex_pos"]] = feat.geometry().asWkb()
+            drainageNodeDict[feat["d_featid"]][
+                feat["vertex_pos"]
+            ] = feat.geometry().asWkb()
             multiStepFeedback.setProgress(current * stepSize)
         newNodeId = max(nodesDict.keys()) + 1
-        stepSize = 100/len(drainageNodeDict)
-        
+        stepSize = 100 / len(drainageNodeDict)
+
         G = nx.DiGraph(h=None)
         addEdgeLambda = lambda x: G.add_edge(x[0], x[1])
         for current, (drainageId, startEndDict) in enumerate(drainageNodeDict.items()):
@@ -309,7 +354,10 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             intersectionList = intersectionDict.get(drainageId, [])
             intersectionIdList = []
             if intersectionList == []:
-                G.add_edge(nodesWkbToIdDict[startEndDict[0]], nodesWkbToIdDict[startEndDict[-1]])
+                G.add_edge(
+                    nodesWkbToIdDict[startEndDict[0]],
+                    nodesWkbToIdDict[startEndDict[-1]],
+                )
                 continue
             for intersectionFeat in intersectionList:
                 newNodesWkbToIdDict[intersectionFeat.geometry().asWkb()] = newNodeId
@@ -317,7 +365,7 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                 intersectionIdList.append(newNodeId)
                 G.add_node(newNodeId, h=intersectionFeat[contourAttr])
                 newNodeId += 1
-            
+
             nodesDict.update(newNodesDict)
             nodesWkbToIdDict.update(newNodesWkbToIdDict)
             list(
@@ -327,14 +375,14 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                         [
                             nodesWkbToIdDict[startEndDict[0]],
                             *intersectionIdList,
-                            nodesWkbToIdDict[startEndDict[-1]]
+                            nodesWkbToIdDict[startEndDict[-1]],
                         ]
-                    )
+                    ),
                 )
             )
             multiStepFeedback.setProgress(current * stepSize)
         return nodesDict, G
-    
+
     def findContinuityErrorsOnGraph(self, nx, nodesDict, G, contourInterval, feedback):
         flagDict = dict()
         d = dict(G.nodes(data="h", default=None))
@@ -343,33 +391,71 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             for node in G.nodes
             if G.degree(node) == 1 and len(list(G.successors(node))) > 0
         )
-        stepSize = 100/len(firstOrderNodes)
-        for current, node in enumerate(firstOrderNodes):
-            if feedback.isCanceled():
-                break
+        stepSize = 100 / len(firstOrderNodes)
+
+        def evaluate(node):
             connectedNodes = nx.dfs_tree(G, node)
-            connectedNodesWithHeight = [(node, d[node]) for node in connectedNodes if d[node] is not None]
+            connectedNodesWithHeight = [
+                (node, d[node]) for node in connectedNodes if d[node] is not None
+            ]
             if len(connectedNodesWithHeight) < 1:
-                continue
-            for (node1, h1), (node2, h2) in graphHandler.pairwise(connectedNodesWithHeight):
+                return None
+            for (node1, h1), (node2, h2) in graphHandler.pairwise(
+                connectedNodesWithHeight
+            ):
                 diff = h1 - h2
                 if diff == contourInterval:
                     continue
                 if diff < 0:
-                    flagText = self.tr(f"Drainage newtwork going uphill. This network branch has already intercepted countour with height {h2} after intercepting contour with height {h1}.")
+                    flagText = self.tr(
+                        f"Drainage newtwork going uphill. This network branch has already intercepted countour with height {h2} after intercepting contour with height {h1}."
+                    )
                 elif diff == 0:
-                    flagText = self.tr(f"Invalid intercection between drainage and contour lines. This network branch has already intercepted twice the countour with height {h2}.")
+                    flagText = self.tr(
+                        f"Invalid intercection between drainage and contour lines. This network branch has already intercepted twice the countour with height {h2}."
+                    )
                 else:
-                    flagText = self.tr(f"Drainage network intercepted countour with height {h2} after intercepting contour with height {h1}. Since the contour interval is {contourInterval}, there are missing contours in this region. Check the contours for missing features.")
+                    flagText = self.tr(
+                        f"Drainage network intercepted countour with height {h2} after intercepting contour with height {h1}. Since the contour interval is {contourInterval}, there are missing contours in this region. Check the contours for missing features."
+                    )
                 g1 = nodesDict[node1].geometry()
                 g2 = nodesDict[node2].geometry()
                 flagGeom = g1.combine(g2)
-                flagDict[flagGeom.asWkb()] = flagText
-                break
-            feedback.setProgress(current * stepSize)
+                return {flagGeom.asWkb(): flagText}
+
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.setProgressText(
+            self.tr(
+                "Finding continuity errors on graph: Submitting features to thread..."
+            )
+        )
+        pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count())
+        futures = set()
+        for current, node in enumerate(firstOrderNodes):
+            if multiStepFeedback.isCanceled():
+                pool.shutdown(wait=False)
+                return flagDict
+            futures.add(pool.submit(evaluate, node))
+            multiStepFeedback.setProgress(current * stepSize)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.setProgressText(
+            self.tr("Finding continuity errors on graph: Evaluating results...")
+        )
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback.isCanceled():
+                pool.shutdown(wait=False)
+                return flagDict
+            result = future.result()
+            if result is None:
+                continue
+            flagDict.update(result)
+            multiStepFeedback.setProgress(current * stepSize)
         return flagDict
-        
-    def findMissingErrorsOnGraphConsideringRamificationsAndConfluences(self, nx, nodesDict, G, contourInterval, feedback):
+
+    def findMissingErrorsOnGraphConsideringRamificationsAndConfluences(
+        self, nx, nodesDict, G, contourInterval, feedback
+    ):
         # flagDict = dict()
         # G = G.copy()
         # firstOrderNodes = set(
@@ -381,9 +467,8 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
         # d = dict(G.nodes(data="h", default=None))
         # while len(firstOrderNodes) > 0:
 
-        #TODO
+        # TODO
         pass
-
 
     def tr(self, string):
         return QCoreApplication.translate("Processing", string)
