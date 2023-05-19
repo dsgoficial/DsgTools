@@ -20,6 +20,7 @@
  ***************************************************************************/
 """
 
+from itertools import product
 import os
 import concurrent.futures
 
@@ -214,6 +215,9 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(
+            self.tr("Finding continuity errors...")
+        )
         flagDict = self.findContinuityErrorsOnGraph(
             nx, nodesDict, G, contourInterval, feedback=multiStepFeedback
         )
@@ -222,9 +226,14 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             return {self.FLAGS: self.flag_id}
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        flagDict = self.findMissingErrorsOnGraphConsideringRamificationsAndConfluences(
-            nx, nodesDict, G, contourInterval, feedback=multiStepFeedback
+        multiStepFeedback.setProgressText(
+            self.tr("Finding errors on confluence and ramifications...")
         )
+        flagDict = self.findMissingErrorsOnGraphConsideringRamificationsAndConfluences(
+            nodesDict, G, feedback=multiStepFeedback
+        )
+        if len(flagDict) > 0:
+            list(map(flagLambda, flagDict.items()))
         return {self.FLAGS: self.flag_id}
 
     def buildIntersectionSearchStructure(
@@ -386,42 +395,47 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
     def findContinuityErrorsOnGraph(self, nx, nodesDict, G, contourInterval, feedback):
         flagDict = dict()
         d = dict(G.nodes(data="h", default=None))
-        firstOrderNodes = set(
-            node
-            for node in G.nodes
-            if G.degree(node) == 1 and len(list(G.successors(node))) > 0
-        )
-        stepSize = 100 / len(firstOrderNodes)
+        startingNodes, endingNodes = set(), set()
+        for node in G.nodes:
+            if G.degree(node) != 1:
+                continue
+            if len(list(G.successors(node))) > 0:
+                startingNodes.add(node)
+            else:
+                endingNodes.add(node)
 
-        def evaluate(node):
-            connectedNodes = nx.dfs_tree(G, node)
-            connectedNodesWithHeight = [
-                (node, d[node]) for node in connectedNodes if d[node] is not None
-            ]
-            if len(connectedNodesWithHeight) < 1:
-                return None
-            for (node1, h1), (node2, h2) in graphHandler.pairwise(
-                connectedNodesWithHeight
-            ):
-                diff = h1 - h2
-                if diff == contourInterval:
+
+        def evaluate(startingNode, endingNode):
+            flagDict = dict()
+            for path in nx.all_simple_paths(G, startingNode, endingNode):
+                connectedNodesWithHeight = [
+                    (node, d[node]) for node in path if d[node] is not None
+                ]
+                if len(connectedNodesWithHeight) < 1:
                     continue
-                if diff < 0:
-                    flagText = self.tr(
-                        f"Drainage newtwork going uphill. This network branch has already intercepted countour with height {h2} after intercepting contour with height {h1}."
-                    )
-                elif diff == 0:
-                    flagText = self.tr(
-                        f"Invalid intercection between drainage and contour lines. This network branch has already intercepted twice the countour with height {h2}."
-                    )
-                else:
-                    flagText = self.tr(
-                        f"Drainage network intercepted countour with height {h2} after intercepting contour with height {h1}. Since the contour interval is {contourInterval}, there are missing contours in this region. Check the contours for missing features."
-                    )
-                g1 = nodesDict[node1].geometry()
-                g2 = nodesDict[node2].geometry()
-                flagGeom = g1.combine(g2)
-                return {flagGeom.asWkb(): flagText}
+                for (node1, h1), (node2, h2) in graphHandler.pairwise(
+                    connectedNodesWithHeight
+                ):
+                    diff = h1 - h2
+                    if diff == contourInterval:
+                        continue
+                    if diff < 0:
+                        flagText = self.tr(
+                            f"Drainage newtwork going uphill. This network branch has already intercepted countour with height {h2} after intercepting contour with height {h1}."
+                        )
+                    elif diff == 0:
+                        flagText = self.tr(
+                            f"Invalid intercection between drainage and contour lines. This network branch has already intercepted twice the countour with height {h2}."
+                        )
+                    else:
+                        flagText = self.tr(
+                            f"Drainage network intercepted countour with height {h2} after intercepting contour with height {h1}. Since the contour interval is {contourInterval}, there are missing contours in this region. Check the contours for missing features."
+                        )
+                    g1 = nodesDict[node1].geometry()
+                    g2 = nodesDict[node2].geometry()
+                    flagGeom = g1.combine(g2)
+                    flagDict[flagGeom.asWkb()] = flagText
+            return flagDict
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
@@ -432,11 +446,13 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
         )
         pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count())
         futures = set()
-        for current, node in enumerate(firstOrderNodes):
+        pairList = list(product(startingNodes, endingNodes))
+        stepSize = 100 / len(pairList)
+        for current, (startNode, endNode) in enumerate(pairList):
             if multiStepFeedback.isCanceled():
                 pool.shutdown(wait=False)
                 return flagDict
-            futures.add(pool.submit(evaluate, node))
+            futures.add(pool.submit(evaluate, startNode, endNode))
             multiStepFeedback.setProgress(current * stepSize)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.setProgressText(
@@ -454,14 +470,53 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
         return flagDict
 
     def findMissingErrorsOnGraphConsideringRamificationsAndConfluences(
-        self, nx, nodesDict, G, contourInterval, feedback
+        self, nodesDict, G, feedback
     ):
         flagDict = dict()
+        processedNodes = set()
         G = G.copy()
-        visitedNodes = set()
         d = dict(G.nodes(data="h", default=None))
-        graphHandler.removeFirstOrderEmptyNodes(G, d, attr="h")
-        graphHandler.removeSecondOrderEmptyNodes(G, d, attr="h")
+        G = graphHandler.removeFirstOrderEmptyNodes(G, d)
+        G = graphHandler.removeSecondOrderEmptyNodes(G, d)
+        nodesToVisit = set(
+            node for node in G.nodes if G.degree(node) == 1 and len(list(G.successors(node))) > 0
+        )
+        currentStep = 0
+        while nodesToVisit:
+            newNodesToVisit = set()
+            for node in nodesToVisit:
+                if feedback.isCanceled():
+                    return flagDict
+                if G.degree(node) == 1:
+                    if d[node] is None:
+                        h = next(d[i] for i in graphHandler.fetch_connected_nodes(G, node, max_degree=2) if d[i] is not None)
+                        d[node] = h
+                    newNodesToVisit = newNodesToVisit.union(G.successors(node))
+                    continue
+                if G.degree(node) == 2:
+                    if d[node] is None:
+                        pred = list(G.predecessors(node))[0]
+                        d[node] = d[pred] if d[pred] is not None else next(d[i] for i in graphHandler.fetch_connected_nodes(G, node, max_degree=2) if d[i] is not None)
+                    newNodesToVisit = newNodesToVisit.union(G.successors(node))
+                    continue
+                succ = list(G.successors(node))
+                pred = list(G.predecessors(node))
+                n1, n2 = succ if len(pred) == 1 else pred
+                h1, h2 = d[n1], d[n2]
+                processedNodes.add(node)
+                if h1 == h2:
+                    d[node] = h1
+                    newNodesToVisit = newNodesToVisit.union(G.successors(node))
+                    continue
+                if h1 is None or h2 is None:
+                    continue
+                flagText = self.tr(
+                    f"Drainage encounter with different known height values: {h1} and {h2}."
+                )
+                flagGeom = nodesDict[node].geometry()
+                flagDict[flagGeom.asWkb()] = flagText
+            nodesToVisit = newNodesToVisit
+        return flagDict
 
     def tr(self, string):
         return QCoreApplication.translate("Processing", string)

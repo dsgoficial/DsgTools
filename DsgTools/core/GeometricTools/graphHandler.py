@@ -159,7 +159,6 @@ def evaluateStreamOrder(G, feedback=None):
                 if feedback is not None:
                     feedback.setProgress(current * stepSize)
             for n in connectedNodes:
-                G.remove_node(n)
                 visitedNodes.add(n)
             # visitedNodes.add(node)
         firstOrderNodes = (
@@ -191,7 +190,7 @@ def evaluateStreamOrder(G, feedback=None):
 #         pathDict[path[0]].append(path)
 
 
-def removeFirstOrderEmptyNodes(G, d, attr):
+def removeFirstOrderEmptyNodes(G, d):
     """
     Test case:
     G = nx.DiGraph()
@@ -207,35 +206,39 @@ def removeFirstOrderEmptyNodes(G, d, attr):
         ]
     )
     """
+    G_copy = G.copy()
     nodesToRemove = set(
         node
-        for node in G.nodes
-        if G.degree(node) == 1
-        and d[node][attr] is None
-        and len(list(G.successors(node))) > 0
+        for node in G_copy.nodes
+        if G_copy.degree(node) == 1
+        and d[node] is None
+        and len(list(G_copy.successors(node))) > 0
     )
     while nodesToRemove:
         for node in nodesToRemove:
-            G.remove_node(node)
+            G_copy.remove_node(node)
         nodesToRemove = set(
             node
-            for node in G.nodes
-            if G.degree(node) == 1
-            and d[node][attr] is None
-            and len(list(G.successors(node))) > 0
+            for node in G_copy.nodes
+            if G_copy.degree(node) == 1
+            and d[node] is None
+            and len(list(G_copy.successors(node))) > 0
         )
+    return G_copy
 
 
-def removeSecondOrderEmptyNodes(G, d, attr):
+def removeSecondOrderEmptyNodes(G, d):
+    G_copy = G.copy()
     nodesToRemove = set(
-        node for node in G.nodes if G.degree(node) == 2 and d[node][attr] is None
+        node for node in G_copy.nodes if G_copy.degree(node) == 2 and d[node] is None
     )
     while nodesToRemove:
         for node in nodesToRemove:
-            pred = list(G.predecessors(node))[0]
-            suc = list(G.successors(node))[0]
-            G.add_edge(pred, suc)
-            G.remove_node(node)
+            pred = list(G_copy.predecessors(node))[0]
+            suc = list(G_copy.successors(node))[0]
+            G_copy.add_edge(pred, suc)
+            G_copy.remove_node(node)
         nodesToRemove = set(
-            node for node in G.nodes if G.degree(node) == 2 and d[node][attr] is None
+            node for node in G_copy.nodes if G_copy.degree(node) == 2 and d[node] is None
         )
+    return G_copy
