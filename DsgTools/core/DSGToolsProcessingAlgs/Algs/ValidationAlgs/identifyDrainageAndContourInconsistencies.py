@@ -456,19 +456,12 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
     def findMissingErrorsOnGraphConsideringRamificationsAndConfluences(
         self, nx, nodesDict, G, contourInterval, feedback
     ):
-        # flagDict = dict()
-        # G = G.copy()
-        # firstOrderNodes = set(
-        #     node
-        #     for node in G.nodes
-        #     if G.degree(node) == 1 and len(list(G.successors(node))) > 0
-        # )
-        # visitedNodes = set()
-        # d = dict(G.nodes(data="h", default=None))
-        # while len(firstOrderNodes) > 0:
-
-        # TODO
-        pass
+        flagDict = dict()
+        G = G.copy()
+        visitedNodes = set()
+        d = dict(G.nodes(data="h", default=None))
+        graphHandler.removeFirstOrderEmptyNodes(G, d, attr="h")
+        graphHandler.removeSecondOrderEmptyNodes(G, d, attr="h")
 
     def tr(self, string):
         return QCoreApplication.translate("Processing", string)
