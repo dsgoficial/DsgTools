@@ -1,0 +1,137 @@
+# -*- coding: utf-8 -*-
+"""
+/***************************************************************************
+ DsgTools
+                                 A QGIS plugin
+ Brazilian Army Cartographic Production Tools
+                              -------------------
+        begin                : 2023-05-20
+        git sha              : $Format:%H$
+        copyright            : (C) 2023 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        email                : borba.philipe@eb.mil.br
+ ***************************************************************************/
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+"""
+
+from typing import Tuple, Union
+from uuid import uuid4
+
+import affine
+import numpy as np
+from osgeo import gdal, ogr
+from osgeo.gdal import Dataset
+from qgis.core import (
+    QgsFeature,
+    QgsFields,
+    QgsGeometry,
+    QgsPoint,
+    QgsProcessingUtils,
+    QgsProject,
+    QgsRasterLayer,
+    QgsVectorFileWriter,
+    QgsVectorLayer,
+)
+
+
+def readAsNumpy(inputRaster: Union[str, QgsRasterLayer]) -> Tuple[Dataset, np.array]:
+    inputRaster = (
+        inputRaster.dataProvider().dataSourceUri()
+        if isinstance(inputRaster, QgsRasterLayer)
+        else inputRaster
+    )
+    ds = gdal.Open(inputRaster)
+    return ds, np.array(ds.GetRasterBand(1).ReadAsArray().transpose())
+
+
+def getCoordinateTransform(ds: Dataset) -> affine.Affine:
+    return affine.Affine.from_gdal(*ds.GetGeoTransform())
+
+
+def getMaxCoordinatesFromNpArray(npArray: np.array) -> tuple:
+    return np.unravel_index(np.argmax(npArray), npArray.shape)
+
+
+def getMinCoordinatesFromNpArray(npArray: np.array) -> tuple:
+    return np.unravel_index(np.argmin(npArray), npArray.shape)
+
+
+def createFeatureWithPixelValueFromPixelCoordinates(
+    pixelCoordinates: Tuple[float, float],
+    fieldName: str,
+    fields: QgsFields,
+    npRaster: np.array,
+    transform: affine.Affine,
+) -> QgsFeature:
+    newFeat = QgsFeature(fields)
+    terrainCoordinates = transform * pixelCoordinates
+    newFeat.setGeometry(QgsGeometry(QgsPoint(*terrainCoordinates)))
+    newFeat[fieldName] = int(npRaster[pixelCoordinates])
+    return newFeat
+
+
+def createFeatureWithPixelValueFromTerrainCoordinates(
+    terrainCoordinates: Tuple[float, float],
+    fieldName: str,
+    fields: QgsFields,
+    npRaster: np.array,
+    transform: affine.Affine,
+) -> QgsFeature:
+    newFeat = QgsFeature(fields)
+    pixelCoordinates = ~transform * terrainCoordinates
+    newFeat.setGeometry(QgsGeometry(QgsPoint(*terrainCoordinates)))
+    newFeat[fieldName] = int(npRaster[pixelCoordinates])
+    return newFeat
+
+
+def buildNumpyNodataMask(rasterLyr: QgsRasterLayer, vectorLyr: QgsVectorLayer):
+    _out = QgsProcessingUtils.generateTempFilename(f"clip_{str(uuid4().hex)}.tif")
+    _temp_in = QgsProcessingUtils.generateTempFilename(f"feats_{str(uuid4().hex)}.shp")
+
+    NoData_value = -9999
+    x_res = rasterLyr.rasterUnitsPerPixelX()
+    y_res = rasterLyr.rasterUnitsPerPixelY()
+    x_min, y_min, x_max, y_max = rasterLyr.extent().toRectF().getCoords()
+
+    # 4. Create Target - TIFF
+    cols = int((x_max - x_min) / x_res)
+    rows = int((y_max - y_min) / y_res)
+
+    _raster = gdal.GetDriverByName("GTiff").Create(_out, cols, rows, 1, gdal.GDT_Byte)
+    _raster.SetGeoTransform((x_min, x_res, 0, y_max, 0, -y_res))
+    _band = _raster.GetRasterBand(1)
+    _band.SetNoDataValue(NoData_value)
+
+    if vectorLyr is None or vectorLyr.featureCount() == 0:
+        _raster = None
+        ds = gdal.Open(_out)
+        npRaster = np.array(ds.GetRasterBand(1).ReadAsArray())
+        ds = None
+        return npRaster
+
+    save_options = QgsVectorFileWriter.SaveVectorOptions()
+    save_options.driverName = "ESRI Shapefile"
+    save_options.fileEncoding = "UTF-8"
+    transform_context = QgsProject.instance().transformContext()
+    error = QgsVectorFileWriter.writeAsVectorFormatV3(
+        vectorLyr, _temp_in, transform_context, save_options
+    )
+
+    # 3. Open Shapefile
+    driver = ogr.GetDriverByName("ESRI Shapefile")
+    source_ds = driver.Open(_temp_in, 0)
+    source_layer = source_ds.GetLayer()
+
+    gdal.RasterizeLayer(_raster, [1], source_layer, burn_values=[255.0])
+    _raster = None
+    ds = gdal.Open(_out)
+    npRaster = np.array(ds.GetRasterBand(1).ReadAsArray(), dtype=float)
+    ds = None
+    npRaster[npRaster == 255.0] = np.nan
+    return npRaster
