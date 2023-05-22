@@ -272,6 +272,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 elevationPointHeightFieldName=elevationPointHeightFieldName,
                 threshold=threshold,
                 geoBoundsLyr=localGeographicBoundsLyr,
+                context=localContext,
                 feedback=None,
             )
 
