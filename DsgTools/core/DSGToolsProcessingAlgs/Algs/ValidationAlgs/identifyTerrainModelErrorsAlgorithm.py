@@ -145,7 +145,8 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         heightFieldName = self.parameterAsFields(
             parameters, self.CONTOUR_ATTR, context
-        )[0]
+        )
+        heightFieldName = None if len(heightFieldName) == 0 else heightFieldName[0]
         threshold = self.parameterAsDouble(parameters, self.CONTOUR_INTERVAL, context)
         geoBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDS, context
@@ -156,7 +157,8 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         elevationPointsLyr = self.parameterAsVectorLayer(parameters, self.INPUT_ELEVATION_POINTS, context)
         elevationPointHeightFieldName = self.parameterAsFields(
             parameters, self.ELEVATION_POINT_ATTR, context
-        )[0]
+        )
+        elevationPointHeightFieldName = None if len(elevationPointHeightFieldName) == 0 else elevationPointHeightFieldName[0]
         if elevationPointsLyr is not None and elevationPointHeightFieldName in (None, [], ''):
             raise QgsProcessingException(self.tr('Elevation point height attribute must be selected.'))
         point_flagSink, point_flag_id = self.prepareAndReturnFlagSink(
@@ -212,6 +214,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         onlySelected,
         heightFieldName,
         elevationPointsLyr,
+        elevationPointHeightFieldName,
         threshold,
         geoBoundsLyr,
         context,
