@@ -23,7 +23,7 @@
 from typing import Tuple, Union
 from uuid import uuid4
 
-import affine
+from .affine import Affine
 import numpy as np
 from osgeo import gdal, ogr
 from osgeo.gdal import Dataset
@@ -50,8 +50,8 @@ def readAsNumpy(inputRaster: Union[str, QgsRasterLayer]) -> Tuple[Dataset, np.ar
     return ds, np.array(ds.GetRasterBand(1).ReadAsArray().transpose())
 
 
-def getCoordinateTransform(ds: Dataset) -> affine.Affine:
-    return affine.Affine.from_gdal(*ds.GetGeoTransform())
+def getCoordinateTransform(ds: Dataset) -> Affine:
+    return Affine.from_gdal(*ds.GetGeoTransform())
 
 
 def getMaxCoordinatesFromNpArray(npArray: np.array) -> tuple:
@@ -67,7 +67,7 @@ def createFeatureWithPixelValueFromPixelCoordinates(
     fieldName: str,
     fields: QgsFields,
     npRaster: np.array,
-    transform: affine.Affine,
+    transform: Affine,
 ) -> QgsFeature:
     newFeat = QgsFeature(fields)
     terrainCoordinates = transform * pixelCoordinates
@@ -81,7 +81,7 @@ def createFeatureWithPixelValueFromTerrainCoordinates(
     fieldName: str,
     fields: QgsFields,
     npRaster: np.array,
-    transform: affine.Affine,
+    transform: Affine,
 ) -> QgsFeature:
     newFeat = QgsFeature(fields)
     pixelCoordinates = ~transform * terrainCoordinates
