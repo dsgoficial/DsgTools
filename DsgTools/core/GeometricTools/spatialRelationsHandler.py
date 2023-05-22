@@ -423,15 +423,15 @@ class SpatialRelationsHandler(QObject):
         return missingContourFlagDict
 
     def findElevationPointsOutOfThreshold(self, elevationPointsLyr, polygonLyr, contourAreaDict, threshold, elevationPointHeightFieldName, context, feedback=None):
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        self.algRunner.runCreateSpatialIndex(polygonLyr, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        self.algRunner.runCreateSpatialIndex(polygonLyr, context, feedback=feedback, is_child_algorithm=True)
         invalidDict = dict()
         nFeats = elevationPointsLyr.featureCount()
         if nFeats == 0:
             return invalidDict
         stepSize = 100/nFeats
         for current, pointFeat in enumerate(elevationPointsLyr.getFeatures()):
+            if feedback is not None and feedback.isCanceled():
+                break
             pointGeom = pointFeat.geometry()
             pointBuffer = pointGeom.buffer(1e-8,-1)
             bbox = pointBuffer.boundingBox()
@@ -444,14 +444,25 @@ class SpatialRelationsHandler(QObject):
                 countourList = contourAreaDict['areaContourRelations'][areaId].keys()
                 h_min = min(countourList)
                 h_max = max(countourList)
+                if pointHeight == h_min or pointHeight == h_max:
+                    continue
                 if (h_min == h_max):
-                    flagText = self.tr(
-                        f"Elevation point with height {pointHeight} out of threshold. This value is on a hilltop and should be between {h_max} and {h_max+threshold}"
-                    )
+                    if pointHeight > h_max + threshold:
+                        flagText = self.tr(
+                            f"Elevation point with height {pointHeight} out of threshold. This value is on a hilltop and should be between {h_max} and {h_max+threshold}"
+                        )
+                    elif pointHeight < h_min - threshold:
+                        flagText = self.tr(
+                            f"Elevation point with height {pointHeight} out of threshold. This value is on a valley/depression and should be between {h_min} and {h_min-threshold}"
+                        )
+                    else:
+                        continue
                 elif pointHeight < h_min or pointHeight > h_max:
                     flagText = self.tr(
                         f"Elevation point with height {pointHeight} out of threshold. This value should be between {h_min} and {h_max}"
                     )
+                else:
+                    continue
                 invalidDict[pointGeom.asWkb()] = flagText
 
             if feedback is not None:

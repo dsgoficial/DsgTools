@@ -250,6 +250,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 overlayLayer=bufferedBounds,
                 context=localContext,
                 feedback=None,
+                is_child_algorithm=True,
             )
             if multiStepFeedback.isCanceled():
                 return {}
@@ -303,6 +304,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         for current, future in enumerate(concurrent.futures.as_completed(futures)):
             if multiStepFeedback.isCanceled():
                 break
+            # localFlagDict = compute(localGeographicBoundsLyr)
             localFlagDict = future.result()
             multiStepFeedback.pushInfo(
                 self.tr(f"Identification of region {current+1}/{nRegions} is done.")
