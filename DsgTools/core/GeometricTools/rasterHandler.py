@@ -180,3 +180,19 @@ def buildNumpyNodataMask(rasterLyr: QgsRasterLayer, vectorLyr: QgsVectorLayer):
     ds = None
     npRaster[npRaster == 255.0] = np.nan
     return npRaster
+
+def createMaxPointFeatFromRasterLayer(inputRaster: QgsRasterLayer, fields: QgsFields, fieldName: str) -> QgsFeature:
+    ds, npRaster = readAsNumpy(inputRaster)
+    transform = getCoordinateTransform(ds)
+    nanIndexes = np.isnan(npRaster)
+    npRaster = (np.rint(npRaster)).astype(float)
+    npRaster[nanIndexes] = np.nan
+    pixelCoordinates = getMaxCoordinatesFromNpArray(npRaster)
+    pixelCoordinates = tuple(pixelCoordinates) if pixelCoordinates.shape[0] == 1 else tuple(pixelCoordinates[0])
+    return createFeatureWithPixelValueFromPixelCoordinates(
+        pixelCoordinates=pixelCoordinates,
+        fieldName=fieldName,
+        fields=fields,
+        npRaster=npRaster,
+        transform=transform
+    )

@@ -129,6 +129,7 @@ class AlgRunner:
         donuthole=None,
         outershell=None,
         selected=False,
+        is_child_algorithm=False,
     ):
         donuthole = "memory:" if donuthole is None else donuthole
         outershell = "memory:" if outershell is None else outershell
@@ -143,6 +144,7 @@ class AlgRunner:
             parameters,
             context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTERSHELL"], output["DONUTHOLE"]
 
@@ -1502,3 +1504,19 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
+    
+    def extractWithinDistance(self, inputLyr, referenceLyr, distance, context, outputLyr=None, feedback=None, is_child_algorithm=False):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:extractwithindistance",
+            {
+                'INPUT': inputLyr,
+                'REFERENCE': referenceLyr,
+                'DISTANCE': distance,
+                'OUTPUT': outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
