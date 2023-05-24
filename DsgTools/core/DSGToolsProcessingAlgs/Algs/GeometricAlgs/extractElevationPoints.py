@@ -20,11 +20,12 @@
  ***************************************************************************/
 """
 
+from typing import List
 from uuid import uuid4
 import numpy as np
 import json
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from DsgTools.core.GeometricTools import rasterHandler
+from DsgTools.core.GeometricTools import geometryHandler, rasterHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 import processing
 from osgeo import gdal, ogr
@@ -50,6 +51,8 @@ from qgis.core import (
     QgsProcessingParameterFileDestination,
     QgsVectorFileWriter,
     QgsProcessingParameterEnum,
+    QgsSpatialIndex,
+    QgsCoordinateReferenceSystem,
 )
 
 
@@ -59,7 +62,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
     CONTOUR_LINES = "CONTOUR_LINES"
     GEOGRAPHIC_BOUNDARY = "GEOGRAPHIC_BOUNDARY"
     SCALE = "SCALE"
+    WATER_BODIES = "WATER_BODIES"
     AREA_WITHOUT_INFORMATION_POLYGONS = "AREA_WITHOUT_INFORMATION_POLYGONS"
+    MAIN_ROADS = "MAIN_ROADS"
     OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config=None):
@@ -93,9 +98,12 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             "1:250.000",
         ]
 
-        # self.distances = {
-        #     0:
-        # }
+        self.distances = {
+            0: 20e-3 * 25_000,
+            1: 20e-3 * 50_000,
+            2: 20e-3 * 100_000,
+            3: 20e-3 * 250_000,
+        }
 
         self.addParameter(
             QgsProcessingParameterEnum(
@@ -105,9 +113,27 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterFeatureSource(
+                self.WATER_BODIES,
+                self.tr("Water Bodies"),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True,
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
                 self.AREA_WITHOUT_INFORMATION_POLYGONS,
                 self.tr("Area without information layer"),
                 [QgsProcessing.TypeVectorPolygon],
+                optional=True,
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.MAIN_ROADS,
+                self.tr("Main Roads"),
+                [QgsProcessing.TypeVectorLine],
                 optional=True,
             )
         )
@@ -129,6 +155,11 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         areaWithoutInformationLyr = self.parameterAsVectorLayer(
             parameters, self.AREA_WITHOUT_INFORMATION_POLYGONS, context
         )
+        waterBodiesLyr = self.parameterAsVectorLayer(
+            parameters, self.WATER_BODIES, context
+        )
+        mainRoads = self.parameterAsVectorLayer(parameters, self.MAIN_ROADS, context)
+        self.bufferDist = self.distances[scale]
 
         fields = QgsFields()
         fields.append(QgsField("cota", QVariant.Int))
@@ -156,6 +187,8 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 inputRaster=inputRaster,
                 geographicBoundsLyr=localBoundsLyr,
                 areaWithoutInformationLyr=areaWithoutInformationLyr,
+                waterBodiesLyr=waterBodiesLyr,
+                mainRoads=mainRoads,
                 fields=fields,
                 context=context,
                 feedback=multiStepFeedback,
@@ -170,12 +203,17 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         inputRaster,
         geographicBoundsLyr,
         areaWithoutInformationLyr,
+        waterBodiesLyr,
+        mainRoads,
         fields,
         context,
         feedback,
     ):
         algRunner = AlgRunner()
-        nSteps = 4 if areaWithoutInformationLyr is None else 6
+        layerHandler = LayerHandler()
+        nSteps = (
+            4 + (areaWithoutInformationLyr is not None) + (waterBodiesLyr is not None)
+        )
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(nSteps, feedback)
             if feedback is not None
@@ -196,6 +234,17 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             ),
         )
         clippedRasterLyr = QgsProcessingUtils.mapLayerFromString(clippedRaster, context)
+        frameCentroid = (
+            [i for i in geographicBoundsLyr.getFeatures()][0].geometry().centroid()
+        )
+        originEpsg = QgsCoordinateReferenceSystem(
+            geometryHandler.getSirgasAuthIdByPointLatLong(*frameCentroid.asPoint())
+        )
+        localBufferDistance = geometryHandler.convertDistance(
+            self.bufferDist,
+            originEpsg=originEpsg,
+            destinationEpsg=geographicBoundsLyr.crs(),
+        )
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -208,50 +257,184 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             areaWithoutInformationLyr is not None
             and areaWithoutInformationLyr.featureCount() > 0
         ):
-            clippedArea = algRunner.runClip(
-                areaWithoutInformationLyr,
-                geographicBoundsLyr,
-                context,
-                multiStepFeedback,
+            npRaster = self.maskFeaturesFromLayerOnRaster(
+                rasterLyr=clippedRasterLyr,
+                geographicBoundsLyr=geographicBoundsLyr,
+                maskLyr=areaWithoutInformationLyr,
+                context=context,
+                algRunner=algRunner,
+                feedback=multiStepFeedback,
+                npRaster=npRaster,
             )
             if multiStepFeedback is not None:
                 currentStep += 1
                 multiStepFeedback.setCurrentStep(currentStep)
-            npMask = (
-                None
-                if clippedArea.featureCount() == 0
-                else rasterHandler.buildNumpyNodataMask(
-                    rasterLyr=clippedArea, vectorLyr=clippedArea
-                )
+
+        if waterBodiesLyr is not None and waterBodiesLyr.featureCount() > 0:
+            npRaster = self.maskFeaturesFromLayerOnRaster(
+                rasterLyr=clippedRasterLyr,
+                geographicBoundsLyr=geographicBoundsLyr,
+                maskLyr=waterBodiesLyr,
+                context=context,
+                algRunner=algRunner,
+                feedback=multiStepFeedback,
+                npRaster=npRaster,
             )
-            if npMask is not None:
-                npMask.resize(npRaster.shape, refcheck=False)
-                npRaster = npRaster + npMask
             if multiStepFeedback is not None:
                 currentStep += 1
                 multiStepFeedback.setCurrentStep(currentStep)
+        nanIndexes = np.isnan(npRaster)
+        npRaster = (np.rint(npRaster)).astype(float)
+        npRaster[nanIndexes] = np.nan
 
-        maxCoordinates = rasterHandler.getMaxCoordinatesFromNpArray(npRaster)
-        maxFeat = rasterHandler.createFeatureWithPixelValueFromPixelCoordinates(
-            maxCoordinates,
-            fieldName="cota",
+        minMaxFeats = self.getMinMaxFeatures(
+            fields, npRaster, transform, distance=localBufferDistance
+        )
+        featList += minMaxFeats
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        pointsLayer = layerHandler.createMemoryLayerWithFeatures(
+            featList=featList,
+            fields=fields,
+            crs=clippedRasterLyr.crs(),
+            wkbType=QgsWkbTypes.Point,
+            context=context,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        # create grid
+
+        # create points from first criteria
+
+        # create points from road intersections
+        localMainRoads = algRunner.runClip(
+            mainRoads,
+            overlayLayer=geographicBoundsLyr,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        featList += self.getContourValuesFromMainRoadIntersections(
+            mainRoads=localMainRoads,
+            gridLayer=None,
+            pointsLayer=pointsLayer,
             fields=fields,
             npRaster=npRaster,
             transform=transform,
+            algRunner=algRunner,
+            context=context,
+            feedback=multiStepFeedback,
         )
-        maxFeat["cota_mais_alta"] = True
-        featList.append(maxFeat)
-
-        minCoordinates = rasterHandler.getMinCoordinatesFromNpArray(npRaster)
-        minFeat = rasterHandler.createFeatureWithPixelValueFromPixelCoordinates(
-            minCoordinates,
-            fieldName="cota",
-            fields=fields,
-            npRaster=npRaster,
-            transform=transform,
-        )
-        featList.append(minFeat)
         return featList
+
+    def getContourValuesFromMainRoadIntersections(
+        self,
+        mainRoads,
+        gridLayer,
+        pointsLayer,
+        fields,
+        npRaster,
+        transform,
+        algRunner,
+        context,
+        feedback,
+    ):
+        roadIntersections = algRunner.runLineIntersections(
+            mainRoads, intersectLyr=mainRoads, context=context, feedback=feedback
+        )
+        pointList = rasterHandler.createFeatureListWithPointList(
+            pointList=roadIntersections.getFeatures(),
+            fieldName="cota",
+            fields=fields,
+            npRaster=npRaster,
+            transform=transform,
+        )
+        return filter(lambda x: x is not None, pointList)
+
+    def getMinMaxFeatures(self, fields, npRaster, transform, distance):
+        featSet = set()
+        maxCoordinatesArray = rasterHandler.getMaxCoordinatesFromNpArray(npRaster)
+        maxFeatList = (
+            rasterHandler.createFeatureListWithPixelValuesFromPixelCoordinatesArray(
+                maxCoordinatesArray,
+                fieldName="cota",
+                fields=fields,
+                npRaster=npRaster,
+                transform=transform,
+            )
+        )
+        featSet |= self.filterFeaturesByBuffer(maxFeatList, distance, cotaMaisAlta=True)
+
+        minCoordinatesArray = rasterHandler.getMinCoordinatesFromNpArray(npRaster)
+        minFeatList = (
+            rasterHandler.createFeatureListWithPixelValuesFromPixelCoordinatesArray(
+                minCoordinatesArray,
+                fieldName="cota",
+                fields=fields,
+                npRaster=npRaster,
+                transform=transform,
+            )
+        )
+        featSet |= self.filterFeaturesByBuffer(minFeatList, distance)
+        return list(featSet)
+
+    def filterFeaturesByBuffer(
+        self, filterFeatList: List, distance, cotaMaisAlta=False
+    ):
+        outputSet = set()
+        exclusionGeom = None
+        for feat in filterFeatList:
+            geom = feat.geometry()
+            buffer = geom.buffer(distance, -1)
+            if exclusionGeom is not None and exclusionGeom.intersects(geom):
+                continue
+            feat["cota_mais_alta"] = cotaMaisAlta
+            exclusionGeom = (
+                buffer if exclusionGeom is None else exclusionGeom.combine(buffer)
+            )
+            outputSet.add(feat)
+        return outputSet
+
+    def maskFeaturesFromLayerOnRaster(
+        self,
+        rasterLyr,
+        geographicBoundsLyr,
+        maskLyr,
+        context,
+        algRunner,
+        feedback,
+        npRaster,
+    ):
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(2, feedback)
+            if feedback is not None
+            else None
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+        clippedArea = algRunner.runClip(
+            maskLyr,
+            geographicBoundsLyr,
+            context,
+            multiStepFeedback,
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+        npMask = (
+            None
+            if clippedArea.featureCount() == 0
+            else rasterHandler.buildNumpyNodataMask(
+                rasterLyr=rasterLyr, vectorLyr=clippedArea
+            )
+        )
+        if npMask is not None:
+            npMask.resize(npRaster.shape, refcheck=False)
+            npRaster = npRaster + npMask
+        return npRaster
 
     def tr(self, string):
         return QCoreApplication.translate("ExtractElevationPoints", string)

@@ -20,7 +20,7 @@
  ***************************************************************************/
 """
 
-from typing import Tuple, Union
+from typing import List, Tuple, Union
 from uuid import uuid4
 
 from .affine import Affine
@@ -54,12 +54,12 @@ def getCoordinateTransform(ds: Dataset) -> Affine:
     return Affine.from_gdal(*ds.GetGeoTransform())
 
 
-def getMaxCoordinatesFromNpArray(npArray: np.array) -> tuple:
-    return np.unravel_index(np.argmax(npArray), npArray.shape)
+def getMaxCoordinatesFromNpArray(npArray: np.array) -> np.array:
+    return np.argwhere(npArray == npArray[~np.isnan(npArray)].max())
 
 
-def getMinCoordinatesFromNpArray(npArray: np.array) -> tuple:
-    return np.unravel_index(np.argmin(npArray), npArray.shape)
+def getMinCoordinatesFromNpArray(npArray: np.array) -> np.array:
+    return np.argwhere(npArray == npArray[~np.isnan(npArray)].min())
 
 
 def createFeatureWithPixelValueFromPixelCoordinates(
@@ -76,6 +76,44 @@ def createFeatureWithPixelValueFromPixelCoordinates(
     return newFeat
 
 
+def createFeatureListWithPixelValuesFromPixelCoordinatesArray(
+    pixelCoordinates: np.array,
+    fieldName: str,
+    fields: QgsFields,
+    npRaster: np.array,
+    transform: Affine,
+) -> List[QgsFeature]:
+    return [
+        createFeatureWithPixelValueFromPixelCoordinates(
+            tuple(coords), fieldName, fields, npRaster, transform
+        )
+        for coords in pixelCoordinates
+    ]
+
+
+def createFeatureListWithPointList(
+    pointList: List[QgsPoint],
+    fieldName: str,
+    fields: QgsFields,
+    npRaster: np.array,
+    transform: Affine,
+) -> List[QgsFeature]:
+    return [
+        createFeatureWithPixelValueFromTerrainCoordinates(
+            tuple(
+                point.geometry().asMultiPoint()[0]
+                if point.geometry().isMultipart()
+                else point.geometry().asPoint()
+            ),
+            fieldName,
+            fields,
+            npRaster,
+            transform,
+        )
+        for point in pointList
+    ]
+
+
 def createFeatureWithPixelValueFromTerrainCoordinates(
     terrainCoordinates: Tuple[float, float],
     fieldName: str,
@@ -85,8 +123,15 @@ def createFeatureWithPixelValueFromTerrainCoordinates(
 ) -> QgsFeature:
     newFeat = QgsFeature(fields)
     pixelCoordinates = ~transform * terrainCoordinates
+    pixelCoordinates = tuple(map(int, pixelCoordinates))
+    try:
+        value = npRaster[pixelCoordinates]
+    except:
+        return None
+    if np.isnan(value):
+        return None
     newFeat.setGeometry(QgsGeometry(QgsPoint(*terrainCoordinates)))
-    newFeat[fieldName] = int(npRaster[pixelCoordinates])
+    newFeat[fieldName] = int(value)
     return newFeat
 
 

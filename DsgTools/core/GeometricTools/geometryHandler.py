@@ -37,6 +37,8 @@ from qgis.core import (
     QgsProject,
     QgsVectorLayer,
     QgsWkbTypes,
+    QgsDistanceArea,
+    QgsCoordinateTransformContext,
 )
 from qgis.PyQt.Qt import QObject
 
@@ -844,3 +846,52 @@ class GeometryHandler(QObject):
             changedGeom = self.addVertex(vertexPoint, changedGeom)
         changedGeom.removeDuplicateNodes()
         return changedGeom
+
+
+def convertDistance(distance, originEpsg, destinationEpsg):
+    distanceArea = QgsDistanceArea()
+    distanceArea.setSourceCrs(
+        QgsCoordinateReferenceSystem(originEpsg), QgsCoordinateTransformContext()
+    )
+    return distanceArea.convertLengthMeasurement(distance, destinationEpsg.mapUnits())
+
+
+def getSirgasAuthIdByPointLatLong(lat, long):
+    """
+    Calculates SIRGAS 2000 epsg.
+    <h2>Example usage:</h2>
+    <ul>
+    <li>Found: getSirgarAuthIdByPointLatLong(-8.05389, -34.881111) -> 'ESPG:31985'</li>
+    <li>Not found: getSirgarAuthIdByPointLatLong(lat, long) -> 'EPSG:3857'</li>
+    </ul>
+    """
+    zone_number = math.floor(((long + 180) / 6) % 60) + 1
+    zone_letter = "N" if lat >= 0 else "S"
+    return getSirgasEpsg(f"{zone_number}{zone_letter}")
+
+
+def getSirgasEpsg(key):
+    options = {
+        "11N": "EPSG:31965",
+        "12N": "EPSG:31966",
+        "13N": "EPSG:31967",
+        "14N": "EPSG:31968",
+        "15N": "EPSG:31969",
+        "16N": "EPSG:31970",
+        "17N": "EPSG:31971",
+        "18N": "EPSG:31972",
+        "19N": "EPSG:31973",
+        "20N": "EPSG:31974",
+        "21N": "EPSG:31975",
+        "22N": "EPSG:31976",
+        "17S": "EPSG:31977",
+        "18S": "EPSG:31978",
+        "19S": "EPSG:31979",
+        "20S": "EPSG:31980",
+        "21S": "EPSG:31981",
+        "22S": "EPSG:31982",
+        "23S": "EPSG:31983",
+        "24S": "EPSG:31984",
+        "25S": "EPSG:31985",
+    }
+    return options.get(key, "EPSG:3857")

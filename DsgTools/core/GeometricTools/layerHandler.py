@@ -2896,3 +2896,22 @@ class LayerHandler(QObject):
             inputLyr=temp, context=context, is_child_algorithm=True
         )
         return temp
+
+    def createMemoryLayerWithFeatures(
+        self, featList, fields, crs, wkbType, context=None, isSource=False
+    ):
+        context = QgsProcessingContext() if context is None else context
+        temp_name = f"temp-{str(uuid4())}" if not isSource else f"{str(uuid4())}"
+        temp = QgsVectorLayer(
+            f"{QgsWkbTypes.displayString(wkbType)}?crs={crs.authid()}",
+            temp_name,
+            "memory",
+        )
+        temp_data = temp.dataProvider()
+        temp_data.addAttributes(fields.toList())
+        temp.updateFields()
+        temp_data.addFeatures(featList)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=temp, context=context, is_child_algorithm=True
+        )
+        return temp
