@@ -353,8 +353,9 @@ class SpatialRelationsHandler(QObject):
         polygonLayer: QgsVectorLayer,
         context: QgsProcessingContext,
         feedback: QgsProcessingFeedback = None,
+        computeOrder: bool = False,
     ) -> QgsVectorLayer:
-        nSteps = 4
+        nSteps = 4 if not computeOrder else 7
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(nSteps, feedback)
             if feedback is not None
@@ -388,7 +389,43 @@ class SpatialRelationsHandler(QObject):
             context=context,
             feedback=multiStepFeedback
         )
-        return hilltopsLyr
+        if not computeOrder:
+            return hilltopsLyr
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        outershellWithOrder = self.algRunner.runCreateFieldWithExpression(
+            inputLyr=outerShellLyr,
+            expression="1",
+            fieldName="order",
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=outerShellLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        hilltopsWithOrder = self.algRunner.runJoinByLocationSummary(
+            inputLyr=outershellWithOrder,
+            joinLyr=hilltopsLyr,
+            predicateList=[5],
+            summaries=[0],
+            joinFields=['order'],
+            context=context,
+            feedback=multiStepFeedback
+        )
+        QgsProject.instance().addMapLayer(hilltopsWithOrder)
+        QgsProject.instance().addMapLayer(outershellWithOrder)
+        QgsProject.instance().addMapLayer(hilltopsLyr)
+        return hilltopsWithOrder
 
 
     def populateContourAreaDict(

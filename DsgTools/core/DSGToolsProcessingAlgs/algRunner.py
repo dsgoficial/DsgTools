@@ -1520,3 +1520,39 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
+
+    def runJoinByLocationSummary(
+        self,
+        inputLyr,
+        joinLyr,
+        predicateList,
+        joinFields,
+        summaries,
+        context,
+        discardNonMatching=True,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
+        predicateList = [0] if predicateList is None else predicateList
+        joinFields = [] if joinFields is None else joinFields
+        summaries = [] if summaries is None else summaries
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        parameters = {
+            "INPUT": inputLyr,
+            "PREDICATE": predicateList,
+            "JOIN": joinLyr,
+            "JOIN_FIELDS": joinFields,
+            "SUMMARIES": summaries,
+            "DISCARD_NONMATCHING": discardNonMatching,
+            "PREFIX": "",
+            "OUTPUT": outputLyr,
+        }
+        output = processing.run(
+            "qgis:joinbylocationsummary",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]

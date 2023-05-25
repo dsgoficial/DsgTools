@@ -188,7 +188,7 @@ def createMaxPointFeatFromRasterLayer(inputRaster: QgsRasterLayer, fields: QgsFi
     npRaster = (np.rint(npRaster)).astype(float)
     npRaster[nanIndexes] = np.nan
     pixelCoordinates = getMaxCoordinatesFromNpArray(npRaster)
-    pixelCoordinates = tuple(pixelCoordinates) if pixelCoordinates.shape[0] == 1 else tuple(pixelCoordinates[0])
+    pixelCoordinates = tuple(pixelCoordinates.reshape(1, -1)[0]) if pixelCoordinates.shape[0] == 1 else tuple(pixelCoordinates[0])
     return createFeatureWithPixelValueFromPixelCoordinates(
         pixelCoordinates=pixelCoordinates,
         fieldName=fieldName,
