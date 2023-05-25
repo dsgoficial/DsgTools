@@ -97,7 +97,7 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
             self.LINE_FLAGS,
             context,
             streamLayerInput.fields(),
-            QgsWkbTypes.LineGeometry,
+            QgsWkbTypes.LineString,
             streamLayerInput.sourceCrs(),
         )
 
