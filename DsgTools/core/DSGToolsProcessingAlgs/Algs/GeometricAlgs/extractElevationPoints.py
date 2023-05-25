@@ -443,7 +443,32 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-
+        if elevationPointsLayer.featureCount() > maxNPoints:
+            return elevationPointsLayer.getFeatures()
+        elevationPointsFromRoadIntersections = self.getContourValuesLineIntersections(
+            lineLyr1=mainRoadsLyr,
+            lineLyr2=mainRoadsLyr,
+            geographicBoundsLyr=geographicBoundsLyr,
+            npRaster=npRaster,
+            transform=transform,
+            polygonLyr=polygonLyr,
+            bufferDistance=localBufferDistance,
+            exclusionLyr=exclusionLyr,
+            minContourLength=localMinContourLength,
+            contourAreaDict=contourAreaDict,
+            contourHeightInterval=contourHeightInterval,
+            gridLyr=gridLyr,
+            gridDict=gridDict,
+            maxPointsPerGridUnit=maxPointsPerGridUnit,
+            fields=fields,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        self.updateExclusionLyr(exclusionLyr, elevationPointsFromRoadIntersections, distance=localBufferDistance, context=context)
+        self.addPointsToMemoryLayer(elevationPointsLayer, elevationPointsFromRoadIntersections, context)
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
         # # create points from road intersections
         # localMainRoads = algRunner.runClip(
         #     mainRoadsLyr,
@@ -746,36 +771,113 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             point for point in elevationPoints if point.geometry().asWkb() not in flagDict
         ]
     
-    def getContourValuesFromMainRoadIntersections(
+    def getContourValuesLineIntersections(
         self,
-        mainRoads,
-        gridLayer,
-        pointsLayer,
-        fields,
+        lineLyr1,
+        lineLyr2,
+        geographicBoundsLyr,
         npRaster,
         transform,
-        algRunner,
-        context,
-        feedback,
+        exclusionLyr: QgsVectorLayer,
+        polygonLyr: QgsVectorLayer,
+        bufferDistance: float,
+        contourAreaDict: Dict,
+        contourHeightInterval: float,
+        gridLyr: QgsVectorLayer,
+        gridDict: Dict[QByteArray, int],
+        maxPointsPerGridUnit: int,
+        fields: QgsFields,
+        context: QgsProcessingContext,
+        feedback: QgsFeedback,
     ):
-        roadIntersections = algRunner.runLineIntersections(
-            mainRoads, intersectLyr=mainRoads, context=context, feedback=feedback
+        algRunner = AlgRunner()
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(10, feedback)
+            if feedback is not None
+            else None
         )
-        # intersectedLines = AlgRunner().runSplitLinesWithLines(
-        #     linesLyr=
-        # )
-        # filteredRoadIntersections = self.keepThirdOrderOrHigherPoints(
-        #     points=roadIntersections.getFeatures(),
-        #     linesLyr=
-        # )
+        if multiStepFeedback is not None:
+            currentStep = 0
+            multiStepFeedback.setCurrentStep(currentStep)
+        localLineLyr1 = algRunner.runClip(
+            lineLyr1,
+            overlayLayer=geographicBoundsLyr,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(localLineLyr1, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        localLineLyr2 = algRunner.runClip(
+            lineLyr2,
+            overlayLayer=geographicBoundsLyr,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(localLineLyr2, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        lineIntersectionPointsLyr = algRunner.runLineIntersections(
+            lineLyr1, intersectLyr=lineLyr2, context=context, feedback=feedback
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        intersectedLines = AlgRunner().runSplitLinesWithLines(
+            inputLyr=lineLyr1,
+            linesLyr=lineLyr2,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(intersectedLines, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        filteredPointsIntersections = self.keepThirdOrderOrHigherPoints(
+            points=lineIntersectionPointsLyr.getFeatures(),
+            linesLyr=intersectedLines,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
         pointList = rasterHandler.createFeatureListWithPointList(
-            pointList=roadIntersections.getFeatures(),
+            pointList=filteredPointsIntersections,
             fieldName="cota",
             fields=fields,
             npRaster=npRaster,
             transform=transform,
         )
-        return filter(lambda x: x is not None, pointList)
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        return self.filterWithAllCriteria(
+            inputPointList=filter(lambda x: x is not None, pointList),
+            referenceLyr=lineLyr1,
+            exclusionLyr=exclusionLyr,
+            polygonLyr=polygonLyr,
+            bufferDistance=bufferDistance,
+            contourAreaDict=contourAreaDict,
+            contourHeightInterval=contourHeightInterval,
+            gridLyr=gridLyr,
+            gridDict=gridDict,
+            maxPointsPerGridUnit=maxPointsPerGridUnit,
+            fields=fields,
+            context=context,
+            feedback=multiStepFeedback,
+        )
 
     def getMinMaxFeatures(self, fields, npRaster, transform, distance):
         featSet = set()
