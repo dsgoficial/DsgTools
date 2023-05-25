@@ -142,14 +142,17 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
             return {self.POINT_FLAGS: sink_id}
 
         if outputPointsSet != set():
-            sink_id = self.outLayer(
-                parameters, context, outputPointsSet, streamLayerInput, QgsWkbTypes.Point
+            self.outLayer(
+                parameters, context, outputPointsSet, streamLayerInput, QgsWkbTypes.Point, point_flag_sink, 
             )
         if outputLinesSet != set():
-            sink_id = self.outLayer(
-                parameters, context, outputLinesSet, streamLayerInput, QgsWkbTypes.LineString
+            self.outLayer(
+                parameters, context, outputLinesSet, streamLayerInput, QgsWkbTypes.LineString, line_flag_sink,
             )
-        return {self.POINT_FLAGS: sink_id}
+        return {
+            self.POINT_FLAGS: point_flag_sink_id,
+            self.LINE_FLAGS: line_flag_sink_id,
+        }
 
     def runSpatialJoin(self, streamLayerInput, countourLayer, feedback):
         output = processing.run(
@@ -225,25 +228,16 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
             feedback.setProgress(current_idx * total)
             current_idx += 1
 
-    def outLayer(self, parameters, context, geometry, streamLayer, geomtype):
+    def outLayer(self, parameters, context, geometry, streamLayer, geomtype, sink):
         newFields = QgsFields()
         newFields.append(QgsField("id", QVariant.Int))
 
-        (sink, sink_id) = self.parameterAsSink(
-            parameters,
-            self.POINT_FLAGS,
-            context,
-            newFields,
-            geomtype,
-            streamLayer.sourceCrs(),
-        )
         for idcounter, geom in enumerate(geometry):
             newFeat = QgsFeature()
             newFeat.setGeometry(geom)
             newFeat.setFields(newFields)
             newFeat["id"] = idcounter
             sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
-        return sink_id
 
     def name(self):
         """
