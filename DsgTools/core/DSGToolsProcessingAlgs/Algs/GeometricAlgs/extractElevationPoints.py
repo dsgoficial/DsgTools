@@ -445,6 +445,8 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
         if elevationPointsLayer.featureCount() > maxNPoints:
             return elevationPointsLayer.getFeatures()
+        if multiStepFeedback is not None:
+                multiStepFeedback.setProgressText(self.tr("Getting elevation points from road intersections..."))
         elevationPointsFromRoadIntersections = self.getContourValuesLineIntersections(
             lineLyr1=mainRoadsLyr,
             lineLyr2=mainRoadsLyr,
@@ -786,13 +788,14 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         gridLyr: QgsVectorLayer,
         gridDict: Dict[QByteArray, int],
         maxPointsPerGridUnit: int,
+        minContourLength: float,
         fields: QgsFields,
         context: QgsProcessingContext,
         feedback: QgsFeedback,
     ):
         algRunner = AlgRunner()
         multiStepFeedback = (
-            QgsProcessingMultiStepFeedback(10, feedback)
+            QgsProcessingMultiStepFeedback(14, feedback)
             if feedback is not None
             else None
         )
@@ -831,9 +834,44 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-        intersectedLines = AlgRunner().runSplitLinesWithLines(
+        intersectionBuffers = algRunner.runBuffer(
+            inputLayer=lineIntersectionPointsLyr,
+            distance=1e-5,
+            context=context,
+            is_child_algorithm=True,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(intersectionBuffers, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        extractedLines1 = algRunner.runExtractByLocation(
             inputLyr=lineLyr1,
-            linesLyr=lineLyr2,
+            intersectLyr=intersectionBuffers,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(extractedLines1, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        extractedLines2 = algRunner.runExtractByLocation(
+            inputLyr=lineLyr2,
+            intersectLyr=intersectionBuffers,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(extractedLines2, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        intersectedLines = AlgRunner().runSplitLinesWithLines(
+            inputLyr=extractedLines1,
+            linesLyr=extractedLines2,
             context=context,
             feedback=multiStepFeedback,
         )
@@ -845,7 +883,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
         filteredPointsIntersections = self.keepThirdOrderOrHigherPoints(
-            points=lineIntersectionPointsLyr.getFeatures(),
+            points=lineIntersectionPointsLyr,
             linesLyr=intersectedLines,
             context=context,
             feedback=multiStepFeedback
@@ -865,7 +903,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
         return self.filterWithAllCriteria(
             inputPointList=filter(lambda x: x is not None, pointList),
-            referenceLyr=lineLyr1,
+            referenceLyr=localLineLyr1,
             exclusionLyr=exclusionLyr,
             polygonLyr=polygonLyr,
             bufferDistance=bufferDistance,
@@ -1211,7 +1249,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         minArea = minContourLength**2 / (4 * math.pi)
         hilltopList = sorted(
             filter(
-                lambda x: x.geometry().length() > minContourLength and x.geometry().area() > minArea,
+                lambda x: x.geometry().length() > minContourLength,
                 hillTopsLyr.getFeatures()
             ),
             key=lambda x: x["order"],
@@ -1248,31 +1286,19 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         return featList
 
     
-    def keepThirdOrderOrHigherPoints(self, points: Union[List, QgsVectorLayer], linesLyr: QgsVectorLayer, context: QgsProcessingContext, feedback: QgsFeedback) -> List:
+    def keepThirdOrderOrHigherPoints(self, points: Union[List, QgsVectorLayer], linesLyr: QgsVectorLayer, context: QgsProcessingContext, feedback: QgsFeedback) -> List[QgsFeature]:
         iterator = points.getFeatures() if isinstance(points, QgsVectorLayer) else points
         nFeats = points.featureCount() if isinstance(points, QgsVectorLayer) else len(points)
         if nFeats == 0:
             return []
         featDict = dict()
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
-        algRunner = AlgRunner()
+        multiStepFeedback = QgsProcessingMultiStepFeedback(1, feedback) if feedback is not None else None
         if multiStepFeedback is not None:
             currentStep = 0
             multiStepFeedback.setCurrentStep(currentStep)
-        splitLines = algRunner.runSplitLinesWithLines(
-            linesLyr, context, feedback=multiStepFeedback
-        )
-        if multiStepFeedback is not None:
-            currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(splitLines, context=context, feedback=multiStepFeedback, is_child_algorithm=True)
-        if multiStepFeedback is not None:
-            currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
-        #count feats
         stepSize = 100/nFeats
         for current, feat in enumerate(iterator):
-            if multiStepFeedback is not None and multiStepFeedback.isCanceled:
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
             geom = feat.geometry()
             geomWkb = geom.asWkb()
@@ -1280,7 +1306,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 continue
             buffer = geom.buffer(1e-5, -1)
             bbox = buffer.boundingBox()
-            nFeats = len(i for i in splitLines.getFeatures(bbox) if i.geometry().intersects(geom))
+            nFeats = sum(1 for _ in (i for i in linesLyr.getFeatures(bbox) if i.geometry().intersects(geom)))
             if nFeats < 3:
                 continue
             featDict[geomWkb] = feat # uses dict to remove duplicated features

@@ -422,9 +422,6 @@ class SpatialRelationsHandler(QObject):
             context=context,
             feedback=multiStepFeedback
         )
-        QgsProject.instance().addMapLayer(hilltopsWithOrder)
-        QgsProject.instance().addMapLayer(outershellWithOrder)
-        QgsProject.instance().addMapLayer(hilltopsLyr)
         return hilltopsWithOrder
 
 
