@@ -292,7 +292,9 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 suppressPolygonWithoutCenterPointFlag,
                 multiStepFeedback,
             )
-            if geographicBoundaryLyr is None or not groupBySpatialPartition or geographicBoundaryLyr.featureCount() <= 1
+            if geographicBoundaryLyr is None
+            or not groupBySpatialPartition
+            or geographicBoundaryLyr.featureCount() <= 1
             else self.computePolygonsFromCenterPointAndBoundariesGroupingBySpatialPartition(
                 context,
                 inputCenterPointLyr,
@@ -406,7 +408,9 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         )["OUTPUT"]
         currentStep += 1
 
-        multiStepFeedback.setProgressText(self.tr("Converting built polygons to lines..."))
+        multiStepFeedback.setProgressText(
+            self.tr("Converting built polygons to lines...")
+        )
         multiStepFeedback.setCurrentStep(currentStep)
         polygonLines = self.algRunner.runPolygonsToLines(
             inputLyr=builtPolygonsLyr,
@@ -438,7 +442,10 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setProgressText(self.tr("Exploding boudary lines..."))
         multiStepFeedback.setCurrentStep(currentStep)
         segments = self.algRunner.runExplodeLines(
-            boundaryLineLyr, context, feedback=multiStepFeedback, is_child_algorithm=True,
+            boundaryLineLyr,
+            context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         currentStep += 1
 
@@ -473,22 +480,25 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         unmatchedLines = processing.run(
             "native:joinattributesbylocation",
             {
-                'INPUT':segments,
-                'PREDICATE':[2,5],
-                'JOIN':explodedPolygonLines,
-                'JOIN_FIELDS':[],
-                'METHOD':0,
-                'DISCARD_NONMATCHING':False,
-                'PREFIX':'',
-                'NON_MATCHING':'memory:',
+                "INPUT": segments,
+                "PREDICATE": [2, 5],
+                "JOIN": explodedPolygonLines,
+                "JOIN_FIELDS": [],
+                "METHOD": 0,
+                "DISCARD_NONMATCHING": False,
+                "PREFIX": "",
+                "NON_MATCHING": "memory:",
             },
             context=context,
             feedback=multiStepFeedback,
-            is_child_algorithm=True
-        )['NON_MATCHING']
-        
+            is_child_algorithm=False,
+        )["NON_MATCHING"]
+        if unmatchedLines.featureCount() == 0:
+            return
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Preparing unused boundaries flags..."))
+        multiStepFeedback.setProgressText(
+            self.tr("Preparing unused boundaries flags...")
+        )
         self.algRunner.runCreateSpatialIndex(
             inputLyr=unmatchedLines,
             context=context,
@@ -786,12 +796,14 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setProgressText(self.tr("Checking unused boundaries..."))
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Building aux structures: creating local cache..."))
+        multiStepFeedback.setProgressText(
+            self.tr("Building aux structures: creating local cache...")
+        )
         polygonLyr = self.algRunner.runAddAutoIncrementalField(
             inputLyr=output_polygon_sink_id,
             fieldName="featid",
             context=context,
-            feedback=multiStepFeedback,   
+            feedback=multiStepFeedback,
         )
         currentStep += 1
 
@@ -820,7 +832,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 inputLyr=localBoundaries,
                 fieldName="local_featid",
                 context=localContext,
-                feedback=None
+                feedback=None,
             )
             if multiStepFeedback.isCanceled():
                 return
@@ -833,9 +845,11 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 inputLyr=segments,
                 fieldName="seg_featid",
                 context=localContext,
-                feedback=None
+                feedback=None,
             )
-            algRunner.runCreateSpatialIndex(inputLyr=segments, context=localContext, feedback=None)
+            algRunner.runCreateSpatialIndex(
+                inputLyr=segments, context=localContext, feedback=None
+            )
             if multiStepFeedback.isCanceled():
                 return
             builtPolygonsLyr = algRunner.runClip(
@@ -869,20 +883,20 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             )
 
             unmatchedLines = processing.run(
-            "native:joinattributesbylocation",
+                "native:joinattributesbylocation",
                 {
-                    'INPUT':segments,
-                    'PREDICATE':[2,5],
-                    'JOIN':explodedPolygonLines,
-                    'JOIN_FIELDS':[],
-                    'METHOD':0,
-                    'DISCARD_NONMATCHING':False,
-                    'PREFIX':'',
-                    'NON_MATCHING':'memory:',
+                    "INPUT": segments,
+                    "PREDICATE": [2, 5],
+                    "JOIN": explodedPolygonLines,
+                    "JOIN_FIELDS": [],
+                    "METHOD": 0,
+                    "DISCARD_NONMATCHING": False,
+                    "PREFIX": "",
+                    "NON_MATCHING": "memory:",
                 },
                 context=localContext,
-                is_child_algorithm=True
-            )['NON_MATCHING']
+                is_child_algorithm=True,
+            )["NON_MATCHING"]
 
             if multiStepFeedback.isCanceled():
                 return
@@ -904,7 +918,6 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 mergedSegments, context, feedback=multiStepFeedback
             )
             return flagLyr
-
 
         multiStepFeedback.setCurrentStep(currentStep)
 
