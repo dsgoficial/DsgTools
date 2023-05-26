@@ -1928,7 +1928,6 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         candidateGridLyr = algRunner.runExtractByLocation(
             inputLyr=contourLyr,
             intersectLyr=planeGrid,
-            context=context,
             predicate=[2],
             context=context,
             feedback=multiStepFeedback,
