@@ -323,18 +323,6 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         )
         sink.addFeatures(polygonFeatList, QgsFeatureSink.FastInsert)
 
-        if checkUnusedBoundaries:
-            multiStepFeedback.setCurrentStep(currentStep)
-            self.checkUnusedBoundariesAndWriteOutput(
-                context,
-                boundaryLineLyr,
-                geographicBoundaryLyr,
-                sink_id,
-                unused_boundary_flag_sink,
-                multiStepFeedback,
-            )
-            currentStep += 1
-
         if mergeOutput:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(self.tr("Dissolving output..."))
@@ -355,6 +343,17 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             output_polygon_sink, multiStepFeedback, polygonFeatList, flagDict
         )
         currentStep += 1
+        if checkUnusedBoundaries:
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.checkUnusedBoundariesAndWriteOutput(
+                context,
+                boundaryLineLyr,
+                geographicBoundaryLyr,
+                sink_id,
+                unused_boundary_flag_sink,
+                multiStepFeedback,
+            )
+            currentStep += 1
         if checkInvalidOnOutput:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(self.tr("Checking invalid geometries..."))
@@ -384,7 +383,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
     ):
         if boundaryLineLyr is None:
             return
-        nSteps = 9 if geographicBoundaryLyr is None else 11
+        nSteps = 10 if geographicBoundaryLyr is None else 12
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         multiStepFeedback.setProgressText(self.tr("Checking unused boundaries..."))
         currentStep = 0
@@ -408,12 +407,19 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         )["OUTPUT"]
         currentStep += 1
 
+        multiStepFeedback.setCurrentStep(currentStep)
+        allPolygonsLyr = self.algRunner.runMergeVectorLayers(
+            [builtPolygonsLyr, self.flag_id],
+            context=context,
+        )
+        currentStep += 1
+
         multiStepFeedback.setProgressText(
             self.tr("Converting built polygons to lines...")
         )
         multiStepFeedback.setCurrentStep(currentStep)
         polygonLines = self.algRunner.runPolygonsToLines(
-            inputLyr=builtPolygonsLyr,
+            inputLyr=allPolygonsLyr,
             context=context,
             feedback=multiStepFeedback,
             is_child_algorithm=True,
