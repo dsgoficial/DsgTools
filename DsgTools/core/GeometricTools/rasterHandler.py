@@ -181,18 +181,43 @@ def buildNumpyNodataMask(rasterLyr: QgsRasterLayer, vectorLyr: QgsVectorLayer):
     npRaster[npRaster == 255.0] = np.nan
     return npRaster
 
-def createMaxPointFeatFromRasterLayer(inputRaster: QgsRasterLayer, fields: QgsFields, fieldName: str) -> QgsFeature:
+
+def createMaxPointFeatFromRasterLayer(
+    inputRaster: QgsRasterLayer, fields: QgsFields, fieldName: str
+) -> QgsFeature:
     ds, npRaster = readAsNumpy(inputRaster)
     transform = getCoordinateTransform(ds)
     nanIndexes = np.isnan(npRaster)
     npRaster = (np.rint(npRaster)).astype(float)
     npRaster[nanIndexes] = np.nan
     pixelCoordinates = getMaxCoordinatesFromNpArray(npRaster)
-    pixelCoordinates = tuple(pixelCoordinates.reshape(1, -1)[0]) if pixelCoordinates.shape[0] == 1 else tuple(pixelCoordinates[0])
+    pixelCoordinates = (
+        tuple(pixelCoordinates.reshape(1, -1)[0])
+        if pixelCoordinates.shape[0] == 1
+        else tuple(pixelCoordinates[0])
+    )
     return createFeatureWithPixelValueFromPixelCoordinates(
         pixelCoordinates=pixelCoordinates,
         fieldName=fieldName,
         fields=fields,
         npRaster=npRaster,
-        transform=transform
+        transform=transform,
+    )
+
+
+def createMaxPointFeatListFromRasterLayer(
+    inputRaster: QgsRasterLayer, fields: QgsFields, fieldName: str
+) -> List[QgsFeature]:
+    ds, npRaster = readAsNumpy(inputRaster)
+    transform = getCoordinateTransform(ds)
+    nanIndexes = np.isnan(npRaster)
+    npRaster = (np.rint(npRaster)).astype(float)
+    npRaster[nanIndexes] = np.nan
+    pixelCoordinates = getMaxCoordinatesFromNpArray(npRaster)
+    return createFeatureListWithPixelValuesFromPixelCoordinatesArray(
+        pixelCoordinates=pixelCoordinates,
+        fieldName=fieldName,
+        fields=fields,
+        npRaster=npRaster,
+        transform=transform,
     )

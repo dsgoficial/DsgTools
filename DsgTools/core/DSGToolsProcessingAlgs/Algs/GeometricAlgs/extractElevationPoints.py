@@ -110,7 +110,10 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.CONTOUR_INTERVAL, self.tr("Contour interval"), minValue=0, defaultValue=10
+                self.CONTOUR_INTERVAL,
+                self.tr("Contour interval"),
+                minValue=0,
+                defaultValue=10,
             )
         )
 
@@ -154,6 +157,13 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             1: 3.2e-3 * 50_000,
             2: 3.2e-3 * 100_000,
             3: 3.2e-3 * 250_000,
+        }
+
+        self.planeGridSpacingDict = {
+            0: 20e-3 * 25_000,
+            1: 20e-3 * 50_000,
+            2: 20e-3 * 100_000,
+            3: 20e-3 * 250_000,
         }
 
         self.addParameter(
@@ -226,7 +236,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         heightFieldName = self.parameterAsFields(
             parameters, self.CONTOUR_ATTR, context
         )[0]
-        contourHeightInterval = self.parameterAsDouble(parameters, self.CONTOUR_INTERVAL, context)
+        contourHeightInterval = self.parameterAsDouble(
+            parameters, self.CONTOUR_INTERVAL, context
+        )
         geoBoundsSource = self.parameterAsSource(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
@@ -240,14 +252,23 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         waterBodiesLyr = self.parameterAsVectorLayer(
             parameters, self.WATER_BODIES, context
         )
-        naturalPointFeaturesLyr = self.parameterAsVectorLayer(parameters, self.NATURAL_POINT_FEATURES, context)
-        drainagesWithNameLyr = self.parameterAsVectorLayer(parameters, self.DRAINAGE_LINES_WITH_NAME, context)
-        drainagesWithoutNameLyr = self.parameterAsVectorLayer(parameters, self.DRAINAGE_LINES_WITHOUT_NAME, context)
+        naturalPointFeaturesLyr = self.parameterAsVectorLayer(
+            parameters, self.NATURAL_POINT_FEATURES, context
+        )
+        drainagesWithNameLyr = self.parameterAsVectorLayer(
+            parameters, self.DRAINAGE_LINES_WITH_NAME, context
+        )
+        drainagesWithoutNameLyr = self.parameterAsVectorLayer(
+            parameters, self.DRAINAGE_LINES_WITHOUT_NAME, context
+        )
         mainRoadsLyr = self.parameterAsVectorLayer(parameters, self.MAIN_ROADS, context)
-        otherRoadsLyr = self.parameterAsVectorLayer(parameters, self.OTHER_ROADS, context)
+        otherRoadsLyr = self.parameterAsVectorLayer(
+            parameters, self.OTHER_ROADS, context
+        )
         self.bufferDist = self.distances[scale]
         self.minContourLength = self.minContourLenghts[scale]
         self.gridSpacing = self.gridSpacingDict[scale]
+        self.planeGridSpacing = self.gridSpacingDict[scale]
         self.contourBufferLength = self.contourBufferLengths[scale]
 
         fields = QgsFields()
@@ -278,13 +299,27 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 contourHeightInterval=contourHeightInterval,
                 inputRaster=inputRaster,
                 geographicBoundsLyr=localBoundsLyr,
-                areaWithoutInformationLyr=parameters[self.AREA_WITHOUT_INFORMATION_POLYGONS] if areaWithoutInformationLyr is not None else None,
+                areaWithoutInformationLyr=parameters[
+                    self.AREA_WITHOUT_INFORMATION_POLYGONS
+                ]
+                if areaWithoutInformationLyr is not None
+                else None,
                 waterBodiesLyr=waterBodiesLyr,
-                naturalPointFeaturesLyr=parameters[self.NATURAL_POINT_FEATURES] if naturalPointFeaturesLyr is not None else None,
-                drainagesWithNameLyr=parameters[self.DRAINAGE_LINES_WITH_NAME] if drainagesWithNameLyr is not None else None,
-                drainagesWithoutNameLyr=parameters[self.DRAINAGE_LINES_WITHOUT_NAME] if drainagesWithoutNameLyr is not None else None,
-                mainRoadsLyr=parameters[self.MAIN_ROADS] if mainRoadsLyr is not None else None,
-                otherRoadsLyr=parameters[self.OTHER_ROADS] if otherRoadsLyr is not None else None,
+                naturalPointFeaturesLyr=parameters[self.NATURAL_POINT_FEATURES]
+                if naturalPointFeaturesLyr is not None
+                else None,
+                drainagesWithNameLyr=parameters[self.DRAINAGE_LINES_WITH_NAME]
+                if drainagesWithNameLyr is not None
+                else None,
+                drainagesWithoutNameLyr=parameters[self.DRAINAGE_LINES_WITHOUT_NAME]
+                if drainagesWithoutNameLyr is not None
+                else None,
+                mainRoadsLyr=parameters[self.MAIN_ROADS]
+                if mainRoadsLyr is not None
+                else None,
+                otherRoadsLyr=parameters[self.OTHER_ROADS]
+                if otherRoadsLyr is not None
+                else None,
                 fields=fields,
                 context=context,
                 feedback=multiStepFeedback,
@@ -315,9 +350,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         algRunner = AlgRunner()
         layerHandler = LayerHandler()
         spatialRelationsHandler = SpatialRelationsHandler()
-        nSteps = (
-            9 + (naturalPointFeaturesLyr is not None) #handle this count after alg is done
-        )
+        nSteps = 9 + (
+            naturalPointFeaturesLyr is not None
+        )  # handle this count after alg is done
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(nSteps, feedback)
             if feedback is not None
@@ -327,14 +362,24 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             currentStep = 0
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(self.tr("Clipping raster"))
+        frameCentroid = (
+            [i for i in geographicBoundsLyr.getFeatures()][0].geometry().centroid()
+        )
+        originEpsg = QgsCoordinateReferenceSystem(
+            geometryHandler.getSirgasAuthIdByPointLatLong(*frameCentroid.asPoint())
+        )
         localGridSize = geometryHandler.convertDistance(
             self.gridSpacing,
             originEpsg=originEpsg,
             destinationEpsg=geographicBoundsLyr.crs(),
         )
-        geographicBoundsLyr = algRunner.runBuffer(
-            inputLayer=geographicBoundsLyr, distance=-localGridSize/2, context=context
+        minusBufferedGeographicBoundsLyr = algRunner.runBuffer(
+            inputLayer=geographicBoundsLyr,
+            distance=-localGridSize / 64,
+            endCapStyle=1,
+            context=context,
         )
+        QgsProject.instance().addMapLayer(minusBufferedGeographicBoundsLyr)
         clippedRaster = algRunner.runClipRasterLayer(
             inputRaster,
             mask=geographicBoundsLyr,
@@ -346,19 +391,8 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             ),
         )
         clippedRasterLyr = QgsProcessingUtils.mapLayerFromString(clippedRaster, context)
-        frameCentroid = (
-            [i for i in geographicBoundsLyr.getFeatures()][0].geometry().centroid()
-        )
-        originEpsg = QgsCoordinateReferenceSystem(
-            geometryHandler.getSirgasAuthIdByPointLatLong(*frameCentroid.asPoint())
-        )
         localBufferDistance = geometryHandler.convertDistance(
             self.bufferDist,
-            originEpsg=originEpsg,
-            destinationEpsg=geographicBoundsLyr.crs(),
-        )
-        localMinContourLength = geometryHandler.convertDistance(
-            self.minContourLength,
             originEpsg=originEpsg,
             destinationEpsg=geographicBoundsLyr.crs(),
         )
@@ -366,19 +400,36 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(self.tr("Reading raster with numpy..."))
-        npRaster, transform = self.readAndMaskRaster(
-            clippedRasterLyr,
-            geographicBoundsLyr,
-            areaWithoutInformationLyr,
-            waterBodiesLyr,
-            context,
-            algRunner,
+        contourBufferLyr = algRunner.runBuffer(
+            inputLayer=contourLyr,
+            distance=geometryHandler.convertDistance(
+                self.contourBufferLength,
+                originEpsg=originEpsg,
+                destinationEpsg=geographicBoundsLyr.crs(),
+            ),
+            context=context,
             feedback=multiStepFeedback,
         )
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(self.tr("Getting max min feats and building exclusion polygons..."))
+        npRaster, transform = self.readAndMaskRaster(
+            clippedRasterLyr,
+            geographicBoundsLyr,
+            areaWithoutInformationLyr,
+            waterBodiesLyr,
+            contourBufferLyr,
+            context,
+            algRunner,
+            feedback=multiStepFeedback,
+        )
+
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(
+                self.tr("Getting max min feats and building exclusion polygons...")
+            )
         minMaxFeats = self.getMinMaxFeatures(
             fields, npRaster, transform, distance=localBufferDistance
         )
@@ -392,7 +443,14 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         # compute number of points
         minNPoints, maxNPoints = self.getRangeOfNumberOfPoints(minMaxFeats)
         maxPointsPerGridUnit = maxNPoints // 9
-        exclusionLyr = self.buildExclusionLyr(elevationPointsLayer, areaWithoutInformationLyr, waterBodiesLyr, localBufferDistance, context, feedback=multiStepFeedback)
+        exclusionLyr = self.buildExclusionLyr(
+            elevationPointsLayer,
+            areaWithoutInformationLyr,
+            waterBodiesLyr,
+            localBufferDistance,
+            context,
+            feedback=multiStepFeedback,
+        )
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -402,7 +460,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             geographicBoundsLyr=geographicBoundsLyr,
             heightFieldName=heightFieldName,
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         if multiStepFeedback is not None:
             currentStep += 1
@@ -411,46 +469,63 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-        gridLyr, gridDict, gridLyrDict = self.buildGrid(geographicBoundsLyr, context, feedback=multiStepFeedback)
+        gridLyr, gridDict, gridLyrDict = self.buildGrid(
+            geographicBoundsLyr, context, feedback=multiStepFeedback
+        )
 
         # create points from first criteria
         if naturalPointFeaturesLyr is not None:
             if multiStepFeedback is not None:
-                multiStepFeedback.setProgressText(self.tr("Getting elevation points from natural points..."))
-            elevationPointsFromNaturalPointFeatures = self.getElevationPointsFromNaturalPoints(
-                npRaster=npRaster,
-                transform=transform,
-                naturalPointFeaturesLyr=naturalPointFeaturesLyr,
-                exclusionLyr=exclusionLyr,
-                polygonLyr=polygonLyr,
-                bufferDistance=localBufferDistance,
-                contourAreaDict=contourAreaDict,
-                contourHeightInterval=contourHeightInterval,
-                fields=fields,
-                gridLyr=gridLyr,
-                gridDict=gridDict,
-                gridLyrDict=gridLyrDict,
-                maxPointsPerGridUnit=maxPointsPerGridUnit,
-                context=context,
-                feedback=multiStepFeedback,
+                multiStepFeedback.setProgressText(
+                    self.tr("Getting elevation points from natural points...")
+                )
+            elevationPointsFromNaturalPointFeatures = (
+                self.getElevationPointsFromNaturalPoints(
+                    npRaster=npRaster,
+                    transform=transform,
+                    naturalPointFeaturesLyr=naturalPointFeaturesLyr,
+                    exclusionLyr=exclusionLyr,
+                    polygonLyr=polygonLyr,
+                    bufferDistance=localBufferDistance,
+                    contourAreaDict=contourAreaDict,
+                    contourHeightInterval=contourHeightInterval,
+                    fields=fields,
+                    gridLyr=gridLyr,
+                    gridDict=gridDict,
+                    gridLyrDict=gridLyrDict,
+                    maxPointsPerGridUnit=maxPointsPerGridUnit,
+                    context=context,
+                    feedback=multiStepFeedback,
+                )
             )
 
-            self.updateExclusionLyr(exclusionLyr, elevationPointsFromNaturalPointFeatures, distance=localBufferDistance, context=context)
-            self.addPointsToMemoryLayer(elevationPointsLayer, elevationPointsFromNaturalPointFeatures, context)
+            self.updateExclusionLyr(
+                exclusionLyr,
+                elevationPointsFromNaturalPointFeatures,
+                distance=localBufferDistance,
+                context=context,
+            )
+            self.addPointsToMemoryLayer(
+                elevationPointsLayer, elevationPointsFromNaturalPointFeatures, context
+            )
             if multiStepFeedback is not None:
                 currentStep += 1
                 multiStepFeedback.setCurrentStep(currentStep)
-        
+
         if multiStepFeedback is not None:
-                multiStepFeedback.setProgressText(self.tr("Getting elevation points from hilltops..."))
+            multiStepFeedback.setProgressText(
+                self.tr("Getting elevation points from hilltops...")
+            )
 
         # create points from hilltops
         elevationPointsFromHilltops = self.getElevationPointsFromHilltops(
             rasterLyr=clippedRaster,
             polygonLyr=polygonLyr,
             exclusionLyr=exclusionLyr,
+            geographicBoundsLyr=geographicBoundsLyr,
+            minusBuffergeographicBoundsLyr=minusBufferedGeographicBoundsLyr,
             bufferDistance=localBufferDistance,
-            minContourLength=localMinContourLength,
+            originEpsg=originEpsg,
             contourAreaDict=contourAreaDict,
             contourHeightInterval=contourHeightInterval,
             gridLyr=gridLyr,
@@ -460,25 +535,366 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        self.updateExclusionLyr(exclusionLyr, elevationPointsFromHilltops, distance=localBufferDistance, context=context)
-        self.addPointsToMemoryLayer(elevationPointsLayer, elevationPointsFromHilltops, context)
-        if multiStepFeedback is not None:
-            currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
+        self.updateExclusionLyr(
+            exclusionLyr,
+            elevationPointsFromHilltops,
+            distance=localBufferDistance,
+            context=context,
+        )
+        self.addPointsToMemoryLayer(
+            elevationPointsLayer, elevationPointsFromHilltops, context
+        )
         if elevationPointsLayer.featureCount() > maxNPoints:
             return elevationPointsLayer.getFeatures()
+
         if multiStepFeedback is not None:
-                multiStepFeedback.setProgressText(self.tr("Getting elevation points from road intersections..."))
-        elevationPointsFromRoadIntersections = self.getContourValuesLineIntersections(
-            lineLyr1=mainRoadsLyr,
-            lineLyr2=mainRoadsLyr,
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(
+                self.tr("Getting elevation points from main road intersections...")
+            )
+        elevationPointsFromRoadIntersections = (
+            self.getElevationPointsFromLineIntersections(
+                lineLyr1=mainRoadsLyr,
+                lineLyr2=mainRoadsLyr,
+                geographicBoundsLyr=minusBufferedGeographicBoundsLyr,
+                npRaster=npRaster,
+                transform=transform,
+                polygonLyr=polygonLyr,
+                bufferDistance=localBufferDistance,
+                exclusionLyr=exclusionLyr,
+                contourAreaDict=contourAreaDict,
+                contourHeightInterval=contourHeightInterval,
+                gridLyr=gridLyr,
+                gridDict=gridDict,
+                maxPointsPerGridUnit=maxPointsPerGridUnit,
+                fields=fields,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+        )
+        self.updateExclusionLyr(
+            exclusionLyr,
+            elevationPointsFromRoadIntersections,
+            distance=localBufferDistance,
+            context=context,
+        )
+        self.addPointsToMemoryLayer(
+            elevationPointsLayer, elevationPointsFromRoadIntersections, context
+        )
+        if elevationPointsLayer.featureCount() > maxNPoints:
+            return elevationPointsLayer.getFeatures()
+
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(
+                self.tr("Getting elevation points from other road intersections...")
+            )
+        elevationPointsFromOtherRoadIntersections = (
+            self.getElevationPointsFromLineIntersections(
+                lineLyr1=otherRoadsLyr,
+                lineLyr2=otherRoadsLyr,
+                geographicBoundsLyr=minusBufferedGeographicBoundsLyr,
+                npRaster=npRaster,
+                transform=transform,
+                polygonLyr=polygonLyr,
+                bufferDistance=localBufferDistance,
+                exclusionLyr=exclusionLyr,
+                contourAreaDict=contourAreaDict,
+                contourHeightInterval=contourHeightInterval,
+                gridLyr=gridLyr,
+                gridDict=gridDict,
+                maxPointsPerGridUnit=maxPointsPerGridUnit,
+                fields=fields,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+        )
+        self.updateExclusionLyr(
+            exclusionLyr,
+            elevationPointsFromOtherRoadIntersections,
+            distance=localBufferDistance,
+            context=context,
+        )
+        self.addPointsToMemoryLayer(
+            elevationPointsLayer, elevationPointsFromOtherRoadIntersections, context
+        )
+        if elevationPointsFromOtherRoadIntersections.featureCount() > maxNPoints:
+            return elevationPointsFromOtherRoadIntersections.getFeatures()
+
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(
+                self.tr(
+                    "Getting elevation points from intersections of road and rivers with names outside polygons..."
+                )
+            )
+        elevationPointsFromIntersectionsOfRiverWithNamesAndRoads = (
+            self.getElevationPointsFromLineIntersections(
+                lineLyr1=drainagesWithNameLyr,
+                lineLyr2=mainRoadsLyr,
+                geographicBoundsLyr=minusBufferedGeographicBoundsLyr,
+                npRaster=npRaster,
+                transform=transform,
+                polygonLyr=polygonLyr,
+                bufferDistance=localBufferDistance,
+                exclusionLyr=exclusionLyr,
+                contourAreaDict=contourAreaDict,
+                contourHeightInterval=contourHeightInterval,
+                gridLyr=gridLyr,
+                gridDict=gridDict,
+                maxPointsPerGridUnit=maxPointsPerGridUnit,
+                fields=fields,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+        )
+        self.updateExclusionLyr(
+            exclusionLyr,
+            elevationPointsFromIntersectionsOfRiverWithNamesAndRoads,
+            distance=localBufferDistance,
+            context=context,
+        )
+        self.addPointsToMemoryLayer(
+            elevationPointsLayer,
+            elevationPointsFromIntersectionsOfRiverWithNamesAndRoads,
+            context,
+        )
+        if elevationPointsLayer.featureCount() > maxNPoints:
+            return elevationPointsLayer.getFeatures()
+
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(
+                self.tr(
+                    "Getting elevation points from intersections of road and rivers without names..."
+                )
+            )
+
+        elevationPointsFromIntersectionsOfRiversWithoutNamesAndRoads = (
+            self.getElevationPointsFromLineIntersections(
+                lineLyr1=drainagesWithoutNameLyr,
+                lineLyr2=mainRoadsLyr,
+                geographicBoundsLyr=minusBufferedGeographicBoundsLyr,
+                npRaster=npRaster,
+                transform=transform,
+                polygonLyr=polygonLyr,
+                bufferDistance=localBufferDistance,
+                exclusionLyr=exclusionLyr,
+                contourAreaDict=contourAreaDict,
+                contourHeightInterval=contourHeightInterval,
+                gridLyr=gridLyr,
+                gridDict=gridDict,
+                maxPointsPerGridUnit=maxPointsPerGridUnit,
+                fields=fields,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+        )
+        self.updateExclusionLyr(
+            exclusionLyr,
+            elevationPointsFromIntersectionsOfRiversWithoutNamesAndRoads,
+            distance=localBufferDistance,
+            context=context,
+        )
+        self.addPointsToMemoryLayer(
+            elevationPointsLayer,
+            elevationPointsFromIntersectionsOfRiversWithoutNamesAndRoads,
+            context,
+        )
+        if elevationPointsLayer.featureCount() > maxNPoints:
+            return elevationPointsLayer.getFeatures()
+
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(
+                self.tr(
+                    "Getting elevation points from intersections of rivers with names..."
+                )
+            )
+
+        elevationPointsFromIntersectionsOfRiversWithNames = (
+            self.getElevationPointsFromLineIntersections(
+                lineLyr1=drainagesWithNameLyr,
+                lineLyr2=drainagesWithNameLyr,
+                geographicBoundsLyr=minusBufferedGeographicBoundsLyr,
+                npRaster=npRaster,
+                transform=transform,
+                polygonLyr=polygonLyr,
+                bufferDistance=localBufferDistance,
+                exclusionLyr=exclusionLyr,
+                contourAreaDict=contourAreaDict,
+                contourHeightInterval=contourHeightInterval,
+                gridLyr=gridLyr,
+                gridDict=gridDict,
+                maxPointsPerGridUnit=maxPointsPerGridUnit,
+                fields=fields,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+        )
+        self.updateExclusionLyr(
+            exclusionLyr,
+            elevationPointsFromIntersectionsOfRiversWithNames,
+            distance=localBufferDistance,
+            context=context,
+        )
+        self.addPointsToMemoryLayer(
+            elevationPointsLayer,
+            elevationPointsFromIntersectionsOfRiversWithNames,
+            context,
+        )
+        if elevationPointsLayer.featureCount() > maxNPoints:
+            return elevationPointsLayer.getFeatures()
+
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(
+                self.tr(
+                    "Getting elevation points from intersections of rivers with names..."
+                )
+            )
+
+        elevationPointsFromIntersectionsOfRiversWithNames = (
+            self.getElevationPointsFromLineIntersections(
+                lineLyr1=drainagesWithNameLyr,
+                lineLyr2=drainagesWithNameLyr,
+                geographicBoundsLyr=minusBufferedGeographicBoundsLyr,
+                npRaster=npRaster,
+                transform=transform,
+                polygonLyr=polygonLyr,
+                bufferDistance=localBufferDistance,
+                exclusionLyr=exclusionLyr,
+                contourAreaDict=contourAreaDict,
+                contourHeightInterval=contourHeightInterval,
+                gridLyr=gridLyr,
+                gridDict=gridDict,
+                maxPointsPerGridUnit=maxPointsPerGridUnit,
+                fields=fields,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+        )
+        self.updateExclusionLyr(
+            exclusionLyr,
+            elevationPointsFromIntersectionsOfRiversWithNames,
+            distance=localBufferDistance,
+            context=context,
+        )
+        self.addPointsToMemoryLayer(
+            elevationPointsLayer,
+            elevationPointsFromIntersectionsOfRiversWithNames,
+            context,
+        )
+        if elevationPointsLayer.featureCount() > maxNPoints:
+            return elevationPointsLayer.getFeatures()
+
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(
+                self.tr(
+                    "Getting elevation points from intersections of rivers with and without names..."
+                )
+            )
+
+        elevationPointsFromIntersectionsOfRiversWithAndWithoutNames = (
+            self.getElevationPointsFromLineIntersections(
+                lineLyr1=drainagesWithNameLyr,
+                lineLyr2=drainagesWithoutNameLyr,
+                geographicBoundsLyr=minusBufferedGeographicBoundsLyr,
+                npRaster=npRaster,
+                transform=transform,
+                polygonLyr=polygonLyr,
+                bufferDistance=localBufferDistance,
+                exclusionLyr=exclusionLyr,
+                contourAreaDict=contourAreaDict,
+                contourHeightInterval=contourHeightInterval,
+                gridLyr=gridLyr,
+                gridDict=gridDict,
+                maxPointsPerGridUnit=maxPointsPerGridUnit,
+                fields=fields,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+        )
+        self.updateExclusionLyr(
+            exclusionLyr,
+            elevationPointsFromIntersectionsOfRiversWithAndWithoutNames,
+            distance=localBufferDistance,
+            context=context,
+        )
+        self.addPointsToMemoryLayer(
+            elevationPointsLayer,
+            elevationPointsFromIntersectionsOfRiversWithAndWithoutNames,
+            context,
+        )
+        if elevationPointsLayer.featureCount() > maxNPoints:
+            return elevationPointsLayer.getFeatures()
+
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(
+                self.tr(
+                    "Getting elevation points from intersections of rivers without names..."
+                )
+            )
+
+        elevationPointsFromIntersectionsOfRiversWithoutNames = (
+            self.getElevationPointsFromLineIntersections(
+                lineLyr1=drainagesWithoutNameLyr,
+                lineLyr2=drainagesWithoutNameLyr,
+                geographicBoundsLyr=minusBufferedGeographicBoundsLyr,
+                npRaster=npRaster,
+                transform=transform,
+                polygonLyr=polygonLyr,
+                bufferDistance=localBufferDistance,
+                exclusionLyr=exclusionLyr,
+                contourAreaDict=contourAreaDict,
+                contourHeightInterval=contourHeightInterval,
+                gridLyr=gridLyr,
+                gridDict=gridDict,
+                maxPointsPerGridUnit=maxPointsPerGridUnit,
+                fields=fields,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+        )
+        self.updateExclusionLyr(
+            exclusionLyr,
+            elevationPointsFromIntersectionsOfRiversWithoutNames,
+            distance=localBufferDistance,
+            context=context,
+        )
+        self.addPointsToMemoryLayer(
+            elevationPointsLayer,
+            elevationPointsFromIntersectionsOfRiversWithoutNames,
+            context,
+        )
+        if elevationPointsLayer.featureCount() > maxNPoints:
+            return elevationPointsLayer.getFeatures()
+
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(
+                self.tr("Getting elevation points from plane areas...")
+            )
+
+        planeAreasElevationPoints = self.getElevationPointsFromPlaneAreas(
+            contourLyr=contourLyr,
             geographicBoundsLyr=geographicBoundsLyr,
-            npRaster=npRaster,
-            transform=transform,
-            polygonLyr=polygonLyr,
-            bufferDistance=localBufferDistance,
+            rasterLyr=clippedRasterLyr,
             exclusionLyr=exclusionLyr,
-            minContourLength=localMinContourLength,
+            polygonLyr=polygonLyr,
+            originEpsg=originEpsg,
+            bufferDistance=localBufferDistance,
             contourAreaDict=contourAreaDict,
             contourHeightInterval=contourHeightInterval,
             gridLyr=gridLyr,
@@ -488,38 +904,30 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        self.updateExclusionLyr(exclusionLyr, elevationPointsFromRoadIntersections, distance=localBufferDistance, context=context)
-        self.addPointsToMemoryLayer(elevationPointsLayer, elevationPointsFromRoadIntersections, context)
-        if multiStepFeedback is not None:
-            currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
-        # # create points from road intersections
-        # localMainRoads = algRunner.runClip(
-        #     mainRoadsLyr,
-        #     overlayLayer=geographicBoundsLyr,
-        #     context=context,
-        #     feedback=multiStepFeedback,
-        # )
-        # if multiStepFeedback is not None:
-        #     currentStep += 1
-        #     multiStepFeedback.setCurrentStep(currentStep)
-        # roadIntersectionFeatList = self.getContourValuesFromMainRoadIntersections(
-        #     mainRoads=localMainRoads,
-        #     gridLayer=None,
-        #     pointsLayer=elevationPointsLayer,
-        #     fields=fields,
-        #     npRaster=npRaster,
-        #     transform=transform,
-        #     algRunner=algRunner,
-        #     context=context,
-        #     feedback=multiStepFeedback,
-        # )
-        # self.addPointsToMemoryLayer(elevationPointsLayer, roadIntersectionFeatList, context)
+        self.updateExclusionLyr(
+            exclusionLyr,
+            planeAreasElevationPoints,
+            distance=localBufferDistance,
+            context=context,
+        )
+        self.addPointsToMemoryLayer(
+            elevationPointsLayer, planeAreasElevationPoints, context
+        )
         return elevationPointsLayer.getFeatures()
 
-    def readAndMaskRaster(self, clippedRasterLyr, geographicBoundsLyr, areaWithoutInformationLyr, waterBodiesLyr, context, algRunner, feedback):
+    def readAndMaskRaster(
+        self,
+        clippedRasterLyr,
+        geographicBoundsLyr,
+        areaWithoutInformationLyr,
+        waterBodiesLyr,
+        contourBufferLyr,
+        context,
+        algRunner,
+        feedback,
+    ):
         nSteps = (
-            2 + (areaWithoutInformationLyr is not None) + (waterBodiesLyr is not None)
+            3 + (areaWithoutInformationLyr is not None) + (waterBodiesLyr is not None)
         )
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(nSteps, feedback)
@@ -564,18 +972,30 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             if multiStepFeedback is not None:
                 currentStep += 1
                 multiStepFeedback.setCurrentStep(currentStep)
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        npRaster = self.maskFeaturesFromLayerOnRaster(
+            rasterLyr=clippedRasterLyr,
+            geographicBoundsLyr=geographicBoundsLyr,
+            maskLyr=contourBufferLyr,
+            context=context,
+            algRunner=algRunner,
+            feedback=multiStepFeedback,
+            npRaster=npRaster,
+        )
         nanIndexes = np.isnan(npRaster)
         npRaster = (np.rint(npRaster)).astype(float)
         npRaster[nanIndexes] = np.nan
-        return npRaster,transform
-    
+        return npRaster, transform
+
     def getRangeOfNumberOfPoints(self, featList):
-        minValue = min(featList, key = lambda x: x["cota"])["cota"]
-        maxValue = max(featList, key = lambda x: x["cota"])["cota"]
-        if abs(maxValue-minValue) > 250:
+        minValue = min(featList, key=lambda x: x["cota"])["cota"]
+        maxValue = max(featList, key=lambda x: x["cota"])["cota"]
+        if abs(maxValue - minValue) > 250:
             return (50, 150)
         return (25, 75)
-    
+
     def buildExclusionLyr(
         self,
         elevationPointsLayer: QgsVectorLayer,
@@ -599,22 +1019,26 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                     lyr, context, is_child_algorithm=True
                 )
                 layerList.append(auxLyr)
-        outputLyr = buffer if len(layerList) == 1 else algRunner.runMergeVectorLayers(
-            layerList, context
+        outputLyr = (
+            buffer
+            if len(layerList) == 1
+            else algRunner.runMergeVectorLayers(layerList, context)
         )
         algRunner.runCreateSpatialIndex(outputLyr, context, is_child_algorithm=True)
         return outputLyr
-        
 
-    
-    def addPointsToMemoryLayer(self, lyr: QgsVectorLayer, featList: List, context: QgsProcessingContext) -> None:
+    def addPointsToMemoryLayer(
+        self, lyr: QgsVectorLayer, featList: List, context: QgsProcessingContext
+    ) -> None:
         lyr.startEditing()
         lyr.beginEditCommand("adding features")
         lyr.addFeatures(featList)
         lyr.endEditCommand()
         lyr.commitChanges()
-        AlgRunner().runCreateSpatialIndex(inputLyr=lyr, context=context, is_child_algorithm=True)
-    
+        AlgRunner().runCreateSpatialIndex(
+            inputLyr=lyr, context=context, is_child_algorithm=True
+        )
+
     def prepareContours(
         self,
         contourLyr: QgsVectorLayer,
@@ -624,7 +1048,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         feedback: QgsFeedback,
     ) -> Tuple[Dict, QgsVectorLayer]:
         multiStepFeedback = (
-            QgsProcessingMultiStepFeedback(4, feedback)
+            QgsProcessingMultiStepFeedback(5, feedback)
             if feedback is not None
             else None
         )
@@ -635,6 +1059,14 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         clippedContourLyr = AlgRunner().runClip(
             inputLayer=contourLyr,
             overlayLayer=geographicBoundsLyr,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        clippedContourLyr = AlgRunner().runMultipartToSingleParts(
+            inputLayer=clippedContourLyr,
             context=context,
             feedback=multiStepFeedback,
         )
@@ -667,14 +1099,16 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-        AlgRunner().runCreateSpatialIndex(polygonLyr, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        AlgRunner().runCreateSpatialIndex(
+            polygonLyr, context, feedback=multiStepFeedback, is_child_algorithm=True
+        )
         return contourAreaDict, polygonLyr
-    
+
     def buildGrid(
         self,
         geographicBoundsLyr: QgsVectorLayer,
         context: QgsProcessingContext,
-        feedback: QgsFeedback
+        feedback: QgsFeedback,
     ) -> Tuple[QgsVectorLayer, Dict[QByteArray, int], Dict[QByteArray, QgsVectorLayer]]:
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(4, feedback)
@@ -686,20 +1120,20 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
         boundsGeom = [i for i in geographicBoundsLyr.getFeatures()][0].geometry()
         xmin, ymin, xmax, ymax = boundsGeom.boundingBox().toRectF().getCoords()
-        hSpacing = abs(xmax-xmin)/3
-        vSpacing = abs(ymax-ymin)/3
+        hSpacing = abs(xmax - xmin) / 3
+        vSpacing = abs(ymax - ymin) / 3
         gridLyr = AlgRunner().runCreateGrid(
             extent=geographicBoundsLyr.extent(),
             crs=geographicBoundsLyr.crs(),
             hSpacing=hSpacing,
             vSpacing=vSpacing,
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-        stepSize = 100/9
+        stepSize = 100 / 9
         gridDict = defaultdict(int)
         gridLyrDict = dict()
         for current, feat in enumerate(gridLyr.getFeatures()):
@@ -708,12 +1142,13 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             geom = feat.geometry()
             geomWkb = geom.asWkb()
             gridDict[geomWkb] = 0
-            gridLyrDict[geomWkb] = LayerHandler().createMemoryLayerWithFeature(geographicBoundsLyr, feat, context)
+            gridLyrDict[geomWkb] = LayerHandler().createMemoryLayerWithFeature(
+                geographicBoundsLyr, feat, context
+            )
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(current * stepSize)
         return gridLyr, gridDict, gridLyrDict
-        
-    
+
     def getElevationPointsFromNaturalPoints(
         self,
         npRaster: np.array,
@@ -742,7 +1177,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep = 0
             multiStepFeedback.setCurrentStep(currentStep)
-        pointList = self.getElevationPointsFromLayer(npRaster, transform, naturalPointFeaturesLyr, fields)
+        pointList = self.getElevationPointsFromLayer(
+            npRaster, transform, naturalPointFeaturesLyr, fields
+        )
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -761,7 +1198,6 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-
 
     def getElevationPointsFromLayer(self, npRaster, transform, lyr, fields):
         pointList = rasterHandler.createFeatureListWithPointList(
@@ -789,13 +1225,19 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             threshold=threshold,
             elevationPointHeightFieldName="cota",
             context=context,
-            feedback=feedback
+            feedback=feedback,
         )
-        return elevationPoints if flagDict == dict() else [
-            point for point in elevationPoints if point.geometry().asWkb() not in flagDict
-        ]
-    
-    def getContourValuesLineIntersections(
+        return (
+            elevationPoints
+            if flagDict == dict()
+            else [
+                point
+                for point in elevationPoints
+                if point.geometry().asWkb() not in flagDict
+            ]
+        )
+
+    def getElevationPointsFromLineIntersections(
         self,
         lineLyr1,
         lineLyr2,
@@ -810,11 +1252,12 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         gridLyr: QgsVectorLayer,
         gridDict: Dict[QByteArray, int],
         maxPointsPerGridUnit: int,
-        minContourLength: float,
         fields: QgsFields,
         context: QgsProcessingContext,
         feedback: QgsFeedback,
     ):
+        if lineLyr1 is None or lineLyr2 is None:
+            return []
         algRunner = AlgRunner()
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(14, feedback)
@@ -833,7 +1276,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(localLineLyr1, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        algRunner.runCreateSpatialIndex(
+            localLineLyr1, context, feedback=multiStepFeedback, is_child_algorithm=True
+        )
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -846,13 +1291,19 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(localLineLyr2, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        algRunner.runCreateSpatialIndex(
+            localLineLyr2, context, feedback=multiStepFeedback, is_child_algorithm=True
+        )
+        if localLineLyr1.featureCount() == 0 or localLineLyr2.featureCount() == 0:
+            return []
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
         lineIntersectionPointsLyr = algRunner.runLineIntersections(
             lineLyr1, intersectLyr=lineLyr2, context=context, feedback=feedback
         )
+        if lineIntersectionPointsLyr.featureCount() == 0:
+            return []
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -865,7 +1316,12 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(intersectionBuffers, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        algRunner.runCreateSpatialIndex(
+            intersectionBuffers,
+            context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
         extractedLines1 = algRunner.runExtractByLocation(
             inputLyr=lineLyr1,
             intersectLyr=intersectionBuffers,
@@ -876,7 +1332,12 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(extractedLines1, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        algRunner.runCreateSpatialIndex(
+            extractedLines1,
+            context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
         extractedLines2 = algRunner.runExtractByLocation(
             inputLyr=lineLyr2,
             intersectLyr=intersectionBuffers,
@@ -887,7 +1348,12 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(extractedLines2, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        algRunner.runCreateSpatialIndex(
+            extractedLines2,
+            context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -900,7 +1366,12 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(intersectedLines, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        algRunner.runCreateSpatialIndex(
+            intersectedLines,
+            context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -908,7 +1379,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             points=lineIntersectionPointsLyr,
             linesLyr=intersectedLines,
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         if multiStepFeedback is not None:
             currentStep += 1
@@ -965,7 +1436,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
         featSet |= self.filterFeaturesByBuffer(minFeatList, distance)
         return list(featSet)
-    
+
     def filterWithAllCriteria(
         self,
         inputPointList: List[QgsFeature],
@@ -995,14 +1466,14 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             fields=fields,
             crs=referenceLyr.crs(),
             wkbType=QgsWkbTypes.Point,
-            context=context
+            context=context,
         )
         pointList = self.filterFeaturesByDistanceAndExclusionLayer(
             candidatesPointLyr=candidatesPointLyr,
             exclusionLyr=exclusionLyr,
             distance=bufferDistance,
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         if len(pointList) == []:
             return []
@@ -1015,7 +1486,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             contourAreaDict=contourAreaDict,
             threshold=contourHeightInterval,
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         if multiStepFeedback is not None:
             currentStep += 1
@@ -1025,7 +1496,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             fields=fields,
             crs=referenceLyr.crs(),
             wkbType=QgsWkbTypes.Point,
-            context=context
+            context=context,
         )
         return self.filterPointsAgainstGrid(
             pointLyr=newCandidatesPointLyr,
@@ -1070,7 +1541,11 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
 
         disjointLyr = AlgRunner().runExtractByLocation(
-            candidatesPointLyr, exclusionLyr, predicate=[2], context=context, feedback=multiStepFeedback
+            candidatesPointLyr,
+            exclusionLyr,
+            predicate=[2],
+            context=context,
+            feedback=multiStepFeedback,
         )
         nFeats = disjointLyr.featureCount()
         if nFeats == 0:
@@ -1079,7 +1554,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
         outputSet, exclusionSet = set(), set()
-        stepSize = 100/nFeats
+        stepSize = 100 / nFeats
         for current, feat in enumerate(disjointLyr.getFeatures()):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
@@ -1126,15 +1601,25 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             geomWkb = geom.asWkb()
             if gridDict[geomWkb] >= maxPointsPerGridUnit:
                 continue
-            gridFeats = [f for f in pointLyr.getFeatures(bbox) if f.geometry().intersects(geom)]
+            gridFeats = [
+                f for f in pointLyr.getFeatures(bbox) if f.geometry().intersects(geom)
+            ]
             if gridFeats == []:
                 continue
-            selectedGridFeatsSet = set(islice(gridFeats, maxPointsPerGridUnit-gridDict[geomWkb]))
+            selectedGridFeatsSet = set(
+                islice(gridFeats, maxPointsPerGridUnit - gridDict[geomWkb])
+            )
             gridDict[geomWkb] += len(selectedGridFeatsSet)
             outputSet |= selectedGridFeatsSet
         return list(outputSet)
 
-    def updateExclusionLyr(self, exclusionLyr: QgsVectorLayer, pointList: List, distance: float, context: QgsProcessingContext) -> None:
+    def updateExclusionLyr(
+        self,
+        exclusionLyr: QgsVectorLayer,
+        pointList: List,
+        distance: float,
+        context: QgsProcessingContext,
+    ) -> None:
         exclusionLyr.startEditing()
         exclusionLyr.beginEditCommand("updating exclusion layer")
         for feat in pointList:
@@ -1144,7 +1629,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             exclusionLyr.addFeature(newFeat)
         exclusionLyr.endEditCommand()
         exclusionLyr.commitChanges()
-        AlgRunner().runCreateSpatialIndex(exclusionLyr, context, is_child_algorithm=True)
+        AlgRunner().runCreateSpatialIndex(
+            exclusionLyr, context, is_child_algorithm=True
+        )
 
     def maskFeaturesFromLayerOnRaster(
         self,
@@ -1188,8 +1675,10 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         rasterLyr: QgsRasterLayer,
         polygonLyr: QgsVectorLayer,
         exclusionLyr: QgsVectorLayer,
+        geographicBoundsLyr: QgsVectorLayer,
+        minusBuffergeographicBoundsLyr: QgsVectorLayer,
         bufferDistance: float,
-        minContourLength: float,
+        originEpsg: QgsCoordinateReferenceSystem,
         contourAreaDict: Dict,
         contourHeightInterval: float,
         gridLyr: QgsVectorLayer,
@@ -1210,7 +1699,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         pointList = self.extractElevationPointsFromHilltops(
             polygonLayer=polygonLyr,
             rasterLyr=rasterLyr,
-            minContourLength=minContourLength,
+            geographicBoundsLyr=geographicBoundsLyr,
+            minusBuffergeographicBoundsLyr=minusBuffergeographicBoundsLyr,
+            originEpsg=originEpsg,
             fields=fields,
             context=context,
             feedback=multiStepFeedback,
@@ -1233,29 +1724,28 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        
 
-        
-    
     def extractElevationPointsFromHilltops(
         self,
         polygonLayer: QgsVectorLayer,
-        geographicBounds: QgsVectorLayer,
+        geographicBoundsLyr: QgsVectorLayer,
+        minusBuffergeographicBoundsLyr: QgsVectorLayer,
         rasterLyr: QgsRasterLayer,
-        minContourLength: float,
+        originEpsg: QgsCoordinateReferenceSystem,
         fields: QgsFields,
         context: QgsProcessingContext,
-        feedback: QgsFeedback = None
+        feedback: QgsFeedback = None,
     ) -> List:
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(3, feedback)
+            if feedback is not None
+            else None
+        )
         spatialRelationsHandler = SpatialRelationsHandler()
         layerHandler = LayerHandler()
         algRunner = AlgRunner()
         currentStep = 0
         if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(currentStep)
-        if multiStepFeedback is not None:
-            currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(self.tr("Finding hilltops..."))
         hillTopsLyr = spatialRelationsHandler.createHilltopLayerFromPolygonLayer(
@@ -1263,34 +1753,55 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
             computeOrder=True,
-        
-        minusBuffer = algRunner.runBuffer(
-            inputLayer=geographicBounds,
-            distance= -0.00
-        ))
+        )
+        algRunner.runCreateSpatialIndex(
+            hillTopsLyr, context=context, is_child_algorithm=True
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            currentStep += 1
+        minContourLength = geometryHandler.convertDistance(
+            self.minContourLength,
+            originEpsg=originEpsg,
+            destinationEpsg=geographicBoundsLyr.crs(),
+        )
+        minusBufferLength = geometryHandler.convertDistance(
+            self.contourBufferLength,
+            originEpsg=originEpsg,
+            destinationEpsg=geographicBoundsLyr.crs(),
+        )
         clippedHilltops = algRunner.runClip(
             inputLayer=hillTopsLyr,
-            overlayLayer=geographicBounds,
+            overlayLayer=minusBuffergeographicBoundsLyr,
+            context=context,
+            feedback=multiStepFeedback,
         )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
         nFeats = hillTopsLyr.featureCount()
         if nFeats == 0:
             return []
-        stepSize = 100/nFeats
+        stepSize = 100 / nFeats
         featList = []
         minArea = minContourLength**2 / (4 * math.pi)
         hilltopList = sorted(
             filter(
-                lambda x: x.geometry().length() > minContourLength and x.geometry().area() > minArea,
-                hillTopsLyr.getFeatures()
+                lambda x: x["order_count"] > 1
+                and x.geometry().length() > minContourLength
+                and x.geometry().area() > minArea,
+                clippedHilltops.getFeatures(),
             ),
-            key=lambda x: (x["order_count"], 1./x.geometry().area()),
-            reverse=True
+            key=lambda x: (x["order_count"], 1.0 / x.geometry().area()),
+            reverse=True,
         )
         for current, hilltopFeat in enumerate(hilltopList):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
             geom = hilltopFeat.geometry()
-            minusBuffer = geom.buffer(-0.0001)
+            minusBuffer = geom.buffer(minusBufferLength, -1)
+            if minusBuffer.isEmpty():
+                continue
             localHilltopLyr = layerHandler.createMemoryLayerWithFeature(
                 hillTopsLyr, hilltopFeat, context
             )
@@ -1303,7 +1814,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                     f"local_clip_{str(uuid4().hex)}.tif"
                 ),
             )
-            clippedRasterLyr = QgsProcessingUtils.mapLayerFromString(clippedRaster, context)
+            clippedRasterLyr = QgsProcessingUtils.mapLayerFromString(
+                clippedRaster, context
+            )
             if clippedRasterLyr is None:
                 continue
             newFeat = rasterHandler.createMaxPointFeatFromRasterLayer(
@@ -1315,21 +1828,34 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
 
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(current * stepSize)
-        
+
         return featList
 
-    
-    def keepThirdOrderOrHigherPoints(self, points: Union[List, QgsVectorLayer], linesLyr: QgsVectorLayer, context: QgsProcessingContext, feedback: QgsFeedback) -> List[QgsFeature]:
-        iterator = points.getFeatures() if isinstance(points, QgsVectorLayer) else points
-        nFeats = points.featureCount() if isinstance(points, QgsVectorLayer) else len(points)
+    def keepThirdOrderOrHigherPoints(
+        self,
+        points: Union[List, QgsVectorLayer],
+        linesLyr: QgsVectorLayer,
+        context: QgsProcessingContext,
+        feedback: QgsFeedback,
+    ) -> List[QgsFeature]:
+        iterator = (
+            points.getFeatures() if isinstance(points, QgsVectorLayer) else points
+        )
+        nFeats = (
+            points.featureCount() if isinstance(points, QgsVectorLayer) else len(points)
+        )
         if nFeats == 0:
             return []
         featDict = dict()
-        multiStepFeedback = QgsProcessingMultiStepFeedback(1, feedback) if feedback is not None else None
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(1, feedback)
+            if feedback is not None
+            else None
+        )
         if multiStepFeedback is not None:
             currentStep = 0
             multiStepFeedback.setCurrentStep(currentStep)
-        stepSize = 100/nFeats
+        stepSize = 100 / nFeats
         for current, feat in enumerate(iterator):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
@@ -1339,14 +1865,129 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 continue
             buffer = geom.buffer(1e-5, -1)
             bbox = buffer.boundingBox()
-            nFeats = sum(1 for _ in (i for i in linesLyr.getFeatures(bbox) if i.geometry().intersects(geom)))
+            nFeats = sum(
+                1
+                for _ in (
+                    i
+                    for i in linesLyr.getFeatures(bbox)
+                    if i.geometry().intersects(geom)
+                )
+            )
             if nFeats < 3:
                 continue
-            featDict[geomWkb] = feat # uses dict to remove duplicated features
+            featDict[geomWkb] = feat  # uses dict to remove duplicated features
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(current * stepSize)
 
         return list(featDict.values())
+
+    def getElevationPointsFromPlaneAreas(
+        self,
+        contourLyr: QgsVectorLayer,
+        geographicBoundsLyr: QgsVectorLayer,
+        rasterLyr: QgsRasterLayer,
+        exclusionLyr: QgsVectorLayer,
+        polygonLyr: QgsVectorLayer,
+        originEpsg: QgsCoordinateReferenceSystem,
+        bufferDistance: float,
+        contourAreaDict: Dict,
+        contourHeightInterval: float,
+        gridLyr: QgsVectorLayer,
+        gridDict: Dict[QByteArray, int],
+        maxPointsPerGridUnit: int,
+        fields: QgsFields,
+        context: QgsProcessingContext,
+        feedback: QgsFeedback,
+    ) -> List[QgsFeature]:
+        algRunner = AlgRunner()
+        layerHandler = LayerHandler()
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(4, feedback)
+            if feedback is not None
+            else None
+        )
+        if multiStepFeedback is not None:
+            currentStep = 0
+            multiStepFeedback.setCurrentStep(currentStep)
+        localGridSize = geometryHandler.convertDistance(
+            self.planeGridSpacing,
+            originEpsg=originEpsg,
+            destinationEpsg=geographicBoundsLyr.crs(),
+        )
+        planeGrid = algRunner.runCreateGrid(
+            extent=geographicBoundsLyr.extent(),
+            crs=geographicBoundsLyr.crs(),
+            hSpacing=localGridSize,
+            vSpacing=localGridSize,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        candidateGridLyr = algRunner.runExtractByLocation(
+            inputLyr=contourLyr,
+            intersectLyr=planeGrid,
+            context=context,
+            predicate=[2],
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        nFeats = candidateGridLyr.featureCount()
+        if nFeats == 0:
+            return []
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        stepSize = 100 / nFeats
+        pointList = []
+        for current, feat in enumerate(candidateGridLyr.getFeatures()):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+            localGridLyr = layerHandler.createMemoryLayerWithFeature(
+                candidateGridLyr, feat, context
+            )
+            clippedRaster = algRunner.runClipRasterLayer(
+                rasterLyr,
+                mask=localGridLyr,
+                context=context,
+                noData=-9999,
+                outputRaster=QgsProcessingUtils.generateTempFilename(
+                    f"local_clip_{str(uuid4().hex)}.tif"
+                ),
+            )
+            clippedRasterLyr = QgsProcessingUtils.mapLayerFromString(
+                clippedRaster, context
+            )
+            if clippedRasterLyr is None:
+                continue
+            newFeatList = rasterHandler.createMaxPointFeatListFromRasterLayer(
+                inputRaster=clippedRasterLyr,
+                fields=fields,
+                fieldName="cota",
+            )
+            pointList += newFeatList
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * stepSize)
+
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        self.filterWithAllCriteria(
+            inputPointList=pointList,
+            referenceLyr=polygonLyr,
+            exclusionLyr=exclusionLyr,
+            polygonLyr=polygonLyr,
+            bufferDistance=bufferDistance,
+            contourAreaDict=contourAreaDict,
+            contourHeightInterval=contourHeightInterval,
+            gridLyr=gridLyr,
+            gridDict=gridDict,
+            maxPointsPerGridUnit=maxPointsPerGridUnit,
+            fields=fields,
+            context=context,
+            feedback=multiStepFeedback,
+        )
 
     def tr(self, string):
         return QCoreApplication.translate("ExtractElevationPoints", string)
