@@ -368,7 +368,6 @@ class SpatialRelationsHandler(QObject):
             polygonLayer,
             context=context,
             feedback=multiStepFeedback,
-            is_child_algorithm=True,
         )
         if multiStepFeedback is not None:
             currentStep += 1
@@ -414,8 +413,8 @@ class SpatialRelationsHandler(QObject):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
         hilltopsWithOrder = self.algRunner.runJoinByLocationSummary(
-            inputLyr=outershellWithOrder,
-            joinLyr=hilltopsLyr,
+            inputLyr=hilltopsLyr,
+            joinLyr=outershellWithOrder,
             predicateList=[5],
             summaries=[0],
             joinFields=['order'],
