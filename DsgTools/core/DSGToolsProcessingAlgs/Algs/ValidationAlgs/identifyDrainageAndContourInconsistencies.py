@@ -489,7 +489,9 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                     return flagDict
                 if G.degree(node) == 1:
                     if d[node] is None:
-                        h = next(d[i] for i in graphHandler.fetch_connected_nodes(G, node, max_degree=2) if d[i] is not None)
+                        h = next(d[i] for i in graphHandler.fetch_connected_nodes(G, node, max_degree=2) if d[i] is not None, None)
+                        if h is None:
+                            continue
                         d[node] = h
                     newNodesToVisit = newNodesToVisit.union(G.successors(node))
                     continue
