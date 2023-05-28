@@ -234,9 +234,12 @@ def removeSecondOrderEmptyNodes(G, d):
     )
     while nodesToRemove:
         for node in nodesToRemove:
-            pred = list(G_copy.predecessors(node))[0]
-            suc = list(G_copy.successors(node))[0]
-            G_copy.add_edge(pred, suc)
+            predList = list(G_copy.predecessors(node))
+            pred = predList[0] if len(predList) > 0 else None
+            sucList = list(G_copy.successors(node))
+            suc = sucList[0] if len(sucList) > 0 else None
+            if pred is not None and suc is not None:
+                G_copy.add_edge(pred, suc)
             G_copy.remove_node(node)
         nodesToRemove = set(
             node for node in G_copy.nodes if G_copy.degree(node) == 2 and d[node] is None
