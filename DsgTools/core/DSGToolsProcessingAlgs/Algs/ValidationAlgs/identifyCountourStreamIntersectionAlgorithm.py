@@ -137,10 +137,6 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
             idDict,
         )
 
-        
-        if outputPointsSet == set() and outputLinesSet == set():
-            return {self.POINT_FLAGS: sink_id}
-
         if outputPointsSet != set():
             self.outLayer(
                 parameters, context, outputPointsSet, streamLayerInput, QgsWkbTypes.Point, point_flag_sink, 
