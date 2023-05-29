@@ -620,8 +620,8 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         self.addPointsToMemoryLayer(
             elevationPointsLayer, elevationPointsFromOtherRoadIntersections, context
         )
-        if elevationPointsFromOtherRoadIntersections.featureCount() > maxNPoints:
-            return elevationPointsFromOtherRoadIntersections.getFeatures()
+        if elevationPointsLayer.featureCount() > maxNPoints:
+            return elevationPointsLayer.getFeatures()
 
         if multiStepFeedback is not None:
             currentStep += 1
