@@ -379,7 +379,6 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             endCapStyle=1,
             context=context,
         )
-        QgsProject.instance().addMapLayer(minusBufferedGeographicBoundsLyr)
         clippedRaster = algRunner.runClipRasterLayer(
             inputRaster,
             mask=geographicBoundsLyr,
