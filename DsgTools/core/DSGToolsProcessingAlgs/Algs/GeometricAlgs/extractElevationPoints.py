@@ -290,6 +290,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             if multiStepFeedback.isCanceled():
                 break
             multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr(f"Evaluating region {currentStep+1}/{nFeats}"))
             localBoundsLyr = layerHandler.createMemoryLayerWithFeature(
                 geographicBoundaryLyr, feat, context
             )
