@@ -351,7 +351,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         algRunner = AlgRunner()
         layerHandler = LayerHandler()
         spatialRelationsHandler = SpatialRelationsHandler()
-        nSteps = 9 + (
+        nSteps = 16 + (
             naturalPointFeaturesLyr is not None
         )  # handle this count after alg is done
         multiStepFeedback = (
@@ -1070,6 +1070,13 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
+        emptyList = [feat.id() for feat in clippedContourLyr.getFeatures() if feat.geometry().isEmpty()]
+        if emptyList != []:
+            clippedContourLyr.startEditing()
+            clippedContourLyr.beginEditCommand("deleting empty")
+            clippedContourLyr.deleteFeatures(emptyList)
+            clippedContourLyr.endEditCommand()
+            clippedContourLyr.commitChanges()
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -1300,7 +1307,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
         lineIntersectionPointsLyr = algRunner.runLineIntersections(
-            lineLyr1, intersectLyr=lineLyr2, context=context, feedback=feedback
+            localLineLyr1, intersectLyr=localLineLyr2, context=context, feedback=feedback
         )
         if lineIntersectionPointsLyr.featureCount() == 0:
             return []
@@ -1323,7 +1330,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             is_child_algorithm=True,
         )
         extractedLines1 = algRunner.runExtractByLocation(
-            inputLyr=lineLyr1,
+            inputLyr=localLineLyr1,
             intersectLyr=intersectionBuffers,
             context=context,
             feedback=multiStepFeedback,
@@ -1339,7 +1346,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             is_child_algorithm=True,
         )
         extractedLines2 = algRunner.runExtractByLocation(
-            inputLyr=lineLyr2,
+            inputLyr=localLineLyr2,
             intersectLyr=intersectionBuffers,
             context=context,
             feedback=multiStepFeedback,
@@ -1922,6 +1929,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
+        algRunner.runCreateSpatialIndex(planeGrid, context, is_child_algorithm=True)
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
