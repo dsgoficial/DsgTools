@@ -1971,7 +1971,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-        self.filterWithAllCriteria(
+        return self.filterWithAllCriteria(
             inputPointList=pointList,
             referenceLyr=polygonLyr,
             exclusionLyr=exclusionLyr,
