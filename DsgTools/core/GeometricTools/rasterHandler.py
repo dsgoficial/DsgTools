@@ -20,7 +20,7 @@
  ***************************************************************************/
 """
 
-from typing import List, Tuple, Union
+from typing import Dict, List, Tuple, Union
 from uuid import uuid4
 
 from .affine import Affine
@@ -68,11 +68,16 @@ def createFeatureWithPixelValueFromPixelCoordinates(
     fields: QgsFields,
     npRaster: np.array,
     transform: Affine,
+    defaultAtributeMap: Dict = None,
 ) -> QgsFeature:
     newFeat = QgsFeature(fields)
     terrainCoordinates = transform * pixelCoordinates
     newFeat.setGeometry(QgsGeometry(QgsPoint(*terrainCoordinates)))
     newFeat[fieldName] = int(npRaster[pixelCoordinates])
+    if defaultAtributeMap is None:
+        return newFeat
+    for attr, value in defaultAtributeMap.items():
+        newFeat[attr] = value
     return newFeat
 
 
@@ -82,10 +87,11 @@ def createFeatureListWithPixelValuesFromPixelCoordinatesArray(
     fields: QgsFields,
     npRaster: np.array,
     transform: Affine,
+    defaultAtributeMap: Dict = None,
 ) -> List[QgsFeature]:
     return [
         createFeatureWithPixelValueFromPixelCoordinates(
-            tuple(coords), fieldName, fields, npRaster, transform
+            tuple(coords), fieldName, fields, npRaster, transform, defaultAtributeMap=defaultAtributeMap
         )
         for coords in pixelCoordinates
     ]
@@ -97,6 +103,7 @@ def createFeatureListWithPointList(
     fields: QgsFields,
     npRaster: np.array,
     transform: Affine,
+    defaultAtributeMap: Dict = None,
 ) -> List[QgsFeature]:
     return [
         createFeatureWithPixelValueFromTerrainCoordinates(
@@ -109,6 +116,7 @@ def createFeatureListWithPointList(
             fields,
             npRaster,
             transform,
+            defaultAtributeMap,
         )
         for point in pointList
     ]
@@ -120,6 +128,7 @@ def createFeatureWithPixelValueFromTerrainCoordinates(
     fields: QgsFields,
     npRaster: np.array,
     transform: Affine,
+    defaultAtributeMap: Dict = None,
 ) -> QgsFeature:
     newFeat = QgsFeature(fields)
     pixelCoordinates = ~transform * terrainCoordinates
@@ -132,6 +141,10 @@ def createFeatureWithPixelValueFromTerrainCoordinates(
         return None
     newFeat.setGeometry(QgsGeometry(QgsPoint(*terrainCoordinates)))
     newFeat[fieldName] = int(value)
+    if defaultAtributeMap is None:
+        return newFeat
+    for attr, value in defaultAtributeMap.items():
+        newFeat[attr] = value
     return newFeat
 
 
@@ -183,7 +196,7 @@ def buildNumpyNodataMask(rasterLyr: QgsRasterLayer, vectorLyr: QgsVectorLayer):
 
 
 def createMaxPointFeatFromRasterLayer(
-    inputRaster: QgsRasterLayer, fields: QgsFields, fieldName: str
+    inputRaster: QgsRasterLayer, fields: QgsFields, fieldName: str, defaultAtributeMap: Dict = None,
 ) -> QgsFeature:
     ds, npRaster = readAsNumpy(inputRaster)
     transform = getCoordinateTransform(ds)
@@ -202,11 +215,12 @@ def createMaxPointFeatFromRasterLayer(
         fields=fields,
         npRaster=npRaster,
         transform=transform,
+        defaultAtributeMap=defaultAtributeMap,
     )
 
 
 def createMaxPointFeatListFromRasterLayer(
-    inputRaster: QgsRasterLayer, fields: QgsFields, fieldName: str
+    inputRaster: QgsRasterLayer, fields: QgsFields, fieldName: str, defaultAtributeMap: Dict = None,
 ) -> List[QgsFeature]:
     ds, npRaster = readAsNumpy(inputRaster)
     transform = getCoordinateTransform(ds)
@@ -220,4 +234,5 @@ def createMaxPointFeatListFromRasterLayer(
         fields=fields,
         npRaster=npRaster,
         transform=transform,
+        defaultAtributeMap=defaultAtributeMap,
     )

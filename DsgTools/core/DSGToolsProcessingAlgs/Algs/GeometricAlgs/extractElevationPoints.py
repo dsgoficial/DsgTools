@@ -273,7 +273,18 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
 
         fields = QgsFields()
         fields.append(QgsField("cota", QVariant.Int))
-        fields.append(QgsField("cota_mais_alta", QVariant.Bool))
+        fields.append(QgsField("cota_mais_alta", QVariant.Int))
+        fields.append(QgsField("cota_comprovada", QVariant.Int))
+        fields.append(QgsField("ancora_horizontal", QVariant.Int))
+        fields.append(QgsField("ancora_vertical", QVariant.Int))
+        fields.append(QgsField("suprimir_simbologia", QVariant.Int))
+        self.defaultAttrMap = {
+            "cota_mais_alta": 2,
+            "cota_comprovada": 2,
+            "ancora_horizontal": 1,
+            "ancora_vertical": 1,
+            "suprimir_simbologia": 2,
+        }
 
         (self.sink, self.sink_id) = self.parameterAsSink(
             parameters,
@@ -350,10 +361,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
     ):
         algRunner = AlgRunner()
         layerHandler = LayerHandler()
-        spatialRelationsHandler = SpatialRelationsHandler()
         nSteps = 16 + (
             naturalPointFeaturesLyr is not None
-        )  # handle this count after alg is done
+        )  + 3 * (waterBodiesLyr is not None) # handle this count after alg is done
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(nSteps, feedback)
             if feedback is not None
@@ -400,16 +410,43 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(self.tr("Reading raster with numpy..."))
+        localContourBufferLength = geometryHandler.convertDistance(
+            self.contourBufferLength,
+            originEpsg=originEpsg,
+            destinationEpsg=geographicBoundsLyr.crs(),
+        )
         contourBufferLyr = algRunner.runBuffer(
             inputLayer=contourLyr,
-            distance=geometryHandler.convertDistance(
-                self.contourBufferLength,
-                originEpsg=originEpsg,
-                destinationEpsg=geographicBoundsLyr.crs(),
-            ),
+            distance=localContourBufferLength,
             context=context,
             feedback=multiStepFeedback,
         )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        if waterBodiesLyr is not None:
+            localWaterBodiesLyr = algRunner.runExtractByLocation(
+                inputLyr=waterBodiesLyr,
+                intersectLyr=geographicBoundsLyr,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
+            )
+            if multiStepFeedback is not None:
+                currentStep += 1
+                multiStepFeedback.setCurrentStep(currentStep)
+            localBufferedWaterBodiesLyr = algRunner.runBuffer(
+                inputLayer=localWaterBodiesLyr, distance=localContourBufferLength, context=context, feedback=multiStepFeedback, is_child_algorithm=True
+            )
+            if multiStepFeedback is not None:
+                currentStep += 1
+                multiStepFeedback.setCurrentStep(currentStep)
+            waterBodiesLyr = algRunner.runClip(
+                localBufferedWaterBodiesLyr,
+                overlayLayer=geographicBoundsLyr,
+                context=context,
+                feedback=multiStepFeedback
+            )
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -1213,6 +1250,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             fields=fields,
             npRaster=npRaster,
             transform=transform,
+            defaultAtributeMap=dict(self.defaultAttrMap),
         )
         return filter(lambda x: x is not None, pointList)
 
@@ -1391,12 +1429,15 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
+        localAttrDefaultMap = dict(self.defaultAttrMap)
+        localAttrDefaultMap["suprimir_simbologia"] = 1
         pointList = rasterHandler.createFeatureListWithPointList(
             pointList=filteredPointsIntersections,
             fieldName="cota",
             fields=fields,
             npRaster=npRaster,
             transform=transform,
+            defaultAtributeMap=localAttrDefaultMap,
         )
         if multiStepFeedback is not None:
             currentStep += 1
@@ -1427,6 +1468,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 fields=fields,
                 npRaster=npRaster,
                 transform=transform,
+                defaultAtributeMap=dict(self.defaultAttrMap),
             )
         )
         featSet |= self.filterFeaturesByBuffer(maxFeatList, distance, cotaMaisAlta=True)
@@ -1439,6 +1481,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 fields=fields,
                 npRaster=npRaster,
                 transform=transform,
+                defaultAtributeMap=dict(self.defaultAttrMap),
             )
         )
         featSet |= self.filterFeaturesByBuffer(minFeatList, distance)
@@ -1523,7 +1566,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             buffer = geom.buffer(distance, -1)
             if exclusionGeom is not None and exclusionGeom.intersects(geom):
                 continue
-            feat["cota_mais_alta"] = cotaMaisAlta
+            feat["cota_mais_alta"] = 1 if cotaMaisAlta else 2
             exclusionGeom = (
                 buffer if exclusionGeom is None else exclusionGeom.combine(buffer)
             )
@@ -1830,6 +1873,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 inputRaster=clippedRasterLyr,
                 fields=fields,
                 fieldName="cota",
+                defaultAtributeMap=dict(self.defaultAttrMap),
             )
             featList.append(newFeat)
 
