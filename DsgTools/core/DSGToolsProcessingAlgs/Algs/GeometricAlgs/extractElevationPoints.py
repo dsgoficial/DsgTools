@@ -1674,7 +1674,8 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         exclusionLyr.beginEditCommand("updating exclusion layer")
         for feat in pointList:
             geom = feat.geometry()
-            buffer = geom.buffer(distance, -1)
+            buffer = geom.buffer(distance, -1) \
+                if geom.type() == QgsWkbTypes.PointGeometry else geom
             newFeat = QgsVectorLayerUtils.createFeature(exclusionLyr, buffer)
             exclusionLyr.addFeature(newFeat)
         exclusionLyr.endEditCommand()
@@ -1746,7 +1747,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep = 0
             multiStepFeedback.setCurrentStep(currentStep)
-        pointList = self.extractElevationPointsFromHilltops(
+        pointList, hillTopsLyr = self.extractElevationPointsFromHilltops(
             polygonLayer=polygonLyr,
             rasterLyr=rasterLyr,
             geographicBoundsLyr=geographicBoundsLyr,
@@ -1759,7 +1760,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-        return self.filterWithAllCriteria(
+        filteredPoints = self.filterWithAllCriteria(
             inputPointList=pointList,
             referenceLyr=polygonLyr,
             exclusionLyr=exclusionLyr,
@@ -1774,6 +1775,13 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
+        self.updateExclusionLyr(
+            exclusionLyr=exclusionLyr,
+            pointList=[feat for feat in hillTopsLyr.getFeatures()],
+            distance=bufferDistance,
+            context=context,
+        )
+        return filteredPoints
 
     def extractElevationPointsFromHilltops(
         self,
@@ -1879,8 +1887,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
 
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(current * stepSize)
-
-        return featList
+        return featList, hillTopsLyr
 
     def keepThirdOrderOrHigherPoints(
         self,
