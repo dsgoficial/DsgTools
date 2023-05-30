@@ -44,9 +44,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractElevationPoi
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.line2Multiline import (
     Line2Multiline,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.pointsInPolygonGridAlgorithm import (
-    PointsInPolygonGridAlgorithm,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.reclassifyAdjecentPolygonsAlgorithm import (
     ReclassifyAdjacentPolygonsAlgorithm,
 )
