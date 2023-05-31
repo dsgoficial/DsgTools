@@ -524,7 +524,6 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             SmallHoleRemoverAlgorithm(),
             ReclassifyAdjacentPolygonsAlgorithm(),
             StreamOrder(),
-            PointsInPolygonGridAlgorithm(),
             SplitPolygons(),
             SplitPolygonsByGrid(),
             SelectByDE9IMAlgorithm(),
