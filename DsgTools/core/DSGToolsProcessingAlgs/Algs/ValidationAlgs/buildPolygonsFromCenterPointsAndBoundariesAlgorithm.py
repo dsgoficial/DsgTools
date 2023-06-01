@@ -240,7 +240,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             parameters,
             self.OUTPUT_POLYGONS,
             context,
-            fields,
+            inputCenterPointLyr.fields(),
             QgsWkbTypes.Polygon,
             inputCenterPointLyr.sourceCrs(),
         )
