@@ -215,9 +215,7 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(
-            self.tr("Finding continuity errors...")
-        )
+        multiStepFeedback.setProgressText(self.tr("Finding continuity errors..."))
         flagDict = self.findContinuityErrorsOnGraph(
             nx, nodesDict, G, contourInterval, feedback=multiStepFeedback
         )
@@ -230,7 +228,7 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             self.tr("Finding errors on confluence and ramifications...")
         )
         flagDict = self.findMissingErrorsOnGraphConsideringRamificationsAndConfluences(
-            nodesDict, G, feedback=multiStepFeedback
+            nodesDict, G, contourInterval, feedback=multiStepFeedback
         )
         if len(flagDict) > 0:
             list(map(flagLambda, flagDict.items()))
@@ -404,7 +402,6 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
             else:
                 endingNodes.add(node)
 
-
         def evaluate(startingNode, endingNode):
             flagDict = dict()
             for path in nx.all_simple_paths(G, startingNode, endingNode):
@@ -470,7 +467,7 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
         return flagDict
 
     def findMissingErrorsOnGraphConsideringRamificationsAndConfluences(
-        self, nodesDict, G, feedback
+        self, nodesDict, G, contourInterval, feedback
     ):
         flagDict = dict()
         processedNodes = set()
@@ -479,7 +476,9 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
         G = graphHandler.removeFirstOrderEmptyNodes(G, d)
         G = graphHandler.removeSecondOrderEmptyNodes(G, d)
         nodesToVisit = set(
-            node for node in G.nodes if G.degree(node) == 1 and len(list(G.successors(node))) > 0
+            node
+            for node in G.nodes
+            if G.degree(node) == 1 and len(list(G.successors(node))) > 0
         )
         currentStep = 0
         while nodesToVisit:
@@ -489,7 +488,16 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                     return flagDict
                 if G.degree(node) == 1:
                     if d[node] is None:
-                        h = next((d[i] for i in graphHandler.fetch_connected_nodes(G, node, max_degree=2) if d[i] is not None), None)
+                        h = next(
+                            (
+                                d[i]
+                                for i in graphHandler.fetch_connected_nodes(
+                                    G, node, max_degree=2
+                                )
+                                if d[i] is not None
+                            ),
+                            None,
+                        )
                         if h is None:
                             continue
                         d[node] = h
@@ -498,7 +506,17 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                 if G.degree(node) == 2:
                     if d[node] is None:
                         pred = list(G.predecessors(node))[0]
-                        d[node] = d[pred] if d[pred] is not None else next(d[i] for i in graphHandler.fetch_connected_nodes(G, node, max_degree=2) if d[i] is not None)
+                        d[node] = (
+                            d[pred]
+                            if d[pred] is not None
+                            else next(
+                                d[i]
+                                for i in graphHandler.fetch_connected_nodes(
+                                    G, node, max_degree=2
+                                )
+                                if d[i] is not None
+                            )
+                        )
                     newNodesToVisit = newNodesToVisit.union(G.successors(node))
                     continue
                 succ = list(G.successors(node))
@@ -511,6 +529,8 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                     newNodesToVisit = newNodesToVisit.union(G.successors(node))
                     continue
                 if h1 is None or h2 is None:
+                    continue
+                if (h1 == d[node] or h2 == d[node]) and abs(h1 - h2) == contourInterval:
                     continue
                 flagText = self.tr(
                     f"Drainage encounter with different known height values: {h1} and {h2}."
