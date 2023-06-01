@@ -185,9 +185,11 @@ class GeometryHandler(QObject):
                 nodes = nodes[::-1]
                 flippedFeatureGeom = QgsGeometry.fromPolygonXY(nodes)
         # setting feature geometry to the flipped one
-        # feature.setGeometry(flippedFeatureGeom)
-        # layer.updateFeature(feature)
-        layer.changeGeometry(feature.id(), flippedFeatureGeom)
+        layer.beginEditCommand("Flipping feature")
+        feature.setGeometry(flippedFeatureGeom)
+        layer.updateFeature(feature)
+        layer.endEditCommand()
+        # layer.changeGeometry(feature.id(), flippedFeatureGeom)
         if refreshCanvas:
             self.iface.mapCanvas().refresh()
         return [layer, feature, geomType]
