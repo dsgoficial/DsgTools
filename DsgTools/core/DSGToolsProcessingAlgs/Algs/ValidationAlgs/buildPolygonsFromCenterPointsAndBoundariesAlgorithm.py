@@ -231,7 +231,9 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             parameters, self.ATTRIBUTE_BLACK_LIST, context
         )
         fields = self.layerHandler.getFieldsFromAttributeBlackList(
-            inputCenterPointLyr, attributeBlackList
+            inputCenterPointLyr,
+            attributeBlackList,
+            ignoreVirtualFields=False,
         )
         groupBySpatialPartition = self.parameterAsBool(
             parameters, self.GROUP_BY_SPATIAL_PARTITION, context
@@ -240,7 +242,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             parameters,
             self.OUTPUT_POLYGONS,
             context,
-            inputCenterPointLyr.fields(),
+            fields,
             QgsWkbTypes.Polygon,
             inputCenterPointLyr.sourceCrs(),
         )

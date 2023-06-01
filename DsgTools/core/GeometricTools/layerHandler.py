@@ -2529,7 +2529,9 @@ class LayerHandler(QObject):
             inputCenterPointLyr, attributeBlackList=attributeBlackList
         )
         fields = self.getFieldsFromAttributeBlackList(
-            inputCenterPointLyr, attributeBlackList
+            inputCenterPointLyr,
+            attributeBlackList,
+            ignoreVirtualFields=False,
         )
         for current, feat in enumerate(builtPolygonLyr.getFeatures()):
             if feedback is not None and feedback.isCanceled():
@@ -2561,7 +2563,9 @@ class LayerHandler(QObject):
                     feedback.setCurrentStep(current * size)
         return builtPolygonToCenterPointDict
 
-    def getFieldsFromAttributeBlackList(self, originalLayer, attributeBlackList):
+    def getFieldsFromAttributeBlackList(
+        self, originalLayer, attributeBlackList, ignoreVirtualFields=True
+    ):
         """
         Create a QgsFields with only columns that are not at attributeBlackList
         :params originalLayer: Layer from where will be taken the fields
@@ -2570,7 +2574,9 @@ class LayerHandler(QObject):
         :return fields: (QgsFields) with the fields necessary
         """
         columns = self.getAttributesFromBlackList(
-            originalLayer, attributeBlackList=attributeBlackList
+            originalLayer,
+            attributeBlackList=attributeBlackList,
+            ignoreVirtualFields=ignoreVirtualFields,
         )
         fields = QgsFields()
         for f in originalLayer.fields():
