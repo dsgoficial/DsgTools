@@ -21,7 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsProject, Qgis, QgsVectorLayer
+from qgis.core import QgsProject, Qgis, QgsVectorLayer, QgsWkbTypes
 from qgis.gui import QgsMapTool
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QObject
@@ -99,12 +99,9 @@ class OtherTools(QgsMapTool):
         features = layer.selectedFeatures()
         newFields = layer.fields()
         name = layer.name()
-        geomtype = layer.geometryType()
-        print(geomtype)
-        print(type(geomtype))
         newName = name + "_temp"
-        geomdict = {0: "multipoint", 1: "multilinestring", 2: "multipolygon"}
-        selection = QgsVectorLayer(geomdict[int(geomtype)], newName, "memory")
+        wkbType = layer.wkbType()
+        selection = QgsVectorLayer(QgsWkbTypes.displayString(wkbType), newName, "memory")
         selection.startEditing()
         selection.setCrs(layer.crs())
         dp = selection.dataProvider()
