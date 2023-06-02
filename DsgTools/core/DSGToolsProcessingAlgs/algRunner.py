@@ -1556,3 +1556,28 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
+    
+    def runRefactorFields(
+        self, 
+        inputLayer, 
+        fieldmap:list[dict], 
+        context, 
+        feedback=None,
+        onlySelected=None, 
+        outputLyr=None, 
+        is_child_algorithm=False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        parameters = {
+            "INPUT": QgsProcessingFeatureSourceDefinition(inputLayer.source(), selectedFeaturesOnly=onlySelected),
+            "FIELDS_MAPPING": fieldmap,
+            "OUTPUT": outputLyr,
+        }
+        output = processing.run(
+            "native:refactorfields",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
