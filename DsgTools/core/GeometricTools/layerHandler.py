@@ -2526,14 +2526,16 @@ class LayerHandler(QObject):
         iterator, featCount = self.getFeatureList(builtPolygonLyr, onlySelected=False)
         size = 100 / featCount if featCount else 0
         columns = self.getAttributesFromBlackList(
-            inputCenterPointLyr, attributeBlackList=attributeBlackList
+            inputCenterPointLyr,
+            attributeBlackList=attributeBlackList,
+            ignoreVirtualFields=False,
         )
         fields = self.getFieldsFromAttributeBlackList(
             inputCenterPointLyr,
             attributeBlackList,
             ignoreVirtualFields=False,
         )
-        for current, feat in enumerate(builtPolygonLyr.getFeatures()):
+        for current, feat in enumerate(iterator):
             if feedback is not None and feedback.isCanceled():
                 break
             featGeom = feat.geometry()
