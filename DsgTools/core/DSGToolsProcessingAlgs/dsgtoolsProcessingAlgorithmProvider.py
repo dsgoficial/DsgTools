@@ -146,6 +146,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.fileInventoryAlgorithm 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeometryType import (
     FilterLayerListByGeometryType,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.loadTrackerAlgorithm import (
+    LoadTrackerAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.pecCalculatorAlgorithm import (
     PecCalculatorAlgorithm,
 )
@@ -531,6 +534,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             Line2Multiline(),
             IdentifyDrainageAndContourInconsistencies(),
             ExtractElevationPoints(),
+            LoadTrackerAlgorithm(),
         ]
         return algList
 
