@@ -1,5 +1,7 @@
 from PyQt5.QtCore import QCoreApplication
 from datetime import datetime
+import concurrent.futures
+import os
 import re
 from ...algRunner import AlgRunner
 from qgis.core import (
@@ -168,7 +170,7 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
                 point.transform(transform)
             outputfeature.setGeometry(point)
             outputfeature.setAttributes(feat.attributes())
-            return feature
+            return outputfeature
         
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback is not None else None
         if multiStepFeedback is not None:
