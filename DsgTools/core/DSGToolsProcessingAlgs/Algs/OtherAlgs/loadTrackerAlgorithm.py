@@ -159,9 +159,7 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
         inputCrs = inputLyr.crs()
         if targetCrs is not None:
             transform = QgsCoordinateTransform(inputCrs, targetCrs, QgsProject.instance())
-        for feat in features:
-            if feedback is not None and feedback.isCanceled():
-                break
+        def compute(feat):
             outputfeature = QgsFeature()
             geom= feat.geometry()
             pointinput= geom.asPoint()
@@ -170,10 +168,33 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
                 point.transform(transform)
             outputfeature.setGeometry(point)
             outputfeature.setAttributes(feat.attributes())
-            outputLyr.addFeature(outputfeature)
-            if feedback is not None:
-                feedback.setProgress(current_idx * total)
-            current_idx += 1
+            return feature
+        
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback is not None else None
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+            multiStepFeedback.pushInfo(self.tr("Submitting tasks to thread..."))
+        futures = set()
+        featSet = set()
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
+
+        for current, feat in enumerate(features):
+            if multiStepFeedback is not None and feedback.isCanceled():
+                break
+            futures.add(pool.submit(compute, feat))
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * total)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+            multiStepFeedback.setProgressText(self.tr("Evaluating results..."))
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback is not None and feedback.isCanceled():
+                break
+            feat = future.result()
+            featSet.add(feat)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * total)
+        outputLyr.addFeatures(list(featSet))
         outputLyr.endEditCommand()
 
     def processAlgorithm(self, parameters, context, feedback):
