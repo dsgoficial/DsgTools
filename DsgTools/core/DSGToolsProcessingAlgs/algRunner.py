@@ -667,11 +667,10 @@ class AlgRunner:
         parameters = {
             "INPUT": inputLyr,
             "SELECTED": onlySelected,
-            "FLAGS": flagLyr,
+            "FLAGS": outputLyr,
             "ATTRIBUTE_BLACK_LIST": attributeBlackList,
             "IGNORE_VIRTUAL_FIELDS": ignoreVirtualFields,
             "IGNORE_PK_FIELDS": excludePrimaryKeys,
-            "OUTPUT": outputLyr,
         }
         output = processing.run(
             "dsgtools:removeduplicatedfeatures",
@@ -679,7 +678,7 @@ class AlgRunner:
             context=context,
             feedback=feedback,
         )
-        return output["OUTPUT"]
+        return output["FLAGS"]
 
     def runApplStylesFromDatabaseToLayers(
         self, inputList, context, styleName, feedback=None, outputLyr=None
@@ -912,7 +911,13 @@ class AlgRunner:
         return output["OUTPUT"]
 
     def runLineIntersections(
-        self, inputLyr, intersectLyr, context, feedback=None, outputLyr=None, is_child_algorithm=False
+        self,
+        inputLyr,
+        intersectLyr,
+        context,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {
@@ -927,7 +932,7 @@ class AlgRunner:
             parameters,
             context=context,
             feedback=feedback,
-            is_child_algorithm=is_child_algorithm
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -1504,16 +1509,25 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
-    
-    def extractWithinDistance(self, inputLyr, referenceLyr, distance, context, outputLyr=None, feedback=None, is_child_algorithm=False):
+
+    def extractWithinDistance(
+        self,
+        inputLyr,
+        referenceLyr,
+        distance,
+        context,
+        outputLyr=None,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
             "native:extractwithindistance",
             {
-                'INPUT': inputLyr,
-                'REFERENCE': referenceLyr,
-                'DISTANCE': distance,
-                'OUTPUT': outputLyr,
+                "INPUT": inputLyr,
+                "REFERENCE": referenceLyr,
+                "DISTANCE": distance,
+                "OUTPUT": outputLyr,
             },
             context=context,
             feedback=feedback,
