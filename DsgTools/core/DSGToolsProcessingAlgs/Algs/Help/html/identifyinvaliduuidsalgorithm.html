@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="br">
+
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+
+   <body>
+      
+      <div>
+         <p > Help versão 1.0<br>DsgTools versão 4.7.1</p>
+         <hr/>
+         <h2>Descrição:</h2>
+         <h4 style="text-align: center; padding: 6px;">
+            Identifica e conserta atributos das camadas que contém uuid inválido.
+         </h4>
+         <hr />
+      </div>
+
+      <div>
+         
+         <h2>Parâmetros:</h2>
+         <p>
+            <span style="margin-bottom: 10px;">
+                &#8226; Camada(s) de entrada &rarr;  Camada a ser processada em busca de uuid inválido.
+            </span>
+            <span style="margin-bottom: 10px;">
+                 &#8226; Nome do atributo &rarr;  Nome do atributo a ser verificado.
+             </span>
+             <span style="margin-bottom: 10px;">
+                 &#8226; Consertar? &rarr;  Conserta atributo automaticamente da camada.
+             </span>
+             <span style="margin-bottom: 10px;">
+                 &#8226; Compare only within same layer &rarr;  Comparar atributo apenas dentro da mesma camada.
+             </span>
+
+            <span style="color:#ff0000; font-weight: bold;"><u>Atenção:</u> A rotina também identifica feições multi partes.</span>
+         </p>  
+         <hr />
+
+
+      </div>
+      
+      <div>
+         <h2>Exemplo de uso: </h2>
+         <h4>Modelagem EDGV3.0 na escala de 1:25.000 (EPSG):4674</h4>
+
+         
+         <span style="margin-bottom: 10px;"> &#8226; Camada(s) de entrada &rarr;  aer_pista_ponto_pouso_p</span>
+         <span style="margin-bottom: 10px;"> &#8226; Nome do atributo &rarr;  id</span>
+         <span style="margin-bottom: 10px;"> &#8226; Consertar? &rarr;  false</span>
+         <span style="margin-bottom: 10px;"> &#8226; Compare only within same layer &rarr;  false</span>
+
+         <hr />
+      </div>
+      
+      <div>
+         <h2>Exemplo de Flag:</h2>
+         <center><img src= "{}"></center>
+         <p style="text-align: center; font-style: italic;">Feição com uuid inválido.</p>
+         <hr/>
+      </div> 
+   </body>
+
+</html>

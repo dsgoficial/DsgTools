@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="br">
+
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+
+   <body>
+      
+      <div>
+         <p > Help versão 1.0<br>DsgTools versão 4.7.1</p>
+         <hr/>
+         <h2>Descrição:</h2>
+         <h4 style="text-align: center; padding: 6px;">
+            Identifica os pontos onde o <u>trecho de drenagem</u> intersecta uma mesma <u>curva de nível</u>, subindo e descendo a cota.
+         </h4>
+         <hr />
+      </div>
+
+      <div>
+         
+         <h2>Parâmetros:</h2>
+         <p>
+            <span style="margin-bottom: 10px;">
+                &#8226; Layer de trecho drenagem &rarr;  Camada vetorial de linhas representando uma rede de drenagem.
+            </span>
+            
+            <span style="margin-bottom: 10px;">
+                &#8226; Layer de curva de nível &rarr;  Camada vetorial de linhas representando curvas de nível.
+            </span>
+            
+            <span style="margin-bottom: 10px;">
+                &#8226; Process is running inside model &rarr;  Um parâmetro booleano que indica se o algoritmo está sendo executado dentro de um model do QGIS. 
+            </span>
+            
+            <span style="color:#ff0000; font-weight: bold;"><u>Atenção:</u> Essa ferramenta não gera interseção nas classes entre si.</span>
+         </p>  
+         <hr />
+
+      </div>
+      
+      <div>
+         <h2>Exemplo de uso: </h2>
+         <h4>Modelagem EDGV3.0 na escala de 1:25.000 (EPSG):4674</h4>
+
+         <span style="margin-bottom: 10px;"> &#8226; Layer de trecho drenagem &rarr;  hid_trecho_drenagem_l</span> 
+         <span style="margin-bottom: 10px;"> &#8226; Layer de curva de nível &rarr;  rel_curva_nivel_l</span>
+         <span style="margin-bottom: 10px;"> &#8226; Process is running inside model &rarr;  False</span>
+
+         <hr />
+      </div>
+      
+      <div>
+         <h2>Exemplo de Flag:</h2>
+         <center><img src= "{}"></center>
+         <p style="text-align: center; font-style: italic;">hid_trecho_drenagem_l subindo e descendo rel_curva_nivel_l.</p>
+         <hr/>
+      </div> 
+   </body>
+
+</html>

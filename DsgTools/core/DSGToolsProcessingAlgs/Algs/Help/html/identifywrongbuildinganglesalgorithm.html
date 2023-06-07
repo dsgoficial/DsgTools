@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="br">
+
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+
+   <body>
+      
+      <div>
+         <p > Help versão 1.0<br>DsgTools versão 4.7.1</p>
+         <hr/>
+         <h2>Descrição:</h2>
+         <h4 style="text-align: center; padding: 6px;">
+            Identifica vértices de linhas ou polígonos cujos ângulos estão próximos (dentro da tolerância) de 90º, porém, não foram construídos como tal, apontando erro na construção.
+            
+         </h4>
+         <hr />
+      </div>
+
+      <div>
+         
+         <h2>Parâmetros:</h2>
+         <p>
+            <span style="margin-bottom: 10px;">
+                &#8226; Camadas de Entrada &rarr;  Camada do tipo polígono a ser processada em busca de ângulos incorretos.
+            </span>
+            <span style="margin-bottom: 10px;">
+                 &#8226; Tolerância angular em graus decimais &rarr;  Indica a diferença máxima, em relação a 90º, que um ângulo pode ter para ser considerado incorreto. Onde 0.00001 graus decimais ≅ 1 metro.
+             </span>
+            
+
+            
+            
+         </p>  
+         <hr />
+
+      </div>
+      
+      <div>
+         <h2>Exemplo de uso: </h2>
+         <h4>Modelagem EDGV3.0 na escala de 1:25.000 (EPSG):4674</h4>
+
+         <span style="margin-bottom: 10px;"></span> &#8226; Camadas de Entrada &rarr;  edf_edif_comerc_serv_a</span>
+         <span style="margin-bottom: 10px;"></span> &#8226; Tolerância angular em graus decimais &rarr;  0,01</span>
+         
+
+         <hr />
+      </div>
+      
+      <div>
+         <h2>Exemplo de Flag:</h2>
+         <center><img src= "{}"></center>
+         <p style="text-align: center; font-style: italic;">edf_edif_comerc_serv_a com ângulos menores que 90º.</p>
+         <hr/>
+      </div> 
+   </body>
+
+</html>

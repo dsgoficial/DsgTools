@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="br">
+
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+
+   <body>
+      
+      <div>
+         <p > Help versão 1.0<br>DsgTools versão 4.7.1</p>
+         <hr/>
+         <h2>Descrição:</h2>
+         <h4 style="text-align: center; padding: 6px;">
+            Este algoritmo provê uma interface de modo que o usuário consiga verificar se uma coleção de camadas respeita um conjunto de regras espaciais.
+         </h4>
+         <hr />
+      </div>
+
+      <div>
+         
+         <h2>Parâmetros:</h2>
+         <p>
+            <span style="margin-bottom: 10px;">
+               &#8226; Nome da regra &rarr; Descrição da regra a ser aplicada ao atributo.
+            </span>
+            
+            <span style="margin-bottom: 10px;">
+                &#8226; Camada A &rarr; Camada referência sob a qual será aplicado predicado espacial selecionado.
+            </span>
+            
+            <span style="margin-bottom: 10px;">
+                &#8226; Filtro A &rarr;  Filtro de feições aplicado na camada A, de modo a restringir as feições que serão utilizadas na regra espacial.
+            </span>
+            
+            <span style="margin-bottom: 10px;">
+                &#8226; Predicado &rarr;  Coluna que apresenta um nome amigável que representa a regra espacial aplicada.
+            </span>
+
+            <span style="margin-bottom: 10px;">
+                 &#8226; Camada B &rarr;  Camada que será relacionada à camada referência quando aplicado o predicado espacial selecionado (pode ser a mesma camada que A).
+            </span>
+
+            <span style="margin-bottom: 10px;">
+                 &#8226; Filtro B &rarr;  Filtro de feições aplicado na camada B, de modo a restringir as feições que serão utilizadas na regra espacial.
+            </span>
+
+            <span style="margin-bottom: 10px;">
+                 &#8226; Cardinalidade &rarr;  Representa a multiplicade dos eventos observados ao se utilizar o predicado selecionado entre feições de A e B. Segue o padrão "Nmin..Nmax", onde "Nmin" é o número de mínimo de feições de B que se relacionam com uma feição de A, e "Nmax", o máximo de feições de B. Por default, é "1..*", em que "*" indica "qualquer valor" (leia-se 1 ou mais, neste caso).
+            </span>
+            
+         </p>  
+         <hr />
+
+      </div>
+      
+      <div>
+         <h2>Exemplo de uso: </h2>
+         <h4>Modelagem EDGV3.0 na escala de 1:25.000 (EPSG):4674</h4>
+
+         <span style="margin-bottom: 10px;"> &#8226; Nome da regra &rarr;  Regra 1</span>
+         <span style="margin-bottom: 10px;"> &#8226; Camada A &rarr;  cbge_deposito_geral_p </span>
+         <span style="margin-bottom: 10px;"> &#8226; Filtro A &rarr;  opcional</span>
+         <span style="margin-bottom: 10px;"> &#8226; Predicado &rarr;  Toca</span>
+         <span style="margin-bottom: 10px;"> &#8226; Camada B &rarr;  hid_massa_dagua_a</span>
+         <span style="margin-bottom: 10px;"> &#8226; Filtro B &rarr;  opcional</span>
+         <span style="margin-bottom: 10px;"> &#8226; Cardinalidade &rarr;  opcional</span>
+
+         <hr />
+      </div>
+      
+      <div>
+         <h2>Exemplo de Flag:</h2>
+         <center><img src= "{}"></center>
+         <p style="text-align: center; font-style: italic;">cbge_deposito_geral_p está tocando a classe hid_massa_dagua_a.</p>
+         <hr/>
+      </div> 
+   </body>
+
+</html>
