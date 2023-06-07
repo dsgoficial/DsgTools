@@ -40,6 +40,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 from .validationAlgorithm import ValidationAlgorithm
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 
 class IdentifyDrainageLoops(ValidationAlgorithm):
@@ -243,6 +244,12 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyDrainageLoops", string)
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return  help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyDrainageLoops()

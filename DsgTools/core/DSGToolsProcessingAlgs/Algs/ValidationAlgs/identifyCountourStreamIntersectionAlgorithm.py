@@ -39,6 +39,7 @@ from qgis.PyQt.QtCore import QCoreApplication, QVariant
 from qgis.utils import iface
 
 from .validationAlgorithm import ValidationAlgorithm
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 
 class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
@@ -285,6 +286,12 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
         return QCoreApplication.translate(
             "IdentifyCountourStreamIntersectionAlgorithm", string
         )
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return  help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyCountourStreamIntersectionAlgorithm()

@@ -38,6 +38,7 @@ from qgis.core import (
 from qgis import processing
 
 from .validationAlgorithm import ValidationAlgorithm
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 
 class VerifyCountourStackingAlgorihtm(ValidationAlgorithm):
@@ -324,6 +325,12 @@ class VerifyCountourStackingAlgorihtm(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate("VerifyCountourStackingAlgorihtm", string)
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return  help().helpUrl(self.name())
 
     def createInstance(self):
         return VerifyCountourStackingAlgorihtm()

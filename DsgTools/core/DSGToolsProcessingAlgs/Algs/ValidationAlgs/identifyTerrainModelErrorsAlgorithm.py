@@ -41,6 +41,7 @@ from qgis.core import (
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 from .validationAlgorithm import ValidationAlgorithm
 
@@ -328,6 +329,12 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyTerrainModelErrorsAlgorithm", string)
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return  help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyTerrainModelErrorsAlgorithm()

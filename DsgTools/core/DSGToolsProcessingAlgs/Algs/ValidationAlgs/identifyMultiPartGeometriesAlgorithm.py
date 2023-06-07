@@ -50,6 +50,7 @@ from qgis.core import (
 )
 
 from .validationAlgorithm import ValidationAlgorithm
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 
 class IdentifyMultiPartGeometriesAlgorithm(ValidationAlgorithm):
@@ -152,6 +153,12 @@ class IdentifyMultiPartGeometriesAlgorithm(ValidationAlgorithm):
         return QCoreApplication.translate(
             "IdentifyMultiPartGeometriesAlgorithm", string
         )
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return  help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyMultiPartGeometriesAlgorithm()

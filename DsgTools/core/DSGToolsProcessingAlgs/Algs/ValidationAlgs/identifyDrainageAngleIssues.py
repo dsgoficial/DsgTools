@@ -45,6 +45,7 @@ from qgis.core import (
 
 from .validationAlgorithm import ValidationAlgorithm
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 
 class IdentifyDrainageAngleIssues(ValidationAlgorithm):
@@ -183,6 +184,12 @@ class IdentifyDrainageAngleIssues(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyDrainageAngleIssues", string)
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return  help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyDrainageAngleIssues()

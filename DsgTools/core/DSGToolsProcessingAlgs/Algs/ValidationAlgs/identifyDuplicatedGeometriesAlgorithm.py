@@ -38,6 +38,7 @@ from qgis.core import (
 from qgis.PyQt.QtCore import QCoreApplication
 
 from .validationAlgorithm import ValidationAlgorithm
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 
 class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
@@ -146,6 +147,12 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         return QCoreApplication.translate(
             "IdentifyDuplicatedGeometriesAlgorithm", string
         )
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return  help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyDuplicatedGeometriesAlgorithm()
