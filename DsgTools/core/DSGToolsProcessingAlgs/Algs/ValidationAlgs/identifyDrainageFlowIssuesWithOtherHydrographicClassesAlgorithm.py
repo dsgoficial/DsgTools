@@ -48,6 +48,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
     WATER_BODY_WITH_FLOW_LAYER = "WATER_BODY_WITH_FLOW_LAYER"
     WATER_BODY_WITHOUT_FLOW_LAYER = "WATER_BODY_WITHOUT_FLOW_LAYER"
     OCEAN_LAYER = "OCEAN_LAYER"
+    GEOGRAPHIC_BOUNDARY = "GEOGRAPHIC_BOUNDARY"
     POINT_FLAGS = "POINT_FLAGS"
     LINE_FLAGS = "LINE_FLAGS"
     POLYGON_FLAGS = "POLYGON_FLAGS"
@@ -105,6 +106,16 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             )
         )
         self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.GEOGRAPHIC_BOUNDARY,
+                self.tr(
+                    "Geographic Boundary (this layer only filters the output dangles)"
+                ),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True,
+            )
+        )
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.POINT_FLAGS, self.tr("{0} point flags").format(self.displayName())
             )
@@ -142,6 +153,9 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             parameters, self.WATER_BODY_WITHOUT_FLOW_LAYER, context
         )
         oceanLyr = self.parameterAsLayer(parameters, self.OCEAN_LAYER, context)
+        geographicBoundsLyr = self.parameterAsVectorLayer(
+            parameters, self.GEOGRAPHIC_BOUNDARY, context
+        )
         (self.pointFlagSink, self.point_flag_id) = self.prepareAndReturnFlagSink(
             parameters, inputDrainagesLyr, QgsWkbTypes.Point, context, self.POINT_FLAGS
         )
@@ -176,7 +190,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             spillwayLayer,
             waterBodyWithFlowLyr,
             waterBodyWithoutFlowLyr,
-            oceanLyr
+            oceanLyr,
         ) = self.buildCacheAndSpatialIndexOnLayerList(
             layerList=[
                 waterSinkLayer,
@@ -202,6 +216,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             drainageStartAndEndPointDict,
         ) = self.buildAuxStructures(
             inputDrainagesLyr=inputDrainagesLyr,
+            geographicBoundsLyr=geographicBoundsLyr,
             context=context,
             feedback=multiStepFeedback,
         )
@@ -337,7 +352,10 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         cacheLyr = self.algRunner.runMultipartToSingleParts(
-            inputLayer=layer, context=context, feedback=multiStepFeedback, is_child_algorithm=True
+            inputLayer=layer,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         multiStepFeedback.setCurrentStep(1)
         cacheLyr = self.algRunner.runAddAutoIncrementalField(
@@ -345,12 +363,17 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         )
         multiStepFeedback.setCurrentStep(2)
         self.algRunner.runCreateSpatialIndex(
-            inputLyr=cacheLyr, context=context, feedback=multiStepFeedback, is_child_algorithm=True
+            inputLyr=cacheLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         return cacheLyr
 
-    def buildAuxStructures(self, inputDrainagesLyr, context, feedback):
-        multiStepFeedback = QgsProcessingMultiStepFeedback(9, feedback)
+    def buildAuxStructures(
+        self, inputDrainagesLyr, geographicBoundsLyr, context, feedback
+    ):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(11, feedback)
         multiStepFeedback.setCurrentStep(0)
         inputDrainagesLyr = self.algRunner.runMultipartToSingleParts(
             inputLayer=inputDrainagesLyr, context=context, feedback=multiStepFeedback
@@ -373,28 +396,44 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         startPointsLyr = self.algRunner.runMultipartToSingleParts(
             inputLayer=startPointsLyr, context=context, feedback=multiStepFeedback
         )
-        startPointDict = {feat["featid"]: feat for feat in startPointsLyr.getFeatures()}
         multiStepFeedback.setCurrentStep(4)
+        startPointsLyr = self.algRunner.runExtractByLocation(
+            inputLyr=startPointsLyr,
+            intersectLyr=geographicBoundsLyr,
+            predicate=[0],
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        startPointDict = {feat["featid"]: feat for feat in startPointsLyr.getFeatures()}
+        multiStepFeedback.setCurrentStep(5)
         self.algRunner.runCreateSpatialIndex(
             inputLyr=startPointsLyr, context=context, feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(5)
+        multiStepFeedback.setCurrentStep(6)
         endPointsLyr = self.algRunner.runExtractSpecificVertices(
             inputLyr=cachedInputDrainagesLyr,
             vertices="-1",
             context=context,
             feedback=multiStepFeedback,
         )
-        multiStepFeedback.setCurrentStep(6)
+        multiStepFeedback.setCurrentStep(7)
+        endPointsLyr = self.algRunner.runExtractByLocation(
+            inputLyr=endPointsLyr,
+            intersectLyr=geographicBoundsLyr,
+            predicate=[0],
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        multiStepFeedback.setCurrentStep(8)
         endPointsLyr = self.algRunner.runMultipartToSingleParts(
             inputLayer=endPointsLyr, context=context, feedback=multiStepFeedback
         )
         endPointDict = {feat["featid"]: feat for feat in endPointsLyr.getFeatures()}
-        multiStepFeedback.setCurrentStep(7)
+        multiStepFeedback.setCurrentStep(9)
         self.algRunner.runCreateSpatialIndex(
             inputLyr=endPointsLyr, context=context, feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(8)
+        multiStepFeedback.setCurrentStep(10)
         nFeats = cachedInputDrainagesLyr.featureCount()
         if nFeats == 0:
             return (
@@ -405,7 +444,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 startPointDict,
                 endPointDict,
             )
-        stepSize = 100/nFeats
+        stepSize = 100 / nFeats
         drainageStartAndEndPointDict = defaultdict(set)
         for current, (featid, feat) in enumerate(drainageDict.items()):
             if multiStepFeedback.isCanceled():
@@ -415,7 +454,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             endPoint = endPointDict[featid].geometry().asWkt()
             drainageStartAndEndPointDict[endPoint].add(feat)
             multiStepFeedback.setProgress(current * stepSize)
-        
+
         return (
             cachedInputDrainagesLyr,
             startPointsLyr,
@@ -501,7 +540,15 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         )
         list(map(flagLambda, invalidIntersection.getFeatures()))
 
-    def validateRelationshipWithWaterBody(self, startPoinLyr, waterBodyLyr, drainageStartAndEndPointDict, flagText, context, feedback):
+    def validateRelationshipWithWaterBody(
+        self,
+        startPoinLyr,
+        waterBodyLyr,
+        drainageStartAndEndPointDict,
+        flagText,
+        context,
+        feedback,
+    ):
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         invalidIntersection = self.algRunner.runExtractByLocation(
@@ -514,7 +561,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         nFeatures = invalidIntersection.featureCount()
         if nFeatures == 0:
             return
-        stepSize = 100/nFeatures
+        stepSize = 100 / nFeatures
         nodeDict = defaultdict(set)
         for current, nodeFeat in enumerate(invalidIntersection.getFeatures()):
             if multiStepFeedback.isCanceled():
@@ -527,7 +574,9 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             multiStepFeedback.setProgress(current * stepSize)
         multiStepFeedback.setCurrentStep(2)
         errorList = [
-            QgsGeometry.fromWkt(geomWkt) for geomWkt, idSet in nodeDict.items() if len(idSet) == 1
+            QgsGeometry.fromWkt(geomWkt)
+            for geomWkt, idSet in nodeDict.items()
+            if len(idSet) == 1
         ]
         flagLambda = lambda x: self.flagFeature(
             x, flagText=flagText, sink=self.pointFlagSink
@@ -542,8 +591,8 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         endPointDict,
         waterBodyName,
         feedback,
-        withFlow = False,
-     ):
+        withFlow=False,
+    ):
         nFeats = waterBodyLyr.featureCount()
         if nFeats == 0:
             return
@@ -581,7 +630,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                 drainageGeom = drainageFeat.geometry()
                 if not geomEngine.intersects(drainageGeom.constGet()):
                     continue
-                if geomEngine.relatePattern(drainageGeom.constGet(), '102F*1FF2'):
+                if geomEngine.relatePattern(drainageGeom.constGet(), "102F*1FF2"):
                     continue
                 if geomEngine.contains(drainageGeom.constGet()):
                     continue
@@ -625,8 +674,6 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
             if polygonWithProblem is not None:
                 flagPolygonLambda(polygonWithProblem)
             multiStepFeedback.setProgress(current * stepSize)
-
-    
 
     def validateDrainagesEndPoints(self, endPointDict, elementList, feedback):
         nFeats = len(endPointDict)
