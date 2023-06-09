@@ -449,10 +449,12 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         for current, (featid, feat) in enumerate(drainageDict.items()):
             if multiStepFeedback.isCanceled():
                 break
-            startPoint = startPointDict[featid].geometry().asWkt()
-            drainageStartAndEndPointDict[startPoint].add(feat)
-            endPoint = endPointDict[featid].geometry().asWkt()
-            drainageStartAndEndPointDict[endPoint].add(feat)
+            if featid in startPointDict:
+                startPoint = startPointDict[featid].geometry().asWkt()
+                drainageStartAndEndPointDict[startPoint].add(feat)
+            if featid in endPointDict:
+                endPoint = endPointDict[featid].geometry().asWkt()
+                drainageStartAndEndPointDict[endPoint].add(feat)
             multiStepFeedback.setProgress(current * stepSize)
 
         return (
