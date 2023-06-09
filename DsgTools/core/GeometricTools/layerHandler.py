@@ -2534,12 +2534,16 @@ class LayerHandler(QObject):
         iterator, featCount = self.getFeatureList(builtPolygonLyr, onlySelected=False)
         size = 100 / featCount if featCount else 0
         columns = self.getAttributesFromBlackList(
-            inputCenterPointLyr, attributeBlackList=attributeBlackList
+            inputCenterPointLyr,
+            attributeBlackList=attributeBlackList,
+            ignoreVirtualFields=False,
         )
         fields = self.getFieldsFromAttributeBlackList(
-            inputCenterPointLyr, attributeBlackList
+            inputCenterPointLyr,
+            attributeBlackList,
+            ignoreVirtualFields=False,
         )
-        for current, feat in enumerate(builtPolygonLyr.getFeatures()):
+        for current, feat in enumerate(iterator):
             if feedback is not None and feedback.isCanceled():
                 break
             featGeom = feat.geometry()
@@ -2569,7 +2573,9 @@ class LayerHandler(QObject):
                     feedback.setCurrentStep(current * size)
         return builtPolygonToCenterPointDict
 
-    def getFieldsFromAttributeBlackList(self, originalLayer, attributeBlackList):
+    def getFieldsFromAttributeBlackList(
+        self, originalLayer, attributeBlackList, ignoreVirtualFields=True
+    ):
         """
         Create a QgsFields with only columns that are not at attributeBlackList
         :params originalLayer: Layer from where will be taken the fields
@@ -2578,7 +2584,9 @@ class LayerHandler(QObject):
         :return fields: (QgsFields) with the fields necessary
         """
         columns = self.getAttributesFromBlackList(
-            originalLayer, attributeBlackList=attributeBlackList
+            originalLayer,
+            attributeBlackList=attributeBlackList,
+            ignoreVirtualFields=ignoreVirtualFields,
         )
         fields = QgsFields()
         for f in originalLayer.fields():
@@ -2904,6 +2912,24 @@ class LayerHandler(QObject):
             inputLyr=temp, context=context, is_child_algorithm=True
         )
         return temp
+
+    def createMemoryLayerWithFeatures(
+        self, featList, fields, crs, wkbType, context=None, isSource=False
+    ):
+        context = QgsProcessingContext() if context is None else context
+        temp_name = f"temp-{str(uuid4())}" if not isSource else f"{str(uuid4())}"
+        temp = QgsVectorLayer(
+            f"{QgsWkbTypes.displayString(wkbType)}?crs={crs.authid()}",
+            temp_name,
+            "memory",
+        )
+        temp_data = temp.dataProvider()
+        temp_data.addAttributes(fields.toList())
+        temp.updateFields()
+        temp_data.addFeatures(featList)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=temp, context=context, is_child_algorithm=True
+        )
     
     def createMemoryLayerFromGeometry(self, geom, crs):
         temp = QgsVectorLayer(
