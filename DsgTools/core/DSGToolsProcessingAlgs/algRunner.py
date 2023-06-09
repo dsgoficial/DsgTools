@@ -1498,3 +1498,25 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
+
+    def runUnbuildPolygons(self, inputPolygonList, context, onlySelected=False, lineConstraintLayerList=None, polygonConstraintLayerList=None, geographicBoundary=None, feedback=None, outputCenterPointsLyr=None, outputBoundariesLyr=None, is_child_algorithm=False):
+        lineConstraintLayerList = [] if lineConstraintLayerList is None else lineConstraintLayerList
+        polygonConstraintLayerList = [] if polygonConstraintLayerList is None else polygonConstraintLayerList
+        outputCenterPointsLyr = "memory:" if outputCenterPointsLyr is None else outputCenterPointsLyr
+        outputBoundariesLyr = "memory:" if outputBoundariesLyr is None else outputBoundariesLyr
+        output = processing.run(
+            "dsgtools:unbuildpolygonsalgorithm",
+            {
+                'INPUT_POLYGONS': inputPolygonList,
+                'SELECTED': onlySelected,
+                'CONSTRAINT_LINE_LAYERS': lineConstraintLayerList,
+                'CONSTRAINT_POLYGON_LAYERS': polygonConstraintLayerList,
+                'GEOGRAPHIC_BOUNDARY': geographicBoundary,
+                'OUTPUT_CENTER_POINTS': outputCenterPointsLyr,
+                'OUTPUT_BOUNDARIES': outputBoundariesLyr
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output['OUTPUT_CENTER_POINTS'], output['OUTPUT_BOUNDARIES']

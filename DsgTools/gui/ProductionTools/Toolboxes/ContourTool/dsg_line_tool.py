@@ -31,7 +31,7 @@ class DsgLineTool(QgsMapTool):
 
     lineCreated = pyqtSignal(QgsGeometry)
 
-    def __init__(self, canvas):
+    def __init__(self, canvas, geometryType=None):
         """
         Constructor
         """
@@ -39,6 +39,7 @@ class DsgLineTool(QgsMapTool):
 
         self.canvas = canvas
         self.rubberBand = None
+        self.geometryType = QgsWkbTypes.LineGeometry if geometryType is None else geometryType
         self.reset()
 
     def deactivate(self):
@@ -57,7 +58,7 @@ class DsgLineTool(QgsMapTool):
         myGreen = int(settings.value("/qgis/default_measure_color_green", 155))
         myBlue = int(settings.value("/qgis/default_measure_color_blue", 67))
 
-        self.rubberBand = QgsRubberBand(self.canvas)
+        self.rubberBand = QgsRubberBand(self.canvas, geometryType=self.geometryType)
         self.rubberBand.setColor(QColor(myRed, myGreen, myBlue, 100))
         self.rubberBand.setWidth(3)
 
@@ -66,7 +67,7 @@ class DsgLineTool(QgsMapTool):
         Resets the tool
         """
         if self.rubberBand:
-            self.rubberBand.reset(QgsWkbTypes.LineGeometry)
+            self.rubberBand.reset(self.geometryType)
         self.isEmittingPoint = False
         self.defineRubberBand()
 
@@ -115,3 +116,7 @@ class DsgLineTool(QgsMapTool):
             return m.point()
         else:
             return self.canvas.getCoordinateTransform().toMapCoordinates(p)
+
+class DsgPolygonTool(DsgLineTool):
+    def __init__(self, canvas):
+        super(DsgPolygonTool, self).__init__(canvas, geometryType=QgsWkbTypes.PolygonGeometry)

@@ -22,6 +22,9 @@
 """
 import os
 from typing import List, Optional
+from DsgTools.gui.ProductionTools.Toolboxes.ContourTool.dsg_line_tool import DsgPolygonTool
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
 from processing.gui.MultipleInputDialog import MultipleInputDialog
 
@@ -36,6 +39,8 @@ from qgis.core import (
     QgsVectorLayer,
     QgsWkbTypes,
     QgsFeature,
+    QgsGeometry,
+    QgsProcessingContext,
 )
 from qgis.gui import QgsMapTool, QgsMessageBar, QgisInterface
 from qgis.PyQt import QtCore, QtGui, uic
@@ -73,9 +78,14 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
 
         self.lineLayerDict = dict()
 
+        self.tool = DsgPolygonTool(self.canvas)
+        self.tool.lineCreated.connect(self.runBuildPolygons)
+        self.tool.deactivated.connect(self.deactivateButton)
         self.iface.newProjectCreated.connect(self.resetTool)
         QgsProject.instance().layersWillBeRemoved.connect(self.syncLayers)
         self.enableTool(enabled=False)
+        self.layerHandler = LayerHandler()
+        self.algRunner = AlgRunner()
 
     def add_action(
         self,
@@ -90,9 +100,36 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
         if parent:
             parent.addAction(action)
         return action
+    
+    def deactivateButton(self):
+        self.runPushButton.setChecked(False)
 
     def enableTool(self, enabled: bool = True) -> None:
         self.runPushButton.setEnabled(enabled)
+    
+    def runBuildPolygons(self, geom: QgsGeometry):
+        """
+        1. criar camada temporária da geometria do rubberband
+        2. chamar processing do dsgtools
+        3. carregar a saída do processing como camada temporária
+        """
+        lyr = self.layerHandler.createMemoryLayerFromGeometry(geom, crs=QgsProject.instance().crs())
+        outputCenterPointsLyr, _ = self.algRunner.runUnbuildPolygons(
+            inputPolygonList=[lyr],
+            lineConstraintLayerList=list(self.lineLayerDict.values()),
+            context=QgsProcessingContext()
+        )
+        node = self.findNode()
+        QgsProject.instance().addMapLayer(outputCenterPointsLyr, addToLegend=False)
+        node.addLayer(outputCenterPointsLyr)
+    
+    def findNode(self):
+        rootNode = QgsProject.instance().layerTreeRoot()
+        groupName = "DSGTools_Output"
+        groupNode = rootNode.findGroup(groupName)
+        groupNode = groupNode if groupNode else rootNode.insertGroup(0, groupName)
+        return groupNode
+        
 
     @pyqtSlot(bool, name="on_centerPointPushButton_toggled")
     def toggleBar(self, toggled: Optional[bool] = None) -> None:
@@ -107,6 +144,7 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
 
     def resetTool(self):
         self.lineLayerDict = dict()
+        self.tool.deactivate()
 
     def syncLayers(self, layerids):
         for lyrid in layerids:
@@ -116,7 +154,10 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_runPushButton_clicked(self) -> None:
-        print(self.lineLayerDict)
+        if self.runPushButton.isChecked():
+            self.iface.mapCanvas().setMapTool(self.tool)
+        else:
+            self.tool.deactivate()
 
     @pyqtSlot(bool)
     def on_configPushButton_clicked(self) -> None:
@@ -153,3 +194,4 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
         self.iface.unregisterMainWindowAction(self.runPushButtonAction)
         self.iface.newProjectCreated.disconnect(self.resetTool)
         QgsProject.instance().layersWillBeRemoved.disconnect(self.syncLayers)
+        self.iface.mapCanvas().unsetMapTool(self.tool)
