@@ -2052,7 +2052,7 @@ class LayerHandler(QObject):
         context = (
             dataobjects.createContext(feedback=feedback) if context is None else context
         )
-        multiStepFeedback = QgsProcessingMultiStepFeedback(8, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(9, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Getting constraint lines"))
         linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
@@ -2083,16 +2083,21 @@ class LayerHandler(QObject):
             explodedEdges, context, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(6)
+        mergedLines = self.algRunner.runMergeVectorLayers(
+            inputList=[explodedWithoutDuplicates, linesLyr],
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        multiStepFeedback.setCurrentStep(7)
         self.buildCenterPoints(
-            inputLyr,
-            outputCenterPointSink,
-            explodedWithoutDuplicates,
-            linesLyr,
+            inputLyr=inputLyr,
+            linesLyr=mergedLines,
+            outputCenterPointSink=outputCenterPointSink,
             feedback=multiStepFeedback,
             context=context,
             algRunner=algRunner,
         )
-        multiStepFeedback.setCurrentStep(7)
+        multiStepFeedback.setCurrentStep(8)
         self.filterEdges(
             explodedWithoutDuplicates,
             constraintSpatialIdx,
@@ -2105,6 +2110,7 @@ class LayerHandler(QObject):
     def buildCenterPoints(
         self,
         inputLyr,
+        linesLyr,
         outputCenterPointSink,
         context=None,
         feedback=None,
@@ -2119,16 +2125,18 @@ class LayerHandler(QObject):
         context = (
             dataobjects.createContext(feedback=feedback) if context is None else context
         )
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
         multiStepFeedback.setCurrentStep(0)
         outputPolygonLyr = algRunner.runPolygonize(
-            inputLyr, context, feedback=multiStepFeedback
+            linesLyr, context, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(1)
         centroidLyr = algRunner.runPointOnSurface(
             outputPolygonLyr, context, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(2)
+        algRunner.runCreateSpatialIndex(centroidLyr, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        multiStepFeedback.setCurrentStep(3)
         centroidsWithAttributes = algRunner.runJoinAttributesByLocation(
             centroidLyr, inputLyr, context, feedback=multiStepFeedback
         )
@@ -2922,4 +2930,16 @@ class LayerHandler(QObject):
         self.algRunner.runCreateSpatialIndex(
             inputLyr=temp, context=context, is_child_algorithm=True
         )
+    
+    def createMemoryLayerFromGeometry(self, geom, crs):
+        temp = QgsVectorLayer(
+            f"{QgsWkbTypes.displayString(geom.wkbType())}?crs={crs.authid()}",
+            "temp_layer",
+            "memory",
+        )
+        temp_data = temp.dataProvider()
+        fields = QgsFields()
+        feat = QgsFeature(fields)
+        feat.setGeometry(geom)
+        temp_data.addFeature(feat)
         return temp

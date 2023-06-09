@@ -25,6 +25,10 @@ from builtins import object
 import os.path
 import sys
 
+from .CenterPointAndBoundariesToolbar.centerPointAndBoundariesTool import (
+    CenterPointAndBoundariesToolbar,
+)
+
 from .ReviewTools.reviewToolbar import ReviewToolbar
 
 from .MinimumAreaTool.minimumAreaTool import MinimumAreaTool
@@ -62,6 +66,15 @@ class ToolbarsGuiManager(QObject):
         self.createToolbarAndAddWidget(
             name="DSGTools_Review_Toolbar", widget=self.reviewTool
         )
+        # adding center point tool
+        self.centerPointAndBoundariesTool = CenterPointAndBoundariesToolbar(
+            self.iface, parent=self.parentMenu
+        )
+        self.createToolbarAndAddWidget(
+            name="DSGTools_CenterPointAndBoundaries_Toolbar",
+            widget=self.centerPointAndBoundariesTool,
+        )
+
         # adding style tools
         self.styleManagerTool = StyleManagerTool(self.iface, parent=self.parentMenu)
         self.createToolbarAndAddWidget(
