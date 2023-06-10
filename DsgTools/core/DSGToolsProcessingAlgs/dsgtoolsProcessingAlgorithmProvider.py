@@ -177,6 +177,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.stringCsvToLayerListAlg
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateOriginalLayerAlgorithm import (
     UpdateOriginalLayerAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.validateTrackerAlgorithm import (
+    ValidateTrackerAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnIntersectionsAlgorithm import (
     AddUnsharedVertexOnIntersectionsAlgorithm,
 )
@@ -539,6 +542,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ExtractElevationPoints(),
             LoadTrackerAlgorithm(),
             IdentifyErrorsBetweenDamAndRoadsAlgorithm(),
+            ValidateTrackerAlgorithm()
         ]
         return algList
 
