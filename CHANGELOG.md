@@ -8,6 +8,7 @@ Novas Funcionalidades:
 - Nova funcionalidade de mostrar o comprimento da linha ou a área enquanto se digitaliza (portado do DSGTools OP);
 - Nova funcionalidade de verificar o fluxo de drenagens com relação às curvas de nível (reescrito a partir de código do ferramentas experimentais);
 - Novo processo de extrair pontos cotados segundo as regras da MTM;
+- Nova ferramenta de extrair centroides a partir de linhas e polígono digitalizado na tela (Center Point Tool);
 
 Melhorias:
 
