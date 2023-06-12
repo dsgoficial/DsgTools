@@ -177,6 +177,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.stringCsvToLayerListAlg
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateOriginalLayerAlgorithm import (
     UpdateOriginalLayerAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateRunwayAltitudeAlgorithm import (
+    UpdateRunwayAltitudeAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.validateTrackerAlgorithm import (
     ValidateTrackerAlgorithm,
 )
@@ -542,7 +545,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ExtractElevationPoints(),
             LoadTrackerAlgorithm(),
             IdentifyErrorsBetweenDamAndRoadsAlgorithm(),
-            ValidateTrackerAlgorithm()
+            ValidateTrackerAlgorithm(),
+            UpdateRunwayAltitudeAlgorithm()
         ]
         return algList
 
