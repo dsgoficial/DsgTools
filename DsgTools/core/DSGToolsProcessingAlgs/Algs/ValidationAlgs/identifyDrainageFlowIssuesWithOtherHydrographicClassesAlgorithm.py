@@ -641,11 +641,19 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
                     QgsWkbTypes.geometryType(intersection.wkbType())
                     == QgsWkbTypes.PointGeometry
                 ):
-                    outCount += geomEngine.intersects(
-                        startPointDict[drainageFeat["featid"]].geometry().constGet()
+                    outCount += (
+                        0
+                        if drainageFeat["featid"] not in startPointDict
+                        else geomEngine.intersects(
+                            startPointDict[drainageFeat["featid"]].geometry().constGet()
+                        )
                     )
-                    inCount += geomEngine.intersects(
-                        endPointDict[drainageFeat["featid"]].geometry().constGet()
+                    inCount += (
+                        0
+                        if drainageFeat["featid"] not in endPointDict
+                        else geomEngine.intersects(
+                            endPointDict[drainageFeat["featid"]].geometry().constGet()
+                        )
                     )
                     continue
                 interWkt = intersection.asWkt()
