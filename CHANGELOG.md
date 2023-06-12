@@ -22,6 +22,7 @@ Correção de bug:
 - Corrigido bug de feições geradas com vértices duplicados na ferramenta de criação de grid sistemático;
 - Corrigido bug de erro na precisão dos vértices gerados na ferramenta de criação de grid sistemático;
 - Corrigido bug de flag incorreta de delimitador não utilizado no processo de construir polígonos;
+- Corrigido bug no processo de identificar vértice duplicado com camadas do tipo polígono (o primeiro ponto de cada linear ring era indicado como flag);
 
 ## 4.7.1 - 2023-05-10
 
