@@ -50,6 +50,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QMessageBox, QSpinBox, QWidget
 from qgis.PyQt.QtXml import QDomDocument
 from qgis.core.additions.edit import edit
+import processing
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "centerPointAndBoundaries.ui")
@@ -107,21 +108,22 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
     def enableTool(self, enabled: bool = True) -> None:
         self.runPushButton.setEnabled(enabled)
     
-    def runBuildPolygons(self, geom: QgsGeometry):
-        """
-        1. criar camada temporária da geometria do rubberband
-        2. chamar processing do dsgtools
-        3. carregar a saída do processing como camada temporária
-        """
+    def runBuildPolygons(self, geom: QgsGeometry, merge = None):
+        layer_list = QgsProject.instance().mapLayersByName('Centroides')
+        outputLyr = None if len(layer_list) == 0 else layer_list[0]
         lyr = self.layerHandler.createMemoryLayerFromGeometry(geom, crs=QgsProject.instance().crs())
         outputCenterPointsLyr, _ = self.algRunner.runUnbuildPolygons(
             inputPolygonList=[lyr],
             lineConstraintLayerList=list(self.lineLayerDict.values()),
-            context=QgsProcessingContext()
+            context=QgsProcessingContext(),
         )
+        outputCenterPointsLyr = self.runMerge(outputLyr, outputCenterPointsLyr) if outputLyr is not None else outputCenterPointsLyr
+        outputCenterPointsLyr.setName('Centroides')
         node = self.findNode()
         QgsProject.instance().addMapLayer(outputCenterPointsLyr, addToLegend=False)
         node.addLayer(outputCenterPointsLyr)
+        if outputLyr is not None:
+            QgsProject.instance().removeMapLayer(outputLyr.id())
     
     def findNode(self):
         rootNode = QgsProject.instance().layerTreeRoot()
@@ -129,7 +131,16 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
         groupNode = rootNode.findGroup(groupName)
         groupNode = groupNode if groupNode else rootNode.insertGroup(0, groupName)
         return groupNode
-        
+    
+    def runMerge(self, existente, novo):
+        merge = processing.run(
+            'native:mergevectorlayers',
+            {
+                'LAYERS': [existente, novo],
+                'OUTPUT': 'TEMPORARY_OUTPUT'
+            }
+        )
+        return merge['OUTPUT']
 
     @pyqtSlot(bool, name="on_centerPointPushButton_toggled")
     def toggleBar(self, toggled: Optional[bool] = None) -> None:
