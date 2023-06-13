@@ -23,7 +23,6 @@
 
 import psycopg2
 import psycopg2.extras
-from processing.gui.wrappers import WidgetWrapper
 from qgis.core import (
     QgsDataSourceUri,
     QgsProcessingAlgorithm,
@@ -36,7 +35,6 @@ from qgis.core import (
     QgsProcessingOutputRasterLayer,
 )
 from qgis.PyQt.QtCore import QCoreApplication
-from qgis.PyQt.QtWidgets import QLineEdit
 from qgis.utils import iface
 
 
@@ -81,12 +79,12 @@ class LoadRasterLayerFromServerAlgorithm(QgsProcessingAlgorithm):
             )
         )
 
-        password = QgsProcessingParameterString(
-            self.PASSWORD,
-            self.tr("Password"),
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.PASSWORD,
+                self.tr("Password"),
+            )
         )
-        password.setMetadata({"widget_wrapper": {"class": PasswordWrapper}})
-        self.addParameter(password)
 
         self.addParameter(
             QgsProcessingParameterBoolean(
@@ -220,17 +218,3 @@ class LoadRasterLayerFromServerAlgorithm(QgsProcessingAlgorithm):
 
     def createInstance(self):
         return LoadRasterLayerFromServerAlgorithm()
-
-
-class PasswordWrapper(WidgetWrapper):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.placeholder = args[0]
-
-    def createWidget(self):
-        self._lineEdit = QLineEdit()
-        self._lineEdit.setEchoMode(QLineEdit.Password)
-        return self._lineEdit
-
-    def value(self):
-        return self._lineEdit.text()
