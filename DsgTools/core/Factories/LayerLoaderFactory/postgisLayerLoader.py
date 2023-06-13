@@ -51,11 +51,11 @@ from .edgvLayerLoader import EDGVLayerLoader
 
 
 class PostGISLayerLoader(EDGVLayerLoader):
-    def __init__(self, iface, abstractDb, loadCentroids):
+    def __init__(self, iface, abstractDb, loadCentroids, rasterLayer=False):
         """Constructor."""
         super(self.__class__, self).__init__(iface, abstractDb, loadCentroids)
 
-        self.provider = "postgres"
+        self.provider = "postgres" if not rasterLayer else "postgresraster"
         self.setDatabaseConnection()
         self.buildUri()
         self.customFormGenerator = CustomFormGenerator()
