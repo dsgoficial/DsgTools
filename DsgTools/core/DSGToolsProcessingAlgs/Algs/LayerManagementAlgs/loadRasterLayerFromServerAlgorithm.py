@@ -43,11 +43,9 @@ class LoadRasterLayerFromServerAlgorithm(QgsProcessingAlgorithm):
     SERVER_IP = "SERVER_IP"
     PORT = "PORT"
     DB_NAME = "DB_NAME"
-    SCHEMA_NAME = "SCHEMA_NAME"
     TABLE_NAME = "TABLE_NAME"
     USER = "USER"
     PASSWORD = "PASSWORD"
-    GEOMETRY_COLUMN = "GEOMETRY_COLUMN"
     OUTPUT = "OUTPUT"
     LOAD_TO_CANVAS = "LOAD_TO_CANVAS"
 
@@ -71,26 +69,10 @@ class LoadRasterLayerFromServerAlgorithm(QgsProcessingAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterString(
-                self.SCHEMA_NAME,
-                self.tr("Schema name"),
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterString(
                 self.TABLE_NAME,
                 self.tr("Table name"),
             )
         )
-
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.GEOMETRY_COLUMN,
-                self.tr("Geometry column name"),
-                defaultValue="rast",
-            )
-        )
-
         self.addParameter(
             QgsProcessingParameterString(
                 self.USER,
@@ -118,10 +100,12 @@ class LoadRasterLayerFromServerAlgorithm(QgsProcessingAlgorithm):
         )
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cur.execute(
-            "select r_raster_column as geometry_column, r_table_schema as schema_name, r_table_name as table_name from public.raster_columns where r_table_name = %s",
+            "select r_raster_column, r_table_schema , r_table_name  from public.raster_columns where r_table_name = %s",
             (table_name,),
         )
-        return cur.fetchone()
+        output = cur.fetchone()
+        conn.close()
+        return output
 
     def returnLayer(
         self,
@@ -130,9 +114,7 @@ class LoadRasterLayerFromServerAlgorithm(QgsProcessingAlgorithm):
         db_name,
         user,
         password,
-        schema_name,
         table_name,
-        geometry_column,
         feedback=None,
     ):
         if feedback is not None:
@@ -155,10 +137,16 @@ class LoadRasterLayerFromServerAlgorithm(QgsProcessingAlgorithm):
         serverDict = self.connectToServerDict(
             server_ip, port, db_name, user, password, table_name
         )
-        uriRaster.setDataSource(**serverDict)
+        uriRaster.setDataSource(
+            serverDict["r_table_schema"],
+            serverDict["r_table_name"],
+            serverDict["r_raster_column"],
+        )
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(2)
-        raster = QgsRasterLayer(uriRaster.uri(), providerType="postgresraster")
+        raster = QgsRasterLayer(
+            uriRaster.uri(), table_name, providerType="postgresraster"
+        )
         return raster
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -168,11 +156,7 @@ class LoadRasterLayerFromServerAlgorithm(QgsProcessingAlgorithm):
         server_ip = self.parameterAsString(parameters, self.SERVER_IP, context)
         port = self.parameterAsInt(parameters, self.PORT, context)
         db_name = self.parameterAsString(parameters, self.DB_NAME, context)
-        schema_name = self.parameterAsString(parameters, self.SCHEMA_NAME, context)
         table_name = self.parameterAsString(parameters, self.TABLE_NAME, context)
-        geometry_column = self.parameterAsString(
-            parameters, self.GEOMETRY_COLUMN, context
-        )
         user = self.parameterAsString(parameters, self.USER, context)
         password = self.parameterAsString(parameters, self.PASSWORD, context)
         loadToCanvas = self.parameterAsBool(parameters, self.LOAD_TO_CANVAS, context)
@@ -184,9 +168,7 @@ class LoadRasterLayerFromServerAlgorithm(QgsProcessingAlgorithm):
             db_name,
             user,
             password,
-            schema_name,
             table_name,
-            geometry_column,
             feedback=feedback,
         )
         QgsProject.instance().addMapLayer(raster, addToLegend=loadToCanvas)
@@ -216,7 +198,7 @@ class LoadRasterLayerFromServerAlgorithm(QgsProcessingAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Other Algorithms")
+        return self.tr("Layer Management Algorithms")
 
     def groupId(self):
         """
@@ -226,7 +208,7 @@ class LoadRasterLayerFromServerAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Other Algorithms"
+        return "DSGTools: Layer Management Algorithms"
 
     def tr(self, string):
         return QCoreApplication.translate("loadRasterLayerFromServerAlgorithm", string)

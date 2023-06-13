@@ -107,6 +107,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadLayersFro
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadNonSpatialLayersFromPostgreSQLAlgorithm import (
     LoadNonSpatialLayersFromPostgreSQLAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadRasterLayerFromServerAlgorithm import (
+    LoadRasterLayerFromServerAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadShapefileAlgorithm import (
     LoadShapefileAlgorithm,
 )
@@ -546,7 +549,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             LoadTrackerAlgorithm(),
             IdentifyErrorsBetweenDamAndRoadsAlgorithm(),
             ValidateTrackerAlgorithm(),
-            UpdateRunwayAltitudeAlgorithm()
+            UpdateRunwayAltitudeAlgorithm(),
+            LoadRasterLayerFromServerAlgorithm(),
         ]
         return algList
 

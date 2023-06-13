@@ -1,38 +1,62 @@
-from PyQt5.QtCore import QCoreApplication
-from datetime import datetime
-import concurrent.futures
-import os
+# -*- coding: utf-8 -*-
+"""
+/***************************************************************************
+ DsgTools
+                                 A QGIS plugin
+ Brazilian Army Cartographic Production Tools
+                              -------------------
+        begin                : 2023-06-13
+        git sha              : $Format:%H$
+        copyright            : (C) 2023 by Pedro Martins - Cartographic Engineer @ Brazilian Army
+        email                : pedromartins.souza@eb.mil.br
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+"""
+
 import re
-from ...algRunner import AlgRunner
+from datetime import datetime
+
+from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
-    QgsProcessing,
-    QgsProcessingAlgorithm,
-    QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterVectorLayer,
+    QgsCoordinateTransform,
     QgsFeature,
     QgsGeometry,
-    QgsProject,
-    QgsProcessingException,
-    QgsCoordinateTransform,
     QgsPointXY,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterBoolean,
     QgsProcessingParameterField,
     QgsProcessingParameterString,
+    QgsProcessingParameterVectorLayer,
+    QgsProject,
 )
+
+from ...algRunner import AlgRunner
+
 
 class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
     INPUT = "INPUT"
-    SELECTED = 'SELECTED'
+    SELECTED = "SELECTED"
     OUTPUT_DB = "OUTPUT_DB"
-    FIELD_MAP = 'FIELD_MAP'
-    ELEVATION_FIELD = 'ELEVATION_FIELD'
-    CREATION_FIELD = 'CREATION_FIELD'
-    TRACKID_FIELD = 'TRACKID_FIELD'
-    TRACKSEGID_FIELD = 'TRACKSEGID_FIELD'
-    TRACKSEGPOINTID_FIELD = 'TRACKSEGPOINTID_FIELD'
+    FIELD_MAP = "FIELD_MAP"
+    ELEVATION_FIELD = "ELEVATION_FIELD"
+    CREATION_FIELD = "CREATION_FIELD"
+    TRACKID_FIELD = "TRACKID_FIELD"
+    TRACKSEGID_FIELD = "TRACKSEGID_FIELD"
+    TRACKSEGPOINTID_FIELD = "TRACKSEGPOINTID_FIELD"
     OPERATOR = "OPERATOR"
     PLATE = "PLATE"
-    DATE = 'DATE'
+    DATE = "DATE"
 
     def initAlgorithm(self, config):
         """
@@ -42,7 +66,7 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr("Input Track Layer"),
-                [QgsProcessing.TypeVectorPoint]
+                [QgsProcessing.TypeVectorPoint],
             )
         )
 
@@ -55,78 +79,69 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.ELEVATION_FIELD,
-                self.tr('Elevation field'), 
-                type=QgsProcessingParameterField.Numeric, 
-                defaultValue='ele',
+                self.tr("Elevation field"),
+                type=QgsProcessingParameterField.Numeric,
+                defaultValue="ele",
                 parentLayerParameterName=self.INPUT,
-                allowMultiple=False
+                allowMultiple=False,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterField(
                 self.CREATION_FIELD,
-                self.tr('Date and time field'), 
-                type=QgsProcessingParameterField.DateTime, 
-                defaultValue='time',
+                self.tr("Date and time field"),
+                type=QgsProcessingParameterField.DateTime,
+                defaultValue="time",
                 parentLayerParameterName=self.INPUT,
-                allowMultiple=False
+                allowMultiple=False,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterField(
                 self.TRACKID_FIELD,
-                self.tr('Track id field'), 
-                type=QgsProcessingParameterField.Numeric, 
-                defaultValue='track_fid',
+                self.tr("Track id field"),
+                type=QgsProcessingParameterField.Numeric,
+                defaultValue="track_fid",
                 parentLayerParameterName=self.INPUT,
-                allowMultiple=False
+                allowMultiple=False,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterField(
                 self.TRACKSEGID_FIELD,
-                self.tr('Track seg id field'), 
-                type=QgsProcessingParameterField.Numeric, 
-                defaultValue='track_seg_id',
+                self.tr("Track seg id field"),
+                type=QgsProcessingParameterField.Numeric,
+                defaultValue="track_seg_id",
                 parentLayerParameterName=self.INPUT,
-                allowMultiple=False
+                allowMultiple=False,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterField(
                 self.TRACKSEGPOINTID_FIELD,
-                self.tr('Point seg id field'), 
-                type=QgsProcessingParameterField.Numeric, 
-                defaultValue='track_seg_point_id',
+                self.tr("Point seg id field"),
+                type=QgsProcessingParameterField.Numeric,
+                defaultValue="track_seg_point_id",
                 parentLayerParameterName=self.INPUT,
-                allowMultiple=False
+                allowMultiple=False,
             )
         )
 
         todaydate = ValidationDate(
             self.DATE,
-            description=self.tr(
-                'Current time and data(hh:mm YYYY-MM-DD);'),
-            defaultValue = str(datetime.now().strftime("%Y-%m-%d %H:%M"))
+            description=self.tr("Current time and data(hh:mm YYYY-MM-DD);"),
+            defaultValue=str(datetime.now().strftime("%Y-%m-%d %H:%M")),
         )
         self.addParameter(todaydate)
 
-        operator = ValidationString(
-            self.OPERATOR,
-            description=self.tr(
-                'Operator name')
-        )
+        operator = ValidationString(self.OPERATOR, description=self.tr("Operator name"))
         self.addParameter(operator)
 
-        plate = ValidationPlate(
-            self.PLATE,
-            description=self.tr(
-                'License plate')
-        )
+        plate = ValidationPlate(self.PLATE, description=self.tr("License plate"))
         self.addParameter(plate)
 
         self.addParameter(
@@ -134,40 +149,150 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
                 self.OUTPUT_DB,
                 self.tr("Output database Layer"),
                 [QgsProcessing.TypeVectorPoint],
-                defaultValue='aux_track_p'
+                defaultValue="aux_track_p",
             )
         )
 
-
-    def makeFieldMap(self, operator:str, elevation, creation_time, trackid, tracksegid, tracksegpointid,todaydate, plate:str):
-        fieldmap = [{'expression': '','length': -1,'name': 'id','precision': 0,'sub_type': 0,'type': 10,'type_name': 'text'},
-                    {'expression': f"'{operator}'",'length': -1,'name': 'operador','precision': 0,'sub_type': 0,'type': 10,'type_name': 'text'},
-                    {'expression': f'to_date("{creation_time}")','length': -1,'name': 'data_track','precision': 0,'sub_type': 0,'type': 14,'type_name': 'date'},
-                    {'expression': '$x','length': -1,'name': 'x_ll','precision': 0,'sub_type': 0,'type': 6,'type_name': 'double precision'},
-                    {'expression': '$y','length': -1,'name': 'y_ll','precision': 0,'sub_type': 0,'type': 6,'type_name': 'double precision'},
-                    {'expression': f'"{trackid}"','length': -1,'name': 'track_id','precision': 0,'sub_type': 0,'type': 10,'type_name': 'text'},
-                    {'expression': f'"{tracksegid}"','length': -1,'name': 'track_segment','precision': 0,'sub_type': 0,'type': 2,'type_name': 'integer'},
-                    {'expression': f'"{tracksegpointid}"','length': -1,'name': 'track_segment_point_index','precision': 0,'sub_type': 0,'type': 2,'type_name': 'integer'},
-                    {'expression': f'"{elevation}"','length': -1,'name': 'elevation','precision': 0,'sub_type': 0,'type': 6,'type_name': 'double precision'},
-                    {'expression': f'"{creation_time}"','length': -1,'name': 'creation_time','precision': 0,'sub_type': 0,'type': 16,'type_name': 'datetime'},
-                    {'expression': f'to_datetime(\'{todaydate}\')','length': -1,'name': 'data_importacao','precision': 0,'sub_type': 0,'type': 16,'type_name': 'datetime'},
-                    {'expression': f"'{plate}'",'length': -1,'name': 'vtr','precision': 0,'sub_type': 0,'type': 10,'type_name': 'text'}]
+    def makeFieldMap(
+        self,
+        operator: str,
+        elevation,
+        creation_time,
+        trackid,
+        tracksegid,
+        tracksegpointid,
+        todaydate,
+        plate: str,
+    ):
+        fieldmap = [
+            {
+                "expression": "",
+                "length": -1,
+                "name": "id",
+                "precision": 0,
+                "sub_type": 0,
+                "type": 10,
+                "type_name": "text",
+            },
+            {
+                "expression": f"'{operator}'",
+                "length": -1,
+                "name": "operador",
+                "precision": 0,
+                "sub_type": 0,
+                "type": 10,
+                "type_name": "text",
+            },
+            {
+                "expression": f'to_date("{creation_time}")',
+                "length": -1,
+                "name": "data_track",
+                "precision": 0,
+                "sub_type": 0,
+                "type": 14,
+                "type_name": "date",
+            },
+            {
+                "expression": "$x",
+                "length": -1,
+                "name": "x_ll",
+                "precision": 0,
+                "sub_type": 0,
+                "type": 6,
+                "type_name": "double precision",
+            },
+            {
+                "expression": "$y",
+                "length": -1,
+                "name": "y_ll",
+                "precision": 0,
+                "sub_type": 0,
+                "type": 6,
+                "type_name": "double precision",
+            },
+            {
+                "expression": f'"{trackid}"',
+                "length": -1,
+                "name": "track_id",
+                "precision": 0,
+                "sub_type": 0,
+                "type": 10,
+                "type_name": "text",
+            },
+            {
+                "expression": f'"{tracksegid}"',
+                "length": -1,
+                "name": "track_segment",
+                "precision": 0,
+                "sub_type": 0,
+                "type": 2,
+                "type_name": "integer",
+            },
+            {
+                "expression": f'"{tracksegpointid}"',
+                "length": -1,
+                "name": "track_segment_point_index",
+                "precision": 0,
+                "sub_type": 0,
+                "type": 2,
+                "type_name": "integer",
+            },
+            {
+                "expression": f'"{elevation}"',
+                "length": -1,
+                "name": "elevation",
+                "precision": 0,
+                "sub_type": 0,
+                "type": 6,
+                "type_name": "double precision",
+            },
+            {
+                "expression": f'"{creation_time}"',
+                "length": -1,
+                "name": "creation_time",
+                "precision": 0,
+                "sub_type": 0,
+                "type": 16,
+                "type_name": "datetime",
+            },
+            {
+                "expression": f"to_datetime('{todaydate}')",
+                "length": -1,
+                "name": "data_importacao",
+                "precision": 0,
+                "sub_type": 0,
+                "type": 16,
+                "type_name": "datetime",
+            },
+            {
+                "expression": f"'{plate}'",
+                "length": -1,
+                "name": "vtr",
+                "precision": 0,
+                "sub_type": 0,
+                "type": 10,
+                "type_name": "text",
+            },
+        ]
         return fieldmap
-    def addFeatureAsPoint(self, inputLyr, outputLyr, feedback=None, targetCrs = None):
+
+    def addFeatureAsPoint(self, inputLyr, outputLyr, feedback=None, targetCrs=None):
         features = inputLyr.getFeatures()
         outputLyr.beginEditCommand("Add features")
         total = 100.0 / inputLyr.featureCount() if inputLyr.featureCount() else 0
         inputCrs = inputLyr.crs()
         if targetCrs is not None:
-            transform = QgsCoordinateTransform(inputCrs, targetCrs, QgsProject.instance())
+            transform = QgsCoordinateTransform(
+                inputCrs, targetCrs, QgsProject.instance()
+            )
         outputDataProvider = outputLyr.dataProvider()
         featSet = set()
         for current, feat in enumerate(features):
             if feedback is not None and feedback.isCanceled():
                 break
             outputfeature = QgsFeature()
-            geom= feat.geometry()
-            pointinput= geom.asPoint()
+            geom = feat.geometry()
+            pointinput = geom.asPoint()
             point = QgsGeometry.fromPointXY(QgsPointXY(pointinput.x(), pointinput.y()))
             if targetCrs is not None:
                 point.transform(transform)
@@ -204,29 +329,44 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
         elevacao = self.parameterAsFields(parameters, self.ELEVATION_FIELD, context)[0]
         creation = self.parameterAsFields(parameters, self.CREATION_FIELD, context)[0]
         trackid = self.parameterAsFields(parameters, self.TRACKID_FIELD, context)[0]
-        tracksegid = self.parameterAsFields(parameters, self.TRACKSEGID_FIELD, context)[0]
-        tracksegpointid = self.parameterAsFields(parameters, self.TRACKSEGPOINTID_FIELD, context)[0]
+        tracksegid = self.parameterAsFields(parameters, self.TRACKSEGID_FIELD, context)[
+            0
+        ]
+        tracksegpointid = self.parameterAsFields(
+            parameters, self.TRACKSEGPOINTID_FIELD, context
+        )[0]
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr("Building FieldMap."))
-        fieldmap = self.makeFieldMap(operator, elevacao, creation, trackid, tracksegid, tracksegpointid, todaydate, plate)
+        fieldmap = self.makeFieldMap(
+            operator,
+            elevacao,
+            creation,
+            trackid,
+            tracksegid,
+            tracksegpointid,
+            todaydate,
+            plate,
+        )
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr("Assinging fields."))
         tempLyr = algRunner.runRefactorFields(
-            inputLayer=inputLyr, 
-            fieldmap=fieldmap, 
-            context=context, 
-            feedback=multiStepFeedback, 
-            onlySelected=onlySelected
+            inputLayer=inputLyr,
+            fieldmap=fieldmap,
+            context=context,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected,
         )
         multiStepFeedback.setCurrentStep(3)
         multiStepFeedback.pushInfo("Updating database.")
-        
+
         outputLyr.startEditing()
-        self.addFeatureAsPoint(tempLyr, outputLyr, feedback=multiStepFeedback, targetCrs=outputLyr.crs())
+        self.addFeatureAsPoint(
+            tempLyr, outputLyr, feedback=multiStepFeedback, targetCrs=outputLyr.crs()
+        )
         multiStepFeedback.setCurrentStep(4)
         multiStepFeedback.pushInfo("Loading complete.")
-       
-        return {self.OUTPUT_DB:outputLyr}
+
+        return {self.OUTPUT_DB: outputLyr}
 
     def name(self):
         """
@@ -267,42 +407,51 @@ class LoadTrackerAlgorithm(QgsProcessingAlgorithm):
 
     def createInstance(self):
         return LoadTrackerAlgorithm()
-    
+
+
 class ValidationString(QgsProcessingParameterString):
-    '''
+    """
     Auxiliary class for pre validation on name.
-    '''
+    """
+
     # __init__ not necessary
 
-    def __init__(self, name, description=''):
+    def __init__(self, name, description=""):
         super().__init__(name, description)
 
     def checkValueIsAcceptable(self, value, context=None):
-        if re.match(r'^[a-zA-ZÀ-ÖØ-öø-ÿ\s]+$', value):
+        if re.match(r"^[a-zA-ZÀ-ÖØ-öø-ÿ\s]+$", value):
             return True
-        
+
+
 class ValidationPlate(QgsProcessingParameterString):
-    '''
+    """
     Auxiliary class for pre validation on plate.
-    '''
+    """
+
     # __init__ not necessary
 
-    def __init__(self, name, description=''):
+    def __init__(self, name, description=""):
         super().__init__(name, description)
 
     def checkValueIsAcceptable(self, value, context=None):
-        if re.match(r'([a-zA-Z]{3}-?\d[a-zA-Z0-9]\d{2})(?:$)', value):
+        if re.match(r"([a-zA-Z]{3}-?\d[a-zA-Z0-9]\d{2})(?:$)", value):
             return True
-        
+
+
 class ValidationDate(QgsProcessingParameterString):
-    '''
+    """
     Auxiliary class for pre validation on dates.
-    '''
+    """
+
     # __init__ not necessary
 
-    def __init__(self, name, description='', defaultValue = None):
+    def __init__(self, name, description="", defaultValue=None):
         super().__init__(name, description, defaultValue)
 
     def checkValueIsAcceptable(self, value, context=None):
-        if re.match(r'20\d\d-(?:0[1-9]|1[0-2])-(?:[0-2]\d|3[01]) (?:[01]\d|2[0-3]):[0-5]\d', value):
+        if re.match(
+            r"20\d\d-(?:0[1-9]|1[0-2])-(?:[0-2]\d|3[01]) (?:[01]\d|2[0-3]):[0-5]\d",
+            value,
+        ):
             return True
