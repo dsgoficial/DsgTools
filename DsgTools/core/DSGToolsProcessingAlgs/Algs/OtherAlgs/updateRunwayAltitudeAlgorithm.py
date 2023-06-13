@@ -3,32 +3,17 @@ from qgis.core import (
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterNumber,
     QgsProcessingParameterString,
-    QgsDataSourceUri,
-    QgsRasterLayer,
     QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterRasterLayer,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
-from qgis.PyQt.QtWidgets import (
-    QLineEdit
-)
-
-from processing.gui.wrappers import WidgetWrapper
-
 class UpdateRunwayAltitudeAlgorithm(QgsProcessingAlgorithm):
-    OUTPUT = 'OUTPUT'
-    SERVER_IP = 'SERVER_IP'
-    PORT = 'PORT'
-    DB_NAME = 'DB_NAME'
-    SCHEMA_NAME = 'SCHEMA_NAME'
-    TABLE_NAME = 'TABLE_NAME'
-    USER = 'USER'
-    PASSWORD = 'PASSWORD'
-    GEOMETRY_COLUMN = 'GEOMETRY_COLUMN'
     INPUT_LAYERS = 'INPUT_LAYERS'
     ALTITUDE_FIELD = 'ALTITUDE_FIELD'
+    INPUT_DEM = 'INPUT_DEM'
+    OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
         """
@@ -50,69 +35,15 @@ class UpdateRunwayAltitudeAlgorithm(QgsProcessingAlgorithm):
             )
         )
 
-
-        
         self.addParameter(
-            QgsProcessingParameterString(
-                self.SERVER_IP,
-                self.tr('Server Address')
+            QgsProcessingParameterRasterLayer(
+                self.INPUT_DEM,
+                self.tr("Input DEM"),
             )
         )
-        
-
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.PORT,
-                self.tr('Port')
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.DB_NAME,
-                self.tr('Database name'),
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.SCHEMA_NAME,
-                self.tr('Schema name'),
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.TABLE_NAME,
-                self.tr('Table name'),
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.GEOMETRY_COLUMN,
-                self.tr('Geometry column name'),
-                defaultValue='rast'
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.USER,
-                self.tr('User'),
-            )
-        )
-
-        password = QgsProcessingParameterString(
-            self.PASSWORD,
-            self.tr('Password'),
-        )
-        password.setMetadata({
-            'widget_wrapper':{'class':PasswordWrapper}
-        })
-        self.addParameter(password)
     
     def updateLyrs(self, inputLyrs, altitudeField, raster, context, feedback=None):
+        layerIds = []
         if feedback is not None:
             multiStepFeedback = QgsProcessingMultiStepFeedback(
                 len(inputLyrs)*2, feedback
@@ -151,6 +82,8 @@ class UpdateRunwayAltitudeAlgorithm(QgsProcessingAlgorithm):
                 if success:
                     data[f.id()]={altitude:value}
             original_lyr.dataProvider().changeAttributeValues(data)
+            layerIds.append(original_lyr.id())
+        return layerIds
 
             
 
@@ -158,33 +91,19 @@ class UpdateRunwayAltitudeAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Starting..."))
-        server_ip = self.parameterAsString(parameters, self.SERVER_IP, context)
-        port = self.parameterAsInt(parameters, self.PORT, context)
-        db_name = self.parameterAsString(parameters, self.DB_NAME, context)
-        schema_name = self.parameterAsString(parameters, self.SCHEMA_NAME, context)
-        table_name = self.parameterAsString(parameters, self.TABLE_NAME, context)
-        geometry_column = self.parameterAsString(parameters, self.GEOMETRY_COLUMN, context)
-        user = self.parameterAsString(parameters, self.USER, context)
-        password = self.parameterAsString(parameters, self.PASSWORD, context)
         inputLyrList = self.parameterAsLayerList(parameters, self.INPUT_LAYERS, context)
         altitudeField = self.parameterAsString(parameters, self.ALTITUDE_FIELD, context)
+        raster = self.parameterAsRasterLayer(parameters, self.INPUT_DEM, context)
         self.algRunner = AlgRunner()
-        uriRaster = QgsDataSourceUri()
-        multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(self.tr("Connecting..."))
-        uriRaster.setConnection(server_ip, str(port), db_name, user, password, sslmode=QgsDataSourceUri.SslDisable)
-        uriRaster.setDataSource(schema_name, table_name, geometry_column)
-        raster = QgsRasterLayer(uriRaster.uri(), providerType="postgresraster")
-        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr("Updating field..."))
-        self.updateLyrs(inputLyrList, altitudeField, raster, context, multiStepFeedback)
-        multiStepFeedback.setCurrentStep(3)
+        layerIds = self.updateLyrs(inputLyrList, altitudeField, raster, context, multiStepFeedback)
+        multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr("Complete."))
-        errorMessage = ""
-        return {self.OUTPUT:errorMessage}
+        return {self.OUTPUT:layerIds}
 
     def name(self):
         """
@@ -225,17 +144,3 @@ class UpdateRunwayAltitudeAlgorithm(QgsProcessingAlgorithm):
 
     def createInstance(self):
         return UpdateRunwayAltitudeAlgorithm()
-    
-class PasswordWrapper(WidgetWrapper):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.placeholder = args[0]
-
-    def createWidget(self):
-        self._lineEdit = QLineEdit()
-        self._lineEdit.setEchoMode(QLineEdit.Password)
-        return self._lineEdit
-
-    def value(self):
-        return self._lineEdit.text()
