@@ -33,6 +33,7 @@ from qgis.core import (
     QgsProcessingParameterString,
     QgsProject,
     QgsRasterLayer,
+    QgsProcessingOutputRasterLayer,
 )
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtWidgets import QLineEdit
@@ -91,6 +92,10 @@ class LoadRasterLayerFromServerAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterBoolean(
                 self.LOAD_TO_CANVAS, self.tr("Load layers to canvas"), defaultValue=True
             )
+        )
+
+        self.addOutput(
+            QgsProcessingOutputRasterLayer(self.OUTPUT, self.tr("Loaded layer"))
         )
 
     @staticmethod
