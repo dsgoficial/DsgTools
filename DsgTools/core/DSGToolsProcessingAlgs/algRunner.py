@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from typing import List
 import uuid
 
 import processing
@@ -1535,27 +1536,47 @@ class AlgRunner:
         )
         return output["OUTPUT"]
 
-    def runUnbuildPolygons(self, inputPolygonList, context, onlySelected=False, lineConstraintLayerList=None, polygonConstraintLayerList=None, geographicBoundary=None, feedback=None, outputCenterPointsLyr=None, outputBoundariesLyr=None, is_child_algorithm=False):
-        lineConstraintLayerList = [] if lineConstraintLayerList is None else lineConstraintLayerList
-        polygonConstraintLayerList = [] if polygonConstraintLayerList is None else polygonConstraintLayerList
-        outputCenterPointsLyr = "memory:" if outputCenterPointsLyr is None else outputCenterPointsLyr
-        outputBoundariesLyr = "memory:" if outputBoundariesLyr is None else outputBoundariesLyr
+    def runUnbuildPolygons(
+        self,
+        inputPolygonList,
+        context,
+        onlySelected=False,
+        lineConstraintLayerList=None,
+        polygonConstraintLayerList=None,
+        geographicBoundary=None,
+        feedback=None,
+        outputCenterPointsLyr=None,
+        outputBoundariesLyr=None,
+        is_child_algorithm=False,
+    ):
+        lineConstraintLayerList = (
+            [] if lineConstraintLayerList is None else lineConstraintLayerList
+        )
+        polygonConstraintLayerList = (
+            [] if polygonConstraintLayerList is None else polygonConstraintLayerList
+        )
+        outputCenterPointsLyr = (
+            "memory:" if outputCenterPointsLyr is None else outputCenterPointsLyr
+        )
+        outputBoundariesLyr = (
+            "memory:" if outputBoundariesLyr is None else outputBoundariesLyr
+        )
         output = processing.run(
             "dsgtools:unbuildpolygonsalgorithm",
             {
-                'INPUT_POLYGONS': inputPolygonList,
-                'SELECTED': onlySelected,
-                'CONSTRAINT_LINE_LAYERS': lineConstraintLayerList,
-                'CONSTRAINT_POLYGON_LAYERS': polygonConstraintLayerList,
-                'GEOGRAPHIC_BOUNDARY': geographicBoundary,
-                'OUTPUT_CENTER_POINTS': outputCenterPointsLyr,
-                'OUTPUT_BOUNDARIES': outputBoundariesLyr,
+                "INPUT_POLYGONS": inputPolygonList,
+                "SELECTED": onlySelected,
+                "CONSTRAINT_LINE_LAYERS": lineConstraintLayerList,
+                "CONSTRAINT_POLYGON_LAYERS": polygonConstraintLayerList,
+                "GEOGRAPHIC_BOUNDARY": geographicBoundary,
+                "OUTPUT_CENTER_POINTS": outputCenterPointsLyr,
+                "OUTPUT_BOUNDARIES": outputBoundariesLyr,
             },
             context=context,
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
-        return output['OUTPUT_CENTER_POINTS'], output['OUTPUT_BOUNDARIES']
+        return output["OUTPUT_CENTER_POINTS"], output["OUTPUT_BOUNDARIES"]
 
     def runJoinByLocationSummary(
         self,
@@ -1592,20 +1613,22 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
-    
+
     def runRefactorFields(
-        self, 
-        inputLayer, 
-        fieldmap:list[dict], 
-        context, 
+        self,
+        inputLayer,
+        fieldmap: List[dict],
+        context,
         feedback=None,
-        onlySelected=None, 
-        outputLyr=None, 
+        onlySelected=None,
+        outputLyr=None,
         is_child_algorithm=False,
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {
-            "INPUT": QgsProcessingFeatureSourceDefinition(inputLayer.source(), selectedFeaturesOnly=onlySelected),
+            "INPUT": QgsProcessingFeatureSourceDefinition(
+                inputLayer.source(), selectedFeaturesOnly=onlySelected
+            ),
             "FIELDS_MAPPING": fieldmap,
             "OUTPUT": outputLyr,
         }
@@ -1617,4 +1640,3 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
-
