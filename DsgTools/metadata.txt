@@ -44,8 +44,32 @@ about=
 
 # Uncomment the following line and add your changelog:
 changelog=
+
+	4.8.0:
+		Novas Funcionalidades:
+			- Novo processo de identificar inconsistências entre os elementos da rede de drenagem;
+			- Nova funcionalidade de verificar o fluxo de drenagens com relação às curvas de nível (reescrito a partir de código do ferramentas experimentais);
+			- Novo processo de extrair pontos cotados segundo as regras da MTM;
+			- Nova ferramenta de extrair centróides a partir de linhas e polígono digitalizado na tela (Center Point Tool);
+			- Novo processo de extrair elevação de MDS utilizando geometria da camada de entrada e gravar em campo de elevação;
+			- Novo processo de carregar camada PostGIS Raster;
+
+		Melhorias:
+			- Adicionada a opção de suprimir o formulário de feição no modo reclassificação do menu de aquisição (particularmente útil quando se está corrigindo flags de áreas sem centroide na construção de polígonos utilizando linha e centróide);
+			- Adicionada a melhoria de verificar pontos cotados fora da equidistância na ferramenta de validação do terreno;
+			- Removido o processo de verificação de empilhamento de curvas (a validação de terreno já faz isso);
+
+		Correção de bug:
+			- Corrigido bug na construção do texto da flag de identificar geometria inválida, quando a chave primária tem tipo inteiro;
+			- Corrigido bug de feições geradas com vértices duplicados na ferramenta de criação de grid sistemático;
+			- Corrigido bug de erro na precisão dos vértices gerados na ferramenta de criação de grid sistemático;
+			- Corrigido bug de flag incorreta de delimitador não utilizado no processo de construir polígonos;
+			- Corrigido bug no processo de identificar vértice duplicado com camadas do tipo polígono (o primeiro ponto de cada linear ring era indicado como flag);
+
 	4.7.1:
-		
+		Correção de bug:
+			- Correção de bug no menu (filtro de geometria estava quebrado);
+
 	4.7.0:
 		Novas funcionalidades:
 			- Novo processo de selecionar feições no canvas de camadas selecionadas;
