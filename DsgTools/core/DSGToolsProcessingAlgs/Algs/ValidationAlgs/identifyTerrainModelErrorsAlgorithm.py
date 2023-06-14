@@ -51,6 +51,8 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
     CONTOUR_INTERVAL = "CONTOUR_INTERVAL"
     GEOGRAPHIC_BOUNDS = "GEOGRAPHIC_BOUNDS"
     CONTOUR_ATTR = "CONTOUR_ATTR"
+    INPUT_ELEVATION_POINTS = "INPUT_ELEVATION_POINTS"
+    ELEVATION_POINT_ATTR = "ELEVATION_POINT_ATTR"
     GROUP_BY_SPATIAL_PARTITION = "GROUP_BY_SPATIAL_PARTITION"
     POINT_FLAGS = "POINT_FLAGS"
     LINE_FLAGS = "LINE_FLAGS"
@@ -78,6 +80,24 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 None,
                 "INPUT",
                 QgsProcessingParameterField.Any,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.INPUT_ELEVATION_POINTS,
+                self.tr("Input elevation points layer"),
+                [QgsProcessing.TypeVectorPoint],
+                optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.ELEVATION_POINT_ATTR,
+                self.tr("Elevation point height value field"),
+                None,
+                "INPUT_ELEVATION_POINTS",
+                QgsProcessingParameterField.Any,
+                optional=True
             )
         )
         self.addParameter(
@@ -125,7 +145,8 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         heightFieldName = self.parameterAsFields(
             parameters, self.CONTOUR_ATTR, context
-        )[0]
+        )
+        heightFieldName = None if len(heightFieldName) == 0 else heightFieldName[0]
         threshold = self.parameterAsDouble(parameters, self.CONTOUR_INTERVAL, context)
         geoBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDS, context
@@ -133,6 +154,13 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         groupBySpatialPartition = self.parameterAsBool(
             parameters, self.GROUP_BY_SPATIAL_PARTITION, context
         )
+        elevationPointsLyr = self.parameterAsVectorLayer(parameters, self.INPUT_ELEVATION_POINTS, context)
+        elevationPointHeightFieldName = self.parameterAsFields(
+            parameters, self.ELEVATION_POINT_ATTR, context
+        )
+        elevationPointHeightFieldName = None if len(elevationPointHeightFieldName) == 0 else elevationPointHeightFieldName[0]
+        if elevationPointsLyr is not None and elevationPointHeightFieldName in (None, [], ''):
+            raise QgsProcessingException(self.tr('Elevation point height attribute must be selected.'))
         point_flagSink, point_flag_id = self.prepareAndReturnFlagSink(
             parameters, inputLyr, QgsWkbTypes.Point, context, self.POINT_FLAGS
         )
@@ -145,15 +173,20 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 contourLyr=inputLyr,
                 onlySelected=onlySelected,
                 heightFieldName=heightFieldName,
+                elevationPointsLyr=elevationPointsLyr,
+                elevationPointHeightFieldName=elevationPointHeightFieldName,
                 threshold=threshold,
                 geoBoundsLyr=geoBoundsLyr,
                 feedback=feedback,
+                context=context
             )
             if not groupBySpatialPartition
             else self.validateTerrainModelInParalel(
                 contourLyr=inputLyr,
                 onlySelected=onlySelected,
                 heightFieldName=heightFieldName,
+                elevationPointsLyr=elevationPointsLyr,
+                elevationPointHeightFieldName=elevationPointHeightFieldName,
                 threshold=threshold,
                 geoBoundsLyr=geoBoundsLyr,
                 context=context,
@@ -180,6 +213,8 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         contourLyr,
         onlySelected,
         heightFieldName,
+        elevationPointsLyr,
+        elevationPointHeightFieldName,
         threshold,
         geoBoundsLyr,
         context,
@@ -215,6 +250,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 overlayLayer=bufferedBounds,
                 context=localContext,
                 feedback=None,
+                is_child_algorithm=True,
             )
             if multiStepFeedback.isCanceled():
                 return {}
@@ -223,12 +259,21 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             )
             if multiStepFeedback.isCanceled():
                 return {}
+            localElevationPointsLyr = self.algRunner.runExtractByLocation(
+                inputLyr=elevationPointsLyr,
+                intersectLyr=localGeographicBoundsLyr,
+                context=localContext,
+                feedback=None,
+            ) if elevationPointsLyr is not None else None
             return self.spatialRealtionsHandler.validateTerrainModel(
                 contourLyr=singlePartContours,
                 onlySelected=False,
                 heightFieldName=heightFieldName,
+                elevationPointsLyr=localElevationPointsLyr,
+                elevationPointHeightFieldName=elevationPointHeightFieldName,
                 threshold=threshold,
                 geoBoundsLyr=localGeographicBoundsLyr,
+                context=localContext,
                 feedback=None,
             )
 
@@ -259,6 +304,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         for current, future in enumerate(concurrent.futures.as_completed(futures)):
             if multiStepFeedback.isCanceled():
                 break
+            # localFlagDict = compute(localGeographicBoundsLyr)
             localFlagDict = future.result()
             multiStepFeedback.pushInfo(
                 self.tr(f"Identification of region {current+1}/{nRegions} is done.")

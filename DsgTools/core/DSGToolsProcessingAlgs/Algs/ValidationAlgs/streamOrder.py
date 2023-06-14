@@ -21,27 +21,24 @@
 """
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from qgis.PyQt.QtCore import (QCoreApplication, QVariant)
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterVectorLayer,
-                       QgsFeature,
-                       QgsField,
-                       QgsGeometry,
-                       QgsPointXY,
-                       QgsProcessingException,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFeatureSource,
-                       QgsVectorLayerUtils,
-                       )
+from qgis.PyQt.QtCore import QCoreApplication, QVariant
+from qgis.core import (
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSink,
+    QgsFeature,
+    QgsField,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterFeatureSource,
+)
 from DsgTools.core.GeometricTools import graphHandler
+
 
 class StreamOrder(QgsProcessingAlgorithm):
 
-    INPUT = 'INPUT'
-    OUTPUT = 'OUTPUT'
+    INPUT = "INPUT"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config=None):
         self.addParameter(
@@ -54,10 +51,7 @@ class StreamOrder(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.OUTPUT,
-                self.tr('Output')
-            )
+            QgsProcessingParameterFeatureSink(self.OUTPUT, self.tr("Output"))
         )
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -73,7 +67,7 @@ class StreamOrder(QgsProcessingAlgorithm):
         algRunner = AlgRunner()
         networkLayer = self.parameterAsSource(parameters, self.INPUT, context)
         fields = networkLayer.fields()
-        fields.append(QgsField('stream_order', QVariant.Int))
+        fields.append(QgsField("stream_order", QVariant.Int))
         (sink, sink_id) = self.parameterAsSink(
             parameters,
             self.OUTPUT,
@@ -115,11 +109,17 @@ class StreamOrder(QgsProcessingAlgorithm):
             hashDict,
             networkBidirectionalGraph,
         ) = graphHandler.buildAuxStructures(
-            nx, nodesLayer=nodesLayer, edgesLayer=localCache, feedback=multiStepFeedback, directed=True
+            nx,
+            nodesLayer=nodesLayer,
+            edgesLayer=localCache,
+            feedback=multiStepFeedback,
+            directed=True,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        G_copy = graphHandler.evaluateStreamOrder(networkBidirectionalGraph, feedback=multiStepFeedback)
+        G_copy = graphHandler.evaluateStreamOrder(
+            networkBidirectionalGraph, feedback=multiStepFeedback
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         if len(G_copy.edges) == 0:
@@ -140,13 +140,13 @@ class StreamOrder(QgsProcessingAlgorithm):
         return {self.OUTPUT: sink_id}
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate("Processing", string)
 
     def createInstance(self):
         return StreamOrder()
 
     def name(self):
-        return 'streamorder'
+        return "streamorder"
 
     def displayName(self):
         """
@@ -173,5 +173,6 @@ class StreamOrder(QgsProcessingAlgorithm):
         return "DSGTools: Quality Assurance Tools (Network Processes)"
 
     def shortHelpString(self):
-        return self.tr("O algoritmo orderna ou direciona fluxo, como linhas de drenagem ")
-    
+        return self.tr(
+            "O algoritmo orderna ou direciona fluxo, como linhas de drenagem "
+        )

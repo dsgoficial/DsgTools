@@ -21,24 +21,6 @@
  ***************************************************************************/
 """
 
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractByDE9IM import (
-    ExtractByDE9IMAlgorithm,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.line2Multiline import (
-    Line2Multiline,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.pointsInPolygonGridAlgorithm import (
-    PointsInPolygonGridAlgorithm,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.selectByDE9IM import (
-    SelectByDE9IMAlgorithm,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitPolygonsAlgorithm import (
-    SplitPolygons,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitPolygonsByGrid import (
-    SplitPolygonsByGrid,
-)
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -53,11 +35,29 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.setFreeHand
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.donutHoleExtractorAlgorithm import (
     DonutHoleExtractorAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractByDE9IM import (
+    ExtractByDE9IMAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractElevationPoints import (
+    ExtractElevationPoints,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.line2Multiline import (
+    Line2Multiline,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.reclassifyAdjecentPolygonsAlgorithm import (
     ReclassifyAdjacentPolygonsAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.selectByDE9IM import (
+    SelectByDE9IMAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.smallHoleRemoverAlgorithm import (
     SmallHoleRemoverAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitPolygonsAlgorithm import (
+    SplitPolygons,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitPolygonsByGrid import (
+    SplitPolygonsByGrid,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.applyStylesFromDatabaseToLayersAlgorithm import (
     ApplyStylesFromDatabaseToLayersAlgorithm,
@@ -107,6 +107,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadLayersFro
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadNonSpatialLayersFromPostgreSQLAlgorithm import (
     LoadNonSpatialLayersFromPostgreSQLAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadRasterLayerFromServerAlgorithm import (
+    LoadRasterLayerFromServerAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadShapefileAlgorithm import (
     LoadShapefileAlgorithm,
 )
@@ -134,6 +137,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm im
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFramesWithConstraintAlgorithm import (
     CreateFramesWithConstraintAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createReviewGridAlgorithm import (
+    CreateReviewGridAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.exportToMemoryLayer import (
     ExportToMemoryLayer,
 )
@@ -142,6 +148,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.fileInventoryAlgorithm 
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeometryType import (
     FilterLayerListByGeometryType,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.loadTrackerAlgorithm import (
+    LoadTrackerAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.pecCalculatorAlgorithm import (
     PecCalculatorAlgorithm,
@@ -170,6 +179,12 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.stringCsvToLayerListAlg
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateOriginalLayerAlgorithm import (
     UpdateOriginalLayerAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateRunwayAltitudeAlgorithm import (
+    UpdateRunwayAltitudeAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.validateTrackerAlgorithm import (
+    ValidateTrackerAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnIntersectionsAlgorithm import (
     AddUnsharedVertexOnIntersectionsAlgorithm,
@@ -224,6 +239,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyCountourSt
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesAlgorithm import (
     IdentifyDanglesAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDrainageAndContourInconsistencies import (
+    IdentifyDrainageAndContourInconsistencies,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDrainageAngleIssues import (
     IdentifyDrainageAngleIssues,
 )
@@ -253,6 +271,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicated
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedVertexesAlgorithm import (
     IdentifyDuplicatedVertexesAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyErrorsBetweenDamAndRoadsAlgorithm import (
+    IdentifyErrorsBetweenDamAndRoadsAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAlgorithm import (
     IdentifyGapsAlgorithm,
@@ -317,8 +338,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUnsharedVe
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyVertexNearEdgesAlgorithm import (
     IdentifyVertexNearEdgesAlgorithm,
 )
-
-# from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWrongBuildingAnglesAlgorithm import (
     IdentifyWrongBuildingAnglesAlgorithm,
 )
@@ -358,6 +377,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.snapToGridAndUpdat
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.spellCheckerAlgorithm import (
     SpellCheckerAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.streamOrder import (
+    StreamOrder,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanAlgorithm import (
     TopologicalCleanAlgorithm,
 )
@@ -379,18 +401,11 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unbuildPolygonsAlg
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unicodeFilterAlgorithm import (
     UnicodeFilterAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyCountourStackingAlgorithm import (
-    VerifyCountourStackingAlgorihtm,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import (
     VerifyNetworkDirectioningAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.streamOrder import (
-    StreamOrder,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createReviewGridAlgorithm import (
-    CreateReviewGridAlgorithm,
-)
+
+# from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
 
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
@@ -495,7 +510,6 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             identifyZAnglesBetweenFeaturesAlgorithm(),
             IdentifySmallHolesAlgorithm(),
             IdentifyInvalidUUIDsAlgorithm(),
-            VerifyCountourStackingAlgorihtm(),
             LoadShapefileAlgorithm(),
             IdentifyCountourStreamIntersectionAlgorithm(),
             SpellCheckerAlgorithm(),
@@ -525,12 +539,18 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             SmallHoleRemoverAlgorithm(),
             ReclassifyAdjacentPolygonsAlgorithm(),
             StreamOrder(),
-            PointsInPolygonGridAlgorithm(),
             SplitPolygons(),
             SplitPolygonsByGrid(),
             SelectByDE9IMAlgorithm(),
             ExtractByDE9IMAlgorithm(),
             Line2Multiline(),
+            IdentifyDrainageAndContourInconsistencies(),
+            ExtractElevationPoints(),
+            LoadTrackerAlgorithm(),
+            IdentifyErrorsBetweenDamAndRoadsAlgorithm(),
+            ValidateTrackerAlgorithm(),
+            UpdateRunwayAltitudeAlgorithm(),
+            LoadRasterLayerFromServerAlgorithm(),
         ]
         return algList
 

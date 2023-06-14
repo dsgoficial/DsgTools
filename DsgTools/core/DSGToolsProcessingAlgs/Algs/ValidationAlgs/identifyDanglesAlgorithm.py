@@ -380,15 +380,18 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
 
         def evaluate(point) -> Union[QgsPointXY, None]:
             qgisPoint = QgsGeometry.fromPointXY(point)
+            geomEngine = QgsGeometry.createGeometryEngine(qgisPoint.constGet())
+            geomEngine.prepareGeometry()
             buffer = qgisPoint.buffer(searchRadius, -1)
             bufferBB = buffer.boundingBox()
             # search radius to narrow down candidates
             request = QgsFeatureRequest().setFilterRect(bufferBB)
             bufferCount, intersectCount = 0, 0
             point_relationship_lambda = (
-                lambda x: qgisPoint.intersects(x) or qgisPoint.distance(x) < 1e-8
+                lambda x: geomEngine.intersects(x.constGet())
+                or qgisPoint.distance(x) < 1e-8
                 if ignoreDanglesOnUnsegmentedLines
-                else qgisPoint.touches(x)
+                else geomEngine.touches(x.constGet())
             )
             for feat in inputLyr.getFeatures(request):
                 geom = feat.geometry()

@@ -231,7 +231,9 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             parameters, self.ATTRIBUTE_BLACK_LIST, context
         )
         fields = self.layerHandler.getFieldsFromAttributeBlackList(
-            inputCenterPointLyr, attributeBlackList
+            inputCenterPointLyr,
+            attributeBlackList,
+            ignoreVirtualFields=False,
         )
         groupBySpatialPartition = self.parameterAsBool(
             parameters, self.GROUP_BY_SPATIAL_PARTITION, context
@@ -292,7 +294,9 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 suppressPolygonWithoutCenterPointFlag,
                 multiStepFeedback,
             )
-            if not groupBySpatialPartition or geographicBoundaryLyr.featureCount() <= 1
+            if geographicBoundaryLyr is None
+            or not groupBySpatialPartition
+            or geographicBoundaryLyr.featureCount() <= 1
             else self.computePolygonsFromCenterPointAndBoundariesGroupingBySpatialPartition(
                 context,
                 inputCenterPointLyr,
@@ -321,18 +325,6 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         )
         sink.addFeatures(polygonFeatList, QgsFeatureSink.FastInsert)
 
-        if checkUnusedBoundaries:
-            multiStepFeedback.setCurrentStep(currentStep)
-            self.checkUnusedBoundariesAndWriteOutput(
-                context,
-                boundaryLineLyr,
-                geographicBoundaryLyr,
-                sink_id,
-                unused_boundary_flag_sink,
-                multiStepFeedback,
-            )
-            currentStep += 1
-
         if mergeOutput:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(self.tr("Dissolving output..."))
@@ -353,6 +345,17 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             output_polygon_sink, multiStepFeedback, polygonFeatList, flagDict
         )
         currentStep += 1
+        if checkUnusedBoundaries:
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.checkUnusedBoundariesAndWriteOutput(
+                context,
+                boundaryLineLyr,
+                geographicBoundaryLyr,
+                sink_id,
+                unused_boundary_flag_sink,
+                multiStepFeedback,
+            )
+            currentStep += 1
         if checkInvalidOnOutput:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(self.tr("Checking invalid geometries..."))
@@ -382,7 +385,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
     ):
         if boundaryLineLyr is None:
             return
-        nSteps = 9 if geographicBoundaryLyr is None else 11
+        nSteps = 10 if geographicBoundaryLyr is None else 12
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         multiStepFeedback.setProgressText(self.tr("Checking unused boundaries..."))
         currentStep = 0
@@ -406,10 +409,19 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         )["OUTPUT"]
         currentStep += 1
 
-        multiStepFeedback.setProgressText(self.tr("Converting built polygons to lines..."))
+        multiStepFeedback.setCurrentStep(currentStep)
+        allPolygonsLyr = self.algRunner.runMergeVectorLayers(
+            [builtPolygonsLyr, self.flag_id],
+            context=context,
+        )
+        currentStep += 1
+
+        multiStepFeedback.setProgressText(
+            self.tr("Converting built polygons to lines...")
+        )
         multiStepFeedback.setCurrentStep(currentStep)
         polygonLines = self.algRunner.runPolygonsToLines(
-            inputLyr=builtPolygonsLyr,
+            inputLyr=allPolygonsLyr,
             context=context,
             feedback=multiStepFeedback,
             is_child_algorithm=True,
@@ -438,7 +450,10 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setProgressText(self.tr("Exploding boudary lines..."))
         multiStepFeedback.setCurrentStep(currentStep)
         segments = self.algRunner.runExplodeLines(
-            boundaryLineLyr, context, feedback=multiStepFeedback, is_child_algorithm=True,
+            boundaryLineLyr,
+            context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         currentStep += 1
 
@@ -473,22 +488,25 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         unmatchedLines = processing.run(
             "native:joinattributesbylocation",
             {
-                'INPUT':segments,
-                'PREDICATE':[2],
-                'JOIN':polygonLines,
-                'JOIN_FIELDS':[],
-                'METHOD':0,
-                'DISCARD_NONMATCHING':False,
-                'PREFIX':'',
-                'NON_MATCHING':'memory:',
+                "INPUT": segments,
+                "PREDICATE": [2, 5],
+                "JOIN": explodedPolygonLines,
+                "JOIN_FIELDS": [],
+                "METHOD": 0,
+                "DISCARD_NONMATCHING": False,
+                "PREFIX": "",
+                "NON_MATCHING": "memory:",
             },
             context=context,
             feedback=multiStepFeedback,
-            is_child_algorithm=True
-        )['NON_MATCHING']
-        
+            is_child_algorithm=False,
+        )["NON_MATCHING"]
+        if unmatchedLines.featureCount() == 0:
+            return
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Preparing unused boundaries flags..."))
+        multiStepFeedback.setProgressText(
+            self.tr("Preparing unused boundaries flags...")
+        )
         self.algRunner.runCreateSpatialIndex(
             inputLyr=unmatchedLines,
             context=context,
@@ -786,21 +804,16 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setProgressText(self.tr("Checking unused boundaries..."))
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Building aux structures: creating local cache..."))
+        multiStepFeedback.setProgressText(
+            self.tr("Building aux structures: creating local cache...")
+        )
         polygonLyr = self.algRunner.runAddAutoIncrementalField(
             inputLyr=output_polygon_sink_id,
             fieldName="featid",
             context=context,
-            feedback=multiStepFeedback,   
+            feedback=multiStepFeedback,
         )
         currentStep += 1
-
-        multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(
-            inputLyr=polygonLyr, context=context, feedback=multiStepFeedback
-        )
-        currentStep += 1
-
 
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Splitting geographic bounds"))
@@ -810,14 +823,14 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         currentStep += 1
 
         def compute(localGeographicBoundsLyr):
-            context = QgsProcessingContext()
+            localContext = QgsProcessingContext()
             algRunner = AlgRunner()
             if multiStepFeedback.isCanceled():
                 return
             localBoundaries = algRunner.runClip(
                 boundaryLineLyr,
                 localGeographicBoundsLyr,
-                context=context,
+                context=localContext,
                 feedback=None,
                 is_child_algorithm=True,
             )
@@ -826,65 +839,93 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
             localBoundaries = algRunner.runAddAutoIncrementalField(
                 inputLyr=localBoundaries,
                 fieldName="local_featid",
-                context=context,
-                feedback=None
+                context=localContext,
+                feedback=None,
             )
             if multiStepFeedback.isCanceled():
                 return
             segments = self.algRunner.runExplodeLines(
-                localBoundaries, context, feedback=None, is_child_algorithm=True
+                localBoundaries, localContext, feedback=None, is_child_algorithm=True
             )
             if multiStepFeedback.isCanceled():
                 return
             segments = algRunner.runAddAutoIncrementalField(
                 inputLyr=segments,
                 fieldName="seg_featid",
-                context=context,
-                feedback=None
-            )
-            if multiStepFeedback.isCanceled():
-                return
-            flags = SpatialRelationsHandler().checkDE9IM(
-                layerA=segments,
-                layerB=polygonLyr,
-                mask="*1*******",
-                cardinality="1..*",
+                context=localContext,
                 feedback=None,
-                ctx=context,
+            )
+            algRunner.runCreateSpatialIndex(
+                inputLyr=segments, context=localContext, feedback=None
             )
             if multiStepFeedback.isCanceled():
                 return
-            featidList = list(
-                set(i["seg_featid"] for i in segments.getFeatures(list(flags.keys())))
-            )
-            if multiStepFeedback.isCanceled():
-                return
-            if len(featidList) == 0:
-                return
-            expressionStr = f"seg_featid in {tuple(featidList)}"
-            if ",)" in expressionStr:
-                expressionStr = expressionStr.replace(",)", ")")
-            segmentedFlags = algRunner.runFilterExpression(
-                segments,
-                expression=expressionStr,
-                context=context,
+            builtPolygonsLyr = algRunner.runClip(
+                inputLayer=polygonLyr,
+                overlayLayer=localGeographicBoundsLyr,
+                context=localContext,
                 feedback=None,
             )
             if multiStepFeedback.isCanceled():
                 return
+            polygonLines = algRunner.runPolygonsToLines(
+                inputLyr=builtPolygonsLyr,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
+            )
+            if multiStepFeedback.isCanceled():
+                return
+            explodedPolygonLines = algRunner.runExplodeLines(
+                inputLyr=polygonLines,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
+            )
+
+            algRunner.runCreateSpatialIndex(
+                inputLyr=explodedPolygonLines,
+                context=context,
+                feedback=None,
+                is_child_algorithm=True,
+            )
+
+            unmatchedLines = processing.run(
+                "native:joinattributesbylocation",
+                {
+                    "INPUT": segments,
+                    "PREDICATE": [2, 5],
+                    "JOIN": explodedPolygonLines,
+                    "JOIN_FIELDS": [],
+                    "METHOD": 0,
+                    "DISCARD_NONMATCHING": False,
+                    "PREFIX": "",
+                    "NON_MATCHING": "memory:",
+                },
+                context=localContext,
+                is_child_algorithm=True,
+            )["NON_MATCHING"]
+
+            if multiStepFeedback.isCanceled():
+                return
+            algRunner.runCreateSpatialIndex(
+                inputLyr=unmatchedLines,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
+            )
+
             mergedSegments = processing.run(
                 "native:dissolve",
-                {"INPUT": segmentedFlags, "OUTPUT": "memory:"},
+                {"INPUT": unmatchedLines, "OUTPUT": "memory:"},
                 context=context,
-                feedback=None,
+                feedback=multiStepFeedback,
             )["OUTPUT"]
-            if multiStepFeedback.isCanceled():
-                return
+
             flagLyr = algRunner.runMultipartToSingleParts(
-                mergedSegments, context, feedback=None
+                mergedSegments, context, feedback=multiStepFeedback
             )
             return flagLyr
-
 
         multiStepFeedback.setCurrentStep(currentStep)
 
