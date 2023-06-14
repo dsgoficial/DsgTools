@@ -2,6 +2,10 @@
 
 ## 4.9.0 - dev
 
+Melhorias:
+
+- Melhoria de desempenho na construção de polígonos quando se utiliza polígonos na entrada que contém linhas que podem delimitar (caso área edificada versus via deslocamento);
+
 ## 4.8.0 - 2023-06-14
 
 Novas Funcionalidades:

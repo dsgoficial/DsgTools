@@ -272,8 +272,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicated
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedVertexesAlgorithm import (
     IdentifyDuplicatedVertexesAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyErrorsBetweenDamAndRoadsAlgorithm import (
-    IdentifyErrorsBetweenDamAndRoadsAlgorithm,
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySegmentErrorsBetweenLinesAlgorithm import (
+    IdentifySegmentErrorsBetweenLinesAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAlgorithm import (
     IdentifyGapsAlgorithm,
@@ -547,7 +547,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyDrainageAndContourInconsistencies(),
             ExtractElevationPoints(),
             LoadTrackerAlgorithm(),
-            IdentifyErrorsBetweenDamAndRoadsAlgorithm(),
+            IdentifySegmentErrorsBetweenLinesAlgorithm(),
             ValidateTrackerAlgorithm(),
             UpdateRunwayAltitudeAlgorithm(),
             LoadRasterLayerFromServerAlgorithm(),

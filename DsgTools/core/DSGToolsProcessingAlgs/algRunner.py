@@ -888,6 +888,7 @@ class AlgRunner:
         feedback=None,
         outputLyr=None,
         unjoinnedLyr=None,
+        returnUnjoinned=False,
     ):
         predicateList = [0] if predicateList is None else predicateList
         joinFields = [] if joinFields is None else joinFields

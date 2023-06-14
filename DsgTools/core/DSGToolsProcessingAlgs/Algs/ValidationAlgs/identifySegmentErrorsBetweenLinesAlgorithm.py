@@ -36,9 +36,9 @@ from qgis.core import (
 from .validationAlgorithm import ValidationAlgorithm
 
 
-class IdentifyErrorsBetweenDamAndRoadsAlgorithm(ValidationAlgorithm):
+class IdentifySegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
-    ROADS = "ROADS"
+    REFERENCE_LINE = "REFERENCE_LINE"
     FLAGS = "FLAGS"
 
     def initAlgorithm(self, config):
@@ -47,12 +47,12 @@ class IdentifyErrorsBetweenDamAndRoadsAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterFeatureSource(
-                self.INPUT, self.tr("Input dam"), [QgsProcessing.TypeVectorLine]
+                self.INPUT, self.tr("Input lines"), [QgsProcessing.TypeVectorLine]
             )
         )
         self.addParameter(
             QgsProcessingParameterFeatureSource(
-                self.ROADS, self.tr("Input roads"), [QgsProcessing.TypeVectorLine]
+                self.REFERENCE_LINE, self.tr("Reference lines"), [QgsProcessing.TypeVectorLine]
             )
         )
         self.addParameter(
@@ -65,14 +65,14 @@ class IdentifyErrorsBetweenDamAndRoadsAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        damSource = self.parameterAsSource(parameters, self.INPUT, context)
-        roadsSource = self.parameterAsSource(parameters, self.ROADS, context)
-        self.prepareFlagSink(parameters, damSource, QgsWkbTypes.MultiPoint, context)
-        nFeats = damSource.featureCount()
-        if damSource is None or nFeats == 0:
+        inputSource = self.parameterAsSource(parameters, self.INPUT, context)
+        referenceSource = self.parameterAsSource(parameters, self.REFERENCE_LINE, context)
+        self.prepareFlagSink(parameters, inputSource, QgsWkbTypes.MultiPoint, context)
+        nFeats = inputSource.featureCount()
+        if inputSource is None or nFeats == 0:
             return {self.FLAGS: self.flag_id}
         stepSize = 100 / nFeats
-        for current, feat in enumerate(damSource.getFeatures()):
+        for current, feat in enumerate(inputSource.getFeatures()):
             if feedback.isCanceled():
                 break
             geom = feat.geometry()
@@ -81,7 +81,7 @@ class IdentifyErrorsBetweenDamAndRoadsAlgorithm(ValidationAlgorithm):
             originalDamVertexSet = set(map(lambda x: QgsGeometry(x), vertexList))
             roadVertexSet = set()
             request = QgsFeatureRequest(bbox)
-            for candidateRoadFeat in roadsSource.getFeatures(request):
+            for candidateRoadFeat in referenceSource.getFeatures(request):
                 candidateGeom = candidateRoadFeat.geometry()
                 if not candidateGeom.intersects(geom) or candidateGeom.touches(geom):
                     continue
@@ -114,7 +114,7 @@ class IdentifyErrorsBetweenDamAndRoadsAlgorithm(ValidationAlgorithm):
             self.flagFeature(
                 flagGeom=firstVertex,
                 flagText=self.tr(
-                    "Invalid unshared vertexes on dam that intersects road"
+                    "Invalid unshared vertexes on input line that intersects reference line"
                 ),
             )
             feedback.setProgress(current * stepSize)
@@ -128,14 +128,14 @@ class IdentifyErrorsBetweenDamAndRoadsAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "identifyerrorsbetweendamandroads"
+        return "identifysegmenterrorsbetweenlines"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Identify Errors Between Dam and Roads")
+        return self.tr("Identify Segment Errors Between Lines")
 
     def group(self):
         """
@@ -156,8 +156,8 @@ class IdentifyErrorsBetweenDamAndRoadsAlgorithm(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate(
-            "IdentifyErrorsBetweenDamAndRoadsAlgorithm", string
+            "IdentifySegmentErrorsBetweenLinesAlgorithm", string
         )
 
     def createInstance(self):
-        return IdentifyErrorsBetweenDamAndRoadsAlgorithm()
+        return IdentifySegmentErrorsBetweenLinesAlgorithm()

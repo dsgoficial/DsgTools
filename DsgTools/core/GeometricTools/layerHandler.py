@@ -33,6 +33,7 @@ from uuid import uuid4
 from processing.tools import dataobjects
 
 import concurrent.futures
+import processing
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
@@ -1911,7 +1912,7 @@ class LayerHandler(QObject):
         context = (
             dataobjects.createContext(feedback=feedback) if context is None else context
         )
-        nSteps = 2 * len(inputLineLyrList) + 3 * len(inputPolygonLyrList) + 1
+        nSteps = 2 * len(inputLineLyrList) + 3 * len(inputPolygonLyrList) + 1 + 7 * (inputPolygonLyrList != [])
         multiStepFeedback = QgsProcessingMultiStepFeedback(
             nSteps, feedback
         )  # set number of steps
@@ -1941,6 +1942,7 @@ class LayerHandler(QObject):
         multiStepFeedback.pushInfo(
             self.tr("Converting polygons to single part and exploding lines")
         )
+        singlePartPolygonList = []
         for polygonLyr in inputPolygonLyrList:
             multiStepFeedback.setCurrentStep(currentStep)
             usedInput = algRunner.runMultipartToSingleParts(
@@ -1951,6 +1953,7 @@ class LayerHandler(QObject):
                 feedback=multiStepFeedback,
                 is_child_algorithm=True,
             )
+            singlePartPolygonList.append(usedInput)
             currentStep += 1
             convertedPolygons = algRunner.runPolygonsToLines(
                 usedInput, context, feedback=multiStepFeedback, is_child_algorithm=True
@@ -1977,6 +1980,62 @@ class LayerHandler(QObject):
             if lineList != []
             else None
         )
+        
+        if singlePartPolygonList != []:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            mergedLayer = algRunner.runCreateFieldWithExpression(
+                inputLyr=mergedLayer,
+                expression="$id",
+                fieldName="featid",
+                fieldType=1,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            algRunner.runCreateSpatialIndex(inputLyr=mergedLayer, context=context, feedback=multiStepFeedback, is_child_algorithm=True)
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            mergedPolygons = algRunner.runMergeVectorLayers(
+                inputList=singlePartPolygonList,
+                context=context,
+                feedback=multiStepFeedback
+            )
+            currentStep += 1
+
+            multiStepFeedback.setCurrentStep(currentStep)
+            dissolvedPolygons = algRunner.runDissolve(
+                inputLyr=mergedPolygons,
+                context=context,
+                feedback=multiStepFeedback
+            )
+            currentStep += 1
+
+            multiStepFeedback.setCurrentStep(currentStep)
+            algRunner.runCreateSpatialIndex(inputLyr=dissolvedPolygons, context=context, feedback=multiStepFeedback, is_child_algorithm=True)
+            currentStep += 1
+
+            multiStepFeedback.setCurrentStep(currentStep)
+            mergedLayer = processing.run(
+                "native:joinattributesbylocation",
+                {
+                    "INPUT": mergedLayer,
+                    "PREDICATE": [6],
+                    "JOIN": dissolvedPolygons,
+                    "JOIN_FIELDS": [],
+                    "METHOD": 0,
+                    "DISCARD_NONMATCHING": False,
+                    "PREFIX": "",
+                    "NON_MATCHING": "memory:",
+                },
+                context=context,
+                feedback=multiStepFeedback,
+            )["NON_MATCHING"]
+
         return mergedLayer
 
     def reprojectLayer(self, layer, targetEpsg, output=None):
