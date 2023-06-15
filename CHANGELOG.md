@@ -2,6 +2,10 @@
 
 ## 4.9.0 - dev
 
+Novas Funcionalidades:
+
+- Novo processo de identificar erros de construção em linhas que devem se sobrepor (exemplo, barragem e rodovia);
+
 Melhorias:
 
 - Melhoria de desempenho na construção de polígonos quando se utiliza polígonos na entrada que contém linhas que podem delimitar (caso área edificada versus via deslocamento);

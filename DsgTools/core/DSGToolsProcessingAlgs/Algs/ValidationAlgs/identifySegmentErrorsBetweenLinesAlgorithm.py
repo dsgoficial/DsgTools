@@ -21,6 +21,8 @@
  ***************************************************************************/
 """
 
+from collections import defaultdict
+from typing import Dict
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from PyQt5.QtCore import QCoreApplication
@@ -31,6 +33,10 @@ from qgis.core import (
     QgsWkbTypes,
     QgsGeometry,
     QgsFeatureRequest,
+    QgsProcessingMultiStepFeedback,
+    QgsFeedback,
+    QgsProcessingFeatureSource,
+    QgsProcessingContext,
 )
 
 from .validationAlgorithm import ValidationAlgorithm
@@ -39,6 +45,7 @@ from .validationAlgorithm import ValidationAlgorithm
 class IdentifySegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     REFERENCE_LINE = "REFERENCE_LINE"
+    SEARCH_RADIUS = "SEARCH_RADIUS"
     FLAGS = "FLAGS"
 
     def initAlgorithm(self, config):
@@ -65,60 +72,115 @@ class IdentifySegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
+        layerHandler = LayerHandler()
+        self.algRunner = AlgRunner()
         inputSource = self.parameterAsSource(parameters, self.INPUT, context)
         referenceSource = self.parameterAsSource(parameters, self.REFERENCE_LINE, context)
+        searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
         self.prepareFlagSink(parameters, inputSource, QgsWkbTypes.MultiPoint, context)
         nFeats = inputSource.featureCount()
-        if inputSource is None or nFeats == 0:
+        nReferenceFeats = referenceSource.featureCount()
+        if inputSource is None or nFeats == 0 or nReferenceFeats == 0:
             return {self.FLAGS: self.flag_id}
-        stepSize = 100 / nFeats
-        for current, feat in enumerate(inputSource.getFeatures()):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        vertexNearEdgeFlagDict = layerHandler.getUnsharedVertexOnSharedEdgesDict(
+            [parameters[self.INPUT], parameters[self.REFERENCE_LINE]],
+            [],
+            searchRadius,
+            feedback=multiStepFeedback,
+
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        vertexFlagSet = self.getFlagVertexesFromGeomDict(
+            vertexNearEdgeFlagDict,
+            feedback=multiStepFeedback
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        intersectedFeats = self.algRunner.runDifference(
+            inputLyr=parameters[self.INPUT],
+            overlayLyr=parameters[self.REFERENCE_LINE],
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        intersectFeatCount = intersectedFeats.featureCount()
+        if len(vertexFlagSet) == 0 and intersectFeatCount == 0:
+            return {self.FLAGS: self.flag_id}
+        if intersectFeatCount > 0:
+            intersectedVertexes = self.algRunner.runExtractVertices(
+                inputLyr=intersectedFeats,
+                context=context,
+            )
+            vertexFlagSet = vertexFlagSet.union(
+                set(
+                    v.geometry().asWkt() for v in intersectedVertexes.getFeatures()
+                )
+            )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.raiseFlagsFromVertexFlagSet(parameters[self.INPUT], vertexFlagSet, context, feedback=multiStepFeedback)
+        return {self.FLAGS: self.flag_id}
+    
+    def getFlagVertexesFromGeomDict(self, geomDict: Dict[int, Dict[str, QgsGeometry]], feedback: QgsFeedback):
+        size = 100 / len(geomDict) if geomDict else 0
+        outputSet = set()
+        for current, (featid, vertexDict) in enumerate(geomDict.items()):
             if feedback.isCanceled():
                 break
-            geom = feat.geometry()
-            bbox = geom.boundingBox()
-            vertexList = list(geom.vertices())
-            originalDamVertexSet = set(map(lambda x: QgsGeometry(x), vertexList))
-            roadVertexSet = set()
-            request = QgsFeatureRequest(bbox)
-            for candidateRoadFeat in referenceSource.getFeatures(request):
-                candidateGeom = candidateRoadFeat.geometry()
-                if not candidateGeom.intersects(geom) or candidateGeom.touches(geom):
-                    continue
-                intersectionGeom = geom.intersection(candidateGeom)
-                intersectionSet = set(
-                    map(lambda x: QgsGeometry(x), intersectionGeom.vertices())
-                )
-                if len(intersectionSet) == 1:
-                    continue
-                candidateGeomVertexSet = set(
-                    map(lambda x: QgsGeometry(x), candidateGeom.vertices())
-                )
-                roadVertexSet = roadVertexSet.union(candidateGeomVertexSet)
-            if roadVertexSet == set():
+            outputSet = outputSet.union(vertexDict.keys())
+            feedback.setProgress(size * current)
+        return outputSet
+    
+    def raiseFlagsFromVertexFlagSet(self, inputSource: QgsProcessingFeatureSource, vertexFlagSet: set, context: QgsProcessingContext, feedback: QgsFeedback):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        localCache = self.algRunner.runCreateFieldWithExpression(
+            inputLyr=inputSource,
+            expression="$id",
+            fieldName="featid",
+            fieldType=1,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=False,
+        )
+        multiStepFeedback.setCurrentStep(1)
+        vertexLyr = self.algRunner.runExtractVertices(
+            inputLyr=localCache,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(2)
+        vertexDict = defaultdict(set)
+        stepSize = 100/vertexLyr.featureCount()
+        for current, vertexFeat in enumerate(vertexLyr.getFeatures()):
+            if multiStepFeedback.isCanceled():
+                return
+            geom = vertexFeat.geometry()
+            if geom.asWkt() not in vertexFlagSet:
                 continue
-            damVertexSet = originalDamVertexSet - roadVertexSet
-            if len(damVertexSet) == 0:
-                continue
-            if len(damVertexSet) == 1 and list(damVertexSet)[0] in [
-                damVertexSet[0],
-                damVertexSet[-1],
-            ]:
-                continue
-            newVertexSet = originalDamVertexSet - damVertexSet
-            if newVertexSet == set():
-                continue
-            firstVertex, *selectedVertexList = list(newVertexSet)
-            for v in selectedVertexList:
-                firstVertex = firstVertex.combine(v)
+            vertexDict[vertexFeat['featid']].add(geom)
+            multiStepFeedback.setProgress(current * stepSize)
+        multiStepFeedback.setCurrentStep(3)
+        stepSize = 100/len(vertexDict)
+        for current, (featid, vertexSet) in enumerate(vertexDict.items()):
+            if multiStepFeedback.isCanceled():
+                return
+            flagText = f"Line with id={featid} from input has construction errors with reference layer."
+            baseGeom, *geomList = list(vertexSet)
+            if len(geomList) > 0:
+                for g in geomList:
+                    baseGeom = baseGeom.combine(g)
             self.flagFeature(
-                flagGeom=firstVertex,
-                flagText=self.tr(
-                    "Invalid unshared vertexes on input line that intersects reference line"
-                ),
+                flagGeom=baseGeom,
+                flagText=flagText
             )
-            feedback.setProgress(current * stepSize)
-        return {self.FLAGS: self.flag_id}
+            multiStepFeedback.setProgress(current * stepSize)
 
     def name(self):
         """

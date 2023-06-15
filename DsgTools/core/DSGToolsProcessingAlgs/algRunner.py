@@ -20,11 +20,13 @@
  *                                                                         *
  ***************************************************************************/
 """
-from typing import List
 import uuid
+from typing import List, Optional
 
 import processing
-from qgis.core import Qgis, QgsProcessingUtils, QgsProcessingFeatureSourceDefinition
+from qgis.core import (Qgis, QgsProcessingContext,
+                       QgsProcessingFeatureSourceDefinition,
+                       QgsProcessingUtils, QgsVectorLayer, QgsFeedback)
 
 
 class AlgRunner:
@@ -1636,6 +1638,31 @@ class AlgRunner:
         output = processing.run(
             "native:refactorfields",
             parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runDifference(
+        self,
+        inputLyr: QgsVectorLayer,
+        overlayLyr: QgsVectorLayer,
+        context: QgsProcessingContext,
+        gridSize: Optional[float] = None,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:difference",
+            {
+                "INPUT": inputLyr,
+                "OVERLAY": overlayLyr,
+                "OUTPUT": outputLyr,
+                "GRID_SIZE": gridSize,
+            },
             context=context,
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,

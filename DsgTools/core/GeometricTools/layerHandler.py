@@ -1897,6 +1897,7 @@ class LayerHandler(QObject):
         inputLineLyrList,
         inputPolygonLyrList,
         algRunner=None,
+        excludeLinesInsidePolygons=False,
         onlySelected=False,
         feedback=None,
         context=None,
@@ -1912,7 +1913,7 @@ class LayerHandler(QObject):
         context = (
             dataobjects.createContext(feedback=feedback) if context is None else context
         )
-        nSteps = 2 * len(inputLineLyrList) + 3 * len(inputPolygonLyrList) + 1 + 7 * (inputPolygonLyrList != [])
+        nSteps = 2 * len(inputLineLyrList) + 3 * len(inputPolygonLyrList) + 1 + 7 * (inputPolygonLyrList != [] and excludeLinesInsidePolygons)
         multiStepFeedback = QgsProcessingMultiStepFeedback(
             nSteps, feedback
         )  # set number of steps
@@ -1981,7 +1982,7 @@ class LayerHandler(QObject):
             else None
         )
         
-        if singlePartPolygonList != []:
+        if singlePartPolygonList != [] and excludeLinesInsidePolygons:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             mergedLayer = algRunner.runCreateFieldWithExpression(
@@ -2432,6 +2433,7 @@ class LayerHandler(QObject):
         linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
             constraintLineLyrList,
             constraintPolygonListWithGeoBounds,
+            excludeLinesInsidePolygons=True,
             onlySelected=onlySelected,
             feedback=multiStepFeedback,
             context=context,
