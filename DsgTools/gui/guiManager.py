@@ -195,8 +195,7 @@ class GuiManager(QObject):
             manager.unload()
             del manager
         for action in self.actions:
-            try:
-                self.iface.unregisterMainWindowAction(action)
-            except:
-                pass
-        del self.toolbar
+            if action is None:
+                continue
+            self.iface.unregisterMainWindowAction(action)
+            del action

@@ -96,6 +96,8 @@ class DsgTools(object):
         """
         self.guiManager.unload()
         for action in self.actions:
+            if action is None:
+                continue
             self.iface.removePluginMenu("&DSGTools", action)
             self.iface.removeToolBarIcon(action)
             self.iface.unregisterMainWindowAction(action)
@@ -103,10 +105,8 @@ class DsgTools(object):
 
         if self.dsgTools is not None:
             self.menuBar.removeAction(self.dsgTools.menuAction())
-        try:
+        if self.toolbar is not None:
             self.iface.mainWindow().removeToolBar(self.toolbar)
-        except:
-            pass
         QgsApplication.processingRegistry().removeProvider(self.provider)
         del self.guiManager
         del self.dsgTools
