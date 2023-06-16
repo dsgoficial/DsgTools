@@ -310,7 +310,6 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                         continue
                     newFeat = self.flipLine(edgeDict, edgeId)
                     featuresToUpdateDict[edgeId] = newFeat
-                    G.remove_edge(n0, n1)
                     feedback.setProgress(current * stepSize)
                     continue
                 for n0, n1 in pairwise(connectedNodes):
@@ -322,7 +321,6 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                         continue
                     newFeat = self.flipLine(edgeDict, edgeId)
                     featuresToUpdateDict[edgeId] = newFeat
-                    G.remove_edge(n0, n1)
                     feedback.setProgress(current * stepSize)
                 for n in connectedNodes:
                     G.remove_node(n)

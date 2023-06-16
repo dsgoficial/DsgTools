@@ -193,8 +193,10 @@ class GuiManager(QObject):
     def unload(self):
         for manager in self.managerList:
             manager.unload()
+            del manager
         for action in self.actions:
             try:
                 self.iface.unregisterMainWindowAction(action)
             except:
                 pass
+        del self.toolbar

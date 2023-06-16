@@ -51,6 +51,7 @@ class OtherTools(QgsMapTool):
             isCheckable=False,
         )
         self.stackButton.setDefaultAction(action)
+        self.copyFeaturesAction = action
 
         icon_path = iconBasePath + "/copywkt.png"
         toolTip = self.tr("DSGTools: Copy Feature's Coordinates as WKT")
@@ -65,7 +66,8 @@ class OtherTools(QgsMapTool):
             parentButton=stackButton,
             isCheckable=False,
         )
-    
+        self.copyWktAction = action
+
     def setCurrentActionOnStackButton(self):
         try:
             self.stackButton.setDefaultAction(self.sender())
@@ -73,8 +75,16 @@ class OtherTools(QgsMapTool):
             pass
 
     def unload(self):
-        pass
-    
+        try:
+            self.iface.unregisterMainWindowAction(self.copyFeaturesAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.copyWktAction)
+        except:
+            pass
+        del self
+
     def runCopyWkt(self):
         self.setCurrentActionOnStackButton()
         copywkt()
@@ -101,7 +111,9 @@ class OtherTools(QgsMapTool):
         name = layer.name()
         newName = name + "_temp"
         wkbType = layer.wkbType()
-        selection = QgsVectorLayer(QgsWkbTypes.displayString(wkbType), newName, "memory")
+        selection = QgsVectorLayer(
+            QgsWkbTypes.displayString(wkbType), newName, "memory"
+        )
         selection.startEditing()
         selection.setCrs(layer.crs())
         dp = selection.dataProvider()

@@ -33,6 +33,7 @@ from qgis.PyQt.QtCore import pyqtSignal
 from qgis.core import QgsVectorLayer
 
 from .GenericSelectionTool.genericSelectionTool import GenericSelectionTool
+
 # from .MeasureTool.measureTool import MeasureTool
 from .Acquisition.acquisition import Acquisition
 from .FlipLineTool.flipLineTool import FlipLine
@@ -147,18 +148,17 @@ class MapToolsGuiManager(QObject):
         self.filterStackButton = self.manager.createToolButton(
             self.toolbar_extra, "FilterTools"
         )
-        self.spatialFilterTool = SpatialFilter(
-            stackButton=self.filterStackButton
-        )
-        action = self.manager.add_action(
+        self.spatialFilterTool = SpatialFilter(stackButton=self.filterStackButton)
+        self.spatialFilterAction = self.manager.add_action(
             icon_path=self.iconBasePath + "spatialFilter.png",
             text=self.tr("DSGTools: Spatial Filter"),
             callback=self.spatialFilterTool.start,
+            add_to_menu=False,
             add_to_toolbar=False,
             parentButton=self.filterStackButton,
             withShortcut=True,
         )
-        self.filterStackButton.setDefaultAction(action)
+        self.filterStackButton.setDefaultAction(self.spatialFilterAction)
 
         self.filterTool = FilterTools(self.iface)
         self.filterTool.addTool(
@@ -237,7 +237,38 @@ class MapToolsGuiManager(QObject):
         self.iface.mapCanvas().setMapTool(self.rasterSelectTool)
 
     def unload(self):
+        for tool in [
+            self.flipLineTool,
+            self.acquisition,
+            self.freeHandAcquisiton.acquisitionFreeController,
+            self.freeHandReshape.acquisitionFreeController,
+        ]:
+            # connect current layer changed signal to all tools that use it
+            self.iface.currentLayerChanged.disconnect(tool.setToolEnabled)
+            # connect editing started/stopped signals to all tools that use it
+            self.editingStarted.disconnect(tool.setToolEnabled)
+            self.editingStopped.disconnect(tool.setToolEnabled)
+            # connect edit button toggling signal to all tools that use it
+            self.iface.actionToggleEditing().triggered.disconnect(tool.setToolEnabled)
         self.genericTool.unload()
+        self.freeHandReshape.unload()
+        self.freeHandAcquisiton.unload()
         self.rasterSelectTool.unload()
+        self.otherTools.unload()
+        self.filterTool.unload()
+        self.spatialFilterTool.unload()
+        self.labelTool.unload()
+        self.shortcutsTool.unload()
+        self.freeHandAcquisiton.unload()
+        try:
+            self.iface.unregisterMainWindowAction(self.spatialFilterAction)
+        except:
+            pass
         self.iface.mainWindow().removeToolBar(self.toolbar_extra)
+        del self.spatialFilterTool
         del self.toolbar_extra
+        del self.otherTools
+        del self.rasterSelectTool
+        del self.genericTool
+        del self.freeHandAcquisiton
+        del self.freeHandReshape

@@ -568,7 +568,22 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
 
     def unload(self) -> None:
         self.restoreOriginalValueList()
-        self.iface.unregisterMainWindowAction(self.applyPushButtonAction)
+        try:
+            self.iface.unregisterMainWindowAction(self.applyPushButtonAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.previousTileAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.nextTileAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.resetPushButtonAction)
+        except:
+            pass
 
     def setState(
         self,

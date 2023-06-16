@@ -107,6 +107,22 @@ class ToolbarsGuiManager(QObject):
         self.reviewTool.unload()
         self.rasterInfoTool.unload()
         self.dataValidationTool.unload()
+        self.centerPointAndBoundariesTool.unload()
+        for tool in [
+            self.minimumAreaTool,
+            self.inspectFeaturesTool,
+            self.reviewTool,
+            self.rasterInfoTool,
+            self.dataValidationTool,
+            self.centerPointAndBoundariesTool,
+        ]:
+            try:
+                del tool
+            except:
+                pass
         for toolbar in self.toolbarList:
-            self.iface.mainWindow().removeToolBar(toolbar)
+            try:
+                self.iface.mainWindow().removeToolBar(toolbar)
+            except:
+                pass
             del toolbar

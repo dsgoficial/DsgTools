@@ -37,6 +37,7 @@ class LabelTogglingTool(QgsMapTool):
         self.iface = iface
         self.canvas = self.iface.mapCanvas()
         super(LabelTogglingTool, self).__init__(self.canvas)
+        self.actionList = []
 
     def addTool(self, manager, callback, parentToolbar, stackButton, iconBasePath):
         self.stackButton = stackButton
@@ -58,6 +59,7 @@ class LabelTogglingTool(QgsMapTool):
         )
         self.setAction(action)
         self.stackButton.setDefaultAction(action)
+        self.actionList.append(action)
 
         icon_path = iconBasePath + "/toggleSelectedLayersLabel.png"
         toolTip = self.tr("DSGTools: Toggle selected layers' labels visibility")
@@ -75,6 +77,7 @@ class LabelTogglingTool(QgsMapTool):
             isCheckable=False,
         )
         self.setAction(action)
+        self.actionList.append(action)
 
         icon_path = iconBasePath + "/toggleActiveLayerLabel.png"
         toolTip = self.tr("DSGTools: Toggle active layer' label visibility")
@@ -92,6 +95,7 @@ class LabelTogglingTool(QgsMapTool):
             isCheckable=False,
         )
         self.setAction(action)
+        self.actionList.append(action)
 
     def setAction(self, action):
         self.toolAction = action
@@ -132,5 +136,10 @@ class LabelTogglingTool(QgsMapTool):
             return []
 
     def unload(self):
+        for action in self.actionList:
+            try:
+                self.iface.unregisterMainWindowAction(action)
+            except:
+                pass
         self.deactivate()
         del self
