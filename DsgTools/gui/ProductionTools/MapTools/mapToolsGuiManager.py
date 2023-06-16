@@ -250,6 +250,16 @@ class MapToolsGuiManager(QObject):
             self.editingStopped.disconnect(tool.setToolEnabled)
             # connect edit button toggling signal to all tools that use it
             self.iface.actionToggleEditing().triggered.disconnect(tool.setToolEnabled)
+        for free_hand_tool in [self.freeHandAcquisiton, self.freeHandReshape]:
+            free_hand_tool.acquisitionFreeController.actionAcquisitionFree.triggered.disconnect(
+                free_hand_tool.acquisitionFreeController.activateTool
+            )
+            free_hand_tool.acquisitionFreeController.acquisitionFree.acquisitionFinished.disconnect(
+                free_hand_tool.acquisitionFreeController.createFeature
+            )
+            free_hand_tool.acquisitionFreeController.acquisitionFree.reshapeLineCreated.disconnect(
+                free_hand_tool.acquisitionFreeController.reshapeSimplify
+            )
         self.genericTool.unload()
         self.freeHandReshape.unload()
         self.freeHandAcquisiton.unload()

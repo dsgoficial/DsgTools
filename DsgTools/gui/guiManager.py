@@ -195,7 +195,7 @@ class GuiManager(QObject):
             manager.unload()
             del manager
         for action in self.actions:
-            if action is None:
+            if action is None or not isinstance(action, QAction):
+                del action
                 continue
             self.iface.unregisterMainWindowAction(action)
-            del action

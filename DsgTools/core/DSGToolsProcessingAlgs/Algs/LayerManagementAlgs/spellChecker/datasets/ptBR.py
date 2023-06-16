@@ -5,7 +5,6 @@ import os
 from ..structures.ternarySearchTree import Trie, Node
 from DsgTools.core.NetworkTools.ExternalFilesHandler import (
     ExternalFileHandlerConfig,
-    ExternalFileDownloadProcessor,
 )
 
 WORLIST_FILE_PATH = os.path.join(

@@ -22,21 +22,12 @@
 """
 from builtins import range
 import os
-from os.path import expanduser
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.spellChecker.datasets.ptBR import (
-    PalavrasFileConfig,
-    WordDatasetPtBRFileConfig,
-)
-from DsgTools.core.NetworkTools.ExternalFilesHandler import (
-    ExternalFileDownloadProcessor,
-)
 
 from processing.modeler.ModelerUtils import ModelerUtils
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt, QSettings
+from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
 from qgis.PyQt.QtWidgets import QMessageBox, QDialog, QFileDialog
 
-from qgis.utils import iface
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), "options.ui"))
 
