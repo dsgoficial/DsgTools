@@ -340,7 +340,8 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
     def getRelatedNode(self, node, lineFeat):
         p0, pn = self.firstAndLastNode(lineFeat)
         p0 = QgsGeometry.fromPointXY(p0)
-        nodeGeom = QgsGeometry.fromWkb(node)
+        nodeGeom = QgsGeometry()
+        nodeGeom.fromWkb(node)
         return nodeGeom.equals(p0)
 
     def name(self):
