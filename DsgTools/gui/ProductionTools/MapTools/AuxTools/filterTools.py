@@ -22,11 +22,21 @@
  ***************************************************************************/
 """
 from qgis import core
+from qgis.gui import QgsMapTool
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QObject
 
 
-class FilterTools(QObject):
+class FilterTools(QgsMapTool):
+
+    def __init__(self, iface):
+        """
+        Hides or show active layers labels.
+        """
+        self.iface = iface
+        self.canvas = self.iface.mapCanvas()
+        super(FilterTools, self).__init__(self.canvas)
+
     def addTool(self, manager, callback, parentToolbar, stackButton, iconBasePath):
         self.stackButton = stackButton
         icon_path = iconBasePath + "/filter.svg"
@@ -73,8 +83,15 @@ class FilterTools(QObject):
 
     def unload(self):
         pass
+    
+    def setCurrentActionOnStackButton(self):
+        try:
+            self.stackButton.setDefaultAction(self.sender())
+        except:
+            pass
 
     def cleanAllFilters(self):
+        self.setCurrentActionOnStackButton()
         loadedLayers = core.QgsProject.instance().mapLayers().values()
         showMessage = False
         for layer in loadedLayers:
@@ -91,6 +108,7 @@ class FilterTools(QObject):
             )
 
     def filterBySelectedGeometries(self):
+        self.setCurrentActionOnStackButton()
         layer = iface.activeLayer()
         if not layer:
             return
@@ -120,6 +138,7 @@ class FilterTools(QObject):
         iface.mapCanvas().refresh()
 
     def filterSelections(self):
+        self.setCurrentActionOnStackButton()
         layer = iface.activeLayer()
         if not layer:
             return

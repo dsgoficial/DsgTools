@@ -252,9 +252,14 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
             engine.prepareGeometry()
             request = QgsFeatureRequest().setFilterRect(bbox)
             # inner search
-            for candidateFeat in itertools.chain.from_iterable(
-                [mergedLines.getFeatures(request), filterLayer.getFeatures(request)]
-            ):
+            iterable = (
+                itertools.chain.from_iterable(
+                    [mergedLines.getFeatures(request), filterLayer.getFeatures(request)]
+                )
+                if filterLayer is not None
+                else mergedLines.getFeatures(request)
+            )
+            for candidateFeat in iterable:
                 if multiStepFeedback.isCanceled():
                     return outputSet
                 candidateGeom = candidateFeat.geometry()
@@ -319,9 +324,15 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
         ]
         currentStep = len(polygonFilter) + 1
         multiStepFeedback.setCurrentStep(currentStep)
-        mergedFilters = algRunner.runMergeVectorLayers(
-            lineFilterList, context=context, feedback=multiStepFeedback
+        mergedFilters = (
+            algRunner.runMergeVectorLayers(
+                lineFilterList, context=context, feedback=multiStepFeedback
+            )
+            if lineFilterList != []
+            else None
         )
+        if mergedFilters is None:
+            return None
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)

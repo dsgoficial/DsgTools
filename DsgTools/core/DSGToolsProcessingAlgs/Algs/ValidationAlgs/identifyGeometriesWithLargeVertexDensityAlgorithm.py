@@ -20,25 +20,19 @@
  ***************************************************************************/
 """
 
+import os
+import concurrent.futures
+
 from collections import defaultdict
-from dataclasses import dataclass
 from PyQt5.QtCore import QCoreApplication
 
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterDistance,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterField,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
     QgsProcessingFeatureSourceDefinition,
@@ -162,9 +156,13 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
         if featCount == 0:
             return flagDict
         size = 100 / featCount
-        for current, feat in enumerate(vertexLayer.getFeatures()):
-            if feedback is not None and feedback.isCanceled():
-                break
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.setProgressText(self.tr("Submitting to thread"))
+        def compute(feat):
+            outputDict = defaultdict(set)
+            if feedback.isCanceled():
+                return None
             geom = feat.geometry()
             buffer = geom.buffer(searchRadius, -1)
             bufferBB = buffer.boundingBox()
@@ -173,18 +171,38 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
                 .setFilterExpression(f"featid = {feat['featid']}")
                 .setFilterRect(bufferBB)
             )
+            if "vertex_part_ring" in feat:
+                request.setFilterExpression(f"vertex_part_ring = {feat['vertex_part_ring']}")
             for candidateFeat in vertexLayer.getFeatures(request):
-                if (
-                    candidateFeat.id() == feat.id()
-                    or candidateFeat.geometry() in flagDict[feat["featid"]]
-                ):
+                if candidateFeat.id() == feat.id():
                     continue
+                candidateGeom = candidateFeat.geometry()
                 if candidateFeat.geometry().intersects(
                     buffer
-                ) and not candidateFeat.geometry().equals(geom):
-                    flagDict[feat["featid"]].add(geom.asWkb())
-            if feedback is not None:
-                feedback.setProgress(size * current)
+                ) and not candidateGeom.equals(geom):
+                    outputDict[feat["featid"]].add(candidateGeom.asWkb())
+            return outputDict
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
+        futures = set()
+
+        for current, feat in enumerate(vertexLayer.getFeatures()):
+            if feedback is not None and feedback.isCanceled():
+                break
+            futures.add(pool.submit(compute, feat))
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(size * current)
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.setProgressText(self.tr("Evaluating Results"))
+
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if feedback.isCanceled():
+                return None
+            output = future.result()
+            if output is None:
+                continue
+            for featid, geomSet in output.items():
+                flagDict[featid] = flagDict[featid].union(geomSet)
+            multiStepFeedback.setProgress(size * current)
         return flagDict
 
     def name(self):

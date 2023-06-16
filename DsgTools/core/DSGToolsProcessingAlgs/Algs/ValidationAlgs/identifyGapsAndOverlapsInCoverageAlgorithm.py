@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 
+from collections import defaultdict
 from PyQt5.QtCore import QCoreApplication
 
 import processing
@@ -42,6 +43,7 @@ from qgis.core import (
     QgsProcessingUtils,
     QgsProject,
     QgsWkbTypes,
+    QgsProcessingMultiStepFeedback
 )
 
 from .validationAlgorithm import ValidationAlgorithm
@@ -104,27 +106,42 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
             )
         isMulti = True
         for inputLyr in inputLyrList:
-            isMulti &= QgsWkbTypes.isMultiType(int(inputLyr.wkbType()))
+            isMulti &= QgsWkbTypes.isMultiType(inputLyr.wkbType())
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.Polygon, context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
-
+        nSteps = 4 if not frameLyr else 5
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Creating unified layer"))
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
-            inputLyrList, QgsWkbTypes.Polygon, onlySelected=onlySelected
+            inputLyrList, QgsWkbTypes.Polygon, onlySelected=onlySelected, feedback=multiStepFeedback
         )
-        lyr = self.overlayCoverage(coverage, context)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Overlaying coverage"))
+        lyr = self.overlayCoverage(coverage, context, feedback=multiStepFeedback)
+        currentStep += 1
         if frameLyr:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Getting gaps with geographic bounds"))
             self.getGapsOfCoverageWithFrame(lyr, frameLyr, context)
+            currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         featureList, total = self.getIteratorAndFeatureCount(
             lyr
         )  # only selected is not applied because we are using an inner layer, not the original ones
-        geomDict = self.getGeomDict(featureList, isMulti, feedback, total)
-        self.raiseFlags(geomDict, feedback)
+        multiStepFeedback.setProgressText(self.tr("Raising flags"))
+        geomDict = self.getGeomDict(featureList, isMulti, multiStepFeedback, total)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.raiseFlags(geomDict, multiStepFeedback)
         QgsProject.instance().removeMapLayer(lyr)
         return {self.FLAGS: self.flag_id}
 
-    def overlayCoverage(self, coverage, context):
+    def overlayCoverage(self, coverage, context, feedback):
         output = QgsProcessingUtils.generateTempFilename("output.shp")
         parameters = {
             "ainput": coverage,
@@ -142,7 +159,7 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
             "GRASS_VECTOR_DSCO": "",
             "GRASS_VECTOR_LCO": "",
         }
-        x = processing.run("grass7:v.overlay", parameters, context=context)
+        x = processing.run("grass7:v.overlay", parameters, context=context, feedback=feedback)
         lyr = QgsProcessingUtils.mapLayerFromString(x["output"], context)
         lyr.setCrs(coverage.crs())
         return lyr
@@ -196,7 +213,7 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
                     self.flagFeature(geom, self.tr("Gap in coverage with frame"))
 
     def getGeomDict(self, featureList, isMulti, feedback, total):
-        geomDict = dict()
+        geomDict = defaultdict(list)
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
             if feedback.isCanceled():
@@ -205,8 +222,6 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
             if isMulti and not geom.isMultipart():
                 geom.convertToMultiType()
             geomKey = geom.asWkb()
-            if geomKey not in geomDict:
-                geomDict[geomKey] = []
             geomDict[geomKey].append(feat)
             # # Update the progress bar
             attrList = feat.attributes()

@@ -109,7 +109,11 @@ class IdentifyDuplicatedVertexesAlgorithm(ValidationAlgorithm):
         )
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.setProgressText(self.tr("Building search structure..."))
-        pointDict = self.buildPointDict(vertexLayer, feedback=multiStepFeedback)
+        pointDict = self.buildPointDict(
+            vertexLayer,
+            inpuIsPolygon=inputLyr.geometryType() == QgsWkbTypes.PolygonGeometry,
+            feedback=multiStepFeedback,
+        )
         multiStepFeedback.setCurrentStep(3)
         multiStepFeedback.setProgressText(self.tr("Searching duplicated vertexes..."))
         flagDict = self.getDuplicatedVertexes(pointDict, feedback=multiStepFeedback)
@@ -119,7 +123,7 @@ class IdentifyDuplicatedVertexesAlgorithm(ValidationAlgorithm):
 
         return {self.FLAGS: self.flag_id}
 
-    def buildPointDict(self, inputLyr, feedback=None):
+    def buildPointDict(self, inputLyr, inpuIsPolygon=False, feedback=None):
         featCount = inputLyr.featureCount()
         if featCount == 0:
             return {}
@@ -129,7 +133,9 @@ class IdentifyDuplicatedVertexesAlgorithm(ValidationAlgorithm):
             if feedback is not None and feedback.isCanceled():
                 break
             geom = feat.geometry()
-            pointDict[feat["featid"]][geom.asWkb()].append(geom)
+            if inpuIsPolygon and feat["vertex_part_index"] == 0:
+                continue
+            pointDict[feat["featid"]][geom.asWkb()].append(feat)
             if feedback is not None:
                 feedback.setProgress(current * total)
         return pointDict
@@ -137,9 +143,10 @@ class IdentifyDuplicatedVertexesAlgorithm(ValidationAlgorithm):
     def getDuplicatedVertexes(self, pointDict, feedback=None):
         flagSet = set()
         for vertexDict in pointDict.values():
-            for vertex, geomList in vertexDict.items():
-                if len(geomList) > 1:
-                    flagSet.add(vertex)
+            for vertex, featList in vertexDict.items():
+                if len(featList) <= 1:
+                    continue
+                flagSet.add(vertex)
         return flagSet
 
     def raiseFlags(self, flagSet, feedback=None):

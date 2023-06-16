@@ -116,7 +116,7 @@ class DetectNullGeometriesAlgorithm(QgsProcessingAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Layer Management Algorithms")
+        return self.tr("Quality Assurance Tools (Identification Processes)")
 
     def groupId(self):
         """
@@ -126,7 +126,7 @@ class DetectNullGeometriesAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Layer Management Algorithms"
+        return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
         return QCoreApplication.translate("DetectNullGeometriesAlgorithm", string)

@@ -45,15 +45,15 @@ class BDGExRequestHandler(QObject):
         super(BDGExRequestHandler, self).__init__()
         self.availableServicesDict = {
             "mapcache": {
-                "url": "https://bdgex.eb.mil.br/mapcache",
+                "url": "http://bdgex.eb.mil.br/mapcache",
                 "services": {"WMS": dict()},
             },
             "mapindex": {
-                "url": "https://bdgex.eb.mil.br/cgi-bin/mapaindice",
+                "url": "http://bdgex.eb.mil.br/cgi-bin/mapaindice",
                 "services": {"WMS": dict(), "WFS": dict()},
             },
             "auxlayers": {
-                "url": "https://bdgex.eb.mil.br/cgi-bin/geoportal",
+                "url": "http://bdgex.eb.mil.br/cgi-bin/geoportal",
                 "services": {"WMS": dict(), "WFS": dict()},
             },
         }

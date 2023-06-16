@@ -55,6 +55,13 @@ class GetCrsDialog(QDialog):
 
 def copywkt():
     layer = iface.activeLayer()
+    if layer is None:
+        iface.messageBar().pushMessage(
+            "Warning",
+            "Selecione uma camada antes de rodar o processo",
+            level=Qgis.Warning,
+            duration=5
+        )
 
     result, destCrs = callDialog(layer.crs())
     wktcoord = []

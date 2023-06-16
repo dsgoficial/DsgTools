@@ -21,9 +21,12 @@
  ***************************************************************************/
 """
 import uuid
+from typing import List, Optional
 
 import processing
-from qgis.core import Qgis, QgsProcessingUtils, QgsProcessingFeatureSourceDefinition
+from qgis.core import (Qgis, QgsProcessingContext,
+                       QgsProcessingFeatureSourceDefinition,
+                       QgsProcessingUtils, QgsVectorLayer, QgsFeedback)
 
 
 class AlgRunner:
@@ -63,12 +66,24 @@ class AlgRunner:
         else:
             return lyr
 
-    def runDissolve(self, inputLyr, context, feedback=None, outputLyr=None, field=None):
+    def runDissolve(
+        self,
+        inputLyr,
+        context,
+        feedback=None,
+        outputLyr=None,
+        field=None,
+        is_child_algorithm=False,
+    ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         field = [] if field is None else field
         parameters = {"INPUT": inputLyr, "FIELD": field, "OUTPUT": outputLyr}
         output = processing.run(
-            "native:dissolve", parameters, context=context, feedback=feedback
+            "native:dissolve",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -117,6 +132,7 @@ class AlgRunner:
         donuthole=None,
         outershell=None,
         selected=False,
+        is_child_algorithm=False,
     ):
         donuthole = "memory:" if donuthole is None else donuthole
         outershell = "memory:" if outershell is None else outershell
@@ -131,6 +147,7 @@ class AlgRunner:
             parameters,
             context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTERSHELL"], output["DONUTHOLE"]
 
@@ -504,11 +521,23 @@ class AlgRunner:
         )
         return output["OUTPUT"]
 
-    def runClip(self, inputLayer, overlayLayer, context, feedback=None, outputLyr=None):
+    def runClip(
+        self,
+        inputLayer,
+        overlayLayer,
+        context,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"INPUT": inputLayer, "OVERLAY": overlayLayer, "OUTPUT": outputLyr}
         output = processing.run(
-            "native:clip", parameters, context=context, feedback=feedback
+            "native:clip",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -564,6 +593,7 @@ class AlgRunner:
         mitterLimit=None,
         feedback=None,
         outputLyr=None,
+        is_child_algorithm=False,
     ):
         endCapStyle = 0 if endCapStyle is None else endCapStyle
         joinStyle = 0 if joinStyle is None else joinStyle
@@ -581,7 +611,11 @@ class AlgRunner:
             "OUTPUT": outputLyr,
         }
         output = processing.run(
-            "native:buffer", parameters, context=context, feedback=feedback
+            "native:buffer",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -636,11 +670,10 @@ class AlgRunner:
         parameters = {
             "INPUT": inputLyr,
             "SELECTED": onlySelected,
-            "FLAGS": flagLyr,
+            "FLAGS": outputLyr,
             "ATTRIBUTE_BLACK_LIST": attributeBlackList,
             "IGNORE_VIRTUAL_FIELDS": ignoreVirtualFields,
             "IGNORE_PK_FIELDS": excludePrimaryKeys,
-            "OUTPUT": outputLyr,
         }
         output = processing.run(
             "dsgtools:removeduplicatedfeatures",
@@ -648,7 +681,7 @@ class AlgRunner:
             context=context,
             feedback=feedback,
         )
-        return output["OUTPUT"]
+        return output["FLAGS"]
 
     def runApplStylesFromDatabaseToLayers(
         self, inputList, context, styleName, feedback=None, outputLyr=None
@@ -767,7 +800,7 @@ class AlgRunner:
 
     def runSaveSelectedFeatures(self, inputLyr, context, feedback=None, outputLyr=None):
         outputLyr = "memory:" if outputLyr is None else outputLyr
-        parameters = {"LAYERS": inputLyr, "OUTPUT": outputLyr}
+        parameters = {"INPUT": inputLyr, "OUTPUT": outputLyr}
         output = processing.run(
             "native:saveselectedfeatures",
             parameters,
@@ -857,6 +890,7 @@ class AlgRunner:
         feedback=None,
         outputLyr=None,
         unjoinnedLyr=None,
+        returnUnjoinned=False,
     ):
         predicateList = [0] if predicateList is None else predicateList
         joinFields = [] if joinFields is None else joinFields
@@ -881,7 +915,13 @@ class AlgRunner:
         return output["OUTPUT"]
 
     def runLineIntersections(
-        self, inputLyr, intersectLyr, context, feedback=None, outputLyr=None
+        self,
+        inputLyr,
+        intersectLyr,
+        context,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {
@@ -892,7 +932,11 @@ class AlgRunner:
             "OUTPUT": outputLyr,
         }
         output = processing.run(
-            "native:lineintersections", parameters, context=context, feedback=feedback
+            "native:lineintersections",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -1005,6 +1049,7 @@ class AlgRunner:
         fieldPrecision=0,
         feedback=None,
         outputLyr=None,
+        is_child_algorithm=False,
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
@@ -1019,6 +1064,7 @@ class AlgRunner:
             },
             context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -1272,6 +1318,7 @@ class AlgRunner:
         outputLyr=None,
         hOverlay=0,
         vOverlay=0,
+        is_child_algorithm=False,
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
@@ -1288,6 +1335,7 @@ class AlgRunner:
             },
             context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -1367,3 +1415,256 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["FLAGS"]
+
+    def runShortestLine(
+        self,
+        sourceLayer,
+        destinationLayer,
+        context,
+        method=0,
+        neighbors=1,
+        maxDistance=None,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:shortestline",
+            {
+                "SOURCE": sourceLayer,
+                "DESTINATION": destinationLayer,
+                "METHOD": method,
+                "NEIGHBORS": neighbors,
+                "DISTANCE": maxDistance,
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runRetainFields(
+        self,
+        inputLayer,
+        fields,
+        context,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:retainfields",
+            {"INPUT": inputLayer, "FIELDS": fields, "OUTPUT": "TEMPORARY_OUTPUT"},
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runExtractByExtent(
+        self,
+        inputLayer,
+        extent,
+        context,
+        clip=True,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:extractbyextent",
+            {
+                "INPUT": inputLayer,
+                "EXTENT": extent,
+                "CLIP": clip,
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runSelectByLocation(
+        self,
+        inputLyr,
+        intersectLyr,
+        context,
+        predicate=None,
+        method=None,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        predicate = [0] if predicate is None else predicate
+        method = [0] if method is None else method
+        processing.run(
+            "native:selectbylocation",
+            {
+                "INPUT": inputLyr,
+                "INTERSECT": intersectLyr,
+                "PREDICATE": predicate,
+                "METHOD": method,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+
+    def extractWithinDistance(
+        self,
+        inputLyr,
+        referenceLyr,
+        distance,
+        context,
+        outputLyr=None,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:extractwithindistance",
+            {
+                "INPUT": inputLyr,
+                "REFERENCE": referenceLyr,
+                "DISTANCE": distance,
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runUnbuildPolygons(
+        self,
+        inputPolygonList,
+        context,
+        onlySelected=False,
+        lineConstraintLayerList=None,
+        polygonConstraintLayerList=None,
+        geographicBoundary=None,
+        feedback=None,
+        outputCenterPointsLyr=None,
+        outputBoundariesLyr=None,
+        is_child_algorithm=False,
+    ):
+        lineConstraintLayerList = (
+            [] if lineConstraintLayerList is None else lineConstraintLayerList
+        )
+        polygonConstraintLayerList = (
+            [] if polygonConstraintLayerList is None else polygonConstraintLayerList
+        )
+        outputCenterPointsLyr = (
+            "memory:" if outputCenterPointsLyr is None else outputCenterPointsLyr
+        )
+        outputBoundariesLyr = (
+            "memory:" if outputBoundariesLyr is None else outputBoundariesLyr
+        )
+        output = processing.run(
+            "dsgtools:unbuildpolygonsalgorithm",
+            {
+                "INPUT_POLYGONS": inputPolygonList,
+                "SELECTED": onlySelected,
+                "CONSTRAINT_LINE_LAYERS": lineConstraintLayerList,
+                "CONSTRAINT_POLYGON_LAYERS": polygonConstraintLayerList,
+                "GEOGRAPHIC_BOUNDARY": geographicBoundary,
+                "OUTPUT_CENTER_POINTS": outputCenterPointsLyr,
+                "OUTPUT_BOUNDARIES": outputBoundariesLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT_CENTER_POINTS"], output["OUTPUT_BOUNDARIES"]
+
+    def runJoinByLocationSummary(
+        self,
+        inputLyr,
+        joinLyr,
+        predicateList,
+        joinFields,
+        summaries,
+        context,
+        discardNonMatching=True,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
+        predicateList = [0] if predicateList is None else predicateList
+        joinFields = [] if joinFields is None else joinFields
+        summaries = [] if summaries is None else summaries
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        parameters = {
+            "INPUT": inputLyr,
+            "PREDICATE": predicateList,
+            "JOIN": joinLyr,
+            "JOIN_FIELDS": joinFields,
+            "SUMMARIES": summaries,
+            "DISCARD_NONMATCHING": discardNonMatching,
+            "PREFIX": "",
+            "OUTPUT": outputLyr,
+        }
+        output = processing.run(
+            "qgis:joinbylocationsummary",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runRefactorFields(
+        self,
+        inputLayer,
+        fieldmap: List[dict],
+        context,
+        feedback=None,
+        onlySelected=None,
+        outputLyr=None,
+        is_child_algorithm=False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        parameters = {
+            "INPUT": QgsProcessingFeatureSourceDefinition(
+                inputLayer.source(), selectedFeaturesOnly=onlySelected
+            ),
+            "FIELDS_MAPPING": fieldmap,
+            "OUTPUT": outputLyr,
+        }
+        output = processing.run(
+            "native:refactorfields",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runDifference(
+        self,
+        inputLyr: QgsVectorLayer,
+        overlayLyr: QgsVectorLayer,
+        context: QgsProcessingContext,
+        gridSize: Optional[float] = None,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:difference",
+            {
+                "INPUT": inputLyr,
+                "OVERLAY": overlayLyr,
+                "OUTPUT": outputLyr,
+                "GRID_SIZE": gridSize,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]

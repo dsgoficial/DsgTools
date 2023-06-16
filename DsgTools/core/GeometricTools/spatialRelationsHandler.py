@@ -20,25 +20,24 @@
  *                                                                         *
  ***************************************************************************/
 """
-from __future__ import absolute_import
+
+import concurrent.futures
 
 from itertools import tee, combinations
 from collections import defaultdict, OrderedDict
+import os
 
 from qgis.core import (
-    Qgis,
-    QgsFeature,
     QgsProject,
     QgsGeometry,
     QgsExpression,
     QgsVectorLayer,
     QgsSpatialIndex,
-    QgsFeatureRequest,
     QgsProcessingContext,
     QgsProcessingFeedback,
     QgsProcessingMultiStepFeedback,
+    QgsFeatureRequest,
 )
-from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
 from qgis.PyQt.Qt import QObject
 from qgis.PyQt.QtCore import QRegExp, QCoreApplication
 from qgis.PyQt.QtGui import QRegExpValidator
@@ -68,6 +67,7 @@ class SpatialRelationsHandler(QObject):
         QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not overlap"),
         QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "contains"),
         QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "does not contain"),
+        QCoreApplication.translate("EnforceSpatialRulesAlgorithm", "de9im"),
     )
     (
         EQUALS,
@@ -85,6 +85,7 @@ class SpatialRelationsHandler(QObject):
         NOTOVERLAPS,
         CONTAINS,
         NOTCONTAINS,
+        DE9IM,
     ) = range(len(__predicates))
 
     def __init__(self, iface=None, parent=None):
@@ -103,6 +104,8 @@ class SpatialRelationsHandler(QObject):
         contourLyr,
         heightFieldName,
         threshold,
+        elevationPointsLyr=None,
+        elevationPointHeightFieldName=None,
         onlySelected=False,
         geoBoundsLyr=None,
         context=None,
@@ -112,16 +115,23 @@ class SpatialRelationsHandler(QObject):
         Does several validation procedures with terrain elements.
         """
         invalidDict = OrderedDict()
-        multiStepFeedback = QgsProcessingMultiStepFeedback(
-            7, feedback
+        nSteps = 7 if elevationPointsLyr is None else 9
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(nSteps, feedback)
+            if feedback is not None
+            else None
         )  # ajustar depois
-        multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.setProgressText(self.tr("Splitting lines..."))
+        currentStep = 0
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Splitting lines..."))
         splitLinesLyr = self.algRunner.runSplitLinesWithLines(
             contourLyr, contourLyr, context=context, feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.setProgressText(self.tr("Building aux structure..."))
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Building aux structure..."))
         (
             contourSpatialIdx,
             contourIdDict,
@@ -132,7 +142,12 @@ class SpatialRelationsHandler(QObject):
             attributeName=heightFieldName,
             feedback=multiStepFeedback,
         )
-        multiStepFeedback.setCurrentStep(2)
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
         geoBoundsGeomEngine, geoBoundsPolygonEngine = (
             (None, None)
             if geoBoundsLyr is None
@@ -140,28 +155,37 @@ class SpatialRelationsHandler(QObject):
                 geoBoundsLyr, context=context, feedback=multiStepFeedback
             )
         )
-        multiStepFeedback.setCurrentStep(3)
-        multiStepFeedback.setProgressText(self.tr("Validating contour relations..."))
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(
+                self.tr("Validating contour relations...")
+            )
         contourFlags = self.validateContourRelations(
             contourNodeDict,
             heightFieldName,
             geoBoundsGeomEngine=geoBoundsGeomEngine,
             geoBoundsPolygonEngine=geoBoundsPolygonEngine,
         )
+        currentStep += 1
+
         invalidDict.update(contourFlags)
-        multiStepFeedback.setCurrentStep(4)
-        multiStepFeedback.setProgressText(
-            self.tr("Finding contour out of threshold...")
-        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(
+                self.tr("Finding contour out of threshold...")
+            )
         contourOutOfThresholdDict = self.findContourOutOfThreshold(
             heightsDict, threshold, feedback=multiStepFeedback
         )
+        currentStep += 1
         invalidDict.update(contourOutOfThresholdDict)
         if len(invalidDict) > 0:
             return invalidDict
-        multiStepFeedback.setCurrentStep(5)
-        multiStepFeedback.setProgressText(self.tr("Building contour area dict.."))
-        contourAreaDict = self.buildContourAreaDict(
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Building contour area dict.."))
+        contourAreaDict, polygonLyr = self.buildContourAreaDict(
             inputLyr=splitLinesLyr,
             geoBoundsLyr=geoBoundsLyr,
             attributeName=heightFieldName,
@@ -171,12 +195,26 @@ class SpatialRelationsHandler(QObject):
             context=context,
             feedback=multiStepFeedback,
         )
-        multiStepFeedback.setCurrentStep(6)
-        multiStepFeedback.setProgressText(self.tr("Finding missing contours..."))
-        misingContourDict = self.findMissingContours(
+        currentStep += 1
+        
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Finding missing contours..."))
+        missingContourDict = self.findMissingContours(
             contourAreaDict, threshold, context=context, feedback=multiStepFeedback
         )
-        invalidDict.update(misingContourDict)
+        invalidDict.update(missingContourDict)
+        currentStep += 1
+
+        if elevationPointsLyr is None or len(missingContourDict) > 0:
+            return invalidDict
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Finding elevation points out of threshold..."))
+        pointErrorDict = self.findElevationPointsOutOfThreshold(
+            elevationPointsLyr, polygonLyr, contourAreaDict, threshold, elevationPointHeightFieldName, context=context, feedback=multiStepFeedback
+        )
+        invalidDict.update(pointErrorDict)
         return invalidDict
 
     def getGeoBoundsGeomEngine(self, geoBoundsLyr, context=None, feedback=None):
@@ -185,12 +223,18 @@ class SpatialRelationsHandler(QObject):
         """
         if geoBoundsLyr is None:
             return None, None
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(2, feedback)
+            if feedback is not None
+            else None
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
         mergedPolygonLyr = self.algRunner.runAggregate(
             geoBoundsLyr, context=context, feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(1)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
         mergedPolygonGeom = (
             [i for i in mergedPolygonLyr.getFeatures()][0].geometry()
             if mergedPolygonLyr.featureCount() != 0
@@ -238,25 +282,21 @@ class SpatialRelationsHandler(QObject):
             "areaIdDict": {},
             "areaContourRelations": {},
         }
-        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        boundsLineLyr = (
-            self.algRunner.runPolygonsToLines(
-                geoBoundsLyr, context, feedback=multiStepFeedback
-            )
-            if geoBoundsLyr is not None
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(2, feedback)
+            if feedback is not None
             else None
         )
-        lineLyrList = [inputLyr] if boundsLineLyr is None else [inputLyr, boundsLineLyr]
-        multiStepFeedback.setCurrentStep(1)
-        linesLyr = self.algRunner.runMergeVectorLayers(
-            lineLyrList, context, feedback=multiStepFeedback
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+        polygonLyr = self.buildTerrainPolygonLayerFromContours(
+            inputLyr=inputLyr,
+            geoBoundsLyr=geoBoundsLyr,
+            context=context,
+            feedback=multiStepFeedback,
         )
-        multiStepFeedback.setCurrentStep(2)
-        polygonLyr = self.algRunner.runPolygonize(
-            linesLyr, context, feedback=multiStepFeedback
-        )
-        multiStepFeedback.setCurrentStep(3)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
         self.populateContourAreaDict(
             polygonLyr,
             geoBoundsLyr,
@@ -266,7 +306,123 @@ class SpatialRelationsHandler(QObject):
             contourIdDict,
             feedback=multiStepFeedback,
         )
-        return contourAreaDict
+        return contourAreaDict, polygonLyr
+    
+    def buildTerrainPolygonLayerFromContours(
+        self,
+        inputLyr: QgsVectorLayer,
+        geoBoundsLyr: QgsVectorLayer,
+        context: QgsProcessingContext = None,
+        feedback: QgsProcessingFeedback = None,
+        createSpatialIndex: bool = False,
+    ) -> QgsVectorLayer:
+        nSteps = 3 if not createSpatialIndex else 4
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(nSteps, feedback)
+            if feedback is not None
+            else None
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+        boundsLineLyr = (
+            self.algRunner.runPolygonsToLines(
+                geoBoundsLyr, context, feedback=multiStepFeedback
+            )
+            if geoBoundsLyr is not None
+            else None
+        )
+        lineLyrList = [inputLyr] if boundsLineLyr is None else [inputLyr, boundsLineLyr]
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+        linesLyr = self.algRunner.runMergeVectorLayers(
+            lineLyrList, context, feedback=multiStepFeedback
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(2)
+        polygonLyr = self.algRunner.runPolygonize(
+            linesLyr, context, feedback=multiStepFeedback
+        )
+        if createSpatialIndex:
+            self.algRunner.runCreateSpatialIndex(
+                inputLyr=polygonLyr, context=context, feedback=multiStepFeedback, is_child_algorithm=True
+            )
+        return polygonLyr
+    
+    def createHilltopLayerFromPolygonLayer(
+        self,
+        polygonLayer: QgsVectorLayer,
+        context: QgsProcessingContext,
+        feedback: QgsProcessingFeedback = None,
+        computeOrder: bool = False,
+    ) -> QgsVectorLayer:
+        nSteps = 4 if not computeOrder else 7
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(nSteps, feedback)
+            if feedback is not None
+            else None
+        )
+        if multiStepFeedback is not None:
+            currentStep = 0
+            multiStepFeedback.setCurrentStep(currentStep)
+        outerShellLyr, _ = self.algRunner.runDonutHoleExtractor(
+            polygonLayer,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=outerShellLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        hilltopsLyr = self.algRunner.runExtractByLocation(
+            inputLyr=polygonLayer,
+            intersectLyr=outerShellLyr,
+            predicate=[3],
+            context=context,
+            feedback=multiStepFeedback
+        )
+        if not computeOrder:
+            return hilltopsLyr
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        outershellWithOrder = self.algRunner.runCreateFieldWithExpression(
+            inputLyr=outerShellLyr,
+            expression="1",
+            fieldName="order",
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=outerShellLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        hilltopsWithOrder = self.algRunner.runJoinByLocationSummary(
+            inputLyr=hilltopsLyr,
+            joinLyr=outershellWithOrder,
+            predicateList=[5],
+            summaries=[0],
+            joinFields=['order'],
+            context=context,
+            feedback=multiStepFeedback
+        )
+        return hilltopsWithOrder
+
 
     def populateContourAreaDict(
         self,
@@ -299,17 +455,18 @@ class SpatialRelationsHandler(QObject):
                 if feedback is not None and feedback.isCanceled():
                     break
                 candidateContourFeat = contourIdDict[contourId]
-                if candidateContourFeat.geometry().intersects(geom):
-                    contourValue = candidateContourFeat[attributeName]
-                    candidateContourGeom = (
-                        candidateContourFeat.geometry()
-                        if boundsGeom is not None
-                        and not candidateContourFeat.geometry().intersects(boundsGeom)
-                        else candidateContourFeat.geometry().intersection(boundsGeom)
-                    )
-                    contourAreaDict["areaContourRelations"][featId][
-                        contourValue
-                    ].append(candidateContourGeom)
+                if not candidateContourFeat.geometry().intersects(geom):
+                    continue
+                contourValue = candidateContourFeat[attributeName]
+                candidateContourGeom = (
+                    candidateContourFeat.geometry()
+                    if boundsGeom is not None
+                    and not candidateContourFeat.geometry().intersects(boundsGeom)
+                    else candidateContourFeat.geometry().intersection(boundsGeom)
+                )
+                contourAreaDict["areaContourRelations"][featId][
+                    contourValue
+                ].append(candidateContourGeom)
             if feedback is not None:
                 feedback.setProgress(current * size)
 
@@ -369,6 +526,54 @@ class SpatialRelationsHandler(QObject):
                 feedback.setProgress(current * size)
         return missingContourFlagDict
 
+    def findElevationPointsOutOfThreshold(self, elevationPoints, polygonLyr, contourAreaDict, threshold, elevationPointHeightFieldName, context, feedback=None):
+        self.algRunner.runCreateSpatialIndex(polygonLyr, context, feedback=feedback, is_child_algorithm=True)
+        invalidDict = dict()
+        nFeats = elevationPoints.featureCount() if isinstance(elevationPoints, QgsVectorLayer) else len(elevationPoints)
+        iterator = elevationPoints.getFeatures() if isinstance(elevationPoints, QgsVectorLayer) else elevationPoints
+        if nFeats == 0:
+            return invalidDict
+        stepSize = 100/nFeats
+        for current, pointFeat in enumerate(iterator):
+            if feedback is not None and feedback.isCanceled():
+                break
+            pointGeom = pointFeat.geometry()
+            pointBuffer = pointGeom.buffer(1e-8,-1)
+            bbox = pointBuffer.boundingBox()
+            pointHeight = pointFeat[elevationPointHeightFieldName]
+            for areaFeat in polygonLyr.getFeatures(bbox):
+                areaGeom = areaFeat.geometry()
+                if not areaGeom.intersects(pointGeom):
+                    continue
+                areaId = areaFeat.id()
+                countourList = contourAreaDict['areaContourRelations'][areaId].keys()
+                h_min = min(countourList)
+                h_max = max(countourList)
+                if pointHeight == h_min or pointHeight == h_max:
+                    continue
+                if (h_min == h_max):
+                    if pointHeight > h_max + threshold:
+                        flagText = self.tr(
+                            f"Elevation point with height {pointHeight} out of threshold. This value is on a hilltop and should be between {h_max} and {h_max+threshold}"
+                        )
+                    elif pointHeight < h_min - threshold:
+                        flagText = self.tr(
+                            f"Elevation point with height {pointHeight} out of threshold. This value is on a valley/depression and should be between {h_min} and {h_min-threshold}"
+                        )
+                    else:
+                        continue
+                elif pointHeight < h_min or pointHeight > h_max:
+                    flagText = self.tr(
+                        f"Elevation point with height {pointHeight} out of threshold. This value should be between {h_min} and {h_max}"
+                    )
+                else:
+                    continue
+                invalidDict[pointGeom.asWkb()] = flagText
+
+            if feedback is not None:
+                feedback.setProgress(current * stepSize)
+        return invalidDict
+    
     def relateDrainagesWithContours(
         self,
         drainageLyr,
@@ -498,6 +703,7 @@ class SpatialRelationsHandler(QObject):
             feedback=feedback,
         )
         list(map(addFeatureAlias, enumerate(iterator)))
+
         return spatialIdx, idDict, nodeDict
 
     def addFeatureToSpatialIndexAndNodeDict(

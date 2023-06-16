@@ -37,6 +37,8 @@ from qgis.core import (
     QgsProject,
     QgsVectorLayer,
     QgsWkbTypes,
+    QgsDistanceArea,
+    QgsCoordinateTransformContext,
 )
 from qgis.PyQt.Qt import QObject
 
@@ -147,7 +149,7 @@ class GeometryHandler(QObject):
             geomType = layer.geometryType()
         # getting whether geometry is multipart or not
         # features not yet commited to layer always have SINGLE geometry
-        isMulti = QgsWkbTypes.isMultiType(int(layer.wkbType())) and feature.id() > 0
+        isMulti = QgsWkbTypes.isMultiType(layer.wkbType()) and feature.id() > 0
         geom = feature.geometry()
         if geomType == 0:
             if isMulti:
@@ -183,9 +185,11 @@ class GeometryHandler(QObject):
                 nodes = nodes[::-1]
                 flippedFeatureGeom = QgsGeometry.fromPolygonXY(nodes)
         # setting feature geometry to the flipped one
-        # feature.setGeometry(flippedFeatureGeom)
-        # layer.updateFeature(feature)
-        layer.changeGeometry(feature.id(), flippedFeatureGeom)
+        layer.beginEditCommand("Flipping feature")
+        feature.setGeometry(flippedFeatureGeom)
+        layer.updateFeature(feature)
+        layer.endEditCommand()
+        # layer.changeGeometry(feature.id(), flippedFeatureGeom)
         if refreshCanvas:
             self.iface.mapCanvas().refresh()
         return [layer, feature, geomType]
@@ -457,7 +461,7 @@ class GeometryHandler(QObject):
         if not geomType:
             geomType = layer.geometryType()
         # getting whether geometry is multipart or not
-        isMulti = QgsWkbTypes.isMultiType(int(layer.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(layer.wkbType())
         geom = feature.geometry()
         return self.getGeomNodes(geom, geomType, isMulti)
 
@@ -488,7 +492,7 @@ class GeometryHandler(QObject):
         :return: starting node point (QgsPoint).
         """
         n = self.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(lyr.wkbType())
         if isMulti:
             if len(n) > 1:
                 return
@@ -505,7 +509,7 @@ class GeometryHandler(QObject):
         :return: starting node point (QgsPoint).
         """
         n = self.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(lyr.wkbType())
         if isMulti:
             if len(n) > 1:
                 # process doesn't treat multipart features that does have more than 1 part
@@ -523,7 +527,7 @@ class GeometryHandler(QObject):
         :return: ending node point (QgsPoint).
         """
         n = self.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(lyr.wkbType())
         if isMulti:
             if len(n) > 1:
                 return
@@ -540,7 +544,7 @@ class GeometryHandler(QObject):
         :return: ending node point (QgsPoint).
         """
         n = self.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(lyr.wkbType())
         if isMulti:
             if len(n) > 1:
                 return
@@ -557,7 +561,7 @@ class GeometryHandler(QObject):
         :return: starting node point (QgsPoint).
         """
         n = self.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(lyr.wkbType())
         if isMulti:
             if len(n) > 1:
                 return
@@ -696,7 +700,7 @@ class GeometryHandler(QObject):
         :return: { node_id : { start : [feature_which_starts_with_node], end : feature_which_ends_with_node } }.
         """
         nodeDict = dict()
-        isMulti = QgsWkbTypes.isMultiType(int(networkLayer.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(networkLayer.wkbType())
         if onlySelected:
             features = [feat for feat in networkLayer.getSelectedFeatures()]
         else:
@@ -844,3 +848,52 @@ class GeometryHandler(QObject):
             changedGeom = self.addVertex(vertexPoint, changedGeom)
         changedGeom.removeDuplicateNodes()
         return changedGeom
+
+
+def convertDistance(distance, originEpsg, destinationEpsg):
+    distanceArea = QgsDistanceArea()
+    distanceArea.setSourceCrs(
+        QgsCoordinateReferenceSystem(originEpsg), QgsCoordinateTransformContext()
+    )
+    return distanceArea.convertLengthMeasurement(distance, destinationEpsg.mapUnits())
+
+
+def getSirgasAuthIdByPointLatLong(lat, long):
+    """
+    Calculates SIRGAS 2000 epsg.
+    <h2>Example usage:</h2>
+    <ul>
+    <li>Found: getSirgarAuthIdByPointLatLong(-8.05389, -34.881111) -> 'ESPG:31985'</li>
+    <li>Not found: getSirgarAuthIdByPointLatLong(lat, long) -> 'EPSG:3857'</li>
+    </ul>
+    """
+    zone_number = math.floor(((long + 180) / 6) % 60) + 1
+    zone_letter = "N" if lat >= 0 else "S"
+    return getSirgasEpsg(f"{zone_number}{zone_letter}")
+
+
+def getSirgasEpsg(key):
+    options = {
+        "11N": "EPSG:31965",
+        "12N": "EPSG:31966",
+        "13N": "EPSG:31967",
+        "14N": "EPSG:31968",
+        "15N": "EPSG:31969",
+        "16N": "EPSG:31970",
+        "17N": "EPSG:31971",
+        "18N": "EPSG:31972",
+        "19N": "EPSG:31973",
+        "20N": "EPSG:31974",
+        "21N": "EPSG:31975",
+        "22N": "EPSG:31976",
+        "17S": "EPSG:31977",
+        "18S": "EPSG:31978",
+        "19S": "EPSG:31979",
+        "20S": "EPSG:31980",
+        "21S": "EPSG:31981",
+        "22S": "EPSG:31982",
+        "23S": "EPSG:31983",
+        "24S": "EPSG:31984",
+        "25S": "EPSG:31985",
+    }
+    return options.get(key, "EPSG:3857")

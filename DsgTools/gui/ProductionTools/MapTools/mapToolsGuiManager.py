@@ -33,6 +33,7 @@ from qgis.PyQt.QtCore import pyqtSignal
 from qgis.core import QgsVectorLayer
 
 from .GenericSelectionTool.genericSelectionTool import GenericSelectionTool
+# from .MeasureTool.measureTool import MeasureTool
 from .Acquisition.acquisition import Acquisition
 from .FlipLineTool.flipLineTool import FlipLine
 from .FreeHandTool.freeHandMain import FreeHandMain
@@ -70,6 +71,11 @@ class MapToolsGuiManager(QObject):
         self.genericTool.addTool(
             self.manager, self.activateGenericTool, self.parentMenu, self.iconBasePath
         )
+        # adding measure tool
+        # self.measureTool = MeasureTool(self.iface)
+        # self.measureTool.addTool(
+        #     self.manager, None, self.parentMenu, self.parentMenu, self.iconBasePath
+        # )
         # adding flip line tool
         self.flipLineTool = FlipLine(self.iface)
         self.flipLineTool.addTool(
@@ -141,7 +147,9 @@ class MapToolsGuiManager(QObject):
         self.filterStackButton = self.manager.createToolButton(
             self.toolbar_extra, "FilterTools"
         )
-        self.spatialFilterTool = SpatialFilter()
+        self.spatialFilterTool = SpatialFilter(
+            stackButton=self.filterStackButton
+        )
         action = self.manager.add_action(
             icon_path=self.iconBasePath + "spatialFilter.png",
             text=self.tr("DSGTools: Spatial Filter"),

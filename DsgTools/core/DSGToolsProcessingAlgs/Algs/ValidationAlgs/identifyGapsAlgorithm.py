@@ -22,24 +22,13 @@
 
 from PyQt5.QtCore import QCoreApplication
 
-import processing
-from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingUtils,
     QgsProject,
     QgsWkbTypes,
 )
@@ -97,14 +86,11 @@ class IdentifyGapsAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        geometryHandler = GeometryHandler()
-        layerHandler = LayerHandler()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUT)
             )
-        isMulti = QgsWkbTypes.isMultiType(int(inputLyr.wkbType()))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Polygon, context)
         # Compute the number of steps to display within the progress bar and

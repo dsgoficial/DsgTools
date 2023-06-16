@@ -92,7 +92,7 @@ class DonutHoleExtractorAlgorithm(ValidationAlgorithm):
             )
 
         inputType = inputLyr.wkbType()
-        isMulti = QgsWkbTypes.isMultiType(int(inputType))
+        isMulti = QgsWkbTypes.isMultiType(inputType)
         inputFields = inputLyr.fields()
 
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
@@ -141,7 +141,7 @@ class DonutHoleExtractorAlgorithm(ValidationAlgorithm):
                 donuthole_sink.addFeature(feat, QgsFeatureSink.FastInsert)
             # # Update the progress bar
             feedback.setProgress(int(current * total))
-        return {self.DONUTHOLE: outershell_dest_id, self.OUTERSHELL: outershell_dest_id}
+        return {self.DONUTHOLE: donuthole_dest_id, self.OUTERSHELL: outershell_dest_id}
 
     def name(self):
         """
