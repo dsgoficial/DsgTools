@@ -140,6 +140,24 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFramesWithConstra
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createReviewGridAlgorithm import (
     CreateReviewGridAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeometryType import (
+    FilterLayerListByGeometryType,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.selectFeaturesOnCurrentCanvas import (
+    SelectFeaturesOnCurrentCanvas,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnIntersectionsAlgorithm import (
+    AddUnsharedVertexOnIntersectionsAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnSharedEdgesAlgorithm import (
+    AddUnsharedVertexOnSharedEdgesAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.extendLinesToGeographicBoundsAlgorithm import (
+    ExtendLinesToGeographicBoundsAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixDrainageFlowAlgorithm import (
+    FixDrainageFlowAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.exportToMemoryLayer import (
     ExportToMemoryLayer,
 )
@@ -551,6 +569,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ValidateTrackerAlgorithm(),
             UpdateRunwayAltitudeAlgorithm(),
             LoadRasterLayerFromServerAlgorithm(),
+            FixDrainageFlowAlgorithm(),
         ]
         return algList
 
