@@ -169,26 +169,7 @@ def evaluateStreamOrder(G, feedback=None):
             )
             - visitedNodes
         )
-        # firstOrderNodes = [node for node in G.nodes if G.degree(node) == 1 and node not in visitedNodes]
     return G_copy
-
-
-# def evaluateStreamOrder(nx, G, feedback=None):
-#     G = G.copy()
-#     firstOrderNodes = set(node for node in G.nodes if G.degree(node) == 1 and len(list(G.successors(node))) > 0)
-#     stepSize = 100 / len(G.edges)
-#     current = 0
-#     G_copy = G.copy()
-#     visitedNodes = set()
-#     for n0, n1 in G_copy.edges:
-#         G_copy[n0][n1]["stream_order"] = 0
-#     roots = (v for v, d in G.in_degree() if d == 0)
-#     leaves = (v for v, d in G.out_degree() if d == 0)
-#     all_paths = partial(nx.all_simple_paths, G)
-#     pathDict = defaultdict(list)
-#     for path in sorted(chain.from_iterable(starmap(all_paths, product(roots, leaves))), key=lambda x: len(x), reverse=True):
-#         pathDict[path[0]].append(path)
-
 
 def removeFirstOrderEmptyNodes(G, d):
     """
@@ -245,3 +226,12 @@ def removeSecondOrderEmptyNodes(G, d):
             node for node in G_copy.nodes if G_copy.degree(node) == 2 and d[node] is None
         )
     return G_copy
+
+def buildAuxFlowGraph(nx, G, fixedInNodeList, fixedOutNodeList):
+    Dir_G = nx.Digraph()
+    firstOrderNodeSet = set(
+        node
+        for node in G.nodes
+        if G.degree(node) == 1
+        and len(list(G.successors(node))) > 0
+    )
