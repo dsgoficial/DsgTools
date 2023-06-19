@@ -34,6 +34,7 @@ from qgis.core import (
     QgsVectorLayer,
     QgsWkbTypes,
     QgsFeature,
+    QgsExpression,
 )
 from qgis.gui import QgsMapTool, QgsMessageBar, QgisInterface
 from qgis.PyQt import QtCore, QtGui, uic
@@ -433,11 +434,17 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         if layer is None:
             return
         visitedField = self.visitedFieldComboBox.currentField()
+        dateTimeFieldList = [field.name() for field in layer.fields() if field.type() == QVariant.DateTime]
+        dateTimeField = None if dateTimeFieldList == [] else dateTimeFieldList[0]
         layer.setReadOnly(False)
         layer.startEditing()
         layer.beginEditCommand("DSGTools review tool")
         for feat in featureList:
             feat[visitedField] = not feat[visitedField]
+            if dateTimeField is not None:
+                e = QgsExpression( " $now " )
+                currentDateTime = e.evaluate()
+                feat[dateTimeField] = currentDateTime
             layer.updateFeature(feat)
         layer.endEditCommand()
         layer.commitChanges()

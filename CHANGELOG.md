@@ -9,6 +9,7 @@ Novas Funcionalidades:
 Melhorias:
 
 - Melhoria de desempenho na construção de polígonos quando se utiliza polígonos na entrada que contém linhas que podem delimitar (caso área edificada versus via deslocamento);
+- Adicionado registro de alteração do tile na barra de ferramentas de revisão;
 
 ## 4.8.0 - 2023-06-14
 
