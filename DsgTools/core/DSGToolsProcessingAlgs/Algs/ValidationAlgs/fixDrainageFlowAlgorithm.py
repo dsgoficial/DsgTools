@@ -27,7 +27,7 @@ from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from DsgTools.core.GeometricTools.networkHandler import NetworkHandler
+from DsgTools.core.GeometricTools import graphHandler
 from qgis.core import (
     QgsDataSourceUri,
     QgsFeature,
@@ -205,8 +205,16 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             edgeDict,
             hashDict,
             networkBidirectionalGraph,
-        ) = self.buildAuxStructures(
+        ) = graphHandler.buildAuxStructures(
             nx, nodesLayer=nodesLayer, edgesLayer=localCache, feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        (fixedInNodeSet, fixedOutNodeSet) = self.getInAndOutNodes(
+            nodeDict=nodeDict,
+            nodeIdDict=nodeIdDict,
+            edgesLayer=localCache,
+            geographicBoundsLayer=geographicBoundsLayer
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -229,45 +237,9 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             # self.POINT_FLAGS: self.flag_id,
             # self.LINE_FLAGS: flag_line_sink_id,
         }
-
-    def buildAuxStructures(self, nx, nodesLayer, edgesLayer, feedback):
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        edgeDict = {feat["featid"]: feat for feat in edgesLayer.getFeatures()}
-        multiStepFeedback.setCurrentStep(1)
-        nodeDict = defaultdict(list)
-        nodeIdDict = defaultdict(list)
-        nodeCount = nodesLayer.featureCount()
-        stepSize = 100 / nodeCount
-        auxId = 0
-        hashDict = defaultdict(lambda: [[], []])
-        for current, nodeFeat in enumerate(nodesLayer.getFeatures()):
-            if multiStepFeedback.isCanceled():
-                break
-            geom = nodeFeat.geometry()
-            geomWkb = geom.asWkb()
-            if geomWkb not in nodeDict:
-                nodeDict[geomWkb] = auxId
-                nodeIdDict[auxId] = geomWkb
-                auxId += 1
-            hashDict[nodeFeat["featid"]][nodeFeat["vertex_pos"]] = geomWkb
-            multiStepFeedback.setProgress(current * stepSize)
-        multiStepFeedback.setCurrentStep(2)
-        networkBidirectionalGraph = self.buildGraph(
-            nx, hashDict, nodeDict, feedback=multiStepFeedback
-        )
-        return nodeDict, nodeIdDict, edgeDict, hashDict, networkBidirectionalGraph
-
-    def buildGraph(self, nx, hashDict, nodeDict, feedback):
-        G = nx.Graph()
-        progressStep = 100 / len(hashDict)
-        for current, (edgeId, (wkb_1, wkb_2)) in enumerate(hashDict.items()):
-            if feedback.isCanceled():
-                break
-            G.add_edge(nodeDict[wkb_1], nodeDict[wkb_2])
-            G[nodeDict[wkb_1]][nodeDict[wkb_2]]["featid"] = edgeId
-            feedback.setProgress(current * progressStep)
-        return G
+    
+    def getInAndOutNodes(self, nodeDict):
+        pass
 
     def updateFeatures(self, networkLayer, featuresToUpdateDict, feedback):
         nFeatsToUpdate = len(featuresToUpdateDict)

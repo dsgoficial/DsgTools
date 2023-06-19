@@ -22,26 +22,50 @@
 
 from collections import defaultdict
 from itertools import tee
-from typing import Iterable
+from typing import Dict, Iterable, List, Optional, Tuple
 from itertools import chain
 from itertools import product
 from itertools import starmap
 from functools import partial
 
-from qgis.core import QgsGeometry, QgsFeature, QgsProcessingMultiStepFeedback
+from qgis.core import QgsGeometry, QgsFeature, QgsProcessingMultiStepFeedback, QgsVectorLayer, QgsFeedback
 
 
-def fetch_connected_nodes(G, node, max_degree, seen=None, feedback=None):
-    if seen == None:
-        seen = [node]
-    for neighbor in G.neighbors(node):
+def fetch_connected_nodes(G, node: int, max_degree: int, feedback: Optional[QgsFeedback] = None) -> List[int]:
+    """
+    Fetch nodes connected to a given node within a maximum degree limit using a non-recursive approach.
+
+    Args:
+        G: The input graph.
+        node: The starting node from which to fetch connected nodes.
+        max_degree: The maximum degree allowed for connected nodes.
+        feedback: An optional QgsFeedback object to provide feedback during processing.
+
+    Returns:
+        A list of nodes connected to the starting node within the maximum degree limit.
+
+    Note:
+        The function uses a non-recursive approach with a stack to traverse the graph and fetch nodes connected to the
+        starting node. It only considers nodes with a degree less than or equal to the specified max_degree.
+
+        If the feedback parameter is provided and the feedback object indicates cancellation,
+        the function will stop the traversal and return the list of nodes found so far.
+
+    """
+    seen = [node]
+    stack = [node]
+
+    while stack:
+        current_node = stack.pop()
+
         if feedback is not None and feedback.isCanceled():
             break
-        if G.degree(neighbor) > max_degree:
-            continue
-        if neighbor not in seen:
-            seen.append(neighbor)
-            fetch_connected_nodes(G, neighbor, max_degree, seen)
+
+        for neighbor in G.neighbors(current_node):
+            if G.degree(neighbor) <= max_degree and neighbor not in seen:
+                seen.append(neighbor)
+                stack.append(neighbor)
+
     return seen
 
 
@@ -53,6 +77,24 @@ def pairwise(iterable: Iterable) -> Iterable:
 
 
 def flipLine(edgeDict: dict, edgeId: int) -> QgsFeature:
+    """
+    Flip the direction of a line feature and return a new QgsFeature.
+
+    Args:
+        edgeDict: A dictionary mapping edge feature IDs to QgsFeature objects.
+        edgeId: An integer representing the ID of the edge feature to flip.
+
+    Returns:
+        A new QgsFeature object representing the flipped line feature.
+
+    Note:
+        The function retrieves the edge feature with the given ID from the edgeDict.
+        It then reverses the geometry of the line feature and creates a new QgsFeature
+        object with the reversed geometry. The new QgsFeature object is returned.
+
+        The function assumes that the edge feature with the provided ID exists in the edgeDict.
+
+    """
     edgeFeat = edgeDict[edgeId]
     edgeGeomAsQgsLine = edgeFeat.geometry().constGet()
     reversedGeom = QgsGeometry(edgeGeomAsQgsLine.reversed())
@@ -74,7 +116,47 @@ def buildGraph(nx, hashDict, nodeDict, feedback=None, directed=False):
     return G
 
 
-def buildAuxStructures(nx, nodesLayer, edgesLayer, feedback=None, directed=False):
+def buildAuxStructures(
+    nx,
+    nodesLayer: QgsVectorLayer,
+    edgesLayer: QgsVectorLayer,
+    feedback: Optional[QgsFeedback]=None,
+    directed: Optional[bool]=False,
+    useWkt: Optional[bool]=False,
+) -> Tuple:
+    """
+    Build auxiliary data structures for network analysis.
+
+    Args:
+        nx: NetworkX library instance or module.
+        nodesLayer: A QgsVectorLayer representing nodes in the network.
+        edgesLayer: A QgsVectorLayer representing edges in the network.
+        feedback: An optional QgsFeedback object to provide feedback during processing.
+        directed: An optional boolean flag indicating whether the network is directed. 
+                  Default is False (undirected network).
+        useWkt: An optional boolean flag indicating whether to use Well-Known Text (WKT) 
+                representation for node geometries. Default is False (use WKB representation).
+
+    Returns:
+        A tuple containing the following auxiliary data structures:
+        - nodeDict: A dictionary mapping node geometry to an auxiliary ID.
+        - nodeIdDict: A dictionary mapping auxiliary ID to node geometry.
+        - edgeDict: A dictionary mapping edge feature ID to edge feature.
+        - hashDict: A dictionary mapping node feature ID and vertex position to node geometry.
+        - networkBidirectionalGraph: A NetworkX graph representing the network.
+
+    Note:
+        The function builds the auxiliary data structures by iterating over the nodesLayer and edgesLayer.
+        It assigns unique IDs to nodes, maps node geometries to IDs, and stores edge features and node geometries
+        in corresponding dictionaries. It also constructs a bidirectional graph representation of the network
+        using the provided NetworkX library or module.
+
+        The feedback argument can be used to monitor the progress of the function if a QgsFeedback object is provided.
+
+        By default, the function uses the Well-Known Binary (WKB) representation for node geometries.
+        If the useWkt parameter is set to True, the function will use Well-Known Text (WKT) representation instead.
+
+    """
     multiStepFeedback = (
         QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
     )
@@ -93,12 +175,12 @@ def buildAuxStructures(nx, nodesLayer, edgesLayer, feedback=None, directed=False
         if multiStepFeedback is not None and multiStepFeedback.isCanceled():
             break
         geom = nodeFeat.geometry()
-        geomWkb = geom.asWkb()
-        if geomWkb not in nodeDict:
-            nodeDict[geomWkb] = auxId
-            nodeIdDict[auxId] = geomWkb
+        geomKey = geom.asWkb() if not useWkt else geom.asWkt()
+        if geomKey not in nodeDict:
+            nodeDict[geomKey] = auxId
+            nodeIdDict[auxId] = geomKey
             auxId += 1
-        hashDict[nodeFeat["featid"]][nodeFeat["vertex_pos"]] = geomWkb
+        hashDict[nodeFeat["featid"]][nodeFeat["vertex_pos"]] = geomKey
         if multiStepFeedback is not None:
             multiStepFeedback.setProgress(current * stepSize)
 
@@ -209,6 +291,23 @@ def removeFirstOrderEmptyNodes(G, d):
 
 
 def removeSecondOrderEmptyNodes(G, d):
+    """
+    Remove second-order empty nodes from the graph.
+
+    Args:
+        G: The input graph to modify.
+        d: A dictionary mapping nodes to values. Used to check if a node is empty (value is None).
+
+    Returns:
+        A modified copy of the input graph with second-order empty nodes removed.
+
+    Note:
+        Second-order empty nodes are nodes in the graph that have a degree of 2 and their corresponding value in
+        the dictionary 'd' is None. The function iteratively removes these nodes and connects their predecessors
+        and successors to maintain the graph connectivity. It returns a modified copy of the input graph without
+        the second-order empty nodes.
+
+    """
     G_copy = G.copy()
     nodesToRemove = set(
         node for node in G_copy.nodes if G_copy.degree(node) == 2 and d[node] is None
@@ -227,11 +326,75 @@ def removeSecondOrderEmptyNodes(G, d):
         )
     return G_copy
 
-def buildAuxFlowGraph(nx, G, fixedInNodeList, fixedOutNodeList):
-    Dir_G = nx.Digraph()
-    firstOrderNodeSet = set(
+def add_edges_from_connected_nodes(G, DiG, node, reverse=False):
+    connectedNodes = fetch_connected_nodes(G, node, max_degree=2)
+    for (n1, n2) in pairwise(connectedNodes):
+        pair = (n1, n2) if not reverse else (n2, n1)
+        add_edge_from_graph_to_digraph(G, DiG, *pair)
+    last_pair = (connectedNodes[-1], list(G.neighbors(connectedNodes[-1]))[0]) if not reverse else (list(G.neighbors(connectedNodes[-1]))[0], connectedNodes[-1])
+    add_edge_from_graph_to_digraph(G, DiG, *last_pair)
+    return connectedNodes
+
+def add_edge_from_graph_to_digraph(G, DiG, n1, n2):
+    DiG.add_edge(n1, n2)
+    DiG[n1][n2]["featid"] = G[n1][n2].get("featid", None)
+
+def add_node_to_digraph_according_to_flow(G, DiG, node):
+    neighbors = set(G.neighbors(node))
+    nextNodes = set()
+    addToVisitedNodes = set()
+    for n in neighbors:
+        if n not in DiG.nodes or (node, n) in DiG.edges or (n, node) in DiG.edges:
+            continue
+        preds = set(DiG.predecessors(n))
+        succs = set(DiG.successors(n))
+        if preds == set() and succs == set():
+            continue
+        elif preds != set() and succs == set(): # confluencia
+            add_edge_from_graph_to_digraph(G, DiG, n, node)
+        else: # ramificacao
+            add_edge_from_graph_to_digraph(G, DiG, node, n)
+        if preds | succs == neighbors:
+            addToVisitedNodes.add(n)
+        nextNodes.add(n)
+    return nextNodes, addToVisitedNodes
+
+
+
+def buildAuxFlowGraph(nx, G, fixedInNodeSet: set, fixedOutNodeSet: set):
+    DiG = nx.DiGraph()
+    visitedNodes = set()
+    for node in fixedInNodeSet:
+        connectedNodes = add_edges_from_connected_nodes(G, DiG, node)
+        visitedNodes = visitedNodes.union(set(connectedNodes))
+    
+    for node in fixedOutNodeSet:
+        connectedNodes = add_edges_from_connected_nodes(G, DiG, node, reverse=True)
+        visitedNodes = visitedNodes.union(set(connectedNodes))
+    nodesToVisit = set(
         node
         for node in G.nodes
         if G.degree(node) == 1
-        and len(list(G.successors(node))) > 0
-    )
+    ) - visitedNodes
+    
+    while nodesToVisit:
+        newNodesToVist = set()
+        for node in nodesToVisit:
+            if node in visitedNodes:
+                continue
+            nodeNeighborsSet = set(G.neighbors(node)) 
+            nodesNotInDiG = nodeNeighborsSet - set(DiG.nodes)
+            if nodesNotInDiG == set(): # neighbors not processed yet
+                continue
+            if G.degree(node) == 1:
+                nextNode = list(nodeNeighborsSet)[0]
+                DiG.add_edge(node, nextNode)
+                otherNode = list(set(G.neighbors(nextNode)) - {node})[0]
+                visitedNodes.add(node)
+                newNodesToVist.add(otherNode)
+                continue
+            nextNodes, addToVisitedNodes = add_node_to_digraph_according_to_flow(G, DiG, node)
+            visitedNodes = visitedNodes.union(addToVisitedNodes)
+            newNodesToVist = newNodesToVist.union(nextNodes)
+        nodesToVisit = newNodesToVist
+    return DiG
