@@ -327,20 +327,62 @@ def removeSecondOrderEmptyNodes(G, d):
     return G_copy
 
 def add_edges_from_connected_nodes(G, DiG, node, reverse=False):
+    """
+    Add edges from connected nodes to a directed graph.
+
+    Args:
+        G (networkx.Graph): The input undirected graph.
+        DiG (networkx.DiGraph): The directed graph to which edges will be added.
+        node: The target node.
+        reverse (bool, optional): Determines the direction of the added edges. Defaults to False.
+
+    Returns:
+        tuple: A tuple containing two sets: connectedNodes and nextNodesToVisit.
+               - connectedNodes: The nodes connected to the target node.
+               - nextNodesToVisit: The nodes that should be visited in the next iteration.
+
+    """
     connectedNodes = fetch_connected_nodes(G, node, max_degree=2)
     for (n1, n2) in pairwise(connectedNodes):
         pair = (n1, n2) if not reverse else (n2, n1)
         add_edge_from_graph_to_digraph(G, DiG, *pair)
+    lastNodeCandidateList = list(set(G.neighbors(connectedNodes[-1])) - set(connectedNodes))
+    if lastNodeCandidateList == []:
+        return connectedNodes, set(G.neighbors(n2)) - set(connectedNodes) 
     last_pair = (connectedNodes[-1], list(set(G.neighbors(connectedNodes[-1])) - set(connectedNodes))[0]) if not reverse else (list(set(G.neighbors(connectedNodes[-1])) - set(connectedNodes))[0], connectedNodes[-1])
     add_edge_from_graph_to_digraph(G, DiG, *last_pair)
     nextNodesToVisit = set(G.neighbors(last_pair[-1])) - set(connectedNodes)
     return connectedNodes, nextNodesToVisit
 
 def add_edge_from_graph_to_digraph(G, DiG, n1, n2):
+    """
+    Add an edge from the undirected graph to the directed graph.
+
+    Args:
+        G (networkx.Graph): The input undirected graph.
+        DiG (networkx.DiGraph): The directed graph.
+        n1: The first node of the edge.
+        n2: The second node of the edge.
+
+    """
     DiG.add_edge(n1, n2)
     DiG[n1][n2]["featid"] = G[n1][n2].get("featid", None)
 
 def add_node_to_digraph_according_to_flow(G, DiG, node):
+    """
+    Add a node to the directed graph based on the flow conditions.
+
+    Args:
+        G (networkx.Graph): The input undirected graph.
+        DiG (networkx.DiGraph): The directed graph.
+        node: The node to be added.
+
+    Returns:
+        tuple: A tuple containing two sets: nextNodes and addToVisitedNodes.
+               - nextNodes: The nodes connected to the added node that should be visited in the next iteration.
+               - addToVisitedNodes: The added node itself, if it becomes fully connected in the directed graph.
+
+    """
     neighbors = set(G.neighbors(node))
     nextNodes = set()
     addToVisitedNodes = set()
@@ -364,31 +406,58 @@ def add_node_to_digraph_according_to_flow(G, DiG, node):
         else: # ramificacao
             add_edge_from_graph_to_digraph(G, DiG, node, n)
         nextNodes.add(n)
-    if set(DiG.predecessors(node)) | set(DiG.successors(node)) == neighbors:
+    if node in DiG.nodes and set(DiG.predecessors(node)) | set(DiG.successors(node)) == neighbors:
         addToVisitedNodes.add(node)
     return nextNodes, addToVisitedNodes
 
 
 
-def buildAuxFlowGraph(nx, G, fixedInNodeSet: set, fixedOutNodeSet: set):
+def buildAuxFlowGraph(nx, G, fixedInNodeSet: set, fixedOutNodeSet: set, feedback: Optional[QgsFeedback]=None):
+    """
+    Build an auxiliary flow graph from an undirected graph.
+
+    Args:
+        nx: The networkx module.
+        G (networkx.Graph): The input undirected graph.
+        fixedInNodeSet (set): The set of nodes with fixed incoming edges.
+        fixedOutNodeSet (set): The set of nodes with fixed outgoing edges.
+
+    Returns:
+        networkx.DiGraph: The resulting auxiliary flow graph (directed graph).
+
+    """
     DiG = nx.DiGraph()
     visitedNodes = set()
+    multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(0)
     for node in fixedInNodeSet:
+        if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+            return DiG
         connectedNodes, nextNodesToVisitFromFixedIn = add_edges_from_connected_nodes(G, DiG, node)
         visitedNodes = visitedNodes.union(set(connectedNodes))
-    
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(1)
     for node in fixedOutNodeSet:
+        if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+            return DiG
         connectedNodes, nextNodesToVisitFromFixedOut = add_edges_from_connected_nodes(G, DiG, node, reverse=True)
         visitedNodes = visitedNodes.union(set(connectedNodes))
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(2)
     nodesToVisit = set(
         node
         for node in G.nodes
         if G.degree(node) == 1
     ) - visitedNodes | nextNodesToVisitFromFixedIn | nextNodesToVisitFromFixedOut
-    
+    max_cycle_count = 2000
+    count = 0
+    remainingCount = len(list(set(G.nodes) - set(DiG.nodes)))
     while nodesToVisit:
         newNodesToVist = set()
         for node in sorted(nodesToVisit, key=lambda x: G.degree(x)):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                return DiG
             if node in visitedNodes:
                 continue
             if G.degree(node) == 1:
@@ -400,10 +469,16 @@ def buildAuxFlowGraph(nx, G, fixedInNodeSet: set, fixedOutNodeSet: set):
             visitedNodes = visitedNodes.union(addToVisitedNodes)
             newNodesToVist = newNodesToVist.union(nextNodes)
         nodesToVisit = newNodesToVist - visitedNodes
-        if nodesToVisit == set():
-            remainingNodes = set(G.nodes) - set(DiG.edges)
-            if remainingNodes != set():
-                nodesToVisit = remainingNodes
-        if len(G.edges) == len(DiG.edges):
+        remainingNodes = set(G.nodes) - set(DiG.nodes)
+        if len(list(remainingNodes)) == remainingCount:
+            count += 1
+            if feedback is not None:
+                feedback.pushInfo(f"Did not converge, attempt {count}/{max_cycle_count}.")
+        else:
+            count = 0
+            remainingCount = len(list(remainingNodes))
+        if nodesToVisit == set() and remainingNodes != set():
+            nodesToVisit = remainingNodes
+        if len(G.edges) == len(DiG.edges) or count > max_cycle_count:
             break
     return DiG
