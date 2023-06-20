@@ -106,7 +106,7 @@ class LabelTogglingTool(QgsMapTool):
         """
         try:
             if self is not None:
-                self.deactivate()
+                super().deactivate()
         except:
             pass
 
