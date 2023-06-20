@@ -11,6 +11,10 @@ Melhorias:
 - Melhoria de desempenho na construção de polígonos quando se utiliza polígonos na entrada que contém linhas que podem delimitar (caso área edificada versus via deslocamento);
 - Adicionado registro de alteração do tile na barra de ferramentas de revisão;
 
+Correção de bug:
+
+- Correção de bug no rubberband da ferramenta de ângulos retos no QGIS 3.30;
+
 ## 4.8.0 - 2023-06-14
 
 Novas Funcionalidades:
