@@ -331,9 +331,10 @@ def add_edges_from_connected_nodes(G, DiG, node, reverse=False):
     for (n1, n2) in pairwise(connectedNodes):
         pair = (n1, n2) if not reverse else (n2, n1)
         add_edge_from_graph_to_digraph(G, DiG, *pair)
-    last_pair = (connectedNodes[-1], list(G.neighbors(connectedNodes[-1]))[0]) if not reverse else (list(G.neighbors(connectedNodes[-1]))[0], connectedNodes[-1])
+    last_pair = (connectedNodes[-1], list(set(G.neighbors(connectedNodes[-1])) - set(connectedNodes))[0]) if not reverse else (list(set(G.neighbors(connectedNodes[-1])) - set(connectedNodes))[0], connectedNodes[-1])
     add_edge_from_graph_to_digraph(G, DiG, *last_pair)
-    return connectedNodes
+    nextNodesToVisit = set(G.neighbors(last_pair[-1])) - set(connectedNodes)
+    return connectedNodes, nextNodesToVisit
 
 def add_edge_from_graph_to_digraph(G, DiG, n1, n2):
     DiG.add_edge(n1, n2)
@@ -354,7 +355,7 @@ def add_node_to_digraph_according_to_flow(G, DiG, node):
             add_edge_from_graph_to_digraph(G, DiG, n, node)
         else: # ramificacao
             add_edge_from_graph_to_digraph(G, DiG, node, n)
-        if preds | succs == neighbors:
+        if set(DiG.predecessors(n)) | set(DiG.successors(n)) == neighbors:
             addToVisitedNodes.add(n)
         nextNodes.add(n)
     return nextNodes, addToVisitedNodes
@@ -365,36 +366,32 @@ def buildAuxFlowGraph(nx, G, fixedInNodeSet: set, fixedOutNodeSet: set):
     DiG = nx.DiGraph()
     visitedNodes = set()
     for node in fixedInNodeSet:
-        connectedNodes = add_edges_from_connected_nodes(G, DiG, node)
+        connectedNodes, nextNodesToVisitFromFixedIn = add_edges_from_connected_nodes(G, DiG, node)
         visitedNodes = visitedNodes.union(set(connectedNodes))
     
     for node in fixedOutNodeSet:
-        connectedNodes = add_edges_from_connected_nodes(G, DiG, node, reverse=True)
+        connectedNodes, nextNodesToVisitFromFixedOut = add_edges_from_connected_nodes(G, DiG, node, reverse=True)
         visitedNodes = visitedNodes.union(set(connectedNodes))
     nodesToVisit = set(
         node
         for node in G.nodes
         if G.degree(node) == 1
-    ) - visitedNodes
+    ) - visitedNodes | nextNodesToVisitFromFixedIn | nextNodesToVisitFromFixedOut
     
     while nodesToVisit:
         newNodesToVist = set()
-        for node in nodesToVisit:
+        for node in sorted(nodesToVisit, key=lambda x: G.degree(x)):
             if node in visitedNodes:
                 continue
-            nodeNeighborsSet = set(G.neighbors(node)) 
-            nodesNotInDiG = nodeNeighborsSet - set(DiG.nodes)
-            if nodesNotInDiG == set(): # neighbors not processed yet
-                continue
             if G.degree(node) == 1:
-                nextNode = list(nodeNeighborsSet)[0]
-                DiG.add_edge(node, nextNode)
-                otherNode = list(set(G.neighbors(nextNode)) - {node})[0]
-                visitedNodes.add(node)
-                newNodesToVist.add(otherNode)
+                connectedNodes, nextNodesToVisit = add_edges_from_connected_nodes(G, DiG, node)
+                visitedNodes = visitedNodes.union(set(connectedNodes))
+                newNodesToVist = newNodesToVist.union(nextNodesToVisit)
                 continue
             nextNodes, addToVisitedNodes = add_node_to_digraph_according_to_flow(G, DiG, node)
             visitedNodes = visitedNodes.union(addToVisitedNodes)
             newNodesToVist = newNodesToVist.union(nextNodes)
-        nodesToVisit = newNodesToVist
+        nodesToVisit = newNodesToVist - visitedNodes
+        if len(G.edges) == len(DiG.edges):
+            break
     return DiG
