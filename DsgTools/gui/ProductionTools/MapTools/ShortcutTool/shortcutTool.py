@@ -21,11 +21,10 @@
  ***************************************************************************/
 """
 
-from functools import partial
 
 from qgis.PyQt.QtCore import QSettings, QObject
 
-from qgis.core import QgsProject, QgsVectorLayer
+from qgis.core import QgsProject, Qgis
 
 
 class ShortcutTool(QObject):
@@ -72,8 +71,9 @@ class ShortcutTool(QObject):
         except:
             pass
         qSettings = QSettings()
-        currentState = qSettings.value("qgis/digitizing/marker_only_for_selected")
-        qSettings.setValue("qgis/digitizing/marker_only_for_selected", not currentState)
+        qSettingsKey = "digitizing/marker_only_for_selected" if Qgis.QGIS_VERSION_INT >= 33000 else "qgis/digitizing/marker_only_for_selected"
+        currentState = qSettings.value(qSettingsKey)
+        qSettings.setValue(qSettingsKey, not currentState)
         self.iface.mapCanvas().refresh()
 
     def hideOrShowActiveLayer(self):
