@@ -349,15 +349,23 @@ def add_node_to_digraph_according_to_flow(G, DiG, node):
             continue
         preds = set(DiG.predecessors(n))
         succs = set(DiG.successors(n))
-        if preds == set() and succs == set():
+        if (preds == set() and succs == set()):
+            continue
+        elif G.degree(node) == 2:
+            if node in DiG.nodes:
+                pair = (node, n) if len(DiG.in_edges(node)) > 0 else (n, node)
+            else:
+                pair = (n, node) if len(preds) > 0 else (n, node)
+            add_edge_from_graph_to_digraph(G, DiG, *pair)
+        elif (G.degree(node) == 3 and len(preds | succs) < 2):
             continue
         elif preds != set() and succs == set(): # confluencia
             add_edge_from_graph_to_digraph(G, DiG, n, node)
         else: # ramificacao
             add_edge_from_graph_to_digraph(G, DiG, node, n)
-        if set(DiG.predecessors(n)) | set(DiG.successors(n)) == neighbors:
-            addToVisitedNodes.add(n)
         nextNodes.add(n)
+    if set(DiG.predecessors(node)) | set(DiG.successors(node)) == neighbors:
+        addToVisitedNodes.add(node)
     return nextNodes, addToVisitedNodes
 
 
@@ -392,6 +400,10 @@ def buildAuxFlowGraph(nx, G, fixedInNodeSet: set, fixedOutNodeSet: set):
             visitedNodes = visitedNodes.union(addToVisitedNodes)
             newNodesToVist = newNodesToVist.union(nextNodes)
         nodesToVisit = newNodesToVist - visitedNodes
+        if nodesToVisit == set():
+            remainingNodes = set(G.nodes) - set(DiG.edges)
+            if remainingNodes != set():
+                nodesToVisit = remainingNodes
         if len(G.edges) == len(DiG.edges):
             break
     return DiG

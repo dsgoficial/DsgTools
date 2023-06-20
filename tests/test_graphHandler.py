@@ -118,7 +118,55 @@ class BuildAuxFlowGraphTestCase(unittest.TestCase):
             (18, 15),
         ])
         outputG = buildAuxFlowGraph(nx, G, {1, 9}, {15, 16})
-        self.assertEqual(self.graphs_equal(expectedG, outputG), True)
+        self.assertEqual(set(expectedG), set(outputG))
+    
+    def test_build_flow_dict_case2(self):
+        G = nx.Graph()
+        G.add_edges_from([
+           (1, 2),
+           (2, 3),
+           (3, 4), (4, 6), (7, 6), (6, 2),
+           (4, 5),
+        ])
+        expectedG = nx.DiGraph()
+        expectedG.add_edges_from([
+           (1, 2),
+           (2, 3),
+           (3, 4), (2, 6), (7, 6), (6, 4),
+           (4, 5),
+        ])
+        outputG = buildAuxFlowGraph(nx, G, {1}, {5})
+        self.assertEqual(set(expectedG), set(outputG))
+    
+    def test_build_flow_dict_case3(self):
+        G = nx.Graph()
+        G.add_edges_from([
+            (1, 3), (2, 3),
+            (4, 3), (4, 5), (4, 7),
+            (6, 7), (8, 7),
+            (8, 9), (9, 10), (17, 14), (14, 13), (13, 8), # loop
+            (12, 13), (12, 11),
+            (15, 14), (15, 16),
+            (17, 10), (17, 18), (26, 17), (26, 25), (27, 30), (27, 28), (27, 29),
+            (31, 18), (30, 31), (31, 32),
+            (19, 18), (19, 20),
+            (34, 19), (34, 21), (34, 22),
+            (22, 23), (22, 33),
+            (24, 33),
+        ])
+        expectedG = nx.DiGraph()
+        expectedG.add_edges_from([
+            (1, 3), (2, 3),
+            (3 ,4), (5 ,4), (4, 7), (6, 7), (7, 8),
+            (8, 9), (8, 13), (11, 12), (12, 13), (13, 14),
+            (9, 10), (14, 17), (14, 15), (15, 16),
+            (10, 17), (17, 30), (25, 26), (26, 27), (28, 27), (27, 29),
+            (17, 18), (18, 31), (30, 31), (31, 32),
+            (24, 33), (33, 22),
+            (23, 22), (22, 34), (21, 34), (34, 19), (19, 18), (20, 19),
+        ])
+        outputG = buildAuxFlowGraph(nx, G, {1, 24}, {16, 29, 32})
+        self.assertEqual(set(expectedG), set(outputG))
 
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""
