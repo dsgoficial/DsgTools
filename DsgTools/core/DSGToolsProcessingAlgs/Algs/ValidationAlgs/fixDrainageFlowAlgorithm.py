@@ -43,7 +43,7 @@ from .validationAlgorithm import ValidationAlgorithm
 
 class FixDrainageFlowAlgorithm(ValidationAlgorithm):
     NETWORK_LAYER = "NETWORK_LAYER"
-    # SINK_LAYER = "SINK_LAYER"
+    SINK_LAYER = "SINK_LAYER"
     GEOGRAPHIC_BOUNDS_LAYER = "GEOGRAPHIC_BOUNDS_LAYER"
     # WATER_BODY_LAYERS = "WATER_BODY_LAYERS"
     # OCEAN_LAYER = "OCEAN_LAYER"
@@ -66,7 +66,6 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 self.GEOGRAPHIC_BOUNDS_LAYER,
                 self.tr("Reference layer"),
                 [QgsProcessing.TypeVectorPolygon],
-                optional=True,
             )
         )
         # self.addParameter(
@@ -77,14 +76,14 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         #         optional=True,
         #     )
         # )
-        # self.addParameter(
-        #     QgsProcessingParameterVectorLayer(
-        #         self.SINK_LAYER,
-        #         self.tr("Water sink layer"),
-        #         [QgsProcessing.TypeVectorPoint],
-        #         optional=True,
-        #     )
-        # )
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.SINK_LAYER,
+                self.tr("Water sink layer"),
+                [QgsProcessing.TypeVectorPoint],
+                optional=True,
+            )
+        )
         # self.addParameter(
         #     QgsProcessingParameterMultipleLayers(
         #         self.WATER_BODY_LAYERS,
@@ -132,7 +131,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         # waterBodyClasses = self.parameterAsLayer(
         #     parameters, self.WATER_BODY_LAYERS, context
         # )
-        # waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
+        waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
         geographicBoundsLayer = self.parameterAsLayer(
             parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context
         )
@@ -153,9 +152,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             networkLayer.sourceCrs(),
         )
         # searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(
-            8 if geographicBoundsLayer is not None else 6, feedback
-        )
+        multiStepFeedback = QgsProcessingMultiStepFeedback(12, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Building aux structures"))
@@ -209,7 +206,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Computing constraint nodes"))
-        (fixedInNodeSet, fixedOutNodeSet) = self.getInAndOutNodes(
+        (fixedInNodeSet, fixedOutNodeSet) = self.getInAndOutNodesOnGeographicBounds(
             nodeDict=nodeDict,
             nodesLayer=nodesLayer,
             geographicBoundsLayer=geographicBoundsLayer,
@@ -218,6 +215,18 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        if waterSinkLayer is not None:
+            for feat in waterSinkLayer.getFeatures():
+                if feedback.isCanceled:
+                    break
+                geom = feat.geometry()
+                geomWkb = geom.asWkb()
+                if geomWkb not in nodeIdDict:
+                    continue
+                fixedOutNodeSet.add(nodeIdDict[geomWkb])
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Computing flow graph"))
         DiG = graphHandler.buildAuxFlowGraph(
             nx, networkBidirectionalGraph, fixedInNodeSet, fixedOutNodeSet, feedback=multiStepFeedback
         )
@@ -260,7 +269,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             self.LINE_FLAGS: self.line_flags_sink_id,
         }
     
-    def getInAndOutNodes(self,
+    def getInAndOutNodesOnGeographicBounds(self,
             nodeDict: Dict[str, int],
             nodesLayer: QgsVectorLayer,
             geographicBoundsLayer,
