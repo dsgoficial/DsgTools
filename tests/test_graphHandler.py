@@ -118,7 +118,9 @@ class BuildAuxFlowGraphTestCase(unittest.TestCase):
             (18, 15),
         ])
         outputG = buildAuxFlowGraph(nx, G, {1, 9}, {15, 16})
-        self.assertEqual(set(expectedG), set(outputG))
+        self.assertEqual(set(expectedG.nodes), set(outputG.nodes))
+        self.assertEqual(set(expectedG.edges), set(outputG.edges))
+        self.assertEqual(set(expectedG.adj), set(outputG.adj))
     
     def test_build_flow_dict_case2(self):
         G = nx.Graph()
@@ -136,7 +138,9 @@ class BuildAuxFlowGraphTestCase(unittest.TestCase):
            (4, 5),
         ])
         outputG = buildAuxFlowGraph(nx, G, {1}, {5})
-        self.assertEqual(set(expectedG), set(outputG))
+        self.assertEqual(set(expectedG.nodes), set(outputG.nodes))
+        self.assertEqual(set(expectedG.edges), set(outputG.edges))
+        self.assertEqual(set(expectedG.adj), set(outputG.adj))
     
     def test_build_flow_dict_case3(self):
         G = nx.Graph()
@@ -144,7 +148,7 @@ class BuildAuxFlowGraphTestCase(unittest.TestCase):
             (1, 3), (2, 3),
             (4, 3), (4, 5), (4, 7),
             (6, 7), (8, 7),
-            (8, 9), (9, 10), (17, 14), (14, 13), (13, 8), # loop
+            (8, 9), (9, 10), (10, 14), (14, 13), (13, 8), # loop
             (12, 13), (12, 11),
             (15, 14), (15, 16),
             (17, 10), (17, 18), (26, 17), (26, 25), (27, 30), (27, 28), (27, 29),
@@ -166,7 +170,49 @@ class BuildAuxFlowGraphTestCase(unittest.TestCase):
             (23, 22), (22, 34), (21, 34), (34, 19), (19, 18), (20, 19),
         ])
         outputG = buildAuxFlowGraph(nx, G, {1, 24}, {16, 29, 32})
-        self.assertEqual(set(expectedG), set(outputG))
+        self.assertEqual(set(expectedG.nodes), set(outputG.nodes))
+        self.assertEqual(set(expectedG.edges), set(outputG.edges))
+        self.assertEqual(set(expectedG.adj), set(outputG.adj))
+    
+    def test_build_flow_dict_case4(self):
+        G = nx.Graph()
+        G.add_edges_from([
+            (1, 3), (2, 3),
+            (4, 3), (4, 5),
+            (19, 4), (19, 6),
+            (6, 7), 
+            (8, 6),
+            (9, 17), (8, 17),
+            (10, 12), (12, 11),
+            (12, 13), (13, 8), (14, 13),
+            (14, 18), (18, 15),
+            (14, 16),
+            (21, 22), (22, 20), (24, 23),
+            (24, 22), (24, 25), (26, 25), (27, 26), (28, 26), (28, 29), (32, 29), (30, 29), (30, 31),
+            (32, 33), (33, 34), (33, 35),
+        ])
+        expectedG = nx.DiGraph()
+        expectedG.add_edges_from([
+            (1, 3), (2, 3),
+            (3, 4), (5, 4),
+            (4, 19), (19, 6),
+            (7, 6),
+            (6, 8), 
+            (9, 17), (17, 8),
+            (8, 13),
+            (10, 12), (11, 12),
+            (12, 13),
+            (13, 14),
+            (14, 18), (14, 16),
+            (18, 15),
+            (20, 22), (21, 22), (22, 24), (23, 24), (24, 25), (25, 26), (27, 26), (26, 28), (28, 29),
+            (34, 33), (35, 33), (33, 32), (32, 29),
+            (29, 30), (30, 31),
+        ])
+        outputG = buildAuxFlowGraph(nx, G, {1, 9}, {15, 16, 31})
+        self.assertEqual(set(expectedG.nodes), set(outputG.nodes))
+        self.assertEqual(set(expectedG.edges), set(outputG.edges))
+        self.assertEqual(set(expectedG.adj), set(outputG.adj))
 
 def run_all(filterString=None):
     """Default function that is called by the runner if nothing else is specified"""

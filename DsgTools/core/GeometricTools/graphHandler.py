@@ -19,8 +19,10 @@
  *                                                                         *
  ***************************************************************************/
 """
-
-from collections import defaultdict
+import itertools
+import operator
+from functools import reduce
+from collections import defaultdict, Counter
 from itertools import tee
 from typing import Dict, Iterable, List, Optional, Tuple
 from itertools import chain
@@ -397,7 +399,7 @@ def add_node_to_digraph_according_to_flow(G, DiG, node):
             if node in DiG.nodes:
                 pair = (node, n) if len(DiG.in_edges(node)) > 0 else (n, node)
             else:
-                pair = (n, node) if len(preds) > 0 else (n, node)
+                pair = (n, node) if len(preds) == 0 else (n, node)
             add_edge_from_graph_to_digraph(G, DiG, *pair)
         elif (G.degree(node) == 3 and len(preds | succs) < 2):
             continue
@@ -445,40 +447,46 @@ def buildAuxFlowGraph(nx, G, fixedInNodeSet: set, fixedOutNodeSet: set, feedback
         visitedNodes = visitedNodes.union(set(connectedNodes))
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(2)
-    nodesToVisit = set(
-        node
-        for node in G.nodes
-        if G.degree(node) == 1
-    ) - visitedNodes | nextNodesToVisitFromFixedIn | nextNodesToVisitFromFixedOut
-    max_cycle_count = 2000
-    count = 0
-    remainingCount = len(list(set(G.nodes) - set(DiG.nodes)))
-    while nodesToVisit:
-        newNodesToVist = set()
-        for node in sorted(nodesToVisit, key=lambda x: G.degree(x)):
-            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
-                return DiG
-            if node in visitedNodes:
-                continue
-            if G.degree(node) == 1:
-                connectedNodes, nextNodesToVisit = add_edges_from_connected_nodes(G, DiG, node)
-                visitedNodes = visitedNodes.union(set(connectedNodes))
-                newNodesToVist = newNodesToVist.union(nextNodesToVisit)
-                continue
-            nextNodes, addToVisitedNodes = add_node_to_digraph_according_to_flow(G, DiG, node)
-            visitedNodes = visitedNodes.union(addToVisitedNodes)
-            newNodesToVist = newNodesToVist.union(nextNodes)
-        nodesToVisit = newNodesToVist - visitedNodes
-        remainingNodes = set(G.nodes) - set(DiG.nodes)
-        if len(list(remainingNodes)) == remainingCount:
-            count += 1
-            if feedback is not None:
-                feedback.pushInfo(f"Did not converge, attempt {count}/{max_cycle_count}.")
-        else:
-            count = 0
-            remainingCount = len(list(remainingNodes))
-        if nodesToVisit == set() and remainingNodes != set():
-            nodesToVisit = remainingNodes
-        if len(G.edges) == len(DiG.edges) or count > max_cycle_count:
-            break
+    # nodesToVisit = set(
+    #     node
+    #     for node in G.nodes
+    #     if G.degree(node) == 1
+    # ) - visitedNodes | nextNodesToVisitFromFixedIn | nextNodesToVisitFromFixedOut
+
+    # ini_dict = [nx.single_source_shortest_path_length(G, node) for node in G.nodes]
+    # order_dict = dict(reduce(operator.add, map(Counter, ini_dict)))
+
+    for baseNode in fixedOutNodeSet:
+        path_list = sorted(
+            [list(nx.all_simple_paths(G, i, baseNode)) for i in G.nodes if G.degree(i) == 1],
+            key=lambda x: len(x), reverse=True
+        )
+        for node_path in itertools.chain(*path_list):
+            for n0, n1 in pairwise(node_path):
+                if (n0, n1) not in G.edges or (n0, n1) in DiG.edges or (n1, n0) in DiG.edges:
+                    continue
+                add_edge_from_graph_to_digraph(G, DiG, n0, n1)
+            
+        # for node in filter(lambda x: x not in visitedNodes, nx.bfs_tree(G, source=baseNode)):
+        #     if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+        #         return DiG
+        #     if node in visitedNodes:
+        #         continue
+        #     if G.degree(node) == 1:
+        #         add_edges_from_connected_nodes(G, DiG, node)
+        #         continue
+        #     add_node_to_digraph_according_to_flow(G, DiG, node)
+        # nodesToVisit = newNodesToVist - visitedNodes
+        # remainingNodes = set(G.nodes) - set(DiG.nodes)
+        # if len(list(remainingNodes)) == remainingCount:
+        #     count += 1
+        #     if feedback is not None:
+        #         feedback.pushInfo(f"Did not converge, attempt {count}/{max_cycle_count}.")
+        # else:
+        #     count = 0
+        #     remainingCount = len(list(remainingNodes))
+        # if nodesToVisit == set() and remainingNodes != set():
+        #     nodesToVisit = remainingNodes
+        # if len(G.edges) == len(DiG.edges) or count > max_cycle_count:
+        #     break
     return DiG
