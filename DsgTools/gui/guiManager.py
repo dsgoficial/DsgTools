@@ -199,3 +199,5 @@ class GuiManager(QObject):
                 del action
                 continue
             self.iface.unregisterMainWindowAction(action)
+        self.iface.mainWindow().removeToolBar(self.toolbar)
+        self.toolbar = None

@@ -73,3 +73,4 @@ class ProductionToolsGuiManager(QObject):
         del self.mapToolsGuiManager
         self.toolbarsGuiManager.unload()
         del self.toolbarsGuiManager
+        del self.stackButton

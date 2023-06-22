@@ -110,7 +110,6 @@ class DsgTools(object):
         QgsApplication.processingRegistry().removeProvider(self.provider)
         del self.guiManager
         del self.dsgTools
-        del self.toolbar
 
     def initGui(self):
         """

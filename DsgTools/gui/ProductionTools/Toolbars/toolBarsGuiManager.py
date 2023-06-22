@@ -102,12 +102,6 @@ class ToolbarsGuiManager(QObject):
         toolbar.addWidget(widget)
 
     def unload(self):
-        self.minimumAreaTool.unload()
-        self.inspectFeaturesTool.unload()
-        self.reviewTool.unload()
-        self.rasterInfoTool.unload()
-        self.dataValidationTool.unload()
-        self.centerPointAndBoundariesTool.unload()
         for tool in [
             self.minimumAreaTool,
             self.inspectFeaturesTool,
@@ -116,6 +110,7 @@ class ToolbarsGuiManager(QObject):
             self.dataValidationTool,
             self.centerPointAndBoundariesTool,
         ]:
+            tool.unload()
             try:
                 del tool
             except:
