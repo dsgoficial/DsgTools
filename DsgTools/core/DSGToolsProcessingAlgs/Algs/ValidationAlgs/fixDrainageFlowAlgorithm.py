@@ -223,7 +223,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             for feat in selectedNodesFromWaterSink.getFeatures():
                 if multiStepFeedback.isCanceled():
                     break
-                constantSinkPointSet.add(nodeLayerIdDict[feat["nfeatid"]])
+                constantSinkPointSet.add(nodeDict[nodeLayerIdDict[feat["nfeatid"]]])
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         if oceanLayer is not None and oceanLayer.featureCount() > 0:
@@ -243,7 +243,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             for feat in selectedNodesFromOcean.getFeatures():
                 if multiStepFeedback.isCanceled():
                     break
-                constantSinkPointSet.add(nodeLayerIdDict[feat["nfeatid"]])
+                constantSinkPointSet.add(nodeDict[nodeLayerIdDict[feat["nfeatid"]]])
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Computing flow graph"))

@@ -141,14 +141,17 @@ def buildAuxStructures(
     Build auxiliary data structures for network analysis.
 
     Args:
-        nx: NetworkX library instance or module.
-        nodesLayer: A QgsVectorLayer representing nodes in the network.
-        edgesLayer: A QgsVectorLayer representing edges in the network.
+        nx: A NetworkX library instance or module.
+        nodesLayer: A QgsVectorLayer representing the nodes in the network.
+        edgesLayer: A QgsVectorLayer representing the edges in the network.
         feedback: An optional QgsFeedback object to provide feedback during processing.
         directed: An optional boolean flag indicating whether the network is directed.
                   Default is False (undirected network).
         useWkt: An optional boolean flag indicating whether to use Well-Known Text (WKT)
                 representation for node geometries. Default is False (use WKB representation).
+        computeNodeLayerIdDict: An optional boolean flag indicating whether to compute
+                                a dictionary mapping node layer ID to auxiliary ID.
+                                Default is False.
 
     Returns:
         A tuple containing the following auxiliary data structures:
@@ -158,8 +161,8 @@ def buildAuxStructures(
         - hashDict: A dictionary mapping node feature ID and vertex position to node geometry.
         - networkBidirectionalGraph: A NetworkX graph representing the network.
 
-    Note:
-        The function builds the auxiliary data structures by iterating over the nodesLayer and edgesLayer.
+    Notes:
+        This function builds auxiliary data structures by iterating over the nodesLayer and edgesLayer.
         It assigns unique IDs to nodes, maps node geometries to IDs, and stores edge features and node geometries
         in corresponding dictionaries. It also constructs a bidirectional graph representation of the network
         using the provided NetworkX library or module.
@@ -168,7 +171,6 @@ def buildAuxStructures(
 
         By default, the function uses the Well-Known Binary (WKB) representation for node geometries.
         If the useWkt parameter is set to True, the function will use Well-Known Text (WKT) representation instead.
-
     """
     multiStepFeedback = (
         QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
@@ -195,7 +197,7 @@ def buildAuxStructures(
             nodeIdDict[auxId] = geomKey
             auxId += 1
         if computeNodeLayerIdDict:
-            nodeLayerIdDict[nodeFeat["nfeatid"]] = auxId
+            nodeLayerIdDict[nodeFeat["nfeatid"]] = geomKey
         hashDict[nodeFeat["featid"]][nodeFeat["vertex_pos"]] = geomKey
         if multiStepFeedback is not None:
             multiStepFeedback.setProgress(current * stepSize)
@@ -521,6 +523,8 @@ def buildAuxFlowGraph(
         if node not in connectedNodesToConstant:
             connectedNodesToConstant.insert(0, node)
         for n0, n1 in pairwise(reversed(connectedNodesToConstant)):
+            if (n0, n1) not in G.edges or (n1, n0) not in G.edges:
+                continue
             add_edge_from_graph_to_digraph(G, DiG, n0, n1)
         fixedOutNodeSet.add(node)
 
