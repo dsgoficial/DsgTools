@@ -46,7 +46,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
     SINK_LAYER = "SINK_LAYER"
     GEOGRAPHIC_BOUNDS_LAYER = "GEOGRAPHIC_BOUNDS_LAYER"
     # WATER_BODY_LAYERS = "WATER_BODY_LAYERS"
-    # OCEAN_LAYER = "OCEAN_LAYER"
+    OCEAN_LAYER = "OCEAN_LAYER"
     POINT_FLAGS = "POINT_FLAGS"
     LINE_FLAGS = "LINE_FLAGS"
 
@@ -68,14 +68,14 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
-        # self.addParameter(
-        #     QgsProcessingParameterVectorLayer(
-        #         self.OCEAN_LAYER,
-        #         self.tr("Ocean layer"),
-        #         [QgsProcessing.TypeVectorPolygon],
-        #         optional=True,
-        #     )
-        # )
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.OCEAN_LAYER,
+                self.tr("Ocean layer"),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True,
+            )
+        )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.SINK_LAYER,
@@ -128,9 +128,9 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         # get the network handler
         self.algRunner = AlgRunner()
         networkLayer = self.parameterAsLayer(parameters, self.NETWORK_LAYER, context)
-        # waterBodyClasses = self.parameterAsLayer(
-        #     parameters, self.WATER_BODY_LAYERS, context
-        # )
+        oceanLayer = self.parameterAsLayer(
+            parameters, self.OCEAN_LAYER, context
+        )
         waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
         geographicBoundsLayer = self.parameterAsLayer(
             parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context
@@ -152,7 +152,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             networkLayer.sourceCrs(),
         )
         # searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(12, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(15, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Building aux structures"))
@@ -193,6 +193,16 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        nodesLayer = self.algRunner.runCreateFieldWithExpression(
+            inputLyr=nodesLayer,
+            expression="$id",
+            fieldName="nfeatid",
+            fieldType=1,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Building graph aux structures"))
         (
             nodeDict,
@@ -200,8 +210,9 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             edgeDict,
             hashDict,
             networkBidirectionalGraph,
+            nodeLayerIdDict,
         ) = graphHandler.buildAuxStructures(
-            nx, nodesLayer=nodesLayer, edgesLayer=localCache, feedback=multiStepFeedback, useWkt=False,
+            nx, nodesLayer=nodesLayer, edgesLayer=localCache, feedback=multiStepFeedback, useWkt=False, computeNodeLayerIdDict=True
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -213,22 +224,46 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
+        constantSinkPointSet = set()
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         if waterSinkLayer is not None:
-            for feat in waterSinkLayer.getFeatures():
-                if feedback.isCanceled:
+            selectedNodesFromWaterSink = self.algRunner.runExtractByLocation(
+                inputLyr=nodesLayer,
+                intersectLyr=waterSinkLayer,
+                context=context,
+                predicate=[AlgRunner.Equal],
+                feedback=multiStepFeedback,
+            )
+            for feat in selectedNodesFromWaterSink.getFeatures():
+                if multiStepFeedback.isCanceled():
                     break
-                geom = feat.geometry()
-                geomWkb = geom.asWkb()
-                if geomWkb not in nodeIdDict:
-                    continue
-                fixedOutNodeSet.add(nodeIdDict[geomWkb])
+                constantSinkPointSet.add(nodeLayerIdDict[feat['nfeatid']])
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        if oceanLayer is not None and oceanLayer.featureCount() > 0:
+            buffer = self.algRunner.runBuffer(
+                inputLayer=oceanLayer,
+                distance=1e-6,
+                context=context,
+                is_child_algorithm=True,
+            )
+            selectedNodesFromOcean = self.algRunner.runExtractByLocation(
+                inputLyr=nodesLayer,
+                intersectLyr=buffer,
+                context=context,
+                predicate=[AlgRunner.Intersect],
+                feedback=multiStepFeedback,
+            )
+            for feat in selectedNodesFromOcean.getFeatures():
+                if multiStepFeedback.isCanceled():
+                    break
+                constantSinkPointSet.add(nodeLayerIdDict[feat['nfeatid']])
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Computing flow graph"))
         DiG = graphHandler.buildAuxFlowGraph(
-            nx, networkBidirectionalGraph, fixedInNodeSet, fixedOutNodeSet, feedback=multiStepFeedback
+            nx, networkBidirectionalGraph, fixedInNodeSet, fixedOutNodeSet, constantSinkPointSet, feedback=multiStepFeedback
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -237,6 +272,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Finding flow issues"))
         pointFlagLyr = self.algRunner.runIdentifyDrainageFlowIssues(
             inputLyr=networkLayer,
             context=context,
@@ -250,6 +286,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         list(map(pointFlagLambda, pointFlagLyr.getFeatures()))
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Finding loop issues"))
         lineFlagLyr = self.algRunner.runIdentifyLoops(
             inputLyr=networkLayer,
             context=context,
