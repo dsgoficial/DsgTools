@@ -1896,6 +1896,7 @@ class LayerHandler(QObject):
         self,
         inputLineLyrList,
         inputPolygonLyrList,
+        geographicBoundaryLyr=None,
         algRunner=None,
         excludeLinesInsidePolygons=False,
         onlySelected=False,
@@ -1944,6 +1945,7 @@ class LayerHandler(QObject):
             self.tr("Converting polygons to single part and exploding lines")
         )
         singlePartPolygonList = []
+        singlePartGeographicBoundaryLyr = None
         for polygonLyr in inputPolygonLyrList:
             multiStepFeedback.setCurrentStep(currentStep)
             usedInput = algRunner.runMultipartToSingleParts(
@@ -1954,6 +1956,8 @@ class LayerHandler(QObject):
                 feedback=multiStepFeedback,
                 is_child_algorithm=True,
             )
+            if geographicBoundaryLyr is not None and polygonLyr.id() == geographicBoundaryLyr.id():
+                singlePartGeographicBoundaryLyr = usedInput
             singlePartPolygonList.append(usedInput)
             currentStep += 1
             convertedPolygons = algRunner.runPolygonsToLines(
@@ -2002,7 +2006,7 @@ class LayerHandler(QObject):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             mergedPolygons = algRunner.runMergeVectorLayers(
-                inputList=singlePartPolygonList,
+                inputList=[i for i in singlePartPolygonList if i != singlePartGeographicBoundaryLyr],
                 context=context,
                 feedback=multiStepFeedback
             )
@@ -2436,6 +2440,7 @@ class LayerHandler(QObject):
             excludeLinesInsidePolygons=True,
             onlySelected=onlySelected,
             feedback=multiStepFeedback,
+            geographicBoundaryLyr=geographicBoundaryLyr,
             context=context,
             algRunner=algRunner,
         )
