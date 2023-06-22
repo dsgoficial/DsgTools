@@ -16,6 +16,7 @@ Correção de bug:
 
 - Correção de bug no rubberband da ferramenta de ângulos retos no QGIS 3.30;
 - Correção de bug na reclassificação do menu de aquisição;
+- Correção de bug no processo de construir polígonos por línha e centróides (Build Polygons From Center Points and Boundary): com a otimização da versão anterior, o algoritmo estava excluindo as linhas da moldura;
 
 ## 4.8.0 - 2023-06-14
 
