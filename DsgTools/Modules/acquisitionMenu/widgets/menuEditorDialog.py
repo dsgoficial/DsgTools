@@ -2,6 +2,7 @@ import os, sys, copy
 from PyQt5 import QtCore, uic, QtWidgets, QtGui
 import json
 from DsgTools.Modules.utils.factories.utilsFactory import UtilsFactory
+from qgis.PyQt.QtWidgets import QMessageBox
 
 
 class MenuEditorDialog(QtWidgets.QDialog):
@@ -176,6 +177,16 @@ class MenuEditorDialog(QtWidgets.QDialog):
 
     @QtCore.pyqtSlot(bool)
     def on_deleteMenuBtn_clicked(self):
+        if (
+            QMessageBox.question(
+                self,
+                self.tr("Question"),
+                self.tr("Do you really want to delete?"),
+                QMessageBox.Ok | QMessageBox.Cancel,
+            )
+            == QMessageBox.Cancel
+        ):
+            return
         self.menuWidget.setMenuName("")
         self.menuWidget.clean()
         self.tabEditorWidget.clearAllItems()

@@ -3,7 +3,7 @@ from qgis.utils import iface
 from PyQt5 import QtCore, uic, QtWidgets, QtGui
 import json
 from DsgTools.Modules.qgis.factories.actionsFactory import ActionsFactory
-
+from qgis.core import QgsWkbTypes
 
 class QgisCtrl:
     def __init__(self, actionsFactory=ActionsFactory()):
@@ -215,6 +215,13 @@ class QgisCtrl:
                 feature.setAttribute(indx, attributeValue)
 
     def cutAndPasteSelectedFeatures(self, layer, destinatonLayer, attributes):
+        geometryFilterDict = {
+            QgsWkbTypes.PointGeometry: (QgsWkbTypes.PointGeometry,),
+            QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry,),
+            QgsWkbTypes.PolygonGeometry: (QgsWkbTypes.PointGeometry, QgsWkbTypes.PolygonGeometry)
+        }
+        if destinatonLayer.geometryType() not in geometryFilterDict[layer.geometryType()]:
+            return
         layer.startEditing()
         destinatonLayer.startEditing()
         features = layer.selectedFeatures()
