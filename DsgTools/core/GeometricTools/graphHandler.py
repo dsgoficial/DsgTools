@@ -517,8 +517,11 @@ def buildAuxFlowGraph(
     for node in constantSinkPointSet:
         if multiStepFeedback is not None and feedback.isCanceled():
             return DiG
-        other = [i for i in list(G.edges(node))[0] if i != node][0]
-        add_edge_from_graph_to_digraph(G, DiG, other, node)
+        connectedNodesToConstant = fetch_connected_nodes(G, node, max_degree=2)
+        if node not in connectedNodesToConstant:
+            connectedNodesToConstant.insert(0, node)
+        for n0, n1 in pairwise(reversed(connectedNodesToConstant)):
+            add_edge_from_graph_to_digraph(G, DiG, n0, n1)
         fixedOutNodeSet.add(node)
 
     if multiStepFeedback is not None:
