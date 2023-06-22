@@ -32,10 +32,18 @@ from itertools import product
 from itertools import starmap
 from functools import partial
 
-from qgis.core import QgsGeometry, QgsFeature, QgsProcessingMultiStepFeedback, QgsVectorLayer, QgsFeedback
+from qgis.core import (
+    QgsGeometry,
+    QgsFeature,
+    QgsProcessingMultiStepFeedback,
+    QgsVectorLayer,
+    QgsFeedback,
+)
 
 
-def fetch_connected_nodes(G, node: int, max_degree: int, feedback: Optional[QgsFeedback] = None) -> List[int]:
+def fetch_connected_nodes(
+    G, node: int, max_degree: int, feedback: Optional[QgsFeedback] = None
+) -> List[int]:
     """
     Fetch nodes connected to a given node within a maximum degree limit using a non-recursive approach.
 
@@ -124,10 +132,10 @@ def buildAuxStructures(
     nx,
     nodesLayer: QgsVectorLayer,
     edgesLayer: QgsVectorLayer,
-    feedback: Optional[QgsFeedback]=None,
-    directed: Optional[bool]=False,
-    useWkt: Optional[bool]=False,
-    computeNodeLayerIdDict: Optional[bool]=False,
+    feedback: Optional[QgsFeedback] = None,
+    directed: Optional[bool] = False,
+    useWkt: Optional[bool] = False,
+    computeNodeLayerIdDict: Optional[bool] = False,
 ) -> Tuple:
     """
     Build auxiliary data structures for network analysis.
@@ -137,9 +145,9 @@ def buildAuxStructures(
         nodesLayer: A QgsVectorLayer representing nodes in the network.
         edgesLayer: A QgsVectorLayer representing edges in the network.
         feedback: An optional QgsFeedback object to provide feedback during processing.
-        directed: An optional boolean flag indicating whether the network is directed. 
+        directed: An optional boolean flag indicating whether the network is directed.
                   Default is False (undirected network).
-        useWkt: An optional boolean flag indicating whether to use Well-Known Text (WKT) 
+        useWkt: An optional boolean flag indicating whether to use Well-Known Text (WKT)
                 representation for node geometries. Default is False (use WKB representation).
 
     Returns:
@@ -186,7 +194,8 @@ def buildAuxStructures(
             nodeDict[geomKey] = auxId
             nodeIdDict[auxId] = geomKey
             auxId += 1
-        nodeLayerIdDict[nodeFeat.id()] = auxId
+        if computeNodeLayerIdDict:
+            nodeLayerIdDict[nodeFeat["nfeatid"]] = auxId
         hashDict[nodeFeat["featid"]][nodeFeat["vertex_pos"]] = geomKey
         if multiStepFeedback is not None:
             multiStepFeedback.setProgress(current * stepSize)
@@ -196,8 +205,18 @@ def buildAuxStructures(
     networkBidirectionalGraph = buildGraph(
         nx, hashDict, nodeDict, feedback=multiStepFeedback, directed=directed
     )
-    return (nodeDict, nodeIdDict, edgeDict, hashDict, networkBidirectionalGraph) \
-        if not computeNodeLayerIdDict else (nodeDict, nodeIdDict, edgeDict, hashDict, networkBidirectionalGraph, nodeLayerIdDict)
+    return (
+        (nodeDict, nodeIdDict, edgeDict, hashDict, networkBidirectionalGraph)
+        if not computeNodeLayerIdDict
+        else (
+            nodeDict,
+            nodeIdDict,
+            edgeDict,
+            hashDict,
+            networkBidirectionalGraph,
+            nodeLayerIdDict,
+        )
+    )
 
 
 def evaluateStreamOrder(G, feedback=None):
@@ -260,6 +279,7 @@ def evaluateStreamOrder(G, feedback=None):
             - visitedNodes
         )
     return G_copy
+
 
 def removeFirstOrderEmptyNodes(G, d):
     """
@@ -330,9 +350,12 @@ def removeSecondOrderEmptyNodes(G, d):
                 G_copy.add_edge(pred, suc)
             G_copy.remove_node(node)
         nodesToRemove = set(
-            node for node in G_copy.nodes if G_copy.degree(node) == 2 and d[node] is None
+            node
+            for node in G_copy.nodes
+            if G_copy.degree(node) == 2 and d[node] is None
         )
     return G_copy
+
 
 def add_edges_from_connected_nodes(G, DiG, node, reverse=False):
     """
@@ -356,13 +379,26 @@ def add_edges_from_connected_nodes(G, DiG, node, reverse=False):
             continue
         pair = (n1, n2) if not reverse else (n2, n1)
         add_edge_from_graph_to_digraph(G, DiG, *pair)
-    lastNodeCandidateList = list(set(G.neighbors(connectedNodes[-1])) - set(connectedNodes))
+    lastNodeCandidateList = list(
+        set(G.neighbors(connectedNodes[-1])) - set(connectedNodes)
+    )
     if lastNodeCandidateList == []:
-        return connectedNodes, set(G.neighbors(n2)) - set(connectedNodes) 
-    last_pair = (connectedNodes[-1], list(set(G.neighbors(connectedNodes[-1])) - set(connectedNodes))[0]) if not reverse else (list(set(G.neighbors(connectedNodes[-1])) - set(connectedNodes))[0], connectedNodes[-1])
+        return connectedNodes, set(G.neighbors(n2)) - set(connectedNodes)
+    last_pair = (
+        (
+            connectedNodes[-1],
+            list(set(G.neighbors(connectedNodes[-1])) - set(connectedNodes))[0],
+        )
+        if not reverse
+        else (
+            list(set(G.neighbors(connectedNodes[-1])) - set(connectedNodes))[0],
+            connectedNodes[-1],
+        )
+    )
     add_edge_from_graph_to_digraph(G, DiG, *last_pair)
     nextNodesToVisit = set(G.neighbors(last_pair[-1])) - set(connectedNodes)
     return connectedNodes, nextNodesToVisit
+
 
 def add_edge_from_graph_to_digraph(G, DiG, n1, n2):
     """
@@ -377,6 +413,7 @@ def add_edge_from_graph_to_digraph(G, DiG, n1, n2):
     """
     DiG.add_edge(n1, n2)
     DiG[n1][n2]["featid"] = G[n1][n2].get("featid", None)
+
 
 def add_node_to_digraph_according_to_flow(G, DiG, node):
     """
@@ -401,7 +438,7 @@ def add_node_to_digraph_according_to_flow(G, DiG, node):
             continue
         preds = set(DiG.predecessors(n))
         succs = set(DiG.successors(n))
-        if (preds == set() and succs == set()):
+        if preds == set() and succs == set():
             continue
         elif G.degree(node) == 2:
             if node in DiG.nodes:
@@ -409,23 +446,35 @@ def add_node_to_digraph_according_to_flow(G, DiG, node):
             else:
                 pair = (n, node) if len(preds) == 0 else (n, node)
             add_edge_from_graph_to_digraph(G, DiG, *pair)
-        elif (G.degree(node) == 3 and len(preds | succs) < 2):
+        elif G.degree(node) == 3 and len(preds | succs) < 2:
             continue
-        elif preds != set() and succs == set(): # confluencia
+        elif preds != set() and succs == set():  # confluencia
             add_edge_from_graph_to_digraph(G, DiG, n, node)
-        else: # ramificacao
+        else:  # ramificacao
             add_edge_from_graph_to_digraph(G, DiG, node, n)
         nextNodes.add(n)
-    if node in DiG.nodes and set(DiG.predecessors(node)) | set(DiG.successors(node)) == neighbors:
+    if (
+        node in DiG.nodes
+        and set(DiG.predecessors(node)) | set(DiG.successors(node)) == neighbors
+    ):
         addToVisitedNodes.add(node)
     return nextNodes, addToVisitedNodes
+
 
 def is_flow_invalid(DiG, node):
     preds = len(list(DiG.predecessors(node)))
     succs = len(list(DiG.successors(node)))
     return (preds > 0 and succs == 0) or (preds == 0 and succs > 0)
 
-def buildAuxFlowGraph(nx, G, fixedInNodeSet: set, fixedOutNodeSet: set, constantSinkPointSet: set, feedback: Optional[QgsFeedback]=None):
+
+def buildAuxFlowGraph(
+    nx,
+    G,
+    fixedInNodeSet: set,
+    fixedOutNodeSet: set,
+    constantSinkPointSet: set,
+    feedback: Optional[QgsFeedback] = None,
+):
     """
     Build an auxiliary flow graph from an undirected graph.
 
@@ -444,20 +493,26 @@ def buildAuxFlowGraph(nx, G, fixedInNodeSet: set, fixedOutNodeSet: set, constant
     nEdges = len(list(G.edges))
     if nEdges == 0:
         return DiG
-    multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
+    multiStepFeedback = (
+        QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
+    )
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(0)
     for node in fixedInNodeSet:
         if multiStepFeedback is not None and feedback.isCanceled():
             return DiG
-        connectedNodes, nextNodesToVisitFromFixedIn = add_edges_from_connected_nodes(G, DiG, node)
+        connectedNodes, nextNodesToVisitFromFixedIn = add_edges_from_connected_nodes(
+            G, DiG, node
+        )
         visitedNodes = visitedNodes.union(set(connectedNodes))
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(1)
     for node in fixedOutNodeSet:
         if multiStepFeedback is not None and feedback.isCanceled():
             return DiG
-        connectedNodes, nextNodesToVisitFromFixedOut = add_edges_from_connected_nodes(G, DiG, node, reverse=True)
+        connectedNodes, nextNodesToVisitFromFixedOut = add_edges_from_connected_nodes(
+            G, DiG, node, reverse=True
+        )
         visitedNodes = visitedNodes.union(set(connectedNodes))
     for node in constantSinkPointSet:
         if multiStepFeedback is not None and feedback.isCanceled():
@@ -469,13 +524,19 @@ def buildAuxFlowGraph(nx, G, fixedInNodeSet: set, fixedOutNodeSet: set, constant
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(2)
         remainingEdges = nEdges - len(list(DiG.edges))
-        stepSize = 100/remainingEdges
+        stepSize = 100 / remainingEdges
         currentEdge = 0
     for baseNode in fixedOutNodeSet:
         if multiStepFeedback is not None and feedback.isCanceled():
             break
-        firstOrderNodes = (i for i in nx.dfs_postorder_nodes(G, baseNode) if G.degree(i) == 1)
-        path_list = (nx.all_simple_paths(G, i, baseNode) for i in firstOrderNodes if nx.has_path(G, i, baseNode))
+        firstOrderNodes = (
+            i for i in nx.dfs_postorder_nodes(G, baseNode) if G.degree(i) == 1
+        )
+        path_list = (
+            nx.all_simple_paths(G, i, baseNode)
+            for i in firstOrderNodes
+            if nx.has_path(G, i, baseNode)
+        )
         for node_path in itertools.chain(*path_list):
             if multiStepFeedback is not None and feedback.isCanceled():
                 break
