@@ -26,7 +26,8 @@ from functools import reduce
 from collections import defaultdict, Counter
 from itertools import tee
 import os
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
+from qgis.PyQt.QtCore import QByteArray
 from itertools import chain
 from itertools import product
 from itertools import starmap
@@ -115,7 +116,33 @@ def flipLine(edgeDict: dict, edgeId: int) -> QgsFeature:
     return newFeat
 
 
-def buildGraph(nx, hashDict, nodeDict, feedback=None, directed=False):
+def buildGraph(
+    nx: Any,
+    hashDict: Dict[int, List[QByteArray]],
+    nodeDict: Dict[QByteArray, int],
+    feedback: Optional[QgsFeedback] = None,
+    directed: bool = False
+) -> Any:
+    """
+    Build a graph from hash dictionary and node dictionary.
+
+    Args:
+        nx: NetworkX library instance or module.
+        hashDict: A dictionary mapping edge ID to a list with the wkbs of the first and the last nodes of the edge.
+        nodeDict: A dictionary mapping node geometry to an auxiliary ID.
+        feedback: An optional object for providing feedback during processing.
+        directed: A boolean flag indicating whether the graph is directed.
+                  Default is False (undirected graph).
+
+    Returns:
+        The constructed graph object.
+
+    Notes:
+        This function iterates over the hash dictionary and adds edges to the graph based on node geometry mappings.
+        The graph can be either undirected or directed based on the value of the 'directed' parameter.
+        The optional 'feedback' object can be used to monitor the progress of the function.
+
+    """
     G = nx.Graph() if not directed else nx.DiGraph()
     progressStep = 100 / len(hashDict)
     for current, (edgeId, (wkb_1, wkb_2)) in enumerate(hashDict.items()):
@@ -129,14 +156,14 @@ def buildGraph(nx, hashDict, nodeDict, feedback=None, directed=False):
 
 
 def buildAuxStructures(
-    nx,
+    nx: Any,
     nodesLayer: QgsVectorLayer,
     edgesLayer: QgsVectorLayer,
     feedback: Optional[QgsFeedback] = None,
     directed: Optional[bool] = False,
     useWkt: Optional[bool] = False,
     computeNodeLayerIdDict: Optional[bool] = False,
-) -> Tuple:
+) -> Tuple[Dict[QByteArray, int], Dict[int, QByteArray], Dict[int, QgsFeature], Dict[int, Dict[int, QByteArray]], Any]:
     """
     Build auxiliary data structures for network analysis.
 
@@ -221,7 +248,22 @@ def buildAuxStructures(
     )
 
 
-def evaluateStreamOrder(G, feedback=None):
+def evaluateStreamOrder(G: Any, feedback: Optional[QgsFeedback]=None) -> Any:
+    """
+    Evaluate stream order for the given graph.
+
+    Args:
+        G: The input graph object.
+        feedback: An optional object for providing feedback during processing.
+
+    Returns:
+        The graph object with stream order assigned to edges.
+
+    Notes:
+        This function evaluates the stream order for the edges in the graph.
+        The stream order represents the hierarchical position of the edge in the stream network.
+        The optional 'feedback' object can be used to monitor the progress of the function.
+    """
     G = G.copy()
     firstOrderNodes = set(
         node
@@ -463,7 +505,22 @@ def add_node_to_digraph_according_to_flow(G, DiG, node):
     return nextNodes, addToVisitedNodes
 
 
-def is_flow_invalid(DiG, node):
+def is_flow_invalid(DiG, node: int) -> bool:
+    """
+    Check if the flow is invalid for a given node in a directed graph.
+
+    Args:
+        DiG: The directed graph object.
+        node: The node for which to check the flow validity.
+
+    Returns:
+        A boolean indicating whether the flow is invalid for the specified node.
+
+    Notes:
+        This function checks the flow validity for a given node in a directed graph.
+        It returns True if the node has predecessors but no successors, or if it has successors but no predecessors.
+        Otherwise, it returns False indicating that the flow is valid for the node.
+    """
     preds = len(list(DiG.predecessors(node)))
     succs = len(list(DiG.successors(node)))
     return (preds > 0 and succs == 0) or (preds == 0 and succs > 0)
@@ -472,9 +529,9 @@ def is_flow_invalid(DiG, node):
 def buildAuxFlowGraph(
     nx,
     G,
-    fixedInNodeSet: set,
-    fixedOutNodeSet: set,
-    constantSinkPointSet: set,
+    fixedInNodeSet: Set[int],
+    fixedOutNodeSet: Set[int],
+    constantSinkPointSet: Optional[Set[int]]=None,
     feedback: Optional[QgsFeedback] = None,
 ):
     """
@@ -493,6 +550,7 @@ def buildAuxFlowGraph(
     DiG = nx.DiGraph()
     visitedNodes = set()
     nEdges = len(list(G.edges))
+    constantSinkPointSet = set() if constantSinkPointSet is None else constantSinkPointSet
     if nEdges == 0:
         return DiG
     multiStepFeedback = (

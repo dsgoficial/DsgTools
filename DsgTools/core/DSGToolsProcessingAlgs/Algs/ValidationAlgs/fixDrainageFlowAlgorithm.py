@@ -21,9 +21,10 @@
  ***************************************************************************/
 """
 
-from typing import Dict, Tuple
+from typing import Dict, Set, Tuple
 from PyQt5.QtCore import QCoreApplication
 from DsgTools.core.GeometricTools import graphHandler
+from qgis.PyQt.QtCore import QByteArray
 from qgis.core import (
     QgsProcessing,
     QgsProcessingException,
@@ -31,7 +32,8 @@ from qgis.core import (
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
-    QgsProcessingFeatureSourceDefinition,
+    QgsFeedback,
+    QgsProcessingContext,
     QgsGeometry,
     QgsFeature,
     QgsVectorLayer,
@@ -299,12 +301,37 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
 
     def getInAndOutNodesOnGeographicBounds(
         self,
-        nodeDict: Dict[str, int],
+        nodeDict: Dict[QByteArray, int],
         nodesLayer: QgsVectorLayer,
-        geographicBoundsLayer,
-        context,
-        feedback,
-    ) -> Tuple[set, set]:
+        geographicBoundsLayer: QgsVectorLayer,
+        context: QgsProcessingContext,
+        feedback: QgsFeedback,
+    ) -> Tuple[Set[int], Set[int]]:
+        """
+        Get the in-nodes and out-nodes that fall within the geographic bounds.
+
+        Args:
+            self: The instance of the class.
+            nodeDict: A dictionary mapping node geometry to an auxiliary ID.
+            nodesLayer: A QgsVectorLayer representing nodes in the network.
+            geographicBoundsLayer: The geographic bounds layer.
+            context: The context object for the processing.
+            feedback: The QgsFeedback object for providing feedback during processing.
+
+        Returns:
+            A tuple containing two sets: fixedInNodeSet and fixedOutNodeSet.
+            - fixedInNodeSet: A set of in-nodes that fall within the geographic bounds.
+            - fixedOutNodeSet: A set of out-nodes that fall within the geographic bounds.
+
+        Notes:
+            This function performs the following steps:
+            1. Creates a spatial index for the nodesLayer.
+            2. Extracts the nodes that are outside the geographic bounds.
+            3. Iterates over the nodes outside the geographic bounds and adds them to the appropriate set.
+            4. Returns the sets of in-nodes and out-nodes within the geographic bounds.
+
+            The feedback object is used to monitor the progress of the function.
+        """
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
