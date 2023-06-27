@@ -656,7 +656,7 @@ def buildAuxFlowGraph(
             i for i in nx.dfs_postorder_nodes(G, baseNode) if G.degree(i) == 1
         )
         path_list = (
-            nx.astar_path(G, i, baseNode, heuristic=distance, weight="length")
+            nx.astar_path(G, i, baseNode, weight="length")
             for i in firstOrderNodes
             if nx.has_path(G, i, baseNode)
         )
