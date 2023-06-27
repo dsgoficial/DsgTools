@@ -37,6 +37,7 @@ from qgis.core import (
     QgsGeometry,
     QgsFeature,
     QgsVectorLayer,
+    QgsProcessingParameterExpression,
 )
 
 from ...algRunner import AlgRunner
@@ -45,6 +46,7 @@ from .validationAlgorithm import ValidationAlgorithm
 
 class FixDrainageFlowAlgorithm(ValidationAlgorithm):
     NETWORK_LAYER = "NETWORK_LAYER"
+    FILTER_EXPRESSION = "FILTER_EXPRESSION"
     SINK_LAYER = "SINK_LAYER"
     GEOGRAPHIC_BOUNDS_LAYER = "GEOGRAPHIC_BOUNDS_LAYER"
     OCEAN_LAYER = "OCEAN_LAYER"
@@ -60,6 +62,15 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 self.NETWORK_LAYER,
                 self.tr("Network layer"),
                 [QgsProcessing.TypeVectorLine],
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterExpression(
+                self.FILTER_EXPRESSION,
+                self.tr("Filter expression for nodes with fixed flow"),
+                None,
+                self.NETWORK_LAYER,
+                optional=True
             )
         )
         self.addParameter(
@@ -112,6 +123,9 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         # get the network handler
         self.algRunner = AlgRunner()
         networkLayer = self.parameterAsLayer(parameters, self.NETWORK_LAYER, context)
+        filterExpression = self.parameterAsExpression(parameters, self.FILTER_EXPRESSION, context)
+        if filterExpression == '':
+            filterExpression = None
         oceanLayer = self.parameterAsLayer(parameters, self.OCEAN_LAYER, context)
         waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
         geographicBoundsLayer = self.parameterAsLayer(
@@ -134,7 +148,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             networkLayer.sourceCrs(),
         )
         # searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(15, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(17, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Building aux structures"))
@@ -146,6 +160,11 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        drainagesWithCorrectFlow = self.algRunner.runFilterExpression(
+            inputLyr=localCache, expression=filterExpression, context=context, feedback=multiStepFeedback
+        ) if filterExpression is not None else None
         currentStep += 1
         if geographicBoundsLayer is not None:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -200,6 +219,12 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
             useWkt=False,
             computeNodeLayerIdDict=True,
+            addEdgeLength=True,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        initialDiG = None if drainagesWithCorrectFlow is None else graphHandler.buildDirectionalGraphFromIdList(
+            nx, networkBidirectionalGraph, nodeDict, hashDict, set(f["featid"] for f in drainagesWithCorrectFlow.getFeatures()), feedback=multiStepFeedback
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -255,6 +280,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             fixedInNodeSet,
             fixedOutNodeSet,
             constantSinkPointSet,
+            DiG=initialDiG,
             feedback=multiStepFeedback,
         )
         currentStep += 1
@@ -293,6 +319,8 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         )
         list(map(lineFlagLambda, lineFlagLyr.getFeatures()))
 
+        multiStepFeedback.setProgressText(self.tr(f"Found {pointFlagLyr.featureCount()} flow issues."))
+        multiStepFeedback.setProgressText(self.tr(f"Found {lineFlagLyr.featureCount()} loop issues."))
         return {
             self.NETWORK_LAYER: networkLayer,
             self.POINT_FLAGS: self.point_flags_sink_id,
