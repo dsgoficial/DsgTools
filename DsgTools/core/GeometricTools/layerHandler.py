@@ -1985,6 +1985,8 @@ class LayerHandler(QObject):
             if lineList != []
             else None
         )
+        if singlePartPolygonList == [singlePartGeographicBoundaryLyr]:
+            return mergedLayer
         
         if singlePartPolygonList != [] and excludeLinesInsidePolygons:
             currentStep += 1
@@ -2005,11 +2007,12 @@ class LayerHandler(QObject):
 
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
+            mergedPolygonsInputList = [i for i in singlePartPolygonList if i != singlePartGeographicBoundaryLyr]
             mergedPolygons = algRunner.runMergeVectorLayers(
-                inputList=[i for i in singlePartPolygonList if i != singlePartGeographicBoundaryLyr],
+                inputList=mergedPolygonsInputList,
                 context=context,
                 feedback=multiStepFeedback
-            )
+            ) if len(mergedPolygonsInputList) > 0 else None
             currentStep += 1
 
             multiStepFeedback.setCurrentStep(currentStep)
