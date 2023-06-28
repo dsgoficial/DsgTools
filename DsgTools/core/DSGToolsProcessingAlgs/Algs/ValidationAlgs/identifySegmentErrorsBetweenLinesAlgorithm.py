@@ -32,7 +32,7 @@ from qgis.core import (
     QgsProcessingParameterFeatureSink,
     QgsWkbTypes,
     QgsGeometry,
-    QgsFeatureRequest,
+    QgsProcessingParameterNumber,
     QgsProcessingMultiStepFeedback,
     QgsFeedback,
     QgsProcessingFeatureSource,
@@ -59,7 +59,16 @@ class IdentifySegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterFeatureSource(
-                self.REFERENCE_LINE, self.tr("Reference lines"), [QgsProcessing.TypeVectorLine]
+                self.REFERENCE_LINE,
+                self.tr("Reference lines"),
+                [QgsProcessing.TypeVectorLine],
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.SEARCH_RADIUS,
+                self.tr("Search Radius"),
+                type=QgsProcessingParameterNumber.Double,
             )
         )
         self.addParameter(
@@ -75,7 +84,9 @@ class IdentifySegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
         layerHandler = LayerHandler()
         self.algRunner = AlgRunner()
         inputSource = self.parameterAsSource(parameters, self.INPUT, context)
-        referenceSource = self.parameterAsSource(parameters, self.REFERENCE_LINE, context)
+        referenceSource = self.parameterAsSource(
+            parameters, self.REFERENCE_LINE, context
+        )
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
         self.prepareFlagSink(parameters, inputSource, QgsWkbTypes.MultiPoint, context)
         nFeats = inputSource.featureCount()
@@ -90,14 +101,12 @@ class IdentifySegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
             [],
             searchRadius,
             feedback=multiStepFeedback,
-
         )
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
         vertexFlagSet = self.getFlagVertexesFromGeomDict(
-            vertexNearEdgeFlagDict,
-            feedback=multiStepFeedback
+            vertexNearEdgeFlagDict, feedback=multiStepFeedback
         )
         currentStep += 1
 
@@ -117,17 +126,19 @@ class IdentifySegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
                 context=context,
             )
             vertexFlagSet = vertexFlagSet.union(
-                set(
-                    v.geometry().asWkt() for v in intersectedVertexes.getFeatures()
-                )
+                set(v.geometry().asWkt() for v in intersectedVertexes.getFeatures())
             )
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
-        self.raiseFlagsFromVertexFlagSet(parameters[self.INPUT], vertexFlagSet, context, feedback=multiStepFeedback)
+        self.raiseFlagsFromVertexFlagSet(
+            parameters[self.INPUT], vertexFlagSet, context, feedback=multiStepFeedback
+        )
         return {self.FLAGS: self.flag_id}
-    
-    def getFlagVertexesFromGeomDict(self, geomDict: Dict[int, Dict[str, QgsGeometry]], feedback: QgsFeedback):
+
+    def getFlagVertexesFromGeomDict(
+        self, geomDict: Dict[int, Dict[str, QgsGeometry]], feedback: QgsFeedback
+    ):
         size = 100 / len(geomDict) if geomDict else 0
         outputSet = set()
         for current, (featid, vertexDict) in enumerate(geomDict.items()):
@@ -136,8 +147,14 @@ class IdentifySegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
             outputSet = outputSet.union(vertexDict.keys())
             feedback.setProgress(size * current)
         return outputSet
-    
-    def raiseFlagsFromVertexFlagSet(self, inputSource: QgsProcessingFeatureSource, vertexFlagSet: set, context: QgsProcessingContext, feedback: QgsFeedback):
+
+    def raiseFlagsFromVertexFlagSet(
+        self,
+        inputSource: QgsProcessingFeatureSource,
+        vertexFlagSet: set,
+        context: QgsProcessingContext,
+        feedback: QgsFeedback,
+    ):
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         multiStepFeedback.setCurrentStep(0)
         localCache = self.algRunner.runCreateFieldWithExpression(
@@ -151,23 +168,21 @@ class IdentifySegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
         )
         multiStepFeedback.setCurrentStep(1)
         vertexLyr = self.algRunner.runExtractVertices(
-            inputLyr=localCache,
-            context=context,
-            feedback=multiStepFeedback
+            inputLyr=localCache, context=context, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(2)
         vertexDict = defaultdict(set)
-        stepSize = 100/vertexLyr.featureCount()
+        stepSize = 100 / vertexLyr.featureCount()
         for current, vertexFeat in enumerate(vertexLyr.getFeatures()):
             if multiStepFeedback.isCanceled():
                 return
             geom = vertexFeat.geometry()
             if geom.asWkt() not in vertexFlagSet:
                 continue
-            vertexDict[vertexFeat['featid']].add(geom)
+            vertexDict[vertexFeat["featid"]].add(geom)
             multiStepFeedback.setProgress(current * stepSize)
         multiStepFeedback.setCurrentStep(3)
-        stepSize = 100/len(vertexDict)
+        stepSize = 100 / len(vertexDict)
         for current, (featid, vertexSet) in enumerate(vertexDict.items()):
             if multiStepFeedback.isCanceled():
                 return
@@ -176,10 +191,7 @@ class IdentifySegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
             if len(geomList) > 0:
                 for g in geomList:
                     baseGeom = baseGeom.combine(g)
-            self.flagFeature(
-                flagGeom=baseGeom,
-                flagText=flagText
-            )
+            self.flagFeature(flagGeom=baseGeom, flagText=flagText)
             multiStepFeedback.setProgress(current * stepSize)
 
     def name(self):
