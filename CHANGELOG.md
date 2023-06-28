@@ -10,6 +10,10 @@ Melhorias:
 
 - Melhoria de desempenho na construção de polígonos quando se utiliza polígonos na entrada que contém linhas que podem delimitar (caso área edificada versus via deslocamento);
 
+Correção de bug:
+
+- Corrige crash no QGIS 3.32 quando se usa o merge features em um memory layer criado pela ferramenta de copiar feições para camada temporária;
+
 ## 4.8.0 - 2023-06-14
 
 Novas Funcionalidades:

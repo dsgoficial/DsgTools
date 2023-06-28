@@ -21,7 +21,8 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsProject, Qgis, QgsVectorLayer, QgsWkbTypes
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from qgis.core import QgsProject, Qgis, QgsVectorLayer, QgsWkbTypes, QgsProcessingUtils, QgsProcessingContext
 from qgis.gui import QgsMapTool
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QObject
@@ -106,25 +107,16 @@ class OtherTools(QgsMapTool):
                 "Erro", "Selecione uma camada válida", level=Qgis.Critical, duration=5
             )
             return
-        features = layer.selectedFeatures()
-        newFields = layer.fields()
-        name = layer.name()
-        newName = name + "_temp"
-        wkbType = layer.wkbType()
-        selection = QgsVectorLayer(
-            QgsWkbTypes.displayString(wkbType), newName, "memory"
+        context = QgsProcessingContext()
+        outputLyr = AlgRunner().runSaveSelectedFeatures(
+            inputLyr=layer,
+            context=context,
         )
-        selection.startEditing()
-        selection.setCrs(layer.crs())
-        dp = selection.dataProvider()
-        dp.addAttributes(newFields)
-        dp.addFeatures(features)
-        selection.commitChanges()
-        selection.updateExtents()
-        QgsProject.instance().addMapLayer(selection)
+        outputLyr.setName(f"{layer.name()}_temp")
+        QgsProject.instance().addMapLayer(outputLyr, addToLegend=True)
         iface.messageBar().pushMessage(
             "Executado",
-            "Camada temporária criada: " + newName,
+            f"Camada temporária criada: {layer.name()}_temp",
             level=Qgis.Success,
             duration=5,
         )
