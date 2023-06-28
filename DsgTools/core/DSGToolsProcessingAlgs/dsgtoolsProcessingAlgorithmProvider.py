@@ -290,6 +290,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicated
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedVertexesAlgorithm import (
     IdentifyDuplicatedVertexesAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyIntertwinedLinesAlgorithm import (
+    IdentifyIntertwinedLinesAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySegmentErrorsBetweenLinesAlgorithm import (
     IdentifySegmentErrorsBetweenLinesAlgorithm,
 )
@@ -569,6 +572,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ValidateTrackerAlgorithm(),
             UpdateRunwayAltitudeAlgorithm(),
             LoadRasterLayerFromServerAlgorithm(),
+            IdentifyIntertwinedLinesAlgorithm(),
             FixDrainageFlowAlgorithm(),
         ]
         return algList
