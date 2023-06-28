@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 
+from collections import defaultdict
 from typing import Dict, Set, Tuple
 from PyQt5.QtCore import QCoreApplication
 from DsgTools.core.GeometricTools import graphHandler
@@ -38,6 +39,7 @@ from qgis.core import (
     QgsFeature,
     QgsVectorLayer,
     QgsProcessingParameterExpression,
+    QgsProcessingParameterBoolean,
 )
 
 from ...algRunner import AlgRunner
@@ -49,7 +51,10 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
     FILTER_EXPRESSION = "FILTER_EXPRESSION"
     SINK_LAYER = "SINK_LAYER"
     GEOGRAPHIC_BOUNDS_LAYER = "GEOGRAPHIC_BOUNDS_LAYER"
+    WATER_BODY_WITH_FLOW_LAYER = "WATER_BODY_WITH_FLOW_LAYER"
     OCEAN_LAYER = "OCEAN_LAYER"
+    RUN_FLOW_CHECK = "RUN_FLOW_CHECK"
+    RUN_LOOP_CHECK = "RUN_LOOP_CHECK"
     POINT_FLAGS = "POINT_FLAGS"
     LINE_FLAGS = "LINE_FLAGS"
 
@@ -82,6 +87,14 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
+                self.WATER_BODY_WITH_FLOW_LAYER,
+                self.tr("Water body with flow layer"),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
                 self.OCEAN_LAYER,
                 self.tr("Ocean layer"),
                 [QgsProcessing.TypeVectorPolygon],
@@ -94,6 +107,20 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 self.tr("Water sink layer"),
                 [QgsProcessing.TypeVectorPoint],
                 optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.RUN_FLOW_CHECK,
+                self.tr("Run flow checks at the end of the process"),
+                defaultValue=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.RUN_LOOP_CHECK,
+                self.tr("Run loop checks at the end of the process"),
+                defaultValue=True,
             )
         )
         self.addParameter(
@@ -127,10 +154,13 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         if filterExpression == '':
             filterExpression = None
         oceanLayer = self.parameterAsLayer(parameters, self.OCEAN_LAYER, context)
+        waterBodyWithFlowLayer = self.parameterAsLayer(parameters, self.WATER_BODY_WITH_FLOW_LAYER, context)
         waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
         geographicBoundsLayer = self.parameterAsLayer(
             parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context
         )
+        runFlowCheck = self.parameterAsBool(parameters, self.RUN_FLOW_CHECK, context)
+        runLoopCheck = self.parameterAsBool(parameters, self.RUN_LOOP_CHECK, context)
         (self.point_flags_sink, self.point_flags_sink_id) = self.parameterAsSink(
             parameters,
             self.POINT_FLAGS,
@@ -148,7 +178,8 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             networkLayer.sourceCrs(),
         )
         # searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(17, feedback)
+        nSteps = 15 + (runFlowCheck is True) + (runLoopCheck is True) + (waterBodyWithFlowLayer is not None)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Building aux structures"))
@@ -271,6 +302,26 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 if multiStepFeedback.isCanceled():
                     break
                 constantSinkPointSet.add(nodeDict[nodeLayerIdDict[feat["nfeatid"]]])
+        if waterBodyWithFlowLayer is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            selectedNodes = self.algRunner.runExtractByLocation(
+                inputLyr=nodesLayer,
+                intersectLyr=waterBodyWithFlowLayer,
+                context=context,
+                predicate=[AlgRunner.Intersect],
+                feedback=multiStepFeedback,
+            )
+            nodesDict = defaultdict(list)
+            for nodeFeat in selectedNodes.getFeatures():
+                nodesDict[nodeFeat["featid"]].append(nodeFeat)
+            edgesWithinWaterBodiesIdSet = set(featid for featid in nodesDict.keys())
+            # penalize edges not in water bodies
+            for (a, b) in networkBidirectionalGraph.edges:
+                if networkBidirectionalGraph[a][b]["featid"] in edgesWithinWaterBodiesIdSet:
+                    continue
+                networkBidirectionalGraph[a][b]["length"] = networkBidirectionalGraph[a][b]["length"] * 1000
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Computing flow graph"))
@@ -293,34 +344,36 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             hashDict,
             feedback=multiStepFeedback,
         )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Finding flow issues"))
-        pointFlagLyr = self.algRunner.runIdentifyDrainageFlowIssues(
-            inputLyr=networkLayer,
-            context=context,
-            feedback=multiStepFeedback,
-        )
-        pointFlagLambda = lambda x: self.flagFeature(
-            x.geometry(), flagText=x["reason"], sink=self.point_flags_sink
-        )
-        list(map(pointFlagLambda, pointFlagLyr.getFeatures()))
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Finding loop issues"))
-        lineFlagLyr = self.algRunner.runIdentifyLoops(
-            inputLyr=networkLayer,
-            context=context,
-            buildLocalCache=True,
-            feedback=multiStepFeedback,
-        )
-        lineFlagLambda = lambda x: self.flagFeature(
-            x.geometry(), flagText=x["reason"], sink=self.line_flags_sink
-        )
-        list(map(lineFlagLambda, lineFlagLyr.getFeatures()))
+        if runFlowCheck:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Finding flow issues"))
+            pointFlagLyr = self.algRunner.runIdentifyDrainageFlowIssues(
+                inputLyr=networkLayer,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            pointFlagLambda = lambda x: self.flagFeature(
+                x.geometry(), flagText=x["reason"], sink=self.point_flags_sink
+            )
+            list(map(pointFlagLambda, pointFlagLyr.getFeatures()))
+            multiStepFeedback.setProgressText(self.tr(f"Found {pointFlagLyr.featureCount()} flow issues."))
+        if runLoopCheck:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Finding loop issues"))
+            lineFlagLyr = self.algRunner.runIdentifyLoops(
+                inputLyr=networkLayer,
+                context=context,
+                buildLocalCache=True,
+                feedback=multiStepFeedback,
+            )
+            lineFlagLambda = lambda x: self.flagFeature(
+                x.geometry(), flagText=x["reason"], sink=self.line_flags_sink
+            )
+            list(map(lineFlagLambda, lineFlagLyr.getFeatures()))
 
-        multiStepFeedback.setProgressText(self.tr(f"Found {pointFlagLyr.featureCount()} flow issues."))
-        multiStepFeedback.setProgressText(self.tr(f"Found {lineFlagLyr.featureCount()} loop issues."))
+            multiStepFeedback.setProgressText(self.tr(f"Found {lineFlagLyr.featureCount()} loop issues."))
         return {
             self.NETWORK_LAYER: networkLayer,
             self.POINT_FLAGS: self.point_flags_sink_id,
