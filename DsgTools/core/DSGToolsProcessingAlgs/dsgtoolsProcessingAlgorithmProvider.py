@@ -254,6 +254,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAnglesInIn
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyCountourStreamIntersectionAlgorithm import (
     IdentifyCountourStreamIntersectionAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyCrossingLinesAlgorithm import (
+    IdentifyCrossingLinesAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesAlgorithm import (
     IdentifyDanglesAlgorithm,
 )
@@ -573,6 +576,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             UpdateRunwayAltitudeAlgorithm(),
             LoadRasterLayerFromServerAlgorithm(),
             IdentifyIntertwinedLinesAlgorithm(),
+            IdentifyCrossingLinesAlgorithm(),
             FixDrainageFlowAlgorithm(),
         ]
         return algList
