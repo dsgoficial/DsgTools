@@ -5,6 +5,8 @@
 Novas Funcionalidades:
 
 - Novo processo de identificar erros de construção em linhas que devem se sobrepor (exemplo, barragem e rodovia);
+- Novo processo de identificar linhas entrelaçadas
+- Novo processo de identificar linhas cruzando outra camada (exemplo: trecho de drenagem e barragem)
 
 Melhorias:
 
