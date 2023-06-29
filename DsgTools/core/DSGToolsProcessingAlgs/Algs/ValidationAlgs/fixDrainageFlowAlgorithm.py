@@ -320,7 +320,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             for (a, b) in networkBidirectionalGraph.edges:
                 if networkBidirectionalGraph[a][b]["featid"] in edgesWithinWaterBodiesIdSet:
                     continue
-                networkBidirectionalGraph[a][b]["length"] = networkBidirectionalGraph[a][b]["length"] * 1000
+                networkBidirectionalGraph[a][b]["length"] = networkBidirectionalGraph[a][b]["length"] * 1e8
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -330,6 +330,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             networkBidirectionalGraph,
             fixedInNodeSet,
             fixedOutNodeSet,
+            nodeIdDict,
             constantSinkPointSet,
             DiG=initialDiG,
             feedback=multiStepFeedback,

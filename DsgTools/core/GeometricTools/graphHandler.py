@@ -567,6 +567,7 @@ def buildAuxFlowGraph(
     G,
     fixedInNodeSet: Set[int],
     fixedOutNodeSet: Set[int],
+    nodeIdDict: Dict[int, QByteArray],
     constantSinkPointSet: Optional[Set[int]]=None,
     DiG: Optional[Any]=None,
     feedback: Optional[QgsFeedback] = None,
@@ -584,6 +585,13 @@ def buildAuxFlowGraph(
         networkx.DiGraph: The resulting auxiliary flow graph (directed graph).
 
     """
+    fixedInNodeSetFromDiG = set()
+    for node in fixedInNodeSet:
+        if node not in DiG.nodes:
+            fixedInNodeSetFromDiG.add(node)
+            continue
+        nodesToAdd = set(i for i in nx.dfs_preorder_nodes(DiG, node) if DiG[i] is None)
+        fixedInNodeSetFromDiG = fixedInNodeSetFromDiG.union(nodesToAdd)
     DiG = nx.DiGraph() if DiG is None else DiG
     visitedNodes = set()
     nEdges = len(list(G.edges))
@@ -628,17 +636,30 @@ def buildAuxFlowGraph(
         remainingEdges = nEdges - len(list(DiG.edges))
         stepSize = 100 / remainingEdges
         currentEdge = 0
-    for (start, end) in product(fixedInNodeSet, fixedOutNodeSet):
+    def distance(start, end):
+        startGeom, endGeom = QgsGeometry(), QgsGeometry()
+        startGeom.fromWkb(nodeIdDict[start])
+        endGeom.fromWkb(nodeIdDict[end])
+        return startGeom.distance(endGeom)
+    
+    pairList = sorted(
+        (
+            (start, end) for start, end in product(fixedInNodeSetFromDiG, fixedOutNodeSet) if nx.has_path(G, start, end)
+        ),
+        key=lambda x: distance(x[0], x[1]),
+        reverse=True
+    )
+    for (start, end) in pairList:
         if multiStepFeedback is not None and feedback.isCanceled():
             break
-        if not nx.has_path(G, start, end):
-            continue
         for n0, n1 in pairwise(nx.astar_path(G, start, end, weight="length")):
             if multiStepFeedback is not None and feedback.isCanceled():
                 break
             if (n0, n1) in DiG.edges or (n1, n0) in DiG.edges:
                 continue
             add_edge_from_graph_to_digraph(G, DiG, n0, n1)
+            if DiG.degree(n0) == 3 and is_flow_invalid(DiG, n0):
+                flip_edge(DiG, (n0, n1))
             if multiStepFeedback is not None:
                 currentEdge += 1
                 multiStepFeedback.setProgress(currentEdge * stepSize)
