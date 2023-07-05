@@ -321,6 +321,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 if networkBidirectionalGraph[a][b]["featid"] in edgesWithinWaterBodiesIdSet:
                     continue
                 networkBidirectionalGraph[a][b]["length"] = networkBidirectionalGraph[a][b]["length"] * 1e8
+                networkBidirectionalGraph[a][b]["inside_river"] = True
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -475,7 +476,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             if nodeCompairFunc(p0, featid):
                 continue
             feat = self.flipLine(edgeDict, featid)
-            networkLayer.changeGeometry(featid, feat.geometry())
+            networkLayer.changeGeometry(featid, feat.geometry(), skipDefaultValue=True)
             feedback.setProgress(current * stepSize)
         networkLayer.endEditCommand()
 

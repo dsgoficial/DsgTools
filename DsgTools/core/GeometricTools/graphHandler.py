@@ -150,6 +150,7 @@ def buildGraph(
             break
         G.add_edge(nodeDict[wkb_1], nodeDict[wkb_2])
         G[nodeDict[wkb_1]][nodeDict[wkb_2]]["featid"] = edgeId
+        G[nodeDict[wkb_1]][nodeDict[wkb_2]]["inside_river"] = False
         if feedback is not None:
             feedback.setProgress(current * progressStep)
     return G
@@ -486,6 +487,7 @@ def add_edge_from_graph_to_digraph(G, DiG, n1, n2):
     """
     DiG.add_edge(n1, n2)
     DiG[n1][n2]["featid"] = G[n1][n2].get("featid", None)
+    DiG[n1][n2]["inside_river"] = G[n1][n2].get("inside_river", False)
 
 
 def add_node_to_digraph_according_to_flow(G, DiG, node):
@@ -585,13 +587,13 @@ def buildAuxFlowGraph(
         networkx.DiGraph: The resulting auxiliary flow graph (directed graph).
 
     """
-    fixedInNodeSetFromDiG = set()
-    for node in fixedInNodeSet:
-        if node not in DiG.nodes:
-            fixedInNodeSetFromDiG.add(node)
-            continue
-        nodesToAdd = set(i for i in nx.dfs_preorder_nodes(DiG, node) if DiG[i] is None)
-        fixedInNodeSetFromDiG = fixedInNodeSetFromDiG.union(nodesToAdd)
+    # fixedInNodeSetFromDiG = set()
+    # for node in fixedInNodeSet:
+    #     if node not in DiG.nodes:
+    #         fixedInNodeSetFromDiG.add(node)
+    #         continue
+    #     nodesToAdd = set(i for i in nx.dfs_preorder_nodes(DiG, node) if DiG[i] is None)
+    #     fixedInNodeSetFromDiG = fixedInNodeSetFromDiG.union(nodesToAdd)
     DiG = nx.DiGraph() if DiG is None else DiG
     visitedNodes = set()
     nEdges = len(list(G.edges))
@@ -644,9 +646,9 @@ def buildAuxFlowGraph(
     
     pairList = sorted(
         (
-            (start, end) for start, end in product(fixedInNodeSetFromDiG, fixedOutNodeSet) if nx.has_path(G, start, end)
+            (start, end) for start, end in product(fixedInNodeSet, fixedOutNodeSet) if nx.has_path(G, start, end)
         ),
-        key=lambda x: distance(x[0], x[1]),
+        key=lambda x: (any(DiG[a][b]["inside_river"] for (a, b) in chain(DiG.in_edges(x[0]), DiG.out_edges(x[0]))), distance(x[0], x[1])),
         reverse=True
     )
     for (start, end) in pairList:
@@ -658,7 +660,7 @@ def buildAuxFlowGraph(
             if (n0, n1) in DiG.edges or (n1, n0) in DiG.edges:
                 continue
             add_edge_from_graph_to_digraph(G, DiG, n0, n1)
-            if DiG.degree(n0) == 3 and is_flow_invalid(DiG, n0):
+            if (DiG.degree(n0) == G.degree(n0) and is_flow_invalid(DiG, n0)):
                 flip_edge(DiG, (n0, n1))
             if multiStepFeedback is not None:
                 currentEdge += 1
