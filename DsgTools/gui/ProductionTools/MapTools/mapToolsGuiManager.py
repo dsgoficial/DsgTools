@@ -148,15 +148,16 @@ class MapToolsGuiManager(QObject):
             self.toolbar_extra, "FilterTools"
         )
         self.spatialFilterTool = SpatialFilter(stackButton=self.filterStackButton)
-        action = self.manager.add_action(
+        self.spatialFilterAction = self.manager.add_action(
             icon_path=self.iconBasePath + "spatialFilter.png",
             text=self.tr("DSGTools: Spatial Filter"),
             callback=self.spatialFilterTool.start,
+            add_to_menu=False,
             add_to_toolbar=False,
             parentButton=self.filterStackButton,
             withShortcut=True,
         )
-        self.filterStackButton.setDefaultAction(action)
+        self.filterStackButton.setDefaultAction(self.spatialFilterAction)
 
         self.filterTool = FilterTools(self.iface)
         self.filterTool.addTool(
@@ -235,8 +236,49 @@ class MapToolsGuiManager(QObject):
         self.iface.mapCanvas().setMapTool(self.rasterSelectTool)
 
     def unload(self):
+        for tool in [
+            self.flipLineTool,
+            self.acquisition,
+            self.freeHandAcquisiton.acquisitionFreeController,
+            self.freeHandReshape.acquisitionFreeController,
+        ]:
+            # connect current layer changed signal to all tools that use it
+            self.iface.currentLayerChanged.disconnect(tool.setToolEnabled)
+            # connect editing started/stopped signals to all tools that use it
+            self.editingStarted.disconnect(tool.setToolEnabled)
+            self.editingStopped.disconnect(tool.setToolEnabled)
+            # connect edit button toggling signal to all tools that use it
+            self.iface.actionToggleEditing().triggered.disconnect(tool.setToolEnabled)
+        for free_hand_tool in [self.freeHandAcquisiton, self.freeHandReshape]:
+            free_hand_tool.acquisitionFreeController.actionAcquisitionFree.triggered.disconnect(
+                free_hand_tool.acquisitionFreeController.activateTool
+            )
+            free_hand_tool.acquisitionFreeController.acquisitionFree.acquisitionFinished.disconnect(
+                free_hand_tool.acquisitionFreeController.createFeature
+            )
+            free_hand_tool.acquisitionFreeController.acquisitionFree.reshapeLineCreated.disconnect(
+                free_hand_tool.acquisitionFreeController.reshapeSimplify
+            )
         self.genericTool.unload()
+        self.freeHandReshape.unload()
+        self.freeHandAcquisiton.unload()
         self.rasterSelectTool.unload()
         self.measureTool.unload()
+        self.otherTools.unload()
+        self.filterTool.unload()
+        self.spatialFilterTool.unload()
+        self.labelTool.unload()
+        self.shortcutsTool.unload()
+        self.freeHandAcquisiton.unload()
+        try:
+            self.iface.unregisterMainWindowAction(self.spatialFilterAction)
+        except:
+            pass
         self.iface.mainWindow().removeToolBar(self.toolbar_extra)
+        del self.spatialFilterTool
         del self.toolbar_extra
+        del self.otherTools
+        del self.rasterSelectTool
+        del self.genericTool
+        del self.freeHandAcquisiton
+        del self.freeHandReshape

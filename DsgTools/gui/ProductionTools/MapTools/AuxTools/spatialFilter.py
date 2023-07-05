@@ -44,7 +44,7 @@ class SpatialFilter(QgsMapTool):
         self.iface = iface
         self.canvas = self.iface.mapCanvas()
         super(SpatialFilter, self).__init__(self.canvas)
-    
+
     def setCurrentActionOnStackButton(self):
         try:
             self.stackButton.setDefaultAction(self.sender())
@@ -144,3 +144,6 @@ class SpatialFilter(QgsMapTool):
     def mouseMove(self, currentPos):
         if self.isEditing == 1:
             self.myRubberBand.movePoint(core.QgsPointXY(currentPos))
+
+    def unload(self):
+        del self

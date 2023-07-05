@@ -3,12 +3,12 @@ from PyQt5 import QtCore, uic, QtWidgets, QtGui
 from DsgTools.Modules.qgis.controllers.qgisCtrl import QgisCtrl
 import json
 from qgis.core import QgsWkbTypes
-
+from qgis.utils import iface
 
 class AcquisitionMenuCtrl:
-    def __init__(self, qgis=QgisCtrl(), widgetFactory=WidgetFactory()):
-        self.qgis = qgis
-        self.widgetFactory = widgetFactory
+    def __init__(self, qgis=None, widgetFactory=None):
+        self.qgis = qgis if qgis is not None else QgisCtrl()
+        self.widgetFactory = widgetFactory if widgetFactory is not None else WidgetFactory()
         self.menuDock = None
         self.menuEditor = None
         self.addMenuTab = None
@@ -165,10 +165,6 @@ class AcquisitionMenuCtrl:
 
     def openReclassifyDialog(self, buttonConfig, callback):
         layers = self.qgis.getVectorLayersByName(buttonConfig["buttonLayer"])
-        if not layers:
-            raise Exception("Camada não encontrada!")
-        if len(layers) > 1:
-            raise Exception("Há camadas repetidas!")
         layer = layers[0]
         layerName = layer.dataProvider().uri().table() if layer.providerType() == "postgres" else layer.name()
         layersToReclassification = self.getLayersForReclassification(
@@ -194,6 +190,25 @@ class AcquisitionMenuCtrl:
             self.reclassifyDialog.on_saveBtn_clicked()
             return
         self.reclassifyDialog.showTopLevel()
+
+    def validLayersToReclassification(self, buttonConfig):
+        layers = self.qgis.getVectorLayersByName(buttonConfig["buttonLayer"])
+        if not layers:
+            raise Exception("Camada não encontrada!")
+        if len(layers) > 1:
+            raise Exception("Há camadas repetidas!")
+        layer = layers[0]
+        layerName = layer.dataProvider().uri().table() if layer.providerType() == "postgres" else layer.name()
+        layersToReclassification = self.getLayersForReclassification(
+            layerName, layer.geometryType()
+        )
+        if not layersToReclassification:
+            return
+        noActive = False
+        for l in layersToReclassification:
+            noActive = l.id() != iface.activeLayer().id()
+        if noActive:
+            raise Exception("Selecione somente feições da camada que está em uso!")
 
     def reclassify(self, buttonConfig, reclassifyData):
         destinatonLayerName = buttonConfig["buttonLayer"]
