@@ -51,6 +51,9 @@ class MenuDock(QtWidgets.QDockWidget):
 
     def setCurrentButton(self, buttonConfig):
         try:
+            if self.reclassifyCkb.isChecked():
+               self.getController().validLayersToReclassification(buttonConfig)
+
             currentButton = self.getCurrentButtonConfig()
             if currentButton:
                 self.getController().deactiveMenuButton(currentButton)
