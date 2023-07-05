@@ -78,7 +78,6 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
                 )
             )
         algRunner = AlgRunner()
-        geometryHandler = GeometryHandler()
 
         inputLyr = self.parameterAsVectorLayer(parameters, "INPUT", context)
         buildCache = self.parameterAsBool(parameters, self.BUILD_CACHE, context)
@@ -131,14 +130,15 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
 
         multiStepFeedback.setCurrentStep(currentStep)
         self.searchLoops(
-            nx, geometryHandler, inputLyr, multiStepFeedback, polygonLoops, polygonCount
+            nx, inputLyr, multiStepFeedback, polygonLoops, polygonCount
         )
 
         return {self.FLAGS: self.flag_id}
 
     def searchLoops(
-        self, nx, geometryHandler, inputLyr, feedback, polygonLoops, polygonCount
+        self, nx, inputLyr, feedback, polygonLoops, polygonCount
     ):
+        geometryHandler = GeometryHandler()
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         stepSize = 100 / polygonCount
         flagFeatLambda = lambda x: self.flagFeature(

@@ -63,7 +63,7 @@ class AboutAndFurtherInfoGuiManager(QObject):
             parentMenu=self.parentMenu,
             add_to_menu=False,
             add_to_toolbar=False,
-            withShortcut=True,
+            withShortcut=False,
         )
         action = self.manager.add_action(
             self.iconBasePath + "import.png",
@@ -85,7 +85,7 @@ class AboutAndFurtherInfoGuiManager(QObject):
             parent=self.parentMenu,
             add_to_menu=True,
             add_to_toolbar=False,
-            withShortcut=True,
+            withShortcut=False,
         )
 
         icon_path = self.iconBasePath + "help.png"

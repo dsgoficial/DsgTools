@@ -1,4 +1,4 @@
-FROM qgis/qgis:final-3_4_13
+FROM qgis/qgis:release-3_30
 RUN mkdir /tests_directory && \
     qgis_setup.sh DsgTools && \
     cd /tests_directory && \

@@ -104,13 +104,15 @@ class SelectRasterTool(QgsMapTool):
                 otherRaster, otherRaster.id() == raster.id()
             )
         self.toolAction.setChecked(False)
-    
+
     def selectAll(self, visible=True):
         for otherRaster in self.rasters:
-            self.iface.layerTreeView().setLayerVisible(
-                otherRaster, visible
-            )
+            self.iface.layerTreeView().setLayerVisible(otherRaster, visible)
         self.toolAction.setChecked(False)
 
     def unload(self):
         self.deactivate()
+        try:
+            self.iface.unregisterMainWindowAction(self.toolAction)
+        except:
+            pass

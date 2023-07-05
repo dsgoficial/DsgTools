@@ -16,7 +16,6 @@ class Acquisition(QObject):
         self.canvas = iface.mapCanvas()
         self.tool = None
         self.polygonAction = None
-        self.circleAction = None
         self.toolAction = None
 
     def addTool(self, manager, callback, parentMenu, iconBasePath):
@@ -40,14 +39,8 @@ class Acquisition(QObject):
     def setPolygonAction(self, action):
         self.polygonAction = action
 
-    def setCircleAction(self, action):
-        self.circleAction = action
-
     def acquisitionNinetyDegrees(self):
         self.run(Polygon, self.polygonAction)
-
-    def acquisitionCircle(self):
-        self.run(Circle, self.circleAction)
 
     def setToolEnabled(self):
         layer = self.iface.activeLayer()
@@ -63,8 +56,6 @@ class Acquisition(QObject):
             self.tool.deactivate()
         if self.polygonAction:
             self.polygonAction.setEnabled(enabled)
-        if self.circleAction:
-            self.circleAction.setEnabled(enabled)
         return enabled
 
     def run(self, func, action):
@@ -101,3 +92,11 @@ class Acquisition(QObject):
         Unloads tool and unsets it.
         """
         self.tool.deactivate() if self.tool else ""
+        try:
+            self.iface.unregisterMainWindowAction(self.toolAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.polygonAction)
+        except:
+            pass

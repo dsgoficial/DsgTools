@@ -149,12 +149,13 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
             icon_path, text, self.valueSetterButton.toggle, parent=self.parent
         )
         self.iface.registerMainWindowAction(self.valueSetterButtonAction, "")
+        text = self.tr("DSGTools: Set current layer as selected layer on raster tool")
         self.refreshPushButtonAction = self.add_action(
             icon_path, text, self.refreshPushButton.click, parent=self.parent
         )
         self.iface.registerMainWindowAction(self.refreshPushButtonAction, "")
         self.refreshPushButton.setToolTip(
-            self.tr("Set current layer as selected layer on inspect tool")
+            self.tr("Set current layer as selected layer on raster tool")
         )
         # self.timerMapTips.timeout.connect( self.showToolTip )
 
@@ -357,7 +358,23 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
             self.iface.mapCanvas().xyCoordinates.disconnect(self.showToolTip)
         except:
             pass
-        self.iface.unregisterMainWindowAction(self.activateToolAction)
-        self.iface.unregisterMainWindowAction(self.valueSetterButtonAction)
-        self.iface.unregisterMainWindowAction(self.bandTooltipButtonAction)
-        self.iface.unregisterMainWindowAction(self.dynamicHistogramButtonAction)
+        try:
+            self.iface.unregisterMainWindowAction(self.activateToolAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.valueSetterButtonAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.bandTooltipButtonAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.dynamicHistogramButtonAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.bandTooltipButtonAction)
+        except:
+            pass

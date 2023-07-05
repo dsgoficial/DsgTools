@@ -478,6 +478,19 @@ class InspectFeatures(QWidget, Ui_Form):
         self.mFieldExpressionWidget.setExpression("")
 
     def unload(self):
-        self.iface.unregisterMainWindowAction(self.activateToolAction)
-        self.iface.unregisterMainWindowAction(self.backButtonAction)
-        self.iface.unregisterMainWindowAction(self.nextButtonAction)
+        try:
+            self.iface.unregisterMainWindowAction(self.activateToolAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.backButtonAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.nextButtonAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.refreshPushButtonAction)
+        except:
+            pass

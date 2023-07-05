@@ -20,53 +20,43 @@
  *                                                                         *
  ***************************************************************************/
 """
-from collections import defaultdict
-from itertools import tee
-from PyQt5.QtCore import QCoreApplication
-from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
-import processing
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from DsgTools.core.GeometricTools.networkHandler import NetworkHandler
+from collections import defaultdict
+from typing import Dict, Set, Tuple
+from PyQt5.QtCore import QCoreApplication
+from DsgTools.core.GeometricTools import graphHandler
+from qgis.PyQt.QtCore import QByteArray
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
-    QgsGeometry,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterDistance,
-    QgsProcessingParameterEnum,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterField,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingUtils,
-    QgsProject,
-    QgsSpatialIndex,
     QgsWkbTypes,
+    QgsFeedback,
+    QgsProcessingContext,
+    QgsGeometry,
+    QgsFeature,
+    QgsVectorLayer,
+    QgsProcessingParameterExpression,
+    QgsProcessingParameterBoolean,
 )
 
-from ....dsgEnums import DsgEnums
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
 class FixDrainageFlowAlgorithm(ValidationAlgorithm):
     NETWORK_LAYER = "NETWORK_LAYER"
-    # SINK_LAYER = "SINK_LAYER"
+    FILTER_EXPRESSION = "FILTER_EXPRESSION"
+    SINK_LAYER = "SINK_LAYER"
     GEOGRAPHIC_BOUNDS_LAYER = "GEOGRAPHIC_BOUNDS_LAYER"
-    # WATER_BODY_LAYERS = "WATER_BODY_LAYERS"
-    # OCEAN_LAYER = "OCEAN_LAYER"
-    # SEARCH_RADIUS = "SEARCH_RADIUS"
-    # POINT_FLAGS = "FLAGS"
-    # LINE_FLAGS = "LINE_FLAGS"
+    WATER_BODY_WITH_FLOW_LAYER = "WATER_BODY_WITH_FLOW_LAYER"
+    OCEAN_LAYER = "OCEAN_LAYER"
+    RUN_FLOW_CHECK = "RUN_FLOW_CHECK"
+    RUN_LOOP_CHECK = "RUN_LOOP_CHECK"
+    POINT_FLAGS = "POINT_FLAGS"
+    LINE_FLAGS = "LINE_FLAGS"
 
     def initAlgorithm(self, config):
         """
@@ -80,57 +70,70 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
+            QgsProcessingParameterExpression(
+                self.FILTER_EXPRESSION,
+                self.tr("Filter expression for nodes with fixed flow"),
+                None,
+                self.NETWORK_LAYER,
+                optional=True
+            )
+        )
+        self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDS_LAYER,
                 self.tr("Reference layer"),
                 [QgsProcessing.TypeVectorPolygon],
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.WATER_BODY_WITH_FLOW_LAYER,
+                self.tr("Water body with flow layer"),
+                [QgsProcessing.TypeVectorPolygon],
                 optional=True,
             )
         )
-        # self.addParameter(
-        #     QgsProcessingParameterVectorLayer(
-        #         self.OCEAN_LAYER,
-        #         self.tr("Ocean layer"),
-        #         [QgsProcessing.TypeVectorPolygon],
-        #         optional=True,
-        #     )
-        # )
-        # self.addParameter(
-        #     QgsProcessingParameterVectorLayer(
-        #         self.SINK_LAYER,
-        #         self.tr("Water sink layer"),
-        #         [QgsProcessing.TypeVectorPoint],
-        #         optional=True,
-        #     )
-        # )
-        # self.addParameter(
-        #     QgsProcessingParameterMultipleLayers(
-        #         self.WATER_BODY_LAYERS,
-        #         self.tr("Water body layers"),
-        #         QgsProcessing.TypeVectorPolygon,
-        #         optional=True,
-        #     )
-        # )
-        # self.addParameter(
-        #     QgsProcessingParameterNumber(
-        #         self.SEARCH_RADIUS,
-        #         self.tr("Search radius"),
-        #         minValue=0,
-        #         defaultValue=1,
-        #         type=QgsProcessingParameterNumber.Double,
-        #     )
-        # )
-        # self.addParameter(
-        #     QgsProcessingParameterFeatureSink(
-        #         self.POINT_FLAGS,
-        #         self.tr("{0} network node errors").format(self.displayName()),
-        #     )
-        # )
-        # self.addParameter(
-        #     QgsProcessingParameterFeatureSink(
-        #         self.LINE_FLAGS, self.tr("{0} line errors").format(self.displayName())
-        #     )
-        # )
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.OCEAN_LAYER,
+                self.tr("Ocean layer"),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.SINK_LAYER,
+                self.tr("Water sink layer"),
+                [QgsProcessing.TypeVectorPoint],
+                optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.RUN_FLOW_CHECK,
+                self.tr("Run flow checks at the end of the process"),
+                defaultValue=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.RUN_LOOP_CHECK,
+                self.tr("Run loop checks at the end of the process"),
+                defaultValue=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.POINT_FLAGS,
+                self.tr("{0} network node errors").format(self.displayName()),
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.LINE_FLAGS, self.tr("{0} line errors").format(self.displayName())
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -145,24 +148,42 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 )
             )
         # get the network handler
-        layerHandler = LayerHandler()
-        geometryHandler = GeometryHandler()
-        algRunner = AlgRunner()
+        self.algRunner = AlgRunner()
         networkLayer = self.parameterAsLayer(parameters, self.NETWORK_LAYER, context)
-        # waterBodyClasses = self.parameterAsLayer(
-        #     parameters, self.WATER_BODY_LAYERS, context
-        # )
-        # waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
+        filterExpression = self.parameterAsExpression(parameters, self.FILTER_EXPRESSION, context)
+        if filterExpression == '':
+            filterExpression = None
+        oceanLayer = self.parameterAsLayer(parameters, self.OCEAN_LAYER, context)
+        waterBodyWithFlowLayer = self.parameterAsLayer(parameters, self.WATER_BODY_WITH_FLOW_LAYER, context)
+        waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
         geographicBoundsLayer = self.parameterAsLayer(
             parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context
         )
-        # searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(
-            8 if geographicBoundsLayer is not None else 6, feedback
+        runFlowCheck = self.parameterAsBool(parameters, self.RUN_FLOW_CHECK, context)
+        runLoopCheck = self.parameterAsBool(parameters, self.RUN_LOOP_CHECK, context)
+        (self.point_flags_sink, self.point_flags_sink_id) = self.parameterAsSink(
+            parameters,
+            self.POINT_FLAGS,
+            context,
+            self.getFlagFields(),
+            QgsWkbTypes.Point,
+            networkLayer.sourceCrs(),
         )
+        (self.line_flags_sink, self.line_flags_sink_id) = self.parameterAsSink(
+            parameters,
+            self.LINE_FLAGS,
+            context,
+            self.getFlagFields(),
+            QgsWkbTypes.LineString,
+            networkLayer.sourceCrs(),
+        )
+        # searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
+        nSteps = 15 + (runFlowCheck is True) + (runLoopCheck is True) + (waterBodyWithFlowLayer is not None)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
-        localCache = algRunner.runCreateFieldWithExpression(
+        multiStepFeedback.setProgressText(self.tr("Building aux structures"))
+        localCache = self.algRunner.runCreateFieldWithExpression(
             inputLyr=networkLayer,
             expression="$id",
             fieldName="featid",
@@ -171,14 +192,19 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
         )
         currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        drainagesWithCorrectFlow = self.algRunner.runFilterExpression(
+            inputLyr=localCache, expression=filterExpression, context=context, feedback=multiStepFeedback
+        ) if filterExpression is not None else None
+        currentStep += 1
         if geographicBoundsLayer is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-            algRunner.runCreateSpatialIndex(
+            self.algRunner.runCreateSpatialIndex(
                 inputLyr=localCache, context=context, feedback=multiStepFeedback
             )
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            localCache = algRunner.runExtractByLocation(
+            localCache = self.algRunner.runExtractByLocation(
                 inputLyr=localCache,
                 intersectLyr=geographicBoundsLayer,
                 context=context,
@@ -186,12 +212,12 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             )
             currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(
+        self.algRunner.runCreateSpatialIndex(
             inputLyr=localCache, context=context, feedback=multiStepFeedback
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        nodesLayer = algRunner.runExtractSpecificVertices(
+        nodesLayer = self.algRunner.runExtractSpecificVertices(
             inputLyr=localCache,
             vertices="0,-1",
             context=context,
@@ -199,95 +225,237 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        nodesLayer = self.algRunner.runCreateFieldWithExpression(
+            inputLyr=nodesLayer,
+            expression="$id",
+            fieldName="nfeatid",
+            fieldType=1,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Building graph aux structures"))
         (
             nodeDict,
             nodeIdDict,
             edgeDict,
             hashDict,
             networkBidirectionalGraph,
-        ) = self.buildAuxStructures(
-            nx, nodesLayer=nodesLayer, edgesLayer=localCache, feedback=multiStepFeedback
+            nodeLayerIdDict,
+        ) = graphHandler.buildAuxStructures(
+            nx,
+            nodesLayer=nodesLayer,
+            edgesLayer=localCache,
+            feedback=multiStepFeedback,
+            useWkt=False,
+            computeNodeLayerIdDict=True,
+            addEdgeLength=True,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        featuresToUpdateDict = self.fixDrainageFlow(
-            nodeDict,
-            nodeIdDict,
-            edgeDict,
-            hashDict,
+        initialDiG = None if drainagesWithCorrectFlow is None else graphHandler.buildDirectionalGraphFromIdList(
+            nx, networkBidirectionalGraph, nodeDict, hashDict, set(f["featid"] for f in drainagesWithCorrectFlow.getFeatures()), feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Computing constraint nodes"))
+        (fixedInNodeSet, fixedOutNodeSet) = self.getInAndOutNodesOnGeographicBounds(
+            nodeDict=nodeDict,
+            nodesLayer=nodesLayer,
+            geographicBoundsLayer=geographicBoundsLayer,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        constantSinkPointSet = set()
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        if waterSinkLayer is not None:
+            selectedNodesFromWaterSink = self.algRunner.runExtractByLocation(
+                inputLyr=nodesLayer,
+                intersectLyr=waterSinkLayer,
+                context=context,
+                predicate=[AlgRunner.Equal],
+                feedback=multiStepFeedback,
+            )
+            for feat in selectedNodesFromWaterSink.getFeatures():
+                if multiStepFeedback.isCanceled():
+                    break
+                constantSinkPointSet.add(nodeDict[nodeLayerIdDict[feat["nfeatid"]]])
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        if oceanLayer is not None and oceanLayer.featureCount() > 0:
+            buffer = self.algRunner.runBuffer(
+                inputLayer=oceanLayer,
+                distance=1e-6,
+                context=context,
+                is_child_algorithm=True,
+            )
+            selectedNodesFromOcean = self.algRunner.runExtractByLocation(
+                inputLyr=nodesLayer,
+                intersectLyr=buffer,
+                context=context,
+                predicate=[AlgRunner.Intersect],
+                feedback=multiStepFeedback,
+            )
+            for feat in selectedNodesFromOcean.getFeatures():
+                if multiStepFeedback.isCanceled():
+                    break
+                constantSinkPointSet.add(nodeDict[nodeLayerIdDict[feat["nfeatid"]]])
+        if waterBodyWithFlowLayer is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            selectedNodes = self.algRunner.runExtractByLocation(
+                inputLyr=nodesLayer,
+                intersectLyr=waterBodyWithFlowLayer,
+                context=context,
+                predicate=[AlgRunner.Intersect],
+                feedback=multiStepFeedback,
+            )
+            nodesDict = defaultdict(list)
+            for nodeFeat in selectedNodes.getFeatures():
+                nodesDict[nodeFeat["featid"]].append(nodeFeat)
+            edgesWithinWaterBodiesIdSet = set(featid for featid in nodesDict.keys())
+            # penalize edges not in water bodies
+            for (a, b) in networkBidirectionalGraph.edges:
+                if networkBidirectionalGraph[a][b]["featid"] in edgesWithinWaterBodiesIdSet:
+                    continue
+                networkBidirectionalGraph[a][b]["length"] = networkBidirectionalGraph[a][b]["length"] * 1e8
+                networkBidirectionalGraph[a][b]["inside_river"] = True
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Computing flow graph"))
+        DiG = graphHandler.buildAuxFlowGraph(
+            nx,
             networkBidirectionalGraph,
+            fixedInNodeSet,
+            fixedOutNodeSet,
+            nodeIdDict,
+            constantSinkPointSet,
+            DiG=initialDiG,
             feedback=multiStepFeedback,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         self.updateFeatures(
-            networkLayer, featuresToUpdateDict, feedback=multiStepFeedback
+            networkLayer,
+            DiG,
+            nodeIdDict,
+            edgeDict,
+            hashDict,
+            feedback=multiStepFeedback,
         )
+        if runFlowCheck:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Finding flow issues"))
+            pointFlagLyr = self.algRunner.runIdentifyDrainageFlowIssues(
+                inputLyr=networkLayer,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            pointFlagLambda = lambda x: self.flagFeature(
+                x.geometry(), flagText=x["reason"], sink=self.point_flags_sink
+            )
+            list(map(pointFlagLambda, pointFlagLyr.getFeatures()))
+            multiStepFeedback.setProgressText(self.tr(f"Found {pointFlagLyr.featureCount()} flow issues."))
+        if runLoopCheck:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Finding loop issues"))
+            lineFlagLyr = self.algRunner.runIdentifyLoops(
+                inputLyr=networkLayer,
+                context=context,
+                buildLocalCache=True,
+                feedback=multiStepFeedback,
+            )
+            lineFlagLambda = lambda x: self.flagFeature(
+                x.geometry(), flagText=x["reason"], sink=self.line_flags_sink
+            )
+            list(map(lineFlagLambda, lineFlagLyr.getFeatures()))
 
+            multiStepFeedback.setProgressText(self.tr(f"Found {lineFlagLyr.featureCount()} loop issues."))
         return {
             self.NETWORK_LAYER: networkLayer,
-            # self.POINT_FLAGS: self.flag_id,
-            # self.LINE_FLAGS: flag_line_sink_id,
+            self.POINT_FLAGS: self.point_flags_sink_id,
+            self.LINE_FLAGS: self.line_flags_sink_id,
         }
 
-    def buildAuxStructures(self, nx, nodesLayer, edgesLayer, feedback):
+    def getInAndOutNodesOnGeographicBounds(
+        self,
+        nodeDict: Dict[QByteArray, int],
+        nodesLayer: QgsVectorLayer,
+        geographicBoundsLayer: QgsVectorLayer,
+        context: QgsProcessingContext,
+        feedback: QgsFeedback,
+    ) -> Tuple[Set[int], Set[int]]:
+        """
+        Get the in-nodes and out-nodes that fall within the geographic bounds.
+
+        Args:
+            self: The instance of the class.
+            nodeDict: A dictionary mapping node geometry to an auxiliary ID.
+            nodesLayer: A QgsVectorLayer representing nodes in the network.
+            geographicBoundsLayer: The geographic bounds layer.
+            context: The context object for the processing.
+            feedback: The QgsFeedback object for providing feedback during processing.
+
+        Returns:
+            A tuple containing two sets: fixedInNodeSet and fixedOutNodeSet.
+            - fixedInNodeSet: A set of in-nodes that fall within the geographic bounds.
+            - fixedOutNodeSet: A set of out-nodes that fall within the geographic bounds.
+
+        Notes:
+            This function performs the following steps:
+            1. Creates a spatial index for the nodesLayer.
+            2. Extracts the nodes that are outside the geographic bounds.
+            3. Iterates over the nodes outside the geographic bounds and adds them to the appropriate set.
+            4. Returns the sets of in-nodes and out-nodes within the geographic bounds.
+
+            The feedback object is used to monitor the progress of the function.
+        """
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        edgeDict = {feat["featid"]: feat for feat in edgesLayer.getFeatures()}
-        multiStepFeedback.setCurrentStep(1)
-        nodeDict = defaultdict(list)
-        nodeIdDict = defaultdict(list)
-        nodeCount = nodesLayer.featureCount()
-        stepSize = 100 / nodeCount
-        auxId = 0
-        hashDict = defaultdict(lambda: [[], []])
-        for current, nodeFeat in enumerate(nodesLayer.getFeatures()):
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=nodesLayer,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        nodesOutsideGeographicBounds = self.algRunner.runExtractByLocation(
+            inputLyr=nodesLayer,
+            intersectLyr=geographicBoundsLayer,
+            predicate=[AlgRunner.Disjoint],
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        fixedInNodeSet, fixedOutNodeSet = set(), set()
+        nFeats = nodesOutsideGeographicBounds.featureCount()
+        if nFeats == 0:
+            return fixedInNodeSet, fixedOutNodeSet
+        stepSize = 100 / nFeats
+        for current, nodeFeat in enumerate(nodesOutsideGeographicBounds.getFeatures()):
             if multiStepFeedback.isCanceled():
                 break
+            selectedSet = (
+                fixedInNodeSet if nodeFeat["vertex_pos"] == 0 else fixedOutNodeSet
+            )
             geom = nodeFeat.geometry()
-            geomWkb = geom.asWkb()
-            if geomWkb not in nodeDict:
-                nodeDict[geomWkb] = auxId
-                nodeIdDict[auxId] = geomWkb
-                auxId += 1
-            hashDict[nodeFeat["featid"]][nodeFeat["vertex_pos"]] = geomWkb
+            selectedSet.add(nodeDict[geom.asWkb()])
             multiStepFeedback.setProgress(current * stepSize)
-        multiStepFeedback.setCurrentStep(2)
-        networkBidirectionalGraph = self.buildGraph(
-            nx, hashDict, nodeDict, feedback=multiStepFeedback
-        )
-        return nodeDict, nodeIdDict, edgeDict, hashDict, networkBidirectionalGraph
+        return fixedInNodeSet, fixedOutNodeSet
 
-    def buildGraph(self, nx, hashDict, nodeDict, feedback):
-        G = nx.Graph()
-        progressStep = 100 / len(hashDict)
-        for current, (edgeId, (wkb_1, wkb_2)) in enumerate(hashDict.items()):
-            if feedback.isCanceled():
-                break
-            G.add_edge(nodeDict[wkb_1], nodeDict[wkb_2])
-            G[nodeDict[wkb_1]][nodeDict[wkb_2]]["featid"] = edgeId
-            feedback.setProgress(current * progressStep)
-        return G
-
-    def updateFeatures(self, networkLayer, featuresToUpdateDict, feedback):
-        nFeatsToUpdate = len(featuresToUpdateDict)
-        if nFeatsToUpdate == 0:
-            return
-        stepSize = 100 / nFeatsToUpdate
-        networkLayer.startEditing()
-        networkLayer.beginEditCommand("Fixing drainage flow")
-        for current, (_, feat) in enumerate(featuresToUpdateDict.items()):
-            if feedback.isCanceled():
-                break
-            networkLayer.changeGeometry(feat["featid"], feat.geometry())
-            feedback.setProgress(current * stepSize)
-        networkLayer.endEditCommand()
-
-    def fixDrainageFlow(self, nodeDict, nodeIdDict, edgeDict, hashDict, G, feedback):
-        firstOrderNodes = [node for node in G.nodes if G.degree(node) == 1]
-        featuresToUpdateDict = dict()
-        stepSize = 100 / len(nodeDict)
-
+    def updateFeatures(
+        self, networkLayer, DiG, nodeIdDict, edgeDict, hashDict, feedback
+    ):
         def nodeCompairFunc(a, edgeId, startNode=True):
             geom_a, geom_b = QgsGeometry(), QgsGeometry()
             geom_a.fromWkb(nodeIdDict[a])
@@ -295,39 +463,22 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             geom_b.fromWkb(hashDict[edgeId][idx])
             return geom_a.equals(geom_b)
 
-        current = 0
-        while len(firstOrderNodes) > 0:
+        nEdges = len(DiG.edges)
+        if nEdges == 0:
+            return
+        stepSize = 100 / nEdges
+        networkLayer.startEditing()
+        networkLayer.beginEditCommand("Fixing drainage flow")
+        for current, (p0, pn) in enumerate(DiG.edges):
             if feedback.isCanceled():
-                return featuresToUpdateDict
-            for node in firstOrderNodes:
-                connectedNodes = fetch_connected_nodes(G, node, 2)
-                if len(connectedNodes) == 1:
-                    current += 1
-                    n0 = connectedNodes[0]
-                    n1 = list(G.neighbors(n0))[0]
-                    edgeId = G[n0][n1]["featid"]
-                    if nodeCompairFunc(n0, edgeId, startNode=True):
-                        continue
-                    newFeat = self.flipLine(edgeDict, edgeId)
-                    featuresToUpdateDict[edgeId] = newFeat
-                    G.remove_edge(n0, n1)
-                    feedback.setProgress(current * stepSize)
-                    continue
-                for n0, n1 in pairwise(connectedNodes):
-                    current += 1
-                    if feedback.isCanceled():
-                        return featuresToUpdateDict
-                    edgeId = G[n0][n1]["featid"]
-                    if nodeCompairFunc(n0, edgeId, startNode=True):
-                        continue
-                    newFeat = self.flipLine(edgeDict, edgeId)
-                    featuresToUpdateDict[edgeId] = newFeat
-                    G.remove_edge(n0, n1)
-                    feedback.setProgress(current * stepSize)
-                for n in connectedNodes:
-                    G.remove_node(n)
-            firstOrderNodes = [node for node in G.nodes if G.degree(node) == 1]
-        return featuresToUpdateDict
+                break
+            featid = DiG[p0][pn]["featid"]
+            if nodeCompairFunc(p0, featid):
+                continue
+            feat = self.flipLine(edgeDict, featid)
+            networkLayer.changeGeometry(featid, feat.geometry(), skipDefaultValue=True)
+            feedback.setProgress(current * stepSize)
+        networkLayer.endEditCommand()
 
     def flipLine(self, edgeDict, edgeId):
         edgeFeat = edgeDict[edgeId]
@@ -336,12 +487,6 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         newFeat = QgsFeature(edgeFeat)
         newFeat.setGeometry(reversedGeom)
         return newFeat
-
-    def getRelatedNode(self, node, lineFeat):
-        p0, pn = self.firstAndLastNode(lineFeat)
-        p0 = QgsGeometry.fromPointXY(p0)
-        nodeGeom = QgsGeometry.fromWkb(node)
-        return nodeGeom.equals(p0)
 
     def name(self):
         """
@@ -382,22 +527,3 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
 
     def createInstance(self):
         return FixDrainageFlowAlgorithm()
-
-
-def fetch_connected_nodes(G, node, max_degree, seen=None):
-    if seen == None:
-        seen = [node]
-    for neighbor in G.neighbors(node):
-        if G.degree(neighbor) > max_degree:
-            continue
-        if neighbor not in seen:
-            seen.append(neighbor)
-            fetch_connected_nodes(G, neighbor, max_degree, seen)
-    return seen
-
-
-def pairwise(iterable):
-    "s -> (s0,s1), (s1,s2), (s2, s3), ..."
-    a, b = tee(iterable)
-    next(b, None)
-    return zip(a, b)

@@ -149,7 +149,7 @@ class GeometryHandler(QObject):
             geomType = layer.geometryType()
         # getting whether geometry is multipart or not
         # features not yet commited to layer always have SINGLE geometry
-        isMulti = QgsWkbTypes.isMultiType(layer.wkbType()) and feature.id() > 0
+        isMulti = QgsWkbTypes.isMultiType(layer.wkbType())
         geom = feature.geometry()
         if geomType == 0:
             if isMulti:

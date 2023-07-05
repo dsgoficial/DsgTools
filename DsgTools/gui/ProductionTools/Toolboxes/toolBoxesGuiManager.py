@@ -110,7 +110,7 @@ class ToolBoxesGuiManager(QObject):
         return action
 
     def unload(self):
-        pass
+        self.acquisitionMenuCtrl.unloadPlugin()
 
     def showCodeList(self):
         """

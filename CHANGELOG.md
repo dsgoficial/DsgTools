@@ -20,6 +20,10 @@ Correção de bug:
 - Correção de bug na reclassificação do menu de aquisição;
 - Correção de bug no processo de construir polígonos por línha e centróides (Build Polygons From Center Points and Boundary): com a otimização da versão anterior, o algoritmo estava excluindo as linhas da moldura;
 
+Correção de bug:
+
+- Corrige crash no QGIS 3.32 quando se usa o merge features em um memory layer criado pela ferramenta de copiar feições para camada temporária;
+
 ## 4.8.0 - 2023-06-14
 
 Novas Funcionalidades:

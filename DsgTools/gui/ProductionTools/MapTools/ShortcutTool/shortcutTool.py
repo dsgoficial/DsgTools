@@ -34,6 +34,7 @@ class ShortcutTool(QObject):
         """
         self.iface = iface
         super(ShortcutTool, self).__init__()
+        self.actionList = []
 
     def addTool(self, manager, callback, parentToolbar, stackButton, iconBasePath):
         self.stackButton = stackButton
@@ -50,6 +51,7 @@ class ShortcutTool(QObject):
             parentButton=stackButton,
             isCheckable=False,
         )
+        self.actionList.append(action)
 
         icon_path = iconBasePath + "/vertex.png"
         toolTip = self.tr("DSGTools: Toggle vertex's marker visibility")
@@ -64,6 +66,7 @@ class ShortcutTool(QObject):
             parentButton=stackButton,
             isCheckable=False,
         )
+        self.actionList.append(action)
 
     def hideOrShowMarkers(self):
         try:
@@ -89,4 +92,8 @@ class ShortcutTool(QObject):
         )
 
     def unload(self):
-        pass
+        for action in self.actionList:
+            try:
+                self.iface.unregisterMainWindowAction(action)
+            except:
+                pass
