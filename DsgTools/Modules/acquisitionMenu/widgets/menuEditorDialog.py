@@ -7,12 +7,12 @@ from qgis.PyQt.QtWidgets import QMessageBox
 
 class MenuEditorDialog(QtWidgets.QDialog):
     def __init__(
-        self, controller, messageFactory=UtilsFactory().createMessageFactory()
+        self, controller, messageFactory=None
     ):
         super(MenuEditorDialog, self).__init__()
         uic.loadUi(self.getUiPath(), self)
         self.controller = controller
-        self.messageFactory = messageFactory
+        self.messageFactory = messageFactory if messageFactory is not None else UtilsFactory().createMessageFactory()
         self.previewMenu.setAcceptDrops(True)
         self.previewMenu.dragEnterEvent = self.previewDragEnterEvent
         self.previewMenu.dropEvent = self.previewDropEvent

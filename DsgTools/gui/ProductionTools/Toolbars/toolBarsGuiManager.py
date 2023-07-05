@@ -102,11 +102,22 @@ class ToolbarsGuiManager(QObject):
         toolbar.addWidget(widget)
 
     def unload(self):
-        self.minimumAreaTool.unload()
-        self.inspectFeaturesTool.unload()
-        self.reviewTool.unload()
-        self.rasterInfoTool.unload()
-        self.dataValidationTool.unload()
+        for tool in [
+            self.minimumAreaTool,
+            self.inspectFeaturesTool,
+            self.reviewTool,
+            self.rasterInfoTool,
+            self.dataValidationTool,
+            self.centerPointAndBoundariesTool,
+        ]:
+            tool.unload()
+            try:
+                del tool
+            except:
+                pass
         for toolbar in self.toolbarList:
-            self.iface.mainWindow().removeToolBar(toolbar)
+            try:
+                self.iface.mainWindow().removeToolBar(toolbar)
+            except:
+                pass
             del toolbar

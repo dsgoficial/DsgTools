@@ -95,3 +95,9 @@ class FreeHandMain(QObject):
             self.parentButton.setDefaultAction(self.action)
         except:
             pass
+
+    def unload(self):
+        try:
+            self.iface.unregisterMainWindowAction(self.action)
+        except:
+            pass

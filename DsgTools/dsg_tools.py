@@ -22,27 +22,23 @@
 """
 from __future__ import absolute_import
 from builtins import object
-from qgis.PyQt.QtCore import QSettings, qVersion, QCoreApplication, QTranslator, Qt
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QToolButton, QMenu, QAction
+from qgis.PyQt.QtCore import QSettings, qVersion, QCoreApplication, QTranslator
+from qgis.PyQt.QtWidgets import QMenu
 
 import os.path
 import sys
 
 # Initialize Qt resources from file resources_rc.py
-from . import resources_rc
 
 currentPath = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(currentPath))
 
-from qgis.utils import showPluginHelp
 from qgis.core import QgsApplication
 
 from .gui.guiManager import GuiManager
 from .core.DSGToolsProcessingAlgs.dsgtoolsProcessingAlgorithmProvider import (
     DSGToolsProcessingAlgorithmProvider,
 )
-from .Modules.acquisitionMenu.controllers.acquisitionMenuCtrl import AcquisitionMenuCtrl
 
 
 class DsgTools(object):
@@ -100,16 +96,20 @@ class DsgTools(object):
         """
         self.guiManager.unload()
         for action in self.actions:
+            if action is None:
+                continue
             self.iface.removePluginMenu("&DSGTools", action)
             self.iface.removeToolBarIcon(action)
             self.iface.unregisterMainWindowAction(action)
+            del action
 
         if self.dsgTools is not None:
             self.menuBar.removeAction(self.dsgTools.menuAction())
-        self.iface.mainWindow().removeToolBar(self.toolbar)
+        if self.toolbar is not None:
+            self.iface.mainWindow().removeToolBar(self.toolbar)
         QgsApplication.processingRegistry().removeProvider(self.provider)
+        del self.guiManager
         del self.dsgTools
-        del self.toolbar
 
     def initGui(self):
         """
@@ -129,6 +129,3 @@ class DsgTools(object):
         self.guiManager.initGui()
         # provider
         QgsApplication.processingRegistry().addProvider(self.provider)
-
-    def getAcquisitionMenu(self):
-        return AcquisitionMenuCtrl()

@@ -5,12 +5,12 @@ from DsgTools.Modules.utils.factories.utilsFactory import UtilsFactory
 
 class AttributeTableWidget(QtWidgets.QWidget):
     def __init__(
-        self, controller, messageFactory=UtilsFactory().createMessageFactory()
+        self, controller, messageFactory=None
     ):
         super(AttributeTableWidget, self).__init__()
         uic.loadUi(self.getUiPath(), self)
         self.controller = controller
-        self.messageFactory = messageFactory
+        self.messageFactory = messageFactory if messageFactory is not None else UtilsFactory().createMessageFactory()
         self.tableWidget.horizontalHeader().sortIndicatorOrder()
         self.tableWidget.setSortingEnabled(True)
         self.tableWidget.setColumnHidden(0, True)

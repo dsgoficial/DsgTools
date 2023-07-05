@@ -122,6 +122,8 @@ class DatabaseGuiManager(QObject):
         if self.batchCreator is not None:
             self.batchCreator.unload()
         self.datasourceConversion.unload()
+        del self.datasourceConversion
+        del self.stackButton
 
     def createDatabase(self, isBatchCreation):
         """

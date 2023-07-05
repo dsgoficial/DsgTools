@@ -28,7 +28,6 @@ from qgis.PyQt.QtCore import QObject
 
 
 class FilterTools(QgsMapTool):
-
     def __init__(self, iface):
         """
         Hides or show active layers labels.
@@ -36,6 +35,7 @@ class FilterTools(QgsMapTool):
         self.iface = iface
         self.canvas = self.iface.mapCanvas()
         super(FilterTools, self).__init__(self.canvas)
+        self.actionList = []
 
     def addTool(self, manager, callback, parentToolbar, stackButton, iconBasePath):
         self.stackButton = stackButton
@@ -52,6 +52,7 @@ class FilterTools(QgsMapTool):
             parentButton=stackButton,
             isCheckable=False,
         )
+        self.actionList.append(action)
 
         icon_path = iconBasePath + "/filterByGeomtries.png"
         toolTip = self.tr("DSGTools: Filter All Using the Selected Feature's Geometry")
@@ -66,6 +67,7 @@ class FilterTools(QgsMapTool):
             parentButton=stackButton,
             isCheckable=False,
         )
+        self.actionList.append(action)
 
         icon_path = iconBasePath + "/removeSpatialFilter.png"
         toolTip = self.tr("DSGTools: Remove Filters")
@@ -80,10 +82,13 @@ class FilterTools(QgsMapTool):
             parentButton=stackButton,
             isCheckable=False,
         )
+        self.actionList.append(action)
 
     def unload(self):
-        pass
-    
+        for action in self.actionList:
+            self.iface.unregisterMainWindowAction(action)
+        del self
+
     def setCurrentActionOnStackButton(self):
         try:
             self.stackButton.setDefaultAction(self.sender())

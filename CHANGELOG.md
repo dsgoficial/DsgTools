@@ -5,8 +5,9 @@
 Novas Funcionalidades:
 
 - Novo processo de identificar erros de construção em linhas que devem se sobrepor (exemplo, barragem e rodovia);
-- Novo processo de identificar linhas entrelaçadas
-- Novo processo de identificar linhas cruzando outra camada (exemplo: trecho de drenagem e barragem)
+- Novo processo de identificar linhas entrelaçadas;
+- Novo processo de identificar linhas cruzando outra camada (exemplo: trecho de drenagem e barragem);
+- Novo processo de consertar o direcionamento de rios (funcionamento diferente do direcionamento que existia: mudado o comportamento para não levar em consideração os ângulos de digitalização);
 
 Melhorias:
 
@@ -19,6 +20,8 @@ Correção de bug:
 - Correção de bug no rubberband da ferramenta de ângulos retos no QGIS 3.30;
 - Correção de bug na reclassificação do menu de aquisição;
 - Correção de bug no processo de construir polígonos por línha e centróides (Build Polygons From Center Points and Boundary): com a otimização da versão anterior, o algoritmo estava excluindo as linhas da moldura;
+- Correção de bug na ferramenta de trocar a direção da linha (flip) que não funcionava com feição não salva;
+- Corrige crash no QGIS 3.32 quando se usa o merge features em um memory layer criado pela ferramenta de copiar feições para camada temporária;
 
 ## 4.8.0 - 2023-06-14
 
