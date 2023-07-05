@@ -21,26 +21,31 @@
  ***************************************************************************/
 """
 
-from functools import partial
 
-from qgis.PyQt.QtCore import QSettings, QObject
+from qgis.PyQt.QtCore import QObject
+from qgis.PyQt.QtWidgets import QPushButton
 
-from qgis.core import QgsProject, QgsVectorLayer
-from qgis.gui import QgsMapTool
+from qgis.core import QgsDistanceArea
+from qgis.gui import QgisInterface, QgsMapToolDigitizeFeature
 
 from .EventFilter import EventFilter
 from .PointList import PointList
 
 
 class MeasureTool(QObject):
-    def __init__(self, iface):
+    def __init__(self, iface: QgisInterface):
         """
         Hides or show active layers labels.
         """
         self.iface = iface
+        self.canvas = self.iface.mapCanvas()
         super(MeasureTool, self).__init__()
         self.toolAction = None
+        self.distance_area = QgsDistanceArea()
+        self.acquisitionTooltipButton = QPushButton()
+        self.acquisitionTooltipButton.setToolTip(self.tr("Show acquisition tooltip"))
         self.pointList = PointList()
+        self.eventFilter = None
 
     def addTool(self, manager, callback, parentToolbar, stackButton, iconBasePath):
         self.stackButton = stackButton
@@ -49,7 +54,7 @@ class MeasureTool(QObject):
         action = manager.add_action(
             icon_path,
             text=self.tr("DSGTools: Measure while digititizing"),
-            callback=self.measure,
+            callback=self.activateTool,
             add_to_menu=False,
             add_to_toolbar=True,
             withShortcut=True,
@@ -58,26 +63,51 @@ class MeasureTool(QObject):
             isCheckable=True,
         )
         self.setAction(action)
-    
+
+    def activateTool(self):
+        state = self.toolAction.isChecked()
+        if state:
+            self.eventFilter = EventFilter(self.iface, self.pointList)
+            self.canvas.mapToolSet.connect(self.activateFilterMapTool)
+            if not isinstance(self.canvas.mapTool(), QgsMapToolDigitizeFeature):
+                return
+            self.canvas.viewport().setMouseTracking(True)
+            self.canvas.viewport().installEventFilter(self.eventFilter)
+            self.canvas.installEventFilter(self.eventFilter)
+        else:
+            try:
+                self.canvas.mapToolSet.disconnect(self.activateFilterMapTool)
+            except TypeError:
+                pass
+            self.eventFilter.close()
+            self.canvas.viewport().removeEventFilter(self.eventFilter)
+            self.canvas.removeEventFilter(self.eventFilter)
+            self.eventFilter = None
+
+    def activateFilterMapTool(self, mapTool):
+        state = isinstance(mapTool, QgsMapToolDigitizeFeature)
+        self.activateFilter(state)
+
+    def activateFilter(self, state):
+        if state:
+            self.canvas.viewport().setMouseTracking(True)
+            self.canvas.viewport().installEventFilter(self.eventFilter)
+            self.canvas.installEventFilter(self.eventFilter)
+        else:
+            self.eventFilter.close()
+            self.canvas.viewport().removeEventFilter(self.eventFilter)
+            self.canvas.removeEventFilter(self.eventFilter)
+            self.eventFilter = None
+
     def setAction(self, action):
         self.toolAction = action
         self.toolAction.setCheckable(True)
-        self.eventFilter = EventFilter(self.iface, self.pointList, self.toolAction)
-        self.iface.mapCanvas().viewport().setMouseTracking(True)
-        self.iface.mapCanvas().viewport().installEventFilter( self.eventFilter )
-        self.iface.mapCanvas().installEventFilter( self.eventFilter )
-        self.iface.mapCanvas().mapToolSet.connect(self.maptoolChanged)
-    
-    def measure(self):
-        pass
-
-    def maptoolChanged(self):
-        self.eventFilter.active = (self.iface.mapCanvas().mapTool() is not None and self.iface.mapCanvas().mapTool().flags() == QgsMapTool.EditTool)
 
     def unload(self):
+        try:
+            self.canvas.mapToolSet.disconnect(self.activateFilter)
+        except TypeError:
+            pass
         self.eventFilter.close()
-        self.iface.mapCanvas().viewport().removeEventFilter( self.eventFilter )
-        self.iface.mapCanvas().removeEventFilter( self.eventFilter )
-
-        # e remova o sinal maptoolchanded isEditTool
-        self.iface.mapCanvas().mapToolSet.disconnect( self.maptoolChanged )
+        self.canvas.viewport().removeEventFilter(self.eventFilter)
+        self.canvas.removeEventFilter(self.eventFilter)
