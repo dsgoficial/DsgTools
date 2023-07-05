@@ -6,7 +6,7 @@ from DsgTools.Modules.utils.factories.utilsFactory import UtilsFactory
 
 class MenuDock(QtWidgets.QDockWidget):
     def __init__(
-        self, controller, messageFactory=UtilsFactory().createMessageFactory()
+        self, controller, messageFactory=None
     ):
         super(MenuDock, self).__init__()
         uic.loadUi(self.getUiPath(), self)
@@ -14,7 +14,7 @@ class MenuDock(QtWidgets.QDockWidget):
         self.menuWidget = None
         self.currentMenu = None
         self.currentButton = None
-        self.messageFactory = messageFactory
+        self.messageFactory = messageFactory if messageFactory is not None else UtilsFactory().createMessageFactory()
         self.menusCb.currentIndexChanged.connect(self.setCurrentMenu)
 
     def showError(self, title, message):

@@ -6,9 +6,9 @@ from qgis.core import QgsWkbTypes
 from qgis.utils import iface
 
 class AcquisitionMenuCtrl:
-    def __init__(self, qgis=QgisCtrl(), widgetFactory=WidgetFactory()):
+    def __init__(self, qgis=QgisCtrl(), widgetFactory=None):
         self.qgis = qgis
-        self.widgetFactory = widgetFactory
+        self.widgetFactory = widgetFactory if widgetFactory is not None else WidgetFactory()
         self.menuDock = None
         self.menuEditor = None
         self.addMenuTab = None

@@ -6,8 +6,8 @@ from DsgTools.Modules.qgis.factories.actionsFactory import ActionsFactory
 from qgis.core import QgsWkbTypes
 
 class QgisCtrl:
-    def __init__(self, actionsFactory=ActionsFactory()):
-        self.actionsFactory = actionsFactory
+    def __init__(self, actionsFactory=None):
+        self.actionsFactory = actionsFactory if actionsFactory is not None else ActionsFactory()
 
     def getLoadedVectorLayerNames(self):
         layerNames = []
