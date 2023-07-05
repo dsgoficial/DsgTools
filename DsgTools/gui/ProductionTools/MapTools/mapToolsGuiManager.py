@@ -237,6 +237,7 @@ class MapToolsGuiManager(QObject):
         self.iface.mapCanvas().setMapTool(self.rasterSelectTool)
 
     def unload(self):
+        self.iface.currentLayerChanged.disconnect(self.resetCurrentLayerSignals)
         for tool in [
             self.flipLineTool,
             self.acquisition,
