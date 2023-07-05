@@ -14,6 +14,8 @@ Melhorias:
 - Melhoria de desempenho na construção de polígonos quando se utiliza polígonos na entrada que contém linhas que podem delimitar (caso área edificada versus via deslocamento);
 - Adicionado registro de alteração do tile na barra de ferramentas de revisão;
 - Adicionada uma verificação antes de excluir um menu no menu de aquisição;
+- Adicionado ao processo de identificar geometrias inválidas a verificação de vértices com coordenadas infinitas ou nulas;
+- Adicionado ao processo de identificar geometrias inválidas a correção de vértices com coordenadas infinitas ou nulas;
 
 Correção de bug:
 
