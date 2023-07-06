@@ -24,6 +24,7 @@ from __future__ import absolute_import
 from builtins import object
 from qgis.PyQt.QtCore import QSettings, qVersion, QCoreApplication, QTranslator
 from qgis.PyQt.QtWidgets import QMenu
+from .Modules.acquisitionMenu.controllers.acquisitionMenuCtrl import AcquisitionMenuCtrl
 
 import os.path
 import sys
@@ -129,3 +130,7 @@ class DsgTools(object):
         self.guiManager.initGui()
         # provider
         QgsApplication.processingRegistry().addProvider(self.provider)
+
+    def getAcquisitionMenu(self):
+        #chamada pelo FP/FG
+        return AcquisitionMenuCtrl()
