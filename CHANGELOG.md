@@ -16,6 +16,7 @@ Melhorias:
 - Adicionada uma verificação antes de excluir um menu no menu de aquisição;
 - Adicionado ao processo de identificar geometrias inválidas a verificação de vértices com coordenadas infinitas ou nulas;
 - Adicionado ao processo de identificar geometrias inválidas a correção de vértices com coordenadas infinitas ou nulas;
+- O processo de criar camada temporária agora carrega a camada com a contagem de elementos ativada;
 
 Correção de bug:
 
