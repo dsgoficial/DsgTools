@@ -21,9 +21,6 @@
 """
 
 from __future__ import absolute_import
-from builtins import object
-import os.path
-import sys
 from DsgTools.gui.ProductionTools.MapTools.AuxTools.spatialFilter import SpatialFilter
 from DsgTools.gui.ProductionTools.MapTools.SelectRasterTool.selectRaster import (
     SelectRasterTool,
@@ -33,8 +30,7 @@ from qgis.PyQt.QtCore import pyqtSignal
 from qgis.core import QgsVectorLayer
 
 from .GenericSelectionTool.genericSelectionTool import GenericSelectionTool
-
-# from .MeasureTool.measureTool import MeasureTool
+from .MeasureTool.measureTool import MeasureTool
 from .Acquisition.acquisition import Acquisition
 from .FlipLineTool.flipLineTool import FlipLine
 from .FreeHandTool.freeHandMain import FreeHandMain
@@ -73,10 +69,10 @@ class MapToolsGuiManager(QObject):
             self.manager, self.activateGenericTool, self.parentMenu, self.iconBasePath
         )
         # adding measure tool
-        # self.measureTool = MeasureTool(self.iface)
-        # self.measureTool.addTool(
-        #     self.manager, None, self.parentMenu, self.parentMenu, self.iconBasePath
-        # )
+        self.measureTool = MeasureTool(self.iface)
+        self.measureTool.addTool(
+            self.manager, None, self.parentMenu, self.parentMenu, self.iconBasePath
+        )
         # adding flip line tool
         self.flipLineTool = FlipLine(self.iface)
         self.flipLineTool.addTool(
@@ -210,6 +206,7 @@ class MapToolsGuiManager(QObject):
             self.acquisition,
             self.freeHandAcquisiton.acquisitionFreeController,
             self.freeHandReshape.acquisitionFreeController,
+            self.measureTool,
         ]:
             # connect current layer changed signal to all tools that use it
             self.iface.currentLayerChanged.connect(tool.setToolEnabled)
@@ -243,6 +240,7 @@ class MapToolsGuiManager(QObject):
             self.acquisition,
             self.freeHandAcquisiton.acquisitionFreeController,
             self.freeHandReshape.acquisitionFreeController,
+            self.measureTool,
         ]:
             # connect current layer changed signal to all tools that use it
             self.iface.currentLayerChanged.disconnect(tool.setToolEnabled)
@@ -265,6 +263,7 @@ class MapToolsGuiManager(QObject):
         self.freeHandReshape.unload()
         self.freeHandAcquisiton.unload()
         self.rasterSelectTool.unload()
+        self.measureTool.unload()
         self.otherTools.unload()
         self.filterTool.unload()
         self.spatialFilterTool.unload()

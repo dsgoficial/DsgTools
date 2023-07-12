@@ -86,7 +86,6 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
                     onlyrings = poly[1:]
                     for ring in onlyrings:
                         newRing = QgsGeometry.fromPolygonXY([ring])
-                        print(newRing.area())
                         if newRing.area() < maxSize:
                             smallRings.append(newRing)
             feedback.setProgress(step * progressStep)

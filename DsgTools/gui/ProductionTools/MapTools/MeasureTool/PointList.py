@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
+
 class PointList(list):
-    
     def __init__(self):
         list.__init__(self)
 
@@ -9,10 +9,11 @@ class PointList(list):
         self[:] = []
 
     def newPoint(self):
-        self.insert(0, self[0])
+        if len(self) > 0:
+            self.insert(0, self[0])
 
     def updateCurrentPoint(self, point):
-        if len(self)>0:
+        if len(self) > 0:
             self[0] = point
         else:
             self.insert(0, point)
@@ -22,9 +23,7 @@ class PointList(list):
             return self[1]
         else:
             return None
-            
-    def removeLastPoint(self):
-        if len(self)>1:
-            del self[1]
 
-    
+    def removeLastPoint(self):
+        if len(self) > 1:
+            del self[1]
