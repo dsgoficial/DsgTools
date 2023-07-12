@@ -434,7 +434,7 @@ class AcquisitionFree(gui.QgsMapTool):
             if not toolbar.objectName().lower() == "dsgtools":
                 continue
             for action in toolbar.actions():
-                if not action.text() == "DSGTools: Measure while digititizing":
+                if not action.text() == "DSGTools: Measure while digitizing":
                     continue
                 self.measureAction = action
 
