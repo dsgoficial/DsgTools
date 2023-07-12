@@ -82,6 +82,8 @@ class EventFilter(QObject):
         elif event.type() == QEvent.KeyPress:
             if event.key() == Qt.Key_Backspace or event.key() == Qt.Key_Delete:
                 self.pointList.removeLastPoint()
+            elif event.key() == Qt.Key_Escape:
+                self.pointList.empty()
         elif (
             event.type() == QEvent.MouseButtonRelease
             and event.button() == Qt.RightButton

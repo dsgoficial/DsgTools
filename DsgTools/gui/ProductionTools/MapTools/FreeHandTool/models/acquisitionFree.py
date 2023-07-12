@@ -74,6 +74,7 @@ class AcquisitionFree(gui.QgsMapTool):
         )
         self.controlPressed = False
         self.measureAction = None
+        self.tooltip = None
 
     def setCursor(self, cursor):
         # Método para definir cursor da ferramenta
@@ -180,6 +181,7 @@ class AcquisitionFree(gui.QgsMapTool):
             event.ignore()
         elif event.key() == QtCore.Qt.Key_Escape:
             self.cancelEdition()
+            self.showMeasureTooltip()
             event.ignore()
 
     def cancelEdition(self):
@@ -329,12 +331,18 @@ class AcquisitionFree(gui.QgsMapTool):
 
     def showMeasureTooltip(self):
         if self.measureAction is None or not self.measureAction.isChecked():
+            if self.tooltip is not None:
+                self.tooltip.hideText()
+            self.tooltip = None
             return
         rubberBand = self.getRubberBand()
         if not rubberBand:
+            if self.tooltip is not None:
+                self.tooltip.hideText()
+            self.tooltip = None
             return
         geom = rubberBand.asGeometry()
-        tooltip = QtWidgets.QToolTip
+        self.tooltip = QtWidgets.QToolTip
         if geom.type() == core.QgsWkbTypes.LineGeometry:
             length = geom.length()
             if length != None or length == 0:
@@ -344,7 +352,7 @@ class AcquisitionFree(gui.QgsMapTool):
                 )
                 # Tr
                 txt = f"<b>Length: {dist:.3f} m</b><br/>"
-                tooltip.showText(
+                self.tooltip.showText(
                     self.canvas.mapToGlobal(self.canvas.mouseLastXY()),
                     txt,
                     self.canvas,
@@ -352,7 +360,7 @@ class AcquisitionFree(gui.QgsMapTool):
                     5000,
                 )
             else:
-                tooltip.hideText()
+                self.tooltip.hideText()
         elif geom.type() == core.QgsWkbTypes.PolygonGeometry:
             area = geom.area()
             if area != None or area == 0:
@@ -362,7 +370,7 @@ class AcquisitionFree(gui.QgsMapTool):
                 )
                 # Tr
                 txt = f"<b>Area: {dist:.3f} m²</b><br/>"
-                tooltip.showText(
+                self.tooltip.showText(
                     self.canvas.mapToGlobal(self.canvas.mouseLastXY()),
                     txt,
                     self.canvas,
@@ -370,7 +378,7 @@ class AcquisitionFree(gui.QgsMapTool):
                     5000,
                 )
             else:
-                tooltip.hideText()
+                self.tooltip.hideText()
 
     def updateRubberBandToStopState(self, point):
         # Método para atualizar o rubberband do pause da ferramenta
