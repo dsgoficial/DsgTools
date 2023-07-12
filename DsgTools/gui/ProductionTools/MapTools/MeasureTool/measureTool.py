@@ -25,7 +25,7 @@
 from qgis.PyQt.QtCore import QObject
 from qgis.PyQt.QtWidgets import QPushButton
 
-from qgis.core import QgsDistanceArea
+from qgis.core import QgsDistanceArea, QgsWkbTypes, QgsVectorLayer
 from qgis.gui import QgisInterface, QgsMapToolDigitizeFeature
 
 from .EventFilter import EventFilter
@@ -67,47 +67,61 @@ class MeasureTool(QObject):
     def activateTool(self):
         state = self.toolAction.isChecked()
         if state:
-            self.eventFilter = EventFilter(self.iface, self.pointList)
             self.canvas.mapToolSet.connect(self.activateFilterMapTool)
             if not isinstance(self.canvas.mapTool(), QgsMapToolDigitizeFeature):
                 return
-            self.canvas.viewport().setMouseTracking(True)
-            self.canvas.viewport().installEventFilter(self.eventFilter)
-            self.canvas.installEventFilter(self.eventFilter)
         else:
             try:
                 self.canvas.mapToolSet.disconnect(self.activateFilterMapTool)
             except TypeError:
                 pass
-            self.eventFilter.close()
-            self.canvas.viewport().removeEventFilter(self.eventFilter)
-            self.canvas.removeEventFilter(self.eventFilter)
-            self.eventFilter = None
+        self.activateFilter(state)
 
     def activateFilterMapTool(self, mapTool):
         state = isinstance(mapTool, QgsMapToolDigitizeFeature)
         self.activateFilter(state)
 
-    def activateFilter(self, state):
+    def setToolEnabled(self):
+        layer = self.iface.activeLayer()
+        if (
+            not isinstance(layer, QgsVectorLayer)
+            or layer.geometryType() == QgsWkbTypes.PointGeometry
+            or not layer.isEditable()
+        ):
+            enabled = False
+        else:
+            enabled = True
+        if not enabled:
+            self.closeAndRemoveEventFilter()
+            self.toolAction.setChecked(False)
+        self.toolAction.setEnabled(enabled)
+        return enabled
+
+    def activateFilter(self, state: bool):
         if state:
+            self.eventFilter = EventFilter(self.iface, self.pointList)
             self.canvas.viewport().setMouseTracking(True)
             self.canvas.viewport().installEventFilter(self.eventFilter)
             self.canvas.installEventFilter(self.eventFilter)
         else:
-            self.eventFilter.close()
-            self.canvas.viewport().removeEventFilter(self.eventFilter)
-            self.canvas.removeEventFilter(self.eventFilter)
-            self.eventFilter = None
+            self.closeAndRemoveEventFilter()
 
     def setAction(self, action):
         self.toolAction = action
         self.toolAction.setCheckable(True)
+        self.setToolEnabled()
 
-    def unload(self):
-        try:
-            self.canvas.mapToolSet.disconnect(self.activateFilter)
-        except TypeError:
-            pass
+    def closeAndRemoveEventFilter(self):
+        if self.eventFilter is None:
+            return
         self.eventFilter.close()
         self.canvas.viewport().removeEventFilter(self.eventFilter)
         self.canvas.removeEventFilter(self.eventFilter)
+        self.eventFilter = None
+
+    def unload(self):
+        try:
+            self.canvas.mapToolSet.disconnect(self.activateFilterMapTool)
+        except TypeError:
+            pass
+        self.closeAndRemoveEventFilter()

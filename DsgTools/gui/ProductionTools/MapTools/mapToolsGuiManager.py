@@ -21,9 +21,6 @@
 """
 
 from __future__ import absolute_import
-from builtins import object
-import os.path
-import sys
 from DsgTools.gui.ProductionTools.MapTools.AuxTools.spatialFilter import SpatialFilter
 from DsgTools.gui.ProductionTools.MapTools.SelectRasterTool.selectRaster import (
     SelectRasterTool,
@@ -209,6 +206,7 @@ class MapToolsGuiManager(QObject):
             self.acquisition,
             self.freeHandAcquisiton.acquisitionFreeController,
             self.freeHandReshape.acquisitionFreeController,
+            self.measureTool,
         ]:
             # connect current layer changed signal to all tools that use it
             self.iface.currentLayerChanged.connect(tool.setToolEnabled)
@@ -241,6 +239,7 @@ class MapToolsGuiManager(QObject):
             self.acquisition,
             self.freeHandAcquisiton.acquisitionFreeController,
             self.freeHandReshape.acquisitionFreeController,
+            self.measureTool,
         ]:
             # connect current layer changed signal to all tools that use it
             self.iface.currentLayerChanged.disconnect(tool.setToolEnabled)

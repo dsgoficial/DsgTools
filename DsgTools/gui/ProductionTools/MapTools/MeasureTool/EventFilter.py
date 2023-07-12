@@ -110,10 +110,7 @@ class EventFilter(QObject):
                 dist = self.dist_area.convertLengthMeasurement(
                     measure_dist, QgsUnitTypes.DistanceMeters
                 )
-                txt = "<b>Parcial: {distance} m</b><br/>".format(distance="%.3f" % dist)
-                txt += "<b>Total: {distance} m</b></p>".format(
-                    distance="%.3f" % distAcum
-                )
+                txt = f"<b>Parcial: {dist:.3f} m</b><br/><b>Total: {distAcum:.3f} m</b></p>"
                 tooltip.showText(
                     self.mapCanvas.mapToGlobal(self.mapCanvas.mouseLastXY()),
                     txt,
@@ -138,7 +135,7 @@ class EventFilter(QObject):
                 area = self.dist_area.convertAreaMeasurement(
                     measure_area, QgsUnitTypes.AreaSquareMeters
                 )
-                txt = "<b>Área: {area}</b></p>".format(area="%.3f" % area)
+                txt = f"<b>Area: {area:.3f}m²</b></p>"
                 QToolTip.showText(
                     self.mapCanvas.mapToGlobal(self.mapCanvas.mouseLastXY()),
                     txt,

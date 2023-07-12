@@ -117,7 +117,7 @@ class AcquisitionFreeController(object):
             return True
         else:
             self.actionAcquisitionFree.setEnabled(False)
-            self.deactivateTool(checkActivationtatus=False)
+            self.uncheckTool(checkActivationtatus=False)
         return False
 
     def setToolEnabled(self):
@@ -130,11 +130,20 @@ class AcquisitionFreeController(object):
             enabled = False
         else:
             enabled = True
-        if not enabled and self.acquisitionFree:
-            self.acquisitionFree.deactivate()
-            self.iface.mapCanvas().unsetMapTool(self.acquisitionFree)
+        self.uncheckTool(enabled)
         self.actionAcquisitionFree.setEnabled(enabled)
         return enabled
+
+    def uncheckTool(self, enabled):
+        if enabled or not self.acquisitionFree:
+            return
+        self.acquisitionFree.deactivate()
+        self.iface.mapCanvas().unsetMapTool(self.acquisitionFree)
+        self.actionAcquisitionFree.setChecked(False)
+        try:
+            self.iface.mapCanvas().mapToolSet.disconnect(self.activateFilterMapTool)
+        except TypeError:
+            pass
 
     def getParametersFromConfig(self):
         # Método para obter as configurações da tool do QSettings
@@ -348,13 +357,27 @@ class AcquisitionFreeController(object):
         layer.removeSelection()
         layer.endEditCommand()
 
+    def activateFilterMapTool(self, mapTool):
+        state = isinstance(mapTool, AcquisitionFree)
+        changedAcquisitionFree = state
+        if state:
+            changedAcquisitionFree = (
+                mapTool.controlPressed == self.acquisitionFree.controlPressed
+            )
+        enabled = state and changedAcquisitionFree
+        self.uncheckTool(enabled=enabled)
+
     def activateTool(self):
         # Método para iniciar a ferramenta
         state = self.actionAcquisitionFree.isChecked()
-        self.actionAcquisitionFree.setChecked(not state)
         self.setActiveState(state)
-        if not state:
+        if state:
             self.iface.mapCanvas().setMapTool(self.acquisitionFree)
+            self.iface.mapCanvas().mapToolSet.connect(self.activateFilterMapTool)
         else:
             self.iface.mapCanvas().unsetMapTool(self.acquisitionFree)
+            try:
+                self.iface.mapCanvas().mapToolSet.disconnect(self.activateFilterMapTool)
+            except TypeError:
+                pass
         self.setToolEnabled()

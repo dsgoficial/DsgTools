@@ -21,7 +21,13 @@ Some parts were inspired by QGIS plugin FreeHandEditting
 from qgis.PyQt import QtCore, QtGui, QtWidgets
 from qgis import core, gui
 from qgis.utils import iface
-from qgis.core import QgsGeometry
+from qgis.core import (
+    QgsGeometry,
+    QgsUnitTypes,
+    QgsDistanceArea,
+    QgsCoordinateTransformContext,
+    QgsProject,
+)
 
 
 class AcquisitionFree(gui.QgsMapTool):
@@ -67,6 +73,7 @@ class AcquisitionFree(gui.QgsMapTool):
             )
         )
         self.controlPressed = False
+        self.measureAction = None
 
     def setCursor(self, cursor):
         # Método para definir cursor da ferramenta
@@ -296,6 +303,12 @@ class AcquisitionFree(gui.QgsMapTool):
     def canvasMoveEvent(self, event):
         # Método para receber os eventos canvas move do Qgis
         # Parâmetro de entrada: event (Evento que chamou o método)
+        self.dist_area = QgsDistanceArea()
+        projCrs = QgsProject.instance().crs()
+        self.dist_area.setSourceCrs(projCrs, QgsCoordinateTransformContext())
+        ellipsoidAcronym = projCrs.ellipsoidAcronym()
+        if ellipsoidAcronym != "":
+            self.dist_area.setEllipsoid(ellipsoidAcronym)
         if not (self.getStopedState()):
             snapRubberBand = self.getSnapRubberBand()
             if snapRubberBand:
@@ -312,6 +325,52 @@ class AcquisitionFree(gui.QgsMapTool):
                 self.getRubberBand().addPoint(oldPoint)
         if self.getRubberBandToStopState():
             self.updateRubberBandToStopState(self.toMapCoordinates(event.pos()))
+        self.showMeasureTooltip()
+
+    def showMeasureTooltip(self):
+        if self.measureAction is None or not self.measureAction.isChecked():
+            return
+        rubberBand = self.getRubberBand()
+        if not rubberBand:
+            return
+        geom = rubberBand.asGeometry()
+        tooltip = QtWidgets.QToolTip
+        if geom.type() == core.QgsWkbTypes.LineGeometry:
+            length = geom.length()
+            if length != None or length == 0:
+                measure_dist = self.dist_area.measureLength(geom)
+                dist = self.dist_area.convertLengthMeasurement(
+                    measure_dist, QgsUnitTypes.DistanceMeters
+                )
+                # Tr
+                txt = f"<b>Length: {dist:.3f} m</b><br/>"
+                tooltip.showText(
+                    self.canvas.mapToGlobal(self.canvas.mouseLastXY()),
+                    txt,
+                    self.canvas,
+                    QtCore.QRect(),
+                    5000,
+                )
+            else:
+                tooltip.hideText()
+        elif geom.type() == core.QgsWkbTypes.PolygonGeometry:
+            area = geom.area()
+            if area != None or area == 0:
+                measure_dist = self.dist_area.measureArea(geom)
+                dist = self.dist_area.convertAreaMeasurement(
+                    measure_dist, QgsUnitTypes.AreaSquareMeters
+                )
+                # Tr
+                txt = f"<b>Area: {dist:.3f} m²</b><br/>"
+                tooltip.showText(
+                    self.canvas.mapToGlobal(self.canvas.mouseLastXY()),
+                    txt,
+                    self.canvas,
+                    QtCore.QRect(),
+                    5000,
+                )
+            else:
+                tooltip.hideText()
 
     def updateRubberBandToStopState(self, point):
         # Método para atualizar o rubberband do pause da ferramenta
@@ -361,11 +420,23 @@ class AcquisitionFree(gui.QgsMapTool):
 
         self.reshapeLineCreated.emit(QgsGeometry.fromPolylineXY(line))
 
+    def setMeasureAction(self):
+        self.measureAction = None
+        for toolbar in iface.mainWindow().findChildren(QtWidgets.QToolBar):
+            if not toolbar.objectName().lower() == "dsgtools":
+                continue
+            for action in toolbar.actions():
+                if not action.text() == "DSGTools: Measure while digititizing":
+                    continue
+                self.measureAction = action
+
     def activate(self):
         # Método chamado ao ativar a ferramenta
         mapCanvas = self.getCanvas()
         mapCanvas.setCursor(self.getCursor())
+        self.setMeasureAction()
 
     def deactivate(self):
         QtWidgets.QApplication.restoreOverrideCursor()
         gui.QgsMapTool.deactivate(self)
+        self.measureAction = None
