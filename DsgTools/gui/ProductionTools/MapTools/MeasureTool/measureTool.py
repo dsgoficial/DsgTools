@@ -118,10 +118,10 @@ class MeasureTool(QObject):
         self.canvas.viewport().removeEventFilter(self.eventFilter)
         self.canvas.removeEventFilter(self.eventFilter)
         self.eventFilter = None
-
-    def unload(self):
         try:
             self.canvas.mapToolSet.disconnect(self.activateFilterMapTool)
         except TypeError:
             pass
+
+    def unload(self):
         self.closeAndRemoveEventFilter()
