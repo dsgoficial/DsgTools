@@ -50,10 +50,10 @@ class MeasureTool(QObject):
     def addTool(self, manager, callback, parentToolbar, stackButton, iconBasePath):
         self.stackButton = stackButton
         icon_path = iconBasePath + "/measure_tool.png"
-        toolTip = self.tr("DSGTools: Measure while digititizing")
+        toolTip = self.tr("DSGTools: Measure while digitizing")
         action = manager.add_action(
             icon_path,
-            text=self.tr("DSGTools: Measure while digititizing"),
+            text=self.tr("DSGTools: Measure while digitizing"),
             callback=self.activateTool,
             add_to_menu=False,
             add_to_toolbar=True,
