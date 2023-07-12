@@ -23,6 +23,7 @@
 from __future__ import absolute_import
 
 import math
+import numpy as np
 from builtins import range
 from functools import partial
 from itertools import combinations
@@ -42,6 +43,14 @@ from qgis.core import (
 )
 from qgis.PyQt.Qt import QObject
 
+geometry_creation_dict = {
+    QgsWkbTypes.Point: lambda x: QgsGeometry.fromPointXY(x),
+    QgsWkbTypes.MultiPoint: lambda x: QgsGeometry.fromMultiPointXY(x),
+    QgsWkbTypes.LineString: lambda x: QgsGeometry.fromPolylineXY(x),
+    QgsWkbTypes.MultiLineString: lambda x: QgsGeometry.fromMultiPolylineXY([QgsPointXY(*i) for i in x]),
+    QgsWkbTypes.Polygon: lambda x: QgsGeometry.fromPolygonXY([x]),
+    QgsWkbTypes.MultiPolygon: lambda x: QgsGeometry.fromMultiPolygonXY([x]),
+}
 
 class GeometryHandler(QObject):
     def __init__(self, iface=None, parent=None):
@@ -850,12 +859,13 @@ class GeometryHandler(QObject):
         return changedGeom
 
 
-def convertDistance(distance, originEpsg, destinationEpsg):
+def convertDistance(distance, originEpsg, destinationEpsg, mapUnits=None):
+    mapUnits = destinationEpsg.mapUnits() if mapUnits is None else mapUnits
     distanceArea = QgsDistanceArea()
     distanceArea.setSourceCrs(
         QgsCoordinateReferenceSystem(originEpsg), QgsCoordinateTransformContext()
     )
-    return distanceArea.convertLengthMeasurement(distance, destinationEpsg.mapUnits())
+    return distanceArea.convertLengthMeasurement(distance, mapUnits)
 
 
 def getSirgasAuthIdByPointLatLong(lat, long):
@@ -897,3 +907,45 @@ def getSirgasEpsg(key):
         "25S": "EPSG:31985",
     }
     return options.get(key, "EPSG:3857")
+
+def make_valid(geom: QgsGeometry) -> QgsGeometry:
+    if geom is None:
+        return geom
+    if not geom.isMultipart():
+        newGeom = fix_geom_vertices(geom)
+        newGeom.makeValid()
+        return newGeom
+    partList = []
+    newGeom = None
+    parts = geom.asGeometryCollection()
+    for idx, part in enumerate(parts):
+        partGeom = QgsGeometry(part)
+        newPart = fix_geom_vertices(partGeom)
+        if idx == 0:
+            newGeom = newPart
+            newGeom.convertToMultiType()
+            continue
+        newGeom.addPart(newPart)
+    newGeom.makeValid()
+    return newGeom
+
+def fix_geom_vertices(newGeom: QgsGeometry) -> QgsGeometry:
+    geomToUpdate = newGeom
+    vertices_np_array = np.array([(i.x(), i.y()) for i in newGeom.vertices()])
+    hasInvalidCoord = np.isinf(vertices_np_array).any() or np.isnan(vertices_np_array).any()
+    if not hasInvalidCoord:
+        return geomToUpdate
+    validVertices = vertices_np_array[~np.isinf(vertices_np_array).any(axis=1)]
+    validVertices = validVertices[~np.isnan(validVertices).any(axis=1)]
+    geomToUpdate = geometry_creation_dict[newGeom.wkbType()]([QgsPointXY(*tuple(i)) for i in validVertices])
+    if newGeom.isMultipart():
+        geomToUpdate.convertToMultiType()
+    return geomToUpdate
+
+def find_nan_or_inf_vertex_neighbor(geom: QgsGeometry) -> QgsPoint:
+    vertexList = list(geom.vertices())
+    vertex_np = np.array([(i.x(), i.y()) for i in vertexList])
+    problemIdx = np.argwhere(np.isinf(np.array(vertex_np)))[0][0]
+    if problemIdx == 0:
+        return vertexList[1]
+    return QgsGeometry(vertexList[problemIdx-1])

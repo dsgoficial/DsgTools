@@ -101,6 +101,9 @@ class ExportToMemoryLayer(QgsProcessingAlgorithm):
         temp.updateFields()
         temp_data.addFeatures([feat for feat in layer.getFeatures()])
         QgsProject().instance().addMapLayer(temp)
+        root = QgsProject.instance().layerTreeRoot()
+        myLayerNode = root.findLayer(temp.id())
+        myLayerNode.setCustomProperty("showFeatureCount", True)
         return {}
 
     def name(self):

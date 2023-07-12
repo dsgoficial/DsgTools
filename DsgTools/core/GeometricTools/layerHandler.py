@@ -35,6 +35,8 @@ from processing.tools import dataobjects
 import concurrent.futures
 import processing
 
+import numpy as np
+
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
@@ -65,7 +67,7 @@ from qgis.core import (
 from qgis.PyQt.Qt import QObject, QVariant
 
 from .featureHandler import FeatureHandler
-from .geometryHandler import GeometryHandler
+from .geometryHandler import GeometryHandler, find_nan_or_inf_vertex_neighbor, fix_geom_vertices, make_valid
 
 
 class LayerHandler(QObject):
@@ -1435,13 +1437,16 @@ class LayerHandler(QObject):
     def fixGeometryFromInput(
         self, inputLyr, parameterDict, geometryType, newFeatSet, feat, geom, id
     ):
+        originalGeometry = QgsGeometry(geom)
+        geom.removeDuplicateNodes(useZValues=parameterDict["hasZValues"])
+        fixedGeom = make_valid(geom)
+        if originalGeometry.equals(fixedGeom):
+            return
         attrMap = {
             idx: feat[field.name()]
             for idx, field in enumerate(feat.fields())
             if idx not in inputLyr.primaryKeyAttributes()
         }
-        geom.removeDuplicateNodes(useZValues=parameterDict["hasZValues"])
-        fixedGeom = geom.makeValid()
         for idx, newGeom in enumerate(
             self.geometryHandler.handleGeometryCollection(
                 fixedGeom, geometryType, parameterDict=parameterDict
@@ -1490,6 +1495,8 @@ class LayerHandler(QObject):
             if error.hasWhere():
                 errorPointXY = error.where()
                 flagGeom = QgsGeometry.fromPointXY(errorPointXY)
+                if np.isinf(tuple(errorPointXY)).any() or np.isnan(tuple(errorPointXY)).any():
+                    flagGeom = find_nan_or_inf_vertex_neighbor(geom)
                 if (
                     geom.type() == QgsWkbTypes.LineGeometry
                     and ignoreClosed
@@ -1503,9 +1510,10 @@ class LayerHandler(QObject):
     def _add_flag(self, flagDict, validate_type, error, errorPointXY, flagGeom):
         if errorPointXY not in flagDict:
             flagDict[errorPointXY] = {"geom": flagGeom, "reason": ""}
-        flagDict[errorPointXY]["reason"] += "{type} invalid reason: {text}\n".format(
-            type=validate_type, text=error.what()
-        )
+        what = error.what()
+        if 'invalid coordinate' in what.lower():
+            what += ' on neighbor vertex (is either inf or nan).'
+        flagDict[errorPointXY]["reason"] += f"{validate_type} invalid reason: {what}\n"
 
     def isClosedAndFlagIsAtStartOrEnd(self, geom, flagGeom):
         for part in geom.asGeometryCollection():
