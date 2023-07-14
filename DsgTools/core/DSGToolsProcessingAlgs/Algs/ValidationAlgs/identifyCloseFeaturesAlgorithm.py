@@ -74,7 +74,7 @@ class IdentifyCloseFeaturesAlgorithm(QgsProcessingAlgorithm):
         )
         attributeRulesSetter.setMetadata(
             {
-                "widget_wrapper": "DsgTools.gui.ProcessingUI.enforceAttributeRulesWrapper.EnforceAttributeRulesWrapper"
+                "widget_wrapper": "DsgTools.gui.ProcessingUI.distanceBetweenLayersWrapper.DistanceBetweenLayersWrapper"
             }
         )
         self.addParameter(attributeRulesSetter)

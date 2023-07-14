@@ -54,6 +54,8 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
     __DISTANCE_VERSION = 0.2
 
     def __init__(self, *args, **kwargs):
+        self.layerAIndex, self.layerBIndex = 0, 1
+        self.distanceIndex = 2
         super(DistanceBetweenLayersWrapper, self).__init__(*args, **kwargs)
         self.messageBar = QgsMessageBar(self.panel)
         self.panel.resizeEvent = self.resizeEvent
@@ -93,68 +95,6 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
         sb.setDecimals(10)
         return sb
 
-    def postAddRowStandard(self, row):
-        """
-        Sets up widgets to work as expected right after they are added to GUI.
-        :param row: (int) row to have its widgets setup.
-        """
-        # in standard GUI, the layer selectors are QgsMapLayerComboBox, and its
-        # layer changed signal should be connected to the filter expression
-        # widget setup
-        otw = self.panel.otw
-        for col in [1, 5]:
-            mapLayerComboBox = otw.itemAt(row, col)
-            filterWidget = otw.itemAt(row, col + 1)
-            mapLayerComboBox.layerChanged.connect(filterWidget.setLayer)
-            mapLayerComboBox.layerChanged.connect(
-                partial(filterWidget.setExpression, "")
-            )
-            # first setup is manual though
-            vl = mapLayerComboBox.currentLayer()
-            if vl:
-                filterWidget.setLayer(vl)
-        predicateWidget = otw.itemAt(row, 3)
-        predicateWidget.currentIndexChanged.connect(
-            partial(self._checkCardinalityAvailability, row)
-        )
-        # also triggers the action for the first time it is open
-        self._checkCardinalityAvailability(row)
-        predicateWidget.currentIndexChanged.connect(
-            partial(self._check_de9im_is_available, row)
-        )
-        self._check_de9im_is_available(row)
-
-    def postAddRowModeler(self, row):
-        """
-        Sets up widgets to work as expected right after they are added to GUI.
-        :param row: (int) row to have its widgets setup.
-        """
-        otw = self.panel.otw
-
-        def checkLayerBeforeConnect(le, filterExp):
-            lName = le.text().strip()
-            for layer in QgsProject.instance().mapLayersByName(lName):
-                if isinstance(layer, QgsVectorLayer) and layer.name() == lName:
-                    filterExp.setLayer(layer)
-                    return
-            filterExp.setLayer(None)
-
-        for col in [1, 5]:
-            le = otw.itemAt(row, col)
-            filterWidget = otw.itemAt(row, col + 1)
-            le.editingFinished.connect(
-                partial(checkLayerBeforeConnect, le, filterWidget)
-            )
-        predicateWidget = otw.itemAt(row, 3)
-        predicateWidget.currentIndexChanged.connect(
-            partial(self._checkCardinalityAvailability, row)
-        )
-        self._checkCardinalityAvailability(row)
-        predicateWidget.currentIndexChanged.connect(
-            partial(self._check_de9im_is_available, row)
-        )
-        self._check_de9im_is_available(row)
-
     def standardPanel(self):
         """
         Returns the table prepared for the standard Processing GUI.
@@ -165,21 +105,21 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
         # added as an attribute in order to make it easier to be read
         widget.otw = OrderedTableWidget(
             headerMap={
-                0: {
+                self.layerAIndex: {
                     "header": self.tr("Layer A"),
                     "type": "widget",
                     "widget": self.mapLayerComboBox,
                     "setter": "setCurrentText",
                     "getter": "currentText",
                 },
-                1: {
+                self.layerBIndex: {
                     "header": self.tr("Layer B"),
                     "type": "widget",
                     "widget": self.mapLayerComboBox,
                     "setter": "setCurrentText",
                     "getter": "currentText",
                 },
-                2: {
+                self.distanceIndex: {
                     "header": self.tr("Distance"),
                     "type": "widget",
                     "widget": self.doubleSpinBox,
@@ -190,7 +130,6 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
         )
 
         widget.otw.setHeaderDoubleClickBehaviour("replicate")
-        widget.otw.rowAdded.connect(self.postAddRowStandard)
         layout.addWidget(widget.otw)
         widget.setLayout(layout)
         return widget
@@ -202,7 +141,7 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
         """
         return self.standardPanel()
 
-    def modelerPanel(self) -> QWidget:
+    def modelerPanel(self):
         """
         Returns the table prepared for the modeler Processing GUI.
         :return: (OrderedTableWidget) DSGTools customized table widget.
@@ -212,21 +151,21 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
         # added as an attribute in order to make it easier to be read
         widget.otw = OrderedTableWidget(
             headerMap={
-                0: {
+                self.layerAIndex: {
                     "header": self.tr("Layer A"),
                     "type": "widget",
                     "widget": self.mapLayerModelDialog,
                     "setter": "setText",
                     "getter": "text",
                 },
-                1: {
+                self.layerBIndex: {
                     "header": self.tr("Layer B"),
                     "type": "widget",
                     "widget": self.mapLayerModelDialog,
                     "setter": "setText",
                     "getter": "text",
                 },
-                2: {
+                self.distanceIndex: {
                     "header": self.tr("Distance"),
                     "type": "widget",
                     "widget": self.doubleSpinBox,
@@ -237,7 +176,6 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
         )
 
         widget.otw.setHeaderDoubleClickBehaviour("replicate")
-        widget.otw.rowAdded.connect(self.postAddRowModeler)
         layout.addWidget(widget.otw)
         widget.setLayout(layout)
         return widget
@@ -252,8 +190,8 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
     def createWidget(self):
         self.panel = self.createPanel()
         self.panel.otw.showSaveLoadButtons(True)
-        self.panel.otw.extension = ".rules"
-        self.panel.otw.fileType = self.tr("Set of distance between layers")
+        self.panel.otw.extension = ".json"
+        self.panel.otw.fileType = self.tr("JSON file")
         self.panel.otw.setMetadata({"version": self.__DISTANCE_VERSION})
         return self.panel
 
@@ -263,7 +201,7 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
     def setLayer(self, layer):
         pass
 
-    def showLoadingMsg(self, invalidRules=None, msgType=None):
+    def showLoadingMsg(self, invalidValues=None, msgType=None):
         """
         Shows a message box to user if successfully loaded data or not.
         If not, shows to user a list of not loaded layers and allows user
@@ -273,55 +211,56 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
         :return: (signal) value returned from the clicked button.
         """
         msg = QMessageBox()
-        msg.setWindowTitle(self.tr("DSGTools: importing spatial rules"))
-        if invalidRules and msgType == "warning":
+        msg.setWindowTitle(self.tr("DSGTools: importing table"))
+        if invalidValues and msgType == "warning":
             msg.setIcon(QMessageBox.Warning)
-            msg.setText(self.tr("Some rules have not been loaded"))
+            msg.setText(self.tr("Some rows have not been loaded"))
             msg.setInformativeText(
                 self.tr("Do you want to ignore and continue or cancel?")
             )
-            msgString = "\n".join((r.ruleName() for r in invalidRules))
+            msgString = "\n".join(
+                (
+                    f"""{v["layerA"]}, {v["layerB"]}, {v["distance"]}"""
+                    for v in invalidValues
+                )
+            )
             formatedMsgString = self.tr(
-                "The following layers have not been loaded:\n{0}"
+                "The following rows have not been loaded:\n{0}"
             ).format(msgString)
             msg.setDetailedText(formatedMsgString)
             msg.setStandardButtons(QMessageBox.Ignore | QMessageBox.Cancel)
             msg.setDefaultButton(QMessageBox.Cancel)
         else:
             msg.setIcon(QMessageBox.Information)
-            msg.setText(self.tr("Successfully loaded rules!"))
+            msg.setText(self.tr("Successfully loaded!"))
         choice = msg.exec_()
         return choice
 
     def setValue(self, value):
         """
         Sets back parameters to the GUI. Method reimplementation.
-        :param value: (list-of-SpatialRule) list of spatial rules to be set.
         """
         if not value:
             return
         otw = self.panel.otw
         isNotModeler = self.dialogType != DIALOG_MODELER
         invalids = list()
-        for rule in value:
-            # GUI was crashing when passing SpatialRule straight up
-            rule = SpatialRule(**rule, checkLoadedLayer=False)
+        for valueMap in value:
+            # GUI was crashing when passing Spatialrow straight up
             # we want to check whether the layer is loaded as this does not
             # work properly with the map layer combobox. on the modeler it
             # won't matter as it is a line edit
-            if not rule.isValid(checkLoaded=isNotModeler):
-                invalids.append(rule)
+            if not (
+                self.validateLayerName(valueMap["layerA"], checkLoaded=isNotModeler)
+                and self.validateLayerName(valueMap["layerB"], checkLoaded=isNotModeler)
+            ):
+                invalids.append(valueMap)
                 continue
             otw.addRow(
                 {
-                    0: rule.ruleName(),
-                    1: rule.layerA(),
-                    2: rule.filterA(),
-                    3: rule.predicateEnum(),
-                    4: rule.predicateDE9IM(),
-                    5: rule.layerB(),
-                    6: rule.filterB(),
-                    7: rule.cardinality(),
+                    self.layerAIndex: valueMap["layerA"],
+                    self.layerBIndex: valueMap["layerB"],
+                    self.distanceIndex: valueMap["distance"],
                 }
             )
         choice = self.showLoadingMsg(invalids, "warning" if invalids else "")
@@ -333,27 +272,17 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
         Reads widget's contents when process' parameters are set from an
         algorithm call (e.g. Processing toolbox).
         """
-        ruleList = list()
+        rowList = list()
         otw = self.panel.otw
-        handler = SpatialRelationsHandler()
         for row in range(otw.rowCount()):
-            useDE9IM = otw.getValue(row, 3) == handler.DE9IM
-            ruleList.append(
-                SpatialRule(
-                    name=otw.getValue(row, 0).strip(),  # or \
-                    # self.tr("Spatial Rule #{n}".format(n=row + 1)),
-                    layer_a=otw.getValue(row, 1),
-                    filter_a=otw.getValue(row, 2),
-                    predicate=otw.getValue(row, 3),
-                    de9im_predicate=otw.getValue(row, 4),
-                    layer_b=otw.getValue(row, 5),
-                    filter_b=otw.getValue(row, 6),
-                    cardinality=otw.getValue(row, 7) or "1..*",
-                    useDE9IM=useDE9IM,
-                    checkLoadedLayer=False,
-                ).asDict()
+            rowList.append(
+                {
+                    "layerA": otw.getValue(row, self.layerAIndex),
+                    "layerB": otw.getValue(row, self.layerBIndex),
+                    "distance": otw.getValue(row, self.distanceIndex),
+                }
             )
-        return ruleList
+        return rowList
 
     def readModelerPanel(self):
         """
@@ -361,6 +290,23 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
         instance.
         """
         return self.readStandardPanel()
+
+    def validateLayerName(self, layer, checkLoaded=False):
+        """
+        Checks whether a provided layer name is a valid setting. This method
+        may take its availability on canvas into consideration, if necessary.
+        :param layer: (str) layer name to be checked.
+        :param checkLoaded: (bool) whether canvas availability should be
+                            considered.
+        :return: (bool) provided layer name's validity.
+        """
+        isLoaded = False
+        if checkLoaded:
+            for vl in QgsProject.instance().mapLayersByName(layer):
+                if isinstance(vl, QgsVectorLayer):
+                    isLoaded = True
+                    break
+        return (not (checkLoaded and not isLoaded)) and layer != ""
 
     def readBatchPanel(self):
         """

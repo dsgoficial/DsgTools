@@ -260,6 +260,11 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyCrossingLi
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesAlgorithm import (
     IdentifyDanglesAlgorithm,
 )
+
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyCloseFeaturesAlgorithm import (
+    IdentifyCloseFeaturesAlgorithm,
+    ParameterDistanceBetweenLayersType,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDrainageAndContourInconsistencies import (
     IdentifyDrainageAndContourInconsistencies,
 )
@@ -430,8 +435,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirec
 )
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadThemesAlgorithm import (
-    LoadThemesAlgorithm
+    LoadThemesAlgorithm,
 )
+
 # from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
 
 
@@ -581,7 +587,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyIntertwinedLinesAlgorithm(),
             IdentifyCrossingLinesAlgorithm(),
             FixDrainageFlowAlgorithm(),
-            LoadThemesAlgorithm()
+            LoadThemesAlgorithm(),
+            IdentifyCloseFeaturesAlgorithm(),
         ]
         return algList
 
@@ -604,6 +611,10 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         QgsApplication.instance().processingRegistry().addParameterType(
             self.parameterSpatialRulesSetType
         )
+        self.parameterDistanceBetweenLayersType = ParameterDistanceBetweenLayersType()
+        QgsApplication.instance().processingRegistry().addParameterType(
+            self.parameterDistanceBetweenLayersType
+        )
         self.refreshAlgorithms()
         return True
 
@@ -620,6 +631,9 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         )
         QgsApplication.instance().processingRegistry().removeParameterType(
             self.parameterSpatialRulesSetType
+        )
+        QgsApplication.instance().processingRegistry().removeParameterType(
+            self.parameterDistanceBetweenLayersType
         )
 
     def isActive(self):
