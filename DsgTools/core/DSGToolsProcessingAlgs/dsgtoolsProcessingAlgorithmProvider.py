@@ -429,6 +429,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirec
     VerifyNetworkDirectioningAlgorithm,
 )
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadThemesAlgorithm import (
+    LoadThemesAlgorithm
+)
 # from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
 
 
@@ -578,6 +581,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyIntertwinedLinesAlgorithm(),
             IdentifyCrossingLinesAlgorithm(),
             FixDrainageFlowAlgorithm(),
+            LoadThemesAlgorithm()
         ]
         return algList
 
