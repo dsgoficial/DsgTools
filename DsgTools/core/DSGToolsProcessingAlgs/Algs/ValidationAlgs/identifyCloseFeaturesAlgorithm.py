@@ -27,10 +27,11 @@ from qgis.core import (
     QgsFeatureRequest,
     QgsProject,
     QgsWkbTypes,
-    QgsConditionalStyle,
+    QgsGeometry,
     QgsFeatureSink,
     QgsProcessingAlgorithm,
     QgsProcessingException,
+    QgsExpression,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterType,
@@ -39,9 +40,10 @@ from qgis.core import (
 from qgis.PyQt.QtWidgets import QMessageBox
 
 from .validationAlgorithm import ValidationAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
 
-class IdentifyCloseFeaturesAlgorithm(QgsProcessingAlgorithm):
+class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
     """
     Algorithm for applying user-defined attribute rules to
     verify the filling of database attributes.
@@ -49,35 +51,33 @@ class IdentifyCloseFeaturesAlgorithm(QgsProcessingAlgorithm):
 
     DISTANCE_BETWEEN_LAYERS = "DISTANCE_BETWEEN_LAYERS"
     SELECTED = "SELECTED"
-    POINT_FLAGS = "POINT_FLAGS"
-    LINE_FLAGS = "LINE_FLAGS"
-    POLYGON_FLAGS = "POLYGON_FLAGS"
+    FLAGS = "FLAGS"
 
-    def __init__(self):
-        """
-        Constructor.
-        """
-        super().__init__()
-        self.valAlg = ValidationAlgorithm()
-        self.flagFields = self.valAlg.getFlagFields()
-        self.font = QFont()
-        self.font.setBold(True)
-        self.conditionalStyle = QgsConditionalStyle()
+    # def __init__(self):
+    #     """
+    #     Constructor.
+    #     """
+    #     super().__init__()
+    #     self.valAlg = ValidationAlgorithm()
+    #     self.flagFields = self.valAlg.getFlagFields()
+    #     self.font = QFont()
+    #     self.font.setBold(True)
+    #     self.conditionalStyle = QgsConditionalStyle()
 
     def initAlgorithm(self, config):
         """
         Parameter setting.
         """
-        attributeRulesSetter = ParameterDistanceBetweenLayers(
+        minimumDistanceParameter = ParameterDistanceBetweenLayers(
             self.DISTANCE_BETWEEN_LAYERS,
             description=self.tr("Minimum distance between layers"),
         )
-        attributeRulesSetter.setMetadata(
+        minimumDistanceParameter.setMetadata(
             {
                 "widget_wrapper": "DsgTools.gui.ProcessingUI.distanceBetweenLayersWrapper.DistanceBetweenLayersWrapper"
             }
         )
-        self.addParameter(attributeRulesSetter)
+        self.addParameter(minimumDistanceParameter)
 
         self.addParameter(
             QgsProcessingParameterBoolean(
@@ -85,25 +85,15 @@ class IdentifyCloseFeaturesAlgorithm(QgsProcessingAlgorithm):
             )
         )
         self.addParameter(
-            QgsProcessingParameterFeatureSink(self.POINT_FLAGS, self.tr("Point flags"))
-        )
-        self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.LINE_FLAGS, self.tr("Linestring flags")
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.POLYGON_FLAGS, self.tr("Polygon flags")
-            )
+            QgsProcessingParameterFeatureSink(self.FLAGS, self.tr("Flags"))
         )
 
-    def parameterAsAttributeRulesSet(self, parameters, name, context):
+    def parameterAsMinimumDistanceBetweenLayers(self, parameters, name, context):
         """
         Adds data from wrapper to algorithm parameters.
         :param parameters: (QgsProcessingParameter) a set of algorithm
             parameters;
-        :param name: (json) JSON formatted attribute rules;
+        :param name: parameter Name;
         :param context: (QgsProcessingContext) context in which
             processing was run;
         :return: (dict) parameters dictionary.
@@ -122,66 +112,124 @@ class IdentifyCloseFeaturesAlgorithm(QgsProcessingAlgorithm):
         :return: (dict) filled flag layers.
         """
 
-        rules = self.parameterAsAttributeRulesSet(
+        minimumDistances = self.parameterAsMinimumDistanceBetweenLayers(
             parameters, self.DISTANCE_BETWEEN_LAYERS, context
         )
-
-        if not rules:
+        self.prepareFlagSink(parameters, None, QgsWkbTypes.MultiLineString, context)
+        if not minimumDistances:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.DISTANCE_BETWEEN_LAYERS)
             )
-
-        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-
-        crs = QgsProject.instance().crs()
-        pointFlags, ptId = self.parameterAsSink(
-            parameters,
-            self.POINT_FLAGS,
-            context,
-            self.flagFields,
-            QgsWkbTypes.Point,
-            crs,
-        )
-
-        if not pointFlags:
-            raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.POINT_FLAGS)
+        algRunner = AlgRunner()
+        layersList = [] 
+        for row in minimumDistances:
+            distance = row['distance']
+            layerApre = row['layerA']
+            layerA = algRunner.runCreateFieldWithExpression(
+                layerApre,
+                expression="$id",
+                fieldName="feat_id",
+                context=context
             )
-
-        lineFlags, lId = self.parameterAsSink(
-            parameters,
-            self.LINE_FLAGS,
-            context,
-            self.flagFields,
-            QgsWkbTypes.LineString,
-            crs,
-        )
-
-        if not lineFlags:
-            raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.LINE_FLAGS)
+            algRunner.runCreateSpatialIndex(
+                inputLyr=layerA,
+                context=context
             )
-
-        polygonFlags, polId = self.parameterAsSink(
-            parameters,
-            self.POLYGON_FLAGS,
-            context,
-            self.flagFields,
-            QgsWkbTypes.Polygon,
-            crs,
-        )
-
-        if not polygonFlags:
-            raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.POLYGON_FLAGS)
+            layerAbuffered = algRunner.runBuffer(
+                inputLayer=layerA,
+                distance = distance,
+                context=context,
             )
+            algRunner.runCreateSpatialIndex(
+                inputLyr=layerAbuffered,
+                context=context
+            )
+            layerBpre = row['layerB']
+            layerB = algRunner.runCreateFieldWithExpression(
+                layerBpre,
+                expression="$id",
+                fieldName="feat_id",
+                context=context
+            )
+            algRunner.runCreateSpatialIndex(
+                inputLyr=layerB,
+                context=context
+            )
+            layersList.append([layerAbuffered, layerA, layerB, distance])
+        for layers in layersList:
+            layerAbuffered, layerA, layerB, distance = layers
+            joinedLayer = algRunner.runJoinAttributesByLocation(
+                inputLyr=layerAbuffered,
+                joinLyr=layerB,
+                context=context,
+                predicateList=[0]
+            )
+            for feat in joinedLayer.getFeatures():
+                expression = QgsExpression(f'"feat_id"={feat["feat_id"]}')
+                request = QgsFeatureRequest(expression)
+                featA = next(layerA.getFeatures(request))
+                pointA = featA.geometry().asPoint()
+                expression = QgsExpression(f'"feat_id"={feat["feat_id_2"]}')
+                request = QgsFeatureRequest(expression)
+                featB = next(layerB.getFeatures(request))
+                pointB = featB.geometry().asPoint()
+                geom = QgsGeometry().fromPolylineXY([pointA, pointB])
+                flagText = f'distance smaller than {distance}'
+                self.flagFeature(geom, flagText)
 
-        failedFeatures = self.applyAttrRules(rules, onlySelected)
+        
 
-        self.flagsFromFailedList(
-            failedFeatures, pointFlags, lineFlags, polygonFlags, feedback
-        )
-        return {self.POINT_FLAGS: ptId, self.LINE_FLAGS: lId, self.POLYGON_FLAGS: polId}
+        # onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+
+        # crs = QgsProject.instance().crs()
+        # pointFlags, ptId = self.parameterAsSink(
+        #     parameters,
+        #     self.POINT_FLAGS,
+        #     context,
+        #     self.flagFields,
+        #     QgsWkbTypes.Point,
+        #     crs,
+        # )
+
+        # if not pointFlags:
+        #     raise QgsProcessingException(
+        #         self.invalidSourceError(parameters, self.POINT_FLAGS)
+        #     )
+
+        # lineFlags, lId = self.parameterAsSink(
+        #     parameters,
+        #     self.LINE_FLAGS,
+        #     context,
+        #     self.flagFields,
+        #     QgsWkbTypes.LineString,
+        #     crs,
+        # )
+
+        # if not lineFlags:
+        #     raise QgsProcessingException(
+        #         self.invalidSourceError(parameters, self.LINE_FLAGS)
+        #     )
+
+        # polygonFlags, polId = self.parameterAsSink(
+        #     parameters,
+        #     self.POLYGON_FLAGS,
+        #     context,
+        #     self.flagFields,
+        #     QgsWkbTypes.Polygon,
+        #     crs,
+        # )
+
+        # if not polygonFlags:
+        #     raise QgsProcessingException(
+        #         self.invalidSourceError(parameters, self.POLYGON_FLAGS)
+        #     )
+
+        # failedFeatures = self.applyAttrRules(rules, onlySelected)
+
+        # self.flagsFromFailedList(
+        #     failedFeatures, pointFlags, lineFlags, polygonFlags, feedback
+        # )
+        return {self.FLAGS: self.flag_id}
 
     def applyAttrRules(self, attrRulesMap, onlySelected):
         """
@@ -350,19 +398,19 @@ class ParameterDistanceBetweenLayersType(QgsProcessingParameterType):
 
     def metadata(self):
         return {
-            "widget_wrapper": "DsgTools.gui.ProcessingUI.validationAttributeRulesWrapper.ValidationAttributeRulesWrapper"
+            "widget_wrapper": "DsgTools.gui.ProcessingUI.distanceBetweenLayersWrapper.DistanceBetweenLayersWrapper"
         }
 
     def name(self):
-        return QCoreApplication.translate("Processing", self.tr("Attribute Rules Set"))
+        return QCoreApplication.translate("Processing", self.tr("Distance Between Layers"))
 
     def id(self):
-        return "attribute_rules_set_type"
+        return "distance_between_layers"
 
     def description(self):
         return QCoreApplication.translate(
             "Processing",
-            self.tr("Set of attribute rules. Used on Attribute Rules Checker."),
+            self.tr("Check minimum acceptable distance between features of chosen layers."),
         )
 
 
@@ -379,7 +427,7 @@ class ParameterDistanceBetweenLayers(QgsProcessingParameterDefinition):
 
     @staticmethod
     def typeName():
-        return "attribute_rules_set"
+        return "distance_between_layers"
 
     def checkValueIsAcceptable(self, value, context=None):
         return True
