@@ -20,49 +20,34 @@
  ***************************************************************************/
 """
 
+
 from qgis.PyQt.QtCore import QCoreApplication
-from qgis.PyQt.QtGui import QColor, QFont
 from qgis.core import (
-    QgsFeature,
     QgsFeatureRequest,
-    QgsProject,
     QgsWkbTypes,
     QgsGeometry,
-    QgsFeatureSink,
-    QgsProcessingAlgorithm,
+    QgsVectorLayer,
     QgsProcessingException,
     QgsExpression,
-    QgsProcessingParameterBoolean,
+    QgsProperty,
+    QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterType,
     QgsProcessingParameterDefinition,
 )
-from qgis.PyQt.QtWidgets import QMessageBox
 
 from .validationAlgorithm import ValidationAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.GeometricTools import geometryHandler
 
 
 class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
     """
-    Algorithm for applying user-defined attribute rules to
-    verify the filling of database attributes.
+    Algorithm for verifying features closer than minium distance for each layer pair set.
     """
 
     DISTANCE_BETWEEN_LAYERS = "DISTANCE_BETWEEN_LAYERS"
-    SELECTED = "SELECTED"
     FLAGS = "FLAGS"
-
-    # def __init__(self):
-    #     """
-    #     Constructor.
-    #     """
-    #     super().__init__()
-    #     self.valAlg = ValidationAlgorithm()
-    #     self.flagFields = self.valAlg.getFlagFields()
-    #     self.font = QFont()
-    #     self.font.setBold(True)
-    #     self.conditionalStyle = QgsConditionalStyle()
 
     def initAlgorithm(self, config):
         """
@@ -78,12 +63,6 @@ class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
             }
         )
         self.addParameter(minimumDistanceParameter)
-
-        self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.SELECTED, self.tr("Process only selected features")
-            )
-        )
         self.addParameter(
             QgsProcessingParameterFeatureSink(self.FLAGS, self.tr("Flags"))
         )
@@ -109,7 +88,7 @@ class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
             processing was run.
         :param feedback: (QgsProcessingFeedback) QGIS progress tracking
                          component.
-        :return: (dict) filled flag layers.
+        :return: (dict) filled flag layer.
         """
 
         minimumDistances = self.parameterAsMinimumDistanceBetweenLayers(
@@ -120,227 +99,181 @@ class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.DISTANCE_BETWEEN_LAYERS)
             )
-        algRunner = AlgRunner()
-        layersList = [] 
-        for row in minimumDistances:
-            distance = row['distance']
-            layerApre = row['layerA']
-            layerA = algRunner.runCreateFieldWithExpression(
-                layerApre,
-                expression="$id",
-                fieldName="feat_id",
-                context=context
-            )
-            algRunner.runCreateSpatialIndex(
-                inputLyr=layerA,
-                context=context
-            )
-            layerAbuffered = algRunner.runBuffer(
-                inputLayer=layerA,
-                distance = distance,
-                context=context,
-            )
-            algRunner.runCreateSpatialIndex(
-                inputLyr=layerAbuffered,
-                context=context
-            )
-            layerBpre = row['layerB']
-            layerB = algRunner.runCreateFieldWithExpression(
-                layerBpre,
-                expression="$id",
-                fieldName="feat_id",
-                context=context
-            )
-            algRunner.runCreateSpatialIndex(
-                inputLyr=layerB,
-                context=context
-            )
-            layersList.append([layerAbuffered, layerA, layerB, distance])
-        for layers in layersList:
-            layerAbuffered, layerA, layerB, distance = layers
-            joinedLayer = algRunner.runJoinAttributesByLocation(
-                inputLyr=layerAbuffered,
-                joinLyr=layerB,
-                context=context,
-                predicateList=[0]
-            )
-            for feat in joinedLayer.getFeatures():
-                expression = QgsExpression(f'"feat_id"={feat["feat_id"]}')
-                request = QgsFeatureRequest(expression)
-                featA = next(layerA.getFeatures(request))
-                pointA = featA.geometry().asPoint()
-                expression = QgsExpression(f'"feat_id"={feat["feat_id_2"]}')
-                request = QgsFeatureRequest(expression)
-                featB = next(layerB.getFeatures(request))
-                pointB = featB.geometry().asPoint()
-                geom = QgsGeometry().fromPolylineXY([pointA, pointB])
-                flagText = f'distance smaller than {distance}'
-                self.flagFeature(geom, flagText)
+        nSteps = len(minimumDistances)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        self.algRunner = AlgRunner()
+        tempLayersDict = dict()
+        for current, row in enumerate(minimumDistances):
+            multiStepFeedback.setCurrentStep(current)
+            self.findCloseFeatures(row, tempLayersDict, context, multiStepFeedback)
 
-        
-
-        # onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-
-        # crs = QgsProject.instance().crs()
-        # pointFlags, ptId = self.parameterAsSink(
-        #     parameters,
-        #     self.POINT_FLAGS,
-        #     context,
-        #     self.flagFields,
-        #     QgsWkbTypes.Point,
-        #     crs,
-        # )
-
-        # if not pointFlags:
-        #     raise QgsProcessingException(
-        #         self.invalidSourceError(parameters, self.POINT_FLAGS)
-        #     )
-
-        # lineFlags, lId = self.parameterAsSink(
-        #     parameters,
-        #     self.LINE_FLAGS,
-        #     context,
-        #     self.flagFields,
-        #     QgsWkbTypes.LineString,
-        #     crs,
-        # )
-
-        # if not lineFlags:
-        #     raise QgsProcessingException(
-        #         self.invalidSourceError(parameters, self.LINE_FLAGS)
-        #     )
-
-        # polygonFlags, polId = self.parameterAsSink(
-        #     parameters,
-        #     self.POLYGON_FLAGS,
-        #     context,
-        #     self.flagFields,
-        #     QgsWkbTypes.Polygon,
-        #     crs,
-        # )
-
-        # if not polygonFlags:
-        #     raise QgsProcessingException(
-        #         self.invalidSourceError(parameters, self.POLYGON_FLAGS)
-        #     )
-
-        # failedFeatures = self.applyAttrRules(rules, onlySelected)
-
-        # self.flagsFromFailedList(
-        #     failedFeatures, pointFlags, lineFlags, polygonFlags, feedback
-        # )
         return {self.FLAGS: self.flag_id}
 
-    def applyAttrRules(self, attrRulesMap, onlySelected):
-        """
-        Filters a layer or a set of selected features as from conditional rules,
-        and the result is added to a list in a dictionary.
-        :param attrRulesMap: (dict) dictionary with conditional rules;
-        :param onlySelected: (boolean) indicates whether the attribute rules
-            should be applied exclusively on selected features of each
-            verified layer;
-        :return: (dict) modified attrRulesMap with filtered features.
-        """
-        proj = QgsProject.instance()
+    def findCloseFeatures(self, row, tempLayersDict, context, feedback):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        distance = row["distance"]
+        layerApre = row["layerA"]
+        layerBpre = row["layerB"]
+        layerBuffredString = self.addBufferedLayerToDict(
+            layerApre, distance, tempLayersDict, context, multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(1)
+        self.addTempLayerToDict(layerBpre, tempLayersDict, context, multiStepFeedback)
+        multiStepFeedback.setCurrentStep(2)
+        layers = layerBuffredString, layerApre, layerBpre, distance
+        self.addCloseFeaturesToSink(layers, tempLayersDict, context, multiStepFeedback)
 
-        for ruleOrder, ruleParam in attrRulesMap.items():
-            if onlySelected:
-                lyr = proj.mapLayersByName(ruleParam["layerField"][0])[0]
-                request = QgsFeatureRequest().setFilterExpression(
-                    ruleParam["expression"]
-                )
-                selectedFeatures = lyr.getSelectedFeatures(request)
-                ruleParam["features"] = [feature for feature in selectedFeatures]
-            else:
-                lyr = proj.mapLayersByName(ruleParam["layerField"][0])[0]
-                ruleParam["features"] = [
-                    feature for feature in lyr.getFeatures(ruleParam["expression"])
-                ]
-            self.applyConditionalStyle(
-                proj.mapLayersByName(ruleParam["layerField"][0])[0], ruleParam
+    def addBufferedLayerToDict(
+        self, layerPre, distance, tempLayersDict, context, feedback
+    ) -> str:
+        """
+        Adds a buffered layer with a specified distance to the tempLayersDict and returns the buffered layer's name.
+        :param layerPre: (str) The name of the layer to be buffered.
+        :param distance: (float) The buffer distance in meters.
+        :param tempLayersDict: (dict) A dictionary containing temporary layers.
+        """
+        layerBuffredString = layerPre + "_buffered_" + str(distance)
+        if layerBuffredString in tempLayersDict:
+            return layerBuffredString
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        if not layerPre in tempLayersDict:
+            self.addTempLayerToDict(
+                layerPre, tempLayersDict, context, multiStepFeedback
             )
-        return attrRulesMap
+        multiStepFeedback.setCurrentStep(1)
+        getLayer = tempLayersDict[layerPre]
+        fieldStr = "distance_buffer"
+        layer = self.createLayerWithDistanceBufferField(
+            getLayer, distance, fieldStr, context, multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(2)
+        layerBuffered = self.algRunner.runBuffer(
+            inputLayer=layer,
+            distance=QgsProperty.fromExpression(f"{fieldStr}"),
+            context=context,
+            is_child_algorithm=True,
+        )
+        multiStepFeedback.setCurrentStep(3)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=layerBuffered, context=context, is_child_algorithm=True
+        )
+        tempLayersDict[layerBuffredString] = layerBuffered
+        return layerBuffredString
 
-    def flagsFromFailedList(self, attrRulesMap, ptLayer, lLayer, polLayer, feedback):
+    def addTempLayerToDict(self, layerPre, tempLayersDict, context, feedback):
         """
-        Creates new features from a failed conditional rules dictionary.
-        :param attrRulesMap: (dict) dictionary with conditional rules;
-        :param ptLayer: (QgsVectorLayer) output point vector layer;
-        :param lLayer: (QgsVectorLayer) output line vector layer;
-        :param polLayer: (QgsVectorLayer) output polygon vector layer;
-        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
-                         component;
-        :return: (tuple-of-QgsVectorLayer) filled flag layers.
+        Adds a temporary layer to tempLayersDict.
+        :param layerPre: (str) The name of the temporary layer to be added.
+        :param tempLayersDict: (dict) A dictionary containing temporary layers.
         """
-        layerMap = {
-            QgsWkbTypes.PointGeometry: ptLayer,
-            QgsWkbTypes.LineGeometry: lLayer,
-            QgsWkbTypes.PolygonGeometry: polLayer,
-        }
+        if layerPre in tempLayersDict:
+            return
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        layer = self.algRunner.runCreateFieldWithExpression(
+            layerPre, expression="$id", fieldName="feat_id", context=context
+        )
+        multiStepFeedback.setCurrentStep(1)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=layer, context=context, is_child_algorithm=True
+        )
+        tempLayersDict[layerPre] = layer
 
-        for ruleParam in attrRulesMap.values():
-            flagText = "{name}".format(name=ruleParam["description"])
-            for flag in ruleParam["features"]:
-                geom = flag.geometry()
-                newFeature = QgsFeature(self.flagFields)
-                newFeature["reason"] = flagText
-                newFeature.setGeometry(geom)
-                layerMap[geom.type()].addFeature(newFeature, QgsFeatureSink.FastInsert)
-        self.logResult(attrRulesMap, feedback)
-        return (ptLayer, lLayer, polLayer)
-
-    def applyConditionalStyle(self, lyr, values):
+    def createLayerWithDistanceBufferField(
+        self, layer: QgsVectorLayer, distance: float, fieldStr: str, context, feedback
+    ) -> QgsVectorLayer:
         """
-        Applies a conditional style for each wrong attribute
-        in the attribute table.
-        :param lyr: (QgsVectorLayer) vector layer;
-        :param values: (dict) dictionary with conditional rules.
+        Creates a new field with converted distance buffer values in the given layer and returns the resulting layer.
+        :param layer: (QgsVectorLayer) The input layer to add the field.
+        :param distance: (float) The distance value to be added to the field.
+        :param fieldStr: (str) The name of the field to be created.
+        :return: (QgsVectorLayer) The layer with the added field and distance buffer values.
         """
-        self.conditionalStyle.setRule(values["expression"])
-        self.conditionalStyle.setFont(self.font)
-        self.conditionalStyle.setTextColor(QColor(255, 255, 255))
+        multiStepFeedback = QgsProcessingMultiStepFeedback(1, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        layerWithDistanceBufferField = self.algRunner.runCreateFieldWithExpression(
+            layer, expression="$id", fieldName=fieldStr, context=context
+        )
+        layerWithDistanceBufferField.startEditing()
+        layerWithDistanceBufferField.beginEditCommand("Updating features")
+        dp = layerWithDistanceBufferField.dataProvider()
+        fieldIdx = dp.fields().indexFromName(fieldStr)
+        destinationEpsg = layerWithDistanceBufferField.crs()
+        totalFeat = layerWithDistanceBufferField.featureCount()
+        stepSize = 100 / totalFeat if totalFeat else 0
+        for current, feat in enumerate(layerWithDistanceBufferField.getFeatures()):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                return
+            geom = feat.geometry()
+            centroid = geom.centroid().asPoint()
+            originEpsg = geometryHandler.getSirgasAuthIdByPointLatLong(
+                centroid.y(), centroid.x()
+            )
+            distanceProj = geometryHandler.convertDistance(
+                distance, originEpsg, destinationEpsg
+            )
+            dp.changeAttributeValues({feat.id(): {fieldIdx: distanceProj}})
+            multiStepFeedback.setProgress(current * stepSize)
+        layerWithDistanceBufferField.endEditCommand()
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=layerWithDistanceBufferField,
+            context=context,
+            is_child_algorithm=True,
+        )
+        return layerWithDistanceBufferField
 
-        for field in lyr.fields():
-            if field.name() in values["layerField"]:
-                if isinstance(values["color"], (list, tuple)):
-                    self.conditionalStyle.setBackgroundColor(
-                        QColor(
-                            values["color"][0], values["color"][1], values["color"][2]
-                        )
-                    )
-                else:
-                    self.conditionalStyle.setBackgroundColor(QColor(values["color"]))
-
-                lyr.conditionalStyles().setFieldStyles(
-                    field.name(), [self.conditionalStyle]
-                )
-
-    def logResult(self, attrRulesMap, feedback):
+    def addCloseFeaturesToSink(self, layers, tempLayersDict, context, feedback):
         """
-        Creates a statistics text log from each layer and your
-        respectively wrong attribute.
-        :param attrRulesMap: (dict) dictionary with conditional rules;
-        :param feedback: (QgsProcessingFeedback) QGIS progress tracking
-                         component.
+        Adds close features from layerB to the sink layer based on the buffered layerA's proximity.
+        :param layers: (list) A list containing the names of the buffered layer (layerBuffredString), original layer A (layerApre), original layer B (layerBpre), and the distance.
+        :param tempLayersDict: (dict) A dictionary containing the temporary layers used in the process.
         """
-        feedback.pushInfo("{0} {1} {0}\n".format("===" * 5, self.tr("LOG START")))
-
-        for ruleParam in attrRulesMap.values():
-            if len(ruleParam["features"]) > 0:
-                row = self.tr("[RULE]") + ": {0} - {1}\n{2}: {3} {4}\n".format(
-                    ruleParam["layerField"][1],
-                    ruleParam["errorType"],
-                    ruleParam["layerField"][0],
-                    len(ruleParam["features"]),
-                    self.tr("features")
-                    if len(ruleParam["features"]) > 1
-                    else self.tr("feature"),
-                )
-                feedback.pushInfo(row)
-            else:
-                pass
-
-        feedback.pushInfo("{0} {1} {0}\n".format("===" * 5, self.tr("LOG END")))
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        layerBuffredString, layerApre, layerBpre, distance = layers
+        feedbackTxt = f"Verifying {layerApre} x {layerBpre}"
+        multiStepFeedback.setProgressText(feedbackTxt)
+        layerAbuffered = tempLayersDict[layerBuffredString]
+        layerA = tempLayersDict[layerApre]
+        layerB = tempLayersDict[layerBpre]
+        multiStepFeedback.setCurrentStep(0)
+        joinedLayer = self.algRunner.runJoinAttributesByLocation(
+            inputLyr=layerAbuffered,
+            joinLyr=layerB,
+            context=context,
+            predicateList=[0],
+            feedback=multiStepFeedback,
+        )
+        multiStepFeedback.setCurrentStep(1)
+        wkbSet = set()
+        featsId = []
+        totalFeat = joinedLayer.featureCount()
+        stepSize = 100 / totalFeat if totalFeat else 0
+        for current, feat in enumerate(joinedLayer.getFeatures()):
+            featIdSet = {feat["feat_id"], feat["feat_id_2"]}
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                return
+            if layerApre == layerBpre and (
+                feat["feat_id"] == feat["feat_id_2"] or featIdSet in featsId
+            ):
+                continue
+            featsId.append(featIdSet)
+            expression = QgsExpression(f'"feat_id"={feat["feat_id"]}')
+            request = QgsFeatureRequest(expression)
+            featA = next(layerA.getFeatures(request))
+            pointA = featA.geometry().asPoint()
+            expression = QgsExpression(f'"feat_id"={feat["feat_id_2"]}')
+            request = QgsFeatureRequest(expression)
+            featB = next(layerB.getFeatures(request))
+            pointB = featB.geometry().asPoint()
+            geom = QgsGeometry().fromPolylineXY([pointA, pointB])
+            if geom.asWkb() in wkbSet:
+                continue
+            wkbSet.add(geom)
+            flagText = f"distance smaller than {distance}"
+            self.flagFeature(geom, flagText)
+            multiStepFeedback.setProgress(current * stepSize)
 
     def name(self):
         """
@@ -402,7 +335,9 @@ class ParameterDistanceBetweenLayersType(QgsProcessingParameterType):
         }
 
     def name(self):
-        return QCoreApplication.translate("Processing", self.tr("Distance Between Layers"))
+        return QCoreApplication.translate(
+            "Processing", self.tr("Distance Between Layers")
+        )
 
     def id(self):
         return "distance_between_layers"
@@ -410,7 +345,9 @@ class ParameterDistanceBetweenLayersType(QgsProcessingParameterType):
     def description(self):
         return QCoreApplication.translate(
             "Processing",
-            self.tr("Check minimum acceptable distance between features of chosen layers."),
+            self.tr(
+                "Check minimum acceptable distance between features of chosen layers."
+            ),
         )
 
 

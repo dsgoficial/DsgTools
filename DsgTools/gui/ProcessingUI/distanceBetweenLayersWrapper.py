@@ -20,15 +20,12 @@
  ***************************************************************************/
 """
 
-from functools import partial
 
 from qgis.core import Qgis, QgsProject, QgsVectorLayer, QgsMapLayerProxyModel
-from qgis.gui import QgsMessageBar, QgsMapLayerComboBox, QgsFieldExpressionWidget
-from qgis.PyQt.QtCore import QSize, QRegExp
-from qgis.PyQt.QtGui import QRegExpValidator
+from qgis.gui import QgsMessageBar, QgsMapLayerComboBox
+from qgis.PyQt.QtCore import QSize
 from qgis.PyQt.QtWidgets import (
     QWidget,
-    QComboBox,
     QLineEdit,
     QDoubleSpinBox,
     QVBoxLayout,
@@ -41,10 +38,6 @@ from processing.gui.wrappers import (
     DIALOG_BATCH,
 )
 
-from DsgTools.core.GeometricTools.spatialRelationsHandler import (
-    SpatialRule,
-    SpatialRelationsHandler,
-)
 from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedTableWidget import (
     OrderedTableWidget,
 )
@@ -92,7 +85,8 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
         :return: (QDoubleSpinBox) double spin box widget for float input.
         """
         sb = QDoubleSpinBox()
-        sb.setDecimals(10)
+        sb.setDecimals(6)
+        sb.setMaximum(999999)
         return sb
 
     def standardPanel(self):
@@ -102,7 +96,6 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
         """
         widget = QWidget()
         layout = QVBoxLayout()
-        # added as an attribute in order to make it easier to be read
         widget.otw = OrderedTableWidget(
             headerMap={
                 self.layerAIndex: {
@@ -148,7 +141,6 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
         """
         widget = QWidget()
         layout = QVBoxLayout()
-        # added as an attribute in order to make it easier to be read
         widget.otw = OrderedTableWidget(
             headerMap={
                 self.layerAIndex: {
@@ -246,10 +238,6 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
         isNotModeler = self.dialogType != DIALOG_MODELER
         invalids = list()
         for valueMap in value:
-            # GUI was crashing when passing Spatialrow straight up
-            # we want to check whether the layer is loaded as this does not
-            # work properly with the map layer combobox. on the modeler it
-            # won't matter as it is a line edit
             if not (
                 self.validateLayerName(valueMap["layerA"], checkLoaded=isNotModeler)
                 and self.validateLayerName(valueMap["layerB"], checkLoaded=isNotModeler)
@@ -296,8 +284,7 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
         Checks whether a provided layer name is a valid setting. This method
         may take its availability on canvas into consideration, if necessary.
         :param layer: (str) layer name to be checked.
-        :param checkLoaded: (bool) whether canvas availability should be
-                            considered.
+        :param checkLoaded: (bool) whether canvas availability should be considered.
         :return: (bool) provided layer name's validity.
         """
         isLoaded = False
@@ -318,8 +305,7 @@ class DistanceBetweenLayersWrapper(WidgetWrapper):
     def validate(self, pushAlert=False):
         """
         Validates fields. Returns True if all information are filled correctly.
-        :param pushAlert: (bool) whether invalidation reason should be
-                          displayed on the widget.
+        :param pushAlert: (bool) whether invalidation reason should be displayed on the widget.
         :return: (bool) whether set of filled parameters if valid.
         """
         inputMap = {
