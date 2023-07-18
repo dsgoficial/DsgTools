@@ -9,6 +9,7 @@ Novas Funcionalidades:
 - Novo processo de identificar linhas cruzando outra camada (exemplo: trecho de drenagem e barragem);
 - Novo processo de consertar o direcionamento de rios (funcionamento diferente do direcionamento que existia: mudado o comportamento para não levar em consideração os ângulos de digitalização);
 - Nova ferramenta para indicar tamanho da feição durante aquisição
+- Novo processo para verificar feições próximas
 
 Melhorias:
 

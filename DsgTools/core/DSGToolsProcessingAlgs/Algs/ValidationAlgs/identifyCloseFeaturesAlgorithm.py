@@ -335,9 +335,7 @@ class ParameterDistanceBetweenLayersType(QgsProcessingParameterType):
         }
 
     def name(self):
-        return QCoreApplication.translate(
-            "Processing", self.tr("Distance Between Layers")
-        )
+        return QCoreApplication.translate("Processing", "Distance Between Layers")
 
     def id(self):
         return "distance_between_layers"
@@ -345,9 +343,7 @@ class ParameterDistanceBetweenLayersType(QgsProcessingParameterType):
     def description(self):
         return QCoreApplication.translate(
             "Processing",
-            self.tr(
-                "Check minimum acceptable distance between features of chosen layers."
-            ),
+            "Check minimum acceptable distance between features of chosen layers.",
         )
 
 
