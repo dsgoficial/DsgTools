@@ -167,6 +167,9 @@ class SnapHierarchyWrapper(WidgetWrapper):
 
     def createWidget(self):
         self.panel = self.createPanel()
+        self.panel.showSaveLoadButtons(True)
+        self.panel.extension = ".json"
+        self.panel.fileType = self.tr("JSON file")
         # self.panel.dialogType = self.dialogType
         return self.panel
 
