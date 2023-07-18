@@ -25,9 +25,18 @@
 
 
 from PyQt5.QtWidgets import QToolTip
-from qgis.core import (QgsCoordinateTransformContext, QgsDistanceArea,
-                       QgsGeometry, QgsProject, QgsUnitTypes, QgsVectorLayer,
-                       QgsWkbTypes)
+from DsgTools.gui.ProductionTools.MapTools.FreeHandTool.models.acquisitionFree import (
+    AcquisitionFree,
+)
+from qgis.core import (
+    QgsCoordinateTransformContext,
+    QgsDistanceArea,
+    QgsGeometry,
+    QgsProject,
+    QgsUnitTypes,
+    QgsVectorLayer,
+    QgsWkbTypes,
+)
 from qgis.gui import QgisInterface, QgsMapToolDigitizeFeature
 from qgis.PyQt.QtCore import QEvent, QObject, QRect, Qt
 from qgis.PyQt.QtWidgets import QPushButton
@@ -80,6 +89,7 @@ class MeasureTool(QObject):
 
     def activateFilterMapTool(self, mapTool):
         state = isinstance(mapTool, QgsMapToolDigitizeFeature)
+        self.isFreeHand = isinstance(mapTool, AcquisitionFree)
         self.activateFilter(state)
 
     def setToolEnabled(self):
@@ -94,12 +104,13 @@ class MeasureTool(QObject):
             enabled = True
         if not enabled:
             self.closeAndRemoveEventFilter()
-            self.toolAction.setChecked(False)
         self.toolAction.setEnabled(enabled)
         return enabled
 
     def activateFilter(self, state: bool):
-        if state:
+        if self.isFreeHand:
+            return
+        elif state:
             self.eventFilter = EventFilter(self.iface, self.pointList)
             self.canvas.viewport().setMouseTracking(True)
             self.canvas.viewport().installEventFilter(self.eventFilter)
@@ -113,6 +124,7 @@ class MeasureTool(QObject):
         self.setToolEnabled()
 
     def closeAndRemoveEventFilter(self):
+        self.toolAction.setChecked(False)
         if self.eventFilter is None:
             return
         self.eventFilter.close()
@@ -126,6 +138,7 @@ class MeasureTool(QObject):
 
     def unload(self):
         self.closeAndRemoveEventFilter()
+
 
 class PointList(list):
     def __init__(self):
@@ -153,6 +166,7 @@ class PointList(list):
     def removeLastPoint(self):
         if len(self) > 1:
             del self[1]
+
 
 class EventFilter(QObject):
     def __init__(self, iface: QgisInterface, pointList: PointList):
