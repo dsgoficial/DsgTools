@@ -121,14 +121,14 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber(
                 self.XSUBDIVISIONS,
                 self.tr("Number of subdivisions on x-axis"),
-                defaultValue=3,
+                defaultValue=1,
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.YSUBDIVISIONS,
                 self.tr("Number of subdivisions on y-axis"),
-                defaultValue=3,
+                defaultValue=1,
                 minValue=0,
                 type=QgsProcessingParameterNumber.Integer,
             )
