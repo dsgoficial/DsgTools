@@ -1419,6 +1419,10 @@ class LayerHandler(QObject):
 
     def checkGeomIsValid(self, geom, ignoreClosed, feedback=None):
         flagDict = dict()
+        if geom is None or geom.isNull() or geom.isEmpty():
+            return {
+                ""
+            }
         for validate_type, method_parameter in {
             "GEOS": Qgis.GeometryValidationEngine.Geos,
             "QGIS": Qgis.GeometryValidationEngine.QgisInternal,
@@ -1495,7 +1499,7 @@ class LayerHandler(QObject):
             if error.hasWhere():
                 errorPointXY = error.where()
                 flagGeom = QgsGeometry.fromPointXY(errorPointXY)
-                if np.isinf(tuple(errorPointXY)).any() or np.isnan(tuple(errorPointXY)).any():
+                if not (geom is None or geom.isNull() or geom.isEmpty()) and np.isinf(tuple(errorPointXY)).any() or np.isnan(tuple(errorPointXY)).any():
                     flagGeom = find_nan_or_inf_vertex_neighbor(geom)
                 if (
                     geom.type() == QgsWkbTypes.LineGeometry

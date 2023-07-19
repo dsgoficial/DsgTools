@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.9.2 - dev
+## 4.9.3 - dev
 
 Novas Funcionalidades:
 
@@ -28,7 +28,8 @@ Correção de bug:
 - Correção de bug no processo de construir polígonos por linha e centroides (Build Polygons From Center Points and Boundary): com a otimização da versão anterior, o algoritmo estava excluindo as linhas da moldura;
 - Correção de bug na ferramenta de trocar a direção da linha (flip) que não funcionava com feição não salva;
 - Corrige crash no QGIS 3.32 quando se usa o merge features em um memory layer criado pela ferramenta de copiar feições para camada temporária;
-- Correção de bug na ferramenta de aquisição à mão livre que não era ativada ao clicar ou desconectada ao mudar de ferramenta de aquisição
+- Correção de bug na ferramenta de aquisição à mão livre que não era ativada ao clicar ou desconectada ao mudar de ferramenta de aquisição;
+- Correção de bug na ferramenta de identificação de geometrias inválidas (caso de geometria nula);
 
 ## 4.8.0 - 2023-06-14
 
