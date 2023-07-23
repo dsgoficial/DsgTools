@@ -28,8 +28,8 @@ from qgis.core import (
     QgsWkbTypes,
     QgsGeometry,
     QgsVectorLayer,
-    QgsProcessingException,
-    QgsExpression,
+    QgsProcessingUtils,
+    QgsProcessingContext,
     QgsProject,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSink,
@@ -86,6 +86,16 @@ class IdentifySmallObjectsOnLayersAlgorithm(ValidationAlgorithm):
         """
         return parameters[name]
 
+    def layerFromProject(self, layerName):
+        """
+        Retrieves map layer from its name, considering project context.
+        :param layerName: (str) target layer's name.
+        :return: (QgsMapLayer) layer object.
+        """
+        ctx = QgsProcessingContext()
+        ctx.setProject(QgsProject.instance())
+        return QgsProcessingUtils.mapLayerFromString(layerName, ctx)
+
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
@@ -116,13 +126,13 @@ class IdentifySmallObjectsOnLayersAlgorithm(ValidationAlgorithm):
             self.POLYGON_FLAGS,
         )
         func_dict = {
-            QgsWkbTypes.LineString: lambda x: algRunner.runIdentifySmallLines(
+            QgsWkbTypes.LineGeometry: lambda x: algRunner.runIdentifySmallLines(
                 inputLyr=x[0],
                 tol=x[1],
                 context=context,
                 feedback=x[2],
             ),
-            QgsWkbTypes.Polygon: lambda x: algRunner.runIdentifySmallPolygons(
+            QgsWkbTypes.PolygonGeometry: lambda x: algRunner.runIdentifySmallPolygons(
                 inputLyr=x[0],
                 tol=x[1],
                 context=context,
@@ -134,14 +144,15 @@ class IdentifySmallObjectsOnLayersAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         for currentStep, item in enumerate(smallObjectsStructure):
             multiStepFeedback.setCurrentStep(currentStep)
-            outputLyr = func_dict[item["layer"].geometryType()](
-                [item["layer"], item["tol"], multiStepFeedback]
+            layer = self.layerFromProject(item["layer"])
+            outputLyr = func_dict[layer.geometryType()](
+                [layer, item["tol"], multiStepFeedback]
             )
-            outputDict[item["layer"].geometryType()].append(outputLyr)
+            outputDict[layer.geometryType()].append(outputLyr)
 
         flagLambdaDict = {
-            QgsWkbTypes.LineString: lambda x: self.lineFlagSink.addFeature(x),
-            QgsWkbTypes.Polygon: lambda x: self.polygonFlagSink.addFeature(x),
+            QgsWkbTypes.LineGeometry: lambda x: self.lineFlagSink.addFeature(x),
+            QgsWkbTypes.PolygonGeometry: lambda x: self.polygonFlagSink.addFeature(x),
         }
         for currentStep, (wkbType, featList) in enumerate(
             outputDict.items(), start=currentStep + 1
