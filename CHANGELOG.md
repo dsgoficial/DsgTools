@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.9.3 - dev
+## 4.9.4 - dev
 
 Novas Funcionalidades:
 
@@ -10,6 +10,7 @@ Novas Funcionalidades:
 - Novo processo de consertar o direcionamento de rios (funcionamento diferente do direcionamento que existia: mudado o comportamento para não levar em consideração os ângulos de digitalização);
 - Nova ferramenta para indicar tamanho da feição durante aquisição;
 - Novo processo para verificar feições próximas;
+- Novo processo para identificar objetos pequenos (identifica pequenas linhas e pequenas áreas ao mesmo tempo);
 
 Melhorias:
 

@@ -97,6 +97,11 @@ class IdentifySmallLinesAlgorithm(ValidationAlgorithm):
         featureList, total = self.getIteratorAndFeatureCount(
             inputLyr, onlySelected=onlySelected
         )
+        pkIdxList = inputLyr.primaryKeyAttributes()
+        pkIdx = pkIdxList[0] if len(pkIdxList) > 0 else None
+
+        def get_featid(feat):
+            return feat[pkIdx] if pkIdx is not None else feat.id()
 
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
@@ -104,8 +109,10 @@ class IdentifySmallLinesAlgorithm(ValidationAlgorithm):
                 break
             if feat.geometry().length() < tol:
                 flagText = self.tr(
-                    "Feature from layer {0} with id={1} has length of value {2:.2f}, which is lesser than the tolerance of {3} units."
-                ).format(inputLyr.name(), feat.id(), feat.geometry().length(), tol)
+                    "Feature from layer {0} with id={1} has length of value {2:.10f}, which is lesser than the tolerance of {3} units."
+                ).format(
+                    inputLyr.name(), get_featid(feat), feat.geometry().length(), tol
+                )
                 self.flagFeature(feat.geometry(), flagText)
             # Update the progress bar
             feedback.setProgress(int(current * total))

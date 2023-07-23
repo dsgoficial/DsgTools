@@ -24,9 +24,14 @@ import uuid
 from typing import List, Optional
 
 import processing
-from qgis.core import (Qgis, QgsProcessingContext,
-                       QgsProcessingFeatureSourceDefinition,
-                       QgsProcessingUtils, QgsVectorLayer, QgsFeedback)
+from qgis.core import (
+    Qgis,
+    QgsProcessingContext,
+    QgsProcessingFeatureSourceDefinition,
+    QgsProcessingUtils,
+    QgsVectorLayer,
+    QgsFeedback,
+)
 
 
 class AlgRunner:
@@ -1701,7 +1706,7 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["FLAGS"]
-    
+
     def runIdentifyDrainageFlowIssues(
         self,
         inputLyr: QgsVectorLayer,
@@ -1720,5 +1725,23 @@ class AlgRunner:
             context=context,
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
+        )
+        return output["FLAGS"]
+
+    def runIdentifySmallLines(
+        self, inputLyr, tol, context, feedback=None, flagLyr=None, onlySelected=False
+    ):
+        flagLyr = "memory:" if flagLyr is None else flagLyr
+        parameters = {
+            "INPUT": inputLyr,
+            "TOLERANCE": tol,
+            "SELECTED": onlySelected,
+            "FLAGS": flagLyr,
+        }
+        output = processing.run(
+            "dsgtools:identifysmalllines",
+            parameters,
+            context=context,
+            feedback=feedback,
         )
         return output["FLAGS"]

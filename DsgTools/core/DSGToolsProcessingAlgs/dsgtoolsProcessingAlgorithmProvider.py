@@ -21,6 +21,9 @@
  ***************************************************************************/
 """
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallObjectsOnLayersAlgorithm import (
+    IdentifySmallObjectsOnLayersAlgorithm,
+)
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -589,6 +592,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             FixDrainageFlowAlgorithm(),
             LoadThemesAlgorithm(),
             IdentifyCloseFeaturesAlgorithm(),
+            IdentifySmallObjectsOnLayersAlgorithm(),
         ]
         return algList
 
