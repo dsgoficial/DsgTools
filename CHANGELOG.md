@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.9.4 - dev
+## 4.9.5 - dev
 
 Novas Funcionalidades:
 
@@ -32,6 +32,7 @@ Correção de bug:
 - Corrige crash no QGIS 3.32 quando se usa o merge features em um memory layer criado pela ferramenta de copiar feições para camada temporária;
 - Correção de bug na ferramenta de aquisição à mão livre que não era ativada ao clicar ou desconectada ao mudar de ferramenta de aquisição;
 - Correção de bug na ferramenta de identificação de geometrias inválidas (caso de geometria nula);
+- Correção de bug na ferramenta de identificação de feições próximas (medida inválida, melhoria do texto da flag);
 
 ## 4.8.0 - 2023-06-14
 

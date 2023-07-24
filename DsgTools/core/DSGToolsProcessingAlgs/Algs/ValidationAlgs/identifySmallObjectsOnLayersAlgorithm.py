@@ -86,16 +86,6 @@ class IdentifySmallObjectsOnLayersAlgorithm(ValidationAlgorithm):
         """
         return parameters[name]
 
-    def layerFromProject(self, layerName):
-        """
-        Retrieves map layer from its name, considering project context.
-        :param layerName: (str) target layer's name.
-        :return: (QgsMapLayer) layer object.
-        """
-        ctx = QgsProcessingContext()
-        ctx.setProject(QgsProject.instance())
-        return QgsProcessingUtils.mapLayerFromString(layerName, ctx)
-
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
@@ -144,7 +134,7 @@ class IdentifySmallObjectsOnLayersAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         for currentStep, item in enumerate(smallObjectsStructure):
             multiStepFeedback.setCurrentStep(currentStep)
-            layer = self.layerFromProject(item["layer"])
+            layer = self.getLayerFromProject(item["layer"])
             outputLyr = func_dict[layer.geometryType()](
                 [layer, item["tol"], multiStepFeedback]
             )

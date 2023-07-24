@@ -133,9 +133,9 @@ class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
         :param distance: (float) The buffer distance in meters.
         :param tempLayersDict: (dict) A dictionary containing temporary layers.
         """
-        layerBuffredString = layerPre + "_buffered_" + str(distance)
-        if layerBuffredString in tempLayersDict:
-            return layerBuffredString
+        layerBufferedString = layerPre + "_buffered_" + str(distance)
+        if layerBufferedString in tempLayersDict:
+            return layerBufferedString
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
         multiStepFeedback.setCurrentStep(0)
         if not layerPre in tempLayersDict:
@@ -143,24 +143,22 @@ class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
                 layerPre, tempLayersDict, context, multiStepFeedback
             )
         multiStepFeedback.setCurrentStep(1)
-        getLayer = tempLayersDict[layerPre]
-        fieldStr = "distance_buffer"
-        layer = self.createLayerWithDistanceBufferField(
-            getLayer, distance, fieldStr, context, multiStepFeedback
-        )
-        multiStepFeedback.setCurrentStep(2)
         layerBuffered = self.algRunner.runBuffer(
-            inputLayer=layer,
-            distance=QgsProperty.fromExpression(f"{fieldStr}"),
+            inputLayer=tempLayersDict[layerPre],
+            distance=distance,
             context=context,
             is_child_algorithm=True,
         )
+        multiStepFeedback.setCurrentStep(2)
+        singlePart = self.algRunner.runMultipartToSingleParts(
+            inputLayer=layerBuffered, context=context, feedback=multiStepFeedback, is_child_algorithm=True
+        )
         multiStepFeedback.setCurrentStep(3)
         self.algRunner.runCreateSpatialIndex(
-            inputLyr=layerBuffered, context=context, is_child_algorithm=True
+            inputLyr=singlePart, context=context, is_child_algorithm=True
         )
-        tempLayersDict[layerBuffredString] = layerBuffered
-        return layerBuffredString
+        tempLayersDict[layerBufferedString] = singlePart
+        return layerBufferedString
 
     def addTempLayerToDict(self, layerPre, tempLayersDict, context, feedback):
         """
@@ -181,49 +179,6 @@ class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
         )
         tempLayersDict[layerPre] = layer
 
-    def createLayerWithDistanceBufferField(
-        self, layer: QgsVectorLayer, distance: float, fieldStr: str, context, feedback
-    ) -> QgsVectorLayer:
-        """
-        Creates a new field with converted distance buffer values in the given layer and returns the resulting layer.
-        :param layer: (QgsVectorLayer) The input layer to add the field.
-        :param distance: (float) The distance value to be added to the field.
-        :param fieldStr: (str) The name of the field to be created.
-        :return: (QgsVectorLayer) The layer with the added field and distance buffer values.
-        """
-        multiStepFeedback = QgsProcessingMultiStepFeedback(1, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        layerWithDistanceBufferField = self.algRunner.runCreateFieldWithExpression(
-            layer, expression="$id", fieldName=fieldStr, context=context
-        )
-        layerWithDistanceBufferField.startEditing()
-        layerWithDistanceBufferField.beginEditCommand("Updating features")
-        dp = layerWithDistanceBufferField.dataProvider()
-        fieldIdx = dp.fields().indexFromName(fieldStr)
-        destinationEpsg = layerWithDistanceBufferField.crs()
-        totalFeat = layerWithDistanceBufferField.featureCount()
-        stepSize = 100 / totalFeat if totalFeat else 0
-        for current, feat in enumerate(layerWithDistanceBufferField.getFeatures()):
-            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
-                return
-            geom = feat.geometry()
-            centroid = geom.centroid().asPoint()
-            originEpsg = geometryHandler.getSirgasAuthIdByPointLatLong(
-                centroid.y(), centroid.x()
-            )
-            distanceProj = geometryHandler.convertDistance(
-                distance, originEpsg, destinationEpsg
-            )
-            dp.changeAttributeValues({feat.id(): {fieldIdx: distanceProj}})
-            multiStepFeedback.setProgress(current * stepSize)
-        layerWithDistanceBufferField.endEditCommand()
-        self.algRunner.runCreateSpatialIndex(
-            inputLyr=layerWithDistanceBufferField,
-            context=context,
-            is_child_algorithm=True,
-        )
-        return layerWithDistanceBufferField
-
     def addCloseFeaturesToSink(self, layers, tempLayersDict, context, feedback):
         """
         Adds close features from layerB to the sink layer based on the buffered layerA's proximity.
@@ -236,7 +191,13 @@ class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setProgressText(feedbackTxt)
         layerAbuffered = tempLayersDict[layerBuffredString]
         layerA = tempLayersDict[layerApre]
+        lyrAPkFieldNames = self.getLayerPrimaryKeyAttributeNames(layerApre)
+        lyrAPkFieldName = "feat_id" if lyrAPkFieldNames is None else lyrAPkFieldNames[0]
+        idAText = self.tr(f"with feature id") if lyrAPkFieldName == "feat_id" else self.tr(f"with {lyrAPkFieldName}")
         layerB = tempLayersDict[layerBpre]
+        lyrBPkFieldNames = self.getLayerPrimaryKeyAttributeNames(layerBpre)
+        lyrBPkFieldName = "feat_id" if lyrBPkFieldNames is None else lyrBPkFieldNames[0]
+        idBText = self.tr(f"with feature id") if lyrBPkFieldName == "feat_id" else self.tr(f"with {lyrBPkFieldName}")
         multiStepFeedback.setCurrentStep(0)
         joinedLayer = self.algRunner.runJoinAttributesByLocation(
             inputLyr=layerAbuffered,
@@ -271,7 +232,7 @@ class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
             if geom.asWkb() in wkbSet:
                 continue
             wkbSet.add(geom)
-            flagText = f"distance smaller than {distance}"
+            flagText = self.tr(f"Feature from layer {layerApre} with {idAText}={featA[lyrAPkFieldName]} has distance smaller than {distance} from feature from layer {layerBpre} with {idBText}={featB[lyrAPkFieldName]}")
             self.flagFeature(geom, flagText)
             multiStepFeedback.setProgress(current * stepSize)
 
