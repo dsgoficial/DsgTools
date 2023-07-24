@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.9.5 - dev
+## 4.9.6 - dev
 
 Novas Funcionalidades:
 
@@ -22,6 +22,7 @@ Melhorias:
 - Adicionado ao processo de identificar geometrias inválidas a correção de vértices com coordenadas infinitas ou nulas;
 - O processo de criar camada temporária agora carrega a camada com a contagem de elementos ativada;
 - Alterado o default do número de pontos na criação da moldura, de 12 para 4 (o algoritmo continua com a opção de densificar mais, caso o usuário queira);
+- Alterados os inputs da ferramenta de extração de pontos cotados;
 
 Correção de bug:
 

@@ -25,38 +25,29 @@ import math
 from typing import Dict, List, Tuple, Union
 from uuid import uuid4
 import numpy as np
-import json
-from itertools import chain, islice
+from itertools import islice
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools import geometryHandler, rasterHandler
 from DsgTools.core.GeometricTools.affine import Affine
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
-import processing
-from osgeo import gdal, ogr
 from PyQt5.QtCore import QCoreApplication, QVariant, QByteArray
 from qgis.core import (
     QgsFeature,
     QgsFeatureSink,
     QgsField,
     QgsFields,
-    QgsGeometry,
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterFeatureSource,
     QgsProcessingParameterNumber,
-    QgsProcessingParameterRasterDestination,
     QgsProcessingParameterRasterLayer,
     QgsProcessingUtils,
-    QgsProject,
     QgsVectorLayer,
     QgsWkbTypes,
-    QgsProcessingParameterFileDestination,
-    QgsVectorFileWriter,
     QgsProcessingParameterEnum,
-    QgsSpatialIndex,
     QgsCoordinateReferenceSystem,
     QgsRasterLayer,
     QgsProcessingContext,
@@ -177,7 +168,6 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 self.WATER_BODIES,
                 self.tr("Water Bodies"),
                 [QgsProcessing.TypeVectorPolygon],
-                optional=True,
             )
         )
 
@@ -186,7 +176,6 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 self.AREA_WITHOUT_INFORMATION_POLYGONS,
                 self.tr("Area without information layer"),
                 [QgsProcessing.TypeVectorPolygon],
-                optional=True,
             )
         )
 
@@ -195,7 +184,6 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 self.DRAINAGE_LINES_WITH_NAME,
                 self.tr("Drainage lines with name"),
                 [QgsProcessing.TypeVectorLine],
-                optional=True,
             )
         )
 
@@ -204,7 +192,6 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 self.DRAINAGE_LINES_WITHOUT_NAME,
                 self.tr("Drainage lines without name"),
                 [QgsProcessing.TypeVectorLine],
-                optional=True,
             )
         )
 
@@ -213,7 +200,6 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 self.MAIN_ROADS,
                 self.tr("Main Roads"),
                 [QgsProcessing.TypeVectorLine],
-                optional=True,
             )
         )
 
@@ -222,7 +208,6 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 self.OTHER_ROADS,
                 self.tr("Other Roads"),
                 [QgsProcessing.TypeVectorLine],
-                optional=True,
             )
         )
 
