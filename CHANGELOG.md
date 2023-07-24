@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.9.6 - dev
+## 4.9.7 - dev
 
 Novas Funcionalidades:
 
@@ -12,6 +12,7 @@ Novas Funcionalidades:
 - Nova ferramenta para indicar tamanho da feição durante aquisição;
 - Novo processo para verificar feições próximas;
 - Novo processo para identificar objetos pequenos (identifica pequenas linhas e pequenas áreas ao mesmo tempo);
+- Novo processo de adicionar feições a uma camada (AppendFeaturesToLayerAlgorithm);
 
 Melhorias:
 
