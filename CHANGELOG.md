@@ -8,6 +8,7 @@ Novas Funcionalidades:
 - Novo processo de identificar linhas entrelaçadas;
 - Novo processo de identificar linhas cruzando outra camada (exemplo: trecho de drenagem e barragem);
 - Novo processo de consertar o direcionamento de rios (funcionamento diferente do direcionamento que existia: mudado o comportamento para não levar em consideração os ângulos de digitalização);
+- Novo processo de carregar temas;
 - Nova ferramenta para indicar tamanho da feição durante aquisição;
 - Novo processo para verificar feições próximas;
 - Novo processo para identificar objetos pequenos (identifica pequenas linhas e pequenas áreas ao mesmo tempo);
@@ -42,6 +43,8 @@ Novas Funcionalidades:
 - Nova ferramenta de extrair centróides a partir de linhas e polígono digitalizado na tela (Center Point Tool);
 - Novo processo de extrair elevação de MDS utilizando geometria da camada de entrada e gravar em campo de elevação;
 - Novo processo de carregar camada PostGIS Raster;
+- Novo processo de carregar tracks para o banco;
+- Novo processo de validar tracks;
 
 Melhorias:
 
