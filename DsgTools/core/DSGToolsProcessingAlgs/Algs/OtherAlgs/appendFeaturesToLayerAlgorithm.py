@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2018-08-13
+        begin                : 2023-07-24
         git sha              : $Format:%H$
         copyright            : (C) 2018 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
@@ -23,33 +23,23 @@
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
     ValidationAlgorithm,
 )
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 from PyQt5.QtCore import QCoreApplication
-import processing
 from qgis.core import (
     QgsProcessing,
-    QgsFeatureSink,
-    QgsProcessingAlgorithm,
     QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterFeatureSink,
-    QgsFeature,
-    QgsDataSourceUri,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
-    QgsProcessingParameterField,
-    QgsProcessingParameterBoolean,
     QgsWkbTypes,
-    QgsProcessingUtils,
-    QgsProject,
+    QgsVectorLayerUtils,
+    QgsProcessingException,
 )
 
 
-class UpdateOriginalLayerAlgorithm(ValidationAlgorithm):
-    ORIGINALLAYER = "ORIGINALLAYER"
-    PROCESSOUTPUTLAYER = "PROCESSOUTPUTLAYER"
-    CONTROLID = "CONTROLID"
-    KEEPFEATURES = "KEEPFEATURES"
+class AppendFeaturesToLayerAlgorithm(ValidationAlgorithm):
+    DESTINATION_LAYER = "DESTINATION_LAYER"
+    LAYER_WITH_FEATURES_TO_APPEND = "LAYER_WITH_FEATURES_TO_APPEND"
 
     def initAlgorithm(self, config):
         """
@@ -57,67 +47,73 @@ class UpdateOriginalLayerAlgorithm(ValidationAlgorithm):
         """
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.ORIGINALLAYER,
-                self.tr("Original Layer"),
+                self.DESTINATION_LAYER,
+                self.tr("Destination Layer"),
                 [QgsProcessing.TypeVectorAnyGeometry],
             )
         )
 
         self.addParameter(
-            QgsProcessingParameterField(
-                self.CONTROLID,
-                self.tr("Control ID"),
-                parentLayerParameterName=self.ORIGINALLAYER,
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterVectorLayer(
-                self.PROCESSOUTPUTLAYER,
-                self.tr("Control Layer"),
+            QgsProcessingParameterFeatureSource(
+                self.LAYER_WITH_FEATURES_TO_APPEND,
+                self.tr("Layer with features to append to original layer"),
                 [QgsProcessing.TypeVectorAnyGeometry],
             )
         )
 
-        self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.KEEPFEATURES,
-                self.tr("Keep features from input that are not in update layer"),
-            )
-        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
-        layerHandler = LayerHandler()
-        originalLyr = self.parameterAsVectorLayer(
-            parameters, self.ORIGINALLAYER, context
+        destinationLayer = self.parameterAsVectorLayer(
+            parameters, self.DESTINATION_LAYER, context
         )
-        if originalLyr is None:
+        inputSource = self.parameterAsSource(
+            parameters, self.LAYER_WITH_FEATURES_TO_APPEND, context
+        )
+        geometryHandler = GeometryHandler()
+        if  QgsWkbTypes.geometryType(destinationLayer.wkbType()) != QgsWkbTypes.geometryType(inputSource.wkbType()):
             raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.ORIGINALLAYER)
+                self.tr(
+                    "Geometry type missmatch between inputs. Both original layer and layer with features to append must have same geometry type."
+                )
             )
-
-        processOutputLyr = self.parameterAsVectorLayer(
-            parameters, self.PROCESSOUTPUTLAYER, context
-        )
-        if processOutputLyr is None:
-            raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.PROCESSOUTPUTLAYER)
-            )
-
-        controlId = self.parameterAsFields(parameters, self.CONTROLID, context)
-        keepFeatures = self.parameterAsBool(parameters, self.KEEPFEATURES, context)
-
-        layerHandler.updateOriginalLayer(
-            originalLyr,
-            processOutputLyr,
-            field=str(controlId[0]),
-            feedback=feedback,
-            keepFeatures=keepFeatures,
-        )
-        return {self.ORIGINALLAYER: originalLyr}
+        featCount = inputSource.featureCount()
+        if featCount == 0:
+            return {}
+        stepSize = 100/featCount
+        primaryKeyFieldNames = self.getLayerPrimaryKeyAttributeNames(destinationLayer)
+        destinationLayerNameToIdxMap = {
+            field.name(): idx for idx, field in enumerate(destinationLayer.fields()) if field.name() not in primaryKeyFieldNames
+        }
+        isDestinationMulti = QgsWkbTypes.isMultiType(destinationLayer.wkbType())
+        def get_attr_map(feat):
+            attrMap = dict()
+            for fieldName, fieldValue in feat.attributeMap().items():
+                if fieldName not in destinationLayerNameToIdxMap:
+                    continue
+                attrMap[destinationLayerNameToIdxMap[fieldName]] = fieldValue
+            return attrMap
+            
+        destinationLayer.startEditing()
+        destinationLayer.beginEditCommand(f"Appending features to layer {destinationLayer.name()}")
+        for current, feat in enumerate(inputSource.getFeatures()):
+            if feedback.isCanceled():
+                break
+            if feat.geometry().isNull() or feat.geometry().isEmpty():
+                continue
+            attrMap = get_attr_map(feat)
+            for geom in geometryHandler.handleGeometry(geom=feat.geometry(), parameterDict={"isMulti": isDestinationMulti}):
+                newFeat = QgsVectorLayerUtils.createFeature(
+                    layer=destinationLayer,
+                    geometry=geom,
+                    attributes=attrMap
+                )
+                destinationLayer.addFeature(newFeat)
+            feedback.setProgress(current * stepSize)
+        destinationLayer.endEditCommand()
+        return {}
 
     def name(self):
         """
@@ -127,14 +123,14 @@ class UpdateOriginalLayerAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "updatelayer"
+        return "appendfeaturestolayeralgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Update Layer")
+        return self.tr("Append Features to Layer")
 
     def group(self):
         """
@@ -154,7 +150,7 @@ class UpdateOriginalLayerAlgorithm(ValidationAlgorithm):
         return "DSGTools: Other Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate("UpdateOriginalLayerAlgorithm", string)
+        return QCoreApplication.translate("AppendFeaturesToLayerAlgorithm", string)
 
     def createInstance(self):
-        return UpdateOriginalLayerAlgorithm()
+        return AppendFeaturesToLayerAlgorithm()

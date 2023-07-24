@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.appendFeaturesToLayerAlgorithm import AppendFeaturesToLayerAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallObjectsOnLayersAlgorithm import (
     IdentifySmallObjectsOnLayersAlgorithm,
 )
@@ -197,9 +198,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.stringCsvToFirstLayerWi
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.stringCsvToLayerListAlgorithm import (
     StringCsvToLayerListAlgorithm,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateOriginalLayerAlgorithm import (
-    UpdateOriginalLayerAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateRunwayAltitudeAlgorithm import (
     UpdateRunwayAltitudeAlgorithm,
@@ -472,7 +470,6 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyDanglesAlgorithm(),
             IdentifyGapsAlgorithm(),
             DonutHoleExtractorAlgorithm(),
-            UpdateOriginalLayerAlgorithm(),
             TopologicalCleanAlgorithm(),
             TopologicalDouglasPeuckerAreaSimplificationAlgorithm(),
             TopologicalDouglasPeuckerLineSimplificationAlgorithm(),
@@ -593,6 +590,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             LoadThemesAlgorithm(),
             IdentifyCloseFeaturesAlgorithm(),
             IdentifySmallObjectsOnLayersAlgorithm(),
+            AppendFeaturesToLayerAlgorithm(),
         ]
         return algList
 

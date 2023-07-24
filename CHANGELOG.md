@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.9.5 - dev
+## 4.9.7 - dev
 
 Novas Funcionalidades:
 
@@ -12,8 +12,7 @@ Novas Funcionalidades:
 - Nova ferramenta para indicar tamanho da feição durante aquisição;
 - Novo processo para verificar feições próximas;
 - Novo processo para identificar objetos pequenos (identifica pequenas linhas e pequenas áreas ao mesmo tempo);
-- Novo processo de adicionar feições a uma camada;
-- Novo processo de atualizar camada original;
+- Novo processo de adicionar feições a uma camada (AppendFeaturesToLayerAlgorithm);
 
 Melhorias:
 
@@ -24,6 +23,7 @@ Melhorias:
 - Adicionado ao processo de identificar geometrias inválidas a correção de vértices com coordenadas infinitas ou nulas;
 - O processo de criar camada temporária agora carrega a camada com a contagem de elementos ativada;
 - Alterado o default do número de pontos na criação da moldura, de 12 para 4 (o algoritmo continua com a opção de densificar mais, caso o usuário queira);
+- Alterados os inputs da ferramenta de extração de pontos cotados;
 
 Correção de bug:
 
@@ -34,6 +34,7 @@ Correção de bug:
 - Corrige crash no QGIS 3.32 quando se usa o merge features em um memory layer criado pela ferramenta de copiar feições para camada temporária;
 - Correção de bug na ferramenta de aquisição à mão livre que não era ativada ao clicar ou desconectada ao mudar de ferramenta de aquisição;
 - Correção de bug na ferramenta de identificação de geometrias inválidas (caso de geometria nula);
+- Correção de bug na ferramenta de identificação de feições próximas (medida inválida, melhoria do texto da flag);
 
 ## 4.8.0 - 2023-06-14
 
