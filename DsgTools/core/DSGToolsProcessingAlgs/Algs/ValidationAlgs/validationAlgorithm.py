@@ -138,4 +138,5 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
         if pkIdxList == []:
             return None
         attrNames = [f.name() for idx, f in enumerate(lyr.fields()) if idx in pkIdxList]
+
         return attrNames
