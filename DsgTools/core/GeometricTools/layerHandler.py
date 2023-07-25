@@ -3011,6 +3011,7 @@ class LayerHandler(QObject):
         self.algRunner.runCreateSpatialIndex(
             inputLyr=temp, context=context, is_child_algorithm=True
         )
+        return temp
     
     def createMemoryLayerFromGeometry(self, geom, crs):
         temp = QgsVectorLayer(

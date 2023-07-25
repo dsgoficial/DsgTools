@@ -41,7 +41,6 @@ from qgis.core import (
     QgsProcessingAlgorithm,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterNumber,
     QgsProcessingParameterRasterLayer,
     QgsProcessingUtils,
@@ -54,6 +53,7 @@ from qgis.core import (
     QgsFeedback,
     QgsProcessingParameterField,
     QgsVectorLayerUtils,
+    QgsProcessingParameterVectorLayer,
 )
 
 
@@ -82,7 +82,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             )
         )
         self.addParameter(
-            QgsProcessingParameterFeatureSource(
+            QgsProcessingParameterVectorLayer(
                 self.CONTOUR_LINES,
                 self.tr("Contour Lines"),
                 [QgsProcessing.TypeVectorLine],
@@ -109,7 +109,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSource(
+            QgsProcessingParameterVectorLayer(
                 self.GEOGRAPHIC_BOUNDARY,
                 self.tr("Geographic bounds layer"),
                 [QgsProcessing.TypeVectorPolygon],
@@ -164,7 +164,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSource(
+            QgsProcessingParameterVectorLayer(
                 self.WATER_BODIES,
                 self.tr("Water Bodies"),
                 [QgsProcessing.TypeVectorPolygon],
@@ -172,7 +172,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSource(
+            QgsProcessingParameterVectorLayer(
                 self.AREA_WITHOUT_INFORMATION_POLYGONS,
                 self.tr("Area without information layer"),
                 [QgsProcessing.TypeVectorPolygon],
@@ -180,7 +180,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSource(
+            QgsProcessingParameterVectorLayer(
                 self.DRAINAGE_LINES_WITH_NAME,
                 self.tr("Drainage lines with name"),
                 [QgsProcessing.TypeVectorLine],
@@ -188,7 +188,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSource(
+            QgsProcessingParameterVectorLayer(
                 self.DRAINAGE_LINES_WITHOUT_NAME,
                 self.tr("Drainage lines without name"),
                 [QgsProcessing.TypeVectorLine],
@@ -196,7 +196,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSource(
+            QgsProcessingParameterVectorLayer(
                 self.MAIN_ROADS,
                 self.tr("Main Roads"),
                 [QgsProcessing.TypeVectorLine],
@@ -204,7 +204,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSource(
+            QgsProcessingParameterVectorLayer(
                 self.OTHER_ROADS,
                 self.tr("Other Roads"),
                 [QgsProcessing.TypeVectorLine],
@@ -217,14 +217,14 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
 
     def processAlgorithm(self, parameters, context, feedback):
         inputRaster = self.parameterAsRasterLayer(parameters, self.INPUT_DEM, context)
-        contourLyr = self.parameterAsSource(parameters, self.CONTOUR_LINES, context)
+        contourLyr = self.parameterAsVectorLayer(parameters, self.CONTOUR_LINES, context)
         heightFieldName = self.parameterAsFields(
             parameters, self.CONTOUR_ATTR, context
         )[0]
         contourHeightInterval = self.parameterAsDouble(
             parameters, self.CONTOUR_INTERVAL, context
         )
-        geoBoundsSource = self.parameterAsSource(
+        geoBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
         geographicBoundaryLyr = self.parameterAsLayer(
@@ -280,9 +280,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             inputRaster.crs(),
         )
         layerHandler = LayerHandler()
-        nFeats = geoBoundsSource.featureCount()
+        nFeats = geoBoundsLyr.featureCount()
         multiStepFeedback = QgsProcessingMultiStepFeedback(nFeats, feedback)
-        for currentStep, feat in enumerate(geoBoundsSource.getFeatures()):
+        for currentStep, feat in enumerate(geoBoundsLyr.getFeatures()):
             if multiStepFeedback.isCanceled():
                 break
             multiStepFeedback.setCurrentStep(currentStep)

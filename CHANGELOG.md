@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.9.7 - dev
+## 4.9.8 - dev
 
 Novas Funcionalidades:
 
@@ -35,6 +35,7 @@ Correção de bug:
 - Correção de bug na ferramenta de aquisição à mão livre que não era ativada ao clicar ou desconectada ao mudar de ferramenta de aquisição;
 - Correção de bug na ferramenta de identificação de geometrias inválidas (caso de geometria nula);
 - Correção de bug na ferramenta de identificação de feições próximas (medida inválida, melhoria do texto da flag);
+- Correção de bug no processo de extrair pontos cotados;
 
 ## 4.8.0 - 2023-06-14
 
