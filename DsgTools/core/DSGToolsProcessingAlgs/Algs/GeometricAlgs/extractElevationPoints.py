@@ -296,25 +296,21 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 contourHeightInterval=contourHeightInterval,
                 inputRaster=inputRaster,
                 geographicBoundsLyr=localBoundsLyr,
-                areaWithoutInformationLyr=parameters[
-                    self.AREA_WITHOUT_INFORMATION_POLYGONS
-                ]
-                if areaWithoutInformationLyr is not None
-                else None,
+                areaWithoutInformationLyr=areaWithoutInformationLyr if areaWithoutInformationLyr is not None else None,
                 waterBodiesLyr=waterBodiesLyr,
-                naturalPointFeaturesLyr=parameters[self.NATURAL_POINT_FEATURES]
+                naturalPointFeaturesLyr=naturalPointFeaturesLyr
                 if naturalPointFeaturesLyr is not None
                 else None,
-                drainagesWithNameLyr=parameters[self.DRAINAGE_LINES_WITH_NAME]
+                drainagesWithNameLyr=drainagesWithNameLyr
                 if drainagesWithNameLyr is not None
                 else None,
-                drainagesWithoutNameLyr=parameters[self.DRAINAGE_LINES_WITHOUT_NAME]
+                drainagesWithoutNameLyr=drainagesWithoutNameLyr
                 if drainagesWithoutNameLyr is not None
                 else None,
-                mainRoadsLyr=parameters[self.MAIN_ROADS]
+                mainRoadsLyr=mainRoadsLyr
                 if mainRoadsLyr is not None
                 else None,
-                otherRoadsLyr=parameters[self.OTHER_ROADS]
+                otherRoadsLyr=otherRoadsLyr
                 if otherRoadsLyr is not None
                 else None,
                 fields=fields,

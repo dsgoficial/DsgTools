@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.9.8 - dev
+## 4.9.9 - dev
 
 Novas Funcionalidades:
 
@@ -24,6 +24,7 @@ Melhorias:
 - O processo de criar camada temporária agora carrega a camada com a contagem de elementos ativada;
 - Alterado o default do número de pontos na criação da moldura, de 12 para 4 (o algoritmo continua com a opção de densificar mais, caso o usuário queira);
 - Alterados os inputs da ferramenta de extração de pontos cotados;
+- Correção de bug com área sem dados na ferramenta de extração de pontos cotados;
 
 Correção de bug:
 
