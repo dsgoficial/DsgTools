@@ -167,15 +167,16 @@ class GeometricaAcquisition(QgsMapTool):
         )
 
     def completePolygon(self, geom, p4):
+        filteredGeom = list(filter(lambda x: x is not None and isinstance(x, QgsPointXY), self.geometry))
         if (len(geom) >= 2) and (len(geom) % 2 == 0):
             p1 = geom[1]
             p2 = geom[0]
             p3 = geom[-1]
             pf = self.lineIntersection(p1, p2, p3, p4)
-            new_geom = QgsGeometry.fromPolygonXY([self.geometry + [p4, pf]])
+            new_geom = QgsGeometry.fromPolygonXY([filteredGeom + [p4, pf]])
         else:
             new_geom = QgsGeometry.fromPolygonXY(
-                [self.geometry + [QgsPointXY(p4.x(), p4.y())]]
+                [filteredGeom + [QgsPointXY(p4.x(), p4.y())]]
             )
             pf = p4
         return new_geom, pf

@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.9.9 - dev
+## 4.9.10 - dev
 
 Novas Funcionalidades:
 
@@ -37,6 +37,7 @@ Correção de bug:
 - Correção de bug na ferramenta de identificação de geometrias inválidas (caso de geometria nula);
 - Correção de bug na ferramenta de identificação de feições próximas (medida inválida, melhoria do texto da flag);
 - Correção de bug no processo de extrair pontos cotados;
+- Correção de bug na ferramenta de ângulos retos (quando está ativado o trace digitizing);
 
 ## 4.8.0 - 2023-06-14
 
