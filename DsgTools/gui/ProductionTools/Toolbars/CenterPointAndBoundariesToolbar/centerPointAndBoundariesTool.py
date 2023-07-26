@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 import os
-from typing import List, Optional
+from typing import Optional
 from DsgTools.gui.ProductionTools.Toolboxes.ContourTool.dsg_line_tool import DsgPolygonTool
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
@@ -29,27 +29,17 @@ from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from processing.gui.MultipleInputDialog import MultipleInputDialog
 
 from qgis.core import (
-    Qgis,
-    QgsCoordinateReferenceSystem,
-    QgsCoordinateTransform,
-    QgsFeatureRequest,
-    QgsMapLayer,
     QgsProject,
-    QgsRectangle,
     QgsVectorLayer,
     QgsWkbTypes,
-    QgsFeature,
     QgsGeometry,
     QgsProcessingContext,
 )
-from qgis.gui import QgsMapTool, QgsMessageBar, QgisInterface
-from qgis.PyQt import QtCore, QtGui, uic
-from qgis.PyQt.Qt import QObject, QVariant
-from qgis.PyQt.QtCore import QObject, QSettings, Qt, pyqtSignal, pyqtSlot
+from qgis.gui import QgisInterface
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction, QMessageBox, QSpinBox, QWidget
-from qgis.PyQt.QtXml import QDomDocument
-from qgis.core.additions.edit import edit
+from qgis.PyQt.QtWidgets import QAction, QWidget
 import processing
 
 FORM_CLASS, _ = uic.loadUiType(
@@ -157,9 +147,12 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
         self.lineLayerDict = dict()
         self.tool.deactivate()
 
-    def syncLayers(self, layerids):
+    def syncLayers(self, layerids, addNewLayers=False):
         for lyrid in layerids:
             if lyrid not in self.lineLayerDict:
+                if addNewLayers and lyrid in QgsProject.instance().mapLayers():
+                    newLyr = QgsProject.instance().mapLayers()[lyrid]
+                    self.lineLayerDict.update({lyrid: newLyr})
                 continue
             self.lineLayerDict.pop(lyrid)
 
@@ -206,3 +199,21 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
         self.iface.newProjectCreated.disconnect(self.resetTool)
         QgsProject.instance().layersWillBeRemoved.disconnect(self.syncLayers)
         self.iface.mapCanvas().unsetMapTool(self.tool)
+    
+    def getToolState(self) -> dict:
+        return {
+            "line_layer_ids": list(self.lineLayerDict.keys()),
+            "bar_is_toggled": self.centerPointPushButton.isChecked(),
+        }
+
+    def setToolState(self, stateDict: dict) -> bool:
+        isBarToggled = stateDict.get("bar_is_toggled", None)
+        if isBarToggled is None:
+            return False
+        self.centerPointPushButton.click()
+        lineLayerIds = stateDict.get("line_layer_ids", None)
+        if lineLayerIds is None:
+            return False
+        self.syncLayers(lineLayerIds, addNewLayers=True)
+        self.enableTool(enabled=self.lineLayerDict != dict())
+        return True

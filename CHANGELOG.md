@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.9.10 - dev
+## 4.9.11 - dev
 
 Novas Funcionalidades:
 
@@ -13,6 +13,7 @@ Novas Funcionalidades:
 - Novo processo para verificar feições próximas;
 - Novo processo para identificar objetos pequenos (identifica pequenas linhas e pequenas áreas ao mesmo tempo);
 - Novo processo de adicionar feições a uma camada (AppendFeaturesToLayerAlgorithm);
+- O DSGTools agora guarda o estado das ferramentas no projeto: quando o usuário abrir um projeto no qual estão salvos os estados das ferramentas, automaticamente cada ferramenta é ajustada com os parâmetros necessários para que o usuário retome o trabalho de onde parou. Guarda o estado do inspetor de feições, ferramenta de grid e ferramenta de centróides;
 
 Melhorias:
 
