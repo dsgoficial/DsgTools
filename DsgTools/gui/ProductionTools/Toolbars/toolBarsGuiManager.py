@@ -141,6 +141,9 @@ class ToolbarsGuiManager(QObject):
             "dsgtools_toolboxes_state",
             json.dumps(toolStateDict),
         )
+        QgsProject.instance().projectSaved.disconnect(self.saveStateOnProject)
+        QgsProject.instance().write()
+        QgsProject.instance().projectSaved.connect(self.saveStateOnProject)
 
     def loadStateFromProject(self):
         state = json.loads(
