@@ -134,6 +134,7 @@ class ToolbarsGuiManager(QObject):
             self.centerPointAndBoundariesTool,
             self.inspectFeaturesTool,
             self.reviewTool,
+            self.minimumAreaTool,
         ]:
             toolStateDict[tool.__class__.__name__] = tool.getToolState()
         QgsExpressionContextUtils.setProjectVariable(
@@ -158,6 +159,7 @@ class ToolbarsGuiManager(QObject):
             self.centerPointAndBoundariesTool,
             self.inspectFeaturesTool,
             self.reviewTool,
+            self.minimumAreaTool,
         ]:
             toolClassName = tool.__class__.__name__
             if toolClassName not in state:

@@ -215,8 +215,9 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
         isBarToggled = stateDict.get("bar_is_toggled", None)
         if isBarToggled is None:
             return False
-        if isBarToggled and not self.centerPointPushButton.isChecked():
-            self.centerPointPushButton.click()
+        if isBarToggled:
+            if not self.centerPointPushButton.isChecked():
+                self.centerPointPushButton.click()
         lineLayerIds = stateDict.get("line_layer_ids", None)
         if lineLayerIds is None:
             return False

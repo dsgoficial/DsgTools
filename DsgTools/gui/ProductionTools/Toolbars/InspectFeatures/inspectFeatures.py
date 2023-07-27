@@ -513,10 +513,9 @@ class InspectFeatures(QWidget, Ui_Form):
         isBarToggled = stateDict.get("bar_is_toggled", None)
         if isBarToggled is None:
             return False
-        if self.inspectPushButton.isChecked():
-            self.inspectPushButton.click()  # sim, é intencional clicar duas vezes
         if isBarToggled:
-            self.inspectPushButton.click()
+            if not self.inspectPushButton.isChecked():
+                self.inspectPushButton.click()  # sim, é intencional clicar duas vezes
         currentLayerId = stateDict.get("current_layer", None)
         if currentLayerId is None:
             return False

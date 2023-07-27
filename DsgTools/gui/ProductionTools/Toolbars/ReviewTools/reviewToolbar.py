@@ -628,9 +628,9 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         isBarToggled = stateDict.get("bar_is_toggled", None)
         if isBarToggled is None:
             return False
-        if self.reviewPushButton.isChecked():
-            self.reviewPushButton.click()  # sim, é intencional clicar duas vezes
-        self.reviewPushButton.click()
+        if isBarToggled:
+            if not self.reviewPushButton.isChecked():
+                self.reviewPushButton.click()
         currentLayerId = stateDict.get("current_layer", None)
         if currentLayerId is None:
             return False
