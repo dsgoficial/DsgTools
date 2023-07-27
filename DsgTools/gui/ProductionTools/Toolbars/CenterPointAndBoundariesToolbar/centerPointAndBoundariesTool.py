@@ -22,7 +22,9 @@
 """
 import os
 from typing import Optional
-from DsgTools.gui.ProductionTools.Toolboxes.ContourTool.dsg_line_tool import DsgPolygonTool
+from DsgTools.gui.ProductionTools.Toolboxes.ContourTool.dsg_line_tool import (
+    DsgPolygonTool,
+)
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
@@ -91,46 +93,49 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
         if parent:
             parent.addAction(action)
         return action
-    
+
     def deactivateButton(self):
         self.runPushButton.setChecked(False)
 
     def enableTool(self, enabled: bool = True) -> None:
         self.runPushButton.setEnabled(enabled)
-    
-    def runBuildPolygons(self, geom: QgsGeometry, merge = None):
-        layer_list = QgsProject.instance().mapLayersByName('Centroides')
+
+    def runBuildPolygons(self, geom: QgsGeometry, merge=None):
+        layer_list = QgsProject.instance().mapLayersByName("Centroides")
         outputLyr = None if len(layer_list) == 0 else layer_list[0]
-        lyr = self.layerHandler.createMemoryLayerFromGeometry(geom, crs=QgsProject.instance().crs())
+        lyr = self.layerHandler.createMemoryLayerFromGeometry(
+            geom, crs=QgsProject.instance().crs()
+        )
         outputCenterPointsLyr, _ = self.algRunner.runUnbuildPolygons(
             inputPolygonList=[lyr],
             lineConstraintLayerList=list(self.lineLayerDict.values()),
             context=QgsProcessingContext(),
         )
-        outputCenterPointsLyr = self.runMerge(outputLyr, outputCenterPointsLyr) if outputLyr is not None else outputCenterPointsLyr
-        outputCenterPointsLyr.setName('Centroides')
+        outputCenterPointsLyr = (
+            self.runMerge(outputLyr, outputCenterPointsLyr)
+            if outputLyr is not None
+            else outputCenterPointsLyr
+        )
+        outputCenterPointsLyr.setName("Centroides")
         node = self.findNode()
         QgsProject.instance().addMapLayer(outputCenterPointsLyr, addToLegend=False)
         node.addLayer(outputCenterPointsLyr)
         if outputLyr is not None:
             QgsProject.instance().removeMapLayer(outputLyr.id())
-    
+
     def findNode(self):
         rootNode = QgsProject.instance().layerTreeRoot()
         groupName = "DSGTools_Output"
         groupNode = rootNode.findGroup(groupName)
         groupNode = groupNode if groupNode else rootNode.insertGroup(0, groupName)
         return groupNode
-    
+
     def runMerge(self, existente, novo):
         merge = processing.run(
-            'native:mergevectorlayers',
-            {
-                'LAYERS': [existente, novo],
-                'OUTPUT': 'TEMPORARY_OUTPUT'
-            }
+            "native:mergevectorlayers",
+            {"LAYERS": [existente, novo], "OUTPUT": "TEMPORARY_OUTPUT"},
         )
-        return merge['OUTPUT']
+        return merge["OUTPUT"]
 
     @pyqtSlot(bool, name="on_centerPointPushButton_toggled")
     def toggleBar(self, toggled: Optional[bool] = None) -> None:
@@ -199,7 +204,7 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
         self.iface.newProjectCreated.disconnect(self.resetTool)
         QgsProject.instance().layersWillBeRemoved.disconnect(self.syncLayers)
         self.iface.mapCanvas().unsetMapTool(self.tool)
-    
+
     def getToolState(self) -> dict:
         return {
             "line_layer_ids": list(self.lineLayerDict.keys()),
@@ -210,7 +215,8 @@ class CenterPointAndBoundariesToolbar(QWidget, FORM_CLASS):
         isBarToggled = stateDict.get("bar_is_toggled", None)
         if isBarToggled is None:
             return False
-        self.centerPointPushButton.click()
+        if isBarToggled and not self.centerPointPushButton.isChecked():
+            self.centerPointPushButton.click()
         lineLayerIds = stateDict.get("line_layer_ids", None)
         if lineLayerIds is None:
             return False

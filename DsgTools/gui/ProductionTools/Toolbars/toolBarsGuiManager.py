@@ -40,6 +40,7 @@ from .DataValidationTool.dataValidationTool import DataValidationTool
 from qgis.PyQt.QtCore import QObject
 from qgis.core import QgsProject, QgsExpressionContextUtils
 
+
 class ToolbarsGuiManager(QObject):
     def __init__(self, manager, iface, parentMenu=None, toolbar=None):
         """Constructor."""
@@ -129,7 +130,11 @@ class ToolbarsGuiManager(QObject):
 
     def saveStateOnProject(self):
         toolStateDict = dict()
-        for tool in [self.centerPointAndBoundariesTool, self.inspectFeaturesTool]:
+        for tool in [
+            self.centerPointAndBoundariesTool,
+            self.inspectFeaturesTool,
+            self.reviewTool,
+        ]:
             toolStateDict[tool.__class__.__name__] = tool.getToolState()
         QgsExpressionContextUtils.setProjectVariable(
             QgsProject.instance(),
@@ -146,7 +151,11 @@ class ToolbarsGuiManager(QObject):
         )
         if state == {}:
             return
-        for tool in [self.centerPointAndBoundariesTool, self.inspectFeaturesTool]:
+        for tool in [
+            self.centerPointAndBoundariesTool,
+            self.inspectFeaturesTool,
+            self.reviewTool,
+        ]:
             toolClassName = tool.__class__.__name__
             if toolClassName not in state:
                 continue
