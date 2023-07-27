@@ -492,7 +492,6 @@ class InspectFeatures(QWidget, Ui_Form):
             self.iface.unregisterMainWindowAction(self.refreshPushButtonAction)
         except:
             pass
-    
 
     def getToolState(self) -> dict:
         currentLayer = self.mMapLayerComboBox.currentLayer()
@@ -501,8 +500,9 @@ class InspectFeatures(QWidget, Ui_Form):
             "current_layer": currentLayer.id(),
             "current_feature_state_dict": self.allLayers,
             "current_zoom": self.mScaleWidget.scale()
-                if currentLayer.geometryType() == QgsWkbTypes.PointGeometry
-                else self.zoomPercentageSpinBox.value(),
+            if currentLayer.geometryType() == QgsWkbTypes.PointGeometry
+            else self.zoomPercentageSpinBox.value(),
+            "use_pan": self.usePanCkb.isChecked(),
             "current_filter_expression": self.mFieldExpressionWidget.currentText(),
             "sort_is_toggled": self.sortPushButton.isChecked(),
             "current_sort_field": self.mFieldComboBox.currentField(),
@@ -513,6 +513,8 @@ class InspectFeatures(QWidget, Ui_Form):
         isBarToggled = stateDict.get("bar_is_toggled", None)
         if isBarToggled is None:
             return False
+        if self.inspectPushButton.isChecked():
+            self.inspectPushButton.click()  # sim, é intencional clicar duas vezes
         self.inspectPushButton.click()
         currentLayerId = stateDict.get("current_layer", None)
         if currentLayerId is None:
@@ -530,6 +532,10 @@ class InspectFeatures(QWidget, Ui_Form):
             self.mScaleWidget.setScale(currentZoom)
         else:
             self.zoomPercentageSpinBox.setValue(currentZoom)
+        usePan = stateDict.get("use_pan", None)
+        if usePan is None:
+            return False
+        self.usePanCkb.setChecked(usePan)
         currentFilterExpression = stateDict.get("current_filter_expression", None)
         if currentFilterExpression is None:
             return False
