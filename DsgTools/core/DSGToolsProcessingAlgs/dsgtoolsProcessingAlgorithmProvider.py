@@ -21,6 +21,8 @@
  ***************************************************************************/
 """
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.genericSelectionToolParametersAlgorithm import GenericSelectionToolParametersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.rightAngleToolParametersAlgorithm import RightAngleToolParametersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.appendFeaturesToLayerAlgorithm import AppendFeaturesToLayerAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallObjectsOnLayersAlgorithm import (
     IdentifySmallObjectsOnLayersAlgorithm,
@@ -591,6 +593,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyCloseFeaturesAlgorithm(),
             IdentifySmallObjectsOnLayersAlgorithm(),
             AppendFeaturesToLayerAlgorithm(),
+            RightAngleToolParametersAlgorithm(),
+            GenericSelectionToolParametersAlgorithm(),
         ]
         return algList
 
