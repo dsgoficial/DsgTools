@@ -7,7 +7,7 @@
                               -------------------
         begin                : 2023-07-24
         git sha              : $Format:%H$
-        copyright            : (C) 2018 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        copyright            : (C) 2023 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 /***************************************************************************
@@ -61,7 +61,6 @@ class AppendFeaturesToLayerAlgorithm(ValidationAlgorithm):
             )
         )
 
-
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
@@ -73,7 +72,9 @@ class AppendFeaturesToLayerAlgorithm(ValidationAlgorithm):
             parameters, self.LAYER_WITH_FEATURES_TO_APPEND, context
         )
         geometryHandler = GeometryHandler()
-        if  QgsWkbTypes.geometryType(destinationLayer.wkbType()) != QgsWkbTypes.geometryType(inputSource.wkbType()):
+        if QgsWkbTypes.geometryType(
+            destinationLayer.wkbType()
+        ) != QgsWkbTypes.geometryType(inputSource.wkbType()):
             raise QgsProcessingException(
                 self.tr(
                     "Geometry type missmatch between inputs. Both original layer and layer with features to append must have same geometry type."
@@ -82,12 +83,15 @@ class AppendFeaturesToLayerAlgorithm(ValidationAlgorithm):
         featCount = inputSource.featureCount()
         if featCount == 0:
             return {}
-        stepSize = 100/featCount
+        stepSize = 100 / featCount
         primaryKeyFieldNames = self.getLayerPrimaryKeyAttributeNames(destinationLayer)
         destinationLayerNameToIdxMap = {
-            field.name(): idx for idx, field in enumerate(destinationLayer.fields()) if field.name() not in primaryKeyFieldNames
+            field.name(): idx
+            for idx, field in enumerate(destinationLayer.fields())
+            if field.name() not in primaryKeyFieldNames
         }
         isDestinationMulti = QgsWkbTypes.isMultiType(destinationLayer.wkbType())
+
         def get_attr_map(feat):
             attrMap = dict()
             for fieldName, fieldValue in feat.attributeMap().items():
@@ -95,20 +99,22 @@ class AppendFeaturesToLayerAlgorithm(ValidationAlgorithm):
                     continue
                 attrMap[destinationLayerNameToIdxMap[fieldName]] = fieldValue
             return attrMap
-            
+
         destinationLayer.startEditing()
-        destinationLayer.beginEditCommand(f"Appending features to layer {destinationLayer.name()}")
+        destinationLayer.beginEditCommand(
+            f"Appending features to layer {destinationLayer.name()}"
+        )
         for current, feat in enumerate(inputSource.getFeatures()):
             if feedback.isCanceled():
                 break
             if feat.geometry().isNull() or feat.geometry().isEmpty():
                 continue
             attrMap = get_attr_map(feat)
-            for geom in geometryHandler.handleGeometry(geom=feat.geometry(), parameterDict={"isMulti": isDestinationMulti}):
+            for geom in geometryHandler.handleGeometry(
+                geom=feat.geometry(), parameterDict={"isMulti": isDestinationMulti}
+            ):
                 newFeat = QgsVectorLayerUtils.createFeature(
-                    layer=destinationLayer,
-                    geometry=geom,
-                    attributes=attrMap
+                    layer=destinationLayer, geometry=geom, attributes=attrMap
                 )
                 destinationLayer.addFeature(newFeat)
             feedback.setProgress(current * stepSize)
@@ -137,7 +143,7 @@ class AppendFeaturesToLayerAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Other Algorithms")
+        return self.tr("Data Management Algorithms")
 
     def groupId(self):
         """
@@ -147,7 +153,7 @@ class AppendFeaturesToLayerAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Other Algorithms"
+        return "DSGTools: Data Management Algorithms"
 
     def tr(self, string):
         return QCoreApplication.translate("AppendFeaturesToLayerAlgorithm", string)
