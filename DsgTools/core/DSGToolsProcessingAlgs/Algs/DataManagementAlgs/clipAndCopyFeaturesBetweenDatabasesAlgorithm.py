@@ -95,6 +95,7 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
                 self.tr("WKT Geographic Bounds"),
                 geometryTypes=[QgsWkbTypes.PolygonGeometry],
                 allowMultipart=True,
+                optional=True,
             )
         )
         self.addParameter(
@@ -131,8 +132,9 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
         loadDestinationLayers = self.parameterAsBool(
             parameters, self.LOAD_DESTINATION_LAYERS, context
         )
+        nSteps = 6 if not loadDestinationLayers else 7
         multiStepFeedback = (
-            QgsProcessingMultiStepFeedback(8, feedback)
+            QgsProcessingMultiStepFeedback(nSteps, feedback)
             if feedback is not None
             else None
         )
@@ -269,7 +271,7 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
         )
         clipLayer = self.layerHandler.createMemoryLayerFromGeometry(
             geom=geom, crs=QgsProject.instance().crs()
-        )
+        ) if geom is not None else None
         for currentIdx, lyr in enumerate(inputLayerList):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 return outputDict
@@ -280,7 +282,7 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
                 overlayLayer=clipLayer,
                 context=context,
                 feedback=multiStepFeedback,
-            )
+            ) if clippedLyr is not None else lyr
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(2 * currentIdx + 1)
             outputDict[lyr.name()] = self.algRunner.runCreateFieldWithExpression(
