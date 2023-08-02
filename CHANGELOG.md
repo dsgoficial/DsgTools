@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.9.12 - dev
+## 4.9.13 - dev
 
 Novas Funcionalidades:
 
@@ -16,6 +16,7 @@ Novas Funcionalidades:
 - O DSGTools agora guarda o estado das ferramentas no projeto: quando o usuário abrir um projeto no qual estão salvos os estados das ferramentas, automaticamente cada ferramenta é ajustada com os parâmetros necessários para que o usuário retome o trabalho de onde parou. Guarda o estado do inspetor de feições, ferramenta de grid e ferramenta de centróides;
 - Novo processo de ajustar parâmetros do seletor genérico (integração com o FP/SAP);
 - Novo processo de ajustar parâmetros da ferramenta de aquisição com ângulos retos (integração com o FP/SAP);
+- Novo processo de converter entre bancos de mesma modelagem, clipando com um polígono feito para integração com FP/SAP (ClipAndCopyFeaturesBetweenDatabasesAlgorithm);
 
 
 Melhorias:

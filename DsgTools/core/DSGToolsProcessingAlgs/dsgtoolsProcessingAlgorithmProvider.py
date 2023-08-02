@@ -21,6 +21,9 @@
  ***************************************************************************/
 """
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.clipAndCopyFeaturesBetweenDatabasesAlgorithm import (
+    ClipAndCopyFeaturesBetweenDatabasesAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.genericSelectionToolParametersAlgorithm import (
     GenericSelectionToolParametersAlgorithm,
 )
@@ -601,6 +604,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             AppendFeaturesToLayerAlgorithm(),
             RightAngleToolParametersAlgorithm(),
             GenericSelectionToolParametersAlgorithm(),
+            ClipAndCopyFeaturesBetweenDatabasesAlgorithm(),
         ]
         return algList
 

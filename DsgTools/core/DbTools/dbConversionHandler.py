@@ -32,25 +32,36 @@ from qgis.core import (
     QgsFeedback,
     QgsProcessingMultiStepFeedback,
     QgsVectorLayerUtils,
+    QgsWkbTypes,
+    NULL,
 )
 
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 
 class AbstractFeatureProcessor:
-    def deaggregateGeometries(self, featDict):
-        geomList = self.geometryHandler.handleGeometry(featDict["geom"])
+    def __init__(self):
+        self.geometryHandler = GeometryHandler()
+
+    def deaggregateGeometries(self, featDict, parameterDict):
+        geomList = self.geometryHandler.handleGeometry(
+            featDict["geom"], parameterDict=parameterDict
+        )
+        featDictWithoutNULL = dict()
+        for k, v in featDict.items():
+            featDictWithoutNULL[k] = v if v != NULL else None
         if len(geomList) == 1:
-            features = [featDict]
+            features = [featDictWithoutNULL]
         else:
             features = []
+            featDictWithoutNULL.pop("geom")
             for geom in geomList:
-                copyDict = copy.deepcopy(featDict)
+                copyDict = copy.deepcopy(featDictWithoutNULL)
                 copyDict["geom"] = geom
                 features.append(copyDict)
         return features
 
-    def convert(self, featDictList, feedback=None):
+    def convert(self, featDictList, parameterDict, feedback=None):
         outputFeatDictList = []
         if feedback is not None:
             nFeats = len(featDictList)
@@ -60,7 +71,7 @@ class AbstractFeatureProcessor:
         for current, featDict in enumerate(featDictList):
             if feedback is not None and feedback.isCanceled():
                 return outputFeatDictList
-            outputFeatDictList += self.convert_feat(featDict)
+            outputFeatDictList += self.convert_feat(featDict, parameterDict)
             if feedback is not None:
                 feedback.setProgress(current * stepSize)
         return outputFeatDictList
@@ -71,8 +82,8 @@ class AbstractFeatureProcessor:
 
 
 class FeatureProcessor(AbstractFeatureProcessor):
-    def convert_feat(self, featDict):
-        return self.deaggregateGeometries(featDict)
+    def convert_feat(self, featDict, parameterDict):
+        return self.deaggregateGeometries(featDict, parameterDict)
 
 
 class MappingFeatureProcessor(AbstractFeatureProcessor):
@@ -541,9 +552,9 @@ class MappingFeatureProcessor(AbstractFeatureProcessor):
             feat.buildAggregateFeat([feat])
         return feat
 
-    def convert_feat(self, featDict):
+    def convert_feat(self, featDict, parameterDict):
         outputList = []
-        features = self.deaggregateGeometries(featDict)
+        features = self.deaggregateGeometries(featDict, parameterDict)
         for simple_feature in features:
             feat = self.buildFeatureDict(simple_feature)
             if "INVALID_GEOM" in feat and feat["INVALID_GEOM"]:
@@ -564,18 +575,18 @@ class MappingFeatureProcessor(AbstractFeatureProcessor):
 
 
 def convert_features(
-    inputLayerDict: Dict[str, Iterable],
-    conversionHandler: AbstractFeatureProcessor,
+    inputLayerDict: Dict[str, QgsVectorLayer],
+    featureProcessor: AbstractFeatureProcessor,
     feedback: Optional[QgsFeedback] = None,
     layerNameAttr: Optional[str] = None,
-) -> Dict[str, set[QgsFeature]]:
+) -> Dict[str, List[Dict[str, Any]]]:
     outputFeatDict = defaultdict(list)
     multiStepFeedback = (
         QgsProcessingMultiStepFeedback(len(inputLayerDict), feedback)
         if feedback is not None
         else None
     )
-    for currentLyrIdx, (inputLyrName, featList) in enumerate(inputLayerDict.items()):
+    for currentLyrIdx, (inputLyrName, lyr) in enumerate(inputLayerDict.items()):
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentLyrIdx)
             if multiStepFeedback.isCanceled():
@@ -585,11 +596,13 @@ def convert_features(
             if layerNameAttr is None
             else get_feat_dict(x[layerNameAttr], x)
         )
-        outputFeatListDict: List[Dict[str, Any]] = conversionHandler.convert(
-            list(map(get_feat_lambda, featList)), feedback=multiStepFeedback
+        outputFeatListDict: List[Dict[str, Any]] = featureProcessor.convert(
+            list(map(get_feat_lambda, lyr.getFeatures())),
+            parameterDict={"isMulti": QgsWkbTypes.isMultiType(lyr.wkbType())},
+            feedback=multiStepFeedback,
         )
         for featDict in outputFeatListDict:
-            outputFeatListDict[featDict["layer_name"]].append(featDict)
+            outputFeatDict[featDict["layer_name"]].append(featDict)
     return outputFeatDict
 
 
@@ -608,16 +621,18 @@ def get_output_feature(
         layer=destinationLayer,
         geometry=geom,
     )
-    for field in newFeature.fields():
+    pkIndexList = destinationLayer.primaryKeyAttributes()
+    for idx, field in enumerate(newFeature.fields()):
         fieldName = field.name()
-        if fieldName not in inputDictMap:
+        if fieldName not in inputDictMap or idx in pkIndexList:
             continue
-        newFeature[fieldName] = inputDictMap[fieldName]
+        value = inputDictMap[fieldName]
+        newFeature[fieldName] = value if value is not None else NULL
     return newFeature
 
 
 def write_output_features(
-    featDict: Dict[str, set[Dict[str, Any]]],
+    featDict: Dict[str, List[Dict[str, Any]]],
     outputLayerDict: Dict[str, QgsVectorLayer],
     feedback: Optional[QgsFeedback] = None,
 ) -> Dict[str, List[Dict[str, Any]]]:
@@ -635,7 +650,7 @@ def write_output_features(
         outputLayer = outputLayerDict.get(lyrName, None)
         if outputLayer is None:
             for featDict in featDictList:
-                notConvertedDict[featDict["geom"].geometryType()].append(featDict)
+                notConvertedDict[featDict["geom"].wkbType()].append(featDict)
             continue
         get_output_feature_lambda = lambda x: get_output_feature(x, outputLayer)
         outputLayer.startEditing()
