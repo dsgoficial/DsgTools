@@ -46,6 +46,14 @@ class AppendFeaturesToLayerAlgorithm(ValidationAlgorithm):
         Parameter setting.
         """
         self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.LAYER_WITH_FEATURES_TO_APPEND,
+                self.tr("Layer with features to append to original layer"),
+                [QgsProcessing.TypeVectorAnyGeometry],
+            )
+        )
+
+        self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.DESTINATION_LAYER,
                 self.tr("Destination Layer"),
@@ -53,13 +61,6 @@ class AppendFeaturesToLayerAlgorithm(ValidationAlgorithm):
             )
         )
 
-        self.addParameter(
-            QgsProcessingParameterFeatureSource(
-                self.LAYER_WITH_FEATURES_TO_APPEND,
-                self.tr("Layer with features to append to original layer"),
-                [QgsProcessing.TypeVectorAnyGeometry],
-            )
-        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
