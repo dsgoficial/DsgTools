@@ -30,7 +30,7 @@ Melhorias:
 - Alterado o default do número de pontos na criação da moldura, de 12 para 4 (o algoritmo continua com a opção de densificar mais, caso o usuário queira);
 - Alterados os inputs da ferramenta de extração de pontos cotados;
 - Correção de bug com área sem dados na ferramenta de extração de pontos cotados;
-- Adicionado ao processo de extrair elevação de MDS utilizando geometria da camada de entrada a opção de arredondar as casas decimais
+- Adicionado ao processo de extrair elevação de MDS utilizando geometria da camada de entrada a opção de arredondar as casas decimais;
 
 Correção de bug:
 
