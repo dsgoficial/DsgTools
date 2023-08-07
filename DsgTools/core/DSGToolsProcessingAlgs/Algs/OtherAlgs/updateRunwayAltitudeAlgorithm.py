@@ -6,14 +6,17 @@ from qgis.core import (
     QgsProcessingParameterString,
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterRasterLayer,
+    QgsProcessingParameterNumber,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
+
 class UpdateRunwayAltitudeAlgorithm(QgsProcessingAlgorithm):
-    INPUT_LAYERS = 'INPUT_LAYERS'
-    ALTITUDE_FIELD = 'ALTITUDE_FIELD'
-    INPUT_DEM = 'INPUT_DEM'
-    OUTPUT = 'OUTPUT'
+    INPUT_LAYERS = "INPUT_LAYERS"
+    ALTITUDE_FIELD = "ALTITUDE_FIELD"
+    INPUT_DEM = "INPUT_DEM"
+    DECIMALS = "DECIMALS"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -30,8 +33,16 @@ class UpdateRunwayAltitudeAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterString(
                 self.ALTITUDE_FIELD,
-                self.tr('Altitude field name'),
-                defaultValue='altitude'
+                self.tr("Altitude field name"),
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.DECIMALS,
+                self.tr("Round to how many decimal places (-1 to not round)"),
+                type=QgsProcessingParameterNumber.Integer,
+                defaultValue=-1,
             )
         )
 
@@ -41,12 +52,14 @@ class UpdateRunwayAltitudeAlgorithm(QgsProcessingAlgorithm):
                 self.tr("Input DEM"),
             )
         )
-    
-    def updateLyrs(self, inputLyrs, altitudeField, raster, context, feedback=None):
+
+    def updateLyrs(
+        self, inputLyrs, altitudeField, raster, decimals, context, feedback=None
+    ):
         layerIds = []
         if feedback is not None:
             multiStepFeedback = QgsProcessingMultiStepFeedback(
-                len(inputLyrs)*2, feedback
+                len(inputLyrs) * 2, feedback
             )
         else:
             multiStepFeedback = None
@@ -56,36 +69,36 @@ class UpdateRunwayAltitudeAlgorithm(QgsProcessingAlgorithm):
             fields = original_lyr.fields()
             altitude = fields.indexFromName(altitudeField)
             orig_lyr = self.algRunner.runAddAutoIncrementalField(
-            inputLyr=original_lyr,
-            context=context,
-            feedback=multiStepFeedback,
-            fieldName="AUTO",
-        )
-            multiStepFeedback.setCurrentStep(currentStep+1)
+                inputLyr=original_lyr,
+                context=context,
+                feedback=multiStepFeedback,
+                fieldName="AUTO",
+            )
+            multiStepFeedback.setCurrentStep(currentStep + 1)
             self.algRunner.runCreateSpatialIndex(
                 inputLyr=orig_lyr,
                 context=context,
                 feedback=multiStepFeedback,
             )
 
-            multiStepFeedback.setCurrentStep(currentStep+2)
+            multiStepFeedback.setCurrentStep(currentStep + 2)
             lyr = self.algRunner.runJoinAttributesByLocation(
                 inputLyr=orig_lyr,
                 joinLyr=orig_lyr,
                 context=context,
                 feedback=multiStepFeedback,
             )
-            data={}
+            data = {}
             for f in lyr.getFeatures():
                 c = f.geometry().centroid().asPoint()
                 value, success = raster.dataProvider().sample(c, 1)
+                if decimals != -1:
+                    value = round(value, decimals)
                 if success:
-                    data[f.id()]={altitude:value}
+                    data[f.id()] = {altitude: value}
             original_lyr.dataProvider().changeAttributeValues(data)
             layerIds.append(original_lyr.id())
         return layerIds
-
-            
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -96,14 +109,17 @@ class UpdateRunwayAltitudeAlgorithm(QgsProcessingAlgorithm):
         multiStepFeedback.pushInfo(self.tr("Starting..."))
         inputLyrList = self.parameterAsLayerList(parameters, self.INPUT_LAYERS, context)
         altitudeField = self.parameterAsString(parameters, self.ALTITUDE_FIELD, context)
+        decimals = self.parameterAsInt(parameters, self.DECIMALS, context)
         raster = self.parameterAsRasterLayer(parameters, self.INPUT_DEM, context)
         self.algRunner = AlgRunner()
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr("Updating field..."))
-        layerIds = self.updateLyrs(inputLyrList, altitudeField, raster, context, multiStepFeedback)
+        layerIds = self.updateLyrs(
+            inputLyrList, altitudeField, raster, decimals, context, multiStepFeedback
+        )
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr("Complete."))
-        return {self.OUTPUT:layerIds}
+        return {self.OUTPUT: layerIds}
 
     def name(self):
         """
