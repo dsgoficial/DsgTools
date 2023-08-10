@@ -25,7 +25,7 @@
     "identifyunsharedvertexonintersectionsalgorithm": "https://github.com/dsgoficial/DsgTools/wiki/DSGTools-Provedor-de-Algoritmos#identificar-v%C3%A9rtices-n%C3%A3o-compartilhados-em-interse%C3%A7%C3%B5es",
     "identifyvertexnearedges": "https://github.com/dsgoficial/DsgTools/wiki/DSGTools-Provedor-de-Algoritmos#identificar-v%C3%A9rtices-pr%C3%B3ximos-%C3%A0-bordas",
     "identifydrainageangleissues": "https://github.com/dsgoficial/DsgTools/wiki/DSGTools-Provedor-de-Algoritmos#identify-drainage-angle-issues",
-    "identifydrainageflowissues": "https://github.com/raphael3653/help-qgis/wiki#identify-drainage-flow-issues",
+    "identifydrainageflowissues": "https://github.com/dsgoficial/DsgTools/wiki/DSGTools-Provedor-de-Algoritmos#identify-drainage-flow-issues",
     "identifydrainageloops": "https://github.com/dsgoficial/DsgTools/wiki/DSGTools-Provedor-de-Algoritmos#identify-drainage-loops",
     "identifyduplicatedvertexesalgorithm": "https://github.com/dsgoficial/DsgTools/wiki/DSGTools-Provedor-de-Algoritmos#identify-duplicated-vertexes",
     "identifygeometrieswithlargevertexdensityalgorithm": "https://github.com/dsgoficial/DsgTools/wiki/DSGTools-Provedor-de-Algoritmos#identify-geometries-with-large-vertex-density",
