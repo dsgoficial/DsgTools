@@ -42,6 +42,7 @@ from qgis.core import (
     QgsGeometry,
     QgsPoint,
 )
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 
 class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
@@ -381,6 +382,12 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
         return QCoreApplication.translate(
             "IdentifyNetworkConstructionIssuesAlgorithm", string
         )
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyNetworkConstructionIssuesAlgorithm()

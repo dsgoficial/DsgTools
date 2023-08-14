@@ -40,7 +40,7 @@ from qgis.core import (
 from qgis.PyQt.QtWidgets import QMessageBox
 
 from .validationAlgorithm import ValidationAlgorithm
-
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
     """
@@ -331,6 +331,12 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
         Returns a translatable string with the self.tr() function.
         """
         return QCoreApplication.translate("EnforceAttributeRulesAlgorithm", string)
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return  help().helpUrl(self.name())
 
     def createInstance(self):
         """

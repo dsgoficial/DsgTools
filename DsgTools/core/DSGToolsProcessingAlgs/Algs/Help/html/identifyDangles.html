@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="br">
+
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+
+   <body>
+      
+      <div>
+         <p > Help versão 1.0 </p>
+         <hr/>
+         <h2>Descrição:</h2>
+         <h4 style="text-align: center; padding: 6px;">
+            Este algoritmo provê uma interface de modo que o usuário consiga verificar se uma camada respeita um conjunto de regras para o preenchimento correto de atributos ou conjunto de atributos.
+         </h4>
+         <hr />
+      </div>
+
+      <div>
+         
+         <h2>Parâmetros:</h2>
+         <p>
+            <span style="margin-bottom: 10px;">
+                &#8226; Camada de entrada &rarr;  Camada a ser processada em busca de linhas desconectadas.
+            </span>
+            
+            <span style="margin-bottom: 10px;">
+                &#8226; input is a boundary layer ( every line must be connected to an element of either the input layer or the filters) &rarr;  Cria os limites da camada de entrada, quando for usado os filtros opcionais e o parâmetro Geographic Boundary.
+            </span>
+            
+            <span style="margin-bottom: 10px;">
+                &#8226; Raio de busca &rarr;  Distância mínima de uma feição a outra (de uma camada que devesse ser atraí-la) para que não seja considerada desconectada (ponta solta). 
+            </span>
+            
+            <span style="margin-bottom: 10px;">
+                &#8226; Camada de filtro do tipo linha  &rarr; Camadas do tipo linhas a serem adicionadas à regra de checagem de proximidade quando for buscar feições próximas à analisada.
+            </span>
+
+            <span style="margin-bottom: 10px;">
+                 &#8226; Camada de filtro do tipo polígono  &rarr; Camadas do tipo polígono a serem adicionadas à regra de checagem de proximidade quando for buscar feições próximas à analisada.
+            </span>
+
+            <span style="margin-bottom: 10px;">
+                 &#8226; Ignorar pontas soltas em linhas não segmentadas  &rarr; Indica se o algoritmo deve ignorar extremidades de linha que tocam um segmento de reta sem que haja ponto de interseção.
+            </span>
+
+            <span style="margin-bottom: 10px;">
+                 &#8226; Geographic Boundary  &rarr; Será utilizada uma camada do tipo poligono para filtrar e identificar pontas soltas contidas dentro dessa camada.
+            </span>
+            
+            <span style="color:#ff0000; font-weight: bold;"<u>Atenção:</u> Utilização do raio em seu sistema de coordenadas da camada de entrada.</span>
+         </p>  
+         <hr />
+
+      </div>
+      
+      <div>
+         <h2>Exemplo de uso: </h2>
+         <h4>Modelagem EDGV3.0 na escala de 1:25.000 (EPSG):4674</h4>
+
+         <span style="margin-bottom: 10px;"> &#8226; Camada de entrada &rarr;  hid_trecho_drenagem_l </span>
+         <span style="margin-bottom: 10px;"> &#8226; input is a boundary layer &rarr;  false </span>
+         <span style="margin-bottom: 10px;"> &#8226; Raio de busca &rarr;  0,000100 </span>
+         <span style="margin-bottom: 10px;"> &#8226; Camada de filtro do tipo linha &rarr;  opicional </span> 
+         <span style="margin-bottom: 10px;"> &#8226; Camada de filtro do tipo polígono &rarr;  opicional </span>
+         <span style="margin-bottom: 10px;"> &#8226; Ignorar pontas soltas em linhas não segmentadas &rarr;  false </span>
+          
+
+         <hr />
+      </div>
+      
+      <div>
+         <h2>Exemplo de Flag:</h2>
+         <center><img src= "{}"></center>
+         <p style="text-align: center; font-style: italic;">Camada hid_trecho_drenagem_l com pontas soltas.</p>
+         <hr/>
+      </div> 
+   </body>
+
+</html>

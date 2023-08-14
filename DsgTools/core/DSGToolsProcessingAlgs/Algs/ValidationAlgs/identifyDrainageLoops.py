@@ -40,6 +40,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 from .validationAlgorithm import ValidationAlgorithm
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 
 class IdentifyDrainageLoops(ValidationAlgorithm):
@@ -129,15 +130,11 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
             return {self.FLAGS: self.flag_id}
 
         multiStepFeedback.setCurrentStep(currentStep)
-        self.searchLoops(
-            nx, inputLyr, multiStepFeedback, polygonLoops, polygonCount
-        )
+        self.searchLoops(nx, inputLyr, multiStepFeedback, polygonLoops, polygonCount)
 
         return {self.FLAGS: self.flag_id}
 
-    def searchLoops(
-        self, nx, inputLyr, feedback, polygonLoops, polygonCount
-    ):
+    def searchLoops(self, nx, inputLyr, feedback, polygonLoops, polygonCount):
         geometryHandler = GeometryHandler()
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         stepSize = 100 / polygonCount
@@ -243,6 +240,12 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyDrainageLoops", string)
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyDrainageLoops()

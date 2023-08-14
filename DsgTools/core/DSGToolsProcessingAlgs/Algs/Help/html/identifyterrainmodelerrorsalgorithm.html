@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="br">
+
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+
+   <body>
+      
+      <div>
+         <p > Help versão 1.0 </p>
+         <hr/>
+         <h2>Descrição:</h2>
+         <h4 style="text-align: center; padding: 6px;">
+            Identifica erros nas <u>curvas de nível</u> da região, como cotas incorretas, curvas de nível faltando e intersecção de curvas.
+         </h4>
+         <hr />
+      </div>
+
+      <div>
+         
+         <h2>Parâmetros:</h2>
+         <p>
+            <span style="margin-bottom: 10px;">
+               &#8226; Input contour layer &rarr; Camada de curva de nivel a ser processada em busca de ângulos incorretos.
+            </span>
+            
+            <span style="margin-bottom: 10px;">
+               &#8226; Campo de valor da cota &rarr; Atributo da camada contendo os valores das cotas.
+            </span>
+            
+            <span style="margin-bottom: 10px;">
+               &#8226; Tolerância &rarr; Equidistância entre as curvas de nível em metros. 
+            </span>
+            
+            <span style="margin-bottom: 10px;">
+               &#8226; Camada de limite geográfico &rarr; Camada a ser usada como limite da área de analise do algoritmo.
+            </span>
+            
+            <span style="color:#ff0000; font-weight: bold;"><u>Atenção:</u> para identificar curvas de nível faltando, é importante que o usuário corrija quaisquer erros de pontas soltas primeiro.</span>
+         </p>  
+         <hr />
+
+      </div>
+      
+      <div>
+         <h2>Exemplo de uso: </h2>
+         <h4>Modelagem EDGV3.0 na escala de 1:25.000 (EPSG):4674</h4>
+
+         <span style="margin-bottom: 10px;">&#8226; Input contour layer &rarr; rel_curva_nivel_l</span>
+         <span style="margin-bottom: 10px;">&#8226; Campo de valor da cota &rarr; cota</span>
+         <span style="margin-bottom: 10px;">&#8226; Tolerância &rarr; 10</span>
+         <span style="margin-bottom: 10px;">&#8226; Camada de limite geográfico &rarr; aux_moldura_a</span>
+         
+
+         <hr />
+      </div>
+      
+      <div>
+         <h2>Exemplo de Flag:</h2>
+         <center><img src= "{}"></center>
+         <p style="text-align: center; font-style: italic;">Curvas de nível intersectam entre si.</p>
+         <hr/>
+      </div> 
+   </body>
+
+</html>

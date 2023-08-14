@@ -47,6 +47,7 @@ from qgis.core import (
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 
 class IdentifyDuplicatedVertexesAlgorithm(ValidationAlgorithm):
@@ -201,6 +202,12 @@ class IdentifyDuplicatedVertexesAlgorithm(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyDuplicatedVertexesAlgorithm", string)
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyDuplicatedVertexesAlgorithm()

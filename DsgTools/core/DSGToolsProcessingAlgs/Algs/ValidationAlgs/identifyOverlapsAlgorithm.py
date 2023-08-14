@@ -48,7 +48,7 @@ from qgis.core import (
 )
 
 from .validationAlgorithm import ValidationAlgorithm
-
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
     FLAGS = "FLAGS"
@@ -253,6 +253,12 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyOverlapsAlgorithm", string)
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return  help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyOverlapsAlgorithm()
