@@ -45,6 +45,7 @@ from qgis.core import (
 )
 
 from .validationAlgorithm import ValidationAlgorithm
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 
 class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
@@ -318,6 +319,12 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         return QCoreApplication.translate(
             "IdentifyOutOfBoundsAnglesInCoverageAlgorithm", string
         )
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return  help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyOutOfBoundsAnglesInCoverageAlgorithm()

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="br">
+
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+
+   <body>
+      
+      <div>
+         <p > Help versão 1.0 </p>
+         <hr/>
+         <h2>Descrição:</h2>
+         <h4 style="text-align: center; padding: 6px;">
+            Este algoritmo provê uma interface de modo que o usuário consiga verificar se uma camada respeita um conjunto de regras para o preenchimento correto de atributos ou conjunto de atributos.
+         </h4>
+         <hr />
+      </div>
+
+      <div>
+         
+         <h2>Parâmetros:</h2>
+         <p>
+            <span style="margin-bottom: 10px;">
+               &#8226; Descrição &rarr; Descrição da regra a ser aplicada ao atributo.
+            </span>
+            
+            <span style="margin-bottom: 10px;">
+               &#8226; Camada e atributo &rarr; Camada referência sob a qual será aplicada a regra e seu atributo selecionado.
+            </span>
+            
+            <span style="margin-bottom: 10px;">
+               &#8226; Expressão &rarr; Expressão no formato QgsExpression que será aplicada ao atributo em questão. 
+            </span>
+            
+            <span style="margin-bottom: 10px;">
+               &#8226; Tipo de erro &rarr; Tipo do erro a ser atribuído à feição no arquivo de flags.
+            </span>
+
+            <span style="margin-bottom: 10px;">
+                &#8226; Color &rarr; Cor que será aplicada ao atributo na tabela de atributos da camada em questão.
+            </span>
+            
+            <span style="color:#ff0000; font-weight: bold;"><u>Atenção:</u> para identificar curvas de nível faltando, é importante que o usuário corrija quaisquer erros de pontas soltas primeiro.</span>
+         </p>  
+         <hr />
+
+      </div>
+      
+      <div>
+         <h2>Exemplo de uso: </h2>
+         <h4>Modelagem EDGV3.0 na escala de 1:25.000 (EPSG):4674</h4>
+
+         <span style="margin-bottom: 10px;">&#8226; Descrição &rarr; Preencher Atributo</span>
+         <span style="margin-bottom: 10px;">&#8226; Camada e atributo &rarr; hid_trecho_drenagem_l|tipotrechodrenagem </span>
+         <span style="margin-bottom: 10px;">&#8226; Expressão &rarr; "tipotrechodrenagem" not in(4,5)</span>
+         <span style="margin-bottom: 10px;">&#8226; Tipo de erro &rarr; Preencher atributo</span>
+         <span style="margin-bottom: 10px;">&#8226; Color &rarr; #f50000(vermelho)</span>
+
+         <hr />
+      </div>
+      
+      <div>
+         <h2>Exemplo de Flag:</h2>
+         <center><img src= "{}"></center>
+         <p style="text-align: center; font-style: italic;">Atributo tipotrechodrenagem não preenchidos na camada de hid_trecho_drenagem_l.</p>
+         <hr/>
+      </div> 
+   </body>
+
+</html>

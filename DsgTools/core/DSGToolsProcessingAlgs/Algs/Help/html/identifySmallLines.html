@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="br">
+
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+
+   <body>
+      
+      <div>
+         <p > Help versão 1.0 </p>
+         <hr/>
+         <h2>Descrição:</h2>
+         <h4 style="text-align: center; padding: 6px;">
+            Identifica feições com primitiva geométrica do tipo linha com comprimentos menores que a tolerância.
+         </h4>
+         <hr />
+      </div>
+
+      <div>
+         
+         <h2>Parâmetros:</h2>
+         <p>
+            <span style="margin-bottom: 10px;">
+             &#8226; Camada de entrada &rarr;  Camada a ser processada em busca de linhas pequenas.
+            </span>
+            <span style="margin-bottom: 10px;">
+             &#8226; Tolerância de comprimento de linha &rarr;  Indica o comprimento mínimo que uma linha pode ter para que não seja considerada pequena.Se a camada estiver no sistema de coordenada geográfica , a unidade de medida será em graus decimais.
+            0.00001 graus decimais ≅ 1 metro. 
+            
+            <span style="color:#ff0000; font-weight: bold;"><u>Atenção:</u> A unidade de medida do raio é baseada no sistema de coordenadas da camada vetorial de entrada.</span>
+                
+         </p>  
+         <hr />
+
+
+      </div>
+      
+      <div>
+         <h2>Exemplo de uso: </h2>
+         <h4>Modelagem EDGV3.0 na escala de 1:25.000 (EPSG):4674</h4>
+
+         <span style="margin-bottom: 10px;"> &#8226; Camada de entrada &rarr;  hid_trecho_drenagem_l</span>
+         <span style="margin-bottom: 10px;"> &#8226; Tolerância de comprimento de linha &rarr;  0,000100</span>
+         
+         
+
+         <hr />
+      </div>
+      
+      <div>
+         <h2>Exemplo de Flag:</h2>
+         <center><img src= "{}"></center>
+         <p style="text-align: center; font-style: italic;">hid_trecho_drenagem_l com linhas pequenas.</p>
+         <hr/>
+      </div> 
+   </body>
+
+</html>

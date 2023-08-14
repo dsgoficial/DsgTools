@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="br">
+
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+
+   <body>
+      
+      <div>
+         <p > Help versão 1.0 </p>
+         <hr/>
+         <h2>Descrição:</h2>
+         <h4 style="text-align: center; padding: 6px;">
+            Identifica feições com um mesmo conjunto de atributos e geometrias iguais.
+         </h4>
+         <hr />
+      </div>
+
+      <div>
+         
+         <h2>Parâmetros:</h2>
+         <p>
+            <span style="margin-bottom: 10px;">
+                &#8226; Camadas de entrada &rarr;  Camada a ser processada em busca de geometrias duplicadas.
+            </span>
+            <span style="margin-bottom: 10px;">
+                 &#8226; Campos a ignorar &rarr;  Campo opicional de atributos que devem ser ignorados pelo algoritmo quando for comparar as feições.
+             </span> 
+             <span style="margin-bottom: 10px;">
+                 &#8226; Ignorar campos virtuais &rarr;  Indica se o algoritmo deve levar atributos virtuais gerados pelo usuário em consideração quando for comparar feições.
+             </span> 
+             <span style="margin-bottom: 10px;">
+                 &#8226; Ignorar campos de chaves primárias &rarr;  Indica se o algoritmo deve levar atributos usados como chaves primárias (ex. ID) gerados pelo usuário em consideração quando for comparar feições.
+             </span> 
+             
+             <span style="color:#ff0000; font-weight: bold;"><u>Atenção</u>: Só é considerado o conjunto de atributos das feições iguais.</span>
+         </p>  
+         <hr />
+
+
+      </div>
+      
+      <div>
+         <h2>Exemplo de uso: </h2>
+         <h4>Modelagem EDGV3.0 na escala de 1:25.000 (EPSG):4674</h4>
+
+         <span style="margin-bottom: 10px;"></span> &#8226; Camadas de entrada &rarr;  cbge_trecho_arruamento_l</span>
+         <span style="margin-bottom: 10px;"></span> &#8226; Campos a ignorar &rarr;  id|nome|observacao</span>
+         <span style="margin-bottom: 10px;"></span> &#8226; Ignorar campos virtuais &rarr;  true</span>
+         <span style="margin-bottom: 10px;"></span> &#8226; Ignorar campos de chaves primárias &rarr;  true</span>
+
+         <hr />
+      </div>
+      
+      <div>
+         <h2>Exemplo de Flag:</h2>
+         <center><img src= "{}"></center>
+         <p style="text-align: center; font-style: italic;">Camada cbge_trecho_arruamento_l com feições duplicadas.</p>
+         <hr/>
+      </div> 
+   </body>
+
+</html>

@@ -37,6 +37,7 @@ from qgis.core import (
 from qgis.PyQt.QtCore import QCoreApplication, QVariant
 
 from .validationAlgorithm import ValidationAlgorithm
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 
 class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
@@ -236,6 +237,12 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyInvalidUUIDsAlgorithm", string)
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return  help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyInvalidUUIDsAlgorithm()
