@@ -1745,3 +1745,28 @@ class AlgRunner:
             feedback=feedback,
         )
         return output["FLAGS"]
+
+    def runAddUnsharedVertexOnSharedEdges(
+        self,
+        inputLinesList,
+        inputPolygonsList,
+        searchRadius,
+        context,
+        selected=False,
+        geographicBoundsLayer=None,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        processing.run(
+            "dsgtools:addunsharedvertexonsharededgesalgorithm",
+            {
+                "INPUT_LINES": inputLinesList,
+                "INPUT_POLYGONS": inputPolygonsList,
+                "SELECTED": selected,
+                "SEARCH_RADIUS": searchRadius,
+                "GEOGRAPHIC_BOUNDARY": geographicBoundsLayer,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
