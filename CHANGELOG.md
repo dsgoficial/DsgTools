@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.9.17 - dev
+## 4.9.18 - dev
 
 Novas Funcionalidades:
 
@@ -17,6 +17,7 @@ Novas Funcionalidades:
 - Novo processo de ajustar parâmetros do seletor genérico (integração com o FP/SAP);
 - Novo processo de ajustar parâmetros da ferramenta de aquisição com ângulos retos (integração com o FP/SAP);
 - Novo processo de converter entre bancos de mesma modelagem, clipando com um polígono feito para integração com FP/SAP (ClipAndCopyFeaturesBetweenDatabasesAlgorithm);
+- Novo processo de verificar ligação na moldura;
 
 
 Melhorias:
