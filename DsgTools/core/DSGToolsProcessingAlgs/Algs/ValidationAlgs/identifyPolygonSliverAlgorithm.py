@@ -31,6 +31,7 @@ from qgis.core import (
     QgsProcessingParameterMultipleLayers,
 )
 from qgis.PyQt.QtCore import QCoreApplication
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
@@ -220,6 +221,12 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyPolygonSliverAlgorithm", string)
+    
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return  help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyPolygonSliverAlgorithm()

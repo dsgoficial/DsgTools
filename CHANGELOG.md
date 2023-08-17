@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.9.15 - dev
+## 4.9.17 - dev
 
 Novas Funcionalidades:
 
@@ -31,6 +31,8 @@ Melhorias:
 - Alterados os inputs da ferramenta de extração de pontos cotados;
 - Correção de bug com área sem dados na ferramenta de extração de pontos cotados;
 - Adicionado ao processo de extrair elevação de MDS utilizando geometria da camada de entrada a opção de arredondar as casas decimais;
+- Novos helps integrados aos processos de identificação do provedor de algoritmos;
+- O snap hierárquico agora adiciona vértice tanto na referência, quanto na camada atraída;
 
 Correção de bug:
 

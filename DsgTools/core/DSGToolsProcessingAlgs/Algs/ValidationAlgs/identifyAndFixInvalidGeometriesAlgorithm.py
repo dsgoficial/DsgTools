@@ -46,7 +46,7 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsProcessingException,
 )
-
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
@@ -177,6 +177,12 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
         return QCoreApplication.translate(
             "IdentifyAndFixInvalidGeometriesAlgorithm", string
         )
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return  help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyAndFixInvalidGeometriesAlgorithm()

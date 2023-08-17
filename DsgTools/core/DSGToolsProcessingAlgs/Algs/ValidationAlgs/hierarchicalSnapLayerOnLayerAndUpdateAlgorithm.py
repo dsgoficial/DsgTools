@@ -20,6 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
+from collections import defaultdict
+import itertools
 import json
 
 from PyQt5.QtCore import QCoreApplication
@@ -33,6 +35,7 @@ from qgis.core import (
     QgsProcessingParameterBoolean,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterDefinition,
+    QgsWkbTypes,
 )
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
@@ -220,8 +223,10 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
     def snapToReferenceAndUpdateSpatialIndex(
         self, inputLayer, referenceLayer, tol, behavior, context, feedback
     ):
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setCurrentStep(0)
+        nSteps = 2 if behavior not in [0, 1] else 4
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
         snappedLyr = self.algRunner.runSnapGeometriesToLayer(
             inputLayer=inputLayer,
             referenceLayer=referenceLayer,
@@ -231,10 +236,38 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
-        multiStepFeedback.setCurrentStep(1)
-        self.algRunner.runCreateSpatialIndex(
-            snappedLyr, context, multiStepFeedback, is_child_algorithm=True
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        if behavior not in [0, 1]:
+            self.algRunner.runCreateSpatialIndex(
+                snappedLyr, context, multiStepFeedback, is_child_algorithm=True
+            )
+            return snappedLyr
+        primitiveDict = {
+            QgsWkbTypes.LineGeometry: [],
+            QgsWkbTypes.PolygonGeometry: [],
+        }
+        for lyrName in [snappedLyr, referenceLayer]:
+            lyr = (
+                self.layerFromProject(lyrName) if isinstance(lyrName, str) else lyrName
+            )
+            if lyr is None:
+                lyr = QgsProcessingUtils.mapLayerFromString(lyrName, context)
+            primitiveDict[lyr.geometryType()].append(lyr)
+        self.algRunner.runAddUnsharedVertexOnSharedEdges(
+            inputLinesList=primitiveDict[QgsWkbTypes.LineGeometry],
+            inputPolygonsList=primitiveDict[QgsWkbTypes.PolygonGeometry],
+            searchRadius=tol,
+            context=context,
+            feedback=multiStepFeedback,
         )
+        for lyr in itertools.chain.from_iterable(list(primitiveDict.values())):
+            lyr.commitChanges()
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.algRunner.runCreateSpatialIndex(
+                lyr, context, multiStepFeedback, is_child_algorithm=True
+            )
         return snappedLyr
 
     def updateOriginalLayers(self, snapStructure, onlySelected, context, feedback):

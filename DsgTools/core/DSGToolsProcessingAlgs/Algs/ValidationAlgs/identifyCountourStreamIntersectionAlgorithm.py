@@ -39,6 +39,7 @@ from qgis.PyQt.QtCore import QCoreApplication, QVariant
 from qgis.utils import iface
 
 from .validationAlgorithm import ValidationAlgorithm
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 
 class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
@@ -139,11 +140,21 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
 
         if outputPointsSet != set():
             self.outLayer(
-                parameters, context, outputPointsSet, streamLayerInput, QgsWkbTypes.Point, point_flag_sink, 
+                parameters,
+                context,
+                outputPointsSet,
+                streamLayerInput,
+                QgsWkbTypes.Point,
+                point_flag_sink,
             )
         if outputLinesSet != set():
             self.outLayer(
-                parameters, context, outputLinesSet, streamLayerInput, QgsWkbTypes.LineString, line_flag_sink,
+                parameters,
+                context,
+                outputLinesSet,
+                streamLayerInput,
+                QgsWkbTypes.LineString,
+                line_flag_sink,
             )
         return {
             self.POINT_FLAGS: point_flag_sink_id,
@@ -204,7 +215,10 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
                 return
             if intersection.wkbType() == QgsWkbTypes.MultiPoint:
                 outputPointsSet.add(intersection)
-            if intersection.wkbType() in [QgsWkbTypes.LineString, QgsWkbTypes.MultiLineString]:
+            if intersection.wkbType() in [
+                QgsWkbTypes.LineString,
+                QgsWkbTypes.MultiLineString,
+            ]:
                 outputLinesSet.add(intersection)
 
         buildOutputsLambda = lambda x: buildOutputs(x, feedback)
@@ -275,6 +289,12 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
         return QCoreApplication.translate(
             "IdentifyCountourStreamIntersectionAlgorithm", string
         )
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyCountourStreamIntersectionAlgorithm()

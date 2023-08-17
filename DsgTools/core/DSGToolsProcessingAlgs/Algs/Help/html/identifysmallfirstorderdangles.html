@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="br">
+
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+
+   <body>
+      
+      <div>
+         <p > Help versão 1.0 </p>
+         <hr/>
+         <h2>Descrição:</h2>
+         <h4 style="text-align: center; padding: 6px;">
+            Identifica seguimentos de linhas em uma rede, onde o seguimento é um trecho de linha que não está conectado a nenhum outro trecho.
+         </h4>
+         <hr />
+      </div>
+
+      <div>
+         
+         <h2>Parâmetros:</h2>
+         <p>
+            <span style="margin-bottom: 10px;">
+             &#8226; Input Layer &rarr;  Camadas do tipo linha a ser processada em busca de identificar seguimentos de linhas que não estão conectadas a nenhum outro trecho.
+            </span>
+            <span style="margin-bottom: 10px;">
+             &#8226; Minimum size &rarr;  Parâmetro onde se define tamanho mínimo para os seguimentos de linhas que serão identificados.
+            </span>
+            <span style="margin-bottom: 10px;">
+             &#8226; Search radius &rarr;  Parâmetro onde se define a distância que os seguimentos de linhas estão de onde deveriam estar conectados. Onde 0.00001 graus decimais ≅ 1 metro.
+            </span>
+            <span style="margin-bottom: 10px;">
+             &#8226; Linestring Filter Layers &rarr;  Camada opcional do tipo linha onde será filtrado em comparação com input layer.
+            </span>
+            <span style="margin-bottom: 10px;">
+             &#8226; Polygon Filter Layers &rarr;  Camada opcional do tipo poligono onde será filtrado em comparação com input layer.
+            </span>
+            <span style="margin-bottom: 10px;">
+             &#8226; Geographic Boundary &rarr;  Fronteira geográfica da região (moldura), que servirão como limitantes.
+            </span>
+            <span style="color:#ff0000; font-weight: bold;"><u>Atenção:</u> Independentemente do sistema de coordenadas da camada de entrada, o parâmetro do raio de busca é fornecido em ângulos decimais.</span>
+                
+         </p>  
+         <hr />
+
+
+      </div>
+      
+      <div>
+         <h2>Exemplo de uso: </h2>
+         <h4>Modelagem EDGV3.0 na escala de 1:25.000 (EPSG):4674</h4>
+
+         <span style="margin-bottom: 10px;"> &#8226; Input Layer &rarr;  hid_trecho_drenagem_l</span>
+         <span style="margin-bottom: 10px;"> &#8226; Minimum size &rarr;  0,001</span>
+         <span style="margin-bottom: 10px;"> &#8226; Search radius &rarr;  0,0001</span>
+         <span style="margin-bottom: 10px;"> &#8226; Linestring Filter Layers &rarr;  hid_trecho_drenagem_l</span>
+         <span style="margin-bottom: 10px;"> &#8226; Polygon Filter Layers &rarr;  false</span>
+         <span style="margin-bottom: 10px;"> &#8226; Geographic Boundary &rarr;  aux_moldura_a</span>
+         
+         
+
+         <hr />
+      </div>
+      
+      <div>
+         <h2>Exemplo de Flag:</h2>
+         <center><img src= "{}"></center>
+         <p style="text-align: center; font-style: italic;">hid_trecho_drenagem_l que não está conectado.</p>
+         <hr/>
+      </div> 
+   </body>
+
+</html>
