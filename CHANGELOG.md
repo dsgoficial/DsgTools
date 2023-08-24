@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.9.17 - dev
+## 4.9.18 - dev
 
 Novas Funcionalidades:
 
@@ -47,6 +47,7 @@ Correção de bug:
 - Correção de bug no processo de extrair pontos cotados;
 - Correção de bug na ferramenta de ângulos retos (quando está ativado o trace digitizing);
 - Correção de bug no linux no carrega camada (o QGIS mudou a assinatura do atributi duration do QgsMessageBarItem para inteiro e só dava o bug no linux);
+- Correção de bug na ferramenta de medição (não dá mais erro ao ligar e desligar a ferramenta sem selecionar ferramenta de digitalização)
 
 ## 4.8.0 - 2023-06-14
 
