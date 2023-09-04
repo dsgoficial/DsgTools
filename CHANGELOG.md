@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.9.18 - dev
+## 4.9.19 - dev
 
 Novas Funcionalidades:
 
@@ -46,8 +46,9 @@ Correção de bug:
 - Correção de bug na ferramenta de identificação de feições próximas (medida inválida, melhoria do texto da flag);
 - Correção de bug no processo de extrair pontos cotados;
 - Correção de bug na ferramenta de ângulos retos (quando está ativado o trace digitizing);
-- Correção de bug no linux no carrega camada (o QGIS mudou a assinatura do atributi duration do QgsMessageBarItem para inteiro e só dava o bug no linux);
-- Correção de bug na ferramenta de medição (não dá mais erro ao ligar e desligar a ferramenta sem selecionar ferramenta de digitalização)
+- Correção de bug no linux no carrega camada (o QGIS mudou a assinatura do atribute duration do QgsMessageBarItem para inteiro e só dava o bug no linux);
+- Correção de bug na ferramenta de medição (não dá mais erro ao ligar e desligar a ferramenta sem selecionar ferramenta de digitalização);
+- Correção de bug no seletor genérico (agora funciona com mais de uma camada com mesmo nome);
 
 ## 4.8.0 - 2023-06-14
 
