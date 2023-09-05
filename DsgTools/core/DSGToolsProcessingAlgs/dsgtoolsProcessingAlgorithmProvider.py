@@ -445,8 +445,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unicodeFilterAlgor
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import (
     VerifyNetworkDirectioningAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyLigation import (
-    VerifyLigationAlgorithm,
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyAdjacentGeographicBoundaryDataAlgorithm import (
+    VerifyAdjacentGeographicBoundaryDataAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadThemesAlgorithm import (
     LoadThemesAlgorithm,
@@ -607,7 +607,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             RightAngleToolParametersAlgorithm(),
             GenericSelectionToolParametersAlgorithm(),
             ClipAndCopyFeaturesBetweenDatabasesAlgorithm(),
-            VerifyLigationAlgorithm(),
+            VerifyAdjacentGeographicBoundaryDataAlgorithm(),
         ]
         return algList
 

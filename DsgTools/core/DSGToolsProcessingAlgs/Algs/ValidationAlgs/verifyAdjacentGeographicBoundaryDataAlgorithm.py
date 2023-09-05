@@ -7,7 +7,7 @@
                               -------------------
         begin                : 2023-08-09
         git sha              : $Format:%H$
-        copyright            : (C) 2018 by Matheus Alves Silva - Cartographic Engineer @ Brazilian Army
+        copyright            : (C) 2023 by Matheus Alves Silva - Cartographic Engineer @ Brazilian Army
         email                : matheus.silva@ime.eb.br
  ***************************************************************************/
 /***************************************************************************
@@ -23,46 +23,31 @@
 from collections import defaultdict
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from PyQt5.QtCore import QCoreApplication, QVariant
-import os
-import concurrent.futures
 from qgis import core
 from qgis.core import (
-    QgsDataSourceUri,
     QgsFeature,
     QgsFeatureSink,
     QgsProcessing,
     QgsGeometry,
-    QgsProcessingAlgorithm,
-    QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsSpatialIndex,
     QgsFields,
-    QgsProcessingParameterNumber,
-    QgsProcessingOutputVectorLayer,
-    QgsProcessingParameterBoolean,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingUtils,
     QgsField,
     QgsProcessingParameterDistance,
-    QgsProject,
     QgsWkbTypes,
-    QgsPoint,
-    QgsPointXY,
-    QgsProcessingFeatureSourceDefinition,
 )
 
 from .validationAlgorithm import ValidationAlgorithm
 
 
-class VerifyLigationAlgorithm(ValidationAlgorithm):
+class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
     POINT_FLAGS = "POINT_FLAGS"
     LINE_FLAGS = "LINE_FLAGS"
     INPUT_FRAME = "INPUT_FRAME"
     INPUT_LINE_POLYGON = "INPUT_LINE_POLYGON"
-    ATTRIBUTES = "ATTRIBUTES"
+    ATTRIBUTE_BLACK_LIST = "ATTRIBUTE_BLACK_LIST"
     DISTANCE_SEARCH = "DISTANCE_SEARCH"
 
     def initAlgorithm(self, config):
@@ -90,8 +75,8 @@ class VerifyLigationAlgorithm(ValidationAlgorithm):
 
         self.addParameter(
             core.QgsProcessingParameterField(
-                self.ATTRIBUTES,
-                self.tr("Select the attributes for disconsiderer"),
+                self.ATTRIBUTE_BLACK_LIST,
+                self.tr("Fields to ignore"),
                 type=core.QgsProcessingParameterField.Any,
                 parentLayerParameterName=self.INPUT_LINE_POLYGON,
                 allowMultiple=True,
@@ -128,7 +113,7 @@ class VerifyLigationAlgorithm(ValidationAlgorithm):
             parameters, self.INPUT_FRAME, context
         )
         inputLyrAttributes = self.parameterAsFields(
-            parameters, self.ATTRIBUTES, context
+            parameters, self.ATTRIBUTE_BLACK_LIST, context
         )
         distSearch = self.parameterAsDouble(parameters, self.DISTANCE_SEARCH, context)
 
@@ -175,7 +160,10 @@ class VerifyLigationAlgorithm(ValidationAlgorithm):
         # Dict of lines in inside frame
         dictLineInsideFrame = defaultdict(list)
 
-        stepSizeLine, feed = self.stepFeedbackLyr(multiStepFeedback, explodeLinesLyr)
+        nSteps = len([f for f in explodeLinesLyr.getFeatures()])
+        stepSizeLine, feed = self.sizeFeedback(
+            nSteps, multiStepFeedback, point_flag_sink_id, line_flag_sink_id
+        )
 
         self.lineInsideFrame(
             explodeLinesLyr,
@@ -192,8 +180,9 @@ class VerifyLigationAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr("Lines from inside the frame."))
 
-        feed, stepSizeLineInside = self.stepFeedback(
-            multiStepFeedback, dictLineInsideFrame
+        nSteps = len(dictLineInsideFrame)
+        stepSizeLineInside, feed = self.sizeFeedback(
+            nSteps, multiStepFeedback, point_flag_sink_id, line_flag_sink_id
         )
 
         # Application buffer in the lines of frame
@@ -224,7 +213,10 @@ class VerifyLigationAlgorithm(ValidationAlgorithm):
             # Dict vertice in frame
             dictVertInFrame = defaultdict(list)
 
-            feed, stepSize = self.stepFeedback(multiChildOne, listLineBuffFrame)
+            nSteps = len(listLineBuffFrame)
+            stepSize, feed = self.sizeFeedback(
+                nSteps, multiChildOne, point_flag_sink_id, line_flag_sink_id
+            )
 
             self.verticesInFrame(
                 listLineBuffFrame,
@@ -238,10 +230,13 @@ class VerifyLigationAlgorithm(ValidationAlgorithm):
             multiChildOne.setCurrentStep(1)
             multiChildOne.pushInfo(self.tr("Vertices in frame."))
 
-            feed, stepSize = self.stepFeedback(multiChildOne, dictVertInFrame)
+            nSteps = len(dictVertInFrame)
+            stepSize, feed = self.sizeFeedback(
+                nSteps, multiChildOne, point_flag_sink_id, line_flag_sink_id
+            )
 
             self.verifyLine(
-                feed, attributes, dictVertInFrame, stepSize, fields, line_flag_sink
+                feed, attributes, dictVertInFrame, stepSize, point_flag_sink, fields
             )
 
         elif inputLinePolyLyr.geometryType() == QgsWkbTypes.PolygonGeometry:
@@ -262,7 +257,10 @@ class VerifyLigationAlgorithm(ValidationAlgorithm):
             # Spatial Index of polygons
             dictPolygon, idPolygon, polygonSpatialIdx = self.spatialIndex(tempPolyLyr)
 
-            feed, stepSize = self.stepFeedback(multiChildTwo, listLineBuffFrame)
+            nSteps = len(listLineBuffFrame)
+            stepSize, feed = self.sizeFeedback(
+                nSteps, multiChildTwo, point_flag_sink_id, line_flag_sink_id
+            )
 
             # List of vertices polygons in frame
             setVtxPolyFrame = self.verticesPolyInFrame(
@@ -299,7 +297,10 @@ class VerifyLigationAlgorithm(ValidationAlgorithm):
                 explodeLinePolygon
             )
 
-            feed, stepSize = self.stepFeedback(multiChildTwo, listLineBuffFrame)
+            nSteps = len(listLineBuffFrame)
+            stepSize, feed = self.sizeFeedback(
+                nSteps, multiChildTwo, point_flag_sink_id, line_flag_sink_id
+            )
 
             dictLinePoly = self.dictBBoxWktId(
                 listLineBuffFrame,
@@ -312,7 +313,11 @@ class VerifyLigationAlgorithm(ValidationAlgorithm):
             multiChildTwo.setCurrentStep(2)
             multiChildTwo.pushInfo(self.tr("Check link between polygons "))
 
-            feed, stepSize = self.stepFeedback(multiChildTwo, dictLinePoly)
+            nSteps = len(dictLinePoly)
+            stepSize, feed = self.sizeFeedback(
+                nSteps, multiChildTwo, point_flag_sink_id, line_flag_sink_id
+            )
+
             # List of lines
             listLines = self.verifyLigationPolygon(
                 attributes,
@@ -329,7 +334,11 @@ class VerifyLigationAlgorithm(ValidationAlgorithm):
 
             multiChildTwo.setCurrentStep(3)
 
-            feed, stepSize = self.stepFeedback(multiChildTwo, setVtxPolyFrame)
+            nSteps = len(setVtxPolyFrame)
+            stepSize, feed = self.sizeFeedback(
+                nSteps, multiChildTwo, point_flag_sink_id, line_flag_sink_id
+            )
+
             # List vertex of flag
             dictVtxFlag = self.vertexInLineFrame(
                 stepSize, setVtxPolyFrame, dictLine, lineSpatialIndex, multiChildTwo
@@ -341,6 +350,18 @@ class VerifyLigationAlgorithm(ValidationAlgorithm):
             self.POINT_FLAGS: point_flag_sink_id,
             self.LINE_FLAGS: line_flag_sink_id,
         }
+
+    def sizeFeedback(
+        self, nSteps, multiStepFeedback, point_flag_sink_id, line_flag_sink_id
+    ):
+        if nSteps == 0:
+            return {
+                self.POINT_FLAGS: point_flag_sink_id,
+                self.LINE_FLAGS: line_flag_sink_id,
+            }
+        stepSize = 100 / nSteps
+        feed = QgsProcessingMultiStepFeedback(nSteps, multiStepFeedback)
+        return stepSize, feed
 
     def flagPoint(self, fields, point_flag_sink, dictVtxFlag):
         for vtx in dictVtxFlag:
@@ -517,18 +538,6 @@ class VerifyLigationAlgorithm(ValidationAlgorithm):
             attributes.append(attr)
         return attributes
 
-    def stepFeedback(self, multiStepFeedback, iterator):
-        nSteps = len(iterator)
-        stepSizeLineInside = 100 / nSteps
-        feed = QgsProcessingMultiStepFeedback(nSteps, multiStepFeedback)
-        return feed, stepSizeLineInside
-
-    def stepFeedbackLyr(self, multiStepFeedback, explodeLinesLyr):
-        nSteps = len([f for f in explodeLinesLyr.getFeatures()])
-        stepSizeLine = 100 / nSteps
-        feed = QgsProcessingMultiStepFeedback(nSteps, multiStepFeedback)
-        return stepSizeLine, feed
-
     def idPolygonInFrame(self, listLineBuffFrame, polygonSpatialIdx):
         idPolyIn = set()
         for lineFrame in listLineBuffFrame:
@@ -575,21 +584,25 @@ class VerifyLigationAlgorithm(ValidationAlgorithm):
                 sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
             elif len(dictVertInFrame[wktSpecifVert]) == 2:
                 [vertFeatOne, vertFeatTwo] = dictVertInFrame[wktSpecifVert]
-                attrFeatOne = []
-                attrFeatTwo = []
+                dictAttrFeat = defaultdict(set)
                 for attributeName in attributes:
-                    attrFeatOne.append(vertFeatOne[attributeName])
-                    attrFeatTwo.append(vertFeatTwo[attributeName])
-                if attrFeatOne == attrFeatTwo:
+                    dictAttrFeat[attributeName].add(vertFeatOne[attributeName])
+                    dictAttrFeat[attributeName].add(vertFeatTwo[attributeName])
+                msg = "Os atributos "
+                for attr in dictAttrFeat:
+                    if len(dictAttrFeat[attr]) == 1:
+                        continue
+                    msg += f"{attr}, "
+                if msg == "Os atributos ":
                     continue
                 geomFeatOne = vertFeatOne.geometry()
                 newFeat.setGeometry(geomFeatOne)
-                newFeat["Flag"] = "Conectado com atributos diferentes"
+                newFeat["Flag"] = msg[: len(msg) - 2] + " estão diferentes."
                 sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
             else:
                 geomVertFlag = dictVertInFrame[wktSpecifVert][0].geometry()
                 newFeat.setGeometry(geomVertFlag)
-                newFeat["Flag"] = "Três ou mais vias conectadas"
+                newFeat["Flag"] = "Três ou mais vias conectadas."
                 sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
 
             feed.setProgress(current * stepSize)
@@ -620,14 +633,14 @@ class VerifyLigationAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "verifyligation"
+        return "verifyadjacentgeographicboundarydata"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Verify Ligation")
+        return self.tr("Verify Adjacent Geographic Boundary Data")
 
     def group(self):
         """
@@ -647,7 +660,9 @@ class VerifyLigationAlgorithm(ValidationAlgorithm):
         return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate("VerifyLigation", string)
+        return QCoreApplication.translate(
+            "VerifyAdjacentGeographicBoundaryDataAlgorithm", string
+        )
 
     def createInstance(self):
-        return VerifyLigationAlgorithm()
+        return VerifyAdjacentGeographicBoundaryDataAlgorithm()
