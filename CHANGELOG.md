@@ -1,7 +1,7 @@
 # CHANGELOG
 
 
-## 4.9.19 - dev
+## 4.9.20 - dev
 
 
 Novas Funcionalidades:
@@ -20,6 +20,7 @@ Novas Funcionalidades:
 - Novo processo de ajustar parâmetros da ferramenta de aquisição com ângulos retos (integração com o FP/SAP);
 - Novo processo de converter entre bancos de mesma modelagem, clipando com um polígono feito para integração com FP/SAP (ClipAndCopyFeaturesBetweenDatabasesAlgorithm);
 - Novo processo de verificar ligação na moldura;
+- Novo processo de cálculo do azimute;
 
 
 Melhorias:
