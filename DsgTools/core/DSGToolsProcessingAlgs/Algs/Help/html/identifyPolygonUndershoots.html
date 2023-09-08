@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="br">
+
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+
+   <body>
+      
+      <div>
+         <p > Help versão 1.0 </p>
+         <hr/>
+         <h2>Descrição:</h2>
+         <h4 style="text-align: center; padding: 6px;">
+            Identifica os vértices dos polígonos que estão próximos à camada de referência.
+         </h4>
+         <hr />
+      </div>
+
+      <div>
+         
+         <h2>Parâmetros:</h2>
+         <p>
+            <span style="margin-bottom: 10px;">
+             &#8226; Input &rarr;  Camada de geometria do tipo polígono a ser processada em busca de vértices próximos a camada de referência.
+            </span>
+            <span style="margin-bottom: 10px;">
+             &#8226; Reference Polygons &rarr;  Camada do tipo polígono a ser referência.
+            </span>
+            <span style="margin-bottom: 10px;">
+             &#8226; Search Radius &rarr;  Um ângulo entre 0 e 0,00001 onde 0.00001 graus decimais ≅ 1 metro.
+            
+            </span>
+            <span style="color:#ff0000; font-weight: bold;"><u>Atenção:</u> Independentemente do sistema de coordenadas da camada de entrada, o parâmetro do raio de busca é fornecido em ângulos decimais.</span>
+                
+         </p>  
+         <hr />
+
+
+      </div>
+      
+      <div>
+         <h2>Exemplo de uso: </h2>
+         <h4>Modelagem EDGV3.0 na escala de 1:25.000 (EPSG):4674</h4>
+
+         <span style="margin-bottom: 10px;"> &#8226; Input &rarr;  hid_massa_dagua_a</span>
+         <span style="margin-bottom: 10px;"> &#8226; Reference Polygons &rarr;  aux_moldura_a</span>
+         <span style="margin-bottom: 10px;"> &#8226; Search Radius &rarr;  0,0001</span>
+         
+         
+
+         <hr />
+      </div>
+      
+      <div>
+         <h2>Exemplo de Flag:</h2>
+         <center><img src= "{}"></center>
+         <p style="text-align: center; font-style: italic;">Vértice da camada hid_massa_dagua_a próximo à camada de referência.</p>
+         <hr/>
+      </div> 
+   </body>
+
+</html>

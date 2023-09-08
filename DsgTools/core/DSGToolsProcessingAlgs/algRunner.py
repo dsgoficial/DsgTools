@@ -20,11 +20,18 @@
  *                                                                         *
  ***************************************************************************/
 """
-from typing import List
 import uuid
+from typing import List, Optional
 
 import processing
-from qgis.core import Qgis, QgsProcessingUtils, QgsProcessingFeatureSourceDefinition
+from qgis.core import (
+    Qgis,
+    QgsProcessingContext,
+    QgsProcessingFeatureSourceDefinition,
+    QgsProcessingUtils,
+    QgsVectorLayer,
+    QgsFeedback,
+)
 
 
 class AlgRunner:
@@ -43,6 +50,16 @@ class AlgRunner:
         RmLine,
         RMSA,
     ) = range(13)
+    (
+        Intersect,
+        Contain,
+        Disjoint,
+        Equal,
+        Touch,
+        Overlap,
+        Within,
+        Cross,
+    ) = range(8)
 
     def generateGrassOutputAndError(self):
         uuid_value = str(uuid.uuid4()).replace("-", "")
@@ -888,6 +905,7 @@ class AlgRunner:
         feedback=None,
         outputLyr=None,
         unjoinnedLyr=None,
+        returnUnjoinned=False,
     ):
         predicateList = [0] if predicateList is None else predicateList
         joinFields = [] if joinFields is None else joinFields
@@ -1640,3 +1658,115 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
+
+    def runDifference(
+        self,
+        inputLyr: QgsVectorLayer,
+        overlayLyr: QgsVectorLayer,
+        context: QgsProcessingContext,
+        gridSize: Optional[float] = None,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:difference",
+            {
+                "INPUT": inputLyr,
+                "OVERLAY": overlayLyr,
+                "OUTPUT": outputLyr,
+                "GRID_SIZE": gridSize,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runIdentifyLoops(
+        self,
+        inputLyr: QgsVectorLayer,
+        context: QgsProcessingContext,
+        buildLocalCache: bool = False,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "dsgtools:identifydrainageloops",
+            {
+                "INPUT": inputLyr,
+                "BUILD_CACHE": buildLocalCache,
+                "FLAGS": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["FLAGS"]
+
+    def runIdentifyDrainageFlowIssues(
+        self,
+        inputLyr: QgsVectorLayer,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "dsgtools:identifydrainageflowissues",
+            {
+                "INPUT": inputLyr,
+                "FLAGS": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["FLAGS"]
+
+    def runIdentifySmallLines(
+        self, inputLyr, tol, context, feedback=None, flagLyr=None, onlySelected=False
+    ):
+        flagLyr = "memory:" if flagLyr is None else flagLyr
+        parameters = {
+            "INPUT": inputLyr,
+            "TOLERANCE": tol,
+            "SELECTED": onlySelected,
+            "FLAGS": flagLyr,
+        }
+        output = processing.run(
+            "dsgtools:identifysmalllines",
+            parameters,
+            context=context,
+            feedback=feedback,
+        )
+        return output["FLAGS"]
+
+    def runAddUnsharedVertexOnSharedEdges(
+        self,
+        inputLinesList,
+        inputPolygonsList,
+        searchRadius,
+        context,
+        selected=False,
+        geographicBoundsLayer=None,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        processing.run(
+            "dsgtools:addunsharedvertexonsharededgesalgorithm",
+            {
+                "INPUT_LINES": inputLinesList,
+                "INPUT_POLYGONS": inputPolygonsList,
+                "SELECTED": selected,
+                "SEARCH_RADIUS": searchRadius,
+                "GEOGRAPHIC_BOUNDARY": geographicBoundsLayer,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )

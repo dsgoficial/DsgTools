@@ -43,7 +43,7 @@ from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import (
     ValidationAlgorithm,
 )
-
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
     RULES_SET = "RULES_SET"
@@ -120,6 +120,13 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate("EnforceSpatialRulesAlgorithm", string)
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return  help().helpUrl(self.name())
+
 
     def createInstance(self):
         return EnforceSpatialRulesAlgorithm()

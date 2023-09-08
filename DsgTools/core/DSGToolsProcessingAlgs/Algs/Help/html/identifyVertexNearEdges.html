@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="br">
+
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+
+   <body>
+      
+      <div>
+         <p > Help versão 1.0 </p>
+         <hr/>
+         <h2>Descrição:</h2>
+         <h4 style="text-align: center; padding: 6px;">
+            Identifica vértices de um polígono ou linha que estejam próximos de uma aresta do próprio polígono ou linha, útil para detectar situações em que o polígono "afina" demais.
+            
+         </h4>
+         <hr />
+      </div>
+
+      <div>
+         
+         <h2>Parâmetros:</h2>
+         <p>
+            <span style="margin-bottom: 10px;">
+                &#8226; Camada de entrada &rarr;  Camada vetorial do tipo linha ou polígono.
+            </span>
+            <span style="margin-bottom: 10px;">
+                 &#8226; Raio de busca &rarr;  Distância máxima para que se considere o nó de uma feição muito próximo a uma aresta desta mesma feição. Se a camada estiver no sistema de coordenada geográfica , a unidade de medida será em graus decimais.
+                0.00001 graus decimais ≅ 1 metro. 
+             </span>
+            
+
+            <span style="color:#ff0000; font-weight: bold;"><u>Atenção:</u> A unidade de medida do raio é baseada no sistema de coordenadas da camada vetorial de entrada.</span>
+            
+         </p>  
+         <hr />
+
+      </div>
+      
+      <div>
+         <h2>Exemplo de uso: </h2>
+         <h4>Modelagem EDGV3.0 na escala de 1:25.000 (EPSG):4674</h4>
+
+         <span style="margin-bottom: 10px;"></span> &#8226; Camada de entrada &rarr;  veg_floresta_a e veg_campo_a</span>
+         <span style="margin-bottom: 10px;"></span> &#8226; Raio de busca &rarr;  0,001</span>
+         
+
+         <hr />
+      </div>
+      
+      <div>
+         <h2>Exemplo de Flag:</h2>
+         <center><img src= "{}"></center>
+         <p style="text-align: center; font-style: italic;">veg_floresta_a e veg_campo_a com vértices próximos.</p>
+         <hr/>
+      </div> 
+   </body>
+
+</html>

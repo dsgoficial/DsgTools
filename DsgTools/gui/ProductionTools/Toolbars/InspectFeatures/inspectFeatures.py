@@ -199,11 +199,11 @@ class InspectFeatures(QWidget, Ui_Form):
             self.idSpinBox.setValue(newId)
         else:
             currentLayer = self.getIterateLayer()
-            lyrName = currentLayer.name()
-            if lyrName not in list(self.allLayers.keys()):
-                self.allLayers[lyrName] = 0
+            lyrId = currentLayer.id()
+            if lyrId not in list(self.allLayers.keys()):
+                self.allLayers[lyrId] = 0
                 return
-            oldIndex = self.allLayers[lyrName]
+            oldIndex = self.allLayers[lyrId]
             if oldIndex == 0:
                 return
             featIdList = self.getFeatIdList(currentLayer)
@@ -219,11 +219,9 @@ class InspectFeatures(QWidget, Ui_Form):
                 return
             try:
                 index = featIdList.index(newId)
-                self.allLayers[lyrName] = index
+                self.allLayers[lyrId] = index
                 self.makeZoom(zoom, currentLayer, newId)
-                self.idSpinBox.setSuffix(
-                    " ({0}/{1})".format(index + 1, len(featIdList))
-                )
+                self.idSpinBox.setSuffix(f" ({index + 1}/{len(featIdList)})")
             except:
                 # self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Selected id does not exist in layer {0}. Returned to previous id.').format(lyrName), level=Qgis.Warning, duration=2)
                 self.idSpinBox.setValue(oldIndex)
@@ -415,13 +413,13 @@ class InspectFeatures(QWidget, Ui_Form):
     def resetCurrentIndex(self, indexName=None):
         lyr = self.mMapLayerComboBox.currentLayer()
         if lyr is not None:
-            lyrName = lyr.name()
-            self.allLayers[lyrName] = 0
+            lyrId = lyr.id()
+            self.allLayers[lyrId] = 0
 
     def setValues(self, featIdList, currentLayer):
-        lyrName = currentLayer.name()
+        lyrId = currentLayer.id()
         featIdList.sort()
-        self.allLayers[lyrName] = 0
+        self.allLayers[lyrId] = 0
 
         maxIndex = len(featIdList) - 1
         minIndex = 0
@@ -478,6 +476,81 @@ class InspectFeatures(QWidget, Ui_Form):
         self.mFieldExpressionWidget.setExpression("")
 
     def unload(self):
-        self.iface.unregisterMainWindowAction(self.activateToolAction)
-        self.iface.unregisterMainWindowAction(self.backButtonAction)
-        self.iface.unregisterMainWindowAction(self.nextButtonAction)
+        try:
+            self.iface.unregisterMainWindowAction(self.activateToolAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.backButtonAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.nextButtonAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.refreshPushButtonAction)
+        except:
+            pass
+
+    def getToolState(self) -> dict:
+        currentLayer = self.mMapLayerComboBox.currentLayer()
+        return {
+            "bar_is_toggled": self.inspectPushButton.isChecked(),
+            "current_layer": currentLayer.id(),
+            "current_feature_state_dict": self.allLayers,
+            "current_zoom": self.mScaleWidget.scale()
+            if currentLayer.geometryType() == QgsWkbTypes.PointGeometry
+            else self.zoomPercentageSpinBox.value(),
+            "use_pan": self.usePanCkb.isChecked(),
+            "current_filter_expression": self.mFieldExpressionWidget.currentText(),
+            "sort_is_toggled": self.sortPushButton.isChecked(),
+            "current_sort_field": self.mFieldComboBox.currentField(),
+            "is_ascending": self.ascRadioButton.isChecked(),
+        }
+
+    def setToolState(self, stateDict: dict) -> bool:
+        isBarToggled = stateDict.get("bar_is_toggled", None)
+        if isBarToggled is None:
+            return False
+        if isBarToggled:
+            if not self.inspectPushButton.isChecked():
+                self.inspectPushButton.click()  # sim, é intencional clicar duas vezes
+        currentLayerId = stateDict.get("current_layer", None)
+        if currentLayerId is None:
+            return False
+        currentLayer = QgsProject.instance().mapLayers().get(currentLayerId, None)
+        if currentLayer is None:
+            return False
+        self.mMapLayerComboBox.setLayer(currentLayer)
+        currentStateDict = stateDict.get("current_feature_state_dict", None)
+        if currentStateDict is None:
+            return False
+        self.allLayers.update(currentStateDict)
+        currentZoom = stateDict.get("current_zoom", None)
+        if currentLayer.geometryType() == QgsWkbTypes.PointGeometry:
+            self.mScaleWidget.setScale(currentZoom)
+        else:
+            self.zoomPercentageSpinBox.setValue(currentZoom)
+        usePan = stateDict.get("use_pan", None)
+        if usePan is None:
+            return False
+        self.usePanCkb.setChecked(usePan)
+        currentFilterExpression = stateDict.get("current_filter_expression", None)
+        if currentFilterExpression is None:
+            return False
+        self.mFieldExpressionWidget.setExpression(currentFilterExpression)
+        isSortToggled = stateDict.get("sort_is_toggled", None)
+        if not isSortToggled:
+            return True
+        self.sortPushButton.click()
+        currentSortField = stateDict.get("current_sort_field", None)
+        if currentSortField is None:
+            return False
+        self.mFieldComboBox.setField(currentSortField)
+        isAscending = stateDict.get("is_ascending", None)
+        if isAscending is None:
+            return False
+        if not isAscending:
+            self.descRadioButton.click()
+        return True

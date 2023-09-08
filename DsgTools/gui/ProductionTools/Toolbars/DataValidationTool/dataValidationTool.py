@@ -402,6 +402,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
             w.blockSignals(True)
             del w
         self.iface.unregisterMainWindowAction(self.runAction)
+        del self
 
     def addShortcut(self):
         """
@@ -413,6 +414,4 @@ class DataValidationTool(QWidget, FORM_CLASS):
             self.parent,
         )
         self.runAction.triggered.connect(self.runModel)
-        if self.parent:
-            self.parent.addAction(self.runAction)
         self.iface.registerMainWindowAction(self.runAction, "")

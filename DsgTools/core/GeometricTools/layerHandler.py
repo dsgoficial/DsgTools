@@ -33,6 +33,9 @@ from uuid import uuid4
 from processing.tools import dataobjects
 
 import concurrent.futures
+import processing
+
+import numpy as np
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
@@ -64,7 +67,7 @@ from qgis.core import (
 from qgis.PyQt.Qt import QObject, QVariant
 
 from .featureHandler import FeatureHandler
-from .geometryHandler import GeometryHandler
+from .geometryHandler import GeometryHandler, find_nan_or_inf_vertex_neighbor, fix_geom_vertices, make_valid
 
 
 class LayerHandler(QObject):
@@ -1416,6 +1419,10 @@ class LayerHandler(QObject):
 
     def checkGeomIsValid(self, geom, ignoreClosed, feedback=None):
         flagDict = dict()
+        if geom is None or geom.isNull() or geom.isEmpty():
+            return {
+                ""
+            }
         for validate_type, method_parameter in {
             "GEOS": Qgis.GeometryValidationEngine.Geos,
             "QGIS": Qgis.GeometryValidationEngine.QgisInternal,
@@ -1434,13 +1441,16 @@ class LayerHandler(QObject):
     def fixGeometryFromInput(
         self, inputLyr, parameterDict, geometryType, newFeatSet, feat, geom, id
     ):
+        originalGeometry = QgsGeometry(geom)
+        geom.removeDuplicateNodes(useZValues=parameterDict["hasZValues"])
+        fixedGeom = make_valid(geom)
+        if originalGeometry.equals(fixedGeom):
+            return
         attrMap = {
             idx: feat[field.name()]
             for idx, field in enumerate(feat.fields())
             if idx not in inputLyr.primaryKeyAttributes()
         }
-        geom.removeDuplicateNodes(useZValues=parameterDict["hasZValues"])
-        fixedGeom = geom.makeValid()
         for idx, newGeom in enumerate(
             self.geometryHandler.handleGeometryCollection(
                 fixedGeom, geometryType, parameterDict=parameterDict
@@ -1489,6 +1499,8 @@ class LayerHandler(QObject):
             if error.hasWhere():
                 errorPointXY = error.where()
                 flagGeom = QgsGeometry.fromPointXY(errorPointXY)
+                if not (geom is None or geom.isNull() or geom.isEmpty()) and np.isinf(tuple(errorPointXY)).any() or np.isnan(tuple(errorPointXY)).any():
+                    flagGeom = find_nan_or_inf_vertex_neighbor(geom)
                 if (
                     geom.type() == QgsWkbTypes.LineGeometry
                     and ignoreClosed
@@ -1502,9 +1514,10 @@ class LayerHandler(QObject):
     def _add_flag(self, flagDict, validate_type, error, errorPointXY, flagGeom):
         if errorPointXY not in flagDict:
             flagDict[errorPointXY] = {"geom": flagGeom, "reason": ""}
-        flagDict[errorPointXY]["reason"] += "{type} invalid reason: {text}\n".format(
-            type=validate_type, text=error.what()
-        )
+        what = error.what()
+        if 'invalid coordinate' in what.lower():
+            what += ' on neighbor vertex (is either inf or nan).'
+        flagDict[errorPointXY]["reason"] += f"{validate_type} invalid reason: {what}\n"
 
     def isClosedAndFlagIsAtStartOrEnd(self, geom, flagGeom):
         for part in geom.asGeometryCollection():
@@ -1895,7 +1908,9 @@ class LayerHandler(QObject):
         self,
         inputLineLyrList,
         inputPolygonLyrList,
+        geographicBoundaryLyr=None,
         algRunner=None,
+        excludeLinesInsidePolygons=False,
         onlySelected=False,
         feedback=None,
         context=None,
@@ -1911,7 +1926,7 @@ class LayerHandler(QObject):
         context = (
             dataobjects.createContext(feedback=feedback) if context is None else context
         )
-        nSteps = 2 * len(inputLineLyrList) + 3 * len(inputPolygonLyrList) + 1
+        nSteps = 2 * len(inputLineLyrList) + 3 * len(inputPolygonLyrList) + 1 + 7 * (inputPolygonLyrList != [] and excludeLinesInsidePolygons)
         multiStepFeedback = QgsProcessingMultiStepFeedback(
             nSteps, feedback
         )  # set number of steps
@@ -1941,6 +1956,8 @@ class LayerHandler(QObject):
         multiStepFeedback.pushInfo(
             self.tr("Converting polygons to single part and exploding lines")
         )
+        singlePartPolygonList = []
+        singlePartGeographicBoundaryLyr = None
         for polygonLyr in inputPolygonLyrList:
             multiStepFeedback.setCurrentStep(currentStep)
             usedInput = algRunner.runMultipartToSingleParts(
@@ -1951,6 +1968,9 @@ class LayerHandler(QObject):
                 feedback=multiStepFeedback,
                 is_child_algorithm=True,
             )
+            if geographicBoundaryLyr is not None and polygonLyr.id() == geographicBoundaryLyr.id():
+                singlePartGeographicBoundaryLyr = usedInput
+            singlePartPolygonList.append(usedInput)
             currentStep += 1
             convertedPolygons = algRunner.runPolygonsToLines(
                 usedInput, context, feedback=multiStepFeedback, is_child_algorithm=True
@@ -1977,6 +1997,65 @@ class LayerHandler(QObject):
             if lineList != []
             else None
         )
+        if singlePartPolygonList == [singlePartGeographicBoundaryLyr]:
+            return mergedLayer
+        
+        if singlePartPolygonList != [] and excludeLinesInsidePolygons:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            mergedLayer = algRunner.runCreateFieldWithExpression(
+                inputLyr=mergedLayer,
+                expression="$id",
+                fieldName="featid",
+                fieldType=1,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            algRunner.runCreateSpatialIndex(inputLyr=mergedLayer, context=context, feedback=multiStepFeedback, is_child_algorithm=True)
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            mergedPolygonsInputList = [i for i in singlePartPolygonList if i != singlePartGeographicBoundaryLyr]
+            mergedPolygons = algRunner.runMergeVectorLayers(
+                inputList=mergedPolygonsInputList,
+                context=context,
+                feedback=multiStepFeedback
+            ) if len(mergedPolygonsInputList) > 0 else None
+            currentStep += 1
+
+            multiStepFeedback.setCurrentStep(currentStep)
+            dissolvedPolygons = algRunner.runDissolve(
+                inputLyr=mergedPolygons,
+                context=context,
+                feedback=multiStepFeedback
+            )
+            currentStep += 1
+
+            multiStepFeedback.setCurrentStep(currentStep)
+            algRunner.runCreateSpatialIndex(inputLyr=dissolvedPolygons, context=context, feedback=multiStepFeedback, is_child_algorithm=True)
+            currentStep += 1
+
+            multiStepFeedback.setCurrentStep(currentStep)
+            mergedLayer = processing.run(
+                "native:joinattributesbylocation",
+                {
+                    "INPUT": mergedLayer,
+                    "PREDICATE": [6],
+                    "JOIN": dissolvedPolygons,
+                    "JOIN_FIELDS": [],
+                    "METHOD": 0,
+                    "DISCARD_NONMATCHING": False,
+                    "PREFIX": "",
+                    "NON_MATCHING": "memory:",
+                },
+                context=context,
+                feedback=multiStepFeedback,
+            )["NON_MATCHING"]
+
         return mergedLayer
 
     def reprojectLayer(self, layer, targetEpsg, output=None):
@@ -2373,8 +2452,10 @@ class LayerHandler(QObject):
         linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
             constraintLineLyrList,
             constraintPolygonListWithGeoBounds,
+            excludeLinesInsidePolygons=True,
             onlySelected=onlySelected,
             feedback=multiStepFeedback,
+            geographicBoundaryLyr=geographicBoundaryLyr,
             context=context,
             algRunner=algRunner,
         )
@@ -2930,6 +3011,7 @@ class LayerHandler(QObject):
         self.algRunner.runCreateSpatialIndex(
             inputLyr=temp, context=context, is_child_algorithm=True
         )
+        return temp
     
     def createMemoryLayerFromGeometry(self, geom, crs):
         temp = QgsVectorLayer(

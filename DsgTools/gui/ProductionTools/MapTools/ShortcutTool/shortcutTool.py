@@ -21,11 +21,10 @@
  ***************************************************************************/
 """
 
-from functools import partial
 
 from qgis.PyQt.QtCore import QSettings, QObject
 
-from qgis.core import QgsProject, QgsVectorLayer
+from qgis.core import QgsProject, Qgis
 
 
 class ShortcutTool(QObject):
@@ -35,6 +34,7 @@ class ShortcutTool(QObject):
         """
         self.iface = iface
         super(ShortcutTool, self).__init__()
+        self.actionList = []
 
     def addTool(self, manager, callback, parentToolbar, stackButton, iconBasePath):
         self.stackButton = stackButton
@@ -51,6 +51,7 @@ class ShortcutTool(QObject):
             parentButton=stackButton,
             isCheckable=False,
         )
+        self.actionList.append(action)
 
         icon_path = iconBasePath + "/vertex.png"
         toolTip = self.tr("DSGTools: Toggle vertex's marker visibility")
@@ -65,6 +66,7 @@ class ShortcutTool(QObject):
             parentButton=stackButton,
             isCheckable=False,
         )
+        self.actionList.append(action)
 
     def hideOrShowMarkers(self):
         try:
@@ -72,8 +74,9 @@ class ShortcutTool(QObject):
         except:
             pass
         qSettings = QSettings()
-        currentState = qSettings.value("qgis/digitizing/marker_only_for_selected")
-        qSettings.setValue("qgis/digitizing/marker_only_for_selected", not currentState)
+        qSettingsKey = "digitizing/marker-only-for-selected" if Qgis.QGIS_VERSION_INT >= 33000 else "qgis/digitizing/marker_only_for_selected"
+        currentState = qSettings.value(qSettingsKey)
+        qSettings.setValue(qSettingsKey, not currentState)
         self.iface.mapCanvas().refresh()
 
     def hideOrShowActiveLayer(self):
@@ -89,4 +92,8 @@ class ShortcutTool(QObject):
         )
 
     def unload(self):
-        pass
+        for action in self.actionList:
+            try:
+                self.iface.unregisterMainWindowAction(action)
+            except:
+                pass

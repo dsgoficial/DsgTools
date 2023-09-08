@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="br">
+
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+
+   <body>
+      
+      <div>
+         <p > Help versão 1.0 </p>
+         <hr/>
+         <h2>Descrição:</h2>
+         <h4 style="text-align: center; padding: 6px;">
+            Identifica linhas que possuam os mesmos atributos em comum, permitindo que elas sejam mescladas em uma única linha.
+         </h4>
+         <hr />
+      </div>
+
+      <div>
+         
+         <h2>Parâmetros:</h2>
+         <p>
+            <span style="margin-bottom: 10px;">
+             &#8226; Input Layer &rarr;  Camada a ser processada em busca de polígonos pequenos.
+            </span>
+            <span style="margin-bottom: 10px;">
+             &#8226; Fields to ignore &rarr;  Parâmetro onde podem ser selecionados atributos a serem ignorados no processamento.
+            <span style="margin-bottom: 10px;">
+             &#8226; Ignore virtual fields &rarr;  Ignora campos dinamicamente existentes na tabela de atributos.
+            <span style="margin-bottom: 10px;">
+             &#8226; Ignore primary key fields &rarr;  Ignorar campos de chave primária.
+            <span style="margin-bottom: 10px;">
+             &#8226; Point Filter Layers &rarr;  Filtra camadas do tipo ponto que estão conectados às feições selecionadas para evitar a identificação. 
+            <span style="margin-bottom: 10px;">
+             &#8226; Line Filter Layers &rarr;  Filtra camadas do tipo linha que estão conectados às feições selecionadas para evitar a identificação.     
+            
+            
+                
+         </p>  
+         <hr />
+
+
+      </div>
+      
+      <div>
+         <h2>Exemplo de uso: </h2>
+         <h4>Modelagem EDGV3.0 na escala de 1:25.000 (EPSG):4674</h4>
+
+         <span style="margin-bottom: 10px;"> &#8226; Input Layer &rarr;  rod_trecho_rodoviario_l</span>
+         <span style="margin-bottom: 10px;"> &#8226; Fields to ignore &rarr;  atributos a ser ignorados</span>
+         <span style="margin-bottom: 10px;"> &#8226; Ignore virtual fields &rarr;  true</span>
+         <span style="margin-bottom: 10px;"> &#8226; Ignore primary key fields &rarr;  true</span>
+         <span style="margin-bottom: 10px;"> &#8226; Point Filter Layers &rarr;  false</span>
+         <span style="margin-bottom: 10px;"> &#8226; Line Filter Layers &rarr;  false</span>
+         
+         
+
+         <hr />
+      </div>
+      
+      <div>
+         <h2>Exemplo de Flag:</h2>
+         <center><img src= "{}"></center>
+         <p style="text-align: center; font-style: italic;">rod_trecho_rodoviario_l com mesmos atributos em comum.</p>
+         <hr/>
+      </div> 
+   </body>
+
+</html>

@@ -41,6 +41,7 @@ from qgis.core import (
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 from .validationAlgorithm import ValidationAlgorithm
 
@@ -97,7 +98,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 None,
                 "INPUT_ELEVATION_POINTS",
                 QgsProcessingParameterField.Any,
-                optional=True
+                optional=True,
             )
         )
         self.addParameter(
@@ -143,9 +144,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 self.invalidSourceError(parameters, self.INPUT)
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        heightFieldName = self.parameterAsFields(
-            parameters, self.CONTOUR_ATTR, context
-        )
+        heightFieldName = self.parameterAsFields(parameters, self.CONTOUR_ATTR, context)
         heightFieldName = None if len(heightFieldName) == 0 else heightFieldName[0]
         threshold = self.parameterAsDouble(parameters, self.CONTOUR_INTERVAL, context)
         geoBoundsLyr = self.parameterAsVectorLayer(
@@ -154,13 +153,25 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         groupBySpatialPartition = self.parameterAsBool(
             parameters, self.GROUP_BY_SPATIAL_PARTITION, context
         )
-        elevationPointsLyr = self.parameterAsVectorLayer(parameters, self.INPUT_ELEVATION_POINTS, context)
+        elevationPointsLyr = self.parameterAsVectorLayer(
+            parameters, self.INPUT_ELEVATION_POINTS, context
+        )
         elevationPointHeightFieldName = self.parameterAsFields(
             parameters, self.ELEVATION_POINT_ATTR, context
         )
-        elevationPointHeightFieldName = None if len(elevationPointHeightFieldName) == 0 else elevationPointHeightFieldName[0]
-        if elevationPointsLyr is not None and elevationPointHeightFieldName in (None, [], ''):
-            raise QgsProcessingException(self.tr('Elevation point height attribute must be selected.'))
+        elevationPointHeightFieldName = (
+            None
+            if len(elevationPointHeightFieldName) == 0
+            else elevationPointHeightFieldName[0]
+        )
+        if elevationPointsLyr is not None and elevationPointHeightFieldName in (
+            None,
+            [],
+            "",
+        ):
+            raise QgsProcessingException(
+                self.tr("Elevation point height attribute must be selected.")
+            )
         point_flagSink, point_flag_id = self.prepareAndReturnFlagSink(
             parameters, inputLyr, QgsWkbTypes.Point, context, self.POINT_FLAGS
         )
@@ -178,7 +189,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 threshold=threshold,
                 geoBoundsLyr=geoBoundsLyr,
                 feedback=feedback,
-                context=context
+                context=context,
             )
             if not groupBySpatialPartition
             else self.validateTerrainModelInParalel(
@@ -259,12 +270,16 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             )
             if multiStepFeedback.isCanceled():
                 return {}
-            localElevationPointsLyr = self.algRunner.runExtractByLocation(
-                inputLyr=elevationPointsLyr,
-                intersectLyr=localGeographicBoundsLyr,
-                context=localContext,
-                feedback=None,
-            ) if elevationPointsLyr is not None else None
+            localElevationPointsLyr = (
+                self.algRunner.runExtractByLocation(
+                    inputLyr=elevationPointsLyr,
+                    intersectLyr=localGeographicBoundsLyr,
+                    context=localContext,
+                    feedback=None,
+                )
+                if elevationPointsLyr is not None
+                else None
+            )
             return self.spatialRealtionsHandler.validateTerrainModel(
                 contourLyr=singlePartContours,
                 onlySelected=False,
@@ -374,6 +389,12 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyTerrainModelErrorsAlgorithm", string)
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyTerrainModelErrorsAlgorithm()

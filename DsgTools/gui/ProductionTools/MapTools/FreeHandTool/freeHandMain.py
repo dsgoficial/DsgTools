@@ -19,7 +19,6 @@ Some parts were inspired by QGIS plugin FreeHandEditting
 """
 from __future__ import absolute_import
 
-from builtins import object
 from qgis.PyQt.QtCore import QObject
 from .models.acquisitionFree import AcquisitionFree
 from .controllers.acquisitionFreeController import AcquisitionFreeController
@@ -86,6 +85,7 @@ class FreeHandMain(QObject):
     def setAction(self, action):
         self.registerActionOnController(action)
         self.action = action
+        self.action.setCheckable(True)
 
     def getAction(self):
         return self.action
@@ -93,5 +93,11 @@ class FreeHandMain(QObject):
     def run(self):
         try:
             self.parentButton.setDefaultAction(self.action)
+        except:
+            pass
+
+    def unload(self):
+        try:
+            self.iface.unregisterMainWindowAction(self.action)
         except:
             pass

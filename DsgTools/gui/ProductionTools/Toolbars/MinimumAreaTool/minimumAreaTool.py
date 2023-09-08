@@ -28,7 +28,7 @@ from qgis.core import Qgis, QgsUnitTypes
 from qgis.gui import QgsMapMouseEvent
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QMessageBox, QAction
-from qgis.PyQt.QtGui import QIcon, QMouseEvent
+from qgis.PyQt.QtGui import QIcon, QMouseEvent, QColor
 from qgis.PyQt.QtCore import Qt, QEvent, QSettings, pyqtSlot
 from qgis.PyQt.Qt import QWidget
 from qgis.utils import iface
@@ -286,3 +286,35 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
             self.iface.unregisterMainWindowAction(self.shapeAction)
         except:
             pass
+    
+    def getToolState(self) -> dict:
+        return {
+            "bar_is_toggled": self.showPushButton.isChecked(),
+            "current_scale": self.mScaleWidget.scale(),
+            "current_size": self.sizesComboBox.currentIndex(),
+            "current_shape": self.shapesComboBox.currentIndex(),
+            "current_color": self.mColorButton.color().getRgb(),
+        }
+
+    def setToolState(self, stateDict: dict) -> bool:
+        isBarToggled = stateDict.get("bar_is_toggled", None)
+        if isBarToggled is None:
+            return False
+        if isBarToggled:
+            if not self.showPushButton.isChecked():
+                self.showPushButton.click()
+        currentScale = stateDict.get("current_scale", None)
+        self.mScaleWidget.setScale(currentScale)
+        currentSize = stateDict.get("current_size", None)
+        if currentSize is None:
+            return False
+        self.sizesComboBox.setCurrentIndex(int(currentSize))
+        currentShape = stateDict.get("current_shape", None)
+        if currentShape is None:
+            return False
+        self.shapesComboBox.setCurrentIndex(int(currentShape))
+        currentColorRGB = stateDict.get("current_color", None)
+        if currentColorRGB is None:
+            return False
+        self.mColorButton.setColor(QColor(*currentColorRGB))
+        return True

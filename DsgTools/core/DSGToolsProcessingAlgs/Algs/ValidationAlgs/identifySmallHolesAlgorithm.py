@@ -37,6 +37,7 @@ from qgis.core import (
 from qgis.utils import iface
 
 from .validationAlgorithm import ValidationAlgorithm
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 
 class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
@@ -86,7 +87,6 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
                     onlyrings = poly[1:]
                     for ring in onlyrings:
                         newRing = QgsGeometry.fromPolygonXY([ring])
-                        print(newRing.area())
                         if newRing.area() < maxSize:
                             smallRings.append(newRing)
             feedback.setProgress(step * progressStep)
@@ -149,6 +149,12 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifySmallHolesAlgorithm", string)
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifySmallHolesAlgorithm()

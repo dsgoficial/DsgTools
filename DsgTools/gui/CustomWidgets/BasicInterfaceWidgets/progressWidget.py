@@ -29,7 +29,7 @@ import time
 
 
 class ProgressWidget(QgsMessageBar):
-    def __init__(self, min, max, message, parent=None, timeout=1.5):
+    def __init__(self, min, max, message, parent=None, timeout=2):
         """
         Constructs a progress widget
         """
@@ -50,7 +50,7 @@ class ProgressWidget(QgsMessageBar):
             self.tr("INFO: "),
             message,
             self.progressBar,
-            level=Qgis.Info,
+            level=Qgis.MessageLevel.Info,
             duration=timeout,
             parent=self.parent,
         )

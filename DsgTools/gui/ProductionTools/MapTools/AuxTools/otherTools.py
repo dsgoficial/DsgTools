@@ -21,7 +21,8 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsProject, Qgis, QgsVectorLayer, QgsWkbTypes
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from qgis.core import QgsProject, Qgis, QgsVectorLayer, QgsWkbTypes, QgsProcessingUtils, QgsProcessingContext
 from qgis.gui import QgsMapTool
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QObject
@@ -51,6 +52,7 @@ class OtherTools(QgsMapTool):
             isCheckable=False,
         )
         self.stackButton.setDefaultAction(action)
+        self.copyFeaturesAction = action
 
         icon_path = iconBasePath + "/copywkt.png"
         toolTip = self.tr("DSGTools: Copy Feature's Coordinates as WKT")
@@ -65,7 +67,8 @@ class OtherTools(QgsMapTool):
             parentButton=stackButton,
             isCheckable=False,
         )
-    
+        self.copyWktAction = action
+
     def setCurrentActionOnStackButton(self):
         try:
             self.stackButton.setDefaultAction(self.sender())
@@ -73,8 +76,16 @@ class OtherTools(QgsMapTool):
             pass
 
     def unload(self):
-        pass
-    
+        try:
+            self.iface.unregisterMainWindowAction(self.copyFeaturesAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.copyWktAction)
+        except:
+            pass
+        del self
+
     def runCopyWkt(self):
         self.setCurrentActionOnStackButton()
         copywkt()
@@ -96,23 +107,16 @@ class OtherTools(QgsMapTool):
                 "Erro", "Selecione uma camada válida", level=Qgis.Critical, duration=5
             )
             return
-        features = layer.selectedFeatures()
-        newFields = layer.fields()
-        name = layer.name()
-        newName = name + "_temp"
-        wkbType = layer.wkbType()
-        selection = QgsVectorLayer(QgsWkbTypes.displayString(wkbType), newName, "memory")
-        selection.startEditing()
-        selection.setCrs(layer.crs())
-        dp = selection.dataProvider()
-        dp.addAttributes(newFields)
-        dp.addFeatures(features)
-        selection.commitChanges()
-        selection.updateExtents()
-        QgsProject.instance().addMapLayer(selection)
+        context = QgsProcessingContext()
+        outputLyr = AlgRunner().runSaveSelectedFeatures(
+            inputLyr=layer,
+            context=context,
+        )
+        outputLyr.setName(f"{layer.name()}_temp")
+        QgsProject.instance().addMapLayer(outputLyr, addToLegend=True)
         iface.messageBar().pushMessage(
             "Executado",
-            "Camada temporária criada: " + newName,
+            f"Camada temporária criada: {layer.name()}_temp",
             level=Qgis.Success,
             duration=5,
         )

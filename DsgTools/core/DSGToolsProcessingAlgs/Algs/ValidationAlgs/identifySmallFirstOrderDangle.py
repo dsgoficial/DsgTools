@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 from PyQt5.QtCore import QCoreApplication
@@ -216,6 +217,12 @@ class IdentifySmallFirstOrderDanglesAlgorithm(ValidationAlgorithm):
         return QCoreApplication.translate(
             "IdentifySmallFirstOrderDanglesAlgorithm", string
         )
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return  help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifySmallFirstOrderDanglesAlgorithm()

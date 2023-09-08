@@ -1,5 +1,6 @@
 import os, sys, copy
 from PyQt5 import QtCore, uic, QtWidgets, QtGui
+from qgis.PyQt.QtWidgets import QMessageBox
 from .tableEditorWidget import TableEditorWidget
 import json
 
@@ -43,6 +44,16 @@ class ButtonEditorWidget(TableEditorWidget):
         self.showEditButton(self.getRowData(index.row()))
 
     def handleDeleteBtn(self, index):
+        if (
+            QMessageBox.question(
+                self,
+                self.tr("Question"),
+                self.tr("Do you really want to delete?"),
+                QMessageBox.Ok | QMessageBox.Cancel,
+            )
+            == QMessageBox.Cancel
+        ):
+            return
         try:
             deletedButtonData = self.getRowData(index.row())
             self.getController().deleteButtonMenuEditor(deletedButtonData)

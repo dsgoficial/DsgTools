@@ -158,6 +158,7 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
         fields.append(QgsField("rank", QVariant.Int))
         fields.append(QgsField("visited", QVariant.Bool))
         fields.append(QgsField("atividade_id", QVariant.Int))
+        fields.append(QgsField("data_atualizacao", QVariant.DateTime))
         return fields
 
     def sortGridAndCreateOutputFetures(

@@ -34,6 +34,7 @@ from qgis.core import (
     QgsVectorLayer,
     QgsWkbTypes,
     QgsFeature,
+    QgsExpression,
 )
 from qgis.gui import QgsMapTool, QgsMessageBar, QgisInterface
 from qgis.PyQt import QtCore, QtGui, uic
@@ -433,11 +434,21 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         if layer is None:
             return
         visitedField = self.visitedFieldComboBox.currentField()
+        dateTimeFieldList = [
+            field.name()
+            for field in layer.fields()
+            if field.type() == QVariant.DateTime
+        ]
+        dateTimeField = None if dateTimeFieldList == [] else dateTimeFieldList[0]
         layer.setReadOnly(False)
         layer.startEditing()
         layer.beginEditCommand("DSGTools review tool")
         for feat in featureList:
             feat[visitedField] = not feat[visitedField]
+            if dateTimeField is not None:
+                e = QgsExpression(" $now ")
+                currentDateTime = e.evaluate()
+                feat[dateTimeField] = currentDateTime
             layer.updateFeature(feat)
         layer.endEditCommand()
         layer.commitChanges()
@@ -568,7 +579,22 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
 
     def unload(self) -> None:
         self.restoreOriginalValueList()
-        self.iface.unregisterMainWindowAction(self.applyPushButtonAction)
+        try:
+            self.iface.unregisterMainWindowAction(self.applyPushButtonAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.previousTileAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.nextTileAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.resetPushButtonAction)
+        except:
+            pass
 
     def setState(
         self,
@@ -576,9 +602,54 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         rankFieldName: str,
         visitedFieldName: str,
         zoomType: int = 0,
+        currentTile: Optional[int] = None,
     ):
         self.mMapLayerComboBox.setLayer(layer)
         self.rankFieldComboBox.setField(rankFieldName)
         self.visitedFieldComboBox.setField(visitedFieldName)
         self.zoomComboBox.setCurrentIndex(int(zoomType))
         self.preparePushButton.click()
+        if currentTile is None:
+            return
+        self.currentTile = currentTile
+
+    def getToolState(self) -> dict:
+        currentLayer = self.mMapLayerComboBox.currentLayer()
+        return {
+            "bar_is_toggled": self.reviewPushButton.isChecked(),
+            "current_layer": currentLayer.id() if currentLayer is not None else None,
+            "current_rank_field": self.rankFieldComboBox.currentField(),
+            "current_visited_field": self.visitedFieldComboBox.currentField(),
+            "current_zoom_type": self.zoomComboBox.currentIndex(),
+            "current_tile": self.currentTile,
+        }
+
+    def setToolState(self, stateDict: dict) -> bool:
+        isBarToggled = stateDict.get("bar_is_toggled", None)
+        if isBarToggled is None:
+            return False
+        if isBarToggled:
+            if not self.reviewPushButton.isChecked():
+                self.reviewPushButton.click()
+        currentLayerId = stateDict.get("current_layer", None)
+        if currentLayerId is None:
+            return False
+        currentLayer = QgsProject.instance().mapLayers().get(currentLayerId, None)
+        rankFieldName = stateDict.get("current_rank_field", None)
+        if rankFieldName is None:
+            return False
+        visitedFieldName = stateDict.get("current_visited_field", None)
+        if visitedFieldName is None:
+            return False
+        currentZoomType = stateDict.get("current_zoom_type", None)
+        if currentZoomType is None:
+            return False
+        currentTile = stateDict.get("current_tile", None)
+        self.setState(
+            layer=currentLayer,
+            rankFieldName=rankFieldName,
+            visitedFieldName=visitedFieldName,
+            zoomType=currentZoomType,
+            currentTile=currentTile,
+        )
+        return True

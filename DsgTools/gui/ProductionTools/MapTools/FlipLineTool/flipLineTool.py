@@ -184,3 +184,10 @@ class FlipLine(QgsMapTool):
     def deactivate(self):
         QgsMapTool.deactivate(self)
         self.canvas.unsetMapTool(self)
+
+    def unload(self):
+        self.deactivate()
+        try:
+            self.iface.unregisterMainWindowAction(self.toolAction)
+        except:
+            pass

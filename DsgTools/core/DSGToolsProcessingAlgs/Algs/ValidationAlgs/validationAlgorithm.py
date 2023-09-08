@@ -31,6 +31,8 @@ from qgis.core import (
     QgsFields,
     QgsProcessingException,
     QgsProject,
+    QgsProcessingContext,
+    QgsProcessingUtils,
 )
 
 
@@ -114,3 +116,27 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
         if "FLAGS" in output:
             for feat in output["FLAGS"].getFeatures():
                 self.flagSink.addFeature(feat, QgsFeatureSink.FastInsert)
+
+    def getLayerFromProject(self, layerName):
+        """
+        Retrieves map layer from its name, considering project context.
+        :param layerName: (str) target layer's name.
+        :return: (QgsMapLayer) layer object.
+        """
+        ctx = QgsProcessingContext()
+        ctx.setProject(QgsProject.instance())
+        return QgsProcessingUtils.mapLayerFromString(layerName, ctx)
+    
+    def getLayerPrimaryKeyIndex(self, layer):
+        lyr = self.getLayerFromProject(layer) if isinstance(layer, str) else layer
+        pkIdxList = lyr.primaryKeyAttributes()
+        return None if pkIdxList == [] else pkIdxList
+    
+    def getLayerPrimaryKeyAttributeNames(self, layer):
+        lyr = self.getLayerFromProject(layer) if isinstance(layer, str) else layer
+        pkIdxList = lyr.primaryKeyAttributes()
+        if pkIdxList == []:
+            return None
+        attrNames = [f.name() for idx, f in enumerate(lyr.fields()) if idx in pkIdxList]
+
+        return attrNames

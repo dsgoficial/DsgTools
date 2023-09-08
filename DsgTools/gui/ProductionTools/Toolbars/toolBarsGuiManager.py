@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import
 from builtins import object
+import json
 import os.path
 import sys
 
@@ -37,6 +38,7 @@ from .StyleManagerTool.styleManagerTool import StyleManagerTool
 from .DsgRasterInfoTool.dsgRasterInfoTool import DsgRasterInfoTool
 from .DataValidationTool.dataValidationTool import DataValidationTool
 from qgis.PyQt.QtCore import QObject
+from qgis.core import QgsProject, QgsExpressionContextUtils
 
 
 class ToolbarsGuiManager(QObject):
@@ -49,6 +51,8 @@ class ToolbarsGuiManager(QObject):
         self.toolbar = toolbar
         self.toolbarList = []
         self.iconBasePath = ":/plugins/DsgTools/icons/"
+        QgsProject.instance().projectSaved.connect(self.saveStateOnProject)
+        self.iface.projectRead.connect(self.loadStateFromProject)
 
     def initGui(self):
         # adding minimum area tool
@@ -102,11 +106,65 @@ class ToolbarsGuiManager(QObject):
         toolbar.addWidget(widget)
 
     def unload(self):
-        self.minimumAreaTool.unload()
-        self.inspectFeaturesTool.unload()
-        self.reviewTool.unload()
-        self.rasterInfoTool.unload()
-        self.dataValidationTool.unload()
+        QgsProject.instance().projectSaved.disconnect(self.saveStateOnProject)
+        self.iface.projectRead.disconnect(self.loadStateFromProject)
+        for tool in [
+            self.minimumAreaTool,
+            self.inspectFeaturesTool,
+            self.reviewTool,
+            self.rasterInfoTool,
+            self.dataValidationTool,
+            self.centerPointAndBoundariesTool,
+        ]:
+            tool.unload()
+            try:
+                del tool
+            except:
+                pass
         for toolbar in self.toolbarList:
-            self.iface.mainWindow().removeToolBar(toolbar)
+            try:
+                self.iface.mainWindow().removeToolBar(toolbar)
+            except:
+                pass
             del toolbar
+
+    def saveStateOnProject(self):
+        currentProject = QgsProject.instance()
+        currentProject.projectSaved.disconnect(self.saveStateOnProject)
+        toolStateDict = dict()
+        for tool in [
+            self.centerPointAndBoundariesTool,
+            self.inspectFeaturesTool,
+            self.reviewTool,
+            self.minimumAreaTool,
+        ]:
+            toolStateDict[tool.__class__.__name__] = tool.getToolState()
+        QgsExpressionContextUtils.setProjectVariable(
+            currentProject,
+            "dsgtools_toolboxes_state",
+            json.dumps(toolStateDict),
+        )
+        currentProject.blockSignals(True)
+        QgsProject.instance().write()
+        QgsProject.instance().projectSaved.connect(self.saveStateOnProject)
+        currentProject.blockSignals(False)
+
+    def loadStateFromProject(self):
+        state = json.loads(
+            QgsExpressionContextUtils.projectScope(QgsProject.instance()).variable(
+                "dsgtools_toolboxes_state"
+            )
+            or "{}"
+        )
+        if state == {}:
+            return
+        for tool in [
+            self.centerPointAndBoundariesTool,
+            self.inspectFeaturesTool,
+            self.reviewTool,
+            self.minimumAreaTool,
+        ]:
+            toolClassName = tool.__class__.__name__
+            if toolClassName not in state:
+                continue
+            tool.setToolState(state[toolClassName])

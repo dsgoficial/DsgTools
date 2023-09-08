@@ -45,7 +45,9 @@ Temporary Items
 
 # Python files
 # =========================
+__pycache__/
 *.pyc
+*.cpython*
 tags
 .dsg_tools.py.swp
 

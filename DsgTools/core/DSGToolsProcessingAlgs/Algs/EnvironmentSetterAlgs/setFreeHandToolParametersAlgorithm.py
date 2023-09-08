@@ -20,42 +20,18 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from ...algRunner import AlgRunner
-import processing, os, requests
-from time import sleep
 from PyQt5.QtCore import QCoreApplication
 from qgis.PyQt.QtCore import QSettings
 from qgis.core import (
-    QgsProcessing,
-    QgsFeatureSink,
     QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterFeatureSink,
-    QgsFeature,
-    QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
-    QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterEnum,
     QgsProcessingParameterNumber,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingUtils,
-    QgsSpatialIndex,
-    QgsGeometry,
-    QgsProcessingParameterField,
-    QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterFile,
-    QgsProcessingParameterExpression,
-    QgsProcessingException,
-    QgsProcessingParameterString,
-    QgsProcessingParameterDefinition,
-    QgsProcessingParameterType,
 )
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.dsgtoolsBaseSetParametersAlgorithm import \
+    DsgToolsBaseSetParametersAlgorithm
 
-class SetFreeHandToolParametersAlgorithm(QgsProcessingAlgorithm):
+
+class SetFreeHandToolParametersAlgorithm(DsgToolsBaseSetParametersAlgorithm):
     FREE_HAND_TOLERANCE = "FREE_HAND_TOLERANCE"
     FREE_HAND_SMOOTH_ITERATIONS = "FREE_HAND_SMOOTH_ITERATIONS"
     FREE_HAND_SMOOTH_OFFSET = "FREE_HAND_SMOOTH_OFFSET"
@@ -130,28 +106,6 @@ class SetFreeHandToolParametersAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=1,
             )
         )
-
-    def getValueFromQSettings(self, v):
-        settings = QSettings()
-        settings.beginGroup("PythonPlugins/DsgTools/Options")
-        value = settings.value(v)
-        settings.endGroup()
-        return value
-
-    def storeParametersInConfig(self, parameters):
-        settings = QSettings()
-        settings.beginGroup("PythonPlugins/DsgTools/Options")
-        for key, value in parameters.items():
-            settings.setValue(self.QSETTINGS_DICT[key], value)
-        settings.endGroup()
-
-    def processAlgorithm(self, parameters, context, feedback):
-        """
-        Here is where the processing itself takes place.
-        """
-        self.storeParametersInConfig(parameters)
-
-        return {}
 
     def name(self):
         """

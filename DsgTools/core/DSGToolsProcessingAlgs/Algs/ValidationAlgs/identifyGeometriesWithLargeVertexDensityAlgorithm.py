@@ -41,6 +41,7 @@ from qgis.core import (
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
+from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 
 class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
@@ -243,6 +244,12 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
         return QCoreApplication.translate(
             "IdentifyGeometriesWithLargeVertexDensityAlgorithm", string
         )
+
+    def shortHelpString(self):
+        return help().shortHelpString(self.name())
+
+    def helpUrl(self):
+        return  help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyGeometriesWithLargeVertexDensityAlgorithm()

@@ -21,6 +21,21 @@
  ***************************************************************************/
 """
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.clipAndCopyFeaturesBetweenDatabasesAlgorithm import (
+    ClipAndCopyFeaturesBetweenDatabasesAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.genericSelectionToolParametersAlgorithm import (
+    GenericSelectionToolParametersAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.rightAngleToolParametersAlgorithm import (
+    RightAngleToolParametersAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.appendFeaturesToLayerAlgorithm import (
+    AppendFeaturesToLayerAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallObjectsOnLayersAlgorithm import (
+    IdentifySmallObjectsOnLayersAlgorithm,
+)
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -140,6 +155,24 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFramesWithConstra
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createReviewGridAlgorithm import (
     CreateReviewGridAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeometryType import (
+    FilterLayerListByGeometryType,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.selectFeaturesOnCurrentCanvas import (
+    SelectFeaturesOnCurrentCanvas,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnIntersectionsAlgorithm import (
+    AddUnsharedVertexOnIntersectionsAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnSharedEdgesAlgorithm import (
+    AddUnsharedVertexOnSharedEdgesAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.extendLinesToGeographicBoundsAlgorithm import (
+    ExtendLinesToGeographicBoundsAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixDrainageFlowAlgorithm import (
+    FixDrainageFlowAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.exportToMemoryLayer import (
     ExportToMemoryLayer,
 )
@@ -177,9 +210,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.stringCsvToFirstLayerWi
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.stringCsvToLayerListAlgorithm import (
     StringCsvToLayerListAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateOriginalLayerAlgorithm import (
-    UpdateOriginalLayerAlgorithm,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateRunwayAltitudeAlgorithm import (
     UpdateRunwayAltitudeAlgorithm,
 )
@@ -200,9 +230,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.buildPolygonsFromC
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.cleanGeometriesAlgorithm import (
     CleanGeometriesAlgorithm,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.createNetworkNodesAlgorithm import (
-    CreateNetworkNodesAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.deaggregateGeometriesAlgorithm import (
     DeaggregatorAlgorithm,
@@ -236,8 +263,16 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAnglesInIn
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyCountourStreamIntersectionAlgorithm import (
     IdentifyCountourStreamIntersectionAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyCrossingLinesAlgorithm import (
+    IdentifyCrossingLinesAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesAlgorithm import (
     IdentifyDanglesAlgorithm,
+)
+
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyCloseFeaturesAlgorithm import (
+    IdentifyCloseFeaturesAlgorithm,
+    ParameterDistanceBetweenLayersType,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDrainageAndContourInconsistencies import (
     IdentifyDrainageAndContourInconsistencies,
@@ -272,8 +307,11 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicated
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedVertexesAlgorithm import (
     IdentifyDuplicatedVertexesAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyErrorsBetweenDamAndRoadsAlgorithm import (
-    IdentifyErrorsBetweenDamAndRoadsAlgorithm,
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyIntertwinedLinesAlgorithm import (
+    IdentifyIntertwinedLinesAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySegmentErrorsBetweenLinesAlgorithm import (
+    IdentifySegmentErrorsBetweenLinesAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAlgorithm import (
     IdentifyGapsAlgorithm,
@@ -401,8 +439,11 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unbuildPolygonsAlg
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unicodeFilterAlgorithm import (
     UnicodeFilterAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import (
-    VerifyNetworkDirectioningAlgorithm,
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyAdjacentGeographicBoundaryDataAlgorithm import (
+    VerifyAdjacentGeographicBoundaryDataAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadThemesAlgorithm import (
+    LoadThemesAlgorithm,
 )
 
 # from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
@@ -436,7 +477,6 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyDanglesAlgorithm(),
             IdentifyGapsAlgorithm(),
             DonutHoleExtractorAlgorithm(),
-            UpdateOriginalLayerAlgorithm(),
             TopologicalCleanAlgorithm(),
             TopologicalDouglasPeuckerAreaSimplificationAlgorithm(),
             TopologicalDouglasPeuckerLineSimplificationAlgorithm(),
@@ -454,9 +494,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             RemoveEmptyAndUpdateAlgorithm(),
             ConvertLayer2LayerAlgorithm(),
             OverlayElementsWithAreasAlgorithm(),
-            CreateNetworkNodesAlgorithm(),
             AssignDefaultFieldValueToLayersAlgorithm(),
-            VerifyNetworkDirectioningAlgorithm(),
             IdentifyDuplicatedFeaturesAlgorithm(),
             AdjustNetworkConnectivityAlgorithm(),
             RemoveDuplicatedFeaturesAlgorithm(),
@@ -547,10 +585,21 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyDrainageAndContourInconsistencies(),
             ExtractElevationPoints(),
             LoadTrackerAlgorithm(),
-            IdentifyErrorsBetweenDamAndRoadsAlgorithm(),
+            IdentifySegmentErrorsBetweenLinesAlgorithm(),
             ValidateTrackerAlgorithm(),
             UpdateRunwayAltitudeAlgorithm(),
             LoadRasterLayerFromServerAlgorithm(),
+            IdentifyIntertwinedLinesAlgorithm(),
+            IdentifyCrossingLinesAlgorithm(),
+            FixDrainageFlowAlgorithm(),
+            LoadThemesAlgorithm(),
+            IdentifyCloseFeaturesAlgorithm(),
+            IdentifySmallObjectsOnLayersAlgorithm(),
+            AppendFeaturesToLayerAlgorithm(),
+            RightAngleToolParametersAlgorithm(),
+            GenericSelectionToolParametersAlgorithm(),
+            ClipAndCopyFeaturesBetweenDatabasesAlgorithm(),
+            VerifyAdjacentGeographicBoundaryDataAlgorithm(),
         ]
         return algList
 
@@ -573,6 +622,10 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         QgsApplication.instance().processingRegistry().addParameterType(
             self.parameterSpatialRulesSetType
         )
+        self.parameterDistanceBetweenLayersType = ParameterDistanceBetweenLayersType()
+        QgsApplication.instance().processingRegistry().addParameterType(
+            self.parameterDistanceBetweenLayersType
+        )
         self.refreshAlgorithms()
         return True
 
@@ -589,6 +642,9 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         )
         QgsApplication.instance().processingRegistry().removeParameterType(
             self.parameterSpatialRulesSetType
+        )
+        QgsApplication.instance().processingRegistry().removeParameterType(
+            self.parameterDistanceBetweenLayersType
         )
 
     def isActive(self):
@@ -618,7 +674,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         """
         We return the default icon.
         """
-        return QIcon(":/plugins/DsgTools/icons/dsg.png")
+        return QIcon(":/plugins/DsgTools/icons/DSGToolsIcon.png")
 
     def loadAlgorithms(self):
         """
