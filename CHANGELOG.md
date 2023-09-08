@@ -1,8 +1,7 @@
 # CHANGELOG
 
 
-## 4.9.19 - dev
-
+## 4.10.0 - 2023-09-08
 
 Novas Funcionalidades:
 
