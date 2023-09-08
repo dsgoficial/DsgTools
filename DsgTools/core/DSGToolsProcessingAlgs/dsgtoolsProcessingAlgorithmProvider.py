@@ -674,7 +674,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         """
         We return the default icon.
         """
-        return QIcon(":/plugins/DsgTools/icons/dsg.png")
+        return QIcon(":/plugins/DsgTools/icons/DSGToolsIcon.png")
 
     def loadAlgorithms(self):
         """

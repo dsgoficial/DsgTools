@@ -93,5 +93,7 @@
         <file>icons/spatialFilter.png</file>
         <file>icons/measure_tool.png</file>
         <file>icons/layer-landcover-24.png</file>
+        <file>icons/DSGTools.png</file>
+        <file>icons/DSGToolsIcon.png</file>
     </qresource>
 </RCC>
