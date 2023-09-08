@@ -231,9 +231,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.buildPolygonsFromC
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.cleanGeometriesAlgorithm import (
     CleanGeometriesAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.createNetworkNodesAlgorithm import (
-    CreateNetworkNodesAlgorithm,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.deaggregateGeometriesAlgorithm import (
     DeaggregatorAlgorithm,
 )
@@ -442,9 +439,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unbuildPolygonsAlg
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unicodeFilterAlgorithm import (
     UnicodeFilterAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import (
-    VerifyNetworkDirectioningAlgorithm,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyAdjacentGeographicBoundaryDataAlgorithm import (
     VerifyAdjacentGeographicBoundaryDataAlgorithm,
 )
@@ -500,9 +494,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             RemoveEmptyAndUpdateAlgorithm(),
             ConvertLayer2LayerAlgorithm(),
             OverlayElementsWithAreasAlgorithm(),
-            CreateNetworkNodesAlgorithm(),
             AssignDefaultFieldValueToLayersAlgorithm(),
-            VerifyNetworkDirectioningAlgorithm(),
             IdentifyDuplicatedFeaturesAlgorithm(),
             AdjustNetworkConnectivityAlgorithm(),
             RemoveDuplicatedFeaturesAlgorithm(),
