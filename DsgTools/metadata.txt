@@ -44,6 +44,51 @@ about=
 
 # Uncomment the following line and add your changelog:
 changelog=
+	4.10.0:
+		Novas Funcionalidades:
+			- Novo processo de identificar erros de construção em linhas que devem se sobrepor (exemplo, barragem e rodovia);
+			- Novo processo de identificar linhas entrelaçadas;
+			- Novo processo de identificar linhas cruzando outra camada (exemplo: trecho de drenagem e barragem);
+			- Novo processo de consertar o direcionamento de rios (funcionamento diferente do direcionamento que existia: mudado o comportamento para não levar em consideração os ângulos de digitalização);
+			- Novo processo de carregar temas;
+			- Nova ferramenta para indicar tamanho da feição durante aquisição;
+			- Novo processo para verificar feições próximas;
+			- Novo processo para identificar objetos pequenos (identifica pequenas linhas e pequenas áreas ao mesmo tempo);
+			- Novo processo de adicionar feições a uma camada (AppendFeaturesToLayerAlgorithm);
+			- O DSGTools agora guarda o estado das ferramentas no projeto: quando o usuário abrir um projeto no qual estão salvos os estados das ferramentas, automaticamente cada ferramenta é ajustada com os parâmetros necessários para que o usuário retome o trabalho de onde parou. Guarda o estado do inspetor de feições, ferramenta de grid e ferramenta de centróides;
+			- Novo processo de ajustar parâmetros do seletor genérico (integração com o FP/SAP);
+			- Novo processo de ajustar parâmetros da ferramenta de aquisição com ângulos retos (integração com o FP/SAP);
+			- Novo processo de converter entre bancos de mesma modelagem, clipando com um polígono feito para integração com FP/SAP (ClipAndCopyFeaturesBetweenDatabasesAlgorithm);
+			- Novo processo de verificar ligação na moldura;
+		
+		Melhorias:
+			- Melhoria de desempenho na construção de polígonos quando se utiliza polígonos na entrada que contém linhas que podem delimitar (caso área edificada versus via deslocamento);
+			- Adicionado registro de alteração do tile na barra de ferramentas de revisão;
+			- Adicionada uma verificação antes de excluir um menu no menu de aquisição;
+			- Adicionado ao processo de identificar geometrias inválidas a verificação de vértices com coordenadas infinitas ou nulas;
+			- Adicionado ao processo de identificar geometrias inválidas a correção de vértices com coordenadas infinitas ou nulas;
+			- O processo de criar camada temporária agora carrega a camada com a contagem de elementos ativada;
+			- Alterado o default do número de pontos na criação da moldura, de 12 para 4 (o algoritmo continua com a opção de densificar mais, caso o usuário queira);
+			- Alterados os inputs da ferramenta de extração de pontos cotados;
+			- Correção de bug com área sem dados na ferramenta de extração de pontos cotados;
+			- Adicionado ao processo de extrair elevação de MDS utilizando geometria da camada de entrada a opção de arredondar as casas decimais;
+			- Novos helps integrados aos processos de identificação do provedor de algoritmos;
+			- O snap hierárquico agora adiciona vértice tanto na referência, quanto na camada atraída;
+
+		Correção de bug:
+			- Correção de bug no rubberband da ferramenta de ângulos retos no QGIS 3.30;
+			- Correção de bug na reclassificação do menu de aquisição;
+			- Correção de bug no processo de construir polígonos por linha e centroides (Build Polygons From Center Points and Boundary): com a otimização da versão anterior, o algoritmo estava excluindo as linhas da moldura;
+			- Correção de bug na ferramenta de trocar a direção da linha (flip) que não funcionava com feição não salva;
+			- Corrige crash no QGIS 3.32 quando se usa o merge features em um memory layer criado pela ferramenta de copiar feições para camada temporária;
+			- Correção de bug na ferramenta de aquisição à mão livre que não era ativada ao clicar ou desconectada ao mudar de ferramenta de aquisição;
+			- Correção de bug na ferramenta de identificação de geometrias inválidas (caso de geometria nula);
+			- Correção de bug na ferramenta de identificação de feições próximas (medida inválida, melhoria do texto da flag);
+			- Correção de bug no processo de extrair pontos cotados;
+			- Correção de bug na ferramenta de ângulos retos (quando está ativado o trace digitizing);
+			- Correção de bug no linux no carrega camada (o QGIS mudou a assinatura do atribute duration do QgsMessageBarItem para inteiro e só dava o bug no linux);
+			- Correção de bug na ferramenta de medição (não dá mais erro ao ligar e desligar a ferramenta sem selecionar ferramenta de digitalização);
+			- Correção de bug no seletor genérico (agora funciona com mais de uma camada com mesmo nome);
 
 	4.8.0:
 		Novas Funcionalidades:
