@@ -2044,7 +2044,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         return self.tr("Geometric Algorithms")
 
     def groupId(self):
-        return '"DSGTools: Geometric Algorithms"'
+        return "DSGTools: Geometric Algorithms"
 
     def shortHelpString(self):
         return self.tr("This algorithm extracts elevation points from DEM.")
