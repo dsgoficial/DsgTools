@@ -195,7 +195,7 @@ tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,S
 homepage=https://github.com/dsgoficial/DsgTools/wiki
 tracker=https://github.com/dsgoficial/DsgTools/issues
 repository=https://github.com/dsgoficial/DsgTools
-icon=icons/DSGTools.png
+icon=icons/DSGToolsIcon.png
 # experimental flag
 experimental=False
 
