@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## 4.11.1 - dev
+
+Novas Funcionalidades:
+
+
+Melhorias:
+
+
+Correção de bug:
+
+- Corrige bug de quando o usuário tenta reclassificar primitivas não compatíveis utilizando o menu de classificação;
+
+
 ## 4.10.0 - 2023-09-08
 
 Novas Funcionalidades:

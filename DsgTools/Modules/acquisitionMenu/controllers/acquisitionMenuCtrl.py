@@ -209,6 +209,7 @@ class AcquisitionMenuCtrl:
             noActive = l.id() != iface.activeLayer().id()
         if noActive:
             raise Exception("Selecione somente feições da camada que está em uso!")
+        
 
     def reclassify(self, buttonConfig, reclassifyData):
         destinatonLayerName = buttonConfig["buttonLayer"]
@@ -227,14 +228,14 @@ class AcquisitionMenuCtrl:
     def getLayersForReclassification(self, layerName, geometryType):
         layers = self.qgis.getLoadedVectorLayers()
         geometryFilterDict = {
-            QgsWkbTypes.PointGeometry: (QgsWkbTypes.PointGeometry,),
-            QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry,),
-            QgsWkbTypes.PolygonGeometry: (QgsWkbTypes.PointGeometry, QgsWkbTypes.PolygonGeometry)
+            QgsWkbTypes.PointGeometry: (QgsWkbTypes.PointGeometry, QgsWkbTypes.PolygonGeometry),
+            QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry, ),
+            QgsWkbTypes.PolygonGeometry: (QgsWkbTypes.PointGeometry, ),
         }
         return [
             l
             for l in layers
-            if l.selectedFeatureCount() > 0 and l.geometryType() in geometryFilterDict[l.geometryType()]
+            if l.selectedFeatureCount() > 0 and l.geometryType() in geometryFilterDict[geometryType]
         ]
 
     def activeMenuButton(self, buttonConfig):
