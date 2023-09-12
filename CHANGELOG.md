@@ -1,12 +1,14 @@
 # CHANGELOG
 
 
-## 4.11.1 - dev
+## 4.11.2 - dev
 
 Novas Funcionalidades:
 
 
 Melhorias:
+
+- O estado do Menu de classificação agora é salvo no projeto;
 
 
 Correção de bug:
