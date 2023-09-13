@@ -59,7 +59,10 @@ def getMaxCoordinatesFromNpArray(npArray: np.array) -> np.array:
 
 
 def getMinCoordinatesFromNpArray(npArray: np.array) -> np.array:
-    return np.argwhere(npArray == npArray[~np.isnan(npArray)].min())
+    not_nan_mask = ~np.isnan(npArray)
+    min_value = np.min(npArray[np.where((npArray > -500.) & not_nan_mask)])
+    return np.transpose(np.where((npArray == min_value) & not_nan_mask))
+    # return np.argwhere(npArray == npArray[~np.isnan(npArray)].min())
 
 
 def createFeatureWithPixelValueFromPixelCoordinates(

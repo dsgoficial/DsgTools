@@ -1,7 +1,7 @@
 # CHANGELOG
 
 
-## 4.11.3 - dev
+## 4.11.4 - dev
 
 Novas Funcionalidades:
 
@@ -10,6 +10,7 @@ Melhorias:
 
 - O estado do Menu de classificação agora é salvo no projeto;
 - Adiciona parâmetros opcionais na rotina de extração de pontos cotados;
+- Melhoria de desempenho na extração de pontos cotados;
 
 Correção de bug:
 
