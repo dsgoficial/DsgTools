@@ -1,7 +1,7 @@
 # CHANGELOG
 
 
-## 4.11.2 - dev
+## 4.11.3 - dev
 
 Novas Funcionalidades:
 
@@ -9,11 +9,12 @@ Novas Funcionalidades:
 Melhorias:
 
 - O estado do Menu de classificação agora é salvo no projeto;
-
+- Adiciona parâmetros opcionais na rotina de extração de pontos cotados;
 
 Correção de bug:
 
 - Corrige bug de quando o usuário tenta reclassificar primitivas não compatíveis utilizando o menu de classificação;
+- Corrige bug na rotina de extração de pontos cotados;
 
 
 ## 4.10.0 - 2023-09-08

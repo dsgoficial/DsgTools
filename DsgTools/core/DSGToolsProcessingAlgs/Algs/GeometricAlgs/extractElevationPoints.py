@@ -168,6 +168,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 self.WATER_BODIES,
                 self.tr("Water Bodies"),
                 [QgsProcessing.TypeVectorPolygon],
+                optional=True,
             )
         )
 
@@ -176,6 +177,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 self.AREA_WITHOUT_INFORMATION_POLYGONS,
                 self.tr("Area without information layer"),
                 [QgsProcessing.TypeVectorPolygon],
+                optional=True,
             )
         )
 
@@ -192,6 +194,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 self.DRAINAGE_LINES_WITHOUT_NAME,
                 self.tr("Drainage lines without name"),
                 [QgsProcessing.TypeVectorLine],
+                optional=True,
             )
         )
 
@@ -208,6 +211,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 self.OTHER_ROADS,
                 self.tr("Other Roads"),
                 [QgsProcessing.TypeVectorLine],
+                optional=True,
             )
         )
 
@@ -375,7 +379,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             inputRaster,
             mask=geographicBoundsLyr,
             context=context,
-            feedback=feedback,
+            feedback=multiStepFeedback,
             noData=-9999,
             outputRaster=QgsProcessingUtils.generateTempFilename(
                 f"clip_{str(uuid4().hex)}.tif"
@@ -390,7 +394,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(self.tr("Reading raster with numpy..."))
+            multiStepFeedback.setProgressText(self.tr("Extracting buffer from contours..."))
         localContourBufferLength = geometryHandler.convertDistance(
             self.contourBufferLength,
             originEpsg=originEpsg,
@@ -406,6 +410,8 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
         if waterBodiesLyr is not None:
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgressText(self.tr("Extracting local water bodies..."))
             localWaterBodiesLyr = algRunner.runExtractByLocation(
                 inputLyr=waterBodiesLyr,
                 intersectLyr=geographicBoundsLyr,
@@ -416,12 +422,15 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             if multiStepFeedback is not None:
                 currentStep += 1
                 multiStepFeedback.setCurrentStep(currentStep)
+                multiStepFeedback.setProgressText(self.tr("Evaluating buffer on water bodies..."))
             localBufferedWaterBodiesLyr = algRunner.runBuffer(
                 inputLayer=localWaterBodiesLyr, distance=localContourBufferLength, context=context, feedback=multiStepFeedback, is_child_algorithm=True
             )
             if multiStepFeedback is not None:
                 currentStep += 1
                 multiStepFeedback.setCurrentStep(currentStep)
+                multiStepFeedback.setProgressText(self.tr("Running clip on water bodies..."))
+            algRunner.runCreateSpatialIndex(localBufferedWaterBodiesLyr, context, is_child_algorithm=True)
             waterBodiesLyr = algRunner.runClip(
                 localBufferedWaterBodiesLyr,
                 overlayLayer=geographicBoundsLyr,
@@ -431,6 +440,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Building masked raster..."))
         npRaster, transform = self.readAndMaskRaster(
             clippedRasterLyr,
             geographicBoundsLyr,

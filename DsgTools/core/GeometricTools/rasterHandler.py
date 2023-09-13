@@ -41,12 +41,12 @@ from qgis.core import (
 
 
 def readAsNumpy(inputRaster: Union[str, QgsRasterLayer]) -> Tuple[Dataset, np.array]:
-    inputRaster = (
+    inputRasterPath = (
         inputRaster.dataProvider().dataSourceUri()
         if isinstance(inputRaster, QgsRasterLayer)
         else inputRaster
     )
-    ds = gdal.Open(inputRaster)
+    ds = gdal.Open(inputRasterPath)
     return ds, np.array(ds.GetRasterBand(1).ReadAsArray().transpose())
 
 
