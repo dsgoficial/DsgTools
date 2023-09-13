@@ -14,6 +14,7 @@ class AcquisitionMenuCtrl:
         self.addMenuTab = None
         self.addMenuButton = None
         self.reclassifyDialog = None
+        self.menuConfigs = None
         self.ignoreSignal = False
         self.connectQgisSignals()
 
@@ -48,6 +49,8 @@ class AcquisitionMenuCtrl:
         self.createMenuDock(state)
 
     def saveStateOnProject(self):
+        if self.menuConfigs is None:
+            return
         currentProject = QgsProject.instance()
         currentProject.projectSaved.disconnect(self.saveStateOnProject)
         QgsExpressionContextUtils.setProjectVariable(
