@@ -291,7 +291,8 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             if multiStepFeedback.isCanceled():
                 break
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr(f"Evaluating region {currentStep+1}/{nFeats}"))
+            self.currentStepText = self.tr(f"Evaluating region {currentStep+1}/{nFeats}")
+            multiStepFeedback.pushInfo(self.currentStepText)
             localBoundsLyr = layerHandler.createMemoryLayerWithFeature(
                 geographicBoundaryLyr, feat, context
             )
@@ -358,7 +359,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep = 0
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(self.tr("Clipping raster"))
+            multiStepFeedback.setProgressText(self.tr(f"{self.currentStepText}: Clipping raster"))
         frameCentroid = (
             [i for i in geographicBoundsLyr.getFeatures()][0].geometry().centroid()
         )
@@ -395,7 +396,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(self.tr("Extracting buffer from contours..."))
+            multiStepFeedback.setProgressText(self.tr(f"{self.currentStepText}: Extracting buffer from contours..."))
         localContourBufferLength = geometryHandler.convertDistance(
             self.contourBufferLength,
             originEpsg=originEpsg,
@@ -412,7 +413,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
         if waterBodiesLyr is not None:
             if multiStepFeedback is not None:
-                multiStepFeedback.setProgressText(self.tr("Extracting local water bodies..."))
+                multiStepFeedback.setProgressText(self.tr(f"{self.currentStepText}: Extracting local water bodies..."))
             localWaterBodiesLyr = algRunner.runExtractByLocation(
                 inputLyr=waterBodiesLyr,
                 intersectLyr=geographicBoundsLyr,
@@ -423,14 +424,14 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             if multiStepFeedback is not None:
                 currentStep += 1
                 multiStepFeedback.setCurrentStep(currentStep)
-                multiStepFeedback.setProgressText(self.tr("Evaluating buffer on water bodies..."))
+                multiStepFeedback.setProgressText(self.tr(f"{self.currentStepText}:Evaluating buffer on water bodies..."))
             localBufferedWaterBodiesLyr = algRunner.runBuffer(
                 inputLayer=localWaterBodiesLyr, distance=localContourBufferLength, context=context, feedback=multiStepFeedback, is_child_algorithm=True
             )
             if multiStepFeedback is not None:
                 currentStep += 1
                 multiStepFeedback.setCurrentStep(currentStep)
-                multiStepFeedback.setProgressText(self.tr("Running clip on water bodies..."))
+                multiStepFeedback.setProgressText(self.tr(f"{self.currentStepText}: Running clip on water bodies..."))
             algRunner.runCreateSpatialIndex(localBufferedWaterBodiesLyr, context, is_child_algorithm=True)
             waterBodiesLyr = algRunner.runClip(
                 localBufferedWaterBodiesLyr,
@@ -441,7 +442,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(self.tr("Building masked raster..."))
+            multiStepFeedback.setProgressText(self.tr(f"{self.currentStepText}: Building masked raster..."))
         npRaster, transform = self.readAndMaskRaster(
             clippedRasterLyr,
             geographicBoundsLyr,
@@ -489,7 +490,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(self.tr("Preparing contours..."))
+            multiStepFeedback.setProgressText(self.tr(f"{self.currentStepText}: Preparing contours..."))
         contourAreaDict, polygonLyr = self.prepareContours(
             contourLyr=contourLyr,
             geographicBoundsLyr=geographicBoundsLyr,
@@ -512,7 +513,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if naturalPointFeaturesLyr is not None:
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgressText(
-                    self.tr("Getting elevation points from natural points...")
+                    self.tr(f"{self.currentStepText}: Getting elevation points from natural points...")
                 )
             elevationPointsFromNaturalPointFeatures = (
                 self.getElevationPointsFromNaturalPoints(
@@ -549,7 +550,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
 
         if multiStepFeedback is not None:
             multiStepFeedback.setProgressText(
-                self.tr("Getting elevation points from hilltops...")
+                self.tr(f"{self.currentStepText}: Getting elevation points from hilltops...")
             )
 
         # create points from hilltops
@@ -586,7 +587,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(
-                self.tr("Getting elevation points from main road intersections...")
+                self.tr(f"{self.currentStepText}: Getting elevation points from main road intersections...")
             )
         elevationPointsFromRoadIntersections = (
             self.getElevationPointsFromLineIntersections(
@@ -624,7 +625,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(
-                self.tr("Getting elevation points from other road intersections...")
+                self.tr(f"{self.currentStepText}: Getting elevation points from other road intersections...")
             )
         elevationPointsFromOtherRoadIntersections = (
             self.getElevationPointsFromLineIntersections(
@@ -663,7 +664,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(
                 self.tr(
-                    "Getting elevation points from intersections of road and rivers with names outside polygons..."
+                    f"{self.currentStepText}: Getting elevation points from intersections of road and rivers with names outside polygons..."
                 )
             )
         elevationPointsFromIntersectionsOfRiverWithNamesAndRoads = (
@@ -705,7 +706,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(
                 self.tr(
-                    "Getting elevation points from intersections of road and rivers without names..."
+                    f"{self.currentStepText}: Getting elevation points from intersections of road and rivers without names..."
                 )
             )
 
@@ -748,7 +749,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(
                 self.tr(
-                    "Getting elevation points from intersections of rivers with names..."
+                    f"{self.currentStepText}: Getting elevation points from intersections of rivers with names..."
                 )
             )
 
@@ -791,7 +792,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(
                 self.tr(
-                    "Getting elevation points from intersections of rivers with names..."
+                    f"{self.currentStepText}: Getting elevation points from intersections of rivers with names..."
                 )
             )
 
@@ -834,7 +835,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(
                 self.tr(
-                    "Getting elevation points from intersections of rivers with and without names..."
+                    f"{self.currentStepText}: Getting elevation points from intersections of rivers with and without names..."
                 )
             )
 
@@ -877,7 +878,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(
                 self.tr(
-                    "Getting elevation points from intersections of rivers without names..."
+                    f"{self.currentStepText}: Getting elevation points from intersections of rivers without names..."
                 )
             )
 
@@ -919,7 +920,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(
-                self.tr("Getting elevation points from plane areas...")
+                self.tr(f"{self.currentStepText}: Getting elevation points from plane areas...")
             )
 
         planeAreasElevationPoints = self.getElevationPointsFromPlaneAreas(
@@ -1482,6 +1483,8 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(2)
             multiStepFeedback.pushInfo(self.tr("Getting min coordinates from numpy array..."))
         minCoordinatesArray = rasterHandler.getMinCoordinatesFromNpArray(npRaster)
+        if minCoordinatesArray == []:
+            return list(featSet)
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(3)
             multiStepFeedback.pushInfo(self.tr("Creating min feature list from pixel coordinates array..."))
