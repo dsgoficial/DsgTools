@@ -2009,9 +2009,9 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
         candidateGridLyr = algRunner.runExtractByLocation(
-            inputLyr=contourLyr,
-            intersectLyr=planeGrid,
-            predicate=[2],
+            inputLyr=planeGrid,
+            intersectLyr=contourLyr,
+            predicate=[AlgRunner.Disjoint],
             context=context,
             feedback=multiStepFeedback,
         )
