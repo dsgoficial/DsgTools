@@ -1,7 +1,7 @@
 # CHANGELOG
 
 
-## 4.11.4 - dev
+## 4.11.5 - dev
 
 Novas Funcionalidades:
 
@@ -16,6 +16,7 @@ Correção de bug:
 
 - Corrige bug de quando o usuário tenta reclassificar primitivas não compatíveis utilizando o menu de classificação;
 - Corrige bug na rotina de extração de pontos cotados;
+- Corrige bug de flags incorretas na rotina de identificar erros de segmentação em linhas (Identify Segment Errors Between Lines);
 
 
 ## 4.10.0 - 2023-09-08
