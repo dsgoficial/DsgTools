@@ -1,10 +1,11 @@
 # CHANGELOG
 
 
-## 4.11.5 - dev
+## 4.11.6 - dev
 
 Novas Funcionalidades:
 
+- Novo processo de corrigir erros de segmentação em linhas (barragem versus rodovias);
 
 Melhorias:
 
