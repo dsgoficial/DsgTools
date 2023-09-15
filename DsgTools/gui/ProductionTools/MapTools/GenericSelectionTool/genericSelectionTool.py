@@ -232,7 +232,7 @@ class GenericSelectionTool(QgsMapTool):
             if (
                 not isinstance(lyr, QgsVectorLayer)
                 or (self.layerHasPartInBlackList(lyr.name()))
-                or lyr not in visibleLayers
+                or lyr not in visibleLayers or lyr.readOnly()
             ):
                 continue
             if (
