@@ -72,7 +72,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         self.visitedFieldComboBox.setAllowEmptyFieldName(True)
         self.rankFieldComboBox.setToolTip(self.tr("Set rank field"))
         self.rankFieldComboBox.setAllowEmptyFieldName(True)
-        self.zoomComboBox.setCurrentIndex(ReviewToolbar.ZoomToNext)
+        self.zoomComboBox.setCurrentIndex(ReviewToolbar.DoNothing)
         icon_path = ":/plugins/DsgTools/icons/attributeSelector.png"
         text = self.tr("DSGTools: Mark tile as done")
         self.applyPushButtonAction = self.add_action(
