@@ -1177,6 +1177,10 @@ class PostGISSqlGenerator(SqlGenerator):
             tableName.split(".")[-1].replace('"', ""), tableName, geomColumnName
         )
         return sql
+    
+    def getStoredStyles(self):
+        sql = "select f_table_schema, f_table_name, f_geometry_column, stylename, styleqml from public.layer_styles where f_table_catalog = current_database()"
+        return sql
 
     def getStyles(self):
         sql = "select description, f_table_schema, f_table_name, stylename from public.layer_styles where f_table_catalog = current_database()"
@@ -1208,7 +1212,7 @@ class PostGISSqlGenerator(SqlGenerator):
         """
         return sql
 
-    def getStylesFromDb(self, dbVersion):
+    def listStylesFromDb(self, dbVersion):
         """
         Returns the stylenames of the database.
         The replace(stylename,'/' || f_table_name, '') is done due to compatibility issues

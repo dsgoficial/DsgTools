@@ -1,7 +1,7 @@
 # CHANGELOG
 
 
-## 4.11.7 - dev
+## 4.11.8 - dev
 
 Novas Funcionalidades:
 
@@ -19,6 +19,7 @@ Correção de bug:
 - Corrige bug de quando o usuário tenta reclassificar primitivas não compatíveis utilizando o menu de classificação;
 - Corrige bug na rotina de extração de pontos cotados;
 - Corrige bug de flags incorretas na rotina de identificar erros de segmentação em linhas (Identify Segment Errors Between Lines);
+- Corrige bug de número de conexões ativas na ferramenta de setar estilo do banco (os métodos nativos do QGIS abrem conexão e não fecham, dessa forma derrubando todo mundo da produção por exceder o número máximo de conexões defindo no postgres.conf);
 
 
 ## 4.10.0 - 2023-09-08

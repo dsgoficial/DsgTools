@@ -928,7 +928,7 @@ class AbstractDb(QObject):
         except:
             pass
         try:
-            dbStyles = self.getStylesFromDb(dbVersion)
+            dbStyles = self.listStylesFromDb(dbVersion)
             if dbStyles:
                 for style in dbStyles:
                     name = style.split("/")[-1]

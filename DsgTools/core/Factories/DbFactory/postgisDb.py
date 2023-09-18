@@ -2326,9 +2326,10 @@ class PostgisDb(AbstractDb):
                 self.db.commit()
         return created
 
-    def getStylesFromDb(self, dbVersion):
+    def listStylesFromDb(self, dbVersion=None):
         self.checkAndOpenDb()
-        sql = self.gen.getStylesFromDb(dbVersion)
+        dbVersion = dbVersion if dbVersion is not None else self.getDatabaseVersion()
+        sql = self.gen.listStylesFromDb(dbVersion)
         if not sql:
             return []
         query = QSqlQuery(sql, self.db)
@@ -2353,9 +2354,8 @@ class PostgisDb(AbstractDb):
         query.next()
         qml = query.value(0)
         # TODO: post parse qml to remove possible attribute value type
-        if parsing:
-            if qml:
-                qml = self.utils.parseStyle(qml)
+        if parsing and qml:
+            qml = self.utils.parseStyle(qml)
         tempPath = None
         if qml:
             tempPath = os.path.join(os.path.dirname(__file__), "temp.qml")
@@ -2363,6 +2363,24 @@ class PostgisDb(AbstractDb):
                 f.writelines(qml)
                 f.close()
         return tempPath
+    
+    def getStyleDict(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getStoredStyles()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(
+                self.tr("Problem getting styles from db: ") + query.lastError().text()
+            )
+        styleDict = defaultdict(dict)
+        while query.next():
+            tableSchema = query.value(0)
+            tableName = query.value(1)
+            geom = query.value(2)
+            styleName = query.value(3)
+            qml = query.value(4)
+            styleDict[styleName][f"{tableSchema}.{tableName}({geom})"] = qml
+        return styleDict
 
     def importStyle(self, styleName, table_name, qml, tableSchema, useTransaction=True):
         self.checkAndOpenDb()

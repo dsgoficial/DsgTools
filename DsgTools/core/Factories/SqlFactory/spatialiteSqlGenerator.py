@@ -242,7 +242,7 @@ class SpatialiteSqlGenerator(SqlGenerator):
         sql = "SELECT edgvversion, dbimplversion FROM public_db_metadata LIMIT 1"
         return sql
 
-    def getStylesFromDb(self, dbVersion):
+    def listStylesFromDb(self, dbVersion):
         return None
 
     def getGeomTablesFromGeometryColumns(self, edgvVersion):
