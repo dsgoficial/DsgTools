@@ -1,7 +1,7 @@
 # CHANGELOG
 
 
-## 4.11.9 - dev
+## 4.11.10 - dev
 
 Novas Funcionalidades:
 
@@ -21,6 +21,7 @@ Correção de bug:
 - Corrige bug de flags incorretas na rotina de identificar erros de segmentação em linhas (Identify Segment Errors Between Lines);
 - Corrige bug de número de conexões ativas na ferramenta de setar estilo do banco (os métodos nativos do QGIS abrem conexão e não fecham, dessa forma derrubando todo mundo da produção por exceder o número máximo de conexões defindo no postgres.conf);
 - Corrige bug no processo de verificar atributo unicode;
+- Corrige bug no processo de identificar pontas soltas (retira distância mínima na busca, agora pega erro até no "mundo quântico");
 
 
 ## 4.10.0 - 2023-09-08
