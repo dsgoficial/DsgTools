@@ -771,6 +771,13 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
                 nameTableMsgDict[table][
                     "As chaves check que estão presentes no database, mas não estão no MasterFile: "
                 ] = []
+            if not nameTableMsgDict[table].get(
+                "As chaves check que estão presentes no Materfile, mas não estão no database: ",
+                False,
+            ):
+                nameTableMsgDict[table][
+                    "As chaves check que estão presentes no Materfile, mas não estão no database: "
+                ] = []
         if len(inDbNotInMasterSet) > 0:
             for check in inDbNotInMasterSet:
                 nameTableMsgDict[table][
