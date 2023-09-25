@@ -515,14 +515,15 @@ class FeatureHandler(QObject):
 
     def getLyrUnprojectedGeographicBounds(self, inputLyr):
         crs = inputLyr.crs()
+        inputLyr.updateExtents()
         coordinateTransformer = QgsCoordinateTransform(
             crs,
             QgsCoordinateReferenceSystem(crs.geographicCrsAuthId()),
             QgsProject.instance(),
-        )
+        ) if QgsCoordinateReferenceSystem(crs.geographicCrsAuthId()) != crs else None
         reprojectedGeographicBB = coordinateTransformer.transformBoundingBox(
             inputLyr.extent()
-        )
+        ) if coordinateTransformer is not None else inputLyr.extent()
         xmin = reprojectedGeographicBB.xMinimum()
         ymin = reprojectedGeographicBB.yMinimum()
         xmax = reprojectedGeographicBB.xMaximum()
