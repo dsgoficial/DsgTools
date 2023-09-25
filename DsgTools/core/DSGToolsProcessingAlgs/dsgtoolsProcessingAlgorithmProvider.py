@@ -219,8 +219,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateRunwayAltitudeAlg
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.validateTrackerAlgorithm import (
     ValidateTrackerAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.validateDatabaseStructure import (
-    ValidateDatabaseStructureAlgorithm,
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.identifyDifferencesBetweenDatabaseModelsAlgorithm import (
+    IdentifyDifferencesBetweenDatabaseModelsAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnIntersectionsAlgorithm import (
     AddUnsharedVertexOnIntersectionsAlgorithm,
@@ -607,7 +607,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ClipAndCopyFeaturesBetweenDatabasesAlgorithm(),
             VerifyAdjacentGeographicBoundaryDataAlgorithm(),
             FixSegmentErrorsBetweenLinesAlgorithm(),
-            ValidateDatabaseStructureAlgorithm(),
+            IdentifyDifferencesBetweenDatabaseModelsAlgorithm(),
         ]
         return algList
 

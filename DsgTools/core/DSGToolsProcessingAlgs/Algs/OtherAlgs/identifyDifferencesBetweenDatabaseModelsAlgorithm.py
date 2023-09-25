@@ -32,6 +32,7 @@ from qgis.core import (
     QgsProcessingParameterVectorLayer,
     QgsProcessingParameterNumber,
     QgsProcessingException,
+    QgsProcessingParameterFileDestination,
     QgsProcessingParameterField,
 )
 from processing.gui.wrappers import WidgetWrapper
@@ -42,13 +43,14 @@ from collections import defaultdict
 import json
 
 
-class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
+class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
     MASTERFILE = "MASTERFILE"
     SERVERIP = "SERVERIP"
     PORT = "PORT"
     DBNAME = "DBNAME"
     USER = "USER"
     PASSWORD = "PASSWORD"
+    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -60,12 +62,12 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
             )
         )
 
-        self.addParameter(QgsProcessingParameterString(self.SERVERIP, self.tr("Ip")))
+        self.addParameter(QgsProcessingParameterString(self.SERVERIP, self.tr("IP")))
 
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.PORT,
-                self.tr("Insert the port"),
+                self.tr("Port"),
                 minValue=0,
                 maxValue=9999,
                 defaultValue=5432,
@@ -73,26 +75,33 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterString(self.DBNAME, self.tr("Name of database"))
+            QgsProcessingParameterString(self.DBNAME, self.tr("Database Name"))
         )
 
         self.addParameter(
-            QgsProcessingParameterString(
-                self.USER, self.tr("Insert the user of PostgreSQL")
-            )
+            QgsProcessingParameterString(self.USER, self.tr("Database User"))
         )
 
         password = QgsProcessingParameterString(
             self.PASSWORD,
-            self.tr("Insert the password of PostgreSQL"),
+            self.tr("Database Password"),
         )
         password.setMetadata(
             {
-                "widget_wrapper": "DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.validateDatabaseStructure.MyWidgetWrapper"
+                "widget_wrapper": "DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.identifyDifferencesBetweenDatabaseModelsAlgorithm.MyWidgetWrapper"
             }
         )
 
         self.addParameter(password)
+
+        self.addParameter(
+            QgsProcessingParameterFileDestination(
+                self.OUTPUT,
+                self.tr("Path to save .txt File"),
+                fileFilter=".txt",
+                createByDefault=True,
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -104,6 +113,7 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
         dbName = self.parameterAsString(parameters, self.DBNAME, context)
         user = self.parameterAsString(parameters, self.USER, context)
         password = self.parameterAsString(parameters, self.PASSWORD, context)
+        fileTxt = self.parameterAsFileOutput(parameters, self.OUTPUT, context)
         abstractDb = self.getAbstractDb(
             host=serverIp,
             port=port,
@@ -130,31 +140,53 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        msg += self.validateEDGVTables(masterDict, abstractDb)
+        msg, nameTableMsgDict = self.validateEDGVTables(masterDict, abstractDb)
         if multiStepFeedback.isCanceled():
             self.pushOutputMessage(feedback, msg)
             return {}
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        msg += self.validateCheckConstraint(masterDict, abstractDb)
+        nameTableMsgDictTwo = self.validateCheckConstraint(masterDict, abstractDb)
         if multiStepFeedback.isCanceled():
             self.pushOutputMessage(feedback, msg)
             return {}
 
-        self.pushOutputMessage(feedback, msg)
-        return {}
+        nameTableMsgDict.update(nameTableMsgDictTwo)
 
-    def pushOutputMessage(self, feedback, msg):
+        for table in nameTableMsgDict:
+            msg += f"Erro na tabela = {table}: \n"
+            for typeMsg in nameTableMsgDict[table]:
+                msg += f"   {typeMsg}"
+                for element in nameTableMsgDict[table][typeMsg]:
+                    msg += f"{element}"
+                msg = msg[: len(msg) - 2] + "\n"
+            msg += "\n"
+
+        self.pushOutputMessage(feedback, msg, fileTxt)
+
+        return {self.OUTPUT: fileTxt}
+
+    def pushOutputMessage(self, feedback, msg, fileTxt):
         if msg == "":
             feedback.pushInfo(
                 "A estrutura do banco de entrada corresponde à estrutura definida pelo masterfile de entrada."
             )
+            with open(f"{fileTxt}", "w") as file:
+                file.write(
+                    "A estrutura do banco de entrada corresponde à estrutura definida pelo masterfile de entrada."
+                )
         else:
             feedback.pushInfo(
                 "A estrutura do banco de entrada não corresponde à estrutura definida pelo masterfile de entrada:"
             )
             feedback.pushInfo(msg)
+            with open(f"{fileTxt}", "w") as file:
+                file.write(
+                    "A estrutura do banco de entrada não corresponde à estrutura definida pelo masterfile de entrada:\n"
+                )
+                file.write(f"{msg}")
+        file.close()
 
     def getAbstractDb(self, host, port, database, user, password):
         abstractDb = DbFactory().createDbFactory(DsgEnums.DriverPostGIS)
@@ -175,10 +207,15 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
             edgvVersion,
             implementationVersion,
         ) = abstractDb.getDatabaseAndImplementationVersions()
+        if (
+            edgvVersion != masterDict["modelo"]
+            or implementationVersion != masterDict["versao"]
+        ):
+            msg += "Erro de versão:\n"
         if edgvVersion != masterDict["modelo"]:
-            msg += f"A versão do banco ({edgvVersion}) não corresponde à versão do masterfile ({masterDict['modelo']})\n"
+            msg += f"   A versão do banco ({edgvVersion}) não corresponde à versão do masterfile ({masterDict['modelo']})\n"
         if implementationVersion != masterDict["versao"]:
-            msg += f"A versão de implementação do banco ({implementationVersion}) não corresponde à versão de implementação do masterfile ({masterDict['versao']})\n"
+            msg += f"   A versão de implementação do banco ({implementationVersion}) não corresponde à versão de implementação do masterfile ({masterDict['versao']})\n"
         return msg
 
     def validateDomainTables(self, masterDict, abstractDb):
@@ -191,7 +228,8 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
         """
         msg = ""
         if not abstractDb.checkIfSchemaExistsInDatabase(masterDict["schema_dominios"]):
-            msg += f"A o esquema de domínios {masterDict['schema_dominios']} não está implementado no banco."
+            msg += "Erro no Schema de domínios:\n"
+            msg += f"   A o esquema de domínios {masterDict['schema_dominios']} não está implementado no banco."
             return msg
         masterDictDomainNameSet = set(i["nome"] for i in masterDict["dominios"])
         dbDomainNameSet = abstractDb.getTableListFromSchema(
@@ -201,17 +239,20 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
         inMasterDictNotInDbSet = masterDictDomainNameSet.difference(dbDomainNameSet)
         inDbNotInMasterDictSet = dbDomainNameSet.difference(masterDictDomainNameSet)
 
+        if len(inMasterDictNotInDbSet) > 0 or len(inDbNotInMasterDictSet) > 0:
+            msg += "Erro, há disparidade entre as tabelas do Database e do Masterfile no Schema dominios:\n"
+
         if len(inMasterDictNotInDbSet) > 0:
-            msg += "Os domínios que existem no masterDict, mas não exitem no banco (tabelas que faltam no banco) são: "
+            msg += "    Os domínios que existem no masterDict, mas não exitem no banco (tabelas que faltam no banco) são: "
             for e in inMasterDictNotInDbSet:
                 msg += f"{e}, "
-            msg = msg[: len(msg) - 2] + ".\n"
+            msg = msg[: len(msg) - 2] + "\n\n"
 
         if len(inDbNotInMasterDictSet) > 0:
-            msg += "Os domínios que existem no banco, mas não estão previstas no masterDict (tabelas excedentes no banco) são: "
+            msg += "    Os domínios que existem no banco, mas não estão previstas no masterDict (tabelas excedentes no banco) são: "
             for e in inDbNotInMasterDictSet:
                 msg += f"{e}, "
-            msg = msg[: len(msg) - 2] + ".\n"
+            msg = msg[: len(msg) - 2] + "\n\n"
         domainDict = {i["nome"]: i["valores"] for i in masterDict["dominios"]}
         nameIdxDict = {
             i["nome"]: masterDict["dominios"].index(i) for i in masterDict["dominios"]
@@ -240,17 +281,18 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
                 inDbNotInMasterDictSet = tableColumnsSetDict[domainName].difference(
                     columnsMasterFileSet
                 )
-                msg += f"A tabela {domainName} "
+                msg += "Erro no Schema dominios colunas 'code' e 'value':\n"
+                msg += f"   A tabela {domainName} "
                 if len(inMasterDictNotInDbSet) > 0:
                     msg += "possui as seguintes colunas no MasterFile, mas não no database: "
                     for column in inMasterDictNotInDbSet:
                         msg += f"{column}, "
-                    msg = msg[: len(msg) - 2] + "\n"
+                    msg = msg[: len(msg) - 2] + "\n\n"
                 if len(inDbNotInMasterDictSet) > 0:
                     msg += "possui as seguintes colunas no database, mas não no MasterFile: "
                     for column in inDbNotInMasterDictSet:
                         msg += f"{column}, "
-                    msg = msg[: len(msg) - 2] + "\n"
+                    msg = msg[: len(msg) - 2] + "\n\n"
                 # TODO: adicionar mensagem com a diferença entre as colunas do masterfile e do banco
                 # TODO: avisar que a verificação de domínio parou aqui por não ter as mesmas colunas
                 return msg
@@ -258,17 +300,20 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
             # 2. verificar se a chave primária é a coluna code
             setPrimaryKey = tablePrimaryKeySetDict[domainName]
             if len(setPrimaryKey) > 1:
-                msg += "A coluna 'code' deve ser a chave primária, mas foram passadas como chaves primárias: "
+                msg += "Erro Primary Key:\n"
+                msg += "    A coluna 'code' deve ser a chave primária, mas foram passadas como chaves primárias: "
                 for pk in setPrimaryKey:
                     msg += f"{pk}, "
-                msg = msg[: len(msg) - 2] + ".\n"
+                msg = msg[: len(msg) - 2] + "\n\n"
             elif len(setPrimaryKey) == 1:
                 for pk in setPrimaryKey:
                     break
                 if pk != "code":
-                    msg += f"A coluna 'code' deve ser a chave primária da tabela {domainName}, mas a chava primária passada foi: {pk}\n"
+                    msg += "Erro Primary Key:\n"
+                    msg += f"   A coluna 'code' deve ser a chave primária da tabela {domainName}, mas a chava primária passada foi: {pk}\n\n"
             else:
-                msg += f"A tabela {domainName} não possui chave primária.\n"
+                msg += "Erro Primary Key:\n"
+                msg += f"   A tabela {domainName} não possui chave primária.\n\n"
             # 3. comparar os valores do masterfile, incluindo o valor a ser preenchido, com os valores populados no banco
             # Início da parte 3
             # monta o conjunto de tuplas do masterfile
@@ -317,7 +362,8 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
                 inDbDomainNotInMasterFileDomainSet = dbDomainTupleSet.difference(
                     masterFileDomainTupleSet
                 )
-                msg += f"A tabela {domainName} "
+                msg += "Erro valores no Schema dominios:\n"
+                msg += f"   A tabela {domainName} "
                 if len(inMasterFileDomainNotInDbDomainSet) > 0:
                     if not masterDict["dominios"][nameIdxDict[domainName]].get(
                         "filtro", False
@@ -325,12 +371,12 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
                         msg += f"possui os seguintes valores no MasterFile sem correspondência no database: "
                         for valor in inMasterFileDomainNotInDbDomainSet:
                             msg += f"'code': {valor[0]}, 'code_name': {valor[1]}"
-                        msg += "\n"
+                        msg += "\n\n"
                     else:
                         msg += f"possui os seguintes valores no MasterFile sem correspondência no database: "
                         for valor in inMasterFileDomainNotInDbDomainSet:
                             msg += f"'code': {valor[0]}, 'code_name': {valor[1]}, 'filter': {valor[2]}"
-                        msg += "\n"
+                        msg += "\n\n"
                 if len(inDbDomainNotInMasterFileDomainSet) > 0:
                     if not masterDict["dominios"][nameIdxDict[domainName]].get(
                         "filtro", False
@@ -338,12 +384,12 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
                         msg += f"possui os seguintes valores no database sem correspondência no MasterFile: "
                         for valor in inDbDomainNotInMasterFileDomainSet:
                             msg += f"'code': {valor[0]}, 'code_name': {valor[1]}"
-                        msg += "\n"
+                        msg += "\n\n"
                     else:
                         msg += f"possui os seguintes valores no database sem correspondência no MasterFile: "
                         for valor in inDbDomainNotInMasterFileDomainSet:
                             msg += f"'code': {valor[0]}, 'code_name': {valor[1]}, 'filter': {valor[2]}"
-                        msg += "\n"
+                        msg += "\n\n"
 
         return msg
 
@@ -356,7 +402,8 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
         """
         msg = ""
         if not abstractDb.checkIfSchemaExistsInDatabase(masterDict["schema_dados"]):
-            msg += "O schema 'edgv' não está presente no database."
+            msg += "Erro Schema edgv: \n"
+            msg += "    O schema 'edgv' não está presente no database.\n"
             return msg
         dbEDGVNameSet = abstractDb.getTableListFromSchema(masterDict["schema_dados"])
         masterDictEDGVSet = set(
@@ -371,28 +418,37 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
         )
         inMasterDictNotInDbSet = masterDictEDGVSet.difference(dbEDGVNameSet)
         inDbNotInMasterDictSet = dbEDGVNameSet.difference(masterDictEDGVSet)
-
+        if len(inMasterDictNotInDbSet) > 0 or len(inDbNotInMasterDictSet) > 0:
+            msg += "Erro, há divergência de tabelas no Database e Masterfile:"
         if len(inMasterDictNotInDbSet) > 0:
-            msg += "As tabelas do edgv que estão no MasterFile, mas não estão do database são: "
+            msg += "    As tabelas do edgv que estão no MasterFile, mas não estão do database são: "
             for table in inMasterDictNotInDbSet:
                 msg += f"{table}, "
-            msg = msg[: len(msg) - 2] + ".\n"
+            msg = msg[: len(msg) - 2] + "\n\n"
         if len(inDbNotInMasterDictSet) > 0:
-            msg += "As tabelas do edgv que estão no database, mas não estão no MasterFile são: "
+            msg += "    As tabelas do edgv que estão no database, mas não estão no MasterFile são: "
             for table in inDbNotInMasterDictSet:
                 msg += f"{table}, "
-            msg = msg[: len(msg) - 2] + ".\n"
+            msg = msg[: len(msg) - 2] + "\n\n"
 
         tableNamePrimaryKeyDict = abstractDb.getPrimaryKeyDictFromSchema(
             masterDict["schema_dados"]
         )
+        nameTableMsgDict = defaultdict(dict)
         for tableName in tableNamePrimaryKeyDict:
             if tableNamePrimaryKeyDict[tableName] == {"id"}:
                 continue
-            msg += f"A {tableName} possui a chave primária diferente do 'id' a chava primária é/são da tabela: "
+            if not nameTableMsgDict[tableName].get(
+                "chave primária diferente do 'id' a chava primária é/são da tabela: ",
+                False,
+            ):
+                nameTableMsgDict[tableName][
+                    "chave primária diferente do 'id' a chava primária é/são da tabela: "
+                ] = []
             for pk in tableNamePrimaryKeyDict[tableName]:
-                msg += f"{pk}, "
-            msg = msg[: len(msg) - 2] + "\n"
+                nameTableMsgDict[tableName][
+                    "chave primária diferente do 'id' a chava primária é/são da tabela: "
+                ].append(f"{pk}, ")
 
         edgvDict = {
             f'{i["categoria"]}_{i["nome"]}{masterDict["geom_suffix"][j]}': i[
@@ -506,23 +562,43 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
                 inDbNotInMasterSet = dbNameTypeCardinalityMapValueSet.difference(
                     masterNameTypeCardinalityMapValueSet
                 )
+                if len(inMasterNotInDbSet) > 0 or len(inDbNotInMasterSet) > 0:
+                    if not nameTableMsgDict[tableName].get(
+                        "Os seguintes valores estão presentes no Masterfile, mas não estão no database: ",
+                        False,
+                    ):
+                        nameTableMsgDict[tableName][
+                            "Os seguintes valores estão presentes no Masterfile, mas não estão no database: "
+                        ] = []
                 if len(inMasterNotInDbSet) > 0:
-                    msg += f"Os seguintes valores da tabela {edgvName}, estão presentes no MasterFile, mas não estão no database: "
                     for valor in inMasterNotInDbSet:
                         if len(valor) == 3:
-                            msg += f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, "
+                            nameTableMsgDict[tableName][
+                                "Os seguintes valores estão presentes no Masterfile, mas não estão no database: "
+                            ].append(
+                                f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, "
+                            )
                         else:
-                            msg += f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, mapa_valor = {valor[3]}, "
-                    msg = msg[: len(msg) - 2] + "\n"
+                            nameTableMsgDict[tableName][
+                                "Os seguintes valores estão presentes no Masterfile, mas não estão no database: "
+                            ].append(
+                                f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, mapa_valor = {valor[3]}, "
+                            )
                 if len(inDbNotInMasterSet) > 0:
-                    msg += f"Os seguintes valores da tabela {edgvName}, estão presentes no database, mas não estão no MasterFile: "
                     for valor in inDbNotInMasterSet:
                         if len(valor) == 3:
-                            msg += f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, "
+                            nameTableMsgDict[tableName][
+                                "Os seguintes valores estão presentes no Masterfile, mas não estão no database: "
+                            ].append(
+                                f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, "
+                            )
                         else:
-                            msg += f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, mapa_valor = {valor[3]}, "
-                    msg = msg[: len(msg) - 2] + "\n"
-        return msg
+                            nameTableMsgDict[tableName][
+                                "Os seguintes valores estão presentes no Masterfile, mas não estão no database: "
+                            ].append(
+                                f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, mapa_valor = {valor[3]}, "
+                            )
+        return msg, nameTableMsgDict
 
     def validateCheckConstraint(self, masterDict, abstractDb):
         """ """
@@ -583,8 +659,7 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
 
         for table in dbNameTableColumnCheckConstraintDict:
             for column in dbNameTableColumnCheckConstraintDict[table]:
-                msg = self.validateCheckConstraintSet(
-                    msg,
+                nameTableMsgDict = self.validateCheckConstraintSet(
                     dbNameTableColumnCheckConstraintDict,
                     table,
                     column,
@@ -593,14 +668,14 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
 
         for table in masterNameTableColumnCheckConstraintDict:
             for column in masterNameTableColumnCheckConstraintDict[table]:
-                msg = self.validateCheckConstraintSet(
-                    msg,
+                nameTableMsgDictTwo = self.validateCheckConstraintSet(
                     dbNameTableColumnCheckConstraintDict,
                     table,
                     column,
                     masterNameTableColumnCheckConstraintDict,
                 )
-        return msg
+        nameTableMsgDict.update(nameTableMsgDictTwo)
+        return nameTableMsgDict
 
     def tableToRemove(
         self, masterNameTableColumnCheckConstraintDict, nameTableColumnForeignSetDict
@@ -674,7 +749,6 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
 
     def validateCheckConstraintSet(
         self,
-        msg,
         dbNameTableColumnCheckConstraintDict,
         table,
         column,
@@ -688,17 +762,26 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
         inMasterNotInMasterSet = masterCheckConstraintSet.difference(
             dbCheckConstraintSet
         )
+        nameTableMsgDict = defaultdict(dict)
+        if len(inDbNotInMasterSet) > 0 or len(inMasterNotInMasterSet) > 0:
+            if not nameTableMsgDict[table].get(
+                "As chaves check que estão presentes no database, mas não estão no MasterFile: ",
+                False,
+            ):
+                nameTableMsgDict[table][
+                    "As chaves check que estão presentes no database, mas não estão no MasterFile: "
+                ] = []
         if len(inDbNotInMasterSet) > 0:
-            msg += f"As chaves check que estão presentes no database, mas não estão no MasterFile da tabela = {table}, coluna = {column} são: "
             for check in inDbNotInMasterSet:
-                msg += f"{check}, "
-            msg = msg[: len(msg) - 2] + "\n"
+                nameTableMsgDict[table][
+                    "As chaves check que estão presentes no database, mas não estão no MasterFile: "
+                ].append(f"{check}, ")
         if len(inMasterNotInMasterSet) > 0:
-            msg += f"As chaves check que estão presentes no MasterFile, mas não estão no database da tabela = {table}, coluna = {column} são: "
             for check in inMasterNotInMasterSet:
-                msg += f"{check}, "
-            msg = msg[: len(msg) - 2] + "\n"
-        return msg
+                nameTableMsgDict[table][
+                    "As chaves check que estão presentes no Materfile, mas não estão no database: "
+                ].append(f"{check}, ")
+        return nameTableMsgDict
 
     def nameTableColumnCheckConstraint(
         self, masterDict, table, masterNameTableColumnCheckConstraintDict
@@ -756,14 +839,14 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "validatedatabasestructurealgorithm"
+        return "identifydifferencesbetweendatabasemodelsalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Verify Difference Between DB")
+        return self.tr("Identify Differences Between Database Models")
 
     def group(self):
         """
@@ -783,10 +866,12 @@ class ValidateDatabaseStructureAlgorithm(QgsProcessingAlgorithm):
         return "DSGTools: Other Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate("ValidateDatabaseStructureAlgorithm", string)
+        return QCoreApplication.translate(
+            "IdentifyDifferencesBetweenDatabaseModelsAlgorithm", string
+        )
 
     def createInstance(self):
-        return ValidateDatabaseStructureAlgorithm()
+        return IdentifyDifferencesBetweenDatabaseModelsAlgorithm()
 
 
 class MyWidgetWrapper(WidgetWrapper):
