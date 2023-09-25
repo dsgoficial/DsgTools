@@ -1,7 +1,7 @@
 # CHANGELOG
 
 
-## 4.11.10 - dev
+## 4.11.11 - dev
 
 Novas Funcionalidades:
 
@@ -22,6 +22,7 @@ Correção de bug:
 - Corrige bug de número de conexões ativas na ferramenta de setar estilo do banco (os métodos nativos do QGIS abrem conexão e não fecham, dessa forma derrubando todo mundo da produção por exceder o número máximo de conexões defindo no postgres.conf);
 - Corrige bug no processo de verificar atributo unicode;
 - Corrige bug no processo de identificar pontas soltas (retira distância mínima na busca, agora pega erro até no "mundo quântico");
+- Corrige bug na ferramenta de inverter o sentido de linhas (flip lines) quando é uma camada não salva do banco de dados;
 
 
 ## 4.10.0 - 2023-09-08
