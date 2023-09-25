@@ -564,11 +564,18 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
                 )
                 if len(inMasterNotInDbSet) > 0 or len(inDbNotInMasterSet) > 0:
                     if not nameTableMsgDict[edgvName].get(
-                        "Os seguintes valores estão presentes no Masterfile, mas não estão no database: ",
+                        "Os seguintes valores estão presentes no database, mas não estão no Masterfile: ",
                         False,
                     ):
                         nameTableMsgDict[edgvName][
                             "Os seguintes valores estão presentes no database, mas não estão no Masterfile: "
+                        ] = []
+                    if not nameTableMsgDict[edgvName].get(
+                        "Os seguintes valores estão presentes no Masterfile, mas não estão no database: ",
+                        False,
+                    ):
+                        nameTableMsgDict[edgvName][
+                            "Os seguintes valores estão presentes no Masterfile, mas não estão no database: "
                         ] = []
                 if len(inMasterNotInDbSet) > 0:
                     for valor in inMasterNotInDbSet:
