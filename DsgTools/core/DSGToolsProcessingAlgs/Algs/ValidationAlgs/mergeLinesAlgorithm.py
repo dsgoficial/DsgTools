@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from PyQt5.QtCore import QCoreApplication
+from DsgTools.core.GeometricTools import graphHandler
 
 import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
@@ -43,6 +44,8 @@ from qgis.core import (
     QgsProcessingUtils,
     QgsSpatialIndex,
     QgsWkbTypes,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
 )
 
 from .validationAlgorithm import ValidationAlgorithm
@@ -105,6 +108,14 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
+        try:
+            import networkx as nx
+        except ImportError:
+            raise QgsProcessingException(
+                self.tr(
+                    "This algorithm requires the Python networkx library. Please install this library and try again."
+                )
+            )
         layerHandler = LayerHandler()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
@@ -115,16 +126,66 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
             parameters, self.IGNORE_VIRTUAL_FIELDS, context
         )
         ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
-
-        layerHandler.mergeLinesOnLayer(
-            inputLyr,
-            feedback=feedback,
-            onlySelected=onlySelected,
-            ignoreVirtualFields=ignoreVirtual,
-            attributeBlackList=attributeBlackList,
-            excludePrimaryKeys=ignorePK,
+        nSteps = 10
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Building aux structures"))
+        localCache = self.algRunner.runCreateFieldWithExpression(
+            inputLyr=inputLyr,
+            expression="$id",
+            fieldName="featid",
+            fieldType=1,
+            context=context,
+            feedback=multiStepFeedback,
         )
-
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=localCache, context=context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        nodesLayer = self.algRunner.runExtractSpecificVertices(
+            inputLyr=localCache,
+            vertices="0,-1",
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        nodesLayer = self.algRunner.runCreateFieldWithExpression(
+            inputLyr=nodesLayer,
+            expression="$id",
+            fieldName="nfeatid",
+            fieldType=1,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Building graph aux structures"))
+        (
+            nodeDict, nodeIdDict, edgeDict, hashDict, networkBidirectionalGraph,
+        ) = graphHandler.buildAuxStructures(
+            nx,
+            nodesLayer=nodesLayer,
+            edgesLayer=localCache,
+            feedback=multiStepFeedback,
+            useWkt=False,
+            computeNodeLayerIdDict=False,
+            addEdgeLength=False,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Finding mergeable edges"))
+        mergeableEdgesSetDict = graphHandler.find_mergeable_edges_on_graph(
+            G=networkBidirectionalGraph,
+            feedback=multiStepFeedback
+        )
+        if len(mergeableEdgesSetDict) == 0:
+            return {self.OUTPUT: inputLyr}
+        
         return {self.OUTPUT: inputLyr}
 
     def name(self):
