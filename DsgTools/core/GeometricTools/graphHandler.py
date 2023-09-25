@@ -121,7 +121,8 @@ def buildGraph(
     hashDict: Dict[int, List[QByteArray]],
     nodeDict: Dict[QByteArray, int],
     feedback: Optional[QgsFeedback] = None,
-    directed: bool = False
+    directed: bool = False,
+    add_inside_river_attribute: bool = True,
 ) -> Any:
     """
     Build a graph from hash dictionary and node dictionary.
@@ -150,7 +151,8 @@ def buildGraph(
             break
         G.add_edge(nodeDict[wkb_1], nodeDict[wkb_2])
         G[nodeDict[wkb_1]][nodeDict[wkb_2]]["featid"] = edgeId
-        G[nodeDict[wkb_1]][nodeDict[wkb_2]]["inside_river"] = False
+        if add_inside_river_attribute:
+            G[nodeDict[wkb_1]][nodeDict[wkb_2]]["inside_river"] = False
         if feedback is not None:
             feedback.setProgress(current * progressStep)
     return G
@@ -710,3 +712,73 @@ def buildAuxFlowGraph(
         if (is_flow_invalid(DiG, a) and set(nx.dfs_postorder_nodes(DiG, a)).intersection(fixedOutNodeSet) == set()) or (is_flow_invalid(DiG, b) and set(nx.dfs_postorder_nodes(DiG, b)).intersection(fixedOutNodeSet) == set()):
             flip_edge(DiG, (a, b))
     return DiG
+
+def find_mergeable_edges_on_graph(G, feedback: Optional[QgsFeedback] = None):
+    """
+    Find mergeable edges in a graph.
+
+    This function analyzes a graph to identify mergeable edges. Mergeable edges are pairs of edges
+    that share common nodes with degree 2. The function returns a dictionary where keys are sets of nodes that
+    can be merged, and values are sets of mergeable edge pairs.
+
+    Parameters:
+    - G (networkx.Graph): The input graph to analyze.
+    - feedback (Optional[QgsFeedback]): A QgsFeedback object for providing user feedback during
+      processing. If provided and canceled, the function will terminate early.
+
+    Returns:
+    - Dict[Set[Hashable], Set[Tuple[Hashable, Hashable]]]: A dictionary where keys are sets of nodes
+      that can be merged, and values are sets of frozenset pairs representing mergeable edges.
+
+    Note:
+    - Mergeable edges are defined as edges that connect the same set of nodes, potentially forming
+      a multi-edge in the graph.
+
+    Example:
+    ```
+    G = nx.Graph()
+    G.add_edges_from([
+        (1, 2), (3, 2),
+        (2, 4), (4, 5), (2, 18), (18, 6),
+        (7, 6), (7, 17), (17, 8),
+        (8, 9), (8, 13),
+        (9, 10),
+        (11, 10),
+        (12, 10),
+        (13, 14),
+        (15, 13), (15, 16),
+    ])
+    mergeable_edges = find_mergeable_edges_on_graph(G)
+    ```
+
+    In the example above, `mergeable_edges` may contain:
+    ```
+    {
+        frozenset({4, 5}): {frozenset({4, 5}), frozenset({2, 4})},
+        frozenset({17, 18, 6, 7}): {frozenset({8, 17}), frozenset({18, 2}), frozenset({6, 7}), frozenset({17, 7}), frozenset({18, 6})},
+        frozenset({16, 15}): {frozenset({13, 15}), frozenset({16, 15})},
+        frozenset({9}): {frozenset({8, 9}), frozenset({9, 10})}
+    }
+    ```
+    """
+    outputSet = defaultdict(set)
+    degree2nodes = (i for i in G.nodes if G.degree(i) == 2)
+    if feedback is not None and feedback.isCanceled():
+        return outputSet
+    candidatesSetofFrozenSets = set(frozenset(fetch_connected_nodes(G, n, 2)) for n in degree2nodes)
+    if feedback is not None and feedback.isCanceled():
+        return outputSet
+    nSteps = len(candidatesSetofFrozenSets)
+    if nSteps == 0:
+        return outputSet
+    if feedback is not None:
+        stepSize = 100/nSteps
+    for current, candidateSet in enumerate(candidatesSetofFrozenSets):
+        if feedback is not None and feedback.isCanceled():
+            break
+        for node in candidateSet:
+            for edge in G.edges(node):
+                outputSet[candidateSet].add(frozenset(edge))
+        if feedback is not None:
+            feedback.setProgress(current * stepSize)
+    return outputSet
