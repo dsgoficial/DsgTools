@@ -419,7 +419,7 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
         inMasterDictNotInDbSet = masterDictEDGVSet.difference(dbEDGVNameSet)
         inDbNotInMasterDictSet = dbEDGVNameSet.difference(masterDictEDGVSet)
         if len(inMasterDictNotInDbSet) > 0 or len(inDbNotInMasterDictSet) > 0:
-            msg += "Erro, há divergência de tabelas no Database e Masterfile:"
+            msg += "Erro, há divergência de tabelas no Database e Masterfile:\n"
         if len(inMasterDictNotInDbSet) > 0:
             msg += "    As tabelas do edgv que estão no MasterFile, mas não estão do database são: "
             for table in inMasterDictNotInDbSet:
@@ -563,23 +563,23 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
                     masterNameTypeCardinalityMapValueSet
                 )
                 if len(inMasterNotInDbSet) > 0 or len(inDbNotInMasterSet) > 0:
-                    if not nameTableMsgDict[tableName].get(
+                    if not nameTableMsgDict[edgvName].get(
                         "Os seguintes valores estão presentes no Masterfile, mas não estão no database: ",
                         False,
                     ):
-                        nameTableMsgDict[tableName][
-                            "Os seguintes valores estão presentes no Masterfile, mas não estão no database: "
+                        nameTableMsgDict[edgvName][
+                            "Os seguintes valores estão presentes no database, mas não estão no Masterfile: "
                         ] = []
                 if len(inMasterNotInDbSet) > 0:
                     for valor in inMasterNotInDbSet:
                         if len(valor) == 3:
-                            nameTableMsgDict[tableName][
+                            nameTableMsgDict[edgvName][
                                 "Os seguintes valores estão presentes no Masterfile, mas não estão no database: "
                             ].append(
                                 f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, "
                             )
                         else:
-                            nameTableMsgDict[tableName][
+                            nameTableMsgDict[edgvName][
                                 "Os seguintes valores estão presentes no Masterfile, mas não estão no database: "
                             ].append(
                                 f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, mapa_valor = {valor[3]}, "
@@ -587,14 +587,14 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
                 if len(inDbNotInMasterSet) > 0:
                     for valor in inDbNotInMasterSet:
                         if len(valor) == 3:
-                            nameTableMsgDict[tableName][
-                                "Os seguintes valores estão presentes no Masterfile, mas não estão no database: "
+                            nameTableMsgDict[edgvName][
+                                "Os seguintes valores estão presentes no database, mas não estão no Masterfile: "
                             ].append(
                                 f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, "
                             )
                         else:
-                            nameTableMsgDict[tableName][
-                                "Os seguintes valores estão presentes no Masterfile, mas não estão no database: "
+                            nameTableMsgDict[edgvName][
+                                "Os seguintes valores estão presentes no database, mas não estão no Masterfile: "
                             ].append(
                                 f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, mapa_valor = {valor[3]}, "
                             )
@@ -602,7 +602,6 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
 
     def validateCheckConstraint(self, masterDict, abstractDb):
         """ """
-        msg = ""
         dbNameTableColumnCheckConstraintDict = abstractDb.getCheckConstraintDict()
         for table in dbNameTableColumnCheckConstraintDict:
             for column in dbNameTableColumnCheckConstraintDict[table]:
