@@ -10,7 +10,7 @@
 name=DSG Tools
 qgisMinimumVersion=3.22
 description=Brazilian Army Cartographic Production Tools
-version=4.11.12
+version=4.11.13
 author=Brazilian Army Geographic Service
 email=suporte.dsgtools@dsg.eb.mil.br
 about=
@@ -60,7 +60,7 @@ changelog=
 			- Novo processo de ajustar parâmetros da ferramenta de aquisição com ângulos retos (integração com o FP/SAP);
 			- Novo processo de converter entre bancos de mesma modelagem, clipando com um polígono feito para integração com FP/SAP (ClipAndCopyFeaturesBetweenDatabasesAlgorithm);
 			- Novo processo de verificar ligação na moldura;
-		
+
 		Melhorias:
 			- Melhoria de desempenho na construção de polígonos quando se utiliza polígonos na entrada que contém linhas que podem delimitar (caso área edificada versus via deslocamento);
 			- Adicionado registro de alteração do tile na barra de ferramentas de revisão;
