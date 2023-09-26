@@ -1,7 +1,7 @@
 # CHANGELOG
 
 
-## 4.11.12 - dev
+## 4.11.13 - dev
 
 Novas Funcionalidades:
 
@@ -13,6 +13,8 @@ Melhorias:
 - Adiciona parâmetros opcionais na rotina de extração de pontos cotados;
 - Melhoria de desempenho na extração de pontos cotados;
 - O seletor genérico agora ignora camadas somente leitura;
+- Melhoria de desempenho no processo Unir Linhas com Mesmo Conjunto de Atributos (Merge Lines With Same Attribute Set): Código refatorado para usar busca utilizando grafo. Além disso, o processo pega casos que não eram unidos anteriormente (linhas com mesmo conjunto de atributos e encadeadas);
+- Melhoria de desempenho no processo Identify Unmerged Lines With Same Attribute Set: Código refatorado para usar busca utilizando grafo;
 
 Correção de bug:
 
