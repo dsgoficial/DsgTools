@@ -158,10 +158,11 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
             msg += f"Erro na tabela = {table}: \n"
             for typeMsg in nameTableMsgDict[table]:
                 msg += f"   {typeMsg}\n"
+                if nameTableMsgDict[table][typeMsg] == []:
+                    continue
+                msg += f"   "
                 for element in nameTableMsgDict[table][typeMsg]:
-                    if nameTableMsgDict[table][typeMsg] == []:
-                        continue
-                    msg += f"   {element}"
+                    msg += f"{element}"
                 msg = msg[: len(msg) - 2] + "\n"
             msg += "\n"
 
