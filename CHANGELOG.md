@@ -1,7 +1,7 @@
 # CHANGELOG
 
 
-## 4.11.13 - dev
+## 4.11.14 - dev
 
 Novas Funcionalidades:
 
