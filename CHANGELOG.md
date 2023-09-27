@@ -1,7 +1,7 @@
 # CHANGELOG
 
 
-## 4.11.14 - dev
+## 4.11.15 - dev
 
 
 
@@ -29,6 +29,7 @@ Correção de bug:
 - Corrige bug no processo de identificar pontas soltas (retira distância mínima na busca, agora pega erro até no "mundo quântico");
 - Corrige bug na ferramenta de inverter o sentido de linhas (flip lines) quando é uma camada não salva do banco de dados;
 - Corrige bug na geração de moldura relativo a camada (Generate Systematic Grid Related to Layer) quando se usa memory layer (o memory layer não atualiza seu extent automaticamente, logo foi necessário colocar um layer.updateExtents() no código antes de calcular o extent);
+- Corrige bug no processo de calcular azimute (estava sendo calculado com +90 graus);
 
 
 ## 4.10.0 - 2023-09-08
