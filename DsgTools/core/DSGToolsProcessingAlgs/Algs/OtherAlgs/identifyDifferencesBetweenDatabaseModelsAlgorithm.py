@@ -283,10 +283,10 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
                 msg += "Erro no Schema dominios colunas 'code' e 'value':\n"
                 msg += f"   A tabela {domainName} "
                 if len(inMasterDictNotInDbSet) > 0:
-                    msg += "possui as seguintes colunas no MasterFile, mas não no database:\n"
+                    msg += "possui as seguintes colunas no MasterFile, mas não no banco de dados:\n"
                     msg += ", ".join(list(inMasterDictNotInDbSet)) + "\n\n"
                 if len(inDbNotInMasterDictSet) > 0:
-                    msg += "possui as seguintes colunas no database, mas não no MasterFile:\n"
+                    msg += "possui as seguintes colunas no banco de dados, mas não no MasterFile:\n"
                     msg += ", ".join(list(inDbNotInMasterDictSet)) + "\n\n"
                 continue
 
@@ -393,8 +393,8 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
         """
         msg = ""
         if not abstractDb.checkIfSchemaExistsInDatabase(masterDict["schema_dados"]):
-            msg += "Erro Schema edgv: \n"
-            msg += "    O schema 'edgv' não está presente no database.\n"
+            msg += f"""Erro Schema {masterDict["schema_dados"]}: \n"""
+            msg += f"""    O schema '{masterDict["schema_dados"]}' não está presente no banco de dados.\n"""
             return msg
         dbEDGVNameSet = abstractDb.getTableListFromSchema(masterDict["schema_dados"])
         masterDictEDGVSet = set(
@@ -412,12 +412,12 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
         if len(inMasterDictNotInDbSet) > 0 or len(inDbNotInMasterDictSet) > 0:
             msg += "Erro, há divergência de tabelas no banco de dados e Masterfile:\n"
         if len(inMasterDictNotInDbSet) > 0:
-            msg += "    As tabelas do edgv que estão no MasterFile, mas não estão do banco de dados são: "
+            msg += f"""    As tabelas do {masterDict["schema_dados"]} que estão no MasterFile, mas não estão do banco de dados são: """
             for table in inMasterDictNotInDbSet:
                 msg += f"{table}, "
             msg = msg[: len(msg) - 2] + "\n\n"
         if len(inDbNotInMasterDictSet) > 0:
-            msg += "    As tabelas do edgv que estão no database, mas não estão no MasterFile são: "
+            msg += f"""    As tabelas do {masterDict["schema_dados"]} que estão no banco de dados, mas não estão no MasterFile são: """
             for table in inDbNotInMasterDictSet:
                 msg += f"{table}, "
             msg = msg[: len(msg) - 2] + "\n\n"
@@ -555,30 +555,30 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
                 )
                 if len(inMasterNotInDbSet) > 0 or len(inDbNotInMasterSet) > 0:
                     if not nameTableMsgDict[edgvName].get(
-                        "Os seguintes valores estão presentes no database, mas não estão no Masterfile: ",
+                        "Os seguintes valores estão presentes no banco de dados, mas não estão no Masterfile: ",
                         False,
                     ):
                         nameTableMsgDict[edgvName][
-                            "Os seguintes valores estão presentes no database, mas não estão no Masterfile: "
+                            "Os seguintes valores estão presentes no banco de dados, mas não estão no Masterfile: "
                         ] = []
                     if not nameTableMsgDict[edgvName].get(
-                        "Os seguintes valores estão presentes no Masterfile, mas não estão no database: ",
+                        "Os seguintes valores estão presentes no Masterfile, mas não estão no banco de dados: ",
                         False,
                     ):
                         nameTableMsgDict[edgvName][
-                            "Os seguintes valores estão presentes no Masterfile, mas não estão no database: "
+                            "Os seguintes valores estão presentes no Masterfile, mas não estão no banco de dados: "
                         ] = []
                 if len(inMasterNotInDbSet) > 0:
                     for valor in inMasterNotInDbSet:
                         if len(valor) == 3:
                             nameTableMsgDict[edgvName][
-                                "Os seguintes valores estão presentes no Masterfile, mas não estão no database: "
+                                "Os seguintes valores estão presentes no Masterfile, mas não estão no banco de dados: "
                             ].append(
                                 f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, "
                             )
                         else:
                             nameTableMsgDict[edgvName][
-                                "Os seguintes valores estão presentes no Masterfile, mas não estão no database: "
+                                "Os seguintes valores estão presentes no Masterfile, mas não estão no banco de dados: "
                             ].append(
                                 f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, mapa_valor = {valor[3]}, "
                             )
@@ -586,13 +586,13 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
                     for valor in inDbNotInMasterSet:
                         if len(valor) == 3:
                             nameTableMsgDict[edgvName][
-                                "Os seguintes valores estão presentes no database, mas não estão no Masterfile: "
+                                "Os seguintes valores estão presentes no banco de dados, mas não estão no Masterfile: "
                             ].append(
                                 f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, "
                             )
                         else:
                             nameTableMsgDict[edgvName][
-                                "Os seguintes valores estão presentes no database, mas não estão no Masterfile: "
+                                "Os seguintes valores estão presentes no banco de dados, mas não estão no Masterfile: "
                             ].append(
                                 f"coluna: {valor[0]}, tipo: {valor[1]}, opcional: {valor[2]}, mapa_valor = {valor[3]}, "
                             )
@@ -762,28 +762,28 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
         nameTableMsgDict = defaultdict(dict)
         if len(inDbNotInMasterSet) > 0 or len(inMasterNotInMasterSet) > 0:
             if not nameTableMsgDict[table].get(
-                "As chaves check que estão presentes no database, mas não estão no MasterFile: ",
+                "As chaves check que estão presentes no banco de dados, mas não estão no MasterFile: ",
                 False,
             ):
                 nameTableMsgDict[table][
-                    "As chaves check que estão presentes no database, mas não estão no MasterFile: "
+                    "As chaves check que estão presentes no banco de dados, mas não estão no MasterFile: "
                 ] = []
             if not nameTableMsgDict[table].get(
-                "As chaves check que estão presentes no Materfile, mas não estão no database: ",
+                "As chaves check que estão presentes no Materfile, mas não estão no banco de dados: ",
                 False,
             ):
                 nameTableMsgDict[table][
-                    "As chaves check que estão presentes no Materfile, mas não estão no database: "
+                    "As chaves check que estão presentes no Materfile, mas não estão no banco de dados: "
                 ] = []
         if len(inDbNotInMasterSet) > 0:
             for check in inDbNotInMasterSet:
                 nameTableMsgDict[table][
-                    "As chaves check que estão presentes no database, mas não estão no MasterFile: "
+                    "As chaves check que estão presentes no banco de dados, mas não estão no MasterFile: "
                 ].append(f"{check}, ")
         if len(inMasterNotInMasterSet) > 0:
             for check in inMasterNotInMasterSet:
                 nameTableMsgDict[table][
-                    "As chaves check que estão presentes no Materfile, mas não estão no database: "
+                    "As chaves check que estão presentes no Materfile, mas não estão no banco de dados: "
                 ].append(f"{check}, ")
         return nameTableMsgDict
 
