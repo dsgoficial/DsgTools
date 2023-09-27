@@ -254,8 +254,8 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
             self.algRunner.runCreateSpatialIndex(
                 mergedLineLyr, context, multiStepFeedback
             )
-        filterPointSet = (
-            set(i.geometry().asWkb() for i in mergedPointLyr.getFeatures())
+        filterPointIdSet = (
+            set(nodeDict[i.geometry().asWkb()] for i in mergedPointLyr.getFeatures() if i.geometry().asWkb() in nodeDict)
             if mergedPointLyr is not None
             else set()
         )
@@ -265,7 +265,7 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
             G=x,
             featDict=edgeDict,
             nodeIdDict=nodeIdDict,
-            filterPointSet=filterPointSet,
+            filterPointSet=filterPointIdSet,
             filterLineLayer=mergedLineLyr,
             attributeNameList=attributeNameList,
         )

@@ -878,20 +878,18 @@ def identify_unmerged_edges_on_graph(
             candidatePointSet = idSet - filterPointSet
             if candidatePointSet == set():
                 continue
-            if filterLineLayer is None:
-                outputIdSet |= candidatePointSet
-                continue
             for nodeId in candidatePointSet:
-                if nodeId in outputIdSet:
+                if nodeId in outputIdSet or mergeableG.degree(nodeId) != 2:
                     continue
-                geom = QgsGeometry()
-                geom.fromWkb(nodeIdDict[nodeId])
-                buffer = geom.buffer(1e-6, -1)
-                geomBB = buffer.boundingBox()
-                if any(
-                    f.geometry().intersects(geom)
-                    for f in filterLineLayer.getFeatures(geomBB)
-                ):
-                    continue
+                if filterLineLayer is not None:
+                    geom = QgsGeometry()
+                    geom.fromWkb(nodeIdDict[nodeId])
+                    buffer = geom.buffer(1e-6, -1)
+                    geomBB = buffer.boundingBox()
+                    if any(
+                        f.geometry().intersects(geom)
+                        for f in filterLineLayer.getFeatures(geomBB)
+                    ):
+                        continue
                 outputIdSet.add(nodeId)
     return outputIdSet
