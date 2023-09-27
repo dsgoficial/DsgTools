@@ -1770,3 +1770,29 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
+
+    def runIdentifySegmentErrorBetweenLines(
+        self,
+        inputLayer,
+        referenceLineLayer,
+        searchRadius,
+        context,
+        flagLyr=None,
+        feedback=None,
+        is_child_algorithm=False
+    ):
+        flagLyr = "memory:" if flagLyr is None else flagLyr
+        output = processing.run(
+            "dsgtools:identifysegmenterrorsbetweenlines",
+            {
+                "INPUT": inputLayer,
+                "REFERENCE_LINE": referenceLineLayer,
+                "SEARCH_RADIUS": searchRadius,
+                "FLAGS": flagLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["FLAGS"]
+

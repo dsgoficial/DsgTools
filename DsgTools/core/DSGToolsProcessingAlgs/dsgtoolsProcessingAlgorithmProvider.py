@@ -33,6 +33,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.rightAngleT
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.appendFeaturesToLayerAlgorithm import (
     AppendFeaturesToLayerAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixSegmentErrorsBetweenLinesAlgorithm import (
+    FixSegmentErrorsBetweenLinesAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallObjectsOnLayersAlgorithm import (
     IdentifySmallObjectsOnLayersAlgorithm,
 )
@@ -219,6 +222,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateRunwayAltitudeAlg
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.validateTrackerAlgorithm import (
     ValidateTrackerAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.identifyDifferencesBetweenDatabaseModelsAlgorithm import (
+    IdentifyDifferencesBetweenDatabaseModelsAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnIntersectionsAlgorithm import (
     AddUnsharedVertexOnIntersectionsAlgorithm,
 )
@@ -233,9 +239,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.buildPolygonsFromC
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.cleanGeometriesAlgorithm import (
     CleanGeometriesAlgorithm,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.createNetworkNodesAlgorithm import (
-    CreateNetworkNodesAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.deaggregateGeometriesAlgorithm import (
     DeaggregatorAlgorithm,
@@ -445,9 +448,6 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unbuildPolygonsAlg
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.unicodeFilterAlgorithm import (
     UnicodeFilterAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import (
-    VerifyNetworkDirectioningAlgorithm,
-)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyAdjacentGeographicBoundaryDataAlgorithm import (
     VerifyAdjacentGeographicBoundaryDataAlgorithm,
 )
@@ -503,9 +503,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             RemoveEmptyAndUpdateAlgorithm(),
             ConvertLayer2LayerAlgorithm(),
             OverlayElementsWithAreasAlgorithm(),
-            CreateNetworkNodesAlgorithm(),
             AssignDefaultFieldValueToLayersAlgorithm(),
-            VerifyNetworkDirectioningAlgorithm(),
             IdentifyDuplicatedFeaturesAlgorithm(),
             AdjustNetworkConnectivityAlgorithm(),
             RemoveDuplicatedFeaturesAlgorithm(),
@@ -611,6 +609,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             GenericSelectionToolParametersAlgorithm(),
             ClipAndCopyFeaturesBetweenDatabasesAlgorithm(),
             VerifyAdjacentGeographicBoundaryDataAlgorithm(),
+            FixSegmentErrorsBetweenLinesAlgorithm(),
+            IdentifyDifferencesBetweenDatabaseModelsAlgorithm(),
             AzimuthCalculationAlgorithm(),
         ]
         return algList
@@ -686,7 +686,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         """
         We return the default icon.
         """
-        return QIcon(":/plugins/DsgTools/icons/dsg.png")
+        return QIcon(":/plugins/DsgTools/icons/DSGToolsIcon.png")
 
     def loadAlgorithms(self):
         """
