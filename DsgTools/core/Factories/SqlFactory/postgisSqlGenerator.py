@@ -1177,7 +1177,7 @@ class PostGISSqlGenerator(SqlGenerator):
             tableName.split(".")[-1].replace('"', ""), tableName, geomColumnName
         )
         return sql
-    
+
     def getStoredStyles(self):
         sql = "select f_table_schema, f_table_name, f_geometry_column, stylename, styleqml from public.layer_styles where f_table_catalog = current_database()"
         return sql
@@ -2306,3 +2306,67 @@ class PostGISSqlGenerator(SqlGenerator):
         :return: (str) query to database's implementation version (e.g. '5.2').
         """
         return """SELECT dbimplversion FROM public.db_metadata;"""
+
+    def getSchemasFromInformationSchema(self):
+        return f"""SELECT schema_name FROM information_schema.schemata"""
+
+    def getTablesFromInformationSchema(self, schemaName):
+        return f"""SELECT DISTINCT table_name from information_schema.tables where table_schema = '{schemaName}' """
+
+    def getColumnsFromInformationSchema(self, schemaName):
+        return f"""SELECT * FROM information_schema.columns WHERE table_schema = '{schemaName}'"""
+
+    def getPrimaryKeyFromInformationSchema(self, schemaName):
+        return f"""
+        SELECT kcu.table_schema,
+               kcu.table_name,
+               tco.constraint_name,
+               kcu.ordinal_position AS POSITION,
+               kcu.column_name AS key_column
+        FROM information_schema.table_constraints tco
+        JOIN information_schema.key_column_usage kcu
+             ON kcu.constraint_name = tco.constraint_name
+             AND kcu.constraint_schema = tco.constraint_schema
+             AND kcu.constraint_name = tco.constraint_name
+        WHERE tco.constraint_type = 'PRIMARY KEY' AND kcu.table_schema = '{schemaName}'
+        ORDER BY kcu.table_schema,
+                 kcu.table_name,
+                 position
+        """
+
+    def getAllValuesFromTable(self, schemaName, tableName, columnNameList):
+        return f"SELECT {', '.join(columnNameList)} from {schemaName}.{tableName}"
+
+    def getIfCollumnIsNullable(self, schemaName):
+        return f"SELECT * FROM information_schema.columns WHERE table_schema='{schemaName}'"
+
+    def getConstraintMapValueFromSchema(self):
+        return f"""
+        SELECT
+            tc.table_schema,
+            tc.constraint_name,
+            tc.table_name,
+            kcu.column_name,
+            ccu.table_schema AS foreign_table_schema,
+            ccu.table_name AS foreign_table_name,
+            ccu.column_name AS foreign_column_name
+        FROM information_schema.table_constraints AS tc
+        JOIN information_schema.key_column_usage AS kcu
+            ON tc.constraint_name = kcu.constraint_name
+            AND tc.table_schema = kcu.table_schema
+        JOIN information_schema.constraint_column_usage AS ccu
+            ON ccu.constraint_name = tc.constraint_name
+        WHERE tc.constraint_type = 'FOREIGN KEY'
+        """
+
+    def getNameColumnTableDataTypeFromSchema(self, schemaName):
+        return f"""
+        SELECT column_name, table_name, data_type
+        FROM information_schema.columns
+        WHERE table_schema = '{schemaName}'
+        """
+
+    def getMaxLengthVarcharFromSchema(self, schemaName):
+        return f"""
+        SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema = '{schemaName}'
+        """
