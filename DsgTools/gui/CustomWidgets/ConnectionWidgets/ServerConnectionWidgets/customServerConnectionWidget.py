@@ -104,7 +104,10 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
                 )
                 self.selectedDbsDict[dbNameAlias] = localDb
                 # do get dicts
-                localDict = localDb.getStyleDict()
+                try:
+                    localDict = localDb.getStyleDict()
+                except:
+                    localDict = dict()
                 for key in list(localDict.keys()):
                     self.stylesDict[key]["style"] = localDict[key]
                     if dbNameAlias not in self.stylesDict[key]["dbList"]:
