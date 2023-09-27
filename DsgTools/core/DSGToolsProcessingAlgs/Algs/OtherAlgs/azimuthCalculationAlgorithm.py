@@ -95,10 +95,6 @@ class AzimuthCalculationAlgorithm(QgsProcessingAlgorithm):
             orientMiniBBox = self.orientedMinimunBBoxFeat(feat)
 
             angAzim = orientMiniBBox[2]
-            if orientMiniBBox[3] < orientMiniBBox[4]:
-                angAzim = orientMiniBBox[2] - 90
-                if angAzim < 0:
-                    angAzim = orientMiniBBox[2] + 90
 
             if feat[f"{attributeAzim}"] != QVariant(None):
                 if not filledFeatures:
