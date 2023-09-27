@@ -227,7 +227,7 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
             self.tr("Building aux structure on input point list...")
         )
         multiStepFeedback.setCurrentStep(currentStep)
-        mergedPointLyr = (
+        mergedPointConstraintLyr = (
             self.algRunner.runMergeVectorLayers(
                 pointFilterLyrList, context, multiStepFeedback
             )
@@ -255,8 +255,8 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
                 mergedLineLyr, context, multiStepFeedback
             )
         filterPointIdSet = (
-            set(nodeDict[i.geometry().asWkb()] for i in mergedPointLyr.getFeatures() if i.geometry().asWkb() in nodeDict)
-            if mergedPointLyr is not None
+            set(nodeDict[i.geometry().asWkb()] for i in mergedPointConstraintLyr.getFeatures() if i.geometry().asWkb() in nodeDict)
+            if mergedPointConstraintLyr is not None
             else set()
         )
         pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
