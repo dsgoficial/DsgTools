@@ -21,19 +21,14 @@
  ***************************************************************************/
 """
 
-from PyQt5.QtCore import QCoreApplication, QVariant
-from datetime import datetime
+from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
-    QgsProcessing,
     QgsProcessingParameterFile,
     QgsProcessingParameterString,
     QgsProcessingAlgorithm,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterVectorLayer,
     QgsProcessingParameterNumber,
-    QgsProcessingException,
     QgsProcessingParameterFileDestination,
-    QgsProcessingParameterField,
 )
 from processing.gui.wrappers import WidgetWrapper
 from qgis.PyQt.QtWidgets import QLineEdit
@@ -157,12 +152,12 @@ class IdentifyDifferencesBetweenDatabaseModelsAlgorithm(QgsProcessingAlgorithm):
         for table in nameTableMsgDict:
             msg += f"Erro na tabela = {table}: \n"
             for typeMsg in nameTableMsgDict[table]:
-                msg += f"   {typeMsg}\n"
                 if nameTableMsgDict[table][typeMsg] == []:
                     continue
+                msg += f"   {typeMsg}\n"
                 msg += f"   "
                 for element in nameTableMsgDict[table][typeMsg]:
-                    msg += f"{element}"
+                    msg += f"\t- {element}\n"
                 msg = msg[: len(msg) - 2] + "\n"
             msg += "\n"
 
