@@ -4,6 +4,7 @@
 ## 4.11.14 - dev
 
 
+
 Novas Funcionalidades:
 
 - Novo processo de corrigir erros de segmentação em linhas (barragem versus rodovias);
@@ -48,6 +49,7 @@ Novas Funcionalidades:
 - Novo processo de ajustar parâmetros da ferramenta de aquisição com ângulos retos (integração com o FP/SAP);
 - Novo processo de converter entre bancos de mesma modelagem, clipando com um polígono feito para integração com FP/SAP (ClipAndCopyFeaturesBetweenDatabasesAlgorithm);
 - Novo processo de verificar ligação na moldura;
+- Novo processo de cálculo do azimute;
 
 
 Melhorias:
