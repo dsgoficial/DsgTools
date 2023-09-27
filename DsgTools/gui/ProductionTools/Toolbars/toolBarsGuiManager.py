@@ -129,6 +129,8 @@ class ToolbarsGuiManager(QObject):
             del toolbar
 
     def saveStateOnProject(self):
+        currentProject = QgsProject.instance()
+        currentProject.projectSaved.disconnect(self.saveStateOnProject)
         toolStateDict = dict()
         for tool in [
             self.centerPointAndBoundariesTool,
@@ -138,13 +140,14 @@ class ToolbarsGuiManager(QObject):
         ]:
             toolStateDict[tool.__class__.__name__] = tool.getToolState()
         QgsExpressionContextUtils.setProjectVariable(
-            QgsProject.instance(),
+            currentProject,
             "dsgtools_toolboxes_state",
             json.dumps(toolStateDict),
         )
-        QgsProject.instance().projectSaved.disconnect(self.saveStateOnProject)
+        currentProject.blockSignals(True)
         QgsProject.instance().write()
         QgsProject.instance().projectSaved.connect(self.saveStateOnProject)
+        currentProject.blockSignals(False)
 
     def loadStateFromProject(self):
         state = json.loads(

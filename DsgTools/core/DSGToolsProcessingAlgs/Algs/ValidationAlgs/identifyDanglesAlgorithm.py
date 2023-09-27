@@ -390,7 +390,6 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             bufferCount, intersectCount = 0, 0
             point_relationship_lambda = (
                 lambda x: geomEngine.intersects(x.constGet())
-                or qgisPoint.distance(x) < 1e-8
                 if ignoreDanglesOnUnsegmentedLines
                 else geomEngine.touches(x.constGet())
             )

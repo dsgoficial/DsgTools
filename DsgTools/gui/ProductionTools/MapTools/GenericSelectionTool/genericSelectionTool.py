@@ -232,7 +232,7 @@ class GenericSelectionTool(QgsMapTool):
             if (
                 not isinstance(lyr, QgsVectorLayer)
                 or (self.layerHasPartInBlackList(lyr.name()))
-                or lyr not in visibleLayers
+                or lyr not in visibleLayers or lyr.readOnly()
             ):
                 continue
             if (
@@ -399,15 +399,17 @@ class GenericSelectionTool(QgsMapTool):
         """
         geom = None
         for layer in self.iface.mapCanvas().layers():
-            if isinstance(layer, QgsVectorLayer):
-                selection = layer.selectedFeatures()
-                if len(selection):
-                    if geom == None:
-                        geom = layer.geometryType()
-                        continue
-                    elif layer.geometryType() < geom:
-                        geom = layer.geometryType()
-                        continue
+            if not isinstance(layer, QgsVectorLayer):
+                continue
+            selection = layer.selectedFeatures()
+            if not len(selection):
+                continue
+            if geom == None:
+                geom = layer.geometryType()
+                continue
+            elif layer.geometryType() < geom:
+                geom = layer.geometryType()
+                continue
         return geom
 
     def addCallBackToAction(self, action, onTriggeredAction, onHoveredAction=None):
@@ -496,11 +498,10 @@ class GenericSelectionTool(QgsMapTool):
         # creating a dict to handle all "menu" for each class
         submenuDict = dict()
         # sort the layers from diciotnary
-        classNameDict = {cl.name(): cl for cl in menuDict}
-        layers = sorted(list(classNameDict.keys()))
-        for className in layers:
+        classIdDict = {cl.id(): cl for cl in menuDict}
+        for classId, cl in classIdDict.items():
             # menu for features of each class
-            cl = classNameDict[className]
+            className = cl.name()
             geomType = cl.geometryType()
             # get layer database name
             dsUri = cl.dataProvider().dataSourceUri()
@@ -511,7 +512,7 @@ class GenericSelectionTool(QgsMapTool):
                     db_name.split("'")[1] if "'" in db_name else db_name
                 )
             elif "memory" in dsUri:
-                db_name = self.tr("{0} (Memory Layer)").format(className)
+                db_name = self.tr(f"{cl.name()} (Memory Layer)")
             else:
                 db_name = dsUri.split("'")[1]
             if len(menuDict) == 1:
@@ -521,9 +522,7 @@ class GenericSelectionTool(QgsMapTool):
                 orderedFeatIdList = sorted(list(featDict.keys()))
                 for featId in orderedFeatIdList:
                     feat = featDict[featId]
-                    s = "{db_name} | {className} (feat_id = {featId})".format(
-                        db_name=db_name, className=className, featId=featId
-                    )
+                    s = f"{db_name} | {className} (feat_id = {featId})"
                     # inserting action for each feature
                     action = parentMenu.addAction(s)
                     triggeredAction, hoveredAction = self.getCallback(
@@ -542,7 +541,7 @@ class GenericSelectionTool(QgsMapTool):
                 if len(menuDict[cl]) > 1:
                     # if there are more than 1 feature to be filled, "All"-command should be added
                     action = parentMenu.addAction(
-                        self.tr("{0} From Class {1}").format(genericAction, className)
+                        self.tr("{0} from layer {1}").format(genericAction, className)
                     )
                     triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(
                         e=e, dictLayerFeature=menuDict, selectAll=selectAll
@@ -554,9 +553,7 @@ class GenericSelectionTool(QgsMapTool):
                     )
                 # there is no mapping of class to be exposed, only information added to parent QMenu itself
                 return dict()
-            title = "{db_name} | {className}".format(
-                db_name=db_name, className=className
-            )
+            title = f"{db_name} | {className}"
             submenuDict[cl] = QMenu(title=title, parent=parentMenu)
             parentMenu.addMenu(submenuDict[cl])
             # inserting an entry for every feature of each class in its own context menu
@@ -581,7 +578,7 @@ class GenericSelectionTool(QgsMapTool):
             if len(menuDict[cl]) > 1:
                 # if there are more than 1 feature to be filled, "All"-command should be added
                 action = submenuDict[cl].addAction(
-                    self.tr("{0} From Class {1}").format(genericAction, className)
+                    self.tr("{0} from layer {1}").format(genericAction, className)
                 )
                 triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(
                     e=e, dictLayerFeature={cl: menuDict[cl]}, selectAll=selectAll

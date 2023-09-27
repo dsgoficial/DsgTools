@@ -401,7 +401,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
             )
         return ""
 
-    def getStylesFromDbs(self, perspective="style"):
+    def listStylesFromDbs(self, perspective="style"):
         """
         Returns a dict of styles in a form acording to perspective:
             if perspective = 'style'    : [styleName][dbName][tableName] = timestamp
@@ -427,7 +427,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
 
     def populateStylesInterface(self):
         self.stylesTreeWidget.clear()
-        allStylesDict = self.getStylesFromDbs()
+        allStylesDict = self.listStylesFromDbs()
         rootNode = self.stylesTreeWidget.invisibleRootItem()
         for styleName in list(allStylesDict.keys()):
             parentStyleItem = self.createItem(rootNode, styleName, 0)
@@ -451,7 +451,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_deleteStyles_clicked(self):
         dbsDict = self.instantiateAbstractDbs()
-        styleDict = self.getStylesFromDbs()
+        styleDict = self.listStylesFromDbs()
         styleList = list(styleDict.keys())
         dlg = SelectStyles(styleList)
         execStatus = dlg.exec_()

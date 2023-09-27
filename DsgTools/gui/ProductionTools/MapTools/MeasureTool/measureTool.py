@@ -56,6 +56,7 @@ class MeasureTool(QObject):
         self.acquisitionTooltipButton.setToolTip(self.tr("Show acquisition tooltip"))
         self.pointList = PointList()
         self.eventFilter = None
+        self.isFreeHand = False
 
     def addTool(self, manager, callback, parentToolbar, stackButton, iconBasePath):
         self.stackButton = stackButton

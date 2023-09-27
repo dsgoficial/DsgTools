@@ -1,6 +1,36 @@
 # CHANGELOG
 
-## 4.9.17 - dev
+
+## 4.11.14 - dev
+
+
+Novas Funcionalidades:
+
+- Novo processo de corrigir erros de segmentação em linhas (barragem versus rodovias);
+- Novo processo para validar a estrutura do banco de dados em relação ao masterfile;
+
+Melhorias:
+
+- O estado do Menu de classificação agora é salvo no projeto;
+- Adiciona parâmetros opcionais na rotina de extração de pontos cotados;
+- Melhoria de desempenho na extração de pontos cotados;
+- O seletor genérico agora ignora camadas somente leitura;
+- Melhoria de desempenho no processo Unir Linhas com Mesmo Conjunto de Atributos (Merge Lines With Same Attribute Set): Código refatorado para usar busca utilizando grafo. Além disso, o processo pega casos que não eram unidos anteriormente (linhas com mesmo conjunto de atributos e encadeadas);
+- Melhoria de desempenho no processo Identify Unmerged Lines With Same Attribute Set: Código refatorado para usar busca utilizando grafo;
+
+Correção de bug:
+
+- Corrige bug de quando o usuário tenta reclassificar primitivas não compatíveis utilizando o menu de classificação;
+- Corrige bug na rotina de extração de pontos cotados;
+- Corrige bug de flags incorretas na rotina de identificar erros de segmentação em linhas (Identify Segment Errors Between Lines);
+- Corrige bug de número de conexões ativas na ferramenta de setar estilo do banco (os métodos nativos do QGIS abrem conexão e não fecham, dessa forma derrubando todo mundo da produção por exceder o número máximo de conexões defindo no postgres.conf);
+- Corrige bug no processo de verificar atributo unicode;
+- Corrige bug no processo de identificar pontas soltas (retira distância mínima na busca, agora pega erro até no "mundo quântico");
+- Corrige bug na ferramenta de inverter o sentido de linhas (flip lines) quando é uma camada não salva do banco de dados;
+- Corrige bug na geração de moldura relativo a camada (Generate Systematic Grid Related to Layer) quando se usa memory layer (o memory layer não atualiza seu extent automaticamente, logo foi necessário colocar um layer.updateExtents() no código antes de calcular o extent);
+
+
+## 4.10.0 - 2023-09-08
 
 Novas Funcionalidades:
 
@@ -17,6 +47,7 @@ Novas Funcionalidades:
 - Novo processo de ajustar parâmetros do seletor genérico (integração com o FP/SAP);
 - Novo processo de ajustar parâmetros da ferramenta de aquisição com ângulos retos (integração com o FP/SAP);
 - Novo processo de converter entre bancos de mesma modelagem, clipando com um polígono feito para integração com FP/SAP (ClipAndCopyFeaturesBetweenDatabasesAlgorithm);
+- Novo processo de verificar ligação na moldura;
 
 
 Melhorias:
@@ -46,7 +77,9 @@ Correção de bug:
 - Correção de bug na ferramenta de identificação de feições próximas (medida inválida, melhoria do texto da flag);
 - Correção de bug no processo de extrair pontos cotados;
 - Correção de bug na ferramenta de ângulos retos (quando está ativado o trace digitizing);
-- Correção de bug no linux no carrega camada (o QGIS mudou a assinatura do atributi duration do QgsMessageBarItem para inteiro e só dava o bug no linux);
+- Correção de bug no linux no carrega camada (o QGIS mudou a assinatura do atribute duration do QgsMessageBarItem para inteiro e só dava o bug no linux);
+- Correção de bug na ferramenta de medição (não dá mais erro ao ligar e desligar a ferramenta sem selecionar ferramenta de digitalização);
+- Correção de bug no seletor genérico (agora funciona com mais de uma camada com mesmo nome);
 
 ## 4.8.0 - 2023-06-14
 
