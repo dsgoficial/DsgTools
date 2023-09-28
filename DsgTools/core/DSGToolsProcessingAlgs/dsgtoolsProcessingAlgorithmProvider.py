@@ -164,6 +164,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeomet
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.selectFeaturesOnCurrentCanvas import (
     SelectFeaturesOnCurrentCanvas,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.azimuthCalculationAlgorithm import (
+    AzimuthCalculationAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnIntersectionsAlgorithm import (
     AddUnsharedVertexOnIntersectionsAlgorithm,
 )
@@ -608,6 +611,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             VerifyAdjacentGeographicBoundaryDataAlgorithm(),
             FixSegmentErrorsBetweenLinesAlgorithm(),
             IdentifyDifferencesBetweenDatabaseModelsAlgorithm(),
+            AzimuthCalculationAlgorithm(),
         ]
         return algList
 
