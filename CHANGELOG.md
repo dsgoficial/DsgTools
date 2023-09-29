@@ -1,7 +1,7 @@
 # CHANGELOG
 
 
-## 4.11.15 - dev
+## 4.11.16 - dev
 
 
 
@@ -9,6 +9,7 @@ Novas Funcionalidades:
 
 - Novo processo de corrigir erros de segmentação em linhas (barragem versus rodovias);
 - Novo processo para validar a estrutura do banco de dados em relação ao masterfile;
+- Novo processo de detectar as mudanças entre dois banco de dados, realizados em dias distintos;
 
 Melhorias:
 
