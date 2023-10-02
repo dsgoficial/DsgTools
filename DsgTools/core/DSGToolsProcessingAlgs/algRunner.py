@@ -1779,7 +1779,7 @@ class AlgRunner:
         context,
         flagLyr=None,
         feedback=None,
-        is_child_algorithm=False
+        is_child_algorithm=False,
     ):
         flagLyr = "memory:" if flagLyr is None else flagLyr
         output = processing.run(
@@ -1796,3 +1796,33 @@ class AlgRunner:
         )
         return output["FLAGS"]
 
+    def runDetectDatasetChanges(
+        self,
+        inputLayer,
+        reviewedLayer,
+        attributesList,
+        matchComparation,
+        context,
+        unchangedLayer=None,
+        addedLayer=None,
+        deletedLayer=None,
+        feedback=None,
+    ):
+        unchangedLayer = "memory:" if unchangedLayer is None else unchangedLayer
+        addedLayer = "memory:" if addedLayer is None else addedLayer
+        deletedLayer = "memory:" if deletedLayer is None else deletedLayer
+        output = processing.run(
+            "native:detectvectorchanges",
+            {
+                "ORIGINAL": inputLayer,
+                "REVISED": reviewedLayer,
+                "COMPARE_ATTRIBUTES": attributesList,
+                "MATCH_TYPE": matchComparation,
+                "UNCHANGED": unchangedLayer,
+                "ADDED": addedLayer,
+                "DELETED": deletedLayer,
+            },
+            context=context,
+            feedback=feedback,
+        )
+        return output["UNCHANGED"], output["ADDED"], output["DELETED"]

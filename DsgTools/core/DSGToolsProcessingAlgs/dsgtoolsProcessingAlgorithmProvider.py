@@ -243,6 +243,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.cleanGeometriesAlg
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.deaggregateGeometriesAlgorithm import (
     DeaggregatorAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.detectChangesGroupAlgorithm import (
+    DetectChangesGroupAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.detectNullGeometriesAlgorithm import (
     DetectNullGeometriesAlgorithm,
 )
@@ -612,6 +615,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             FixSegmentErrorsBetweenLinesAlgorithm(),
             IdentifyDifferencesBetweenDatabaseModelsAlgorithm(),
             AzimuthCalculationAlgorithm(),
+            DetectChangesGroupAlgorithm(),
         ]
         return algList
 
