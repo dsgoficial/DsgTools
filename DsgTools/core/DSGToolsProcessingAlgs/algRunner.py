@@ -1799,7 +1799,7 @@ class AlgRunner:
     def runDetectDatasetChanges(
         self,
         inputLayer,
-        revisedLayer,
+        reviewedLayer,
         attributesList,
         matchComparation,
         context,
@@ -1815,7 +1815,7 @@ class AlgRunner:
             "native:detectvectorchanges",
             {
                 "ORIGINAL": inputLayer,
-                "REVISED": revisedLayer,
+                "REVISED": reviewedLayer,
                 "COMPARE_ATTRIBUTES": attributesList,
                 "MATCH_TYPE": matchComparation,
                 "UNCHANGED": unchangedLayer,

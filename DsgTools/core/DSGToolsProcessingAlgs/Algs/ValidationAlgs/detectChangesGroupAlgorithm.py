@@ -20,42 +20,22 @@
  ***************************************************************************/
 """
 
-from collections import defaultdict
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from PyQt5 import QtWidgets
 from PyQt5.QtCore import QCoreApplication, QVariant
 from processing.gui.wrappers import WidgetWrapper
-import os
-import concurrent.futures
-from qgis import core
 from qgis.core import (
-    QgsDataSourceUri,
     QgsFeature,
     QgsFeatureSink,
-    QgsProcessing,
     QgsProcessingParameterDefinition,
-    QgsGeometry,
     QgsProcessingParameterString,
-    QgsProcessingAlgorithm,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsSpatialIndex,
     QgsFields,
-    QgsProcessingParameterNumber,
-    QgsProcessingOutputVectorLayer,
-    QgsProcessingParameterBoolean,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterVectorLayer,
-    QgsProcessingUtils,
     QgsField,
-    QgsProcessingParameterDistance,
-    QgsProcessingParameterEnum,
     QgsProject,
     QgsWkbTypes,
-    QgsPoint,
-    QgsPointXY,
-    QgsProcessingFeatureSourceDefinition,
 )
 
 from .validationAlgorithm import ValidationAlgorithm
@@ -63,9 +43,9 @@ from .validationAlgorithm import ValidationAlgorithm
 
 class DetectChangesGroupAlgorithm(ValidationAlgorithm):
     ORIGINAL = "ORIGINAL"
-    REVISED = "REVISED"
+    REVIEWED = "REVIEWED"
     BLACK_ATTRIBUTES = "BLACK_ATTRIBUTES"
-    AGROUP = "AGROUP"
+    GROUP = "GROUP"
     POINT_FLAG = "POINT_FLAG"
     LINE_FLAG = "LINE_FLAG"
     POLYGON_FLAG = "POLYGON_FLAG"
@@ -83,21 +63,21 @@ class DetectChangesGroupAlgorithm(ValidationAlgorithm):
 
         self.addParameter(
             ParameterGroup(
-                self.REVISED,
-                self.tr("Input group revised"),
+                self.REVIEWED,
+                self.tr("Input group reviewed"),
             )
         )
 
         self.addParameter(
             QgsProcessingParameterString(
                 self.BLACK_ATTRIBUTES,
-                self.tr("Select the attributes for disconsiderer"),
+                self.tr("Select the attributes to ignore"),
                 optional=True,
             )
         )
 
         self.addParameter(
-            QgsProcessingParameterString(self.AGROUP, self.tr("Agroup for attribute"))
+            QgsProcessingParameterString(self.GROUP, self.tr("Attribute to group by"))
         )
 
         self.addParameter(
@@ -128,22 +108,22 @@ class DetectChangesGroupAlgorithm(ValidationAlgorithm):
         """
         algRunner = AlgRunner()
         groupOriginal = self.parameterAsGroup(parameters, self.ORIGINAL, context)
-        groupRevised = self.parameterAsGroup(parameters, self.REVISED, context)
+        groupReviewed = self.parameterAsGroup(parameters, self.REVIEWED, context)
         strBlackAttributes = self.parameterAsString(
             parameters, self.BLACK_ATTRIBUTES, context
         )
-        attributeAgroup = self.parameterAsString(parameters, self.AGROUP, context)
+        attributeGroup = self.parameterAsString(parameters, self.GROUP, context)
 
-        if not groupOriginal or not groupRevised:
+        if not groupOriginal or not groupReviewed:
             raise QgsProcessingException(
                 "Must have a input group original and input review"
             )
 
         project = context.project()
         groupO = project.layerTreeRoot().findGroup(groupOriginal)
-        groupR = project.layerTreeRoot().findGroup(groupRevised)
+        groupR = project.layerTreeRoot().findGroup(groupReviewed)
 
-        fields = self.fieldsFlag(attributeAgroup)
+        fields = self.fieldsFlag(attributeGroup)
 
         if not groupO or not groupR:
             raise QgsProcessingException(
@@ -151,7 +131,7 @@ class DetectChangesGroupAlgorithm(ValidationAlgorithm):
             )
 
         dictLyrsOriginals, crs = self.dictNameLyrCrs(groupO)
-        dictLyrsRevised, crs = self.dictNameLyrCrs(groupR)
+        dictLyrsReviewed, crs = self.dictNameLyrCrs(groupR)
 
         point_flag_sink, point_flag_id = self.sinkLyr(
             parameters, self.POINT_FLAG, context, fields, QgsWkbTypes.Point, crs
@@ -179,13 +159,13 @@ class DetectChangesGroupAlgorithm(ValidationAlgorithm):
                 break
             multiStepFeedback.setCurrentStep(current)
 
-            if nameLyrOriginal not in dictLyrsRevised:
+            if nameLyrOriginal not in dictLyrsReviewed:
                 raise QgsProcessingException(
                     "There is no correspondence of layers between the groups"
                 )
 
             lyrOriginal = dictLyrsOriginals[nameLyrOriginal]
-            lyrRevised = dictLyrsRevised[nameLyrOriginal]
+            lyrReviewed = dictLyrsReviewed[nameLyrOriginal]
 
             listWhiteAttributes = self.compareAttributes(
                 strBlackAttributes, lyrOriginal
@@ -193,7 +173,7 @@ class DetectChangesGroupAlgorithm(ValidationAlgorithm):
 
             unchangedLyr, addedLyr, deletedLyr = algRunner.runDetectDatasetChanges(
                 inputLayer=lyrOriginal,
-                revisedLayer=lyrRevised,
+                reviewedLayer=lyrReviewed,
                 attributesList=listWhiteAttributes,
                 matchComparation=0,
                 context=context,
@@ -224,11 +204,11 @@ class DetectChangesGroupAlgorithm(ValidationAlgorithm):
                     if multiStep.isCanceled():
                         break
                     if (
-                        featureAdd[f"{attributeAgroup}"]
-                        != featureDel[f"{attributeAgroup}"]
+                        featureAdd[f"{attributeGroup}"]
+                        != featureDel[f"{attributeGroup}"]
                     ):
                         continue
-                    setDelAddFeat.add(featureDel[f"{attributeAgroup}"])
+                    setDelAddFeat.add(featureDel[f"{attributeGroup}"])
                     flagMsg = ""
                     wktFeatAdd = self.geomWkt(featureAdd)
                     wktFeatDel = self.geomWkt(featureDel)
@@ -247,7 +227,7 @@ class DetectChangesGroupAlgorithm(ValidationAlgorithm):
                         nameLyrOriginal,
                         featureAdd,
                         flagMsg,
-                        attributeAgroup,
+                        attributeGroup,
                         fields,
                         "Update",
                         point_flag_sink,
@@ -265,7 +245,7 @@ class DetectChangesGroupAlgorithm(ValidationAlgorithm):
                         nameLyrOriginal,
                         featureAdd,
                         None,
-                        attributeAgroup,
+                        attributeGroup,
                         fields,
                         "Added",
                         point_flag_sink,
@@ -277,13 +257,13 @@ class DetectChangesGroupAlgorithm(ValidationAlgorithm):
                     )
 
             for featureDel in deletedLyr.getFeatures():
-                if featureDel[f"{attributeAgroup}"] in setDelAddFeat:
+                if featureDel[f"{attributeGroup}"] in setDelAddFeat:
                     continue
                 self.flagFeature(
                     nameLyrOriginal,
                     featureDel,
                     None,
-                    attributeAgroup,
+                    attributeGroup,
                     fields,
                     "Deleted",
                     point_flag_sink,
@@ -321,7 +301,7 @@ class DetectChangesGroupAlgorithm(ValidationAlgorithm):
         nameLyr,
         feature,
         flagMsg,
-        attributeAgroup,
+        attributeGroup,
         fields,
         type_change,
         point_flag_sink,
@@ -334,7 +314,7 @@ class DetectChangesGroupAlgorithm(ValidationAlgorithm):
         newFeat = QgsFeature(fields)
         geomFeatAdd = feature.geometry()
         newFeat.setGeometry(geomFeatAdd)
-        newFeat[f"{attributeAgroup}"] = feature[f"{attributeAgroup}"]
+        newFeat[f"{attributeGroup}"] = feature[f"{attributeGroup}"]
         newFeat["name_layer"] = nameLyr
         newFeat["type_change"] = type_change
         newFeat["update"] = flagMsg
@@ -345,9 +325,9 @@ class DetectChangesGroupAlgorithm(ValidationAlgorithm):
         elif lyrPolygon:
             poly_flag_sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
 
-    def fieldsFlag(self, attributeAgroup):
+    def fieldsFlag(self, attributeGroup):
         fields = QgsFields()
-        fields.append(QgsField(f"{attributeAgroup}", QVariant.String))
+        fields.append(QgsField(f"{attributeGroup}", QVariant.String))
         fields.append(QgsField("name_layer", QVariant.String))
         fields.append(QgsField("type_change", QVariant.String))
         fields.append(QgsField("update", QVariant.String))
@@ -385,14 +365,14 @@ class DetectChangesGroupAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "detectchangesgroup"
+        return "detectchangesingroup"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Detect Changes Group")
+        return self.tr("Detect Changes In Group")
 
     def group(self):
         """
@@ -412,7 +392,7 @@ class DetectChangesGroupAlgorithm(ValidationAlgorithm):
         return "DSGTools: Quality Assurance Tools (Identification Processes)"
 
     def tr(self, string):
-        return QCoreApplication.translate("DetectChangesGroup", string)
+        return QCoreApplication.translate("DetectChangesInGroup", string)
 
     def createInstance(self):
         return DetectChangesGroupAlgorithm()
@@ -471,7 +451,7 @@ class ParameterGroup(QgsProcessingParameterDefinition):
 
     def metadata(self):
         return {
-            "widget_wrapper": "ferramentas_edicao.modules.processings.orderEditLayersAndAddStyle.GroupsWidgetWrapper"
+            "widget_wrapper": "DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.detectChangesGroupAlgorithm.GroupsWidgetWrapper"
         }
 
     def valueAsPythonString(self, value, context):
