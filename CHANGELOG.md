@@ -1,18 +1,6 @@
 # CHANGELOG
 
-## 4.10.1 - 2023-10-02
-
-Melhoria:
-
-- Adicionado o modelo EDGV 3.0 Pro;
-
-Correção de Bug:
-
-- Correção de erro ao criar banco EDGV 3.0;
-
 ## 4.11.16 - dev
-
-
 
 Novas Funcionalidades:
 
@@ -41,6 +29,15 @@ Correção de bug:
 - Corrige bug na geração de moldura relativo a camada (Generate Systematic Grid Related to Layer) quando se usa memory layer (o memory layer não atualiza seu extent automaticamente, logo foi necessário colocar um layer.updateExtents() no código antes de calcular o extent);
 - Corrige bug no processo de calcular azimute (estava sendo calculado com +90 graus);
 
+## 4.10.1 - 2023-10-02
+
+Melhoria:
+
+- Adicionado o modelo EDGV 3.0 Pro;
+
+Correção de Bug:
+
+- Correção de erro ao criar banco EDGV 3.0;
 
 ## 4.10.0 - 2023-09-08
 
