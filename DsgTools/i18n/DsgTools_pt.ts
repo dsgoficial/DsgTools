@@ -2051,7 +2051,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/batchRunAlgorithm.py" line="251"/>
-        <source>Other Algorithms</source>
+        <source>Utils</source>
         <translation>Outros algoritmos</translation>
     </message>
 </context>
@@ -3433,7 +3433,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/convertLayer2LayerAlgorithm.py" line="209"/>
-        <source>Other Algorithms</source>
+        <source>Utils</source>
         <translation>Outros algoritmos</translation>
     </message>
 </context>
@@ -3827,7 +3827,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="195"/>
-        <source>Other Algorithms</source>
+        <source>Utils</source>
         <translation>Outros algoritmos</translation>
     </message>
     <message>
@@ -3860,7 +3860,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFramesWithConstraintAlgorithm.py" line="192"/>
-        <source>Other Algorithms</source>
+        <source>Utils</source>
         <translation>Outros algoritmos</translation>
     </message>
 </context>
@@ -8809,7 +8809,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/exportToMemoryLayer.py" line="121"/>
-        <source>Other Algorithms</source>
+        <source>Utils</source>
         <translation>Outros algoritmos</translation>
     </message>
 </context>
@@ -9414,7 +9414,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/fileInventoryAlgorithm.py" line="189"/>
-        <source>Other Algorithms</source>
+        <source>Utils</source>
         <translation>Outros algoritmos</translation>
     </message>
 </context>
@@ -15367,7 +15367,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/multipleOutputUnitTestAlgorithm.py" line="95"/>
-        <source>Other Algorithms</source>
+        <source>Utils</source>
         <translation>Outros algoritmos</translation>
     </message>
     <message>
@@ -18483,7 +18483,7 @@ Versão do modelo: {1}
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/raiseFlagsAlgorithm.py" line="208"/>
-        <source>Other Algorithms</source>
+        <source>Utils</source>
         <translation>Outros algoritmos</translation>
     </message>
 </context>
@@ -19081,7 +19081,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/ruleStatisticsAlgorithm.py" line="186"/>
-        <source>Other Algorithms</source>
+        <source>Utils</source>
         <translation>Outros algoritmos</translation>
     </message>
 </context>
@@ -19159,7 +19159,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="245"/>
-        <source>Other Algorithms</source>
+        <source>Utils</source>
         <translation>Outros algoritmos</translation>
     </message>
     <message>
@@ -20051,7 +20051,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/singleOutputUnitTestAlgorithm.py" line="112"/>
-        <source>Other Algorithms</source>
+        <source>Utils</source>
         <translation>Outros algoritmos</translation>
     </message>
     <message>
@@ -21276,7 +21276,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/stringCsvToLayerListAlgorithm.py" line="107"/>
-        <source>Other Algorithms</source>
+        <source>Utils</source>
         <translation>Outros algoritmos</translation>
     </message>
 </context>
@@ -22159,7 +22159,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/updateOriginalLayerAlgorithm.py" line="126"/>
-        <source>Other Algorithms</source>
+        <source>Utils</source>
         <translation>Outros algoritmos</translation>
     </message>
     <message>

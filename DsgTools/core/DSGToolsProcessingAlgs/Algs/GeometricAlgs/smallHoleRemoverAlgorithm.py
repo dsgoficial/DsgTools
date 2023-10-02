@@ -272,7 +272,7 @@ class SmallHoleRemoverAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Geometric Algorithms")
+        return self.tr("QA Tools: Small Object Handling")
 
     def groupId(self):
         """
@@ -282,7 +282,7 @@ class SmallHoleRemoverAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Geometric Algorithms"
+        return "DSGTools - QA Tools: Small Object Handling"
 
     def tr(self, string):
         return QCoreApplication.translate("SmallHoleRemoverAlgorithm", string)

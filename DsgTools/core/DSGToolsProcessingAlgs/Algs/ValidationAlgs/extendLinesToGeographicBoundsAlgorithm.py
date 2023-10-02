@@ -30,7 +30,6 @@ from qgis.core import (
     QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterDistance,
-    QgsProcessingParameterEnum,
     QgsProcessingParameterVectorLayer,
     QgsProcessingParameterFeatureSource,
 )
@@ -283,7 +282,7 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Manipulation Processes)")
+        return self.tr("QA Tools: Line Handling")
 
     def groupId(self):
         """
@@ -293,7 +292,7 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Manipulation Processes)"
+        return "DSGTools - QA Tools: Line Handling"
 
     def tr(self, string):
         return QCoreApplication.translate(

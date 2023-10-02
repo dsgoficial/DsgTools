@@ -21,14 +21,10 @@
 """
 from collections import defaultdict
 import math
-from itertools import chain, combinations
+from itertools import combinations
 
-import concurrent.futures
-import os
 import processing
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
     QgsGeometry,
@@ -303,7 +299,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Identification Processes)")
+        return self.tr("QA Tools: Basic Geometry Construction Issues Handling")
 
     def groupId(self):
         """
@@ -313,7 +309,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Identification Processes)"
+        return "DSGTools - QA Tools: Basic Geometry Construction Issues Handling"
 
     def tr(self, string):
         return QCoreApplication.translate(

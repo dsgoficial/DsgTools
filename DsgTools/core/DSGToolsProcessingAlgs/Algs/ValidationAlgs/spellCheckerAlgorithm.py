@@ -150,14 +150,14 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
         return "spellchecker"
 
     def displayName(self):
-        return self.tr("Spell check")
+        return self.tr("Spell Check")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Identification Processes)")
+        return self.tr("QA Tools: Attribute Handling")
 
     def groupId(self):
         """
@@ -167,7 +167,7 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Identification Processes)"
+        return "DSGTools - QA Tools: Attribute Handling"
 
     def tr(self, string):
         return QCoreApplication.translate("SpellCheckerAlgorithm", string)

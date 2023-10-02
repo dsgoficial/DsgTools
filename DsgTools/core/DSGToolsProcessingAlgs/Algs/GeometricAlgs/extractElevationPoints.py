@@ -217,7 +217,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSink(self.OUTPUT, "Output elevation points")
+            QgsProcessingParameterFeatureSink(self.OUTPUT, "Output spot elevation")
         )
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -2084,13 +2084,13 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         return "extractelevationpoints"
 
     def displayName(self):
-        return self.tr("Extract Elevation Points")
+        return self.tr("Extract Spot Elevation")
 
     def group(self):
-        return self.tr("Geometric Algorithms")
+        return self.tr("QA Tools: Terrain Processes")
 
     def groupId(self):
-        return "DSGTools: Geometric Algorithms"
+        return "DSGTools - QA Tools: Terrain Processes"
 
     def shortHelpString(self):
         return self.tr("This algorithm extracts elevation points from DEM.")

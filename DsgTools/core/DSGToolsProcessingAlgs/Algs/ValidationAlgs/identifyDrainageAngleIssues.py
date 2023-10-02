@@ -20,25 +20,13 @@
  ***************************************************************************/
 """
 
-import math
-import concurrent.futures
-import os
 
-from PyQt5.QtCore import QCoreApplication, QVariant
+from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
-    QgsFeature,
-    QgsFeatureRequest,
-    QgsField,
-    QgsFields,
     QgsGeometry,
-    QgsGeometryUtils,
-    QgsPoint,
-    QgsPointXY,
     QgsProcessing,
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterNumber,
-    QgsProject,
     QgsWkbTypes,
     QgsProcessingMultiStepFeedback,
 )
@@ -170,7 +158,7 @@ class IdentifyDrainageAngleIssues(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Identification Processes)")
+        return self.tr("QA Tools: Drainage Network Processes")
 
     def groupId(self):
         """
@@ -180,7 +168,7 @@ class IdentifyDrainageAngleIssues(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return self.tr("DSGTools: Quality Assurance Tools (Identification Processes)")
+        return "DSGTools - QA Tools: Drainage Network Processes"
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyDrainageAngleIssues", string)

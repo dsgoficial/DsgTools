@@ -561,7 +561,7 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Network Processes)")
+        return self.tr("QA Tools: Terrain Processes")
 
     def groupId(self):
         """
@@ -571,7 +571,7 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Network Processes)"
+        return "DSGTools - QA Tools: Terrain Processes"
 
     def shortHelpString(self):
         return self.tr(

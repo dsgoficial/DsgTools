@@ -72,7 +72,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Geometric Algorithms")
+        return self.tr("Generalization Algorithms")
 
     def groupId(self):
         """
@@ -82,7 +82,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Geometric Algorithms"
+        return "DSGTools - Generalization Algorithms"
 
     def shortHelpString(self):
         return self.tr(

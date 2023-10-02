@@ -27,7 +27,6 @@ from qgis.core import (
     QgsFeature,
     QgsWkbTypes,
     QgsFeatureSink,
-    QgsProcessingContext,
     QgsProcessingException,
     QgsProcessingParameterType,
     QgsProcessingParameterDefinition,
@@ -106,7 +105,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Identification Processes)")
+        return self.tr("QA Tools: Object Proximity and Relationships")
 
     def groupId(self):
         """
@@ -116,7 +115,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Identification Processes)"
+        return "DSGTools - QA Tools: Object Proximity and Relationships"
 
     def tr(self, string):
         return QCoreApplication.translate("EnforceSpatialRulesAlgorithm", string)

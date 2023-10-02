@@ -21,19 +21,12 @@
 """
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
 )
 from qgis.PyQt.QtCore import QCoreApplication
 
@@ -131,7 +124,7 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Identification Processes)")
+        return self.tr("QA Tools: Duplicated Object Handling")
 
     def groupId(self):
         """
@@ -141,7 +134,7 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Identification Processes)"
+        return "DSGTools - QA Tools: Duplicated Object Handling"
 
     def tr(self, string):
         return QCoreApplication.translate(

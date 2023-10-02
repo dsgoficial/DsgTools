@@ -41,7 +41,7 @@ from qgis.core import (
 from .validationAlgorithm import ValidationAlgorithm
 
 
-class DetectChangesGroupAlgorithm(ValidationAlgorithm):
+class DetectChangesBetweenGroups(ValidationAlgorithm):
     ORIGINAL = "ORIGINAL"
     REVIEWED = "REVIEWED"
     BLACK_ATTRIBUTES = "BLACK_ATTRIBUTES"
@@ -77,7 +77,7 @@ class DetectChangesGroupAlgorithm(ValidationAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterString(self.GROUP, self.tr("Attribute to group by"))
+            QgsProcessingParameterString(self.GROUP, self.tr("Primary key attribute on input layers to group by (id, for example)"))
         )
 
         self.addParameter(
@@ -365,21 +365,21 @@ class DetectChangesGroupAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "detectchangesingroup"
+        return "detectchangesbetweengroups"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Detect Changes In Group")
+        return self.tr("Detect Changes Between Groups")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Identification Processes)")
+        return self.tr("QA Tools: Identification")
 
     def groupId(self):
         """
@@ -389,13 +389,13 @@ class DetectChangesGroupAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Identification Processes)"
+        return "DSGTools - QA Tools: Identification"
 
     def tr(self, string):
-        return QCoreApplication.translate("DetectChangesInGroup", string)
+        return QCoreApplication.translate("DetectChangesBetweenGroups", string)
 
     def createInstance(self):
-        return DetectChangesGroupAlgorithm()
+        return DetectChangesBetweenGroups()
 
 
 class GroupsWidgetWrapper(WidgetWrapper):

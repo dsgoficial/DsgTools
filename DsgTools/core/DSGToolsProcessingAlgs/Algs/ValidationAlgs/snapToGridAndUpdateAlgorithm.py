@@ -22,30 +22,15 @@
 """
 from PyQt5.QtCore import QCoreApplication
 
-import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
-    QgsGeometry,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterDistance,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterField,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingUtils,
-    QgsSpatialIndex,
-    QgsWkbTypes,
 )
 
 from ...algRunner import AlgRunner
@@ -156,7 +141,7 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Manipulation Processes)")
+        return self.tr("QA Tools: Basic Geometry Construction Issues Handling")
 
     def groupId(self):
         """
@@ -166,7 +151,7 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Manipulation Processes)"
+        return "DSGTools - QA Tools: Basic Geometry Construction Issues Handling"
 
     def tr(self, string):
         return QCoreApplication.translate("SnapToGridAndUpdateAlgorithm", string)

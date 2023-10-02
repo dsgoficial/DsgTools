@@ -22,35 +22,14 @@
 """
 from PyQt5.QtCore import QCoreApplication
 
-import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
-    QgsGeometry,
-    QgsProcessing,
-    QgsProcessingAlgorithm,
-    QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
-    QgsProcessingParameterBoolean,
     QgsProcessingParameterDefinition,
-    QgsProcessingParameterDistance,
     QgsProcessingParameterEnum,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterField,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterNumber,
     QgsProcessingParameterType,
-    QgsProcessingParameterVectorLayer,
-    QgsProcessingUtils,
-    QgsSpatialIndex,
-    QgsWkbTypes,
 )
 
-from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 
@@ -155,7 +134,7 @@ class IdentifyInvalidAttributeCombinationsAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Identification Processes)")
+        return self.tr("QA Tools: Identification")
 
     def groupId(self):
         """
@@ -165,7 +144,7 @@ class IdentifyInvalidAttributeCombinationsAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Identification Processes)"
+        return "DSGTools - QA Tools: Identification"
 
     def tr(self, string):
         return QCoreApplication.translate(

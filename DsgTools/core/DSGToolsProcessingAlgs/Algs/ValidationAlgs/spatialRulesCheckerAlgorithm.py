@@ -20,35 +20,9 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from ...algRunner import AlgRunner
-import processing, os, requests
-from time import sleep
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
-    QgsProcessing,
-    QgsFeatureSink,
     QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterFeatureSink,
-    QgsFeature,
-    QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
-    QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingUtils,
-    QgsSpatialIndex,
-    QgsGeometry,
-    QgsProcessingParameterField,
-    QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterFile,
-    QgsProcessingParameterExpression,
-    QgsProcessingException,
-    QgsProcessingParameterString,
     QgsProcessingParameterDefinition,
     QgsProcessingParameterType,
 )
@@ -104,7 +78,7 @@ class SpatialRulesCheckerAlgorithm(QgsProcessingAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Identification Processes)")
+        return self.tr("QA Tools: Identification")
 
     def groupId(self):
         """
@@ -114,7 +88,7 @@ class SpatialRulesCheckerAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Identification Processes)"
+        return "DSGTools - QA Tools: Identification"
 
     def tr(self, string):
         return QCoreApplication.translate("RunRemoteFMEAlgorithm", string)

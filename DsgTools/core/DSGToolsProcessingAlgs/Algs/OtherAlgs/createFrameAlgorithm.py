@@ -22,37 +22,17 @@
 """
 from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
-from ...algRunner import AlgRunner
-import processing, os, requests
-from time import sleep
 from qgis.PyQt.Qt import QVariant
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
-    QgsProcessing,
     QgsFeatureSink,
     QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterFeatureSink,
-    QgsFeature,
-    QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
-    QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
-    QgsProcessingParameterBoolean,
     QgsProcessingParameterEnum,
     QgsProcessingParameterNumber,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingUtils,
-    QgsSpatialIndex,
-    QgsGeometry,
-    QgsProcessingParameterField,
-    QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterFile,
-    QgsProcessingParameterExpression,
     QgsProcessingException,
     QgsProcessingParameterString,
-    QgsProcessingParameterDefinition,
-    QgsProcessingParameterType,
     QgsProcessingParameterCrs,
     QgsCoordinateTransform,
     QgsProject,
@@ -225,7 +205,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Other Algorithms")
+        return self.tr("Grid Algorithms")
 
     def groupId(self):
         """
@@ -235,7 +215,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Other Algorithms"
+        return "DSGTools - Grid Algorithms"
 
     def tr(self, string):
         return QCoreApplication.translate("CreateFrameAlgorithm", string)
@@ -389,53 +369,3 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
                 if word not in self.chars[11]:
                     return False
         return True
-
-
-# class ParameterFMEManagerType(QgsProcessingParameterType):
-
-#     def __init__(self):
-#         super().__init__()
-
-#     def create(self, name):
-#         return ParameterFMEManager(name)
-
-#     def metadata(self):
-#         return {'widget_wrapper': 'DsgTools.gui.ProcessingUI.fmeManagerWrapper.FMEManagerWrapper'}
-
-#     def name(self):
-#         return QCoreApplication.translate('Processing', 'FME Manager Parameters')
-
-#     def id(self):
-#         return 'fme_manager'
-
-#     def description(self):
-#         return QCoreApplication.translate('Processing', 'FME Manager parameters. Used on Run Remote FME Workspace')
-
-# class ParameterFMEManager(QgsProcessingParameterDefinition):
-
-#     def __init__(self, name, description=''):
-#         super().__init__(name, description)
-
-#     def clone(self):
-#         copy = ParameterFMEManager(self.name(), self.description())
-#         return copy
-
-#     def type(self):
-#         return self.typeName()
-
-#     @staticmethod
-#     def typeName():
-#         return 'fme_manager'
-
-#     def checkValueIsAcceptable(self, value, context=None):
-#         return True
-
-#     def valueAsPythonString(self, value, context):
-#         return str(value)
-
-#     def asScriptCode(self):
-#         raise NotImplementedError()
-
-#     @classmethod
-#     def fromScriptCode(cls, name, description, isOptional, definition):
-#         raise NotImplementedError()

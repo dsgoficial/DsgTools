@@ -340,7 +340,7 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Data Management Algorithms"
+        return "DSGTools - Data Management Algorithms"
 
     def tr(self, string):
         return QCoreApplication.translate("AppendFeaturesToLayerAlgorithm", string)

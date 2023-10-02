@@ -218,7 +218,7 @@ class Line2Multiline(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Geometric Algorithms"
+        return "DSGTools - Geometric Algorithms"
 
     def shortHelpString(self):
         return self.tr("O algoritmo converte linhas que se tocam para multilinha")

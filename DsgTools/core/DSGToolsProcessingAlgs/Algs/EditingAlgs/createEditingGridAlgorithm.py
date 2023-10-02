@@ -273,7 +273,7 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Editing Algorithms")
+        return self.tr("Cartographic Finishing Algorithms")
 
     def groupId(self):
         """
@@ -283,7 +283,7 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Editing Algorithms"
+        return "DSGTools - Cartographic Finishing Algorithms"
 
     def tr(self, string):
         return QCoreApplication.translate("CreateEditingGridAlgorithm", string)
