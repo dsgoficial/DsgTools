@@ -20,26 +20,38 @@
  *                                                                         *
  ***************************************************************************/
 """
+import concurrent.futures
+import os
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtGui import QColor
 from qgis.PyQt.Qt import QVariant
 from qgis.core import (
     QgsProcessingAlgorithm,
     QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterBoolean,
     QgsField,
     QgsVectorLayer,
     QgsConditionalStyle,
     QgsExpression,
+    QgsProcessingMultiStepFeedback,
 )
 
 
 class DetectNullGeometriesAlgorithm(QgsProcessingAlgorithm):
     INPUT_LAYERS = "INPUT_LAYERS"
+    RUN_CHECK_ON_INPUT = "RUN_CHECK_ON_INPUT"
 
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LAYERS, self.tr("Input layers")
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.RUN_CHECK_ON_INPUT,
+                self.tr("Run check in input layers"),
+                defaultValue=True,
             )
         )
 
@@ -48,19 +60,37 @@ class DetectNullGeometriesAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         inputLyrList = self.parameterAsLayerList(parameters, self.INPUT_LAYERS, context)
+        runCheckOnInput = self.parameterAsBool(parameters, self.RUN_CHECK_ON_INPUT, context)
 
         if not inputLyrList:
             return {}
-
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if runCheckOnInput else feedback
         listSize = len(inputLyrList)
         stepSize = 100 / listSize if listSize else 0
-
+        def compute(lyr):
+            return lyr.name(), any(feat.geometry().isNull() or feat.geometry().isEmpty() for feat in lyr.getFeatures())
+        if runCheckOnInput:
+            pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count())
+            futures = set()
+            multiStepFeedback.setCurrentStep(0)
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
             self.addRuleToLayer(lyr, feedback=feedback)
             self.createRuleVirtualField(lyr)
-            feedback.setProgress(current * stepSize)
+            if runCheckOnInput:
+                futures.add(pool.submit(compute, lyr))
+            multiStepFeedback.setProgress(current * stepSize)
+        if not runCheckOnInput:
+            return {}
+        multiStepFeedback.setCurrentStep(1)
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if feedback.isCanceled():
+                break
+            lyrName, hasNullOrEmpty = future.result()
+            if hasNullOrEmpty:
+                multiStepFeedback.pushInfo(self.tr(f"Check layer {lyrName} for empty or null values."))
+            multiStepFeedback.setProgress(current * stepSize)
         return {}
 
     def addRuleToLayer(self, lyr: QgsVectorLayer, feedback=None):

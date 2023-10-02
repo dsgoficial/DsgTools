@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.11.16 - dev
+## 4.11.17 - dev
 
 Novas Funcionalidades:
 
@@ -16,6 +16,7 @@ Melhorias:
 - O seletor genérico agora ignora camadas somente leitura;
 - Melhoria de desempenho no processo Unir Linhas com Mesmo Conjunto de Atributos (Merge Lines With Same Attribute Set): Código refatorado para usar busca utilizando grafo. Além disso, o processo pega casos que não eram unidos anteriormente (linhas com mesmo conjunto de atributos e encadeadas);
 - Melhoria de desempenho no processo Identify Unmerged Lines With Same Attribute Set: Código refatorado para usar busca utilizando grafo;
+- O detecta nula agora indica quais camadas tem que ser verificadas;
 
 Correção de bug:
 
