@@ -121,8 +121,7 @@ def buildGraph(
     hashDict: Dict[int, List[QByteArray]],
     nodeDict: Dict[QByteArray, int],
     feedback: Optional[QgsFeedback] = None,
-    directed: bool = False,
-    add_inside_river_attribute: bool = True,
+    directed: bool = False
 ) -> Any:
     """
     Build a graph from hash dictionary and node dictionary.
@@ -151,8 +150,7 @@ def buildGraph(
             break
         G.add_edge(nodeDict[wkb_1], nodeDict[wkb_2])
         G[nodeDict[wkb_1]][nodeDict[wkb_2]]["featid"] = edgeId
-        if add_inside_river_attribute:
-            G[nodeDict[wkb_1]][nodeDict[wkb_2]]["inside_river"] = False
+        G[nodeDict[wkb_1]][nodeDict[wkb_2]]["inside_river"] = False
         if feedback is not None:
             feedback.setProgress(current * progressStep)
     return G
@@ -167,13 +165,7 @@ def buildAuxStructures(
     useWkt: Optional[bool] = False,
     computeNodeLayerIdDict: Optional[bool] = False,
     addEdgeLength: Optional[bool] = False,
-) -> Tuple[
-    Dict[QByteArray, int],
-    Dict[int, QByteArray],
-    Dict[int, QgsFeature],
-    Dict[int, Dict[int, QByteArray]],
-    Any,
-]:
+) -> Tuple[Dict[QByteArray, int], Dict[int, QByteArray], Dict[int, QgsFeature], Dict[int, Dict[int, QByteArray]], Any]:
     """
     Build auxiliary data structures for network analysis.
 
@@ -265,21 +257,13 @@ def buildAuxStructures(
         )
     )
 
-
-def buildDirectionalGraphFromIdList(
-    nx: Any,
-    G: Any,
-    nodeDict: Dict[QByteArray, int],
-    hashDict: Dict[int, Dict[int, List[int]]],
-    idSet: Set[int],
-    feedback: Optional[QgsFeedback] = None,
-) -> Any:
+def buildDirectionalGraphFromIdList(nx: Any, G: Any, nodeDict: Dict[QByteArray, int], hashDict: Dict[int, Dict[int, List[int]]], idSet: Set[int], feedback: Optional[QgsFeedback]=None) -> Any:
     DiG = nx.DiGraph()
     nFeats = len(idSet)
     if nFeats == 0:
         return DiG
     if feedback is not None:
-        stepSize = 100 / nFeats
+        stepSize = 100/nFeats
     for current, featid in enumerate(idSet):
         if feedback is not None and feedback.isCanceled():
             return DiG
@@ -291,7 +275,7 @@ def buildDirectionalGraphFromIdList(
     return DiG
 
 
-def evaluateStreamOrder(G: Any, feedback: Optional[QgsFeedback] = None) -> Any:
+def evaluateStreamOrder(G: Any, feedback: Optional[QgsFeedback]=None) -> Any:
     """
     Evaluate stream order for the given graph.
 
@@ -572,12 +556,12 @@ def is_flow_invalid(DiG, node: int) -> bool:
     succs = len(list(DiG.successors(node)))
     return (preds > 0 and succs == 0) or (preds == 0 and succs > 0)
 
-
 def flip_edge(DiG, edge: Tuple):
     start, end = edge
     attrDict = DiG[start][end]
     DiG.remove_edge(*edge)
     DiG.add_edge(end, start, **attrDict)
+
 
 
 def buildAuxFlowGraph(
@@ -586,8 +570,8 @@ def buildAuxFlowGraph(
     fixedInNodeSet: Set[int],
     fixedOutNodeSet: Set[int],
     nodeIdDict: Dict[int, QByteArray],
-    constantSinkPointSet: Optional[Set[int]] = None,
-    DiG: Optional[Any] = None,
+    constantSinkPointSet: Optional[Set[int]]=None,
+    DiG: Optional[Any]=None,
     feedback: Optional[QgsFeedback] = None,
 ):
     """
@@ -613,9 +597,7 @@ def buildAuxFlowGraph(
     DiG = nx.DiGraph() if DiG is None else DiG
     visitedNodes = set()
     nEdges = len(list(G.edges))
-    constantSinkPointSet = (
-        set() if constantSinkPointSet is None else constantSinkPointSet
-    )
+    constantSinkPointSet = set() if constantSinkPointSet is None else constantSinkPointSet
     if nEdges == 0:
         return DiG
     multiStepFeedback = (
@@ -656,27 +638,18 @@ def buildAuxFlowGraph(
         remainingEdges = nEdges - len(list(DiG.edges))
         stepSize = 100 / remainingEdges
         currentEdge = 0
-
     def distance(start, end):
         startGeom, endGeom = QgsGeometry(), QgsGeometry()
         startGeom.fromWkb(nodeIdDict[start])
         endGeom.fromWkb(nodeIdDict[end])
         return startGeom.distance(endGeom)
-
+    
     pairList = sorted(
         (
-            (start, end)
-            for start, end in product(fixedInNodeSet, fixedOutNodeSet)
-            if nx.has_path(G, start, end)
+            (start, end) for start, end in product(fixedInNodeSet, fixedOutNodeSet) if nx.has_path(G, start, end)
         ),
-        key=lambda x: (
-            any(
-                DiG[a][b]["inside_river"]
-                for (a, b) in chain(DiG.in_edges(x[0]), DiG.out_edges(x[0]))
-            ),
-            distance(x[0], x[1]),
-        ),
-        reverse=True,
+        key=lambda x: (any(DiG[a][b]["inside_river"] for (a, b) in chain(DiG.in_edges(x[0]), DiG.out_edges(x[0]))), distance(x[0], x[1])),
+        reverse=True
     )
     for (start, end) in pairList:
         if multiStepFeedback is not None and feedback.isCanceled():
@@ -687,7 +660,7 @@ def buildAuxFlowGraph(
             if (n0, n1) in DiG.edges or (n1, n0) in DiG.edges:
                 continue
             add_edge_from_graph_to_digraph(G, DiG, n0, n1)
-            if DiG.degree(n0) == G.degree(n0) and is_flow_invalid(DiG, n0):
+            if (DiG.degree(n0) == G.degree(n0) and is_flow_invalid(DiG, n0)):
                 flip_edge(DiG, (n0, n1))
             if multiStepFeedback is not None:
                 currentEdge += 1
@@ -731,165 +704,9 @@ def buildAuxFlowGraph(
         stepSize = 100 / remainingEdges
         currentEdge = 0
     for (a, b) in G.edges:
-        if ((a, b) in DiG.edges and DiG[a][b]["featid"] == G[a][b]["featid"]) or (
-            (b, a) in DiG.edges and DiG[b][a]["featid"] == G[b][a]["featid"]
-        ):
+        if ((a, b) in DiG.edges and DiG[a][b]["featid"] == G[a][b]["featid"] ) or ((b, a) in DiG.edges and DiG[b][a]["featid"] == G[b][a]["featid"]):
             continue
         add_edge_from_graph_to_digraph(G, DiG, a, b)
-        if (
-            is_flow_invalid(DiG, a)
-            and set(nx.dfs_postorder_nodes(DiG, a)).intersection(fixedOutNodeSet)
-            == set()
-        ) or (
-            is_flow_invalid(DiG, b)
-            and set(nx.dfs_postorder_nodes(DiG, b)).intersection(fixedOutNodeSet)
-            == set()
-        ):
+        if (is_flow_invalid(DiG, a) and set(nx.dfs_postorder_nodes(DiG, a)).intersection(fixedOutNodeSet) == set()) or (is_flow_invalid(DiG, b) and set(nx.dfs_postorder_nodes(DiG, b)).intersection(fixedOutNodeSet) == set()):
             flip_edge(DiG, (a, b))
     return DiG
-
-
-def find_mergeable_edges_on_graph(nx, G, feedback: Optional[QgsFeedback] = None):
-    """
-    Find mergeable edges in a graph.
-
-    This function analyzes a graph to identify mergeable edges. Mergeable edges are pairs of edges
-    that share common nodes with degree 2. The function returns a dictionary where keys are sets of nodes that
-    can be merged, and values are sets of mergeable edge pairs.
-
-    Parameters:
-    - G (networkx.Graph): The input graph to analyze.
-    - feedback (Optional[QgsFeedback]): A QgsFeedback object for providing user feedback during
-      processing. If provided and canceled, the function will terminate early.
-
-    Returns:
-    - Dict[Set[Hashable], Set[Tuple[Hashable, Hashable]]]: A dictionary where keys are sets of nodes
-      that can be merged, and values are sets of frozenset pairs representing mergeable edges.
-
-    Note:
-    - Mergeable edges are defined as edges that connect the same set of nodes, potentially forming
-      a multi-edge in the graph.
-
-    Example:
-    ```
-    G = nx.Graph()
-    G.add_edges_from([
-        (1, 2), (3, 2),
-        (2, 4), (4, 5), (2, 18), (18, 6),
-        (7, 6), (7, 17), (17, 8),
-        (8, 9), (8, 13),
-        (9, 10),
-        (11, 10),
-        (12, 10),
-        (13, 14),
-        (15, 13), (15, 16),
-    ])
-    mergeable_edges = find_mergeable_edges_on_graph(G)
-    ```
-
-    In the example above, `mergeable_edges` may contain:
-    ```
-    {
-        frozenset({4, 5}): {frozenset({4, 5}), frozenset({2, 4})},
-        frozenset({17, 18, 6, 7}): {frozenset({8, 17}), frozenset({18, 2}), frozenset({6, 7}), frozenset({17, 7}), frozenset({18, 6})},
-        frozenset({16, 15}): {frozenset({13, 15}), frozenset({16, 15})},
-        frozenset({9}): {frozenset({8, 9}), frozenset({9, 10})}
-    }
-    ```
-    """
-    outputGraphDict = defaultdict(lambda: nx.Graph())
-    degree2nodes = (i for i in G.nodes if G.degree(i) == 2)
-    if feedback is not None and feedback.isCanceled():
-        return outputGraphDict
-    candidatesSetofFrozenSets = set(
-        frozenset(fetch_connected_nodes(G, n, 2)) for n in degree2nodes
-    )
-    if feedback is not None and feedback.isCanceled():
-        return outputGraphDict
-    nSteps = len(candidatesSetofFrozenSets)
-    if nSteps == 0:
-        return outputGraphDict
-    if feedback is not None:
-        stepSize = 100 / nSteps
-    for current, candidateSet in enumerate(candidatesSetofFrozenSets):
-        if feedback is not None and feedback.isCanceled():
-            break
-        for node in candidateSet:
-            for n0, n1 in G.edges(node):
-                outputGraphDict[candidateSet].add_edge(n0, n1)
-                outputGraphDict[candidateSet][n0][n1]["featid"] = G[n0][n1]["featid"]
-        if feedback is not None:
-            feedback.setProgress(current * stepSize)
-    return outputGraphDict
-
-
-def filter_mergeable_graphs_using_attibutes(
-    nx, G, featDict: Dict[int, QgsFeature], attributeNameList: List[str], isMulti: bool
-) -> Tuple[Set[int], Set[int]]:
-    auxDict = defaultdict(lambda: nx.Graph())
-    featureSetToUpdate, deleteIdSet = set(), set()
-    for n0, n1 in G.edges:
-        featid = G[n0][n1]["featid"]
-        feat = featDict[featid]
-        attrTuple = tuple(feat[i] for i in attributeNameList)
-        auxDict[attrTuple].add_edge(n0, n1)
-        auxDict[attrTuple][n0][n1]["featid"] = featid
-    for auxGraph in auxDict.values():
-        for mergeableG in find_mergeable_edges_on_graph(nx, auxGraph).values():
-            if len(mergeableG.edges) < 2:
-                continue
-            idToKeep, *idsToDelete = [
-                mergeableG[n0][n1]["featid"] for n0, n1 in mergeableG.edges
-            ]
-            outputFeat = featDict[idToKeep]
-            geom = outputFeat.geometry()
-            for id in idsToDelete:
-                geom_b = featDict[id].geometry()
-                geom = geom.combine(geom_b).mergeLines()
-                deleteIdSet.add(id)
-            if isMulti:
-                geom.convertToMultiType()
-            outputFeat.setGeometry(geom)
-            featureSetToUpdate.add(outputFeat)
-    return featureSetToUpdate, deleteIdSet
-
-
-def identify_unmerged_edges_on_graph(
-    nx,
-    G,
-    featDict: Dict[int, QgsFeature],
-    nodeIdDict: Dict[int, QByteArray],
-    filterPointSet: Set[QByteArray],
-    filterLineLayer: QgsVectorLayer,
-    attributeNameList: List[str],
-) -> Set[int]:
-    auxDict = defaultdict(lambda: nx.Graph())
-    outputIdSet = set()
-    for n0, n1 in G.edges:
-        featid = G[n0][n1]["featid"]
-        feat = featDict[featid]
-        attrTuple = tuple(feat[i] for i in attributeNameList)
-        auxDict[attrTuple].add_edge(n0, n1)
-        auxDict[attrTuple][n0][n1]["featid"] = featid
-    for auxGraph in auxDict.values():
-        for idSet, mergeableG in find_mergeable_edges_on_graph(nx, auxGraph).items():
-            if len(mergeableG.edges) < 2:
-                continue
-            candidatePointSet = idSet - filterPointSet
-            if candidatePointSet == set():
-                continue
-            for nodeId in candidatePointSet:
-                if nodeId in outputIdSet or mergeableG.degree(nodeId) != 2:
-                    continue
-                if filterLineLayer is not None:
-                    geom = QgsGeometry()
-                    geom.fromWkb(nodeIdDict[nodeId])
-                    buffer = geom.buffer(1e-6, -1)
-                    geomBB = buffer.boundingBox()
-                    if any(
-                        f.geometry().intersects(geom)
-                        for f in filterLineLayer.getFeatures(geomBB)
-                    ):
-                        continue
-                outputIdSet.add(nodeId)
-    return outputIdSet

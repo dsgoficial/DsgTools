@@ -104,10 +104,7 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
                 )
                 self.selectedDbsDict[dbNameAlias] = localDb
                 # do get dicts
-                try:
-                    localDict = localDb.getStyleDict()
-                except:
-                    localDict = dict()
+                localDict = localDb.getStyleDict(localDb.getDatabaseVersion())
                 for key in list(localDict.keys()):
                     self.stylesDict[key]["style"] = localDict[key]
                     if dbNameAlias not in self.stylesDict[key]["dbList"]:
@@ -277,5 +274,5 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         dbVersion = abstractDb.getDatabaseVersion()
         abstractDb.checkAndCreateStyleTable()
-        styles = abstractDb.listStylesFromDb(dbVersion)
+        styles = abstractDb.getStyleDict(dbVersion)
         self.styleChanged.emit(type, styles)

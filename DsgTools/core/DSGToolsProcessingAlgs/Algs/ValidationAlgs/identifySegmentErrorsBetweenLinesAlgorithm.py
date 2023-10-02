@@ -35,7 +35,7 @@ from qgis.core import (
     QgsProcessingParameterNumber,
     QgsProcessingMultiStepFeedback,
     QgsFeedback,
-    QgsVectorLayer,
+    QgsProcessingFeatureSource,
     QgsProcessingContext,
 )
 
@@ -93,59 +93,11 @@ class IdentifySegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
         nReferenceFeats = referenceSource.featureCount()
         if inputSource is None or nFeats == 0 or nReferenceFeats == 0:
             return {self.FLAGS: self.flag_id}
-        multiStepFeedback = QgsProcessingMultiStepFeedback(10, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
-        cacheLyr = self.algRunner.runCreateFieldWithExpression(
-            inputLyr=parameters[self.INPUT],
-            expression="$id",
-            fieldType=1,
-            fieldName="featid",
-            feedback=multiStepFeedback,
-            context=context,
-        )
-        currentStep += 1
-
-        multiStepFeedback.setCurrentStep(currentStep)
-        bufferedCache = self.algRunner.runBuffer(
-            inputLayer=cacheLyr,
-            distance=searchRadius,
-            context=context,
-            feedback=multiStepFeedback,
-        )
-        currentStep += 1
-
-        multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(bufferedCache, context, feedback=multiStepFeedback, is_child_algorithm=True)
-        currentStep += 1
-
-        multiStepFeedback.setCurrentStep(currentStep)
-        disjointBuffer = self.algRunner.runExtractByLocation(
-            inputLyr=bufferedCache,
-            intersectLyr=parameters[self.REFERENCE_LINE],
-            context=context,
-            predicate=[AlgRunner.Disjoint],
-            feedback=multiStepFeedback
-        )
-        currentStep += 1
-
-        multiStepFeedback.setCurrentStep(currentStep)
-        idsToIgnore = set(feat["featid"] for feat in disjointBuffer.getFeatures())
-        validInput = self.algRunner.runFilterExpression(
-            inputLyr=cacheLyr,
-            context=context,
-            expression=f"featid not in {tuple(idsToIgnore)}".replace(",)", ")"),
-            feedback=multiStepFeedback,
-        ) if len(idsToIgnore) > 0 else cacheLyr
-        currentStep += 1
-
-        multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(validInput, context, feedback=multiStepFeedback, is_child_algorithm=True)
-        currentStep += 1
-
-        multiStepFeedback.setCurrentStep(currentStep)
         vertexNearEdgeFlagDict = layerHandler.getUnsharedVertexOnSharedEdgesDict(
-            [validInput, parameters[self.REFERENCE_LINE]],
+            [parameters[self.INPUT], parameters[self.REFERENCE_LINE]],
             [],
             searchRadius,
             feedback=multiStepFeedback,
@@ -160,8 +112,8 @@ class IdentifySegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
 
         multiStepFeedback.setCurrentStep(currentStep)
         intersectedFeats = self.algRunner.runDifference(
-            inputLyr=parameters[self.REFERENCE_LINE],
-            overlayLyr=validInput,
+            inputLyr=parameters[self.INPUT],
+            overlayLyr=parameters[self.REFERENCE_LINE],
             context=context,
             feedback=multiStepFeedback,
         )
@@ -180,7 +132,7 @@ class IdentifySegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
 
         multiStepFeedback.setCurrentStep(currentStep)
         self.raiseFlagsFromVertexFlagSet(
-            validInput, vertexFlagSet, context, feedback=multiStepFeedback
+            parameters[self.INPUT], vertexFlagSet, context, feedback=multiStepFeedback
         )
         return {self.FLAGS: self.flag_id}
 
@@ -198,36 +150,42 @@ class IdentifySegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
 
     def raiseFlagsFromVertexFlagSet(
         self,
-        localCache: QgsVectorLayer,
+        inputSource: QgsProcessingFeatureSource,
         vertexFlagSet: set,
         context: QgsProcessingContext,
         feedback: QgsFeedback,
     ):
-        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         multiStepFeedback.setCurrentStep(0)
+        localCache = self.algRunner.runCreateFieldWithExpression(
+            inputLyr=inputSource,
+            expression="$id",
+            fieldName="featid",
+            fieldType=1,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=False,
+        )
+        multiStepFeedback.setCurrentStep(1)
         vertexLyr = self.algRunner.runExtractVertices(
             inputLyr=localCache, context=context, feedback=multiStepFeedback
         )
-        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.setCurrentStep(2)
         vertexDict = defaultdict(set)
-        vertexCount = defaultdict(int)
         stepSize = 100 / vertexLyr.featureCount()
         for current, vertexFeat in enumerate(vertexLyr.getFeatures()):
             if multiStepFeedback.isCanceled():
                 return
             geom = vertexFeat.geometry()
-            vertexCount[vertexFeat["featid"]] += 1
             if geom.asWkt() not in vertexFlagSet:
                 continue
             vertexDict[vertexFeat["featid"]].add(geom)
             multiStepFeedback.setProgress(current * stepSize)
-        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.setCurrentStep(3)
         stepSize = 100 / len(vertexDict)
         for current, (featid, vertexSet) in enumerate(vertexDict.items()):
             if multiStepFeedback.isCanceled():
                 return
-            if len(vertexSet) == vertexCount[featid] - 1:
-                continue
             flagText = f"Line with id={featid} from input has construction errors with reference layer."
             baseGeom, *geomList = list(vertexSet)
             if len(geomList) > 0:

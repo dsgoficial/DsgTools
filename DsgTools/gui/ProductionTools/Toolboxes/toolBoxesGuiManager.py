@@ -46,7 +46,7 @@ class ToolBoxesGuiManager(QObject):
         parentMenu=None,
         toolbar=None,
         stackButton=None,
-        acquisitionMenuCtrl=None,
+        acquisitionMenuCtrl=AcquisitionMenuCtrl(),
     ):
         """Constructor."""
         super(ToolBoxesGuiManager, self).__init__()
@@ -57,7 +57,7 @@ class ToolBoxesGuiManager(QObject):
         self.stackButton = stackButton
         self.iconBasePath = ":/plugins/DsgTools/icons/"
 
-        self.acquisitionMenuCtrl = acquisitionMenuCtrl if acquisitionMenuCtrl is not None else AcquisitionMenuCtrl()
+        self.acquisitionMenuCtrl = acquisitionMenuCtrl
 
     def initGui(self):
         self.qaToolBox = None
