@@ -204,6 +204,14 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
             return {}
         if multiStepFeedback is not None:
             multiStepFeedback.pushInfo(self.tr("Commiting changes"))
+        if len(outputLayerDict) > 0:
+            self.commitChanges(multiStepFeedback, outputLayerDict)
+        if not loadDestinationLayers:
+            for lyrName, lyr in outputLayerDict.items():
+                QgsProject.instance().removeMapLayer(lyr.id())
+        return {}
+
+    def commitChanges(self, multiStepFeedback, outputLayerDict):
         stepSize = 100 / len(outputLayerDict)
         for current, (lyrName, lyr) in enumerate(outputLayerDict.items()):
             if multiStepFeedback is not None:
@@ -213,10 +221,6 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
             lyr.commitChanges()
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(current * stepSize)
-        if not loadDestinationLayers:
-            for lyrName, lyr in outputLayerDict.items():
-                QgsProject.instance().removeMapLayer(lyr.id())
-        return {}
 
     def getLayersFromDbConnectionName(
         self,
@@ -269,20 +273,28 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
             if feedback is not None
             else None
         )
-        clipLayer = self.layerHandler.createMemoryLayerFromGeometry(
-            geom=geom, crs=QgsProject.instance().crs()
-        ) if geom is not None else None
+        clipLayer = (
+            self.layerHandler.createMemoryLayerFromGeometry(
+                geom=geom, crs=QgsProject.instance().crs()
+            )
+            if geom is not None
+            else None
+        )
         for currentIdx, lyr in enumerate(inputLayerList):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 return outputDict
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(2 * currentIdx)
-            clippedLyr = self.algRunner.runClip(
-                inputLayer=lyr,
-                overlayLayer=clipLayer,
-                context=context,
-                feedback=multiStepFeedback,
-            ) if clippedLyr is not None else lyr
+            clippedLyr = (
+                self.algRunner.runClip(
+                    inputLayer=lyr,
+                    overlayLayer=clipLayer,
+                    context=context,
+                    feedback=multiStepFeedback,
+                )
+                if clipLayer is not None
+                else lyr
+            )
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(2 * currentIdx + 1)
             outputDict[lyr.name()] = self.algRunner.runCreateFieldWithExpression(

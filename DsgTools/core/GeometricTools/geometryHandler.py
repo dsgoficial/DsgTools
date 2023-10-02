@@ -161,7 +161,7 @@ class GeometryHandler(QObject):
         isMulti = QgsWkbTypes.isMultiType(layer.wkbType())
         geom = feature.geometry()
         if geomType == 0:
-            if isMulti:
+            if geom.isMultipart():
                 nodes = geom.asMultiPoint()
                 # inverting the point list by parts
                 for idx, part in enumerate(nodes):
@@ -174,7 +174,7 @@ class GeometryHandler(QObject):
                 nodes = nodes[::-1]
                 flippedFeatureGeom = QgsGeometry.fromPoint(nodes)
         elif geomType == 1:
-            if isMulti:
+            if geom.isMultipart():
                 nodes = geom.asMultiPolyline()
                 for idx, part in enumerate(nodes):
                     nodes[idx] = part[::-1]
@@ -184,7 +184,7 @@ class GeometryHandler(QObject):
                 nodes = nodes[::-1]
                 flippedFeatureGeom = QgsGeometry.fromPolylineXY(nodes)
         elif geomType == 2:
-            if isMulti:
+            if geom.isMultipart():
                 nodes = geom.asMultiPolygon()
                 for idx, part in enumerate(nodes):
                     nodes[idx] = part[::-1]
@@ -194,6 +194,8 @@ class GeometryHandler(QObject):
                 nodes = nodes[::-1]
                 flippedFeatureGeom = QgsGeometry.fromPolygonXY(nodes)
         # setting feature geometry to the flipped one
+        if isMulti and not geom.isMultipart():
+            flippedFeatureGeom.convertToMultiType()
         layer.beginEditCommand("Flipping feature")
         feature.setGeometry(flippedFeatureGeom)
         layer.updateFeature(feature)

@@ -2,7 +2,7 @@ from DsgTools.Modules.acquisitionMenu.factories.widgetFactory import WidgetFacto
 from PyQt5 import QtCore, uic, QtWidgets, QtGui
 from DsgTools.Modules.qgis.controllers.qgisCtrl import QgisCtrl
 import json
-from qgis.core import QgsWkbTypes
+from qgis.core import QgsWkbTypes, QgsProject, QgsExpressionContextUtils
 from qgis.utils import iface
 
 class AcquisitionMenuCtrl:
@@ -14,6 +14,7 @@ class AcquisitionMenuCtrl:
         self.addMenuTab = None
         self.addMenuButton = None
         self.reclassifyDialog = None
+        self.menuConfigs = None
         self.ignoreSignal = False
         self.connectQgisSignals()
 
@@ -25,12 +26,43 @@ class AcquisitionMenuCtrl:
         self.qgis.connectSignal("ClickLayerTreeView", self.deactiveMenu)
         self.qgis.connectSignal("AddLayerTreeView", self.deactiveMenu)
         self.qgis.connectSignal("StartEditing", self.deactiveMenu)
+        self.qgis.connectSignal("ProjectSaved", self.saveStateOnProject)
+        self.qgis.connectSignal("ProjectRead", self.loadStateOnProject)
 
     def disconnectQgisSignals(self):
         self.qgis.disconnectSignal("StartAddFeature", self.deactiveMenu)
         self.qgis.disconnectSignal("ClickLayerTreeView", self.deactiveMenu)
         self.qgis.disconnectSignal("AddLayerTreeView", self.deactiveMenu)
         self.qgis.disconnectSignal("StartEditing", self.deactiveMenu)
+        self.qgis.disconnectSignal("ProjectSaved", self.saveStateOnProject)
+        self.qgis.disconnectSignal("ProjectRead", self.loadStateOnProject)
+    
+    def loadStateOnProject(self):
+        state = json.loads(
+            QgsExpressionContextUtils.projectScope(QgsProject.instance()).variable(
+                "dsgtools_menu_state"
+            )
+            or "{}"
+        )
+        if state == {}:
+            return
+        self.createMenuDock(state)
+
+    def saveStateOnProject(self):
+        if self.menuConfigs is None:
+            return
+        currentProject = QgsProject.instance()
+        currentProject.projectSaved.disconnect(self.saveStateOnProject)
+        QgsExpressionContextUtils.setProjectVariable(
+            currentProject,
+            "dsgtools_menu_state",
+            json.dumps(self.menuConfigs),
+        )
+        currentProject.blockSignals(True)
+        QgsProject.instance().write()
+        QgsProject.instance().projectSaved.connect(self.saveStateOnProject)
+        currentProject.blockSignals(False)
+
 
     def openMenuEditor(self):
         if not self.menuEditor:
@@ -159,6 +191,8 @@ class AcquisitionMenuCtrl:
         self.menuDock.setMenuWidget(self.getMenuWidget())
         self.menuDock.loadMenus(menuConfigs)
         self.qgis.addDockWidget(self.menuDock)
+        self.menuConfigs = menuConfigs
+        self.saveStateOnProject()
 
     def removeMenuDock(self):
         self.qgis.removeDockWidget(self.menuDock) if self.menuDock else ""
@@ -209,6 +243,7 @@ class AcquisitionMenuCtrl:
             noActive = l.id() != iface.activeLayer().id()
         if noActive:
             raise Exception("Selecione somente feições da camada que está em uso!")
+        
 
     def reclassify(self, buttonConfig, reclassifyData):
         destinatonLayerName = buttonConfig["buttonLayer"]
@@ -227,14 +262,14 @@ class AcquisitionMenuCtrl:
     def getLayersForReclassification(self, layerName, geometryType):
         layers = self.qgis.getLoadedVectorLayers()
         geometryFilterDict = {
-            QgsWkbTypes.PointGeometry: (QgsWkbTypes.PointGeometry,),
-            QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry,),
-            QgsWkbTypes.PolygonGeometry: (QgsWkbTypes.PointGeometry, QgsWkbTypes.PolygonGeometry)
+            QgsWkbTypes.PointGeometry: (QgsWkbTypes.PointGeometry, QgsWkbTypes.PolygonGeometry),
+            QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry, ),
+            QgsWkbTypes.PolygonGeometry: (QgsWkbTypes.PointGeometry, ),
         }
         return [
             l
             for l in layers
-            if l.selectedFeatureCount() > 0 and l.geometryType() in geometryFilterDict[l.geometryType()]
+            if l.selectedFeatureCount() > 0 and l.geometryType() in geometryFilterDict[geometryType]
         ]
 
     def activeMenuButton(self, buttonConfig):

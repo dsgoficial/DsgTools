@@ -10,6 +10,38 @@ Correção de Bug:
 
 - Correção de erro ao criar banco EDGV 3.0;
 
+## 4.11.16 - dev
+
+
+
+Novas Funcionalidades:
+
+- Novo processo de corrigir erros de segmentação em linhas (barragem versus rodovias);
+- Novo processo para validar a estrutura do banco de dados em relação ao masterfile;
+- Novo processo de detectar as mudanças entre dois banco de dados, realizados em dias distintos;
+
+Melhorias:
+
+- O estado do Menu de classificação agora é salvo no projeto;
+- Adiciona parâmetros opcionais na rotina de extração de pontos cotados;
+- Melhoria de desempenho na extração de pontos cotados;
+- O seletor genérico agora ignora camadas somente leitura;
+- Melhoria de desempenho no processo Unir Linhas com Mesmo Conjunto de Atributos (Merge Lines With Same Attribute Set): Código refatorado para usar busca utilizando grafo. Além disso, o processo pega casos que não eram unidos anteriormente (linhas com mesmo conjunto de atributos e encadeadas);
+- Melhoria de desempenho no processo Identify Unmerged Lines With Same Attribute Set: Código refatorado para usar busca utilizando grafo;
+
+Correção de bug:
+
+- Corrige bug de quando o usuário tenta reclassificar primitivas não compatíveis utilizando o menu de classificação;
+- Corrige bug na rotina de extração de pontos cotados;
+- Corrige bug de flags incorretas na rotina de identificar erros de segmentação em linhas (Identify Segment Errors Between Lines);
+- Corrige bug de número de conexões ativas na ferramenta de setar estilo do banco (os métodos nativos do QGIS abrem conexão e não fecham, dessa forma derrubando todo mundo da produção por exceder o número máximo de conexões defindo no postgres.conf);
+- Corrige bug no processo de verificar atributo unicode;
+- Corrige bug no processo de identificar pontas soltas (retira distância mínima na busca, agora pega erro até no "mundo quântico");
+- Corrige bug na ferramenta de inverter o sentido de linhas (flip lines) quando é uma camada não salva do banco de dados;
+- Corrige bug na geração de moldura relativo a camada (Generate Systematic Grid Related to Layer) quando se usa memory layer (o memory layer não atualiza seu extent automaticamente, logo foi necessário colocar um layer.updateExtents() no código antes de calcular o extent);
+- Corrige bug no processo de calcular azimute (estava sendo calculado com +90 graus);
+
+
 ## 4.10.0 - 2023-09-08
 
 Novas Funcionalidades:
@@ -28,6 +60,7 @@ Novas Funcionalidades:
 - Novo processo de ajustar parâmetros da ferramenta de aquisição com ângulos retos (integração com o FP/SAP);
 - Novo processo de converter entre bancos de mesma modelagem, clipando com um polígono feito para integração com FP/SAP (ClipAndCopyFeaturesBetweenDatabasesAlgorithm);
 - Novo processo de verificar ligação na moldura;
+- Novo processo de cálculo do azimute;
 
 
 Melhorias:

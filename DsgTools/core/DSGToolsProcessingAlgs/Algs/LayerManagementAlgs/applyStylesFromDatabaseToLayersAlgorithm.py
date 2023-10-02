@@ -20,42 +20,16 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
+from collections import defaultdict
 from PyQt5.QtCore import QCoreApplication
-from qgis.PyQt.Qt import QVariant
+from DsgTools.core.dsgEnums import DsgEnums
+from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from qgis.PyQt.QtXml import QDomDocument
 from qgis.core import (
     QgsProcessing,
-    QgsFeatureSink,
     QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterFeatureSink,
-    QgsFeature,
-    QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
-    QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterNumber,
     QgsProcessingParameterMultipleLayers,
-    QgsProcessingUtils,
-    QgsSpatialIndex,
-    QgsGeometry,
-    QgsProcessingParameterField,
-    QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterFile,
-    QgsProcessingParameterExpression,
-    QgsProcessingException,
     QgsProcessingParameterString,
-    QgsProcessingParameterDefinition,
-    QgsProcessingParameterType,
-    QgsProcessingParameterCrs,
-    QgsCoordinateTransform,
-    QgsProject,
-    QgsCoordinateReferenceSystem,
-    QgsField,
-    QgsFields,
     QgsProcessingOutputMultipleLayers,
     QgsProcessingParameterString,
 )
@@ -98,28 +72,26 @@ class ApplyStylesFromDatabaseToLayersAlgorithm(QgsProcessingAlgorithm):
         styleName = self.parameterAsString(parameters, self.STYLE_NAME, context)
         listSize = len(inputLyrList)
         progressStep = 100 / listSize if listSize else 0
+        styleDict = self.getStyleDict(inputLyrList, feedback)
+
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
-            count, idList, styleList, time, _ = lyr.listStylesInDatabase()
-            styleDict = dict(zip(styleList, idList))
-            if styleName in styleDict:
-                styleQml, _ = lyr.getStyleFromDatabase(styleDict[styleName])
-                self.applyStyle(lyr, styleQml)
-            elif (
-                "{style_name}/{layer_name}".format(
-                    style_name=styleName, layer_name=lyr.name()
-                )
-                in styleDict
-            ):
-                styleQml, _ = lyr.getStyleFromDatabase(
-                    styleDict[
-                        "{style_name}/{layer_name}".format(
-                            style_name=styleName, layer_name=lyr.name()
-                        )
-                    ]
-                )
-                self.applyStyle(lyr, styleQml)
+            if lyr.providerType() != "postgres":
+                continue
+            uri = lyr.dataProvider().uri()
+            dbName = uri.database()
+            if dbName not in styleDict:
+                continue
+            if styleName not in styleDict[dbName]:
+                continue
+            schema = uri.schema()
+            tableName = uri.table()
+            geometryColumn = uri.geometryColumn()
+            key = f"{schema}.{tableName}({geometryColumn})"
+            if key not in styleDict[dbName][styleName]:
+                continue
+            self.applyStyle(lyr, styleDict[dbName][styleName][key])
             feedback.setProgress(current * progressStep)
 
         return {self.OUTPUT: [i.id() for i in inputLyrList]}
@@ -129,6 +101,39 @@ class ApplyStylesFromDatabaseToLayersAlgorithm(QgsProcessingAlgorithm):
         styleDoc.setContent(styleQml)
         lyr.importNamedStyle(styleDoc)
         lyr.triggerRepaint()
+    
+    def getAbstractDb(self, host, port, database, user, password):
+        abstractDb = DbFactory().createDbFactory(DsgEnums.DriverPostGIS)
+        abstractDb.connectDatabaseWithParameters(host, port, database, user, password)
+        return abstractDb
+    
+    def getDbDict(self, lyrList, feedback):
+        dbDict = dict()
+        for lyr in lyrList:
+            if feedback.isCanceled():
+                return dbDict
+            if lyr.providerType() != "postgres":
+                continue
+            uri = lyr.dataProvider().uri()
+            dbName = uri.database()
+            if dbName in dbDict:
+                continue
+            host = uri.host()
+            port = uri.port()
+            user = uri.username()
+            password = uri.password()
+            dbDict[dbName] = self.getAbstractDb(host, port, dbName, user, password)
+        return dbDict
+    
+    def getStyleDict(self, lyrList, feedback):
+        dbDict = self.getDbDict(lyrList, feedback)
+        dbStyleDict = dict()
+        for dbName, abstractDb in dbDict.items():
+            if feedback.isCanceled():
+                break
+            dbStyleDict[dbName] = abstractDb.getStyleDict()
+        del dbDict
+        return dbStyleDict
 
     def name(self):
         """
