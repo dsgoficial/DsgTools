@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.11.17 - dev
+## 4.11.18 - dev
 
 Novas Funcionalidades:
 
@@ -17,6 +17,7 @@ Melhorias:
 - Melhoria de desempenho no processo Unir Linhas com Mesmo Conjunto de Atributos (Merge Lines With Same Attribute Set): Código refatorado para usar busca utilizando grafo. Além disso, o processo pega casos que não eram unidos anteriormente (linhas com mesmo conjunto de atributos e encadeadas);
 - Melhoria de desempenho no processo Identify Unmerged Lines With Same Attribute Set: Código refatorado para usar busca utilizando grafo;
 - O detecta nula agora indica quais camadas tem que ser verificadas;
+- Algoritmos da caixa de ferramentas reorganizados por temática para facilitar o uso;
 
 Correção de bug:
 
@@ -29,6 +30,7 @@ Correção de bug:
 - Corrige bug na ferramenta de inverter o sentido de linhas (flip lines) quando é uma camada não salva do banco de dados;
 - Corrige bug na geração de moldura relativo a camada (Generate Systematic Grid Related to Layer) quando se usa memory layer (o memory layer não atualiza seu extent automaticamente, logo foi necessário colocar um layer.updateExtents() no código antes de calcular o extent);
 - Corrige bug no processo de calcular azimute (estava sendo calculado com +90 graus);
+- Corrige bug no ClipAndCopyFeaturesBetweenDatabasesAlgorithm;
 
 ## 4.10.1 - 2023-10-02
 

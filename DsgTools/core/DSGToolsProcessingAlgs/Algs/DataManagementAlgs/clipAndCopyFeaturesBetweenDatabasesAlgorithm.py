@@ -236,7 +236,7 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
             withElements=withElements
         )
         inputParamList = list(map(lambda x: x.split(".")[-1], inputParamList))
-        if layerNameList is not None:
+        if layerNameList is not None and layerNameList != []:
             inputParamList = list(filter(lambda x: x in layerNameList, inputParamList))
         loadedLayerList = layerLoader.loadLayersInsideProcessing(
             inputParamList, addToCanvas=addToCanvas, feedback=feedback
