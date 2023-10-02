@@ -277,7 +277,7 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
             self.layerHandler.createMemoryLayerFromGeometry(
                 geom=geom, crs=QgsProject.instance().crs()
             )
-            if geom is not None
+            if geom is not None and not geom.isEmpty()
             else None
         )
         for currentIdx, lyr in enumerate(inputLayerList):
