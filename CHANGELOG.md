@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 4.10.1 - 2023-10-02
+
+Melhoria:
+
+- Adicionado o modelo EDGV 3.0 Pro;
+
+Correção de Bug:
+
+- Correção de erro ao criar banco EDGV 3.0;
 
 ## 4.11.16 - dev
 

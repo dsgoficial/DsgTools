@@ -3503,7 +3503,7 @@ class PostgisDb(AbstractDb):
             return "template_edgv_213_pro"
         elif version == "FTer_2a_Ed":
             return "template_edgv_fter_2a_ed"
-        elif version == "3.0":
+        elif version in ("3.0", "EDGV 3.0"):
             return "template_edgv_3"
         elif version in ("EDGV 3.0 Pro", "3.0 Pro"):
             return "template_edgv_3_pro"
@@ -3578,7 +3578,7 @@ class PostgisDb(AbstractDb):
                 "FTer_2a_Ed",
                 "edgvFter_2a_Ed.sql",
             )
-        elif version == "3.0":
+        elif version in ("3.0", "EDGV 3.0"):
             edgvPath = os.path.join(
                 currentPath,
                 "..",
@@ -3590,7 +3590,7 @@ class PostgisDb(AbstractDb):
                 "3",
                 "edgv3.sql",
             )
-        elif version == "3.0 Pro":
+        elif version in ("3.0 Pro", "EDGV 3.0 Pro"):
             edgvPath = os.path.join(
                 currentPath,
                 "..",

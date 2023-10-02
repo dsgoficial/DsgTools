@@ -14,7 +14,7 @@
 ------------------------------------
 # Complemento DSGTools
 
-O DSGTools é um complemento para o QGIS (http://qgis.org/pt_BR/site/) que permite aos usuários a criação e utilização de produtos cartográficos de acordo com as especificações da ET-EDGV 2.1.3 e da ET-EDGV Defesa F Ter 2ª Edição. O DSGTools visa atender não apenas o Exército Brasileiro, mas também produtores e usuários de geoinformação da sociedade.
+O DSGTools é um complemento para o QGIS (http://qgis.org/pt_BR/site/) que permite aos usuários a criação e utilização de produtos cartográficos de acordo com as especificações da ET-EDGV 2.1.3 e da ET-EDGV 3.0. O DSGTools visa atender não apenas o Exército Brasileiro, mas também produtores e usuários de geoinformação da sociedade.
 Este projeto visa cumprir a missão estabelecida no Plano Estratégico do Exército 2016-2019 (PEEx 2016-2019), relativo ao seguinte Objetivo Estratégico do Exército (OEE):
 * OEE 7 - Aprimorar a Governança de Tecnologia da Informação;
 * Estratégia 7.2 - Reorganização do Sistema de Informação do Exército (SINFOEx);
@@ -26,9 +26,9 @@ O plugin foi todo desenvolvido em python e está disponível para download pelo 
 Estão disponíveis as seguintes funcionalidades no plugin em sua versão 3.1 (changelog completo disponível em https://github.com/dsgoficial/DsgTools/wiki ):
 
 - Criação, armazenamento e remoção de configuração de servidores PostGIS;
-- Criação de banco de dados em Spatialite e em PostGIS de acordo a ET-EDGV 2.1.3, ET-EDGV 3.0 e ET-EDGV Defesa F Ter 2ª Edição;
-- Criação de banco de dados em Spatialite e em PostGIS de acordo com ET-EDGV 2.1.3, ET-EDGV 3.0 e ET-EDGV Defesa F Ter 2ª Edição;
-- Carregamento de camadas por classe e por categoria conforme definido na ET-EDGV 2.1.3, ET-EDGV 3.0 e ET-EDGV Defesa F Ter 2ª Edição;
+- Criação de banco de dados em Spatialite e em PostGIS de acordo a ET-EDGV 2.1.3 e ET-EDGV 3.0;
+- Criação de banco de dados em Spatialite e em PostGIS de acordo com ET-EDGV 2.1.3, ET-EDGV 3.0;
+- Carregamento de camadas por classe e por categoria conforme definido na ET-EDGV 2.1.3, ET-EDGV 3.0;
 - Manipulação de feições complexas (criação, edição, remoção, zoom, associação e desassociação);
 - Acesso a alguns serviços WM(T)S do BDGEx e;
 - Acesso ao mapa índice de produtos vetoriais e matriciais do BDGEx.

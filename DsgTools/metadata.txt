@@ -44,6 +44,11 @@ about=
 
 # Uncomment the following line and add your changelog:
 changelog=
+	4.10.1:
+		Melhoria:
+			- Adicionado o modelo EDGV 3.0 Pro;
+		Correção de Bug:
+			- Correção de erro ao criar banco EDGV 3.0;
 	4.10.0:
 		Novas Funcionalidades:
 			- Novo processo de identificar erros de construção em linhas que devem se sobrepor (exemplo, barragem e rodovia);

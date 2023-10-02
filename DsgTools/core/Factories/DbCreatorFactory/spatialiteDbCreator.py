@@ -66,6 +66,8 @@ class SpatialiteDbCreator(DbCreator):
                 "3",
                 "seed_edgv3.sqlite",
             )
+        else:
+            raise Exception(self.tr("Unsuported model version fro sqlite creation"))
         return edgvPath
 
     def createDb(self, dbName, srid, paramDict=dict(), parentWidget=None):
