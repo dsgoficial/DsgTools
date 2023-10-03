@@ -137,7 +137,7 @@ class IdentifyMultiPartGeometriesAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("QA Tools: Identification")
+        return self.tr("QA Tools: Basic Geometry Construction Issues Handling")
 
     def groupId(self):
         """
@@ -147,7 +147,7 @@ class IdentifyMultiPartGeometriesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools - QA Tools: Identification"
+        return "DSGTools - QA Tools: Basic Geometry Construction Issues Handling"
 
     def tr(self, string):
         return QCoreApplication.translate(

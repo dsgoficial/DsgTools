@@ -762,7 +762,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("QA Tools: Drainage Network Processes")
+        return self.tr("QA Tools: Drainage Flow Processes")
 
     def groupId(self):
         """
@@ -772,7 +772,7 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools - QA Tools: Drainage Network Processes"
+        return "DSGTools - QA Tools: Drainage Flow Processes"
 
     def tr(self, string):
         return QCoreApplication.translate(
