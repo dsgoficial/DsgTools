@@ -567,6 +567,8 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
             bboxlineBuffFrame = lineBuffFrame.boundingBox()
             for vertId in specifVertSpatialIdx.intersects(bboxlineBuffFrame):
                 geomVert = specifVertFeatDict[vertId].geometry()
+                if not geomVert.intersects(lineBuffFrame):
+                    continue
                 vertWkt = geomVert.asWkt()
                 dictVertInFrame[vertWkt].append(specifVertFeatDict[vertId])
 

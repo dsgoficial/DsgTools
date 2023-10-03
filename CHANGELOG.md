@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.11.18 - dev
+## 4.11.19 - dev
 
 Novas Funcionalidades:
 
@@ -31,6 +31,7 @@ Correção de bug:
 - Corrige bug na geração de moldura relativo a camada (Generate Systematic Grid Related to Layer) quando se usa memory layer (o memory layer não atualiza seu extent automaticamente, logo foi necessário colocar um layer.updateExtents() no código antes de calcular o extent);
 - Corrige bug no processo de calcular azimute (estava sendo calculado com +90 graus);
 - Corrige bug no ClipAndCopyFeaturesBetweenDatabasesAlgorithm;
+- Corrige bug no VerifyAdjacentGeographicBoundaryDataAlgorithm (verifica interseção na moldura, não apenas no boundingbox);
 
 ## 4.10.1 - 2023-10-02
 
