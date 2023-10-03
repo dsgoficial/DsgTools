@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.11.19 - dev
+## 4.11.20 - dev
 
 Novas Funcionalidades:
 
@@ -32,6 +32,7 @@ Correção de bug:
 - Corrige bug no processo de calcular azimute (estava sendo calculado com +90 graus);
 - Corrige bug no ClipAndCopyFeaturesBetweenDatabasesAlgorithm;
 - Corrige bug no VerifyAdjacentGeographicBoundaryDataAlgorithm (verifica interseção na moldura, não apenas no boundingbox);
+- Corrige bug na rotina de extrair automaticamente pontos cotados (Extract Spot Elevation);
 
 ## 4.10.1 - 2023-10-02
 
