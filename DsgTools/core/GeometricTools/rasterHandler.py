@@ -79,7 +79,10 @@ def createFeatureWithPixelValueFromPixelCoordinates(
     newFeat = QgsFeature(fields)
     terrainCoordinates = transform * pixelCoordinates
     newFeat.setGeometry(QgsGeometry(QgsPoint(*terrainCoordinates)))
-    newFeat[fieldName] = int(npRaster[pixelCoordinates])
+    value = npRaster[pixelCoordinates]
+    if np.isnan(value):
+        return None
+    newFeat[fieldName] = int(value)
     if defaultAtributeMap is None:
         return newFeat
     for attr, value in defaultAtributeMap.items():
@@ -95,13 +98,15 @@ def createFeatureListWithPixelValuesFromPixelCoordinatesArray(
     transform: Affine,
     defaultAtributeMap: Dict = None,
 ) -> List[QgsFeature]:
-    return [
-        createFeatureWithPixelValueFromPixelCoordinates(
-            tuple(coords), fieldName, fields, npRaster, transform, defaultAtributeMap=defaultAtributeMap
+    return list(
+        filter(
+            lambda x: x is not None, (
+                createFeatureWithPixelValueFromPixelCoordinates(
+                    tuple(coords), fieldName, fields, npRaster, transform, defaultAtributeMap=defaultAtributeMap
+                ) for coords in pixelCoordinates
+            )
         )
-        for coords in pixelCoordinates
-    ]
-
+    )
 
 def createFeatureListWithPointList(
     pointList: List[QgsPoint],
