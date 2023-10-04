@@ -12,12 +12,12 @@ qgisMinimumVersion=3.22
 description=Brazilian Army Cartographic Production Tools
 version=4.11.20
 author=Brazilian Army Geographic Service
-email=suporte.dsgtools@dsg.eb.mil.br
+email=dsgtools@dsg.eb.mil.br
 about=
 	DSGTools with the following features:
 	-Creation, Storage and Deletion of PostGIS servers configurations
 	-Database creation using Spatialite and PostGIS according to EDGV version 2.1.3 and 3.0 (cadaster)
-	-Layer loading by category and class as defined by EDGV version 2.1.3 and EDGV version FTer_2a_Ed (cadaster)
+	-Layer loading by category and class as defined by EDGV version 2.1.3 and EDGV version 3.0 (cadaster)
 	-Manipulation of complex features (Creation, Editing, Deletion, Zoom, Association, Disassociation) and
 	-Access to some WM(T)S services provided by BDGEx.
 	-Inventory Tool for all geospatial data supported by GDAL/OGR.
