@@ -55,7 +55,6 @@ from qgis.core import (
     QgsVectorLayerUtils,
     QgsProcessingParameterVectorLayer,
     QgsSpatialIndex,
-    QgsProject,
     QgsProcessingParameterExpression,
     QgsProcessingParameterBoolean,
 )
@@ -588,7 +587,6 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        # QgsProject.instance().addMapLayer(polygonLyr)
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -1006,7 +1004,6 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         self.addPointsToMemoryLayer(
             elevationPointsLayer, planeAreasElevationPoints, context
         )
-        # QgsProject.instance().addMapLayer(exclusionLyr)
         return elevationPointsLayer.getFeatures()
 
     def readAndMaskRaster(
@@ -1213,7 +1210,6 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        # QgsProject.instance().addMapLayer(gridLyr)
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -1881,8 +1877,6 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        # hillTopsLyr.setName('hilltops')
-        # QgsProject.instance().addMapLayer(hillTopsLyr)
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
