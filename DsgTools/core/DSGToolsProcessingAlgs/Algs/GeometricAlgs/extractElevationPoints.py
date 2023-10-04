@@ -1006,7 +1006,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         self.addPointsToMemoryLayer(
             elevationPointsLayer, planeAreasElevationPoints, context
         )
-        QgsProject.instance().addMapLayer(exclusionLyr)
+        # QgsProject.instance().addMapLayer(exclusionLyr)
         return elevationPointsLayer.getFeatures()
 
     def readAndMaskRaster(
