@@ -150,7 +150,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         useInheritance=False,
         stylePath=None,
         onlyWithElements=False,
-        geomFilterList=[],
+        geomFilterList=None,
         customForm=False,
         loadEditingStructure=False,
         parent=None,
@@ -163,6 +163,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         5. Build Groups;
         6. Load Layers;
         """
+        geomFilterList = [] if geomFilterList is None else geomFilterList
         self.iface.mapCanvas().freeze()  # done to speedup things
         layerList, isDictList = self.preLoadStep(inputList)
         # 2. Filter Layers:

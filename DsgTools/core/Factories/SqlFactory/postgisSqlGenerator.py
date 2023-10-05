@@ -1370,20 +1370,20 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def getGeomColumnTupleList(self, showViews=False, filterList=None):
         filterLayersClause = (
-            "AND f_table_name in ({table_name_list})".format(
+            " f_table_name in ({table_name_list})".format(
                 table_name_list=",".join(filterList)
             )
             if filterList
-            else """ """
+            else """"""
         )
         showViewsClause = (
-            """ AND table_type = 'BASE TABLE'""" if not showViews else """ """
+            """ table_type = 'BASE TABLE'""" if not showViews else """"""
         )
-        sql = """select f_table_schema, f_table_name, f_geometry_column, type, table_type from (select distinct f_table_schema, f_table_name, f_geometry_column, type, f_table_schema || '.' || f_table_name as jc  from public.geometry_columns as gc) as inn
+        whereClause = "" if not showViews and filterList is None else f"WHERE {' AND '.join([filterLayersClause, showViewsClause])}"
+
+        sql = f"""select f_table_schema, f_table_name, f_geometry_column, type, table_type from (select distinct f_table_schema, f_table_name, f_geometry_column, type, f_table_schema || '.' || f_table_name as jc  from public.geometry_columns as gc) as inn
             left join (select table_schema || '.' || table_name as jc, table_type from information_schema.tables) as infs on inn.jc = infs.jc
-            where inn.type <> 'GEOMETRY' {where_layer_filter} {where_show_views}""".format(
-            where_layer_filter=filterLayersClause, where_show_views=showViewsClause
-        )
+            {whereClause}"""
         return sql
 
     def getNotNullDict(self, layerFilter=None):

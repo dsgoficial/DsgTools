@@ -265,7 +265,7 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
         user-visible display of the algorithm name.
         """
         return self.tr(
-            "Identify Intersections Between Contour Lines and Drainage Lines"
+            "Identify Invalid Intersections Between Contour Lines and Drainage Lines"
         )
 
     def group(self):
