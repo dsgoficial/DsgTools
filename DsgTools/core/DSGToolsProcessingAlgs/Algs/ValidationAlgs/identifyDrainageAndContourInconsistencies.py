@@ -554,7 +554,7 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Identify Drainage and Contour Inconsistencies")
+        return self.tr("Identify Drainage Flow and Contour Inconsistencies")
 
     def group(self):
         """
@@ -575,5 +575,5 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
 
     def shortHelpString(self):
         return self.tr(
-            "O algoritmo orderna ou direciona fluxo, como linhas de drenagem "
+            "O algoritmo orderna ou direciona fluxo, como linhas de drenagem e confronta com as curvas de nível, verificando se as drenagens estão correndo de montante para jusante."
         )
