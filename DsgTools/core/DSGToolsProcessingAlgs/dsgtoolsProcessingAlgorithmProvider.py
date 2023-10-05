@@ -39,6 +39,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixSegmentErrorsBe
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallObjectsOnLayersAlgorithm import (
     IdentifySmallObjectsOnLayersAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWaterBodyAndContourInconsistencies import (
+    IdentifyWaterBodyAndContourInconsistencies,
+)
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingProvider
@@ -616,6 +619,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyDifferencesBetweenDatabaseModelsAlgorithm(),
             AzimuthCalculationAlgorithm(),
             DetectChangesBetweenGroups(),
+            IdentifyWaterBodyAndContourInconsistencies(),
         ]
         return algList
 

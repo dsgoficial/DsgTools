@@ -1,12 +1,13 @@
 # CHANGELOG
 
-## 4.11.21 - dev
+## 4.11.22 - dev
 
 Novas Funcionalidades:
 
 - Novo processo de corrigir erros de segmentação em linhas (barragem versus rodovias);
 - Novo processo para validar a estrutura do banco de dados em relação ao masterfile;
 - Novo processo de detectar as mudanças entre dois banco de dados, realizados em dias distintos;
+- Novo processo de identificar erros de intersecção entre curvas de nível e massas d'água;
 
 Melhorias:
 
