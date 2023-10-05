@@ -1376,10 +1376,13 @@ class PostGISSqlGenerator(SqlGenerator):
             if filterList
             else """"""
         )
-        showViewsClause = (
-            """ table_type = 'BASE TABLE'""" if not showViews else """"""
+        showViewsClause = """ table_type = 'BASE TABLE'""" if not showViews else """"""
+        whereStrList = list(
+            filter(lambda x: x != "", [filterLayersClause, showViewsClause])
         )
-        whereClause = "" if not showViews and filterList is None else f"WHERE {' AND '.join([filterLayersClause, showViewsClause])}"
+        whereClause = (
+            "" if whereStrList == [] else f"WHERE {' AND '.join(whereStrList)}"
+        )
 
         sql = f"""select f_table_schema, f_table_name, f_geometry_column, type, table_type from (select distinct f_table_schema, f_table_name, f_geometry_column, type, f_table_schema || '.' || f_table_name as jc  from public.geometry_columns as gc) as inn
             left join (select table_schema || '.' || table_name as jc, table_type from information_schema.tables) as infs on inn.jc = infs.jc
