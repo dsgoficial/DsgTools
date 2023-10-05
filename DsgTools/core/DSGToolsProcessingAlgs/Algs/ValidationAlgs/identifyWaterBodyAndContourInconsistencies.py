@@ -99,7 +99,7 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
 
     def processAlgorithm(self, parameters, context, feedback):
         algRunner = AlgRunner()
-        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
         inputContours = self.parameterAsVectorLayer(
             parameters, self.INPUT_CONTOURS, context
         )
@@ -112,7 +112,7 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         inputWaterBodiesLyr = algRunner.runCreateFieldWithExpression(
-            inputLyr=self.INPUT_WATER_BODIES,
+            inputLyr=parameters[self.INPUT_WATER_BODIES],
             expression="$id",
             fieldName="featid",
             fieldType=1,
@@ -141,11 +141,28 @@ class IdentifyWaterBodyAndContourInconsistencies(ValidationAlgorithm):
             feedback=multiStepFeedback,
         )
         flagLambda = lambda x: self.flagFeature(
-            x, flagText=self.tr("Invalid intersection between water body and contours")
+            x.geometry(),
+            flagText=self.tr("Invalid intersection between water body and contours"),
         )
         if expectedContours.featureCount() == 0:
             list(map(flagLambda, clippedContours.getFeatures()))
             return {self.FLAGS: self.flag_id}
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(
+            inputLyr=clippedContours,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(
+            inputLyr=expectedContours,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         flagCandidatesLyr = processing.run(
