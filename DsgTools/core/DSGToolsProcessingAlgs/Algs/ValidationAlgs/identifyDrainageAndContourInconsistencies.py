@@ -521,6 +521,14 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                     continue
                 succ = list(G.successors(node))
                 pred = list(G.predecessors(node))
+                if len(succ) == 0 or len(pred) == 0:
+                    t = "in" if len(succ) == 0 else "out"
+                    flagText = self.tr(
+                        f"Drainage flow issue: All drainage lines are flowing {t}."
+                    )
+                    flagGeom = nodesDict[node].geometry()
+                    flagDict[flagGeom.asWkb()] = flagText
+                    continue
                 n1, n2 = succ if len(pred) == 1 else pred
                 h1, h2 = d[n1], d[n2]
                 processedNodes.add(node)
