@@ -38,6 +38,7 @@ from qgis.core import (
     QgsFields,
     QgsVectorLayer,
     QgsFeatureRequest,
+    QgsFeature,
 )
 from qgis.PyQt.QtCore import QCoreApplication
 
@@ -167,6 +168,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         self.algRunner = AlgRunner()
         self.layerHandler = LayerHandler()
         source = self.parameterAsSource(parameters, self.INPUT, context)
+        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         x_distance = self.parameterAsDouble(parameters, self.X_DISTANCE, context)
         y_distance = self.parameterAsDouble(parameters, self.Y_DISTANCE, context)
         min_area = self.parameterAsDouble(parameters, self.MIN_AREA, context)
@@ -203,7 +205,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.setProgressText(self.tr("Creating spatial index..."))
         self.algRunner.runCreateSpatialIndex(
-            verticesLyr, context=context, feedback=multiStepFeedback
+            verticesLyr, context=context, feedback=multiStepFeedback, is_child_algorithm=True,
         )
         multiStepFeedback.setProgressText(self.tr("Processing features..."))
 
@@ -226,6 +228,13 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
                 return None, None
             return featureLayer, localNeighborVertexes
 
+        def output_data(feature):
+            newFeat = QgsFeature(source.fields())
+            newFeat.setGeometry(feature.geometry())
+            newFeat[classFieldName] = feature[classFieldName]
+            return newFeat
+            
+        
         if max_concurrency == 1:
             for current, feature in enumerate(iterator, start=2):
                 if multiStepFeedback.isCanceled():
@@ -256,7 +265,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
                             self.tr(f"Processed {current}/{nFeats}.")
                         )
                     continue
-                sink.addFeatures(list(outputFeatures))
+                sink.addFeatures(list(map(output_data, outputFeatures)))
                 if current % 500 == 0:
                     multiStepFeedback.pushInfo(
                         self.tr(f"Processed {current}/{nFeats}.")
@@ -286,7 +295,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
                 return {self.OUTPUT: dest_id}
             if outputFeatures is None or outputFeatures == set():
                 continue
-            sink.addFeatures(list(outputFeatures))
+            sink.addFeatures(list(map(output_data, outputFeatures)))
             if current % 500 == 0:
                 multiStepFeedback.pushInfo(self.tr(f"Processed {current}/{nFeats}."))
 
@@ -357,10 +366,11 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
             hSpacing=xSpacing,
             vSpacing=ySpacing,
             context=context,
+            is_child_algorithm=True,
         )
         if feedback is not None and feedback.isCanceled():
             return set()
-        algRunner.runCreateSpatialIndex(gridLayer, context=context)
+        algRunner.runCreateSpatialIndex(gridLayer, context=context, is_child_algorithm=True)
         if feedback is not None and feedback.isCanceled():
             return set()
         try:
@@ -390,7 +400,7 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
         clippedPolygons.startEditing()
         if feedback is not None and feedback.isCanceled():
             return set()
-        algRunner.runCreateSpatialIndex(clippedPolygons, context=context)
+        algRunner.runCreateSpatialIndex(clippedPolygons, context=context, is_child_algorithm=True)
         nFeats = clippedPolygons.featureCount()
         if nFeats == 0:
             return None
