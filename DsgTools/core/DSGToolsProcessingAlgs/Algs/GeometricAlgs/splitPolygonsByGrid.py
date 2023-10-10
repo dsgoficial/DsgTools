@@ -274,6 +274,8 @@ class SplitPolygonsByGrid(QgsProcessingAlgorithm):
 
         def compute_in_paralel(feature):
             featureLayer, localNeighborVertexes = prepare_data(feature)
+            if featureLayer is None:
+                return set()
             return self.compute(
                 localNeighborVertexes=localNeighborVertexes,
                 feature=feature,
