@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.11.22 - dev
+## 4.11.23 - dev
 
 Novas Funcionalidades:
 
@@ -20,6 +20,7 @@ Melhorias:
 - O detecta nula agora indica quais camadas tem que ser verificadas;
 - Algoritmos da caixa de ferramentas reorganizados por temática para facilitar o uso;
 - A interface de carregamento agora filtra também na coluna de categoria da camada;
+- O menu de aquisição agora mantém a camada ativa quando reclassifica uma feição no modo de reclassificação;
 
 Correção de bug:
 
