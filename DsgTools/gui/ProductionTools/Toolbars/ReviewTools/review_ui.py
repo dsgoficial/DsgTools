@@ -68,6 +68,31 @@ class Ui_ReviewToolbar(object):
         self.mMapLayerComboBox.setMinimumSize(QtCore.QSize(0, 24))
         self.mMapLayerComboBox.setObjectName("mMapLayerComboBox")
         self.mMapLayerComboBox.setFilters(core.QgsMapLayerProxyModel.PolygonLayer)
+
+        self.setActiveLayerPushButton = QtWidgets.QPushButton(self.splitter)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.setActiveLayerPushButton.sizePolicy().hasHeightForWidth()
+        )
+        self.setActiveLayerPushButton.setSizePolicy(sizePolicy)
+        self.setActiveLayerPushButton.setMinimumSize(QtCore.QSize(0, 24))
+        self.setActiveLayerPushButton.setMaximumSize(QtCore.QSize(24, 24))
+        self.setActiveLayerPushButton.setText("")
+        iconSetCurrentLayer = QtGui.QIcon()
+        iconSetCurrentLayer.addPixmap(
+            QtGui.QPixmap(":/plugins/DsgTools/icons/reload.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
+        self.setActiveLayerPushButton.setIcon(iconSetCurrentLayer)
+        self.setActiveLayerPushButton.setIconSize(QtCore.QSize(16, 16))
+        self.setActiveLayerPushButton.setObjectName("setActiveLayerPushButton")
+
+
         self.rankFieldComboBox = QgsFieldComboBox(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed

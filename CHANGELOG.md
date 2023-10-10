@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.11.23 - dev
+## 4.11.24 - dev
 
 Novas Funcionalidades:
 
@@ -21,6 +21,7 @@ Melhorias:
 - Algoritmos da caixa de ferramentas reorganizados por temática para facilitar o uso;
 - A interface de carregamento agora filtra também na coluna de categoria da camada;
 - O menu de aquisição agora mantém a camada ativa quando reclassifica uma feição no modo de reclassificação;
+- Adicionado botão de selecionar a camada ativa na barra de ferramentas de revisão;
 
 Correção de bug:
 
