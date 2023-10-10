@@ -2,6 +2,7 @@ import os, sys, copy
 from PyQt5 import QtCore, uic, QtWidgets, QtGui
 import json
 from DsgTools.Modules.utils.factories.utilsFactory import UtilsFactory
+from qgis.utils import iface
 
 
 class MenuDock(QtWidgets.QDockWidget):
@@ -51,6 +52,7 @@ class MenuDock(QtWidgets.QDockWidget):
 
     def setCurrentButton(self, buttonConfig):
         try:
+            currentActiveLayer = iface.activeLayer()
             if self.reclassifyCkb.isChecked():
                self.getController().validLayersToReclassification(buttonConfig)
 
@@ -62,6 +64,7 @@ class MenuDock(QtWidgets.QDockWidget):
             if not self.reclassifyCkb.isChecked():
                 return
             self.getController().openReclassifyDialog(buttonConfig, self.reclassify)
+            iface.setActiveLayer(currentActiveLayer)
         except Exception as e:
             self.showError("Erro", str(e))
 

@@ -246,7 +246,6 @@ class AcquisitionMenuCtrl:
         
 
     def reclassify(self, buttonConfig, reclassifyData):
-        currentActiveLayer = iface.activeLayer()
         destinatonLayerName = buttonConfig["buttonLayer"]
         destinatonLayer = self.qgis.getVectorLayerByName(destinatonLayerName)
         selectedLayers = reclassifyData["layers"]
@@ -259,7 +258,6 @@ class AcquisitionMenuCtrl:
                 self.qgis.cutAndPasteSelectedFeatures(
                     layer, destinatonLayer, attributes
                 )
-        iface.setActiveLayer(currentActiveLayer)
 
     def getLayersForReclassification(self, layerName, geometryType):
         layers = self.qgis.getLoadedVectorLayers()
