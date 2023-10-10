@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.11.24 - dev
+## 4.11.25 - dev
 
 Novas Funcionalidades:
 
@@ -38,6 +38,7 @@ Correção de bug:
 - Corrige bug no VerifyAdjacentGeographicBoundaryDataAlgorithm (verifica interseção na moldura, não apenas no boundingbox);
 - Corrige bug na rotina de extrair automaticamente pontos cotados (Extract Spot Elevation);
 - Corrige bug da interface de carregamento não listar camadas do tipo GEOMETRY (genéricas normalmente criadas pelo FME). A camada que tiver esse tipo vai ser carregada em um nó chamado Geometry;
+- Corrige bug dos parâmetros do clean não permitirem casas decimais o suficiente;
 
 ## 4.10.1 - 2023-10-02
 
