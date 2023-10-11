@@ -647,8 +647,12 @@ class SpatialRelationsHandler(QObject):
                     continue
                 areaId = areaFeat.id()
                 countourList = contourAreaDict['areaContourRelations'][areaId].keys()
-                h_min = min(countourList)
-                h_max = max(countourList)
+                if countourList == [] or countourList is None or len(countourList) == 0:
+                    continue
+                h_min = min(countourList, default=None)
+                h_max = max(countourList, default=None)
+                if h_min is None or h_max is None:
+                    continue
                 if pointHeight == h_min or pointHeight == h_max:
                     continue
                 if (h_min == h_max):
