@@ -151,10 +151,10 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             3: 40000,
         }
         self.contourBufferLengths = {
-            0: 3.2e-4 * 25_000,
-            1: 3.2e-4 * 50_000,
-            2: 3.2e-4 * 100_000,
-            3: 3.2e-4 * 250_000,
+            0: 3.2e-3 * 25_000,
+            1: 3.2e-3 * 50_000,
+            2: 3.2e-3 * 100_000,
+            3: 3.2e-3 * 250_000,
         }
 
         self.planeGridSpacingDict = {
