@@ -79,7 +79,10 @@ def createFeatureWithPixelValueFromPixelCoordinates(
     newFeat = QgsFeature(fields)
     terrainCoordinates = transform * pixelCoordinates
     newFeat.setGeometry(QgsGeometry(QgsPoint(*terrainCoordinates)))
-    value = npRaster[pixelCoordinates]
+    try:
+        value = npRaster[pixelCoordinates]
+    except:
+        return None
     if np.isnan(value):
         return None
     newFeat[fieldName] = int(value)

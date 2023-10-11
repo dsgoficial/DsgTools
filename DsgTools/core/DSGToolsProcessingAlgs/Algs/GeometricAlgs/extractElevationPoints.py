@@ -151,10 +151,10 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             3: 40000,
         }
         self.contourBufferLengths = {
-            0: 3.2e-3 * 25_000,
-            1: 3.2e-3 * 50_000,
-            2: 3.2e-3 * 100_000,
-            3: 3.2e-3 * 250_000,
+            0: 3.2e-4 * 25_000,
+            1: 3.2e-4 * 50_000,
+            2: 3.2e-4 * 100_000,
+            3: 3.2e-4 * 250_000,
         }
 
         self.planeGridSpacingDict = {
@@ -439,7 +439,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         layerHandler = LayerHandler()
         nSteps = 17 + (
             naturalPointFeaturesLyr is not None
-        )  + 3 * (waterBodiesLyr is not None) # handle this count after alg is done
+        )  + 3 * (waterBodiesLyr is not None) + (areaWithoutInformationLyr is not None)# handle this count after alg is done
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(nSteps, feedback)
             if feedback is not None
@@ -493,7 +493,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
         contourBufferLyr = algRunner.runBuffer(
             inputLayer=contourLyr,
-            distance=localContourBufferLength/4,
+            distance=localContourBufferLength,
             context=context,
             feedback=multiStepFeedback,
         )
@@ -528,11 +528,22 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 context=context,
                 feedback=multiStepFeedback
             )
+        if areaWithoutInformationLyr is not None:
+            if multiStepFeedback is not None:
+                currentStep += 1
+                multiStepFeedback.setCurrentStep(currentStep)
+                multiStepFeedback.setProgressText(self.tr(f"{self.currentStepText}: Running clip on area without information..."))
+            areaWithoutInformationLyr = algRunner.runClip(
+                areaWithoutInformationLyr,
+                overlayLayer=geographicBoundsLyr,
+                context=context,
+                feedback=multiStepFeedback
+            )
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.setProgressText(self.tr(f"{self.currentStepText}: Building masked raster..."))
-        npRaster, transform, maskLyr = self.readAndMaskRaster(
+        npRaster, maskedNpRaster, transform, maskLyr = self.readAndMaskRaster(
             clippedRasterLyr,
             geographicBoundsLyr,
             areaWithoutInformationLyr,
@@ -1028,12 +1039,15 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(currentStep)
         ds, npRaster = rasterHandler.readAsNumpy(clippedRasterLyr)
         transform = rasterHandler.getCoordinateTransform(ds)
+        nanIndexes = np.isnan(npRaster)
+        npRaster = (np.rint(npRaster)).astype(float)
+        npRaster[nanIndexes] = np.nan
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
         layerList = list(filter(lambda x: x is not None, [areaWithoutInformationLyr, waterBodiesLyr, contourBufferLyr]))
         if layerList == []:
-            return npRaster, transform, None
+            return npRaster, npRaster, transform, contourBufferLyr
         maskLyr = AlgRunner().runMergeVectorLayers(
             layerList, context, feedback=multiStepFeedback
         ) if len(layerList) > 1 else layerList[0]
@@ -1047,7 +1061,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-        npRaster = self.maskFeaturesFromLayerOnRaster(
+        maskedNpRaster = self.maskFeaturesFromLayerOnRaster(
             rasterLyr=clippedRasterLyr,
             geographicBoundsLyr=geographicBoundsLyr,
             maskLyr=maskLyr,
@@ -1056,10 +1070,10 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             feedback=multiStepFeedback,
             npRaster=npRaster,
         )
-        nanIndexes = np.isnan(npRaster)
-        npRaster = (np.rint(npRaster)).astype(float)
-        npRaster[nanIndexes] = np.nan
-        return npRaster, transform, maskLyr
+        nanIndexes = np.isnan(maskedNpRaster)
+        maskedNpRaster = (np.rint(maskedNpRaster)).astype(float)
+        maskedNpRaster[nanIndexes] = np.nan
+        return npRaster, maskedNpRaster, transform, maskLyr
 
     def getRangeOfNumberOfPoints(self, featList):
         minValue = min(featList, key=lambda x: x["cota"])["cota"]
@@ -1521,6 +1535,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(0)
             multiStepFeedback.pushInfo(self.tr("Getting max coordinates from numpy array..."))
         maxCoordinatesArray = rasterHandler.getMaxCoordinatesFromNpArray(npRaster)
+        npRasterCopy = np.array(npRaster)
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(1)
             multiStepFeedback.pushInfo(self.tr("Creating max feature list from pixel coordinates array..."))
@@ -1534,17 +1549,51 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 defaultAtributeMap=dict(self.defaultAttrMap),
             )
         )
-        featSet |= self.filterFeaturesByBuffer(maxFeatList, distance, cotaMaisAlta=True, feedback=multiStepFeedback)
+        cotaMax = min(f['cota'] for f in maxFeatList)
+        while True:
+            maxFeatLyr = LayerHandler().createMemoryLayerWithFeatures(
+                featList=maxFeatList,
+                fields=fields,
+                crs=maskLyr.crs(),
+                wkbType=QgsWkbTypes.Point,
+                context=QgsProcessingContext(),
+            )
+            filteredFeatureList = self.filterFeaturesByDistanceAndExclusionLayer(
+                candidatesPointLyr=maxFeatLyr,
+                exclusionLyr=maskLyr,
+                distance=distance,
+                context=QgsProcessingContext(),
+                feedback=None,
+            )
+            if filteredFeatureList != []:
+                featSet |= self.filterFeaturesByBuffer(filteredFeatureList, distance, cotaMaisAlta=True)
+                break
+            npRasterCopy[npRasterCopy == cotaMax] = np.nan
+            maxCoordinatesArray = rasterHandler.getMaxCoordinatesFromNpArray(npRasterCopy)
+            if maxCoordinatesArray == []:
+                return list(featSet)
+            maxFeatList = (
+                rasterHandler.createFeatureListWithPixelValuesFromPixelCoordinatesArray(
+                    maxCoordinatesArray,
+                    fieldName="cota",
+                    fields=fields,
+                    npRaster=npRaster,
+                    transform=transform,
+                    defaultAtributeMap=dict(self.defaultAttrMap),
+                )
+            )
+            cotaMax -= 1
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(2)
             multiStepFeedback.pushInfo(self.tr("Getting min coordinates from numpy array..."))
-        minCoordinatesArray = rasterHandler.getMinCoordinatesFromNpArray(npRaster)
+        minCoordinatesArray = rasterHandler.getMinCoordinatesFromNpArray(npRasterCopy)
         if minCoordinatesArray == []:
             return list(featSet)
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(3)
             multiStepFeedback.pushInfo(self.tr("Creating min feature list from pixel coordinates array..."))
-        npRasterCopy = np.array(npRaster)
         minFeatList = (
             rasterHandler.createFeatureListWithPixelValuesFromPixelCoordinatesArray(
                 minCoordinatesArray,
