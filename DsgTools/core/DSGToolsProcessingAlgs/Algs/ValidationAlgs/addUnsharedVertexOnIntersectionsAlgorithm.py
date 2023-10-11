@@ -179,7 +179,7 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
             return {}
 
         multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(newFlagsLyr, context, multiStepFeedback)
+        algRunner.runCreateSpatialIndex(newFlagsLyr, context, multiStepFeedback, is_child_algorithm=True)
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         LayerHandler().addVertexesToLayers(

@@ -1871,7 +1871,7 @@ class LayerHandler(QObject):
             return set()
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
-        algRunner.runCreateSpatialIndex(linesLyr, context, feedback=multiStepFeedback)
+        algRunner.runCreateSpatialIndex(linesLyr, context, feedback=multiStepFeedback, is_child_algorithm=True)
         multiStepFeedback.setCurrentStep(1)
 
         def compute(feat):
