@@ -353,6 +353,7 @@ class AcquisitionFreeController(object):
         # Método para adicionar a feição sem formulário
         # Parâmetro de entrada: layer (Camada ativa), feature (Feição adquirida)
         layer.beginEditCommand("dsgtools freehand feature added")
+        self.loadDefaultFields(layer, feature)
         layer.addFeatures([feature])
         layer.removeSelection()
         layer.endEditCommand()
