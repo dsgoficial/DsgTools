@@ -52,7 +52,7 @@ class MenuDock(QtWidgets.QDockWidget):
 
     def setCurrentButton(self, buttonConfig):
         try:
-            currentActiveLayer = iface.activeLayer()
+            self.setLastLayer(iface.activeLayer())
             if self.reclassifyCkb.isChecked():
                self.getController().validLayersToReclassification(buttonConfig)
 
@@ -63,10 +63,26 @@ class MenuDock(QtWidgets.QDockWidget):
             self.getController().activeMenuButton(buttonConfig)
             if not self.reclassifyCkb.isChecked():
                 return
-            self.getController().openReclassifyDialog(buttonConfig, self.reclassify)
-            iface.setActiveLayer(currentActiveLayer)
+            self.getController().openReclassifyDialog(
+                buttonConfig, 
+                self.callbackReclassify
+            )
         except Exception as e:
             self.showError("Erro", str(e))
+
+    def setLastLayer(self, layer):
+        self.lastLayer = layer
+
+    def getLastLayer(self):
+        return self.lastLayer
+
+    def callbackReclassify(self, data):
+        self.reclassify(data)
+        iface.setActiveLayer(self.getLastLayer())
+        currentButton = self.getCurrentButtonConfig()
+        if currentButton:
+            self.getController().deactiveMenuButton(currentButton)
+        self.setCurrentButtonConfig(None)
 
     def getCurrentButtonConfig(self):
         return self.currentButton
