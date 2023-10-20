@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 4.11.27 - dev
+
+Correção de Bug:
+
+- Corrige bug de quando o usuário tenta reclassificar primitivas não compatíveis utilizando o menu de classificação;
+- Corrige bug de quando o usuário tenta classificar com o formulário suprimido;
+- Corrige bug de quando o usuário tenta classificar e o camada do botão não estava mudando;
+
 ## 4.11.26 - dev
 
 Novas Funcionalidades:
