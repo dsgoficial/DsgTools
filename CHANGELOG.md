@@ -1,7 +1,7 @@
 # CHANGELOG
 
 
-## 4.11.28 - dev
+## 4.11.29 - dev
 
 Novas Funcionalidades:
 
@@ -9,6 +9,7 @@ Novas Funcionalidades:
 - Novo processo para validar a estrutura do banco de dados em relação ao masterfile;
 - Novo processo de detectar as mudanças entre dois banco de dados, realizados em dias distintos;
 - Novo processo de identificar erros de intersecção entre curvas de nível e massas d'água;
+- Novo processo de criar grid por meio de informar as coordenadas dos extremos;
 
 Melhorias:
 

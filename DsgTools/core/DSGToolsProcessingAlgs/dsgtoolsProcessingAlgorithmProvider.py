@@ -33,6 +33,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.rightAngleT
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.appendFeaturesToLayerAlgorithm import (
     AppendFeaturesToLayerAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridFromCoordinatesAlgorithm import CreateGridFromCoordinatesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixSegmentErrorsBetweenLinesAlgorithm import (
     FixSegmentErrorsBetweenLinesAlgorithm,
 )
@@ -620,6 +621,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             AzimuthCalculationAlgorithm(),
             DetectChangesBetweenGroups(),
             IdentifyWaterBodyAndContourInconsistencies(),
+            CreateGridFromCoordinatesAlgorithm(),
         ]
         return algList
 
