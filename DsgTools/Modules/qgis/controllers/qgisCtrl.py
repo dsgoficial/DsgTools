@@ -153,6 +153,8 @@ class QgisCtrl:
                 elif reset:
                     configField.setExpression("")
             else:
+                if attributeValue == "NULL":
+                    configField.setExpression("")
                 if attributeValue != "":
                     configField.setExpression("'{0}'".format(attributeValue))
                 elif reset:
@@ -209,6 +211,8 @@ class QgisCtrl:
                 valueMap = self.formatMapValues(config["map"])
                 if attributeValue in valueMap:
                     feature.setAttribute(indx, valueMap[attributeValue])
+            elif attributeValue and attributeValue in ["NULL"]:
+                feature.setAttribute(indx, None)
             elif attributeValue and not (attributeValue in ["NULL", "IGNORAR"]):
                 """if re.match('^\@value\(".+"\)$', value):
                 variable = value.split('"')[-2]

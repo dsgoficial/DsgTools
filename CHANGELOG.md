@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 4.12.0 - dev
+
+Nova Funcionalidade:
+
+- Uso da tag "NULL" no atributo do botão do menu para preencher o campo com o valor nulo na atributação e reclassificação.
+
 ## 4.11.27 - dev
 
 Correção de Bug:
