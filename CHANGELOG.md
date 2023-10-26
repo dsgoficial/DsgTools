@@ -23,7 +23,7 @@ Melhorias:
 - A interface de carregamento agora filtra também na coluna de categoria da camada;
 - O menu de aquisição agora mantém a camada ativa quando reclassifica uma feição no modo de reclassificação;
 - Adicionado botão de selecionar a camada ativa na barra de ferramentas de revisão;
-- Uso da tag "NULL" no atributo do botão do menu para preencher o campo com o valor nulo na atributação e reclassificação.
+- Adicionada a opção de uso da tag "NULL" no atributo do botão do menu para preencher o campo com o valor nulo na atributação e reclassificação do menu de aquisição.
 
 Correção de bug:
 
