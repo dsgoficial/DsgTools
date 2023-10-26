@@ -1,20 +1,7 @@
 # CHANGELOG
 
-## 4.12.0 - dev
 
-Nova Funcionalidade:
-
-- Uso da tag "NULL" no atributo do botão do menu para preencher o campo com o valor nulo na atributação e reclassificação.
-
-## 4.11.27 - dev
-
-Correção de Bug:
-
-- Corrige bug de quando o usuário tenta reclassificar primitivas não compatíveis utilizando o menu de classificação;
-- Corrige bug de quando o usuário tenta classificar com o formulário suprimido;
-- Corrige bug de quando o usuário tenta classificar e o camada do botão não estava mudando;
-
-## 4.11.26 - dev
+## 4.11.28 - dev
 
 Novas Funcionalidades:
 
@@ -36,6 +23,7 @@ Melhorias:
 - A interface de carregamento agora filtra também na coluna de categoria da camada;
 - O menu de aquisição agora mantém a camada ativa quando reclassifica uma feição no modo de reclassificação;
 - Adicionado botão de selecionar a camada ativa na barra de ferramentas de revisão;
+- Uso da tag "NULL" no atributo do botão do menu para preencher o campo com o valor nulo na atributação e reclassificação.
 
 Correção de bug:
 
@@ -54,6 +42,9 @@ Correção de bug:
 - Corrige bug da interface de carregamento não listar camadas do tipo GEOMETRY (genéricas normalmente criadas pelo FME). A camada que tiver esse tipo vai ser carregada em um nó chamado Geometry;
 - Corrige bug dos parâmetros do clean não permitirem casas decimais o suficiente;
 - Corrige bug de crash no qgis no algoritmo AddUnsharedVertexOnIntersectionsAlgorithm;
+- Corrige bug de quando o usuário tenta reclassificar primitivas não compatíveis utilizando o menu de classificação;
+- Corrige bug de quando o usuário tenta classificar com o formulário suprimido;
+- Corrige bug de quando o usuário tenta classificar e o camada do botão não estava mudando;
 
 ## 4.10.1 - 2023-10-02
 
