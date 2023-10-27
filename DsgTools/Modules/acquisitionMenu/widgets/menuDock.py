@@ -3,6 +3,7 @@ from PyQt5 import QtCore, uic, QtWidgets, QtGui
 import json
 from DsgTools.Modules.utils.factories.utilsFactory import UtilsFactory
 from qgis.utils import iface
+from qgis import gui
 
 
 class MenuDock(QtWidgets.QDockWidget):
@@ -17,6 +18,9 @@ class MenuDock(QtWidgets.QDockWidget):
         self.currentButton = None
         self.messageFactory = messageFactory if messageFactory is not None else UtilsFactory().createMessageFactory()
         self.menusCb.currentIndexChanged.connect(self.setCurrentMenu)
+    
+    def handleReclassifyMode(self):
+        self.reclassifyCkb.setChecked( not self.reclassifyCkb.isChecked() )
 
     def showError(self, title, message):
         errorMessageBox = self.messageFactory.createMessage("ErrorMessageBox")

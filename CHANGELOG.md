@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 4.11.30 - dev
+
+Novas Funcionalidades:
+
+- Adicionado atalho para ativar/desativar modo reclassificação;
 
 ## 4.11.29 - dev
 

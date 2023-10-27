@@ -76,6 +76,14 @@ class ToolBoxesGuiManager(QObject):
             parentButton=self.stackButton,
         )
 
+        self.addTool(
+            self.acquisitionMenuCtrl.clickReclassfyMode,
+            "customFeatureToolBox.png",
+            self.tr("Reclassify Mode"),
+            parentButton=self.stackButton,
+            withShortcut=True
+        )
+
         self.calcContour = None
         self.addTool(
             self.showCalcContourToolbox,
@@ -94,7 +102,7 @@ class ToolBoxesGuiManager(QObject):
         )
 
     def addTool(
-        self, callback, iconBaseName, text, setDefaultAction=False, parentButton=None
+        self, callback, iconBaseName, text, setDefaultAction=False, parentButton=None, withShortcut=False
     ):
         action = self.manager.add_action(
             os.path.join(self.iconBasePath, iconBaseName),
@@ -102,6 +110,7 @@ class ToolBoxesGuiManager(QObject):
             callback=callback,
             add_to_menu=False,
             add_to_toolbar=False,
+            withShortcut=withShortcut,
             parentMenu=self.parentMenu,
             parentButton=parentButton,
         )

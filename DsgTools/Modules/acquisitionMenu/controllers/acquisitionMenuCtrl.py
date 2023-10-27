@@ -184,6 +184,9 @@ class AcquisitionMenuCtrl:
 
     def getAttributesConfigByLayerName(self, layerName):
         return self.qgis.getAttributesConfigByLayerName(layerName)
+    
+    def clickReclassfyMode(self):
+        self.menuDock.handleReclassifyMode() if self.menuDock else ''
 
     def createMenuDock(self, menuConfigs):
         self.removeMenuDock()
