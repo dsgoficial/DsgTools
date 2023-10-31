@@ -48,8 +48,8 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
     X_MAX = "X_MAX"
     Y_MAX = "Y_MAX"
     CRS = "CRS"
-    X_GRID_SIZE = "X_GRID_SIZE"
-    Y_GRID_SIZE = "Y_GRID_SIZE"
+    N_TILES_X = "N_TILES_X"
+    N_TILES_Y = "N_TILES_Y"
     OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
@@ -62,7 +62,6 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
                 self.X_MIN,
                 self.tr("Min x coordinates"),
                 defaultValue=0.005,
-                minValue=0,
                 type=QgsProcessingParameterNumber.Double,
             )
         )
@@ -72,7 +71,6 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
                 self.Y_MIN,
                 self.tr("Min y coordinates"),
                 defaultValue=0.005,
-                minValue=0,
                 type=QgsProcessingParameterNumber.Double,
             )
         )
@@ -82,7 +80,6 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
                 self.X_MAX,
                 self.tr("Max x coordinates"),
                 defaultValue=0.005,
-                minValue=0,
                 type=QgsProcessingParameterNumber.Double,
             )
         )
@@ -92,28 +89,27 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
                 self.Y_MAX,
                 self.tr("Max y coordinates"),
                 defaultValue=0.005,
-                minValue=0,
                 type=QgsProcessingParameterNumber.Double,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.X_GRID_SIZE,
-                self.tr("Grid size on x-axis"),
-                defaultValue=0.005,
+                self.N_TILES_X,
+                self.tr("Number of subdivisions on x"),
+                defaultValue=2,
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                type=QgsProcessingParameterNumber.Integer,
             )
         )
 
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.Y_GRID_SIZE,
-                self.tr("Grid size on y-axis"),
-                defaultValue=0.005,
-                minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                self.N_TILES_Y,
+                self.tr("Number of subdivisions on y"),
+                defaultValue=2,
+                minValue=1,
+                type=QgsProcessingParameterNumber.Integer,
             )
         )
 
@@ -136,8 +132,8 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
         xMax = self.parameterAsDouble(parameters, self.X_MAX, context)
         yMax = self.parameterAsDouble(parameters, self.Y_MAX, context)
 
-        xGridSize = self.parameterAsDouble(parameters, self.X_GRID_SIZE, context)
-        yGridSize = self.parameterAsDouble(parameters, self.Y_GRID_SIZE, context)
+        nTilesX = self.parameterAsDouble(parameters, self.N_TILES_X, context)
+        nTilesY = self.parameterAsDouble(parameters, self.N_TILES_Y, context)
 
         crs = self.parameterAsCrs(parameters, self.CRS, context)
         if crs is None or not crs.isValid():
@@ -153,6 +149,8 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
         )
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         multiStepFeedback.setCurrentStep(0)
+        xGridSize = abs(xMax-xMin)/nTilesX
+        yGridSize = abs(yMax-yMin)/nTilesY
         grid = algRunner.runCreateGrid(
             extent=QgsRectangle(xMin, yMin, xMax, yMax, normalize=False),
             crs=crs,
