@@ -123,7 +123,7 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
                             cat = tableSchema
                         else:
                             lyrName = "_".join(tableName.split("_")[1::])
-                            if lyrName == "":
+                            if lyrName == "" or (lyrName in ["a", "p", "l"] and "EDGV" not in dbName):
                                 lyrName = tableName
                                 cat = "layers"
                             else:
