@@ -118,7 +118,7 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
                         dbName
                     ].getGeomColumnTupleList(showViews=showViews)
                     for tableSchema, tableName, geom, geomType, tableType in geomList:
-                        if "EDGV" not in dbName:
+                        if all(k not in dbName for k in ["EDGV", "MUVD", "MGCP", "UTRD", "TRD"]):
                             lyrName = tableName
                             cat = tableSchema
                         else:

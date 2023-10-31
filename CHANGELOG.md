@@ -1,12 +1,6 @@
 # CHANGELOG
 
-## 4.11.30 - dev
-
-Novas Funcionalidades:
-
-- Adicionado atalho para ativar/desativar modo reclassificação;
-
-## 4.11.29 - dev
+## 4.11.31 - dev
 
 Novas Funcionalidades:
 
@@ -15,6 +9,7 @@ Novas Funcionalidades:
 - Novo processo de detectar as mudanças entre dois banco de dados, realizados em dias distintos;
 - Novo processo de identificar erros de intersecção entre curvas de nível e massas d'água;
 - Novo processo de criar grid por meio de informar as coordenadas dos extremos;
+- Adicionado atalho para ativar/desativar modo reclassificação;
 
 Melhorias:
 
@@ -51,6 +46,7 @@ Correção de bug:
 - Corrige bug de quando o usuário tenta reclassificar primitivas não compatíveis utilizando o menu de classificação;
 - Corrige bug de quando o usuário tenta classificar com o formulário suprimido;
 - Corrige bug de quando o usuário tenta classificar e o camada do botão não estava mudando;
+- Corrige bug na interface do carregamento de feições, em bancos não EDGV;
 
 ## 4.10.1 - 2023-10-02
 
