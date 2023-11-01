@@ -1420,9 +1420,7 @@ class LayerHandler(QObject):
     def checkGeomIsValid(self, geom, ignoreClosed, feedback=None):
         flagDict = dict()
         if geom is None or geom.isNull() or geom.isEmpty():
-            return {
-                ""
-            }
+            return {}
         for validate_type, method_parameter in {
             "GEOS": Qgis.GeometryValidationEngine.Geos,
             "QGIS": Qgis.GeometryValidationEngine.QgisInternal,

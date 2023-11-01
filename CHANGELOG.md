@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.11.31 - dev
+## 4.11.32 - dev
 
 Novas Funcionalidades:
 
@@ -47,6 +47,7 @@ Correção de bug:
 - Corrige bug de quando o usuário tenta classificar com o formulário suprimido;
 - Corrige bug de quando o usuário tenta classificar e o camada do botão não estava mudando;
 - Corrige bug na interface do carregamento de feições, em bancos não EDGV;
+- Corrige bug no processo de geometria inválida quando há geometria nula ou vazia;
 
 ## 4.10.1 - 2023-10-02
 
