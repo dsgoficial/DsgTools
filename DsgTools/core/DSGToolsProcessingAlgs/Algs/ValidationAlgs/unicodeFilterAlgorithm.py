@@ -144,7 +144,7 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
             parameters, context, self.OUTPUT3, QgsWkbTypes.MultiPolygon, fields
         )
         returnDict[self.OUTPUT3] = polygon_sink_id
-        sinkDict[QgsWkbTypes.MultiPolygon] = polygon_sink
+        sinkDict[QgsWkbTypes.PolygonGeometry] = polygon_sink
 
         return returnDict, sinkDict
 

@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.11.32 - dev
+## 4.11.33 - dev
 
 Novas Funcionalidades:
 
@@ -48,6 +48,7 @@ Correção de bug:
 - Corrige bug de quando o usuário tenta classificar e o camada do botão não estava mudando;
 - Corrige bug na interface do carregamento de feições, em bancos não EDGV;
 - Corrige bug no processo de geometria inválida quando há geometria nula ou vazia;
+- Corrige bug no processo de verificar atributo unicode (não estava gerando flag por erro de definição de geometria da camada);
 
 ## 4.10.1 - 2023-10-02
 
