@@ -67,6 +67,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 self.INPUT,
                 self.tr("Input contour layer"),
                 [QgsProcessing.TypeVectorLine],
+                defaultValue="elemnat_curva_nivel_l",
             )
         )
         self.addParameter(
@@ -78,7 +79,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterField(
                 self.CONTOUR_ATTR,
                 self.tr("Contour value field"),
-                None,
+                "cota",
                 "INPUT",
                 QgsProcessingParameterField.Any,
             )
@@ -95,9 +96,9 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterField(
                 self.ELEVATION_POINT_ATTR,
                 self.tr("Spot elevation height value field"),
-                None,
-                "INPUT_SPOT_ELEVATION",
-                QgsProcessingParameterField.Any,
+                "cota",
+                self.INPUT_SPOT_ELEVATION,
+                QgsProcessingParameterField.Numeric,
                 optional=True,
             )
         )
@@ -112,12 +113,13 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 self.tr("Geographic bounds layer"),
                 [QgsProcessing.TypeVectorPolygon],
                 optional=False,
+                defaultValue="aux_moldura_a",
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.GROUP_BY_SPATIAL_PARTITION,
-                self.tr("Run algothimn grouping by spatial partition"),
+                self.tr("Run algorithmn grouping by spatial partition"),
             )
         )
         self.addParameter(
