@@ -22,6 +22,8 @@
 """
 import os
 
+from pathlib import Path
+
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessingAlgorithm,
@@ -57,33 +59,42 @@ class LoadShapefileAlgorithm(QgsProcessingAlgorithm):
 
     def processAlgorithm(self, parameters, context, feedback):
         folderPath = self.parameterAsString(parameters, self.FOLDER_SHAPEFILES, context)
+        folder_pathlib_obj = Path(folderPath)
         output = []
+        file_iter = folder_pathlib_obj.glob('*/*.shp') \
+            if len(list(folder_pathlib_obj.glob('*/*.shp'))) > 0 \
+            else folder_pathlib_obj.glob('*.shp')
         shapefileData = [
-            {"name": fileName.split(".")[0], "path": os.path.join(folderPath, fileName)}
-            for fileName in os.listdir(folderPath)
-            if fileName.split(".")[1] == "shp"
+            {"name": p.stem, "path": p, "parent_folder": p.parent.stem}
+            for p in file_iter
         ]
-        shapefileData = sorted(shapefileData, key=lambda k: k["name"])
+        shapefileData = sorted(shapefileData, key=lambda k: (k["parent_folder"], k["name"]))
+        groupDict = dict()
+        rootNodeList = []
+        parentFolderSet = set(i["parent_folder"] for i in shapefileData)
         listSize = len(shapefileData)
         progressStep = 100 / listSize if listSize else 0
-        rootNode = QgsProject.instance().layerTreeRoot().addGroup("shapefiles")
-        groups = {
-            QgsWkbTypes.PointGeometry: self.createGroup("Ponto", rootNode),
-            QgsWkbTypes.LineGeometry: self.createGroup("Linha", rootNode),
-            QgsWkbTypes.PolygonGeometry: self.createGroup("Area", rootNode),
-        }
+        for rootNodeName in sorted(parentFolderSet):
+            rootNode = QgsProject.instance().layerTreeRoot().addGroup(rootNodeName)
+            rootNodeList.append(rootNode)
+            groupDict[rootNodeName] = {
+                QgsWkbTypes.PointGeometry: self.createGroup("Ponto", rootNode),
+                QgsWkbTypes.LineGeometry: self.createGroup("Linha", rootNode),
+                QgsWkbTypes.PolygonGeometry: self.createGroup("Area", rootNode),
+            }
         for step, data in enumerate(shapefileData):
             if feedback.isCanceled():
                 break
             iface.mapCanvas().freeze(True)
             ml = QgsProject.instance().addMapLayer(
-                QgsVectorLayer(data["path"], data["name"], "ogr"), addToLegend=False
+                QgsVectorLayer(str(data["path"]), data["name"], "ogr"), addToLegend=False
             )
-            groups[QgsWkbTypes.geometryType(ml.wkbType())].addLayer(ml)
+            groupDict[data["parent_folder"]][QgsWkbTypes.geometryType(ml.wkbType())].addLayer(ml)
             output.append(ml.id())
             iface.mapCanvas().freeze(False)
             feedback.setProgress(step * progressStep)
-        self.removeEmptyGroups(list(groups.values()), rootNode)
+        for rootNode in rootNodeList:
+            self.removeEmptyGroups(list(groupDict[rootNode.name()].values()), rootNode)
         return {self.OUTPUT: output}
 
     def createGroup(self, groupName, rootNode):
@@ -147,3 +158,6 @@ class LoadShapefileAlgorithm(QgsProcessingAlgorithm):
         method from QgsLayerTreeGroup is not thread safe.
         """
         return super().flags() | QgsProcessingAlgorithm.FlagNoThreading
+    
+    def shortHelpString(self):
+        return self.tr("This algorithm loads shapefiles from folders. If a folder with subfolders is selected, one extra node is created for each subfolder")
