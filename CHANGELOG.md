@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.11.35 - dev
+## 4.11.36 - dev
 
 Novas Funcionalidades:
 
@@ -10,6 +10,7 @@ Novas Funcionalidades:
 - Novo processo de identificar erros de intersecção entre curvas de nível e massas d'água;
 - Novo processo de criar grid por meio de informar as coordenadas dos extremos;
 - Adicionado atalho para ativar/desativar modo reclassificação;
+- Novo processo de criar pacote de shapefile (utilizado normalmente para preparar a carga no BDGEx);
 
 Melhorias:
 
