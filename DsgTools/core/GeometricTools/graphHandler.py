@@ -39,7 +39,10 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsVectorLayer,
     QgsFeedback,
+    QgsProcessingContext,
 )
+
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
 
 def fetch_connected_nodes(
@@ -893,3 +896,70 @@ def identify_unmerged_edges_on_graph(
                         continue
                 outputIdSet.add(nodeId)
     return outputIdSet
+
+
+def buildAuxLayersPriorGraphBuilding(
+    networkLayer, context=None, geographicBoundsLayer=None, feedback=None
+):
+    algRunner = AlgRunner()
+    nSteps = 6 if geographicBoundsLayer is not None else 4
+    multiStepFeedback = (
+        QgsProcessingMultiStepFeedback(nSteps, feedback)
+        if feedback is not None
+        else None
+    )
+    context = QgsProcessingContext() if context is None else context
+    currentStep = 0
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(currentStep)
+    localCache = algRunner.runCreateFieldWithExpression(
+        inputLyr=networkLayer,
+        expression="$id",
+        fieldName="featid",
+        fieldType=1,
+        context=context,
+        feedback=multiStepFeedback,
+    )
+    currentStep += 1
+    if geographicBoundsLayer is not None:
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(
+            inputLyr=localCache, context=context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        localCache = algRunner.runExtractByLocation(
+            inputLyr=localCache,
+            intersectLyr=geographicBoundsLayer,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(currentStep)
+    algRunner.runCreateSpatialIndex(
+        inputLyr=localCache, context=context, feedback=multiStepFeedback
+    )
+    currentStep += 1
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(currentStep)
+    nodesLayer = algRunner.runExtractSpecificVertices(
+        inputLyr=localCache,
+        vertices="0,-1",
+        context=context,
+        feedback=multiStepFeedback,
+    )
+    currentStep += 1
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(currentStep)
+    nodesLayer = algRunner.runCreateFieldWithExpression(
+        inputLyr=nodesLayer,
+        expression="$id",
+        fieldName="nfeatid",
+        fieldType=1,
+        context=context,
+        feedback=multiStepFeedback,
+    )
+    return localCache, nodesLayer
