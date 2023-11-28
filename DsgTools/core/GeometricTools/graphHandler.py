@@ -19,19 +19,12 @@
  *                                                                         *
  ***************************************************************************/
 """
-import itertools
-import operator
-import concurrent.futures
-from functools import reduce
-from collections import defaultdict, Counter
+from collections import defaultdict
 from itertools import tee
-import os
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 from qgis.PyQt.QtCore import QByteArray
 from itertools import chain
 from itertools import product
-from itertools import starmap
-from functools import partial
 
 from qgis.core import (
     QgsGeometry,
@@ -39,7 +32,11 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsVectorLayer,
     QgsFeedback,
+    QgsProcessingContext,
+    QgsWkbTypes,
 )
+
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
 
 def fetch_connected_nodes(
@@ -893,3 +890,229 @@ def identify_unmerged_edges_on_graph(
                         continue
                 outputIdSet.add(nodeId)
     return outputIdSet
+
+
+def buildAuxLayersPriorGraphBuilding(
+    networkLayer, context=None, geographicBoundsLayer=None, feedback=None
+):
+    algRunner = AlgRunner()
+    nSteps = 6 if geographicBoundsLayer is not None else 4
+    multiStepFeedback = (
+        QgsProcessingMultiStepFeedback(nSteps, feedback)
+        if feedback is not None
+        else None
+    )
+    context = QgsProcessingContext() if context is None else context
+    currentStep = 0
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(currentStep)
+    localCache = algRunner.runCreateFieldWithExpression(
+        inputLyr=networkLayer,
+        expression="$id",
+        fieldName="featid",
+        fieldType=1,
+        context=context,
+        feedback=multiStepFeedback,
+    )
+    currentStep += 1
+    if geographicBoundsLayer is not None:
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        algRunner.runCreateSpatialIndex(
+            inputLyr=localCache, context=context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        localCache = algRunner.runExtractByLocation(
+            inputLyr=localCache,
+            intersectLyr=geographicBoundsLayer,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(currentStep)
+    algRunner.runCreateSpatialIndex(
+        inputLyr=localCache, context=context, feedback=multiStepFeedback
+    )
+    currentStep += 1
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(currentStep)
+    nodesLayer = algRunner.runExtractSpecificVertices(
+        inputLyr=localCache,
+        vertices="0,-1",
+        context=context,
+        feedback=multiStepFeedback,
+    )
+    currentStep += 1
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(currentStep)
+    nodesLayer = algRunner.runCreateFieldWithExpression(
+        inputLyr=nodesLayer,
+        expression="$id",
+        fieldName="nfeatid",
+        fieldType=1,
+        context=context,
+        feedback=multiStepFeedback,
+    )
+    return localCache, nodesLayer
+
+def getInAndOutNodesOnGeographicBounds(
+        nodeDict: Dict[QByteArray, int],
+        nodesLayer: QgsVectorLayer,
+        geographicBoundsLayer: QgsVectorLayer,
+        context: Optional[QgsProcessingContext] = None,
+        feedback: Optional[QgsFeedback] = None,
+    ) -> Tuple[Set[int], Set[int]]:
+    """
+    Get the in-nodes and out-nodes that fall within the geographic bounds.
+
+    Args:
+        self: The instance of the class.
+        nodeDict: A dictionary mapping node geometry to an auxiliary ID.
+        nodesLayer: A QgsVectorLayer representing nodes in the network.
+        geographicBoundsLayer: The geographic bounds layer.
+        context: The context object for the processing.
+        feedback: The QgsFeedback object for providing feedback during processing.
+
+    Returns:
+        A tuple containing two sets: fixedInNodeSet and fixedOutNodeSet.
+        - fixedInNodeSet: A set of in-nodes that fall within the geographic bounds.
+        - fixedOutNodeSet: A set of out-nodes that fall within the geographic bounds.
+
+    Notes:
+        This function performs the following steps:
+        1. Creates a spatial index for the nodesLayer.
+        2. Extracts the nodes that are outside the geographic bounds.
+        3. Iterates over the nodes outside the geographic bounds and adds them to the appropriate set.
+        4. Returns the sets of in-nodes and out-nodes within the geographic bounds.
+
+        The feedback object is used to monitor the progress of the function.
+    """
+    multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
+    context = context if context is not None else QgsProcessingContext()
+    algRunner = AlgRunner()
+    currentStep = 0
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(currentStep)
+    algRunner.runCreateSpatialIndex(
+        inputLyr=nodesLayer,
+        context=context,
+        feedback=multiStepFeedback,
+        is_child_algorithm=True,
+    )
+    currentStep += 1
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(currentStep)
+    nodesOutsideGeographicBounds = algRunner.runExtractByLocation(
+        inputLyr=nodesLayer,
+        intersectLyr=geographicBoundsLayer,
+        predicate=[AlgRunner.Disjoint],
+        context=context,
+        feedback=multiStepFeedback,
+    )
+    currentStep += 1
+    if multiStepFeedback is not None:
+        multiStepFeedback.setCurrentStep(currentStep)
+    fixedInNodeSet, fixedOutNodeSet = set(), set()
+    nFeats = nodesOutsideGeographicBounds.featureCount()
+    if nFeats == 0:
+        return fixedInNodeSet, fixedOutNodeSet
+    stepSize = 100 / nFeats
+    for current, nodeFeat in enumerate(nodesOutsideGeographicBounds.getFeatures()):
+        if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+            break
+        selectedSet = (
+            fixedInNodeSet if nodeFeat["vertex_pos"] == 0 else fixedOutNodeSet
+        )
+        geom = nodeFeat.geometry()
+        selectedSet.add(nodeDict[geom.asWkb()])
+        if multiStepFeedback is not None:
+            multiStepFeedback.setProgress(current * stepSize)
+    return fixedInNodeSet, fixedOutNodeSet
+
+def find_constraint_points(
+    nodesLayer: QgsVectorLayer,
+    constraintLayer: QgsVectorLayer,
+    nodeDict: Dict[QByteArray, int],
+    nodeLayerIdDict: Dict[int, Dict[int, QByteArray]],
+    useBuffer: bool =True,
+    context: Optional[QgsProcessingContext] = None,
+    feedback: Optional[QgsFeedback] = None,
+) -> Set[int]:
+    multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
+    context = context if context is not None else QgsProcessingContext()
+    algRunner = AlgRunner()
+    constraintSet = set()
+    layerToRelate = algRunner.runBuffer(
+        inputLayer=constraintLayer,
+        distance=1e-6,
+        context=context,
+        is_child_algorithm=True,
+    ) if constraintLayer.geometryType() != QgsWkbTypes.PointGeometry and useBuffer else constraintLayer
+    predicate = AlgRunner.Intersect if constraintLayer.geometryType() != QgsWkbTypes.PointGeometry else AlgRunner.Equal
+    selectedNodesFromOcean = algRunner.runExtractByLocation(
+        inputLyr=nodesLayer,
+        intersectLyr=layerToRelate,
+        context=context,
+        predicate=[predicate],
+        feedback=multiStepFeedback,
+    )
+    for feat in selectedNodesFromOcean.getFeatures():
+        if multiStepFeedback.isCanceled():
+            break
+        constraintSet.add(nodeDict[nodeLayerIdDict[feat["nfeatid"]]])
+    return constraintSet
+
+def generalize_edges_according_to_degrees(
+    G,
+    constraintSet: Set[int],
+    threshold: float,
+    feedback: Optional[QgsFeedback] = None,
+):
+    G_copy = G.copy()
+    pairsToRemove = find_smaller_first_order_path_with_length_smaller_than_threshold(
+        G=G_copy,
+        constraintSet=constraintSet,
+        threshold=threshold,
+        feedback=feedback
+    )
+    while pairsToRemove is not None:
+        if feedback is not None and feedback.isCanceled():
+            break
+        for n0, n1 in pairsToRemove:
+            G_copy.remove_edge(n0, n1)
+        pairsToRemove = find_smaller_first_order_path_with_length_smaller_than_threshold(
+            G=G_copy,
+            constraintSet=constraintSet,
+            threshold=threshold,
+            feedback=feedback
+        )
+    return G_copy
+    
+
+def find_smaller_first_order_path_with_length_smaller_than_threshold(
+    G, 
+    constraintSet: Set[int],
+    threshold: float,
+    feedback: Optional[QgsFeedback] = None
+) -> frozenset[frozenset]:
+    total_length_dict = dict()
+    edges_to_remove_dict = dict()
+    for node in set(node for node in G.nodes if G.degree(node) == 1 and node not in constraintSet):
+        if feedback is not None and feedback.isCanceled():
+            return None
+        connectedNodes = fetch_connected_nodes(G, node, 2)
+        if set(connectedNodes).intersection(constraintSet):
+            continue
+        pairs = frozenset([frozenset([a, b]) for i in connectedNodes for a, b in G.edges(i)])
+        total_length = sum(G[a][b]["length"] for a, b in pairs)
+        if total_length >= threshold:
+            continue
+        edges_to_remove_dict[node] = pairs
+        total_length_dict[node] = total_length
+    if len(total_length_dict) == 0:
+        return None
+    smaller_path_node = min(total_length_dict.keys(), key=lambda x: total_length_dict[x])
+    return edges_to_remove_dict[smaller_path_node]

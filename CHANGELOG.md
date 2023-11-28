@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.11.36 - dev
+## 4.11.37 - dev
 
 Novas Funcionalidades:
 
@@ -11,6 +11,7 @@ Novas Funcionalidades:
 - Novo processo de criar grid por meio de informar as coordenadas dos extremos;
 - Adicionado atalho para ativar/desativar modo reclassificação;
 - Novo processo de criar pacote de shapefile (utilizado normalmente para preparar a carga no BDGEx);
+- Novo processo de generalizar trechos de drenagem de acordo com o comprimento;
 
 Melhorias:
 
