@@ -33,6 +33,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.rightAngleT
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.appendFeaturesToLayerAlgorithm import (
     AppendFeaturesToLayerAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeNetworkEdgesFromLengthAlgorithm import GeneralizeNetworkEdgesWithLengthAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildZipPackagesAlgorithm import BuildZipPackageAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridFromCoordinatesAlgorithm import CreateGridFromCoordinatesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixSegmentErrorsBetweenLinesAlgorithm import (
@@ -67,7 +68,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractElevationPoi
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.line2Multiline import (
     Line2Multiline,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.reclassifyAdjecentPolygonsAlgorithm import (
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyAdjecentPolygonsAlgorithm import (
     ReclassifyAdjacentPolygonsAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.selectByDE9IM import (
@@ -76,10 +77,10 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.selectByDE9IM impor
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.smallHoleRemoverAlgorithm import (
     SmallHoleRemoverAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitPolygonsAlgorithm import (
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.splitPolygonsAlgorithm import (
     SplitPolygons,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitPolygonsByGrid import (
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.splitPolygonsByGrid import (
     SplitPolygonsByGrid,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.applyStylesFromDatabaseToLayersAlgorithm import (
@@ -624,6 +625,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyWaterBodyAndContourInconsistencies(),
             CreateGridFromCoordinatesAlgorithm(),
             BuildZipPackageAlgorithm(),
+            GeneralizeNetworkEdgesWithLengthAlgorithm(),
         ]
         return algList
 

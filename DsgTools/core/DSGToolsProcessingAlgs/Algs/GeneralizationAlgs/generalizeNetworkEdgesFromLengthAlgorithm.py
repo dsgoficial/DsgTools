@@ -21,8 +21,8 @@
  ***************************************************************************/
 """
 
-from collections import defaultdict
-from typing import Dict, Set, Tuple
+from itertools import chain
+from typing import Dict, List, Optional, Set
 from PyQt5.QtCore import QCoreApplication
 from DsgTools.core.GeometricTools import graphHandler
 from qgis.PyQt.QtCore import QByteArray
@@ -33,14 +33,11 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterEnum,
     QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
     QgsFeedback,
     QgsProcessingContext,
-    QgsGeometry,
-    QgsFeature,
     QgsVectorLayer,
     QgsProcessingParameterNumber,
-    QgsProcessingParameterBoolean,
+    QgsProcessingParameterMultipleLayers,
 )
 
 from ...algRunner import AlgRunner
@@ -51,7 +48,9 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
     NETWORK_LAYER = "NETWORK_LAYER"
     MIN_LENGTH = "MIN_LENGTH"
     GEOGRAPHIC_BOUNDS_LAYER = "GEOGRAPHIC_BOUNDS_LAYER"
-    WATER_BODIES_LAYER = "WATER_BODIES_LAYER"
+    POINT_CONSTRAINT_LAYER_LIST = "POINT_CONSTRAINT_LAYER_LIST"
+    LINE_CONSTRAINT_LAYER_LIST = "LINE_CONSTRAINT_LAYER_LIST"
+    POLYGON_CONSTRAINT_LAYER_LIST = "POLYGON_CONSTRAINT_LAYER_LIST"
     METHOD = "METHOD"
 
     def initAlgorithm(self, config):
@@ -75,10 +74,26 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
-            QgsProcessingParameterVectorLayer(
-                self.WATER_BODIES_LAYER,
-                self.tr("Water bodies layer"),
-                [QgsProcessing.TypeVectorPolygon],
+            QgsProcessingParameterMultipleLayers(
+                self.POINT_CONSTRAINT_LAYER_LIST,
+                self.tr("Point constraint Layers"),
+                QgsProcessing.TypeVectorPoint,
+                optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.LINE_CONSTRAINT_LAYER_LIST,
+                self.tr("Line constraint Layers"),
+                QgsProcessing.TypeVectorLine,
+                optional=True,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.POLYGON_CONSTRAINT_LAYER_LIST,
+                self.tr("Polygon constraint Layers"),
+                QgsProcessing.TypeVectorPolygon,
                 optional=True,
             )
         )
@@ -125,25 +140,22 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
         # get the network handler
         self.algRunner = AlgRunner()
         networkLayer = self.parameterAsLayer(parameters, self.NETWORK_LAYER, context)
-        filterExpression = self.parameterAsExpression(
-            parameters, self.FILTER_EXPRESSION, context
-        )
-        if filterExpression == "":
-            filterExpression = None
-        oceanLayer = self.parameterAsLayer(parameters, self.WATER_BODIES_LAYER, context)
-        waterBodyWithFlowLayer = self.parameterAsLayer(
-            parameters, self.WATER_BODY_WITH_FLOW_LAYER, context
-        )
-        waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
+        threshold = self.parameterAsDouble(parameters, self.MIN_LENGTH, context)
         geographicBoundsLayer = self.parameterAsLayer(
             parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context
         )
-        nSteps = (
-            15
-            + (runFlowCheck is True)
-            + (runLoopCheck is True)
-            + (waterBodyWithFlowLayer is not None)
+        pointLayerList = self.parameterAsLayerList(
+            parameters, self.POINT_CONSTRAINT_LAYER_LIST, context
         )
+        lineLayerList = self.parameterAsLayerList(
+            parameters, self.LINE_CONSTRAINT_LAYER_LIST, context
+        )
+        polygonLayerList = self.parameterAsLayerList(
+            parameters, self.POLYGON_CONSTRAINT_LAYER_LIST, context
+        )
+        method = self.parameterAsEnum(parameters, self.METHOD, context)
+        
+        nSteps = 5
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
@@ -175,7 +187,79 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Getting constraint points"))
+        constraintSet = self.getConstraintSet(
+            nodeDict=nodeDict,
+            nodesLayer=nodesLayer,
+            nodeLayerIdDict=nodeLayerIdDict,
+            geographicBoundsLayer=geographicBoundsLayer,
+            pointLayerList=pointLayerList,
+            lineLayerList=lineLayerList,
+            polygonLayerList=polygonLayerList,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Applying algorithm heurisic"))
+        G_out = graphHandler.generalize_edges_according_to_degrees(
+            G=networkBidirectionalGraph,
+            constraintSet=constraintSet,
+            threshold=threshold,
+            feedback=multiStepFeedback
+        )
+        idsToRemove = set(networkBidirectionalGraph[a][b]["featid"] for a, b in networkBidirectionalGraph.edges) - set(G_out[a][b]["featid"] for a, b in G_out.edges)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        if method != 0:
+            networkLayer.selectByIds(list(idsToRemove), self.selectionIdDict[method])
+            return {}
+        networkLayer.startEditing()
+        networkLayer.beginEditCommand(self.tr("Deleting features"))
+        networkLayer.deleteFeatures(list(idsToRemove))
+        networkLayer.endEditCommand()
         return {}
+    
+    def getConstraintSet(
+        self,
+        nodeDict: Dict[QByteArray, int],
+        nodesLayer: QgsVectorLayer,
+        nodeLayerIdDict: Dict[int, Dict[int, QByteArray]],
+        geographicBoundsLayer: QgsVectorLayer,
+        pointLayerList = List[QgsVectorLayer],
+        lineLayerList = List[QgsVectorLayer],
+        polygonLayerList = List[QgsVectorLayer],
+        context: Optional[QgsProcessingContext] = None,
+        feedback: Optional[QgsFeedback] = None,
+    ) -> Set[int]:
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        (fixedInNodeSet, fixedOutNodeSet) = graphHandler.getInAndOutNodesOnGeographicBounds(
+            nodeDict=nodeDict,
+            nodesLayer=nodesLayer,
+            geographicBoundsLayer=geographicBoundsLayer,
+            context=context,
+            feedback=feedback,
+        ) if geographicBoundsLayer is not None else (set(), set())
+        currentStep += 1 
+
+        constraintPointSet = fixedInNodeSet | fixedOutNodeSet
+
+        computeLambda = lambda x: graphHandler.find_constraint_points(
+            nodesLayer=nodesLayer,
+            constraintLayer=x,
+            nodeDict=nodeDict,
+            nodeLayerIdDict=nodeLayerIdDict,
+            useBuffer=False,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        constraintPointSetFromLambda = set(i for i in chain.from_iterable(map(computeLambda, pointLayerList + lineLayerList + polygonLayerList)))
+        constraintPointSet |= constraintPointSetFromLambda
+        return constraintPointSet
 
     def name(self):
         """
