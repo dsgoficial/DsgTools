@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.11.37 - dev
+## 4.11.38 - dev
 
 Novas Funcionalidades:
 
@@ -28,6 +28,7 @@ Melhorias:
 - Adicionado botão de selecionar a camada ativa na barra de ferramentas de revisão;
 - Adicionada a opção de uso da tag "NULL" no atributo do botão do menu para preencher o campo com o valor nulo na atributação e reclassificação do menu de aquisição;
 - O processo de carregar shapefiles agora agrupa por pasta, caso seja dado como entrada uma pasta que possui pastas com shapefiles;
+- Melhoria de desempenho no processo de generalizar trechos de drenagem;
 
 Correção de bug:
 

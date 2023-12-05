@@ -146,6 +146,8 @@ def buildGraph(
     for current, (edgeId, (wkb_1, wkb_2)) in enumerate(hashDict.items()):
         if feedback is not None and feedback.isCanceled():
             break
+        if wkb_1 == [] or wkb_2 == []:
+            continue
         G.add_edge(nodeDict[wkb_1], nodeDict[wkb_2])
         G[nodeDict[wkb_1]][nodeDict[wkb_2]]["featid"] = edgeId
         if add_inside_river_attribute:
@@ -246,6 +248,8 @@ def buildAuxStructures(
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
             featid = networkBidirectionalGraph[a][b]["featid"]
+            if featid not in edgeDict:
+                continue
             geom = edgeDict[featid].geometry()
             networkBidirectionalGraph[a][b]["length"] = geom.length()
 
@@ -1060,7 +1064,7 @@ def find_constraint_points(
         feedback=multiStepFeedback,
     )
     for feat in selectedNodesFromOcean.getFeatures():
-        if multiStepFeedback.isCanceled():
+        if multiStepFeedback is not None and multiStepFeedback.isCanceled():
             break
         constraintSet.add(nodeDict[nodeLayerIdDict[feat["nfeatid"]]])
     return constraintSet

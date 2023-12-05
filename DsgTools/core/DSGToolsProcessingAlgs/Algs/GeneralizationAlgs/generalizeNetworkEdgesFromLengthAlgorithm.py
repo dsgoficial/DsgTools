@@ -21,10 +21,14 @@
  ***************************************************************************/
 """
 
+import concurrent.futures
+
 from itertools import chain
+import os
 from typing import Dict, List, Optional, Set
 from PyQt5.QtCore import QCoreApplication
 from DsgTools.core.GeometricTools import graphHandler
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.PyQt.QtCore import QByteArray
 from qgis.core import (
     Qgis,
@@ -38,6 +42,7 @@ from qgis.core import (
     QgsVectorLayer,
     QgsProcessingParameterNumber,
     QgsProcessingParameterMultipleLayers,
+    QgsProcessingParameterBoolean,
 )
 
 from ...algRunner import AlgRunner
@@ -48,6 +53,7 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
     NETWORK_LAYER = "NETWORK_LAYER"
     MIN_LENGTH = "MIN_LENGTH"
     GEOGRAPHIC_BOUNDS_LAYER = "GEOGRAPHIC_BOUNDS_LAYER"
+    GROUP_BY_SPATIAL_PARTITION = "GROUP_BY_SPATIAL_PARTITION"
     POINT_CONSTRAINT_LAYER_LIST = "POINT_CONSTRAINT_LAYER_LIST"
     LINE_CONSTRAINT_LAYER_LIST = "LINE_CONSTRAINT_LAYER_LIST"
     POLYGON_CONSTRAINT_LAYER_LIST = "POLYGON_CONSTRAINT_LAYER_LIST"
@@ -105,6 +111,12 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
                 optional=True,
             )
         )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.GROUP_BY_SPATIAL_PARTITION,
+                self.tr("Run algothimn grouping by spatial partition"),
+            )
+        )
         self.selectionIdDict = {
             1: Qgis.SelectBehavior.SetSelection,
             2: Qgis.SelectBehavior.AddToSelection,
@@ -139,6 +151,7 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
             )
         # get the network handler
         self.algRunner = AlgRunner()
+        self.layerHandler = LayerHandler()
         networkLayer = self.parameterAsLayer(parameters, self.NETWORK_LAYER, context)
         threshold = self.parameterAsDouble(parameters, self.MIN_LENGTH, context)
         geographicBoundsLayer = self.parameterAsLayer(
@@ -153,9 +166,12 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
         polygonLayerList = self.parameterAsLayerList(
             parameters, self.POLYGON_CONSTRAINT_LAYER_LIST, context
         )
+        groupBySpatialPartition = self.parameterAsBool(
+            parameters, self.GROUP_BY_SPATIAL_PARTITION, context
+        )
         method = self.parameterAsEnum(parameters, self.METHOD, context)
         
-        nSteps = 5
+        nSteps = 5 if groupBySpatialPartition else 2
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
@@ -166,9 +182,97 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
             geographicBoundsLayer=geographicBoundsLayer,
             feedback=multiStepFeedback,
         )
+        if not groupBySpatialPartition or (geographicBoundsLayer is not None and geographicBoundsLayer.featureCount() <= 1):
+            idsToRemove = self.findIdsToRemove(nx, localCache, nodesLayer, threshold, geographicBoundsLayer, pointLayerList, lineLayerList, polygonLayerList, context, multiStepFeedback)
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.manageSelectedIdsUsingInputMethod(networkLayer, method, idsToRemove)
+            return {}
+        def compute(localGeographicBoundsLayer):
+            localContext = QgsProcessingContext()
+            if multiStepFeedback.isCanceled():
+                return set()
+            localNetworkCacheLyr = self.extractFeaturesRelatedToLayer(localCache, localGeographicBoundsLayer)
+            if multiStepFeedback.isCanceled():
+                return set()
+            localNodesLyr = self.extractFeaturesRelatedToLayer(nodesLayer, localNetworkCacheLyr)
+            if multiStepFeedback.isCanceled():
+                return set()
+            localPointFeatList = list(map(lambda x: self.extractFeaturesRelatedToLayer(x, localGeographicBoundsLayer), pointLayerList)) if len(pointLayerList) > 0 else []
+            if multiStepFeedback.isCanceled():
+                return set()
+            localLineFeatList = list(map(lambda x: self.extractFeaturesRelatedToLayer(x, localGeographicBoundsLayer), lineLayerList)) if len(lineLayerList) > 0 else []
+            if multiStepFeedback.isCanceled():
+                return set()
+            localPolygonFeatList = list(map(lambda x: self.extractFeaturesRelatedToLayer(x, localGeographicBoundsLayer), polygonLayerList)) if len(polygonLayerList) > 0 else []
+            return self.findIdsToRemove(
+                nx,
+                localNetworkCacheLyr,
+                localNodesLyr,
+                threshold,
+                localGeographicBoundsLayer,
+                localPointFeatList,
+                localLineFeatList,
+                localPolygonFeatList,
+                localContext,
+                None
+            )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Building graph aux structures"))
+        multiStepFeedback.setProgressText(self.tr("Splitting geographic bounds"))
+        geographicBoundaryLayerList = self.layerHandler.createMemoryLayerForEachFeature(
+            layer=geographicBoundsLayer, context=context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        nRegions = len(geographicBoundaryLayerList)
+        if nRegions == 0:
+            return {}
+        stepSize = 100 / nRegions
+        futures = set()
+        idsToRemove = set()
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
+        multiStepFeedback.setProgressText(
+            self.tr("Submitting tasks to thread...")
+        )
+        for current, localGeographicBoundsLayer in enumerate(
+            geographicBoundaryLayerList, start=0
+        ):
+            if multiStepFeedback.isCanceled():
+                pool.shutdown(cancel_futures=True)
+                break
+            futures.add(pool.submit(compute, localGeographicBoundsLayer))
+            multiStepFeedback.setProgress(current * stepSize)
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Evaluating results..."))
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback.isCanceled():
+                pool.shutdown(cancel_futures=True)
+                break
+            idsToRemove |= future.result()
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.manageSelectedIdsUsingInputMethod(networkLayer, method, idsToRemove)
+        return {}
+
+    def manageSelectedIdsUsingInputMethod(self, networkLayer, method, idsToRemove):
+        if method != 0:
+            networkLayer.selectByIds(list(idsToRemove), self.selectionIdDict[method])
+            return {}
+        networkLayer.startEditing()
+        networkLayer.beginEditCommand(self.tr("Deleting features"))
+        networkLayer.deleteFeatures(list(idsToRemove))
+        networkLayer.endEditCommand()
+        return {}
+
+    def findIdsToRemove(self, nx, localCache, nodesLayer, threshold, geographicBoundsLayer, pointLayerList, lineLayerList, polygonLayerList, context, feedback=None):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback) if feedback is not None else None
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Building graph aux structures"))
         (
             nodeDict,
             nodeIdDict,
@@ -185,9 +289,10 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
             computeNodeLayerIdDict=True,
             addEdgeLength=True,
         )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Getting constraint points"))
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Getting constraint points"))
         constraintSet = self.getConstraintSet(
             nodeDict=nodeDict,
             nodesLayer=nodesLayer,
@@ -199,9 +304,10 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Applying algorithm heurisic"))
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.setProgressText(self.tr("Applying algorithm heurisic"))
         G_out = graphHandler.generalize_edges_according_to_degrees(
             G=networkBidirectionalGraph,
             constraintSet=constraintSet,
@@ -209,16 +315,7 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback
         )
         idsToRemove = set(networkBidirectionalGraph[a][b]["featid"] for a, b in networkBidirectionalGraph.edges) - set(G_out[a][b]["featid"] for a, b in G_out.edges)
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        if method != 0:
-            networkLayer.selectByIds(list(idsToRemove), self.selectionIdDict[method])
-            return {}
-        networkLayer.startEditing()
-        networkLayer.beginEditCommand(self.tr("Deleting features"))
-        networkLayer.deleteFeatures(list(idsToRemove))
-        networkLayer.endEditCommand()
-        return {}
+        return idsToRemove
     
     def getConstraintSet(
         self,
@@ -232,9 +329,10 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
         context: Optional[QgsProcessingContext] = None,
         feedback: Optional[QgsFeedback] = None,
     ) -> Set[int]:
-        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback) if feedback is not None else None
         currentStep = 0
-        multiStepFeedback.setCurrentStep(currentStep)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
         (fixedInNodeSet, fixedOutNodeSet) = graphHandler.getInAndOutNodesOnGeographicBounds(
             nodeDict=nodeDict,
             nodesLayer=nodesLayer,
@@ -255,11 +353,35 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-
-        multiStepFeedback.setCurrentStep(currentStep)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
         constraintPointSetFromLambda = set(i for i in chain.from_iterable(map(computeLambda, pointLayerList + lineLayerList + polygonLayerList)))
         constraintPointSet |= constraintPointSetFromLambda
         return constraintPointSet
+    
+    def extractFeaturesRelatedToLayer(
+        self, inputLyr, referenceLyr, context=None, feedback=None
+    ):
+        context = QgsProcessingContext() if context is None else context
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(2, feedback)
+            if feedback is not None
+            else None
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+        extractedLyr = self.algRunner.runExtractByLocation(
+            inputLyr=inputLyr,
+            intersectLyr=referenceLyr,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=extractedLyr, context=context, feedback=multiStepFeedback, is_child_algorithm=True
+        )
+        return extractedLyr
 
     def name(self):
         """
