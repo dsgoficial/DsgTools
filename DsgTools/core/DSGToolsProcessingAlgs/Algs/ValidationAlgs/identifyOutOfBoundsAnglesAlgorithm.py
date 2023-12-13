@@ -24,15 +24,9 @@ from PyQt5.QtCore import QCoreApplication
 
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
     QgsProcessing,
-    QgsProcessingAlgorithm,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
@@ -136,7 +130,7 @@ class IdentifyOutOfBoundsAnglesAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Identification Processes)")
+        return self.tr("QA Tools: Basic Geometry Construction Issues Handling")
 
     def groupId(self):
         """
@@ -146,7 +140,7 @@ class IdentifyOutOfBoundsAnglesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Identification Processes)"
+        return "DSGTools - QA Tools: Basic Geometry Construction Issues Handling"
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyOutOfBoundsAnglesAlgorithm", string)

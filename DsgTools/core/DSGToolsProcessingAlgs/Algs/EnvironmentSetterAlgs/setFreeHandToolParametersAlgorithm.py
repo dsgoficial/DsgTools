@@ -139,7 +139,7 @@ class SetFreeHandToolParametersAlgorithm(DsgToolsBaseSetParametersAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Environment Setters"
+        return "DSGTools - Environment Setters"
 
     def tr(self, string):
         return QCoreApplication.translate("SetFreeHandToolParametersAlgorithm", string)

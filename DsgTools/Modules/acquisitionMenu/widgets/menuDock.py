@@ -2,6 +2,8 @@ import os, sys, copy
 from PyQt5 import QtCore, uic, QtWidgets, QtGui
 import json
 from DsgTools.Modules.utils.factories.utilsFactory import UtilsFactory
+from qgis.utils import iface
+from qgis import gui
 
 
 class MenuDock(QtWidgets.QDockWidget):
@@ -16,6 +18,9 @@ class MenuDock(QtWidgets.QDockWidget):
         self.currentButton = None
         self.messageFactory = messageFactory if messageFactory is not None else UtilsFactory().createMessageFactory()
         self.menusCb.currentIndexChanged.connect(self.setCurrentMenu)
+    
+    def handleReclassifyMode(self):
+        self.reclassifyCkb.setChecked( not self.reclassifyCkb.isChecked() )
 
     def showError(self, title, message):
         errorMessageBox = self.messageFactory.createMessage("ErrorMessageBox")
@@ -51,6 +56,7 @@ class MenuDock(QtWidgets.QDockWidget):
 
     def setCurrentButton(self, buttonConfig):
         try:
+            self.setLastLayer(iface.activeLayer())
             if self.reclassifyCkb.isChecked():
                self.getController().validLayersToReclassification(buttonConfig)
 
@@ -61,9 +67,26 @@ class MenuDock(QtWidgets.QDockWidget):
             self.getController().activeMenuButton(buttonConfig)
             if not self.reclassifyCkb.isChecked():
                 return
-            self.getController().openReclassifyDialog(buttonConfig, self.reclassify)
+            self.getController().openReclassifyDialog(
+                buttonConfig, 
+                self.callbackReclassify
+            )
         except Exception as e:
             self.showError("Erro", str(e))
+
+    def setLastLayer(self, layer):
+        self.lastLayer = layer
+
+    def getLastLayer(self):
+        return self.lastLayer
+
+    def callbackReclassify(self, data):
+        self.reclassify(data)
+        iface.setActiveLayer(self.getLastLayer())
+        currentButton = self.getCurrentButtonConfig()
+        if currentButton:
+            self.getController().deactiveMenuButton(currentButton)
+        self.setCurrentButtonConfig(None)
 
     def getCurrentButtonConfig(self):
         return self.currentButton

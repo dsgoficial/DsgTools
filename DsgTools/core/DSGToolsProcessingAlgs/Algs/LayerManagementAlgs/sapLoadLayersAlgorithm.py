@@ -163,7 +163,7 @@ class SapLoadLayersAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Layer Management Algorithms"
+        return "DSGTools - Layer Management Algorithms"
 
     def tr(self, string):
         return QCoreApplication.translate("SapLoadLayersAlgorithm", string)

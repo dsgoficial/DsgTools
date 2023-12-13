@@ -152,6 +152,9 @@ class AcquisitionMenuCtrl:
 
     def getAttributesConfigByLayerName(self, layerName):
         return self.qgis.getAttributesConfigByLayerName(layerName)
+    
+    def clickReclassfyMode(self):
+        self.menuDock.handleReclassifyMode() if self.menuDock else ''
 
     def createMenuDock(self, menuConfigs):
         self.removeMenuDock()
@@ -203,7 +206,7 @@ class AcquisitionMenuCtrl:
             layerName, layer.geometryType()
         )
         if not layersToReclassification:
-            return
+            raise Exception("Não há camadas para reclassificação!")
         noActive = False
         for l in layersToReclassification:
             noActive = l.id() != iface.activeLayer().id()
@@ -223,13 +226,15 @@ class AcquisitionMenuCtrl:
                 self.qgis.cutAndPasteSelectedFeatures(
                     layer, destinatonLayer, attributes
                 )
+        destinatonLayer.triggerRepaint()
+        
 
     def getLayersForReclassification(self, layerName, geometryType):
         layers = self.qgis.getLoadedVectorLayers()
         geometryFilterDict = {
-            QgsWkbTypes.PointGeometry: (QgsWkbTypes.PointGeometry,),
-            QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry,),
-            QgsWkbTypes.PolygonGeometry: (QgsWkbTypes.PointGeometry, QgsWkbTypes.PolygonGeometry)
+            QgsWkbTypes.PointGeometry: (QgsWkbTypes.PointGeometry, QgsWkbTypes.PolygonGeometry),
+            QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry, ),
+            QgsWkbTypes.PolygonGeometry: (QgsWkbTypes.PolygonGeometry, ),
         }
         return [
             l

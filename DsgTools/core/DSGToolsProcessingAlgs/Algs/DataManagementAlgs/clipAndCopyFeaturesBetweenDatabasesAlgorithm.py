@@ -232,7 +232,7 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
             withElements=withElements
         )
         inputParamList = list(map(lambda x: x.split(".")[-1], inputParamList))
-        if layerNameList is not None:
+        if layerNameList is not None and layerNameList != []:
             inputParamList = list(filter(lambda x: x in layerNameList, inputParamList))
         loadedLayerList = layerLoader.loadLayersInsideProcessing(
             inputParamList, addToCanvas=addToCanvas, feedback=feedback
@@ -269,9 +269,13 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
             if feedback is not None
             else None
         )
-        clipLayer = self.layerHandler.createMemoryLayerFromGeometry(
-            geom=geom, crs=QgsProject.instance().crs()
-        ) if geom is not None else None
+        clipLayer = (
+            self.layerHandler.createMemoryLayerFromGeometry(
+                geom=geom, crs=QgsProject.instance().crs()
+            )
+            if geom is not None and not geom.isEmpty()
+            else None
+        )
         for currentIdx, lyr in enumerate(inputLayerList):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 return outputDict
@@ -328,7 +332,7 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Data Management Algorithms"
+        return "DSGTools - Data Management Algorithms"
 
     def tr(self, string):
         return QCoreApplication.translate("AppendFeaturesToLayerAlgorithm", string)

@@ -481,7 +481,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Geometric Algorithms")
+        return self.tr("Generalization Algorithms")
 
     def groupId(self):
         """
@@ -491,7 +491,7 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Geometric Algorithms"
+        return "DSGTools - Generalization Algorithms"
 
     def tr(self, string):
         return QCoreApplication.translate("ReclassifyAdjacentPolygonsAlgorithm", string)

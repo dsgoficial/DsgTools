@@ -33,8 +33,17 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.rightAngleT
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.appendFeaturesToLayerAlgorithm import (
     AppendFeaturesToLayerAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeNetworkEdgesFromLengthAlgorithm import GeneralizeNetworkEdgesWithLengthAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildZipPackagesAlgorithm import BuildZipPackageAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridFromCoordinatesAlgorithm import CreateGridFromCoordinatesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixSegmentErrorsBetweenLinesAlgorithm import (
+    FixSegmentErrorsBetweenLinesAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallObjectsOnLayersAlgorithm import (
     IdentifySmallObjectsOnLayersAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWaterBodyAndContourInconsistencies import (
+    IdentifyWaterBodyAndContourInconsistencies,
 )
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
@@ -59,7 +68,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.extractElevationPoi
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.line2Multiline import (
     Line2Multiline,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.reclassifyAdjecentPolygonsAlgorithm import (
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyAdjecentPolygonsAlgorithm import (
     ReclassifyAdjacentPolygonsAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.selectByDE9IM import (
@@ -68,10 +77,10 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.selectByDE9IM impor
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.smallHoleRemoverAlgorithm import (
     SmallHoleRemoverAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitPolygonsAlgorithm import (
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.splitPolygonsAlgorithm import (
     SplitPolygons,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.splitPolygonsByGrid import (
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.splitPolygonsByGrid import (
     SplitPolygonsByGrid,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.applyStylesFromDatabaseToLayersAlgorithm import (
@@ -161,6 +170,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.filterLayerListByGeomet
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.selectFeaturesOnCurrentCanvas import (
     SelectFeaturesOnCurrentCanvas,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.azimuthCalculationAlgorithm import (
+    AzimuthCalculationAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnIntersectionsAlgorithm import (
     AddUnsharedVertexOnIntersectionsAlgorithm,
 )
@@ -216,6 +228,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateRunwayAltitudeAlg
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.validateTrackerAlgorithm import (
     ValidateTrackerAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.identifyDifferencesBetweenDatabaseModelsAlgorithm import (
+    IdentifyDifferencesBetweenDatabaseModelsAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.addUnsharedVertexOnIntersectionsAlgorithm import (
     AddUnsharedVertexOnIntersectionsAlgorithm,
 )
@@ -233,6 +248,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.cleanGeometriesAlg
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.deaggregateGeometriesAlgorithm import (
     DeaggregatorAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.detectChangesGroupAlgorithm import (
+    DetectChangesBetweenGroups,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.detectNullGeometriesAlgorithm import (
     DetectNullGeometriesAlgorithm,
@@ -600,6 +618,14 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             GenericSelectionToolParametersAlgorithm(),
             ClipAndCopyFeaturesBetweenDatabasesAlgorithm(),
             VerifyAdjacentGeographicBoundaryDataAlgorithm(),
+            FixSegmentErrorsBetweenLinesAlgorithm(),
+            IdentifyDifferencesBetweenDatabaseModelsAlgorithm(),
+            AzimuthCalculationAlgorithm(),
+            DetectChangesBetweenGroups(),
+            IdentifyWaterBodyAndContourInconsistencies(),
+            CreateGridFromCoordinatesAlgorithm(),
+            BuildZipPackageAlgorithm(),
+            GeneralizeNetworkEdgesWithLengthAlgorithm(),
         ]
         return algList
 

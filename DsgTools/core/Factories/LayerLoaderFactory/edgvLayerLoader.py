@@ -60,6 +60,7 @@ class EDGVLayerLoader(QObject):
             "MULTILINESTRING": "Line",
             "POLYGON": "Area",
             "MULTIPOLYGON": "Area",
+            "GEOMETRY": "Geometry",
         }
 
     def preLoadStep(self, inputList):
@@ -146,16 +147,12 @@ class EDGVLayerLoader(QObject):
         if isinstance(inputList, list) and len(inputList) > 0:
             if isinstance(inputList[0], dict):
                 for elem in inputList:
-                    if elem["geomType"] == "GEOMETRY":
-                        continue
                     lyrDict[self.correspondenceDict[elem["geomType"]]][
                         elem["cat"]
                     ].append(elem)
             else:
                 for type in list(self.geomTypeDict.keys()):
                     # some tables are only registered as GEOMETRY and should not be considered
-                    if type == "GEOMETRY":
-                        continue
                     for lyr in self.geomTypeDict[type]:
                         if lyr not in inputList:
                             continue

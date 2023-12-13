@@ -7,10 +7,10 @@ SET search_path TO pg_catalog,public,edgv,dominios#
 
 CREATE TABLE public.db_metadata(
 	 edgvversion varchar(50) NOT NULL DEFAULT 'EDGV 3.0 Pro',
-	 dbimplversion varchar(50) NOT NULL DEFAULT '1.3.1',
+	 dbimplversion varchar(50) NOT NULL DEFAULT '1.3.2',
 	 CONSTRAINT edgvversioncheck CHECK (edgvversion = 'EDGV 3.0 Pro')
 )#
-INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 3.0 Pro','1.3.1')#
+INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 3.0 Pro','1.3.2')#
 
 CREATE TABLE dominios.exibir_lado_simbologia (
 	 code smallint NOT NULL,
@@ -4763,6 +4763,7 @@ ALTER TABLE edgv.edicao_simb_cota_mestra_l OWNER TO postgres#
 CREATE TABLE edgv.edicao_simb_torre_energia_p(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 simb_rot real,
+	 visivel smallint NOT NULL,
 	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT edicao_simb_torre_energia_p_pk PRIMARY KEY (id)
@@ -4772,11 +4773,19 @@ CREATE INDEX edicao_simb_torre_energia_p_geom ON edgv.edicao_simb_torre_energia_
 
 ALTER TABLE edgv.edicao_simb_torre_energia_p OWNER TO postgres#
 
+ALTER TABLE edgv.edicao_simb_torre_energia_p
+	 ADD CONSTRAINT edicao_simb_torre_energia_p_visivel_fk FOREIGN KEY (visivel)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.edicao_simb_torre_energia_p ALTER COLUMN visivel SET DEFAULT 9999#
+
 CREATE TABLE edgv.edicao_identificador_trecho_rod_p(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	 sigla varchar(255),
 	 tipo smallint NOT NULL,
 	 jurisdicao smallint NOT NULL,
+	 visivel smallint NOT NULL,
 	 observacao varchar(255),
 	 geom geometry(MultiPoint, [epsg]),
 	 CONSTRAINT edicao_identificador_trecho_rod_p_pk PRIMARY KEY (id)
@@ -4803,6 +4812,13 @@ ALTER TABLE edgv.edicao_identificador_trecho_rod_p
 	 CHECK (jurisdicao = ANY(ARRAY[1 :: SMALLINT, 2 :: SMALLINT, 9999 :: SMALLINT]))# 
 
 ALTER TABLE edgv.edicao_identificador_trecho_rod_p ALTER COLUMN jurisdicao SET DEFAULT 9999#
+
+ALTER TABLE edgv.edicao_identificador_trecho_rod_p
+	 ADD CONSTRAINT edicao_identificador_trecho_rod_p_visivel_fk FOREIGN KEY (visivel)
+	 REFERENCES dominios.booleano (code) MATCH FULL
+	 ON UPDATE NO ACTION ON DELETE NO ACTION#
+
+ALTER TABLE edgv.edicao_identificador_trecho_rod_p ALTER COLUMN visivel SET DEFAULT 9999#
 
 CREATE TABLE edgv.edicao_simb_vegetacao_p(
 	 id uuid NOT NULL DEFAULT uuid_generate_v4(),

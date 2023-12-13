@@ -521,6 +521,14 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
                     continue
                 succ = list(G.successors(node))
                 pred = list(G.predecessors(node))
+                if G.degree(node) > 1 and ((len(succ) == 0 and len(pred) > 0) or (len(pred) == 0 and len(succ) > 0)):
+                    t = "in" if len(succ) == 0 else "out"
+                    flagText = self.tr(
+                        f"Drainage flow issue: All drainage lines are flowing {t}."
+                    )
+                    flagGeom = nodesDict[node].geometry()
+                    flagDict[flagGeom.asWkb()] = flagText
+                    continue
                 n1, n2 = succ if len(pred) == 1 else pred
                 h1, h2 = d[n1], d[n2]
                 processedNodes.add(node)
@@ -554,14 +562,14 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Identify Drainage and Contour Inconsistencies")
+        return self.tr("Identify Drainage Flow and Contour Inconsistencies")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Network Processes)")
+        return self.tr("QA Tools: Terrain Processes")
 
     def groupId(self):
         """
@@ -571,9 +579,9 @@ class IdentifyDrainageAndContourInconsistencies(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Network Processes)"
+        return "DSGTools - QA Tools: Terrain Processes"
 
     def shortHelpString(self):
         return self.tr(
-            "O algoritmo orderna ou direciona fluxo, como linhas de drenagem "
+            "O algoritmo orderna ou direciona fluxo, como linhas de drenagem e confronta com as curvas de nível, verificando se as drenagens estão correndo de montante para jusante."
         )

@@ -219,7 +219,7 @@ class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Geometric Algorithms"
+        return "DSGTools - Geometric Algorithms"
 
     def tr(self, string):
         return QCoreApplication.translate("SelectByDE9IMAlgorithm", string)

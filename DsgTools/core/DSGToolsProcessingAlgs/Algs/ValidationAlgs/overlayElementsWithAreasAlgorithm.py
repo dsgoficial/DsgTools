@@ -22,30 +22,15 @@
 """
 from PyQt5.QtCore import QCoreApplication
 
-import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
-    QgsGeometry,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
-    QgsProcessingParameterDistance,
     QgsProcessingParameterEnum,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingUtils,
-    QgsProject,
-    QgsSpatialIndex,
-    QgsWkbTypes,
 )
 
 from ...algRunner import AlgRunner
@@ -223,7 +208,7 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Manipulation Processes)")
+        return self.tr("Geometric Algorithms")
 
     def groupId(self):
         """
@@ -233,7 +218,7 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Manipulation Processes)"
+        return "DSGTools - Geometric Algorithms"
 
     def tr(self, string):
         return QCoreApplication.translate("OverlayElementsWithAreasAlgorithm", string)

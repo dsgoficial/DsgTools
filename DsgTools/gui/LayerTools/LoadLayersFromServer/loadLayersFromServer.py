@@ -81,6 +81,7 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
             self.tr("Layer\nType"),
         ]
         self.layersCustomSelector.setHeaders(self.headerList)
+        self.layersCustomSelector.setFilterColumn([0, 1])
         self.customServerConnectionWidget.serverConnectionTab.currentChanged.connect(
             self.layersCustomSelector.setInitialState
         )
@@ -117,12 +118,12 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
                         dbName
                     ].getGeomColumnTupleList(showViews=showViews)
                     for tableSchema, tableName, geom, geomType, tableType in geomList:
-                        if self.tr("Unknown model") in dbName:
+                        if all(k not in dbName for k in ["EDGV", "MUVD", "MGCP", "UTRD", "TRD"]):
                             lyrName = tableName
                             cat = tableSchema
                         else:
                             lyrName = "_".join(tableName.split("_")[1::])
-                            if lyrName == "":
+                            if lyrName == "" or (lyrName in ["a", "p", "l"] and "EDGV" not in dbName):
                                 lyrName = tableName
                                 cat = "layers"
                             else:

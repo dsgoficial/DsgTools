@@ -540,6 +540,20 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         if self.mMapLayerComboBox.currentIndex() == 0:
             return
         self.removeLayerNameToGenericSelectionBlackList(layer.name())
+    
+    @pyqtSlot(bool)
+    def on_setActiveLayerPushButton_clicked(self):
+        activeLayer = self.iface.activeLayer()
+        if isinstance(activeLayer, QgsVectorLayer):
+            self.mMapLayerComboBox.setLayer(activeLayer)
+        else:
+            self.iface.messageBar().pushMessage(
+                self.tr("Warning!"),
+                self.tr("Active layer is not valid to be used in this tool."),
+                level=Qgis.Warning,
+                duration=2,
+            )
+        
 
     def addLayerNameToGenericSelectionBlackList(self, layerName: str):
         settings = QSettings()

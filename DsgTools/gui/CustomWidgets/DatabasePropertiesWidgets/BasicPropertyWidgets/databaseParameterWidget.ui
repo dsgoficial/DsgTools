@@ -75,6 +75,11 @@
        <string>3.0 Pro</string>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>3.0 Orto</string>
+      </property>
+     </item>
     </widget>
    </item>
    <item row="2" column="0">

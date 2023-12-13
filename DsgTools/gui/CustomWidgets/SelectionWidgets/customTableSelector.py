@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from builtins import range
+from copy import deepcopy
 import os
 
 # Qt imports
@@ -46,6 +47,7 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         self.toLs = []
         self.utils = Utils()
         self.setupUi(self)
+        self.filterColumnKeyList = [0]
 
     def resizeTrees(self):
         """
@@ -81,12 +83,14 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         """
         Chooses which column is going to be used in the filter
         """
-        if isinstance(customNumber, int):
-            self.filterColumnKey = self.headerList[customNumber]
+        if isinstance(customNumber, list):
+            self.filterColumnKeyList = deepcopy(customNumber)
+        elif isinstance(customNumber, int):
+            self.filterColumnKeyList = [customNumber]
         elif self.headerList:
-            self.filterColumnKey = self.headerList[1]
+            self.filterColumnKeyList = [1]
         else:
-            self.filterColumnKey = self.headerList[0]
+            self.filterColumnKeyList = [0]
 
     def clearAll(self):
         """
@@ -103,10 +107,11 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         self.toTreeWidget.setHeaderLabels(headerList)
         self.setFilterColumn(customNumber=customNumber)
 
-    def setInitialState(self, fromDictList, unique=False, selectedDictList=[]):
+    def setInitialState(self, fromDictList, unique=False, selectedDictList=None):
         """
         Sets the initial state
         """
+        selectedDictList = [] if selectedDictList is None else selectedDictList
         self.fromLs = []
         self.toLs = []
         self.fromTreeWidget.clear()
@@ -143,13 +148,14 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         addItemDictList,
         controlList,
         unique=False,
-        selectedDictList=[],
+        selectedDictList=None,
     ):
         """
         Adds items from addItemDictList in treeWidget.
         addItemDictList = [-list of dicts with keys corresponding to header list texts-]
         unique: only adds item if it is not in already in tree
         """
+        selectedDictList = [] if selectedDictList is None else selectedDictList
         rootNode = treeWidget.invisibleRootItem()  # invisible root item
         for dictItem in addItemDictList:
             firstColumnChild = self.getChildNode(
@@ -163,19 +169,19 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
             textList = [
                 dictItem[self.headerList[i]] for i in range(len(self.headerList))
             ]
-            if unique:
-                childNode = self.getChildNode(firstColumnChild, textList)
-                if not childNode:
-                    item = self.utils.createWidgetItem(firstColumnChild, textList)
-                    if selectedDictList:
-                        item.setSelected(True)
-                    itemList = self.getItemList(item)
-                    if itemList not in controlList:
-                        controlList.append(itemList)
-            else:
+            if not unique:
                 item = self.utils.createWidgetItem(firstColumnChild, textList)
                 itemList = self.getItemList(item)
                 controlList.append(itemList)
+                continue
+            childNode = self.getChildNode(firstColumnChild, textList)
+            if not childNode:
+                item = self.utils.createWidgetItem(firstColumnChild, textList)
+                if selectedDictList:
+                    item.setSelected(True)
+                itemList = self.getItemList(item)
+                if itemList not in controlList:
+                    controlList.append(itemList)
         self.resizeTrees()
         self.sortItems(treeWidget)
 
@@ -183,10 +189,7 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         """
         Gets item as a list
         """
-        if returnAsDict:
-            returnItem = dict()
-        else:
-            returnItem = []
+        returnItem = dict() if returnAsDict else []
         for i in range(item.columnCount()):
             if returnAsDict:
                 returnItem[self.headerList[i]] = item.text(i)
@@ -212,11 +215,12 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
     @pyqtSlot(bool, name="on_pushButtonDeselectOne_clicked")
     @pyqtSlot(bool, name="on_pushButtonSelectAll_clicked")
     @pyqtSlot(bool, name="on_pushButtonDeselectAll_clicked")
-    def selectItems(self, isSelected, selectedItems=[]):
+    def selectItems(self, isSelected, selectedItems=None):
         """
         Adds the selected items to the "to" list
         """
         # gets lists
+        selectedItems = [] if selectedItems is None else selectedItems
         (
             originTreeWidget,
             originControlLs,
@@ -267,12 +271,11 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         """
         If node is selected, removes node from parentNode and adds it to destinationNode
         """
-        if isSelected:
-            child = parentNode.takeChild(idx)
-            destinationNode.addChild(child)
-            return True
-        else:
+        if not isSelected:
             return False
+        child = parentNode.takeChild(idx)
+        destinationNode.addChild(child)
+        return True
 
     def getDestinationNode(self, destinationRoot, catChild, returnNew=True):
         """
@@ -305,16 +308,23 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         """
         Filters the items to make it easier to spot and select them
         """
-        classes = [
-            node[1].lower() for node in self.fromLs if text.lower() in node[1].lower()
-        ]  # text list
-        filteredClasses = [
-            i for i in classes if i.lower() not in [j[1].lower() for j in self.toLs]
-        ]  # text list
-        self.filterTree(self.fromTreeWidget, self.fromLs, filteredClasses, 1)
+        lowerText = text.lower()
+        allTuples = [tuple(node[i].lower() for i in self.filterColumnKeyList) for node in self.fromLs]
+        itemTupleList = set(
+            t for t in allTuples if any(lowerText in i for i in t)
+        )
+        destinationTupleSet = set(
+            tuple(
+                node[i].lower() for i in self.filterColumnKeyList for node in self.toLs
+            )
+        )
+        filteredItems = itemTupleList - destinationTupleSet
+        if filteredItems == set():
+            filteredItems = itemTupleList
+        self.filterTree(self.fromTreeWidget, self.fromLs, filteredItems)
         self.resizeTrees()
 
-    def filterTree(self, treeWidget, controlList, filterList, columnIdx):
+    def filterTree(self, treeWidget, controlList, filterList):
         """
         Actual filter
         """
@@ -322,13 +332,14 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         rootNode = treeWidget.invisibleRootItem()
         # remove items that are not in filterList
         for item in controlList:
-            if item[columnIdx].lower() in filterList:
-                firstColumnChild = self.getChildNode(
-                    rootNode, [item[0]] + [""] * (len(item) - 1)
-                )  # looks for a item in the format ['first column text', '','',...,'']
-                if not firstColumnChild:
-                    firstColumnChild = self.utils.createWidgetItem(rootNode, item[0], 0)
-                QTreeWidgetItem(firstColumnChild, item)
+            if tuple(item[i].lower() for i in self.filterColumnKeyList) not in filterList:
+                continue
+            firstColumnChild = self.getChildNode(
+                rootNode, [item[0]] + [""] * (len(item) - 1)
+            )  # looks for a item in the format ['first column text', '','',...,'']
+            if firstColumnChild is None:
+                firstColumnChild = self.utils.createWidgetItem(rootNode, item[0], 0)
+            QTreeWidgetItem(firstColumnChild, item)
         rootNode.sortChildren(0, Qt.AscendingOrder)
         for i in range(rootNode.childCount()):
             rootNode.child(i).sortChildren(1, Qt.AscendingOrder)
@@ -372,15 +383,17 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         returnList = []
         for i in range(treeRoot.childCount())[::-1]:
             catChild = treeRoot.child(i)
-            if catChild.text(0) in catList:
-                for j in range(catChild.childCount())[::-1]:
-                    nodeChild = catChild.child(j)
-                    nodeChildDict = self.getItemList(nodeChild, returnAsDict=True)
-                    nodeChildDict[self.headerList[0]] = catChild.text(0)
-                    if nodeChildDict in dictItemList:
-                        catChild.takeChild(j)
-                        itemList = self.getItemList(nodeChild)
-                        controlList.pop(controlList.index(itemList))
+            if catChild.text(0) not in catList:
+                continue
+            for j in range(catChild.childCount())[::-1]:
+                nodeChild = catChild.child(j)
+                nodeChildDict = self.getItemList(nodeChild, returnAsDict=True)
+                nodeChildDict[self.headerList[0]] = catChild.text(0)
+                if nodeChildDict not in dictItemList:
+                    continue
+                catChild.takeChild(j)
+                itemList = self.getItemList(nodeChild)
+                controlList.pop(controlList.index(itemList))
         for i in range(treeRoot.childCount())[::-1]:
             if treeRoot.child(i).childCount() == 0:
                 treeRoot.takeChild(i)

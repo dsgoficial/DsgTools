@@ -22,30 +22,17 @@
 """
 from PyQt5.QtCore import QCoreApplication
 
-import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
-    QgsGeometry,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterDistance,
-    QgsProcessingParameterEnum,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingUtils,
-    QgsProject,
-    QgsSpatialIndex,
-    QgsWkbTypes,
 )
 
 from ...algRunner import AlgRunner
@@ -76,24 +63,24 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
                 self.SELECTED, self.tr("Process only selected features")
             )
         )
-        self.addParameter(
-            QgsProcessingParameterDistance(
-                self.TOLERANCE,
-                self.tr("Snap radius"),
-                parentParameterName=self.INPUT,
-                minValue=-1.0,
-                defaultValue=1.0,
-            )
+        param = QgsProcessingParameterDistance(
+            self.TOLERANCE,
+            self.tr("Snap Radius"),
+            parentParameterName=self.INPUT,
+            defaultValue=1.0,
         )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.MINAREA,
-                self.tr("Minimum area"),
-                minValue=0,
-                defaultValue=0.0001,
-                type=QgsProcessingParameterNumber.Double,
-            )
+        param.setMetadata({"widget_wrapper": {"decimals": 8}})
+        self.addParameter(param)
+
+        areaParam = QgsProcessingParameterNumber(
+            self.MINAREA,
+            self.tr("Minimum area"),
+            minValue=0,
+            defaultValue=1e-8,
+            type=QgsProcessingParameterNumber.Double,
         )
+        areaParam.setMetadata({"widget_wrapper": {"decimals": 16}})
+        self.addParameter(areaParam)
 
         self.addParameter(
             QgsProcessingParameterFeatureSink(
@@ -212,7 +199,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Manipulation Processes)")
+        return self.tr("QA Tools: Snap Processes")
 
     def groupId(self):
         """
@@ -222,7 +209,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Manipulation Processes)"
+        return "DSGTools - QA Tools: Snap Processes"
 
     def tr(self, string):
         return QCoreApplication.translate("CleanGeometriesAlgorithm", string)

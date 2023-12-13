@@ -200,14 +200,14 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Identify polygon slivers")
+        return self.tr("Identify Polygon Slivers")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Identification Processes)")
+        return self.tr("QA Tools: Polygon Handling")
 
     def groupId(self):
         """
@@ -217,7 +217,7 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Identification Processes)"
+        return "DSGTools - QA Tools: Polygon Handling"
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyPolygonSliverAlgorithm", string)

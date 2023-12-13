@@ -186,7 +186,7 @@ class ConvertLayer2LayerAlgorithm(QgsProcessingAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Other Algorithms")
+        return self.tr("Data Management Algorithms")
 
     def groupId(self):
         """
@@ -194,7 +194,7 @@ class ConvertLayer2LayerAlgorithm(QgsProcessingAlgorithm):
         string should be fixed for the algorithm, and must not be localised.
         The group id should be unique within each provider.
         """
-        return "DSGTools: Other Algorithms"
+        return "DSGTools - Data Management Algorithms"
 
     def tr(self, string):
         return QCoreApplication.translate("ConvertLayer2LayerAlgorithm", string)

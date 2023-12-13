@@ -567,6 +567,8 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
             bboxlineBuffFrame = lineBuffFrame.boundingBox()
             for vertId in specifVertSpatialIdx.intersects(bboxlineBuffFrame):
                 geomVert = specifVertFeatDict[vertId].geometry()
+                if not geomVert.intersects(lineBuffFrame):
+                    continue
                 vertWkt = geomVert.asWkt()
                 dictVertInFrame[vertWkt].append(specifVertFeatDict[vertId])
 
@@ -647,7 +649,7 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Identification Processes)")
+        return self.tr("QA Tools: Dataset Processes")
 
     def groupId(self):
         """
@@ -657,7 +659,7 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Identification Processes)"
+        return "DSGTools - QA Tools: Dataset Processes"
 
     def tr(self, string):
         return QCoreApplication.translate(

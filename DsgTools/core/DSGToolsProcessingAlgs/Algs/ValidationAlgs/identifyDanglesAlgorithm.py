@@ -540,7 +540,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Identification Processes)")
+        return self.tr("QA Tools: Line Handling")
 
     def groupId(self):
         """
@@ -550,7 +550,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Identification Processes)"
+        return "DSGTools - QA Tools: Line Handling"
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyDanglesAlgorithm", string)

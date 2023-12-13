@@ -52,7 +52,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
     CONTOUR_INTERVAL = "CONTOUR_INTERVAL"
     GEOGRAPHIC_BOUNDS = "GEOGRAPHIC_BOUNDS"
     CONTOUR_ATTR = "CONTOUR_ATTR"
-    INPUT_ELEVATION_POINTS = "INPUT_ELEVATION_POINTS"
+    INPUT_SPOT_ELEVATION = "INPUT_ELEVATION_POINTS"
     ELEVATION_POINT_ATTR = "ELEVATION_POINT_ATTR"
     GROUP_BY_SPATIAL_PARTITION = "GROUP_BY_SPATIAL_PARTITION"
     POINT_FLAGS = "POINT_FLAGS"
@@ -67,6 +67,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 self.INPUT,
                 self.tr("Input contour layer"),
                 [QgsProcessing.TypeVectorLine],
+                defaultValue="elemnat_curva_nivel_l",
             )
         )
         self.addParameter(
@@ -78,15 +79,15 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterField(
                 self.CONTOUR_ATTR,
                 self.tr("Contour value field"),
-                None,
+                "cota",
                 "INPUT",
                 QgsProcessingParameterField.Any,
             )
         )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                self.INPUT_ELEVATION_POINTS,
-                self.tr("Input elevation points layer"),
+                self.INPUT_SPOT_ELEVATION,
+                self.tr("Input spot elevation layer"),
                 [QgsProcessing.TypeVectorPoint],
                 optional=True,
             )
@@ -94,10 +95,10 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterField(
                 self.ELEVATION_POINT_ATTR,
-                self.tr("Elevation point height value field"),
-                None,
-                "INPUT_ELEVATION_POINTS",
-                QgsProcessingParameterField.Any,
+                self.tr("Spot elevation height value field"),
+                "cota",
+                self.INPUT_SPOT_ELEVATION,
+                QgsProcessingParameterField.Numeric,
                 optional=True,
             )
         )
@@ -112,12 +113,13 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 self.tr("Geographic bounds layer"),
                 [QgsProcessing.TypeVectorPolygon],
                 optional=False,
+                defaultValue="aux_moldura_a",
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.GROUP_BY_SPATIAL_PARTITION,
-                self.tr("Run algothimn grouping by spatial partition"),
+                self.tr("Run algorithmn grouping by spatial partition"),
             )
         )
         self.addParameter(
@@ -154,7 +156,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             parameters, self.GROUP_BY_SPATIAL_PARTITION, context
         )
         elevationPointsLyr = self.parameterAsVectorLayer(
-            parameters, self.INPUT_ELEVATION_POINTS, context
+            parameters, self.INPUT_SPOT_ELEVATION, context
         )
         elevationPointHeightFieldName = self.parameterAsFields(
             parameters, self.ELEVATION_POINT_ATTR, context
@@ -170,7 +172,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             "",
         ):
             raise QgsProcessingException(
-                self.tr("Elevation point height attribute must be selected.")
+                self.tr("Spot elevation height attribute must be selected.")
             )
         point_flagSink, point_flag_id = self.prepareAndReturnFlagSink(
             parameters, inputLyr, QgsWkbTypes.Point, context, self.POINT_FLAGS
@@ -375,7 +377,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Identification Processes)")
+        return self.tr("QA Tools: Terrain Processes")
 
     def groupId(self):
         """
@@ -385,7 +387,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Identification Processes)"
+        return "DSGTools - QA Tools: Terrain Processes"
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyTerrainModelErrorsAlgorithm", string)

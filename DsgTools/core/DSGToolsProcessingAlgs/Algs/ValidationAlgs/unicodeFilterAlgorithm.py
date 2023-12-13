@@ -143,8 +143,8 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
         polygon_sink, polygon_sink_id = self.createOutput(
             parameters, context, self.OUTPUT3, QgsWkbTypes.MultiPolygon, fields
         )
-        returnDict[self.OUTPUT3] = polygon_sink
-        sinkDict[QgsWkbTypes.MultiPolygon] = polygon_sink_id
+        returnDict[self.OUTPUT3] = polygon_sink_id
+        sinkDict[QgsWkbTypes.PolygonGeometry] = polygon_sink
 
         return returnDict, sinkDict
 
@@ -182,14 +182,14 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
         return "unicodefilter"
 
     def displayName(self):
-        return self.tr("Identify features with invalid unicode")
+        return self.tr("Identify Features With Invalid Unicode")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Identification Processes)")
+        return self.tr("QA Tools: Attribute Handling")
 
     def groupId(self):
         """
@@ -199,7 +199,7 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Identification Processes)"
+        return "DSGTools - QA Tools: Attribute Handling"
 
     def shortHelpString(self):
         return self.tr(

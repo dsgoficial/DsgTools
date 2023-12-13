@@ -68,6 +68,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
             "Non_EDGV": self.tr("Other database model"),
             "3.0": "EDGV 3.0",
             "3.0 Pro": "EDGV 3.0 Pro",
+            "3.0 Orto": "EDGV 3.0 Orto",
         }
         self.instantiateAbstractDb = False
         self.isStatic = isStatic

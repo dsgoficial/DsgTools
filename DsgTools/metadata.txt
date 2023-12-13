@@ -10,14 +10,14 @@
 name=DSG Tools
 qgisMinimumVersion=3.22
 description=Brazilian Army Cartographic Production Tools
-version=4.10.1
+version=4.12.0
 author=Brazilian Army Geographic Service
-email=suporte.dsgtools@dsg.eb.mil.br
+email=dsgtools@dsg.eb.mil.br
 about=
 	DSGTools with the following features:
 	-Creation, Storage and Deletion of PostGIS servers configurations
 	-Database creation using Spatialite and PostGIS according to EDGV version 2.1.3 and 3.0 (cadaster)
-	-Layer loading by category and class as defined by EDGV version 2.1.3 and EDGV version FTer_2a_Ed (cadaster)
+	-Layer loading by category and class as defined by EDGV version 2.1.3 and EDGV version 3.0 (cadaster)
 	-Manipulation of complex features (Creation, Editing, Deletion, Zoom, Association, Disassociation) and
 	-Access to some WM(T)S services provided by BDGEx.
 	-Inventory Tool for all geospatial data supported by GDAL/OGR.
@@ -44,6 +44,57 @@ about=
 
 # Uncomment the following line and add your changelog:
 changelog=
+	4.12.0:
+		Novas Funcionalidades:
+			- Novo processo de corrigir erros de segmentação em linhas (barragem versus rodovias);
+			- Novo processo para validar a estrutura do banco de dados em relação ao masterfile;
+			- Novo processo de detectar as mudanças entre dois banco de dados, realizados em dias distintos;
+			- Novo processo de identificar erros de intersecção entre curvas de nível e massas d'água;
+			- Novo processo de criar grid por meio de informar as coordenadas dos extremos;
+			- Adicionado atalho para ativar/desativar modo reclassificação;
+			- Novo processo de criar pacote de shapefile (utilizado normalmente para preparar a carga no BDGEx);
+			- Novo processo de generalizar trechos de drenagem de acordo com o comprimento;
+			- Adicionado o modelo EDGV 3.0 Orto;
+		Melhorias:
+			- O estado do Menu de classificação agora é salvo no projeto;
+			- Adiciona parâmetros opcionais na rotina de extração de pontos cotados;
+			- Melhoria de desempenho na extração de pontos cotados;
+			- O seletor genérico agora ignora camadas somente leitura;
+			- Melhoria de desempenho no processo Unir Linhas com Mesmo Conjunto de Atributos (Merge Lines With Same Attribute Set): Código refatorado para usar busca utilizando grafo. Além disso, o processo pega casos que não eram unidos anteriormente (linhas com mesmo conjunto de atributos e encadeadas);
+			- Melhoria de desempenho no processo Identify Unmerged Lines With Same Attribute Set: Código refatorado para usar busca utilizando grafo;
+			- O detecta nula agora indica quais camadas tem que ser verificadas;
+			- Algoritmos da caixa de ferramentas reorganizados por temática para facilitar o uso;
+			- A interface de carregamento agora filtra também na coluna de categoria da camada;
+			- O menu de aquisição agora mantém a camada ativa quando reclassifica uma feição no modo de reclassificação;
+			- Adicionado botão de selecionar a camada ativa na barra de ferramentas de revisão;
+			- Adicionada a opção de uso da tag "NULL" no atributo do botão do menu para preencher o campo com o valor nulo na atributação e reclassificação do menu de aquisição;
+			- O processo de carregar shapefiles agora agrupa por pasta, caso seja dado como entrada uma pasta que possui pastas com shapefiles;
+			- Melhoria de desempenho no processo de generalizar trechos de drenagem;
+		Correção de bug:
+			- Corrige bug de quando o usuário tenta reclassificar primitivas não compatíveis utilizando o menu de classificação;
+			- Corrige bug na rotina de extração de pontos cotados;
+			- Corrige bug de flags incorretas na rotina de identificar erros de segmentação em linhas (Identify Segment Errors Between Lines);
+			- Corrige bug de número de conexões ativas na ferramenta de setar estilo do banco (os métodos nativos do QGIS abrem conexão e não fecham, dessa forma derrubando todo mundo da produção por exceder o número máximo de conexões defindo no postgres.conf);
+			- Corrige bug no processo de verificar atributo unicode;
+			- Corrige bug no processo de identificar pontas soltas (retira distância mínima na busca, agora pega erro até no "mundo quântico");
+			- Corrige bug na ferramenta de inverter o sentido de linhas (flip lines) quando é uma camada não salva do banco de dados;
+			- Corrige bug na geração de moldura relativo a camada (Generate Systematic Grid Related to Layer) quando se usa memory layer (o memory layer não atualiza seu extent automaticamente, logo foi necessário colocar um layer.updateExtents() no código antes de calcular o extent);
+			- Corrige bug no processo de calcular azimute (estava sendo calculado com +90 graus);
+			- Corrige bug no ClipAndCopyFeaturesBetweenDatabasesAlgorithm;
+			- Corrige bug no VerifyAdjacentGeographicBoundaryDataAlgorithm (verifica interseção na moldura, não apenas no boundingbox);
+			- Corrige bug na rotina de extrair automaticamente pontos cotados (Extract Spot Elevation);
+			- Corrige bug da interface de carregamento não listar camadas do tipo GEOMETRY (genéricas normalmente criadas pelo FME). A camada que tiver esse tipo vai ser carregada em um nó chamado Geometry;
+			- Corrige bug dos parâmetros do clean não permitirem casas decimais o suficiente;
+			- Corrige bug de crash no qgis no algoritmo AddUnsharedVertexOnIntersectionsAlgorithm;
+			- Corrige bug de quando o usuário tenta reclassificar primitivas não compatíveis utilizando o menu de classificação;
+			- Corrige bug de quando o usuário tenta classificar com o formulário suprimido;
+			- Corrige bug de quando o usuário tenta classificar e o camada do botão não estava mudando;
+			- Corrige bug na interface do carregamento de feições, em bancos não EDGV;
+			- Corrige bug no processo de geometria inválida quando há geometria nula ou vazia;
+			- Corrige bug no processo de verificar atributo unicode (não estava gerando flag por erro de definição de geometria da camada);
+			- Corrige bug em parâmetro do algoritmo de verificação de regras de construção do terreno;
+			- Correção de bug no modelo EDGV 3.0 Pro;
+			- Correção de bug no modelo EDGV 3.0;
 	4.10.1:
 		Melhoria:
 			- Adicionado o modelo EDGV 3.0 Pro;

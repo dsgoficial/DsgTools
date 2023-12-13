@@ -216,14 +216,14 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Verifies features UUIDs")
+        return self.tr("Identify Features with Invalid UUIDs")
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Identification Processes)")
+        return self.tr("QA Tools: Attribute Handling")
 
     def groupId(self):
         """
@@ -233,7 +233,7 @@ class IdentifyInvalidUUIDsAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Identification Processes)"
+        return "DSGTools - QA Tools: Attribute Handling"
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyInvalidUUIDsAlgorithm", string)

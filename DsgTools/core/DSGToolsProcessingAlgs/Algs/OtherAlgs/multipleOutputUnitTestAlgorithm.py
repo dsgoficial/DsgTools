@@ -95,7 +95,7 @@ class MultipleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Other Algorithms")
+        return self.tr("Utils")
 
     def groupId(self):
         """
@@ -105,7 +105,7 @@ class MultipleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Other Algorithms"
+        return "DSGTools - Utils"
 
     def tr(self, string):
         return QCoreApplication.translate("MultipleOutputUnitTestAlgorithm", string)

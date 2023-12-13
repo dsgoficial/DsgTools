@@ -1420,9 +1420,7 @@ class LayerHandler(QObject):
     def checkGeomIsValid(self, geom, ignoreClosed, feedback=None):
         flagDict = dict()
         if geom is None or geom.isNull() or geom.isEmpty():
-            return {
-                ""
-            }
+            return {}
         for validate_type, method_parameter in {
             "GEOS": Qgis.GeometryValidationEngine.Geos,
             "QGIS": Qgis.GeometryValidationEngine.QgisInternal,
@@ -1871,7 +1869,7 @@ class LayerHandler(QObject):
             return set()
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
-        algRunner.runCreateSpatialIndex(linesLyr, context, feedback=multiStepFeedback)
+        algRunner.runCreateSpatialIndex(linesLyr, context, feedback=multiStepFeedback, is_child_algorithm=True)
         multiStepFeedback.setCurrentStep(1)
 
         def compute(feat):

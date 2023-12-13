@@ -660,12 +660,16 @@ class AlgRunner:
         return output["OUTPUT"]
 
     def runFilterExpression(
-        self, inputLyr, expression, context, outputLyr=None, feedback=None
+        self, inputLyr, expression, context, outputLyr=None, feedback=None, is_child_algorithm=False,
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"EXPRESSION": expression, "INPUT": inputLyr, "OUTPUT": outputLyr}
         output = processing.run(
-            "native:extractbyexpression", parameters, context=context, feedback=feedback
+            "native:extractbyexpression",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 

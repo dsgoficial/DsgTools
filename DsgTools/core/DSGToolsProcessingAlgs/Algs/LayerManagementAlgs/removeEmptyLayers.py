@@ -85,7 +85,7 @@ class RemoveEmptyLayers(QgsProcessingAlgorithm):
         return self.tr("Layer Management Algorithms")
 
     def groupId(self):
-        return "DSGTools: Layer Management Algorithms"
+        return "DSGTools - Layer Management Algorithms"
 
     def shortHelpString(self):
         return self.tr(

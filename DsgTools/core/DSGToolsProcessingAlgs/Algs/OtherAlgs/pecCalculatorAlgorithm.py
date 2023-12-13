@@ -184,7 +184,7 @@ class PecCalculatorAlgorithm(QgsProcessingAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Calculate RMS and Percentile 90 of Layer")
+        return self.tr("Compute RMS and Percentile 90 of Layer")
 
     def group(self):
         """
@@ -199,7 +199,7 @@ class PecCalculatorAlgorithm(QgsProcessingAlgorithm):
         string should be fixed for the algorithm, and must not be localised.
         The group id should be unique within each provider.
         """
-        return "DSGTools: Data Quality"
+        return "DSGTools - Data Quality"
 
     def tr(self, string):
         return QCoreApplication.translate("PecCalculatorAlgorithm", string)

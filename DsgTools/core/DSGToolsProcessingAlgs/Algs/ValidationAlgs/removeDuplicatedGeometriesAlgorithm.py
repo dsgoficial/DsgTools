@@ -23,19 +23,13 @@
 from PyQt5.QtCore import QCoreApplication
 
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterVectorLayer,
-    QgsWkbTypes,
 )
 
 from ...algRunner import AlgRunner
@@ -155,7 +149,7 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("Quality Assurance Tools (Correction Processes)")
+        return self.tr("QA Tools: Duplicated Object Handling")
 
     def groupId(self):
         """
@@ -165,7 +159,7 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools: Quality Assurance Tools (Correction Processes)"
+        return "DSGTools - QA Tools: Duplicated Object Handling"
 
     def tr(self, string):
         return QCoreApplication.translate("RemoveDuplicatedGeometriesAlgorithm", string)

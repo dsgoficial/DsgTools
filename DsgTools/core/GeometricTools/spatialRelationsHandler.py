@@ -351,11 +351,12 @@ class SpatialRelationsHandler(QObject):
     def createHilltopLayerFromPolygonLayer(
         self,
         polygonLayer: QgsVectorLayer,
+        geographicBoundsLyr: QgsVectorLayer,
         context: QgsProcessingContext,
         feedback: QgsProcessingFeedback = None,
         computeOrder: bool = False,
     ) -> QgsVectorLayer:
-        nSteps = 4 if not computeOrder else 7
+        nSteps = 13 if not computeOrder else 16
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(nSteps, feedback)
             if feedback is not None
@@ -421,7 +422,106 @@ class SpatialRelationsHandler(QObject):
             context=context,
             feedback=multiStepFeedback
         )
-        return hilltopsWithOrder
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        hilltopsWithOrder = self.algRunner.runCreateFieldWithExpression(
+            inputLyr=hilltopsWithOrder,
+            expression="$id",
+            fieldType=1,
+            fieldName="hfid",
+            feedback=multiStepFeedback,
+            context=context,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=hilltopsWithOrder,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        geographicBoundsLineLyr = self.algRunner.runPolygonsToLines(
+            inputLyr=geographicBoundsLyr,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        geographicBoundsLineLyr = self.algRunner.runExplodeLines(
+            geographicBoundsLineLyr,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runAddUnsharedVertexOnSharedEdges(
+            inputLinesList=[geographicBoundsLineLyr],
+            inputPolygonsList=[hilltopsWithOrder],
+            searchRadius=1e-5 if geographicBoundsLyr.crs().isGeographic() else 1e-2,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        intersectedLines = self.algRunner.runIntersection(
+            inputLyr=geographicBoundsLineLyr,
+            overlayLyr=hilltopsWithOrder,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        singleParts = self.algRunner.runMultipartToSingleParts(
+            inputLayer=intersectedLines,
+            context=context,
+            feedback=multiStepFeedback
+        )
+        nFeats = singleParts.featureCount()
+        if nFeats == 0:
+            return hilltopsWithOrder
+        groupDict = defaultdict(set)
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        stepSize = 100/nFeats
+        for current, feat in enumerate(singleParts.getFeatures()):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                return hilltopsWithOrder
+            groupDict[feat['hfid']].add(feat)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * stepSize)
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        stepSize = 100/len(groupDict)
+        idsToIgnoreSet = set()
+        for current, (featId, featSet) in enumerate(groupDict.items()):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                return hilltopsWithOrder
+            if len(featSet) <= 1:
+                continue
+            idsToIgnoreSet.add(featId)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * stepSize)
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        outputHilltopWithOrder = self.algRunner.runFilterExpression(
+            inputLyr=hilltopsWithOrder,
+            context=context,
+            expression=f"hfid not in {tuple(idsToIgnoreSet)}".replace(",)", ")"),
+            feedback=multiStepFeedback,
+        ) if len(idsToIgnoreSet) > 0 else hilltopsWithOrder
+        return outputHilltopWithOrder
 
 
     def populateContourAreaDict(
@@ -547,8 +647,12 @@ class SpatialRelationsHandler(QObject):
                     continue
                 areaId = areaFeat.id()
                 countourList = contourAreaDict['areaContourRelations'][areaId].keys()
-                h_min = min(countourList)
-                h_max = max(countourList)
+                if countourList == [] or countourList is None or len(countourList) == 0:
+                    continue
+                h_min = min(countourList, default=None)
+                h_max = max(countourList, default=None)
+                if h_min is None or h_max is None:
+                    continue
                 if pointHeight == h_min or pointHeight == h_max:
                     continue
                 if (h_min == h_max):
