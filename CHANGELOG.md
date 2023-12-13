@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.11.39 - dev
+## 4.12.0 - 2023-12-13
 
 Novas Funcionalidades:
 
