@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.11.38 - dev
+## 4.11.39 - dev
 
 Novas Funcionalidades:
 
@@ -12,6 +12,7 @@ Novas Funcionalidades:
 - Adicionado atalho para ativar/desativar modo reclassificação;
 - Novo processo de criar pacote de shapefile (utilizado normalmente para preparar a carga no BDGEx);
 - Novo processo de generalizar trechos de drenagem de acordo com o comprimento;
+- Adicionado o modelo EDGV 3.0 Orto;
 
 Melhorias:
 
@@ -54,6 +55,8 @@ Correção de bug:
 - Corrige bug no processo de geometria inválida quando há geometria nula ou vazia;
 - Corrige bug no processo de verificar atributo unicode (não estava gerando flag por erro de definição de geometria da camada);
 - Corrige bug em parâmetro do algoritmo de verificação de regras de construção do terreno;
+- Correção de bug no modelo EDGV 3.0 Pro;
+- Correção de bug no modelo EDGV 3.0;
 
 ## 4.10.1 - 2023-10-02
 

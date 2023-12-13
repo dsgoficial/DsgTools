@@ -90,6 +90,7 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
             "EDGV 2.1.3 Pro",
             "EDGV 3.0",
             "EDGV 3.0 Pro",
+            "EDGV 3.0 Orto",
         ]
         self.edgvComboBox.addItems(versions)
 

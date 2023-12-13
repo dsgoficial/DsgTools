@@ -1112,10 +1112,7 @@ class PostgisDb(AbstractDb):
         templateName = self.getTemplateName(edgvVersion)
         fileImplementationVersion = self.getImplementationVersionFromFile(edgvVersion)
         templateImplementationVersion = self.getImplementationVersion()
-        if templateImplementationVersion < fileImplementationVersion:
-            return True
-        else:
-            return False
+        return templateImplementationVersion < fileImplementationVersion
 
     def dropDatabase(self, candidateName, dropTemplate=False):
         """
@@ -3507,6 +3504,8 @@ class PostgisDb(AbstractDb):
             return "template_edgv_3"
         elif version in ("EDGV 3.0 Pro", "3.0 Pro"):
             return "template_edgv_3_pro"
+        elif version in ("EDGV 3.0 Orto", "3.0 Orto"):
+            return "template_edgv_3_orto"
 
     def setDbAsTemplate(
         self, version=None, dbName=None, setTemplate=True, useTransaction=True
@@ -3602,6 +3601,18 @@ class PostgisDb(AbstractDb):
                 "3_Pro",
                 "edgv3_pro.sql",
             )
+        elif version in ("3.0 Orto", "EDGV 3.0 Orto"):
+            edgvPath = os.path.join(
+                currentPath,
+                "..",
+                "..",
+                "..",
+                "core",
+                "DbModels",
+                "PostGIS",
+                "3_Orto",
+                "edgv3_orto.sql",
+            )
         elif version == "admin":
             edgvPath = os.path.join(
                 currentPath,
@@ -3638,7 +3649,7 @@ class PostgisDb(AbstractDb):
             if searchString in command:
                 return (
                     command.split(searchString)[-1]
-                    .split(",")[-1]
+                    .split(",")[1]
                     .replace(")", "")
                     .replace("'", "")
                 )

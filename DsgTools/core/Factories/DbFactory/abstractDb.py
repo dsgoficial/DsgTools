@@ -894,6 +894,8 @@ class AbstractDb(QObject):
             styleDir = os.path.join(styleDir, "edgv_3")
         elif dbVersion == "3.0 Pro":
             styleDir = os.path.join(styleDir, "edgv_3_pro")
+        elif dbVersion == "3.0 Orto":
+            styleDir = os.path.join(styleDir, "edgv_300_orto")
         elif dbVersion == "FTer_2a_Ed":
             styleDir = os.path.join(styleDir, "edgv_FTer_2a_Ed")
         else:

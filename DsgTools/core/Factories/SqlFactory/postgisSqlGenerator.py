@@ -1546,7 +1546,7 @@ class PostGISSqlGenerator(SqlGenerator):
             sql = "ALTER DATABASE \"{0}\" SET search_path = \"$user\", public, topology,'edgv','dominios';".format(
                 dbName
             )
-        elif version in ("3.0", "3.0 Pro"):
+        elif version in ("3.0", "3.0 Pro", "3.0 Orto"):
             sql = "ALTER DATABASE \"{0}\" SET search_path = \"$user\", public, topology, pg_catalog, 'edgv' ,'dominios';".format(
                 dbName
             )

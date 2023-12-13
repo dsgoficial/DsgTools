@@ -145,6 +145,10 @@ class PostgisDbThread(GenericThread):
             edgvPath = os.path.join(currentPath, "sqls", "213_Pro", "edgv213_pro.sql")
         elif self.version == "3.0":
             edgvPath = os.path.join(currentPath, "sqls", "3", "edgv3.sql")
+        elif self.version == "3.0 Pro":
+            edgvPath = os.path.join(currentPath, "sqls", "3_Pro", "edgv3_pro.sql")
+        elif self.version == "3.0 Orto":
+            edgvPath = os.path.join(currentPath, "sqls", "3_Orto", "edgv300_orto.sql")
         else:
             edgvPath = ""
         return self.loadDatabaseStructure(edgvPath)
