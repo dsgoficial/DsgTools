@@ -591,7 +591,7 @@ class SpatialiteDb(AbstractDb):
     def checkAndCreateStyleTable(self):
         return None
 
-    def listStylesFromDb(self, dbVersion):
+    def getStylesFromDb(self, dbVersion):
         return None
 
     def getGeomTypeDict(self, loadCentroids=False):

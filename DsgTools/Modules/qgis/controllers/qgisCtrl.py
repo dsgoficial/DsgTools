@@ -122,8 +122,7 @@ class QgisCtrl:
             "Mão Livre": "FreeHand",
         }
 
-    def addDockWidget(self, dockWidget, side=None):
-        side = side if side is not None else QtCore.Qt.LeftDockWidgetArea
+    def addDockWidget(self, dockWidget, side=QtCore.Qt.LeftDockWidgetArea):
         iface.addDockWidget(side, dockWidget)
 
     def removeDockWidget(self, dockWidget):
@@ -272,8 +271,6 @@ class QgisCtrl:
             "ClickLayerTreeView": iface.layerTreeView().clicked,
             "AddLayerTreeView": core.QgsProject.instance().legendLayersAdded,
             "StartEditing": iface.actionToggleEditing().triggered,
-            "ProjectSaved":  core.QgsProject.instance().projectSaved,
-            "ProjectRead": iface.projectRead,
         }
 
     def suppressLayerForm(self, layer, suppress):

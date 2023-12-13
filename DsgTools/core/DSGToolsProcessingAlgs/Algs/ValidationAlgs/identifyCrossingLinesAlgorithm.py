@@ -43,8 +43,7 @@ from .validationAlgorithm import ValidationAlgorithm
 
 class IdentifyCrossingLinesAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
-    COMPARE_INPUT_LINES = "COMPARE_INPUT_LINES"
-    COMPARE_INPUT_POLYGONS = "COMPARE_INPUT_POLYGONS"
+    COMPARE_INPUT = "COMPARE_INPUT"
     FLAGS = "FLAGS"
 
     def initAlgorithm(self, config):
@@ -58,18 +57,9 @@ class IdentifyCrossingLinesAlgorithm(ValidationAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
-                self.COMPARE_INPUT_LINES,
-                self.tr("Compare layers (lines)"),
-                QgsProcessing.TypeVectorLine,
-                optional=True,
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterMultipleLayers(
-                self.COMPARE_INPUT_POLYGONS,
-                self.tr("Compare layers (polygons)"),
-                QgsProcessing.TypeVectorPolygon,
-                optional=True,
+                self.COMPARE_INPUT,
+                self.tr("Compare lines"),
+                QgsProcessing.TypeVectorAnyGeometry,
             )
         )
         self.addParameter(
@@ -84,18 +74,10 @@ class IdentifyCrossingLinesAlgorithm(ValidationAlgorithm):
         """
         self.algRunner = AlgRunner()
         input = self.parameterAsVectorLayer(parameters, self.INPUT, context)
-        compareList = []
-        compareListLines = self.parameterAsLayerList(
-            parameters, self.COMPARE_INPUT_LINES, context
-        )
-        compareListPoygons = self.parameterAsLayerList(
-            parameters, self.COMPARE_INPUT_POLYGONS, context
-        )
-        compareList.extend(compareListLines)
-        compareList.extend(compareListPoygons)
+        compareList = self.parameterAsLayerList(parameters, self.COMPARE_INPUT, context)
         self.prepareFlagSink(parameters, input, QgsWkbTypes.MultiPoint, context)
         nFeats = input.featureCount()
-        if input is None or nFeats == 0 or not compareList:
+        if input is None or nFeats == 0 or compareList == 0:
             return {self.FLAGS: self.flag_id}
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         currentStep = 0
@@ -269,13 +251,6 @@ class IdentifyCrossingLinesAlgorithm(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyCrossingLinesAlgorithm", string)
-
-    def shortHelpString(self):
-        return self.tr(
-            """
-        Return intersections between 'Input Lines' and the layers selected in 'Compare layers'
-        """
-        )
 
     def createInstance(self):
         return IdentifyCrossingLinesAlgorithm()

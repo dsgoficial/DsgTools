@@ -1,8 +1,0 @@
-{
-"type": "FeatureCollection",
-"name": "line_constraint",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-"features": [
-{ "type": "Feature", "properties": { }, "geometry": { "type": "LineString", "coordinates": [ [ -0.248456790123457, -0.695061728395061 ], [ -0.121574747395765, -0.294493531767752 ], [ -0.114506172839507, -0.146296296296296 ] ] } }
-]
-}

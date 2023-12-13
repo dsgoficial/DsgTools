@@ -190,20 +190,9 @@ class PostgisDb(AbstractDb):
             version = query.value(0)
         return version
 
-    def getDatabaseAndImplementationVersions(self):
-        self.checkAndOpenDb()
-        sql = self.gen.getEDGVVersionAndImplementationVersion()
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            return "Non_EDGV", "-1"
-        while query.next():
-            edgvVersion = query.value(0)
-            implementationVersion = query.value(1)
-        return edgvVersion, implementationVersion
-
     def listGeomClassesFromDatabase(
         self,
-        primitiveFilter=None,
+        primitiveFilter=[],
         withElements=False,
         excludeViews=True,
         getGeometryColumn=False,
@@ -213,7 +202,6 @@ class PostgisDb(AbstractDb):
         returns dict if getGeometryColumn = True
         return list if getGeometryColumn = False
         """
-        primitiveFilter = [] if primitiveFilter is None else primitiveFilter
         self.checkAndOpenDb()
         classList = []
         schemaList = [
@@ -2335,10 +2323,9 @@ class PostgisDb(AbstractDb):
                 self.db.commit()
         return created
 
-    def listStylesFromDb(self, dbVersion=None):
+    def getStylesFromDb(self, dbVersion):
         self.checkAndOpenDb()
-        dbVersion = dbVersion if dbVersion is not None else self.getDatabaseVersion()
-        sql = self.gen.listStylesFromDb(dbVersion)
+        sql = self.gen.getStylesFromDb(dbVersion)
         if not sql:
             return []
         query = QSqlQuery(sql, self.db)
@@ -2363,8 +2350,9 @@ class PostgisDb(AbstractDb):
         query.next()
         qml = query.value(0)
         # TODO: post parse qml to remove possible attribute value type
-        if parsing and qml:
-            qml = self.utils.parseStyle(qml)
+        if parsing:
+            if qml:
+                qml = self.utils.parseStyle(qml)
         tempPath = None
         if qml:
             tempPath = os.path.join(os.path.dirname(__file__), "temp.qml")
@@ -2372,24 +2360,6 @@ class PostgisDb(AbstractDb):
                 f.writelines(qml)
                 f.close()
         return tempPath
-
-    def getStyleDict(self):
-        self.checkAndOpenDb()
-        sql = self.gen.getStoredStyles()
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(
-                self.tr("Problem getting styles from db: ") + query.lastError().text()
-            )
-        styleDict = defaultdict(dict)
-        while query.next():
-            tableSchema = query.value(0)
-            tableName = query.value(1)
-            geom = query.value(2)
-            styleName = query.value(3)
-            qml = query.value(4)
-            styleDict[styleName][f"{tableSchema}.{tableName}({geom})"] = qml
-        return styleDict
 
     def importStyle(self, styleName, table_name, qml, tableSchema, useTransaction=True):
         self.checkAndOpenDb()
@@ -5050,139 +5020,3 @@ class PostgisDb(AbstractDb):
             rowDict["srid"] = str(query.value(4))
             out.append(rowDict)
         return out
-
-    def checkIfSchemaExistsInDatabase(self, schemaName):
-        """
-        Método que retorna true se o esquema existir, e falso caso contrário.
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.getSchemasFromInformationSchema()
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr("Problem getting schemas exists in database"))
-        schemaExistsInDatabaseSet = set()
-        while query.next():
-            schemaExistsInDatabaseSet.add(query.value(0))
-        if schemaName in schemaExistsInDatabaseSet:
-            return True
-        return False
-
-    def getTableListFromSchema(self, schemaName):
-        """
-        Método que recebe um nome de esquema e retorna a lista com os nomes das tabelas.
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.getTablesFromInformationSchema(schemaName)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr("Problem getting table name in schema"))
-        tableListFromSchemaSet = set()
-        while query.next():
-            tableListFromSchemaSet.add(query.value(0))
-        return tableListFromSchemaSet
-
-    def getColumnsDictFromSchema(self, schemaName):
-        """
-        Método que recebe um nome de esquema e retorna um dicionário com a chave sendo o nome da tabela
-        e a chave como sendo um conjunto com os nomes da coluna.
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.getColumnsFromInformationSchema(schemaName)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr("Problem getting columns name in schema"))
-        tableColumnsSetDict = defaultdict(set)
-        while query.next():
-            tableColumnsSetDict[query.value(2)].add(query.value(3))
-        return tableColumnsSetDict
-
-    def getPrimaryKeyDictFromSchema(self, schemaName):
-        """
-        Método que recebe um nome de esquema e retonra um dicionário com a chave sendo o nome da tabela
-        e a chave como sendo um conjunto com os nomes da coluna.
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.getPrimaryKeyFromInformationSchema(schemaName)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(
-                self.tr(f"Problem getting primary key name in {schemaName}")
-            )
-        tablePrimaryKeySetDict = defaultdict(set)
-        while query.next():
-            tablePrimaryKeySetDict[query.value(1)].add(query.value(4))
-        return tablePrimaryKeySetDict
-
-    def getTupleSetFromTable(self, schemaName, tableName, columnNameList):
-        self.checkAndOpenDb()
-        sql = self.gen.getAllValuesFromTable(schemaName, tableName, columnNameList)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(
-                self.tr(f"Problem getting values from {schemaName}.{tableName}")
-            )
-        tupleSet = set()
-        nColumns = len(columnNameList)
-        while query.next():
-            newTuple = tuple(query.value(i) for i in range(nColumns))
-            tupleSet.add(newTuple)
-        return tupleSet
-
-    def getNameColumnIsNullableOrNoFromSchema(self, schemaName):
-        self.checkAndOpenDb()
-        sql = self.gen.getIfCollumnIsNullable(schemaName)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr(f"Problem getting values from {schemaName}"))
-        nameTableColumnIsNullableOrNoDict = defaultdict(dict)
-        while query.next():
-            nameTableColumnIsNullableOrNoDict[query.value(2)][query.value(3)] = {
-                "nullable": query.value(6)
-            }
-        return nameTableColumnIsNullableOrNoDict
-
-    def getForeignTableFromSchema(self, schemaName):
-        nameTableColumnIsNullableOrNoForeignTableDict = (
-            self.getNameColumnIsNullableOrNoFromSchema(schemaName)
-        )
-        sql = self.gen.getConstraintMapValueFromSchema()
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr(f"Problem getting foreing valus from {schemaName}"))
-        while query.next():
-            nameTableColumnIsNullableOrNoForeignTableDict[query.value(2)][
-                query.value(3)
-            ]["foreignTable"] = query.value(5)
-        return nameTableColumnIsNullableOrNoForeignTableDict
-
-    def getTypeColumnFromSchema(self, schemaName):
-        nameTableColumnIsNullableOrNoForeignTypeTableDict = (
-            self.getForeignTableFromSchema(schemaName)
-        )
-        sql = self.gen.getNameColumnTableDataTypeFromSchema(schemaName)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(
-                self.tr(f"Problem getting type of column from {schemaName}")
-            )
-        while query.next():
-            nameTableColumnIsNullableOrNoForeignTypeTableDict[query.value(1)][
-                query.value(0)
-            ]["type"] = query.value(2)
-        return nameTableColumnIsNullableOrNoForeignTypeTableDict
-
-    def getMaxLengthVarcharFromSchema(self, schemaName):
-        self.checkAndOpenDb()
-        sql = self.gen.getMaxLengthVarcharFromSchema(schemaName)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(
-                self.tr(f"Problem getting maximum length from {schemaName}")
-            )
-        nameTableColumnMaxVarcharDict = defaultdict(dict)
-        while query.next():
-            if query.value(7) == "character varying":
-                nameTableColumnMaxVarcharDict[query.value(2)][
-                    query.value(3)
-                ] = query.value(8)
-        return nameTableColumnMaxVarcharDict

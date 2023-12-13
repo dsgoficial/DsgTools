@@ -131,14 +131,14 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
         point_sink, point_sink_id = self.createOutput(
             parameters, context, self.OUTPUT1, QgsWkbTypes.MultiPoint, fields
         )
-        returnDict[self.OUTPUT1] = point_sink_id
-        sinkDict[QgsWkbTypes.PointGeometry] = point_sink
+        returnDict[self.OUTPUT1] = point_sink
+        sinkDict[QgsWkbTypes.PointGeometry] = point_sink_id
 
         line_sink, line_sink_id = self.createOutput(
             parameters, context, self.OUTPUT2, QgsWkbTypes.MultiLineString, fields
         )
-        returnDict[self.OUTPUT2] = line_sink_id
-        sinkDict[QgsWkbTypes.LineGeometry] = line_sink
+        returnDict[self.OUTPUT2] = line_sink
+        sinkDict[QgsWkbTypes.LineGeometry] = line_sink_id
 
         polygon_sink, polygon_sink_id = self.createOutput(
             parameters, context, self.OUTPUT3, QgsWkbTypes.MultiPolygon, fields
