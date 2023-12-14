@@ -269,6 +269,7 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
 
     def findIdsToRemove(self, nx, localCache, nodesLayer, threshold, geographicBoundsLayer, pointLayerList, lineLayerList, polygonLayerList, context, feedback=None):
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback) if feedback is not None else None
+        currentStep = 0
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)

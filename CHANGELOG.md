@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 4.13.1 - dev
+
+Novas Funcionalidades:
+
+-
+
+Melhorias:
+
+-
+
+Correção de bug:
+
+- Corrige bug no modo não paralelo do algoritmo de generalizar linhas por comprimento;
+
 ## 4.12.0 - 2023-12-13
 
 Novas Funcionalidades:
