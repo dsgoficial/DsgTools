@@ -660,7 +660,13 @@ class AlgRunner:
         return output["OUTPUT"]
 
     def runFilterExpression(
-        self, inputLyr, expression, context, outputLyr=None, feedback=None, is_child_algorithm=False,
+        self,
+        inputLyr,
+        expression,
+        context,
+        outputLyr=None,
+        feedback=None,
+        is_child_algorithm=False,
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"EXPRESSION": expression, "INPUT": inputLyr, "OUTPUT": outputLyr}
@@ -1774,3 +1780,26 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
+
+    def runRemoveDuplicateVertex(
+        self,
+        inputLyr,
+        tolerance,
+        context,
+        useZValue=False,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        output = processing.run(
+            "native:removeduplicatevertices",
+            {
+                "INPUT": inputLyr,
+                "TOLERANCE": tolerance,
+                "USE_Z_VALUE": useZValue,
+                "OUTPUT": "TEMPORARY_OUTPUT",
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]

@@ -1,10 +1,10 @@
 # CHANGELOG
 
-## 4.13.1 - dev
+## 4.13.2 - dev
 
 Novas Funcionalidades:
 
--
+- Novo processo de remover vértices duplicados e atualizar a camada original;
 
 Melhorias:
 
