@@ -92,7 +92,9 @@ class AlgRunner:
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         field = [] if field is None else field
-        parameters = {"INPUT": inputLyr, "FIELD": field, "OUTPUT": outputLyr}
+        parameters = {"INPUT": inputLyr, "FIELD": field,  "OUTPUT": outputLyr}
+        if Qgis.QGIS_VERSION_INT >= 32800:
+            parameters["SEPARATE_DISJOINT"] = True
         output = processing.run(
             "native:dissolve",
             parameters,
