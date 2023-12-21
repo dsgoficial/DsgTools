@@ -4,7 +4,7 @@
 
 Novas Funcionalidades:
 
--
+- Novo processo de remover vértices duplicados e atualizar a camada original;
 
 Melhorias:
 
