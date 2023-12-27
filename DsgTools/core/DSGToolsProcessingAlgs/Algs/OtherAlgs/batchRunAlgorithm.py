@@ -25,25 +25,16 @@ from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from qgis.PyQt.QtCore import QVariant
 import json, processing
 from qgis.core import (
-    QgsProcessing,
     QgsFeatureSink,
     QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterFeatureSink,
     QgsFeature,
-    QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
-    QgsProcessingParameterVectorLayer,
     QgsProcessingParameterString,
     QgsWkbTypes,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterMultipleLayers,
     QgsWkbTypes,
     QgsProcessingUtils,
     QgsProject,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterFile,
-    QgsVectorLayerUtils,
+    QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsFields,
     QgsField,
@@ -146,16 +137,12 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
             )
             if layer is None:
                 multiStepFeedback.pushInfo(
-                    self.tr("Layer {layerName} not found. Skipping step.").format(
-                        layerName=layerName
-                    )
+                    self.tr(f"Layer {layerName} not found. Skipping step.")
                 )
                 continue
             if layer.readOnly():
                 multiStepFeedback.pushInfo(
-                    self.tr("Layer {layerName} is read only. Skipping step.").format(
-                        layerName=layerName
-                    )
+                    self.tr(f"Layer {layerName} is read only. Skipping step.")
                 )
                 continue
             currentDict = dict(algParameterDict)  # copy of the dict
