@@ -151,7 +151,13 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
                     )
                 )
                 continue
-
+            if layer.readOnly():
+                multiStepFeedback.pushInfo(
+                    self.tr("Layer {layerName} is read only. Skipping step.").format(
+                        layerName=layerName
+                    )
+                )
+                continue
             currentDict = dict(algParameterDict)  # copy of the dict
             currentDict[inputKey] = layerName
             output = self.runProcessingAlg(

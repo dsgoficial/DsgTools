@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.3 - dev
+## 4.13.4 - dev
 
 Novas Funcionalidades:
 
@@ -9,6 +9,7 @@ Novas Funcionalidades:
 Melhorias:
 
 - Adiciona a melhoria no dissolve nativo do qgis introduzida na versão 3.28.0 (foi feito o backport para manter o funcionamento nas versões anteriores);
+- O processo Batch Run Algorithm agora ignora camadas somente leitura;
 
 Correção de bug:
 
