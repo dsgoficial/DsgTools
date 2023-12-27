@@ -132,8 +132,8 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(idx)
             multiStepFeedback.pushInfo(
                 self.tr(
-                    "Step {idx}/{total}: Running algorithm {algName} on {layerName}"
-                ).format(idx=idx, total=nSteps, algName=algName, layerName=layerName)
+                    f"Step {idx+1}/{nSteps}: Running algorithm {algName} on {layerName}"
+                )
             )
             if layer is None:
                 multiStepFeedback.pushInfo(
