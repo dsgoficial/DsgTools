@@ -92,7 +92,7 @@ class AlgRunner:
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         field = [] if field is None else field
-        parameters = {"INPUT": inputLyr, "FIELD": field,  "OUTPUT": outputLyr}
+        parameters = {"INPUT": inputLyr, "FIELD": field, "OUTPUT": outputLyr}
         if Qgis.QGIS_VERSION_INT >= 32800:
             parameters["SEPARATE_DISJOINT"] = True
         output = processing.run(
@@ -1798,7 +1798,42 @@ class AlgRunner:
                 "INPUT": inputLyr,
                 "TOLERANCE": tolerance,
                 "USE_Z_VALUE": useZValue,
-                "OUTPUT": "TEMPORARY_OUTPUT",
+                "OUTPUT": "memory:",
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runJoinAttributesTable(
+        self,
+        layerA,
+        fieldA,
+        layerB,
+        fieldB,
+        context,
+        method,
+        fieldsToCopy=None,
+        discardNonMatching=False,
+        prefix=None,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        fieldsToCopy = [] if fieldsToCopy is None else fieldsToCopy
+        prefix = "" if prefix is None else prefix
+        output = processing.run(
+            "native:joinattributestable",
+            {
+                "INPUT": layerA,
+                "FIELD": fieldA,
+                "INPUT_2": layerB,
+                "FIELD_2": fieldB,
+                "FIELDS_TO_COPY": [],
+                "METHOD": method,
+                "DISCARD_NONMATCHING": discardNonMatching,
+                "PREFIX": prefix,
+                "OUTPUT": "memory:",
             },
             context=context,
             feedback=feedback,
