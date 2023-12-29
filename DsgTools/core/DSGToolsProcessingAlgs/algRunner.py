@@ -1840,3 +1840,27 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
+
+    def runDSGToolsMergeLines(
+        self,
+        inputLayer,
+        context,
+        onlySelected=False,
+        attributeBlackList=None,
+        ignoreVirtualFields=True,
+        ignorePkFields=True,
+        feedback=None,
+    ):
+        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
+        output = processing.run(
+            "dsgtools:mergelineswithsameattributeset",
+            {
+                "INPUT": inputLayer,
+                "SELECTED": onlySelected,
+                "ATTRIBUTE_BLACK_LIST": attributeBlackList,
+                "IGNORE_VIRTUAL_FIELDS": ignoreVirtualFields,
+                "IGNORE_PK_FIELDS": ignorePkFields,
+            },
+            context=context,
+            feedback=feedback,
+        )

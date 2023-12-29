@@ -42,6 +42,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildZipPacka
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridFromCoordinatesAlgorithm import (
     CreateGridFromCoordinatesAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.cleanGeometriesWithSpatialConstraintAlgorithm import (
+    CleanGeometriesWithSpatialConstraintAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixSegmentErrorsBetweenLinesAlgorithm import (
     FixSegmentErrorsBetweenLinesAlgorithm,
 )
@@ -636,6 +639,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             BuildZipPackageAlgorithm(),
             GeneralizeNetworkEdgesWithLengthAlgorithm(),
             RemoveDuplicateVertexesAlgorithm(),
+            CleanGeometriesWithSpatialConstraintAlgorithm(),
         ]
         return algList
 

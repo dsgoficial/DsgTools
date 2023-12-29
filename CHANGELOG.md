@@ -1,10 +1,11 @@
 # CHANGELOG
 
-## 4.13.4 - dev
+## 4.13.5 - dev
 
 Novas Funcionalidades:
 
 - Novo processo de remover vértices duplicados e atualizar a camada original;
+- Novo processo de rodar o clean levando em consideração a partição espacial (impede alteração do clean fora da moldura);
 
 Melhorias:
 

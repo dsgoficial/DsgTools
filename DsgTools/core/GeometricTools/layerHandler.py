@@ -67,7 +67,12 @@ from qgis.core import (
 from qgis.PyQt.Qt import QObject, QVariant
 
 from .featureHandler import FeatureHandler
-from .geometryHandler import GeometryHandler, find_nan_or_inf_vertex_neighbor, fix_geom_vertices, make_valid
+from .geometryHandler import (
+    GeometryHandler,
+    find_nan_or_inf_vertex_neighbor,
+    fix_geom_vertices,
+    make_valid,
+)
 
 
 class LayerHandler(QObject):
@@ -1497,7 +1502,11 @@ class LayerHandler(QObject):
             if error.hasWhere():
                 errorPointXY = error.where()
                 flagGeom = QgsGeometry.fromPointXY(errorPointXY)
-                if not (geom is None or geom.isNull() or geom.isEmpty()) and np.isinf(tuple(errorPointXY)).any() or np.isnan(tuple(errorPointXY)).any():
+                if (
+                    not (geom is None or geom.isNull() or geom.isEmpty())
+                    and np.isinf(tuple(errorPointXY)).any()
+                    or np.isnan(tuple(errorPointXY)).any()
+                ):
                     flagGeom = find_nan_or_inf_vertex_neighbor(geom)
                 if (
                     geom.type() == QgsWkbTypes.LineGeometry
@@ -1513,8 +1522,8 @@ class LayerHandler(QObject):
         if errorPointXY not in flagDict:
             flagDict[errorPointXY] = {"geom": flagGeom, "reason": ""}
         what = error.what()
-        if 'invalid coordinate' in what.lower():
-            what += ' on neighbor vertex (is either inf or nan).'
+        if "invalid coordinate" in what.lower():
+            what += " on neighbor vertex (is either inf or nan)."
         flagDict[errorPointXY]["reason"] += f"{validate_type} invalid reason: {what}\n"
 
     def isClosedAndFlagIsAtStartOrEnd(self, geom, flagGeom):
@@ -1869,7 +1878,9 @@ class LayerHandler(QObject):
             return set()
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
-        algRunner.runCreateSpatialIndex(linesLyr, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        algRunner.runCreateSpatialIndex(
+            linesLyr, context, feedback=multiStepFeedback, is_child_algorithm=True
+        )
         multiStepFeedback.setCurrentStep(1)
 
         def compute(feat):
@@ -1924,7 +1935,12 @@ class LayerHandler(QObject):
         context = (
             dataobjects.createContext(feedback=feedback) if context is None else context
         )
-        nSteps = 2 * len(inputLineLyrList) + 3 * len(inputPolygonLyrList) + 1 + 7 * (inputPolygonLyrList != [] and excludeLinesInsidePolygons)
+        nSteps = (
+            2 * len(inputLineLyrList)
+            + 3 * len(inputPolygonLyrList)
+            + 1
+            + 7 * (inputPolygonLyrList != [] and excludeLinesInsidePolygons)
+        )
         multiStepFeedback = QgsProcessingMultiStepFeedback(
             nSteps, feedback
         )  # set number of steps
@@ -1966,7 +1982,10 @@ class LayerHandler(QObject):
                 feedback=multiStepFeedback,
                 is_child_algorithm=True,
             )
-            if geographicBoundaryLyr is not None and polygonLyr.id() == geographicBoundaryLyr.id():
+            if (
+                geographicBoundaryLyr is not None
+                and polygonLyr.id() == geographicBoundaryLyr.id()
+            ):
                 singlePartGeographicBoundaryLyr = usedInput
             singlePartPolygonList.append(usedInput)
             currentStep += 1
@@ -1997,7 +2016,7 @@ class LayerHandler(QObject):
         )
         if singlePartPolygonList == [singlePartGeographicBoundaryLyr]:
             return mergedLayer
-        
+
         if singlePartPolygonList != [] and excludeLinesInsidePolygons:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -2011,30 +2030,44 @@ class LayerHandler(QObject):
             )
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            algRunner.runCreateSpatialIndex(inputLyr=mergedLayer, context=context, feedback=multiStepFeedback, is_child_algorithm=True)
+            algRunner.runCreateSpatialIndex(
+                inputLyr=mergedLayer,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
+            )
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
 
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            mergedPolygonsInputList = [i for i in singlePartPolygonList if i != singlePartGeographicBoundaryLyr]
-            mergedPolygons = algRunner.runMergeVectorLayers(
-                inputList=mergedPolygonsInputList,
-                context=context,
-                feedback=multiStepFeedback
-            ) if len(mergedPolygonsInputList) > 0 else None
-            currentStep += 1
-
-            multiStepFeedback.setCurrentStep(currentStep)
-            dissolvedPolygons = algRunner.runDissolve(
-                inputLyr=mergedPolygons,
-                context=context,
-                feedback=multiStepFeedback
+            mergedPolygonsInputList = [
+                i for i in singlePartPolygonList if i != singlePartGeographicBoundaryLyr
+            ]
+            mergedPolygons = (
+                algRunner.runMergeVectorLayers(
+                    inputList=mergedPolygonsInputList,
+                    context=context,
+                    feedback=multiStepFeedback,
+                )
+                if len(mergedPolygonsInputList) > 0
+                else None
             )
             currentStep += 1
 
             multiStepFeedback.setCurrentStep(currentStep)
-            algRunner.runCreateSpatialIndex(inputLyr=dissolvedPolygons, context=context, feedback=multiStepFeedback, is_child_algorithm=True)
+            dissolvedPolygons = algRunner.runDissolve(
+                inputLyr=mergedPolygons, context=context, feedback=multiStepFeedback
+            )
+            currentStep += 1
+
+            multiStepFeedback.setCurrentStep(currentStep)
+            algRunner.runCreateSpatialIndex(
+                inputLyr=dissolvedPolygons,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
+            )
             currentStep += 1
 
             multiStepFeedback.setCurrentStep(currentStep)
@@ -2212,7 +2245,9 @@ class LayerHandler(QObject):
             outputPolygonLyr, context, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(2)
-        algRunner.runCreateSpatialIndex(centroidLyr, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        algRunner.runCreateSpatialIndex(
+            centroidLyr, context, feedback=multiStepFeedback, is_child_algorithm=True
+        )
         multiStepFeedback.setCurrentStep(3)
         centroidsWithAttributes = algRunner.runJoinAttributesByLocation(
             centroidLyr, inputLyr, context, feedback=multiStepFeedback
@@ -3010,7 +3045,7 @@ class LayerHandler(QObject):
             inputLyr=temp, context=context, is_child_algorithm=True
         )
         return temp
-    
+
     def createMemoryLayerFromGeometry(self, geom, crs):
         temp = QgsVectorLayer(
             f"{QgsWkbTypes.displayString(geom.wkbType())}?crs={crs.authid()}",
@@ -3023,3 +3058,90 @@ class LayerHandler(QObject):
         feat.setGeometry(geom)
         temp_data.addFeature(feat)
         return temp
+
+    def prepareAuxLayerForSpatialConstrainedAlgorithm(
+        self, inputLyr, geographicBoundaryLyr, context=None, feedback=None
+    ):
+        context = QgsProcessingContext() if context is None else context
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(4, feedback)
+            if feedback is not None
+            else None
+        )
+        currentStep = 0
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        clipped = self.algRunner.runClip(
+            inputLayer=inputLyr,
+            overlayLayer=geographicBoundaryLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        insideLyr = self.algRunner.runMultipartToSingleParts(
+            inputLayer=clipped, context=context, feedback=multiStepFeedback
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        difference = self.algRunner.runDifference(
+            inputLyr=inputLyr,
+            overlayLyr=geographicBoundaryLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        outsideLyr = self.algRunner.runMultipartToSingleParts(
+            inputLayer=difference, context=context, feedback=multiStepFeedback
+        )
+        return insideLyr, outsideLyr
+
+    def integrateSpatialConstrainedAlgorithmOutputAndOutsideLayer(
+        self, algOutputLyr, outsideLyr, tol, context=None, feedback=None
+    ):
+        context = QgsProcessingContext() if context is None else context
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(3, feedback)
+            if feedback is not None
+            else None
+        )
+        currentStep = 0
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        snappedOutput = self.algRunner.runSnapGeometriesToLayer(
+            inputLayer=algOutputLyr,
+            referenceLayer=outsideLyr,
+            tol=tol,
+            behavior=6,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        mergedLayer = self.algRunner.runMergeVectorLayers(
+            [outsideLyr, snappedOutput],
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if mergedLayer.geometryType() == QgsWkbTypes.PolygonGeometry:
+            # TODO: adicionar lógica de dissolver polígonos de borda
+            return mergedLayer
+        if multiStepFeedback is not None:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runDSGToolsMergeLines(
+            inputLayer=mergedLayer,
+            attributeBlackList=["path", "layer_2", "cat"],
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        mergedLayer.commitChanges()
+        return mergedLayer
