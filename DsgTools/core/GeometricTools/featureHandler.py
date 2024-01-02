@@ -212,17 +212,16 @@ class FeatureHandler(QObject):
             if idx == 0:
                 geomToUpdate = geom
                 continue
-            else:
-                newFeat = QgsVectorLayerUtils.createFeature(
-                    layer=lyr,
-                    geometry=geom,
-                    attributes={
-                        idx: featureWithoutGeom[f.name()]
-                        for idx, f in enumerate(featureWithoutGeom.fields())
-                        if idx not in lyr.primaryKeyAttributes()
-                    },
-                )
-                newFeatList.append(newFeat)
+            newFeat = QgsVectorLayerUtils.createFeature(
+                layer=lyr,
+                geometry=geom,
+                attributes={
+                    idx: featureWithoutGeom[f.name()]
+                    for idx, f in enumerate(featureWithoutGeom.fields())
+                    if idx not in lyr.primaryKeyAttributes()
+                },
+            )
+            newFeatList.append(newFeat)
         return geomToUpdate, newFeatList, False
 
     def handleConvertedFeature(

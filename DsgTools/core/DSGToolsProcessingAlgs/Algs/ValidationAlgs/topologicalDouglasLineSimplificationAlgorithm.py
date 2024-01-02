@@ -39,10 +39,11 @@ from qgis.core import (
     QgsProcessingParameterFeatureSource,
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterNumber,
-    QgsProcessingParameterVectorLayer,
+    QgsProcessingParameterDistance,
     QgsProcessingUtils,
     QgsProject,
-    QgsSpatialIndex,
+    QgsProcessingParameterVectorLayer,
+    QgsProcessingException,
     QgsWkbTypes,
 )
 
@@ -60,6 +61,7 @@ class TopologicalDouglasPeuckerLineSimplificationAlgorithm(ValidationAlgorithm):
     SELECTED = "SELECTED"
     SNAP = "SNAP"
     DOUGLASPARAMETER = "DOUGLASPARAMETER"
+    GEOGRAPHIC_BOUNDARY = "GEOGRAPHIC_BOUNDARY"
     FLAGS = "FLAGS"
 
     def initAlgorithm(self, config):
@@ -87,15 +89,25 @@ class TopologicalDouglasPeuckerLineSimplificationAlgorithm(ValidationAlgorithm):
                 type=QgsProcessingParameterNumber.Double,
             )
         )
+        param = QgsProcessingParameterNumber(
+            self.SNAP,
+            self.tr("Snap radius"),
+            minValue=0,
+            defaultValue=1,
+            type=QgsProcessingParameterNumber.Double,
+        )
+        param.setMetadata({"widget_wrapper": {"decimals": 8}})
+        self.addParameter(param)
+
         self.addParameter(
-            QgsProcessingParameterNumber(
-                self.SNAP,
-                self.tr("Snap radius"),
-                minValue=0,
-                defaultValue=1,
-                type=QgsProcessingParameterNumber.Double,
+            QgsProcessingParameterVectorLayer(
+                self.GEOGRAPHIC_BOUNDARY,
+                self.tr("Geographic Bounds Layer"),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True,
             )
         )
+
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS, self.tr("{0} Flags").format(self.displayName())
@@ -117,11 +129,51 @@ class TopologicalDouglasPeuckerLineSimplificationAlgorithm(ValidationAlgorithm):
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         snap = self.parameterAsDouble(parameters, self.SNAP, context)
         threshold = self.parameterAsDouble(parameters, self.DOUGLASPARAMETER, context)
+        geographicBoundsLyr = self.parameterAsVectorLayer(
+            parameters, self.GEOGRAPHIC_BOUNDARY, context
+        )
         self.prepareFlagSink(
             parameters, inputLyrList[0], QgsWkbTypes.MultiLineString, context
         )
 
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        if geographicBoundsLyr is None:
+            self.runTopologicalDouglasWithoutGeographicBounds(
+                context,
+                feedback,
+                layerHandler,
+                algRunner,
+                inputLyrList,
+                onlySelected,
+                snap,
+                threshold,
+            )
+        else:
+            self.runTopologicalDouglasWithGeographicBounds(
+                context,
+                feedback,
+                layerHandler,
+                algRunner,
+                inputLyrList,
+                geographicBoundsLyr,
+                onlySelected,
+                snap,
+                threshold,
+            )
+
+        return {self.INPUTLAYERS: inputLyrList, self.FLAGS: self.flag_id}
+
+    def runTopologicalDouglasWithoutGeographicBounds(
+        self,
+        context,
+        feedback,
+        layerHandler,
+        algRunner,
+        inputLyrList,
+        onlySelected,
+        snap,
+        threshold,
+    ):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Building unified layer..."))
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
@@ -132,9 +184,23 @@ class TopologicalDouglasPeuckerLineSimplificationAlgorithm(ValidationAlgorithm):
         )
 
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(self.tr("Running clean on unified layer..."))
-        simplifiedCoverage, error = algRunner.runDouglasSimplification(
+        multiStepFeedback.pushInfo(self.tr("Running clean..."))
+        cleanedLyr, error = algRunner.runClean(
             coverage,
+            [algRunner.RMSA, algRunner.Break, algRunner.RmDupl, algRunner.RmDangle],
+            context,
+            returnError=True,
+            snap=snap,
+            minArea=1e-10,
+            feedback=multiStepFeedback,
+        )
+
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo(
+            self.tr("Running douglas peucker on unified layer...")
+        )
+        simplifiedCoverage, error = algRunner.runDouglasSimplification(
+            cleanedLyr,
             threshold,
             context,
             returnError=True,
@@ -142,19 +208,145 @@ class TopologicalDouglasPeuckerLineSimplificationAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
         )
 
-        multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(self.tr("Updating original layer..."))
+        multiStepFeedback.setCurrentStep(3)
+        multiStepFeedback.pushInfo(self.tr("Merging lines..."))
+        merged = algRunner.runDissolve(
+            inputLyr=simplifiedCoverage,
+            context=context,
+            field=["featid", "layer"],
+            feedback=multiStepFeedback,
+        )
 
+        multiStepFeedback.setCurrentStep(4)
+        multiStepFeedback.pushInfo(self.tr("Updating original layer..."))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
             inputLyrList,
-            simplifiedCoverage,
+            merged,
             feedback=multiStepFeedback,
             onlySelected=onlySelected,
         )
 
+        multiStepFeedback.setCurrentStep(5)
         self.flagCoverageIssues(simplifiedCoverage, error, feedback)
 
-        return {self.INPUTLAYERS: inputLyrList, self.FLAGS: self.flag_id}
+    def runTopologicalDouglasWithGeographicBounds(
+        self,
+        context,
+        feedback,
+        layerHandler,
+        algRunner,
+        inputLyrList,
+        geographicBoundsLyr,
+        onlySelected,
+        snap,
+        threshold,
+    ):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Building unified layer..."))
+        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
+            inputLyrList,
+            geomType=QgsWkbTypes.MultiLineString,
+            onlySelected=onlySelected,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Applying spatial constraint..."))
+        (
+            insideLyr,
+            outsideLyr,
+        ) = layerHandler.prepareAuxLayerForSpatialConstrainedAlgorithm(
+            inputLyr=auxLyr,
+            geographicBoundaryLyr=geographicBoundsLyr,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Running clean..."))
+        cleanedLyr, error = algRunner.runClean(
+            insideLyr,
+            [algRunner.RMSA, algRunner.Break, algRunner.RmDupl, algRunner.RmDangle],
+            context,
+            returnError=True,
+            snap=snap,
+            minArea=1e-10,
+            feedback=multiStepFeedback,
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(
+            self.tr("Running douglas peucker on unified layer...")
+        )
+        simplifiedCoverage, error = algRunner.runDouglasSimplification(
+            cleanedLyr,
+            threshold,
+            context,
+            returnError=True,
+            snap=snap,
+            feedback=multiStepFeedback,
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Merging lines..."))
+        merged = algRunner.runDissolve(
+            inputLyr=simplifiedCoverage,
+            context=context,
+            field=["featid", "layer"],
+            feedback=multiStepFeedback,
+        )
+
+        renamedMerged = algRunner.runRenameField(
+            inputLayer=merged,
+            field="featid",
+            newName="oldfeatid",
+            context=context,
+        )
+
+        renamedOutsideLyr = algRunner.runRenameField(
+            inputLayer=outsideLyr,
+            field="featid",
+            newName="oldfeatid",
+            context=context,
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(
+            self.tr("Integrating results inside and outside geographic bounds...")
+        )
+        outputLyr = (
+            layerHandler.integrateSpatialConstrainedAlgorithmOutputAndOutsideLayer(
+                algOutputLyr=renamedMerged,
+                outsideLyr=renamedOutsideLyr,
+                tol=snap,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+        )
+        renamedOutputLyr = algRunner.runRenameField(
+            inputLayer=outputLyr,
+            field="oldfeatid",
+            newName="featid",
+            context=context,
+        )
+
+        multiStepFeedback.setCurrentStep(4)
+        multiStepFeedback.pushInfo(self.tr("Updating original layer..."))
+        layerHandler.updateOriginalLayersFromUnifiedLayer(
+            inputLyrList,
+            renamedOutputLyr,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected,
+        )
+
+        multiStepFeedback.setCurrentStep(5)
+        self.flagCoverageIssues(simplifiedCoverage, error, feedback)
 
     def flagCoverageIssues(self, cleanedCoverage, error, feedback):
         """
@@ -188,11 +380,12 @@ class TopologicalDouglasPeuckerLineSimplificationAlgorithm(ValidationAlgorithm):
                         featList[0].geometry(), self.tr("Gap in coverage.")
                     )
 
-        if error:
-            for feat in error.getFeatures():
-                if feedback.isCanceled():
-                    break
-                self.flagFeature(feat.geometry(), self.tr("Clean error on coverage."))
+        if not error:
+            return
+        for feat in error.getFeatures():
+            if feedback.isCanceled():
+                break
+            self.flagFeature(feat.geometry(), self.tr("Clean error on coverage."))
 
     def name(self):
         """

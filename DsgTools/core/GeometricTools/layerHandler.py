@@ -421,13 +421,13 @@ class LayerHandler(QObject):
         Updates original layers from the unified layers
         """
         lenList = len(lyrList)
-        parameterDict = self.getDestinationParameters(unifiedLyr)
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(3 * lenList, feedback) if feedback else None
         )
         for i, lyr in enumerate(lyrList):
             if feedback is not None and multiStepFeedback.isCanceled():
                 break
+            parameterDict = self.getDestinationParameters(lyr)
             multiStepFeedback.setCurrentStep(3 * i)
             multiStepFeedback.pushInfo(self.tr(f"Building {lyr.name()} input dict"))
             inputDict = self.buildInputDict(
@@ -3139,7 +3139,7 @@ class LayerHandler(QObject):
             multiStepFeedback.setCurrentStep(currentStep)
         self.algRunner.runDSGToolsMergeLines(
             inputLayer=mergedLayer,
-            attributeBlackList=["path", "layer_2", "cat"],
+            attributeBlackList=["path", "layer_2", "cat", "cat_"],
             context=context,
             feedback=multiStepFeedback,
         )

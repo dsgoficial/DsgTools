@@ -257,6 +257,7 @@ class AlgRunner:
         onlySelected=False,
         snap=None,
         minArea=None,
+        geographicBoundaryLyr=None,
         flags=None,
     ):
         snap = -1 if snap is None else snap
@@ -267,6 +268,7 @@ class AlgRunner:
             "SELECTED": onlySelected,
             "TOLERANCE": snap,
             "MINAREA": minArea,
+            "GEOGRAPHIC_BOUNDARY": geographicBoundaryLyr,
             "FLAGS": flags,
         }
         output = processing.run(
@@ -1002,6 +1004,7 @@ class AlgRunner:
         feedback=None,
         outputLyr=None,
         onlySelected=False,
+        is_child_algorithm=False,
     ):
         groupBy = "NULL" if groupBy is None else groupBy
         aggregates = [] if aggregates is None else aggregates
@@ -1013,7 +1016,11 @@ class AlgRunner:
             "OUTPUT": outputLyr,
         }
         output = processing.run(
-            "qgis:aggregate", parameters, context=context, feedback=feedback
+            "qgis:aggregate",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -1864,3 +1871,28 @@ class AlgRunner:
             context=context,
             feedback=feedback,
         )
+
+    def runRenameField(
+        self,
+        inputLayer: QgsVectorLayer,
+        field: str,
+        newName: str,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:renametablefield",
+            {
+                "INPUT": inputLayer,
+                "FIELD": field,
+                "NEW_NAME": newName,
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]

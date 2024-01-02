@@ -1,16 +1,18 @@
 # CHANGELOG
 
-## 4.13.6 - dev
+## 4.13.7 - dev
 
 Novas Funcionalidades:
 
 - Novo processo de remover vértices duplicados e atualizar a camada original;
-- Novo processo de rodar o clean levando em consideração a partição espacial (impede alteração do clean fora da moldura);
 
 Melhorias:
 
 - Adiciona a melhoria no dissolve nativo do qgis introduzida na versão 3.28.0 (foi feito o backport para manter o funcionamento nas versões anteriores);
 - O processo Batch Run Algorithm agora ignora camadas somente leitura;
+- Adicionada a opção de rodar o clean levando em consideração a partição espacial (impede alteração do clean fora da moldura);
+- Melhoria no processo topological douglas peucker: agora antes de rodar a simplificação, é rodado um clean, as feições são quebradas nas intersecções e, após rodar o topological douglas, as linhas são unidas novamente;
+- Adicionada a opção de rodar o topological douglas peucker levando em consideração a partição espacial (impede alteração do topological douglas fora da moldura);
 
 Correção de bug:
 
