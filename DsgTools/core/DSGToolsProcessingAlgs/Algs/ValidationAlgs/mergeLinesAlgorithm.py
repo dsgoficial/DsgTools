@@ -20,28 +20,23 @@
  *                                                                         *
  ***************************************************************************/
 """
+import os
+import concurrent.futures
 from PyQt5.QtCore import QCoreApplication
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.GeometricTools import graphHandler
 
-import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
-    QgsGeometry,
+    QgsProcessingFeatureSourceDefinition,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterField,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingUtils,
-    QgsSpatialIndex,
+    QgsWkbTypes,
+    QgsProcessingException,
+    QgsProcessingMultiStepFeedback,
     QgsWkbTypes,
 )
 
@@ -105,7 +100,16 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
+        try:
+            import networkx as nx
+        except ImportError:
+            raise QgsProcessingException(
+                self.tr(
+                    "This algorithm requires the Python networkx library. Please install this library and try again."
+                )
+            )
         layerHandler = LayerHandler()
+        self.algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         attributeBlackList = self.parameterAsFields(
@@ -115,15 +119,123 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
             parameters, self.IGNORE_VIRTUAL_FIELDS, context
         )
         ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
-
-        layerHandler.mergeLinesOnLayer(
-            inputLyr,
-            feedback=feedback,
-            onlySelected=onlySelected,
-            ignoreVirtualFields=ignoreVirtual,
-            attributeBlackList=attributeBlackList,
-            excludePrimaryKeys=ignorePK,
+        nSteps = 8
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Building aux structures"))
+        localCache = self.algRunner.runCreateFieldWithExpression(
+            inputLyr=inputLyr
+            if not onlySelected
+            else QgsProcessingFeatureSourceDefinition(inputLyr.id(), True),
+            expression="$id",
+            fieldName="featid",
+            fieldType=1,
+            context=context,
+            feedback=multiStepFeedback,
         )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        nodesLayer = self.algRunner.runExtractSpecificVertices(
+            inputLyr=localCache,
+            vertices="0,-1",
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        nodesLayer = self.algRunner.runCreateFieldWithExpression(
+            inputLyr=nodesLayer,
+            expression="$id",
+            fieldName="nfeatid",
+            fieldType=1,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Building graph aux structures"))
+        (
+            nodeDict,
+            nodeIdDict,
+            edgeDict,
+            hashDict,
+            networkBidirectionalGraph,
+        ) = graphHandler.buildAuxStructures(
+            nx,
+            nodesLayer=nodesLayer,
+            edgesLayer=localCache,
+            feedback=multiStepFeedback,
+            useWkt=False,
+            computeNodeLayerIdDict=False,
+            addEdgeLength=False,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Finding mergeable edges"))
+        outputGraphDict = graphHandler.find_mergeable_edges_on_graph(
+            nx=nx, G=networkBidirectionalGraph, feedback=multiStepFeedback
+        )
+        nSteps = len(outputGraphDict)
+        if nSteps == 0:
+            return {self.OUTPUT: inputLyr}
+        stepSize = 100 / nSteps
+
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
+        attributeNameList = [
+            f.name()
+            for f in layerHandler.getFieldsFromAttributeBlackList(
+                originalLayer=inputLyr,
+                attributeBlackList=attributeBlackList,
+                ignoreVirtualFields=ignoreVirtual,
+            )
+        ]
+
+        def computeLambda(x):
+            return graphHandler.filter_mergeable_graphs_using_attibutes(
+                nx=nx,
+                G=x,
+                featDict=edgeDict,
+                attributeNameList=attributeNameList,
+                isMulti=QgsWkbTypes.isMultiType(inputLyr.wkbType()),
+            )
+
+        futures = set()
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Submitting merge task to thread"))
+        for current, G in enumerate(outputGraphDict.values()):
+            if multiStepFeedback.isCanceled():
+                break
+            futures.add(pool.submit(computeLambda, G))
+            multiStepFeedback.setProgress(current * stepSize)
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Evaluating results"))
+        outputFeatSet, idsToDeleteSet = set(), set()
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback.isCanceled():
+                break
+            featSet, idsToDelete = future.result()
+            outputFeatSet |= featSet
+            idsToDeleteSet |= idsToDelete
+            multiStepFeedback.setProgress(current * stepSize)
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Saving changes on input layer"))
+
+        def updateLambda(x):
+            return inputLyr.changeGeometry(x["featid"], x.geometry())
+
+        inputLyr.startEditing()
+        inputLyr.beginEditCommand(
+            f"Merging lines with same attribute set from {inputLyr.name()}"
+        )
+        list(map(updateLambda, outputFeatSet))
+        inputLyr.deleteFeatures(list(idsToDeleteSet))
+        inputLyr.endEditCommand()
 
         return {self.OUTPUT: inputLyr}
 

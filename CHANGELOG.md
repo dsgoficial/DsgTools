@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.5 - dev
+## 4.13.6 - dev
 
 Novas Funcionalidades:
 
@@ -15,6 +15,7 @@ Melhorias:
 Correção de bug:
 
 - Corrige bug no modo não paralelo do algoritmo de generalizar linhas por comprimento;
+- Corrige bug oriundo do merge feito errado no lançamento da última versão nos processos de identificar e unir linhas;
 
 ## 4.12.0 - 2023-12-13
 
