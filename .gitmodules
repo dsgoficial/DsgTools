@@ -1,3 +1,0 @@
-[submodule "ext_dep/postgisaddon"]
-	path = ext_dep/postgisaddon
-	url = https://github.com/pedrogit/postgisaddons.git
