@@ -123,7 +123,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Building aux structures"))
+        multiStepFeedback.pushInfo(self.tr("Building aux structures"))
         localCache = self.algRunner.runCreateFieldWithExpression(
             inputLyr=inputLyr
             if not onlySelected
@@ -154,7 +154,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Building graph aux structures"))
+        multiStepFeedback.pushInfo(self.tr("Building graph aux structures"))
         (
             nodeDict,
             nodeIdDict,
@@ -172,7 +172,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Finding mergeable edges"))
+        multiStepFeedback.pushInfo(self.tr("Finding mergeable edges"))
         outputGraphDict = graphHandler.find_mergeable_edges_on_graph(
             nx=nx, G=networkBidirectionalGraph, feedback=multiStepFeedback
         )
@@ -203,7 +203,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         futures = set()
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Submitting merge task to thread"))
+        multiStepFeedback.pushInfo(self.tr("Submitting merge task to thread"))
         for current, G in enumerate(outputGraphDict.values()):
             if multiStepFeedback.isCanceled():
                 break
@@ -212,7 +212,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Evaluating results"))
+        multiStepFeedback.pushInfo(self.tr("Evaluating results"))
         outputFeatSet, idsToDeleteSet = set(), set()
         for current, future in enumerate(concurrent.futures.as_completed(futures)):
             if multiStepFeedback.isCanceled():
@@ -224,7 +224,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Saving changes on input layer"))
+        multiStepFeedback.pushInfo(self.tr("Saving changes on input layer"))
 
         def updateLambda(x):
             return inputLyr.changeGeometry(x["featid"], x.geometry())
