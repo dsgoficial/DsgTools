@@ -92,7 +92,7 @@ class AlgRunner:
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         field = [] if field is None else field
-        parameters = {"INPUT": inputLyr, "FIELD": field,  "OUTPUT": outputLyr}
+        parameters = {"INPUT": inputLyr, "FIELD": field, "OUTPUT": outputLyr}
         if Qgis.QGIS_VERSION_INT >= 32800:
             parameters["SEPARATE_DISJOINT"] = True
         output = processing.run(
@@ -257,6 +257,7 @@ class AlgRunner:
         onlySelected=False,
         snap=None,
         minArea=None,
+        geographicBoundaryLyr=None,
         flags=None,
     ):
         snap = -1 if snap is None else snap
@@ -267,6 +268,7 @@ class AlgRunner:
             "SELECTED": onlySelected,
             "TOLERANCE": snap,
             "MINAREA": minArea,
+            "GEOGRAPHIC_BOUNDARY": geographicBoundaryLyr,
             "FLAGS": flags,
         }
         output = processing.run(
@@ -1003,6 +1005,7 @@ class AlgRunner:
         feedback=None,
         outputLyr=None,
         onlySelected=False,
+        is_child_algorithm=False,
     ):
         groupBy = "NULL" if groupBy is None else groupBy
         aggregates = [] if aggregates is None else aggregates
@@ -1014,7 +1017,11 @@ class AlgRunner:
             "OUTPUT": outputLyr,
         }
         output = processing.run(
-            "qgis:aggregate", parameters, context=context, feedback=feedback
+            "qgis:aggregate",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -1799,7 +1806,91 @@ class AlgRunner:
                 "INPUT": inputLyr,
                 "TOLERANCE": tolerance,
                 "USE_Z_VALUE": useZValue,
-                "OUTPUT": "TEMPORARY_OUTPUT",
+                "OUTPUT": "memory:",
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runJoinAttributesTable(
+        self,
+        layerA,
+        fieldA,
+        layerB,
+        fieldB,
+        context,
+        method,
+        fieldsToCopy=None,
+        discardNonMatching=False,
+        prefix=None,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        fieldsToCopy = [] if fieldsToCopy is None else fieldsToCopy
+        prefix = "" if prefix is None else prefix
+        output = processing.run(
+            "native:joinattributestable",
+            {
+                "INPUT": layerA,
+                "FIELD": fieldA,
+                "INPUT_2": layerB,
+                "FIELD_2": fieldB,
+                "FIELDS_TO_COPY": [],
+                "METHOD": method,
+                "DISCARD_NONMATCHING": discardNonMatching,
+                "PREFIX": prefix,
+                "OUTPUT": "memory:",
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runDSGToolsMergeLines(
+        self,
+        inputLayer,
+        context,
+        onlySelected=False,
+        attributeBlackList=None,
+        ignoreVirtualFields=True,
+        ignorePkFields=True,
+        feedback=None,
+    ):
+        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
+        output = processing.run(
+            "dsgtools:mergelineswithsameattributeset",
+            {
+                "INPUT": inputLayer,
+                "SELECTED": onlySelected,
+                "ATTRIBUTE_BLACK_LIST": attributeBlackList,
+                "IGNORE_VIRTUAL_FIELDS": ignoreVirtualFields,
+                "IGNORE_PK_FIELDS": ignorePkFields,
+            },
+            context=context,
+            feedback=feedback,
+        )
+
+    def runRenameField(
+        self,
+        inputLayer: QgsVectorLayer,
+        field: str,
+        newName: str,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:renametablefield",
+            {
+                "INPUT": inputLayer,
+                "FIELD": field,
+                "NEW_NAME": newName,
+                "OUTPUT": outputLyr,
             },
             context=context,
             feedback=feedback,

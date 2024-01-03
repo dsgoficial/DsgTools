@@ -22,12 +22,16 @@
 """
 
 import concurrent.futures
+from collections import defaultdict
 import os
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.GeometricTools import graphHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
+    QgsFeatureRequest,
+    QgsGeometry,
     QgsProcessing,
     QgsProcessingFeatureSourceDefinition,
     QgsProcessingMultiStepFeedback,
@@ -37,6 +41,7 @@ from qgis.core import (
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
+    QgsProcessingException,
 )
 
 from .validationAlgorithm import ValidationAlgorithm
@@ -122,8 +127,16 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
+        try:
+            import networkx as nx
+        except ImportError:
+            raise QgsProcessingException(
+                self.tr(
+                    "This algorithm requires the Python networkx library. Please install this library and try again."
+                )
+            )
         self.layerHandler = LayerHandler()
-        algRunner = AlgRunner()
+        self.algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         onlySelected = self.parameterAsBoolean(parameters, self.SELECTED, context)
         pointFilterLyrList = self.parameterAsLayerList(
@@ -138,7 +151,7 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
         attributeBlackList = self.parameterAsFields(
             parameters, self.ATTRIBUTE_BLACK_LIST, context
         )
-        fieldList = self.layerHandler.getAttributesFromBlackList(
+        attributeNameList = self.layerHandler.getAttributesFromBlackList(
             inputLyr,
             attributeBlackList,
             ignoreVirtualFields=self.parameterAsBoolean(
@@ -148,169 +161,155 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
                 parameters, self.IGNORE_PK_FIELDS, context
             ),
         )
-        fieldIdList = [
-            i for i, field in enumerate(inputLyr.fields()) if field.name() in fieldList
-        ]
-        multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.setProgressText(self.tr("Building local cache..."))
-        localLyr = algRunner.runAddAutoIncrementalField(
+        multiStepFeedback = QgsProcessingMultiStepFeedback(11, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(
+            self.tr("Building local cache on input layer...")
+        )
+        localCache = self.algRunner.runCreateFieldWithExpression(
             inputLyr=inputLyr
             if not onlySelected
             else QgsProcessingFeatureSourceDefinition(inputLyr.id(), True),
-            fieldName="AUTO",
+            expression="$id",
+            fieldName="featid",
+            fieldType=1,
             context=context,
             feedback=multiStepFeedback,
         )
-        multiStepFeedback.setCurrentStep(1)
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        nodesLayer = self.algRunner.runExtractSpecificVertices(
+            inputLyr=localCache,
+            vertices="0,-1",
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        nodesLayer = self.algRunner.runCreateFieldWithExpression(
+            inputLyr=nodesLayer,
+            expression="$id",
+            fieldName="nfeatid",
+            fieldType=1,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Building graph aux structures"))
+        (
+            nodeDict,
+            nodeIdDict,
+            edgeDict,
+            hashDict,
+            networkBidirectionalGraph,
+        ) = graphHandler.buildAuxStructures(
+            nx,
+            nodesLayer=nodesLayer,
+            edgesLayer=localCache,
+            feedback=multiStepFeedback,
+            useWkt=False,
+            computeNodeLayerIdDict=False,
+            addEdgeLength=False,
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Finding mergeable edges"))
+        outputGraphDict = graphHandler.find_mergeable_edges_on_graph(
+            nx=nx, G=networkBidirectionalGraph, feedback=multiStepFeedback
+        )
+        nSteps = len(outputGraphDict)
+        if nSteps == 0:
+            return {"FLAGS": self.flag_id}
+
         multiStepFeedback.setProgressText(
-            self.tr("Building initial and end point dict...")
+            self.tr("Building aux structure on input point list...")
         )
-        initialAndEndPointDict = self.buildInitialAndEndPointDict(
-            localLyr, algRunner=algRunner, context=context, feedback=multiStepFeedback
-        )
-        multiStepFeedback.setProgressText(self.tr("Building aux structure..."))
-        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.setCurrentStep(currentStep)
         mergedPointLyr = (
-            algRunner.runMergeVectorLayers(
+            self.algRunner.runMergeVectorLayers(
                 pointFilterLyrList, context, multiStepFeedback
             )
             if pointFilterLyrList
             else None
         )
-        multiStepFeedback.setCurrentStep(3)
+        currentStep += 1
+
+        multiStepFeedback.setProgressText(
+            self.tr("Building aux structure on input line list...")
+        )
+        multiStepFeedback.setCurrentStep(currentStep)
         mergedLineLyr = (
-            algRunner.runMergeVectorLayers(
+            self.algRunner.runMergeVectorLayers(
                 lineFilterLyrList, context, multiStepFeedback
             )
             if lineFilterLyrList
             else None
         )
-        multiStepFeedback.setCurrentStep(4)
+        currentStep += 1
+
+        multiStepFeedback.setCurrentStep(currentStep)
         if mergedLineLyr is not None:
-            algRunner.runCreateSpatialIndex(mergedLineLyr, context, multiStepFeedback)
-        dictSize = len(initialAndEndPointDict)
-        if dictSize == 0:
-            return {"FLAGS": self.flag_id}
+            self.algRunner.runCreateSpatialIndex(
+                mergedLineLyr, context, multiStepFeedback
+            )
         filterPointSet = (
             set(i.geometry().asWkb() for i in mergedPointLyr.getFeatures())
             if mergedPointLyr is not None
             else set()
         )
-        multiStepFeedback.setCurrentStep(5)
-        multiStepFeedback.setProgressText(self.tr("Evaluating candidates"))
-        self.evaluateFlagCandidates(
-            fieldList,
-            fieldIdList,
-            multiStepFeedback,
-            localLyr,
-            initialAndEndPointDict,
-            mergedLineLyr,
-            dictSize,
-            filterPointSet,
-        )
-        return {"FLAGS": self.flag_id}
-
-    def evaluateFlagCandidates(
-        self,
-        fieldList,
-        fieldIdList,
-        multiStepFeedback,
-        localLyr,
-        initialAndEndPointDict,
-        mergedLineLyr,
-        dictSize,
-        filterPointSet,
-    ):
-        stepSize = 100 / dictSize
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, multiStepFeedback)
-        multiStepFeedback.setCurrentStep(0)
-
-        def evaluate(pointXY, idSet):
-            if multiStepFeedback.isCanceled():
-                return None
-            geom = QgsGeometry.fromPointXY(pointXY)
-            geomWkb = geom.asWkb()
-            if geomWkb in filterPointSet:
-                return None
-            if len(idSet) != 2:
-                return None
-            if mergedLineLyr is not None:
-                bbox = geom.boundingBox()
-                nIntersects = len(
-                    [
-                        i
-                        for i in mergedLineLyr.getFeatures(bbox)
-                        if i.geometry().intersects(geom)
-                    ]
-                )
-                if nIntersects > 0:
-                    return None
-            request = (
-                QgsFeatureRequest()
-                .setFilterExpression(f"AUTO in {tuple(idSet)}")
-                .setFlags(QgsFeatureRequest.NoGeometry)
-                .setSubsetOfAttributes(fieldIdList)
-            )
-            f1, f2 = [i for i in localLyr.getFeatures(request)]
-            differentFeats = any(f1[k] != f2[k] for k in fieldList)
-            return geomWkb if not differentFeats else None
-
         pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
-        futures = set()
 
-        for current, (pointXY, idSet) in enumerate(initialAndEndPointDict.items()):
+        def computeLambda(x):
+            return graphHandler.identify_unmerged_edges_on_graph(
+                nx=nx,
+                G=x,
+                featDict=edgeDict,
+                nodeIdDict=nodeIdDict,
+                filterPointSet=filterPointSet,
+                filterLineLayer=mergedLineLyr,
+                attributeNameList=attributeNameList,
+            )
+
+        futures = set()
+        currentStep += 1
+        stepSize = 100 / nSteps
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(
+            self.tr("Submitting identification tasks to thread")
+        )
+        for current, G in enumerate(outputGraphDict.values()):
             if multiStepFeedback.isCanceled():
                 break
-            futures.add(pool.submit(evaluate, pointXY, idSet))
+            futures.add(pool.submit(computeLambda, G))
             multiStepFeedback.setProgress(current * stepSize)
+        currentStep += 1
 
-        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.setProgressText(self.tr("Evaluating results"))
+        flagIdSet = set()
         for current, future in enumerate(concurrent.futures.as_completed(futures)):
             if multiStepFeedback.isCanceled():
                 break
-            geomWkb = future.result()
-            if geomWkb is not None:
-                self.flagFeature(
-                    flagGeom=geomWkb,
-                    flagText=self.tr("Not merged lines with same attribute set"),
-                    fromWkb=True,
-                )
+            flagIdSet |= future.result()
             multiStepFeedback.setProgress(current * stepSize)
-
-    def buildInitialAndEndPointDict(self, lyr, algRunner, context, feedback):
-        pointDict = defaultdict(set)
-        nSteps = 3
-        currentStep = 0
-        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
-        multiStepFeedback.setCurrentStep(currentStep)
-        boundaryLyr = algRunner.runBoundary(
-            inputLayer=lyr, context=context, feedback=multiStepFeedback
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        boundaryLyr = algRunner.runMultipartToSingleParts(
-            inputLayer=boundaryLyr, context=context, feedback=multiStepFeedback
-        )
         currentStep += 1
 
+        if len(flagIdSet) == 0:
+            return {"FLAGS": self.flag_id}
+
+        def flagLambda(x):
+            return self.flagFeature(
+                flagGeom=nodeIdDict[x],
+                flagText=self.tr("Lines with same attribute set that are not merged."),
+                fromWkb=True,
+            )
+
         multiStepFeedback.setCurrentStep(currentStep)
-        featCount = boundaryLyr.featureCount()
-        if featCount == 0:
-            return pointDict
-        step = 100 / featCount
-        for current, feat in enumerate(boundaryLyr.getFeatures()):
-            if multiStepFeedback.isCanceled():
-                break
-            geom = feat.geometry()
-            if geom is None or not geom.isGeosValid():
-                continue
-            id = feat["AUTO"]
-            pointList = geom.asMultiPoint() if geom.isMultipart() else [geom.asPoint()]
-            for point in pointList:
-                pointDict[point].add(id)
-            multiStepFeedback.setProgress(current * step)
-        return pointDict
+        multiStepFeedback.setProgressText(self.tr("Raising flags"))
+        list(map(flagLambda, flagIdSet))
+        return {"FLAGS": self.flag_id}
 
     def name(self):
         """
@@ -355,7 +354,7 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
         return help().shortHelpString(self.name())
 
     def helpUrl(self):
-        return  help().helpUrl(self.name())
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyUnmergedLinesWithSameAttributeSetAlgorithm()
