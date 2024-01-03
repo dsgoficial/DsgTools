@@ -1517,6 +1517,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
     def getMinMaxFeatures(self, fields, npRaster, transform, distance, maskLyr, feedback=None):
         featSet = set()
         maxCoordinatesArray = rasterHandler.getMaxCoordinatesFromNpArray(npRaster)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
         npRasterCopy = np.array(npRaster)
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(1)

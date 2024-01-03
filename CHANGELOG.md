@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.7 - dev
+## 4.13.8 - dev
 
 Novas Funcionalidades:
 
@@ -10,7 +10,7 @@ Melhorias:
 
 - Adiciona a melhoria no dissolve nativo do qgis introduzida na versão 3.28.0 (foi feito o backport para manter o funcionamento nas versões anteriores);
 - O processo Batch Run Algorithm agora ignora camadas somente leitura;
-- Adicionada a opção de rodar o clean levando em consideração a partição espacial (impede alteração do clean fora da moldura);
+- Adicionada a opção de rodar o clean levando em consideração a partição espacial (impede alteração do clean fora da moldura), para o caso de linhas;
 - Melhoria no processo topological douglas peucker: agora antes de rodar a simplificação, é rodado um clean, as feições são quebradas nas intersecções e, após rodar o topological douglas, as linhas são unidas novamente;
 - Adicionada a opção de rodar o topological douglas peucker levando em consideração a partição espacial (impede alteração do topological douglas fora da moldura);
 
@@ -18,6 +18,7 @@ Correção de bug:
 
 - Corrige bug no modo não paralelo do algoritmo de generalizar linhas por comprimento;
 - Corrige bug oriundo do merge feito errado no lançamento da última versão nos processos de identificar e unir linhas;
+- Corrige bug no cálculo em paralelo da rotina de extrair pontos cotados;
 
 ## 4.12.0 - 2023-12-13
 
