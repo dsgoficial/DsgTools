@@ -75,7 +75,7 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 self.tr("Filter expression for nodes with fixed flow"),
                 None,
                 self.NETWORK_LAYER,
-                optional=True
+                optional=True,
             )
         )
         self.addParameter(
@@ -150,11 +150,15 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         # get the network handler
         self.algRunner = AlgRunner()
         networkLayer = self.parameterAsLayer(parameters, self.NETWORK_LAYER, context)
-        filterExpression = self.parameterAsExpression(parameters, self.FILTER_EXPRESSION, context)
-        if filterExpression == '':
+        filterExpression = self.parameterAsExpression(
+            parameters, self.FILTER_EXPRESSION, context
+        )
+        if filterExpression == "":
             filterExpression = None
         oceanLayer = self.parameterAsLayer(parameters, self.OCEAN_LAYER, context)
-        waterBodyWithFlowLayer = self.parameterAsLayer(parameters, self.WATER_BODY_WITH_FLOW_LAYER, context)
+        waterBodyWithFlowLayer = self.parameterAsLayer(
+            parameters, self.WATER_BODY_WITH_FLOW_LAYER, context
+        )
         waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
         geographicBoundsLayer = self.parameterAsLayer(
             parameters, self.GEOGRAPHIC_BOUNDS_LAYER, context
@@ -178,7 +182,12 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             networkLayer.sourceCrs(),
         )
         # searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
-        nSteps = 15 + (runFlowCheck is True) + (runLoopCheck is True) + (waterBodyWithFlowLayer is not None)
+        nSteps = (
+            15
+            + (runFlowCheck is True)
+            + (runLoopCheck is True)
+            + (waterBodyWithFlowLayer is not None)
+        )
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
@@ -193,9 +202,16 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        drainagesWithCorrectFlow = self.algRunner.runFilterExpression(
-            inputLyr=localCache, expression=filterExpression, context=context, feedback=multiStepFeedback
-        ) if filterExpression is not None else None
+        drainagesWithCorrectFlow = (
+            self.algRunner.runFilterExpression(
+                inputLyr=localCache,
+                expression=filterExpression,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            if filterExpression is not None
+            else None
+        )
         currentStep += 1
         if geographicBoundsLayer is not None:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -254,8 +270,17 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        initialDiG = None if drainagesWithCorrectFlow is None else graphHandler.buildDirectionalGraphFromIdList(
-            nx, networkBidirectionalGraph, nodeDict, hashDict, set(f["featid"] for f in drainagesWithCorrectFlow.getFeatures()), feedback=multiStepFeedback
+        initialDiG = (
+            None
+            if drainagesWithCorrectFlow is None
+            else graphHandler.buildDirectionalGraphFromIdList(
+                nx,
+                networkBidirectionalGraph,
+                nodeDict,
+                hashDict,
+                set(f["featid"] for f in drainagesWithCorrectFlow.getFeatures()),
+                feedback=multiStepFeedback,
+            )
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -318,9 +343,14 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             edgesWithinWaterBodiesIdSet = set(featid for featid in nodesDict.keys())
             # penalize edges not in water bodies
             for (a, b) in networkBidirectionalGraph.edges:
-                if networkBidirectionalGraph[a][b]["featid"] in edgesWithinWaterBodiesIdSet:
+                if (
+                    networkBidirectionalGraph[a][b]["featid"]
+                    in edgesWithinWaterBodiesIdSet
+                ):
                     continue
-                networkBidirectionalGraph[a][b]["length"] = networkBidirectionalGraph[a][b]["length"] * 1e8
+                networkBidirectionalGraph[a][b]["length"] = (
+                    networkBidirectionalGraph[a][b]["length"] * 1e8
+                )
                 networkBidirectionalGraph[a][b]["inside_river"] = True
 
         currentStep += 1
@@ -359,7 +389,9 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
                 x.geometry(), flagText=x["reason"], sink=self.point_flags_sink
             )
             list(map(pointFlagLambda, pointFlagLyr.getFeatures()))
-            multiStepFeedback.setProgressText(self.tr(f"Found {pointFlagLyr.featureCount()} flow issues."))
+            multiStepFeedback.setProgressText(
+                self.tr(f"Found {pointFlagLyr.featureCount()} flow issues.")
+            )
         if runLoopCheck:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -375,7 +407,9 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             )
             list(map(lineFlagLambda, lineFlagLyr.getFeatures()))
 
-            multiStepFeedback.setProgressText(self.tr(f"Found {lineFlagLyr.featureCount()} loop issues."))
+            multiStepFeedback.setProgressText(
+                self.tr(f"Found {lineFlagLyr.featureCount()} loop issues.")
+            )
         return {
             self.NETWORK_LAYER: networkLayer,
             self.POINT_FLAGS: self.point_flags_sink_id,

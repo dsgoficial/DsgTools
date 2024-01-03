@@ -126,12 +126,12 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
         ctx = QgsProcessingContext()
         ctx.setProject(QgsProject.instance())
         return QgsProcessingUtils.mapLayerFromString(layerName, ctx)
-    
+
     def getLayerPrimaryKeyIndex(self, layer):
         lyr = self.getLayerFromProject(layer) if isinstance(layer, str) else layer
         pkIdxList = lyr.primaryKeyAttributes()
         return None if pkIdxList == [] else pkIdxList
-    
+
     def getLayerPrimaryKeyAttributeNames(self, layer):
         lyr = self.getLayerFromProject(layer) if isinstance(layer, str) else layer
         pkIdxList = lyr.primaryKeyAttributes()

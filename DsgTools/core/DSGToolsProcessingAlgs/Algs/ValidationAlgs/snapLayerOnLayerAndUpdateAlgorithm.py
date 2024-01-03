@@ -153,14 +153,18 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             currentStep += 1
 
             multiStepFeedback.setCurrentStep(currentStep)
-            algRunner.runCreateSpatialIndex(refLyr, context, multiStepFeedback, is_child_algorithm=True)
+            algRunner.runCreateSpatialIndex(
+                refLyr, context, multiStepFeedback, is_child_algorithm=True
+            )
             currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Running snap..."))
         snapped = algRunner.runSnapGeometriesToLayer(
             inputLayer=auxLyr,
-            referenceLayer=refLyr if buildLocalCache else parameters[self.REFERENCE_LAYER],
+            referenceLayer=refLyr
+            if buildLocalCache
+            else parameters[self.REFERENCE_LAYER],
             tol=tol,
             behavior=behavior,
             context=context,

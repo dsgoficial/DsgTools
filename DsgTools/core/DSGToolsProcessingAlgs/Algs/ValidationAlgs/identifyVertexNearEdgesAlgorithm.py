@@ -160,12 +160,12 @@ class IdentifyVertexNearEdgesAlgorithm(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyVertexNearEdgesAlgorithm", string)
-    
+
     def shortHelpString(self):
         return help().shortHelpString(self.name())
 
     def helpUrl(self):
-        return  help().helpUrl(self.name())
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyVertexNearEdgesAlgorithm()

@@ -22,7 +22,14 @@
  ***************************************************************************/
 """
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from qgis.core import QgsProject, Qgis, QgsVectorLayer, QgsWkbTypes, QgsProcessingUtils, QgsProcessingContext
+from qgis.core import (
+    QgsProject,
+    Qgis,
+    QgsVectorLayer,
+    QgsWkbTypes,
+    QgsProcessingUtils,
+    QgsProcessingContext,
+)
 from qgis.gui import QgsMapTool
 from qgis.utils import iface
 from qgis.PyQt.QtCore import QObject

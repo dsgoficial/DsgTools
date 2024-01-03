@@ -70,7 +70,7 @@ class TopologicalCleanLinesAlgorithm(TopologicalCleanAlgorithm):
                 QgsProcessing.TypeVectorLine,
             )
         )
-        
+
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.SELECTED, self.tr("Process only selected features")
@@ -111,7 +111,7 @@ class TopologicalCleanLinesAlgorithm(TopologicalCleanAlgorithm):
                 self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
-    
+
     def flagCoverageIssues(self, cleanedCoverage, error, feedback):
         overlapDict = defaultdict(list)
         for current, feat in enumerate(cleanedCoverage.getFeatures()):

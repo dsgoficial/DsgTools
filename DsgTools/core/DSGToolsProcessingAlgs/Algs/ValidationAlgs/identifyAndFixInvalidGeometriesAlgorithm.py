@@ -48,6 +48,7 @@ from qgis.core import (
 )
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
+
 class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     SELECTED = "SELECTED"
@@ -182,7 +183,7 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
         return help().shortHelpString(self.name())
 
     def helpUrl(self):
-        return  help().helpUrl(self.name())
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyAndFixInvalidGeometriesAlgorithm()

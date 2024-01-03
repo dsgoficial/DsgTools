@@ -128,17 +128,51 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
         if geomType == QgsWkbTypes.PolygonGeometry and geographicBoundsLyr is not None:
-            raise NotImplementedError(self.tr("Spatial restriction not implemented yet for polygon layers"))
+            raise NotImplementedError(
+                self.tr("Spatial restriction not implemented yet for polygon layers")
+            )
         self.prepareFlagSink(parameters, inputLyrList[0], geomType, context)
 
         if geographicBoundsLyr is None:
-            self.topologicalCleanWithoutGeographicBounds(context, feedback, layerHandler, algRunner, inputLyrList, geomType, onlySelected, snap, minArea)
+            self.topologicalCleanWithoutGeographicBounds(
+                context,
+                feedback,
+                layerHandler,
+                algRunner,
+                inputLyrList,
+                geomType,
+                onlySelected,
+                snap,
+                minArea,
+            )
         else:
-            self.topologicalCleanWithGeographicBounds(context, feedback, layerHandler, algRunner, inputLyrList, geographicBoundsLyr, geomType, onlySelected, snap, minArea)
+            self.topologicalCleanWithGeographicBounds(
+                context,
+                feedback,
+                layerHandler,
+                algRunner,
+                inputLyrList,
+                geographicBoundsLyr,
+                geomType,
+                onlySelected,
+                snap,
+                minArea,
+            )
 
         return {self.INPUTLAYERS: inputLyrList, self.FLAGS: self.flagSink}
 
-    def topologicalCleanWithoutGeographicBounds(self, context, feedback, layerHandler, algRunner, inputLyrList, geomType, onlySelected, snap, minArea):
+    def topologicalCleanWithoutGeographicBounds(
+        self,
+        context,
+        feedback,
+        layerHandler,
+        algRunner,
+        inputLyrList,
+        geomType,
+        onlySelected,
+        snap,
+        minArea,
+    ):
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Building unified layer..."))
@@ -169,7 +203,19 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
         )
         self.flagCoverageIssues(cleanedCoverage, error, feedback)
 
-    def topologicalCleanWithGeographicBounds(self, context, feedback, layerHandler, algRunner, inputLyrList, geographicBoundsLyr, geomType, onlySelected, snap, minArea):
+    def topologicalCleanWithGeographicBounds(
+        self,
+        context,
+        feedback,
+        layerHandler,
+        algRunner,
+        inputLyrList,
+        geographicBoundsLyr,
+        geomType,
+        onlySelected,
+        snap,
+        minArea,
+    ):
         multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
@@ -262,7 +308,7 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
         )
         self.flagCoverageIssues(cleanedCoverage, error, feedback)
-    
+
     def flagCoverageIssues(self, cleanedCoverage, error, feedback):
         overlapDict = dict()
         for current, feat in enumerate(cleanedCoverage.getFeatures()):

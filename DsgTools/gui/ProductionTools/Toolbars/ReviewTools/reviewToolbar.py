@@ -540,7 +540,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         if self.mMapLayerComboBox.currentIndex() == 0:
             return
         self.removeLayerNameToGenericSelectionBlackList(layer.name())
-    
+
     @pyqtSlot(bool)
     def on_setActiveLayerPushButton_clicked(self):
         activeLayer = self.iface.activeLayer()
@@ -553,7 +553,6 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
                 level=Qgis.Warning,
                 duration=2,
             )
-        
 
     def addLayerNameToGenericSelectionBlackList(self, layerName: str):
         settings = QSettings()

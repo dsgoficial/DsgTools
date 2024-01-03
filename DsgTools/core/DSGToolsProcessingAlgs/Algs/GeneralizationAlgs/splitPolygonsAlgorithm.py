@@ -38,7 +38,7 @@ from qgis.core import (
     QgsProcessingParameterNumber,
     QgsRectangle,
     QgsSpatialIndex,
-    QgsVectorLayer
+    QgsVectorLayer,
 )
 
 
@@ -78,7 +78,18 @@ class SplitPolygons(QgsProcessingAlgorithm):
             QgsProcessingParameterFeatureSink(self.OUTPUT, "Output split polygons")
         )
 
-    def splitPol(self, features, overlap, fields, side_length, col_steps, row_steps, idToFeature, index, feedback):
+    def splitPol(
+        self,
+        features,
+        overlap,
+        fields,
+        side_length,
+        col_steps,
+        row_steps,
+        idToFeature,
+        index,
+        feedback,
+    ):
         polygons = []
         for feature in features:
             if feedback.isCanceled():
@@ -159,10 +170,24 @@ class SplitPolygons(QgsProcessingAlgorithm):
         col_steps = int(math.sqrt(parts))
         row_steps = col_steps
 
-        polygons = self.splitPol(features, overlap, fields, side_length, col_steps, row_steps, idToFeature, index, feedback)
-        base_polygons = self.splitPol(features, overlap, fields, 1, 1, 1, idToFeature, index, feedback)
+        polygons = self.splitPol(
+            features,
+            overlap,
+            fields,
+            side_length,
+            col_steps,
+            row_steps,
+            idToFeature,
+            index,
+            feedback,
+        )
+        base_polygons = self.splitPol(
+            features, overlap, fields, 1, 1, 1, idToFeature, index, feedback
+        )
 
-        tile_layer = QgsVectorLayer("Polygon?crs=" + source.sourceCrs().authid(), "tile_polygons", "memory")
+        tile_layer = QgsVectorLayer(
+            "Polygon?crs=" + source.sourceCrs().authid(), "tile_polygons", "memory"
+        )
         tile_data_provider = tile_layer.dataProvider()
         tile_data_provider.addAttributes(fields)
         tile_layer.updateFields()
@@ -173,7 +198,9 @@ class SplitPolygons(QgsProcessingAlgorithm):
         for feat in tile_layer.getFeatures():
             idToFeatureTile[feat.id()] = feat
 
-        base_layer = QgsVectorLayer("Polygon?crs=" + source.sourceCrs().authid(), "base_polygons", "memory")
+        base_layer = QgsVectorLayer(
+            "Polygon?crs=" + source.sourceCrs().authid(), "base_polygons", "memory"
+        )
         base_data_provider = base_layer.dataProvider()
         base_data_provider.addAttributes(fields)
         base_layer.updateFields()
@@ -184,7 +211,6 @@ class SplitPolygons(QgsProcessingAlgorithm):
         for feat in base_layer.getFeatures():
             idToFeatureBase[feat.id()] = feat
 
-
         priority = 1
         final_features = {}
         base_used = []
@@ -192,8 +218,8 @@ class SplitPolygons(QgsProcessingAlgorithm):
         sorted_source_features = sorted(
             source.getFeatures(),
             key=lambda x: (
-                round(x.geometry().centroid().asPoint().y(),5),
-                -round(x.geometry().centroid().asPoint().x(),5),
+                round(x.geometry().centroid().asPoint().y(), 5),
+                -round(x.geometry().centroid().asPoint().x(), 5),
             ),
             reverse=True,
         )
@@ -204,8 +230,8 @@ class SplitPolygons(QgsProcessingAlgorithm):
             intersecting_features_base = [idToFeatureBase[cid] for cid in candidate_ids]
             intersecting_features_base.sort(
                 key=lambda x: (
-                    round(x.geometry().centroid().asPoint().y(),5),
-                    -round(x.geometry().centroid().asPoint().x(),5),
+                    round(x.geometry().centroid().asPoint().y(), 5),
+                    -round(x.geometry().centroid().asPoint().x(), 5),
                 )
                 if not x.geometry().isNull()
                 else (0, 0),
@@ -213,7 +239,7 @@ class SplitPolygons(QgsProcessingAlgorithm):
             )
             for base_polygon in intersecting_features_base:
                 if base_polygon.id() in base_used:
-                        continue
+                    continue
                 base_used.append(base_polygon.id())
 
                 base_geometry = base_polygon.geometry()
@@ -222,8 +248,8 @@ class SplitPolygons(QgsProcessingAlgorithm):
 
                 intersecting_features.sort(
                     key=lambda x: (
-                        round(x.geometry().centroid().asPoint().y(),5),
-                        -round(x.geometry().centroid().asPoint().x(),5),
+                        round(x.geometry().centroid().asPoint().y(), 5),
+                        -round(x.geometry().centroid().asPoint().x(), 5),
                     )
                     if not x.geometry().isNull()
                     else (0, 0),

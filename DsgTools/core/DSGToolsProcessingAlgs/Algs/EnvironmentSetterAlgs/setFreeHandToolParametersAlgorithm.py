@@ -27,8 +27,9 @@ from qgis.core import (
     QgsProcessingParameterNumber,
 )
 
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.dsgtoolsBaseSetParametersAlgorithm import \
-    DsgToolsBaseSetParametersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.dsgtoolsBaseSetParametersAlgorithm import (
+    DsgToolsBaseSetParametersAlgorithm,
+)
 
 
 class SetFreeHandToolParametersAlgorithm(DsgToolsBaseSetParametersAlgorithm):

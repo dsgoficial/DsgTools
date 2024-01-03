@@ -221,12 +221,12 @@ class IdentifyPolygonSliverAlgorithm(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyPolygonSliverAlgorithm", string)
-    
+
     def shortHelpString(self):
         return help().shortHelpString(self.name())
 
     def helpUrl(self):
-        return  help().helpUrl(self.name())
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyPolygonSliverAlgorithm()

@@ -286,7 +286,7 @@ class MinimumAreaTool(QWidget, FORM_CLASS):
             self.iface.unregisterMainWindowAction(self.shapeAction)
         except:
             pass
-    
+
     def getToolState(self) -> dict:
         return {
             "bar_is_toggled": self.showPushButton.isChecked(),

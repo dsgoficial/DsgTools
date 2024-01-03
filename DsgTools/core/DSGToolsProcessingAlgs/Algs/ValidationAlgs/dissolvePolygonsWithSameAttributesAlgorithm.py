@@ -68,9 +68,7 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
             minValue=0,
             optional=True,
         )
-        param.setMetadata( {'widget_wrapper':
-        { 'decimals': 10 }
-        })
+        param.setMetadata({"widget_wrapper": {"decimals": 10}})
         self.addParameter(param)
         self.addParameter(
             QgsProcessingParameterField(

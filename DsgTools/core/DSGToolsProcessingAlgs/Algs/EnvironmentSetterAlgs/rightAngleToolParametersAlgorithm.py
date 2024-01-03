@@ -23,8 +23,9 @@
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsProcessingParameterNumber
 
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.dsgtoolsBaseSetParametersAlgorithm import \
-    DsgToolsBaseSetParametersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.dsgtoolsBaseSetParametersAlgorithm import (
+    DsgToolsBaseSetParametersAlgorithm,
+)
 
 
 class RightAngleToolParametersAlgorithm(DsgToolsBaseSetParametersAlgorithm):

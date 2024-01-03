@@ -281,12 +281,16 @@ class ClipAndCopyFeaturesBetweenDatabasesAlgorithm(QgsProcessingAlgorithm):
                 return outputDict
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(2 * currentIdx)
-            clippedLyr = self.algRunner.runClip(
-                inputLayer=lyr,
-                overlayLayer=clipLayer,
-                context=context,
-                feedback=multiStepFeedback,
-            ) if clippedLyr is not None else lyr
+            clippedLyr = (
+                self.algRunner.runClip(
+                    inputLayer=lyr,
+                    overlayLayer=clipLayer,
+                    context=context,
+                    feedback=multiStepFeedback,
+                )
+                if clippedLyr is not None
+                else lyr
+            )
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(2 * currentIdx + 1)
             outputDict[lyr.name()] = self.algRunner.runCreateFieldWithExpression(

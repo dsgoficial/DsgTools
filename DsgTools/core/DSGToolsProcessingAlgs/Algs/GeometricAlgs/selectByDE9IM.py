@@ -22,11 +22,16 @@
 
 
 from PyQt5.QtCore import QCoreApplication, QRegExp
-from qgis.core import (QgsGeometry, QgsProcessing,
-                       QgsProcessingAlgorithm, QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterString, Qgis)
+from qgis.core import (
+    QgsGeometry,
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterString,
+    Qgis,
+)
 from qgis.PyQt.QtGui import QRegExpValidator
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
@@ -89,7 +94,10 @@ class SelectByDE9IMAlgorithm(QgsProcessingAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterEnum(
-                self.METHOD, self.tr("Modify current selection by"), options=self.method, defaultValue=0
+                self.METHOD,
+                self.tr("Modify current selection by"),
+                options=self.method,
+                defaultValue=0,
             )
         )
         self.selectionIdDict = {

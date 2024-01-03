@@ -124,8 +124,13 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
         geographicBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
-        if inputLyr.wkbType() == QgsWkbTypes.PolygonGeometry and geographicBoundsLyr is not None:
-            raise NotImplementedError(self.tr("Spatial restriction not implemented yet for polygon layers"))
+        if (
+            inputLyr.wkbType() == QgsWkbTypes.PolygonGeometry
+            and geographicBoundsLyr is not None
+        ):
+            raise NotImplementedError(
+                self.tr("Spatial restriction not implemented yet for polygon layers")
+            )
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
         if geographicBoundsLyr is None:
             self.cleanGeometries(

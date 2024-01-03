@@ -38,6 +38,7 @@ from qgis.core import (
 from .validationAlgorithm import ValidationAlgorithm
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
+
 class IdentifyPolygonUndershootsAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     SELECTED = "SELECTED"
@@ -278,7 +279,7 @@ class IdentifyPolygonUndershootsAlgorithm(ValidationAlgorithm):
         return help().shortHelpString(self.name())
 
     def helpUrl(self):
-        return  help().helpUrl(self.name())
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyPolygonUndershootsAlgorithm()

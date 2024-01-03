@@ -66,7 +66,7 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
             minValue=0,
             defaultValue=1e-10,
         )
-        param.setMetadata({'widget_wrapper':{'decimals': 12}})
+        param.setMetadata({"widget_wrapper": {"decimals": 12}})
         self.addParameter(param)
         self.addOutput(
             QgsProcessingOutputVectorLayer(

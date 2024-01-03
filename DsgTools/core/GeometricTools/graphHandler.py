@@ -962,13 +962,14 @@ def buildAuxLayersPriorGraphBuilding(
     )
     return localCache, nodesLayer
 
+
 def getInAndOutNodesOnGeographicBounds(
-        nodeDict: Dict[QByteArray, int],
-        nodesLayer: QgsVectorLayer,
-        geographicBoundsLayer: QgsVectorLayer,
-        context: Optional[QgsProcessingContext] = None,
-        feedback: Optional[QgsFeedback] = None,
-    ) -> Tuple[Set[int], Set[int]]:
+    nodeDict: Dict[QByteArray, int],
+    nodesLayer: QgsVectorLayer,
+    geographicBoundsLayer: QgsVectorLayer,
+    context: Optional[QgsProcessingContext] = None,
+    feedback: Optional[QgsFeedback] = None,
+) -> Tuple[Set[int], Set[int]]:
     """
     Get the in-nodes and out-nodes that fall within the geographic bounds.
 
@@ -994,7 +995,9 @@ def getInAndOutNodesOnGeographicBounds(
 
         The feedback object is used to monitor the progress of the function.
     """
-    multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
+    multiStepFeedback = (
+        QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
+    )
     context = context if context is not None else QgsProcessingContext()
     algRunner = AlgRunner()
     currentStep = 0
@@ -1027,35 +1030,44 @@ def getInAndOutNodesOnGeographicBounds(
     for current, nodeFeat in enumerate(nodesOutsideGeographicBounds.getFeatures()):
         if multiStepFeedback is not None and multiStepFeedback.isCanceled():
             break
-        selectedSet = (
-            fixedInNodeSet if nodeFeat["vertex_pos"] == 0 else fixedOutNodeSet
-        )
+        selectedSet = fixedInNodeSet if nodeFeat["vertex_pos"] == 0 else fixedOutNodeSet
         geom = nodeFeat.geometry()
         selectedSet.add(nodeDict[geom.asWkb()])
         if multiStepFeedback is not None:
             multiStepFeedback.setProgress(current * stepSize)
     return fixedInNodeSet, fixedOutNodeSet
 
+
 def find_constraint_points(
     nodesLayer: QgsVectorLayer,
     constraintLayer: QgsVectorLayer,
     nodeDict: Dict[QByteArray, int],
     nodeLayerIdDict: Dict[int, Dict[int, QByteArray]],
-    useBuffer: bool =True,
+    useBuffer: bool = True,
     context: Optional[QgsProcessingContext] = None,
     feedback: Optional[QgsFeedback] = None,
 ) -> Set[int]:
-    multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
+    multiStepFeedback = (
+        QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
+    )
     context = context if context is not None else QgsProcessingContext()
     algRunner = AlgRunner()
     constraintSet = set()
-    layerToRelate = algRunner.runBuffer(
-        inputLayer=constraintLayer,
-        distance=1e-6,
-        context=context,
-        is_child_algorithm=True,
-    ) if constraintLayer.geometryType() != QgsWkbTypes.PointGeometry and useBuffer else constraintLayer
-    predicate = AlgRunner.Intersect if constraintLayer.geometryType() != QgsWkbTypes.PointGeometry else AlgRunner.Equal
+    layerToRelate = (
+        algRunner.runBuffer(
+            inputLayer=constraintLayer,
+            distance=1e-6,
+            context=context,
+            is_child_algorithm=True,
+        )
+        if constraintLayer.geometryType() != QgsWkbTypes.PointGeometry and useBuffer
+        else constraintLayer
+    )
+    predicate = (
+        AlgRunner.Intersect
+        if constraintLayer.geometryType() != QgsWkbTypes.PointGeometry
+        else AlgRunner.Equal
+    )
     selectedNodesFromOcean = algRunner.runExtractByLocation(
         inputLyr=nodesLayer,
         intersectLyr=layerToRelate,
@@ -1069,6 +1081,7 @@ def find_constraint_points(
         constraintSet.add(nodeDict[nodeLayerIdDict[feat["nfeatid"]]])
     return constraintSet
 
+
 def generalize_edges_according_to_degrees(
     G,
     constraintSet: Set[int],
@@ -1077,40 +1090,40 @@ def generalize_edges_according_to_degrees(
 ):
     G_copy = G.copy()
     pairsToRemove = find_smaller_first_order_path_with_length_smaller_than_threshold(
-        G=G_copy,
-        constraintSet=constraintSet,
-        threshold=threshold,
-        feedback=feedback
+        G=G_copy, constraintSet=constraintSet, threshold=threshold, feedback=feedback
     )
     while pairsToRemove is not None:
         if feedback is not None and feedback.isCanceled():
             break
         for n0, n1 in pairsToRemove:
             G_copy.remove_edge(n0, n1)
-        pairsToRemove = find_smaller_first_order_path_with_length_smaller_than_threshold(
-            G=G_copy,
-            constraintSet=constraintSet,
-            threshold=threshold,
-            feedback=feedback
+        pairsToRemove = (
+            find_smaller_first_order_path_with_length_smaller_than_threshold(
+                G=G_copy,
+                constraintSet=constraintSet,
+                threshold=threshold,
+                feedback=feedback,
+            )
         )
     return G_copy
-    
+
 
 def find_smaller_first_order_path_with_length_smaller_than_threshold(
-    G, 
-    constraintSet: Set[int],
-    threshold: float,
-    feedback: Optional[QgsFeedback] = None
+    G, constraintSet: Set[int], threshold: float, feedback: Optional[QgsFeedback] = None
 ) -> frozenset[frozenset]:
     total_length_dict = dict()
     edges_to_remove_dict = dict()
-    for node in set(node for node in G.nodes if G.degree(node) == 1 and node not in constraintSet):
+    for node in set(
+        node for node in G.nodes if G.degree(node) == 1 and node not in constraintSet
+    ):
         if feedback is not None and feedback.isCanceled():
             return None
         connectedNodes = fetch_connected_nodes(G, node, 2)
         if set(connectedNodes).intersection(constraintSet):
             continue
-        pairs = frozenset([frozenset([a, b]) for i in connectedNodes for a, b in G.edges(i)])
+        pairs = frozenset(
+            [frozenset([a, b]) for i in connectedNodes for a, b in G.edges(i)]
+        )
         total_length = sum(G[a][b]["length"] for a, b in pairs)
         if total_length >= threshold:
             continue
@@ -1118,5 +1131,7 @@ def find_smaller_first_order_path_with_length_smaller_than_threshold(
         total_length_dict[node] = total_length
     if len(total_length_dict) == 0:
         return None
-    smaller_path_node = min(total_length_dict.keys(), key=lambda x: total_length_dict[x])
+    smaller_path_node = min(
+        total_length_dict.keys(), key=lambda x: total_length_dict[x]
+    )
     return edges_to_remove_dict[smaller_path_node]

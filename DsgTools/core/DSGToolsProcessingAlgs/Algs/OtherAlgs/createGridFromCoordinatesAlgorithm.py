@@ -116,9 +116,7 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(QgsProcessingParameterCrs(self.CRS, self.tr("CRS")))
 
         self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.OUTPUT, self.tr("Grid")
-            )
+            QgsProcessingParameterFeatureSink(self.OUTPUT, self.tr("Grid"))
         )
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -126,7 +124,7 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         algRunner = AlgRunner()
-        
+
         xMin = self.parameterAsDouble(parameters, self.X_MIN, context)
         yMin = self.parameterAsDouble(parameters, self.Y_MIN, context)
         xMax = self.parameterAsDouble(parameters, self.X_MAX, context)
@@ -149,8 +147,8 @@ class CreateGridFromCoordinatesAlgorithm(QgsProcessingAlgorithm):
         )
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         multiStepFeedback.setCurrentStep(0)
-        xGridSize = abs(xMax-xMin)/nTilesX
-        yGridSize = abs(yMax-yMin)/nTilesY
+        xGridSize = abs(xMax - xMin) / nTilesX
+        yGridSize = abs(yMax - yMin) / nTilesY
         grid = algRunner.runCreateGrid(
             extent=QgsRectangle(xMin, yMin, xMax, yMax, normalize=False),
             crs=crs,

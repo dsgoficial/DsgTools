@@ -160,6 +160,7 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.setProgressText(self.tr("Submitting to thread"))
+
         def compute(feat):
             outputDict = defaultdict(set)
             if feedback.isCanceled():
@@ -173,7 +174,9 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
                 .setFilterRect(bufferBB)
             )
             if "vertex_part_ring" in feat:
-                request.setFilterExpression(f"vertex_part_ring = {feat['vertex_part_ring']}")
+                request.setFilterExpression(
+                    f"vertex_part_ring = {feat['vertex_part_ring']}"
+                )
             for candidateFeat in vertexLayer.getFeatures(request):
                 if candidateFeat.id() == feat.id():
                     continue
@@ -183,6 +186,7 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
                 ) and not candidateGeom.equals(geom):
                     outputDict[feat["featid"]].add(candidateGeom.asWkb())
             return outputDict
+
         pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
         futures = set()
 
@@ -249,7 +253,7 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
         return help().shortHelpString(self.name())
 
     def helpUrl(self):
-        return  help().helpUrl(self.name())
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyGeometriesWithLargeVertexDensityAlgorithm()

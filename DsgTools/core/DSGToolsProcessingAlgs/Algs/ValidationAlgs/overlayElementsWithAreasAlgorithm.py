@@ -164,7 +164,11 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
             OverlayElementsWithAreasAlgorithm.OverlayAndKeep,
         ]:
             outputLyr = self.algRunner.runClip(
-                lyr, overlayLyr, context, feedback=localFeedback, is_child_algorithm=True,
+                lyr,
+                overlayLyr,
+                context,
+                feedback=localFeedback,
+                is_child_algorithm=True,
             )
             outputLyr = self.algRunner.runMultipartToSingleParts(
                 inputLayer=outputDiffLyr, context=context
@@ -177,7 +181,11 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
             OverlayElementsWithAreasAlgorithm.OverlayAndKeep,
         ]:
             outputDiffLyr = self.algRunner.runSymDiff(
-                lyr, overlayLyr, context, feedback=localFeedback, is_child_algorithm=True
+                lyr,
+                overlayLyr,
+                context,
+                feedback=localFeedback,
+                is_child_algorithm=True,
             )
             outputDiffLyr = self.algRunner.runMultipartToSingleParts(
                 inputLayer=outputDiffLyr, context=context

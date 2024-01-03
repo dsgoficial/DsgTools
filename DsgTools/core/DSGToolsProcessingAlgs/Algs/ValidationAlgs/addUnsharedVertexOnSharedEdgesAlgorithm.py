@@ -170,7 +170,7 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
             searchRadius=searchRadius,
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         currentStep += 1
         if geographicBoundary is not None:
@@ -190,7 +190,7 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
             vertexLyr=newFlagsLyr,
             layerList=list(chain(inputLineLyrList, inputPolygonLyrList)),
             searchRadius=searchRadius,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
 
         return {}

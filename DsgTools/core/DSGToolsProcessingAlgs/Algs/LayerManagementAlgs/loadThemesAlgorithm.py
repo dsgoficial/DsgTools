@@ -37,11 +37,12 @@ from qgis.core import (
     QgsProcessingParameterNumber,
     QgsProcessingParameterString,
     QgsProject,
-    QgsProcessingParameterFile
+    QgsProcessingParameterFile,
 )
 from qgis.utils import iface
 from qgis import gui, core
 import json
+
 
 class LoadThemesAlgorithm(QgsProcessingAlgorithm):
     FILE = "FILE"
@@ -90,20 +91,25 @@ class LoadThemesAlgorithm(QgsProcessingAlgorithm):
 
     def loadThemes(self, themes):
         for theme in themes:
-            themeLayers = [ '{}.{}'.format(l['schema'], l['camada']) for l in theme['camadas'] ]
+            themeLayers = [
+                "{}.{}".format(l["schema"], l["camada"]) for l in theme["camadas"]
+            ]
             root = core.QgsProject().instance().layerTreeRoot().clone()
             for rLayer in root.findLayers():
                 rLayer.setItemVisibilityChecked(False)
-                rLayerName = '{}.{}'.format(
+                rLayerName = "{}.{}".format(
                     rLayer.layer().dataProvider().uri().schema(),
-                    rLayer.layer().dataProvider().uri().table()
+                    rLayer.layer().dataProvider().uri().table(),
                 )
-                if not(rLayerName in themeLayers):
+                if not (rLayerName in themeLayers):
                     continue
                 rLayer.setItemVisibilityChecked(True)
             model = core.QgsLayerTreeModel(root)
             themeCollection = core.QgsProject.instance().mapThemeCollection()
-            themeCollection.insert(theme['nome'], core.QgsMapThemeCollection.createThemeFromCurrentState(root, model))
+            themeCollection.insert(
+                theme["nome"],
+                core.QgsMapThemeCollection.createThemeFromCurrentState(root, model),
+            )
 
     def name(self):
         """

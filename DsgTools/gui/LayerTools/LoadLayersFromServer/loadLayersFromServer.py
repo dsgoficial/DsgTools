@@ -118,12 +118,17 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
                         dbName
                     ].getGeomColumnTupleList(showViews=showViews)
                     for tableSchema, tableName, geom, geomType, tableType in geomList:
-                        if all(k not in dbName for k in ["EDGV", "MUVD", "MGCP", "UTRD", "TRD"]):
+                        if all(
+                            k not in dbName
+                            for k in ["EDGV", "MUVD", "MGCP", "UTRD", "TRD"]
+                        ):
                             lyrName = tableName
                             cat = tableSchema
                         else:
                             lyrName = "_".join(tableName.split("_")[1::])
-                            if lyrName == "" or (lyrName in ["a", "p", "l"] and "EDGV" not in dbName):
+                            if lyrName == "" or (
+                                lyrName in ["a", "p", "l"] and "EDGV" not in dbName
+                            ):
                                 lyrName = tableName
                                 cat = "layers"
                             else:

@@ -60,15 +60,24 @@ class DetectNullGeometriesAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         inputLyrList = self.parameterAsLayerList(parameters, self.INPUT_LAYERS, context)
-        runCheckOnInput = self.parameterAsBool(parameters, self.RUN_CHECK_ON_INPUT, context)
+        runCheckOnInput = self.parameterAsBool(
+            parameters, self.RUN_CHECK_ON_INPUT, context
+        )
 
         if not inputLyrList:
             return {}
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if runCheckOnInput else feedback
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(2, feedback) if runCheckOnInput else feedback
+        )
         listSize = len(inputLyrList)
         stepSize = 100 / listSize if listSize else 0
+
         def compute(lyr):
-            return lyr.name(), any(feat.geometry().isNull() or feat.geometry().isEmpty() for feat in lyr.getFeatures())
+            return lyr.name(), any(
+                feat.geometry().isNull() or feat.geometry().isEmpty()
+                for feat in lyr.getFeatures()
+            )
+
         if runCheckOnInput:
             pool = concurrent.futures.ThreadPoolExecutor(os.cpu_count())
             futures = set()
@@ -89,7 +98,9 @@ class DetectNullGeometriesAlgorithm(QgsProcessingAlgorithm):
                 break
             lyrName, hasNullOrEmpty = future.result()
             if hasNullOrEmpty:
-                multiStepFeedback.pushInfo(self.tr(f"Check layer {lyrName} for empty or null values."))
+                multiStepFeedback.pushInfo(
+                    self.tr(f"Check layer {lyrName} for empty or null values.")
+                )
             multiStepFeedback.setProgress(current * stepSize)
         return {}
 

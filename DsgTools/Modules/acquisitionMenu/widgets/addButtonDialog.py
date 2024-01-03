@@ -5,13 +5,15 @@ import uuid
 
 
 class AddButtonDialog(QtWidgets.QDialog):
-    def __init__(
-        self, controller, messageFactory=None
-    ):
+    def __init__(self, controller, messageFactory=None):
         super(AddButtonDialog, self).__init__()
         uic.loadUi(self.getUiPath(), self)
         self.controller = controller
-        self.messageFactory = messageFactory if messageFactory is not None else UtilsFactory().createMessageFactory()
+        self.messageFactory = (
+            messageFactory
+            if messageFactory is not None
+            else UtilsFactory().createMessageFactory()
+        )
         self.uuid = None
         self.tabCombo = None
         self.layerCombo = None
@@ -125,7 +127,9 @@ class AddButtonDialog(QtWidgets.QDialog):
         self.keyWordsLe.setText(buttonConfig["buttonKeyWords"])
         self.tooltipLe.setText(buttonConfig["buttonTooltip"])
         self.suppressFormCkb.setChecked(buttonConfig["buttonSuppressForm"])
-        self.suppressReclassificationFormCkb.setChecked(buttonConfig.get("buttonSuppressReclassificationForm", False))
+        self.suppressReclassificationFormCkb.setChecked(
+            buttonConfig.get("buttonSuppressReclassificationForm", False)
+        )
 
         self.previewBtn.setText(buttonConfig["buttonName"])
         self.setColorPreviewButton(

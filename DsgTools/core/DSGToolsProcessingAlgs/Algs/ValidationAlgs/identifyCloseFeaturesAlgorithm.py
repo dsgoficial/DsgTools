@@ -151,7 +151,10 @@ class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
         )
         multiStepFeedback.setCurrentStep(2)
         singlePart = self.algRunner.runMultipartToSingleParts(
-            inputLayer=layerBuffered, context=context, feedback=multiStepFeedback, is_child_algorithm=True
+            inputLayer=layerBuffered,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         multiStepFeedback.setCurrentStep(3)
         self.algRunner.runCreateSpatialIndex(
@@ -193,11 +196,19 @@ class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
         layerA = tempLayersDict[layerApre]
         lyrAPkFieldNames = self.getLayerPrimaryKeyAttributeNames(layerApre)
         lyrAPkFieldName = "feat_id" if lyrAPkFieldNames is None else lyrAPkFieldNames[0]
-        idAText = self.tr(f"with feature id") if lyrAPkFieldName == "feat_id" else self.tr(f"with {lyrAPkFieldName}")
+        idAText = (
+            self.tr(f"with feature id")
+            if lyrAPkFieldName == "feat_id"
+            else self.tr(f"with {lyrAPkFieldName}")
+        )
         layerB = tempLayersDict[layerBpre]
         lyrBPkFieldNames = self.getLayerPrimaryKeyAttributeNames(layerBpre)
         lyrBPkFieldName = "feat_id" if lyrBPkFieldNames is None else lyrBPkFieldNames[0]
-        idBText = self.tr(f"with feature id") if lyrBPkFieldName == "feat_id" else self.tr(f"with {lyrBPkFieldName}")
+        idBText = (
+            self.tr(f"with feature id")
+            if lyrBPkFieldName == "feat_id"
+            else self.tr(f"with {lyrBPkFieldName}")
+        )
         multiStepFeedback.setCurrentStep(0)
         joinedLayer = self.algRunner.runJoinAttributesByLocation(
             inputLyr=layerAbuffered,
@@ -232,7 +243,9 @@ class IdentifyCloseFeaturesAlgorithm(ValidationAlgorithm):
             if geom.asWkb() in wkbSet:
                 continue
             wkbSet.add(geom)
-            flagText = self.tr(f"Feature from layer {layerApre} with {idAText}={featA[lyrAPkFieldName]} has distance smaller than {distance} from feature from layer {layerBpre} with {idBText}={featB[lyrAPkFieldName]}")
+            flagText = self.tr(
+                f"Feature from layer {layerApre} with {idAText}={featA[lyrAPkFieldName]} has distance smaller than {distance} from feature from layer {layerBpre} with {idBText}={featB[lyrAPkFieldName]}"
+            )
             self.flagFeature(geom, flagText)
             multiStepFeedback.setProgress(current * stepSize)
 

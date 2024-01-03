@@ -5,9 +5,12 @@ import json
 from DsgTools.Modules.qgis.factories.actionsFactory import ActionsFactory
 from qgis.core import QgsWkbTypes
 
+
 class QgisCtrl:
     def __init__(self, actionsFactory=None):
-        self.actionsFactory = actionsFactory if actionsFactory is not None else ActionsFactory()
+        self.actionsFactory = (
+            actionsFactory if actionsFactory is not None else ActionsFactory()
+        )
 
     def getLoadedVectorLayerNames(self):
         layerNames = []
@@ -21,7 +24,7 @@ class QgisCtrl:
                 layerName = (
                     l.dataProvider().uri().uri().split("|")[-1].split("=")[-1][1:-1]
                 )
-                if layerName == '':
+                if layerName == "":
                     layerName = l.name()
             else:
                 layerName = l.name()
@@ -42,7 +45,7 @@ class QgisCtrl:
                 layerName = (
                     l.dataProvider().uri().uri().split("|")[-1].split("=")[-1][1:-1]
                 )
-                if layerName == '':
+                if layerName == "":
                     layerName = l.name()
             else:
                 layerName = l.name()
@@ -70,7 +73,7 @@ class QgisCtrl:
                 layerName = (
                     l.dataProvider().uri().uri().split("|")[-1].split("=")[-1][1:-1]
                 )
-                if layerName == '':
+                if layerName == "":
                     layerName = l.name()
             else:
                 layerName = l.name()
@@ -222,9 +225,15 @@ class QgisCtrl:
         geometryFilterDict = {
             QgsWkbTypes.PointGeometry: (QgsWkbTypes.PointGeometry,),
             QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry,),
-            QgsWkbTypes.PolygonGeometry: (QgsWkbTypes.PointGeometry, QgsWkbTypes.PolygonGeometry)
+            QgsWkbTypes.PolygonGeometry: (
+                QgsWkbTypes.PointGeometry,
+                QgsWkbTypes.PolygonGeometry,
+            ),
         }
-        if destinatonLayer.geometryType() not in geometryFilterDict[layer.geometryType()]:
+        if (
+            destinatonLayer.geometryType()
+            not in geometryFilterDict[layer.geometryType()]
+        ):
             return
         layer.startEditing()
         destinatonLayer.startEditing()
@@ -233,10 +242,12 @@ class QgisCtrl:
         for feature in features:
             newFeat = core.QgsFeature()
             newFeat.setFields(destinatonLayer.fields())
-            newGeom = feature.geometry().pointOnSurface() \
-                if destinatonLayer.geometryType() == core.QgsWkbTypes.PointGeometry \
-                    and layer.geometryType() == core.QgsWkbTypes.PolygonGeometry \
+            newGeom = (
+                feature.geometry().pointOnSurface()
+                if destinatonLayer.geometryType() == core.QgsWkbTypes.PointGeometry
+                and layer.geometryType() == core.QgsWkbTypes.PolygonGeometry
                 else feature.geometry()
+            )
             newFeat.setGeometry(newGeom)
             self.attributeFeature(newFeat, destinatonLayer, attributes)
             newFeatures.append(newFeat)

@@ -24,6 +24,7 @@
 from qgis.PyQt import QtCore, QtGui, QtWidgets
 from qgsmaplayercombobox import QgsMapLayerComboBox
 
+
 class CheckableComboBox(QgsMapLayerComboBox):
     def __init__(self):
         super(CheckableComboBox, self).__init__()

@@ -1,7 +1,7 @@
 
 ![DSGTools](https://github.com/dsgoficial/DsgTools/assets/6131641/fc2511a4-607b-4ce6-a24c-96b390be2739)
 
-# 
+#
 
 [![Join the chat at https://gitter.im/DsgTools/Lobby](https://badges.gitter.im/DsgTools/Lobby.svg)](https://gitter.im/DsgTools/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![DOI](https://zenodo.org/badge/25019920.svg)](https://zenodo.org/badge/latestdoi/25019920)

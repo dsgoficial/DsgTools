@@ -97,13 +97,21 @@ def createFeatureListWithPixelValuesFromPixelCoordinatesArray(
 ) -> List[QgsFeature]:
     return list(
         filter(
-            lambda x: x is not None, (
+            lambda x: x is not None,
+            (
                 createFeatureWithPixelValueFromPixelCoordinates(
-                    tuple(coords), fieldName, fields, npRaster, transform, defaultAtributeMap=defaultAtributeMap
-                ) for coords in pixelCoordinates
-            )
+                    tuple(coords),
+                    fieldName,
+                    fields,
+                    npRaster,
+                    transform,
+                    defaultAtributeMap=defaultAtributeMap,
+                )
+                for coords in pixelCoordinates
+            ),
         )
     )
+
 
 def createFeatureListWithPointList(
     pointList: List[QgsPoint],
@@ -204,7 +212,10 @@ def buildNumpyNodataMask(rasterLyr: QgsRasterLayer, vectorLyr: QgsVectorLayer):
 
 
 def createMaxPointFeatFromRasterLayer(
-    inputRaster: QgsRasterLayer, fields: QgsFields, fieldName: str, defaultAtributeMap: Dict = None,
+    inputRaster: QgsRasterLayer,
+    fields: QgsFields,
+    fieldName: str,
+    defaultAtributeMap: Dict = None,
 ) -> QgsFeature:
     ds, npRaster = readAsNumpy(inputRaster)
     transform = getCoordinateTransform(ds)
@@ -228,7 +239,10 @@ def createMaxPointFeatFromRasterLayer(
 
 
 def createMaxPointFeatListFromRasterLayer(
-    inputRaster: QgsRasterLayer, fields: QgsFields, fieldName: str, defaultAtributeMap: Dict = None,
+    inputRaster: QgsRasterLayer,
+    fields: QgsFields,
+    fieldName: str,
+    defaultAtributeMap: Dict = None,
 ) -> List[QgsFeature]:
     ds, npRaster = readAsNumpy(inputRaster)
     transform = getCoordinateTransform(ds)

@@ -1,13 +1,18 @@
 import json
 import os
 
+
 class HTMLHelpCreator(object):
-
     def __init__(self):
-        self.html_repository = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'html')
-        self.image_repository = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'images')
-        self.json_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'links_dictionary.json')
-
+        self.html_repository = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "html"
+        )
+        self.image_repository = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "images"
+        )
+        self.json_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "links_dictionary.json"
+        )
 
     def getLinkDictionary(self):
 
@@ -33,4 +38,3 @@ class HTMLHelpCreator(object):
         for algorithm, wiki_link in link_dictionary.items():
             if algorithm_name == algorithm:
                 return wiki_link
-            
