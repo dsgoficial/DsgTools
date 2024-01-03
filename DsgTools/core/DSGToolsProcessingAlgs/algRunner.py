@@ -559,7 +559,7 @@ class AlgRunner:
         return output["OUTPUT"]
 
     def runSymDiff(
-        self, inputLayer, overlayLayer, context, feedback=None, outputLyr=None
+        self, inputLayer, overlayLayer, context, feedback=None, outputLyr=None, is_child_algorithm=False,
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"INPUT": inputLayer, "OVERLAY": overlayLayer, "OUTPUT": outputLyr}
@@ -568,6 +568,7 @@ class AlgRunner:
             parameters,
             context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
