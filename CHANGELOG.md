@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.8 - dev
+## 4.13.9 - dev
 
 Novas Funcionalidades:
 
@@ -13,6 +13,8 @@ Melhorias:
 - Adicionada a opção de rodar o clean levando em consideração a partição espacial (impede alteração do clean fora da moldura), para o caso de linhas;
 - Melhoria no processo topological douglas peucker: agora antes de rodar a simplificação, é rodado um clean, as feições são quebradas nas intersecções e, após rodar o topological douglas, as linhas são unidas novamente;
 - Adicionada a opção de rodar o topological douglas peucker levando em consideração a partição espacial (impede alteração do topological douglas fora da moldura);
+- Adicionada a opção de rodar o topological clean levando em consideração a partição espacial (impede alteração do topological douglas fora da moldura) para o caso de linhas;
+
 
 Correção de bug:
 

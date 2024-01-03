@@ -22,28 +22,16 @@
 """
 from PyQt5.QtCore import QCoreApplication
 
-import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
-    QgsGeometry,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingException,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
-    QgsProcessingParameterEnum,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingUtils,
-    QgsProject,
-    QgsSpatialIndex,
     QgsWkbTypes,
 )
 
@@ -56,6 +44,7 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
     SELECTED = "SELECTED"
     TOLERANCE = "TOLERANCE"
     MINAREA = "MINAREA"
+    GEOGRAPHIC_BOUNDARY = "GEOGRAPHIC_BOUNDARY"
     FLAGS = "FLAGS"
 
     def initAlgorithm(self, config):
@@ -69,29 +58,42 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
                 QgsProcessing.TypeVectorPolygon,
             )
         )
+
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.SELECTED, self.tr("Process only selected features")
             )
         )
+
+        snapParam = QgsProcessingParameterNumber(
+            self.TOLERANCE,
+            self.tr("Snap radius"),
+            minValue=0,
+            defaultValue=1,
+            type=QgsProcessingParameterNumber.Double,
+        )
+        snapParam.setMetadata({"widget_wrapper": {"decimals": 16}})
+        self.addParameter(snapParam)
+
+        areaParam = QgsProcessingParameterNumber(
+            self.MINAREA,
+            self.tr("Minimum area"),
+            minValue=0,
+            defaultValue=1e-8,
+            type=QgsProcessingParameterNumber.Double,
+        )
+        areaParam.setMetadata({"widget_wrapper": {"decimals": 16}})
+        self.addParameter(areaParam)
+
         self.addParameter(
-            QgsProcessingParameterNumber(
-                self.TOLERANCE,
-                self.tr("Snap radius"),
-                minValue=0,
-                defaultValue=1,
-                type=QgsProcessingParameterNumber.Double,
+            QgsProcessingParameterVectorLayer(
+                self.GEOGRAPHIC_BOUNDARY,
+                self.tr("Geographic Bounds Layer"),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True,
             )
         )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.MINAREA,
-                self.tr("Minimum area"),
-                minValue=0,
-                defaultValue=0.0001,
-                type=QgsProcessingParameterNumber.Double,
-            )
-        )
+
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS, self.tr("{0} Flags").format(self.displayName())
@@ -122,8 +124,21 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         snap = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
+        geographicBoundsLyr = self.parameterAsVectorLayer(
+            parameters, self.GEOGRAPHIC_BOUNDARY, context
+        )
+        if geomType == QgsWkbTypes.PolygonGeometry and geographicBoundsLyr is not None:
+            raise NotImplementedError(self.tr("Spatial restriction not implemented yet for polygon layers"))
         self.prepareFlagSink(parameters, inputLyrList[0], geomType, context)
 
+        if geographicBoundsLyr is None:
+            self.topologicalCleanWithoutGeographicBounds(context, feedback, layerHandler, algRunner, inputLyrList, geomType, onlySelected, snap, minArea)
+        else:
+            self.topologicalCleanWithGeographicBounds(context, feedback, layerHandler, algRunner, inputLyrList, geographicBoundsLyr, geomType, onlySelected, snap, minArea)
+
+        return {self.INPUTLAYERS: inputLyrList, self.FLAGS: self.flagSink}
+
+    def topologicalCleanWithoutGeographicBounds(self, context, feedback, layerHandler, algRunner, inputLyrList, geomType, onlySelected, snap, minArea):
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Building unified layer..."))
@@ -154,8 +169,100 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
         )
         self.flagCoverageIssues(cleanedCoverage, error, feedback)
 
-        return {self.INPUTLAYERS: inputLyrList, self.FLAGS: self.flagSink}
+    def topologicalCleanWithGeographicBounds(self, context, feedback, layerHandler, algRunner, inputLyrList, geographicBoundsLyr, geomType, onlySelected, snap, minArea):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Building unified layer..."))
+        # in order to check the topology of all layers as a whole, all features
+        # are handled as if they formed a single layer
+        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
+            inputLyrList,
+            geomType=geomType,
+            onlySelected=onlySelected,
+            feedback=multiStepFeedback,
+        )
 
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        renamedAuxLyr = algRunner.runRenameField(
+            inputLayer=auxLyr,
+            field="featid",
+            newName="oldfeatid",
+            context=context,
+            feedback=multiStepFeedback,
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Applying spatial constraint..."))
+        (
+            insideLyr,
+            outsideLyr,
+        ) = layerHandler.prepareAuxLayerForSpatialConstrainedAlgorithm(
+            inputLyr=renamedAuxLyr,
+            geographicBoundaryLyr=geographicBoundsLyr,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Running clean on unified layer..."))
+        cleanedCoverage, error = algRunner.runClean(
+            insideLyr,
+            [algRunner.RMSA, algRunner.Break, algRunner.RmDupl, algRunner.RmDangle],
+            context,
+            returnError=True,
+            snap=snap,
+            minArea=minArea,
+            feedback=multiStepFeedback,
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(
+            self.tr("Integrating results inside and outside geographic bounds...")
+        )
+        outputLyr = (
+            layerHandler.integrateSpatialConstrainedAlgorithmOutputAndOutsideLayer(
+                algOutputLyr=cleanedCoverage,
+                outsideLyr=outsideLyr,
+                tol=snap,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        renamedOutputLyr = algRunner.runRenameField(
+            inputLayer=outputLyr,
+            field="oldfeatid",
+            newName="featid",
+            context=context,
+            feedback=multiStepFeedback,
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Updating original layer..."))
+        layerHandler.updateOriginalLayersFromUnifiedLayer(
+            inputLyrList, renamedOutputLyr, feedback=multiStepFeedback
+        )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        if error.featureCount() == 0:
+            return
+        cleanedCoverage = algRunner.runRenameField(
+            inputLayer=cleanedCoverage,
+            field="oldfeatid",
+            newName="featid",
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        self.flagCoverageIssues(cleanedCoverage, error, feedback)
+    
     def flagCoverageIssues(self, cleanedCoverage, error, feedback):
         overlapDict = dict()
         for current, feat in enumerate(cleanedCoverage.getFeatures()):

@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from collections import defaultdict
 from PyQt5.QtCore import QCoreApplication
 
 import processing
@@ -55,6 +56,7 @@ class TopologicalCleanLinesAlgorithm(TopologicalCleanAlgorithm):
     SELECTED = "SELECTED"
     TOLERANCE = "TOLERANCE"
     MINAREA = "MINAREA"
+    GEOGRAPHIC_BOUNDARY = "GEOGRAPHIC_BOUNDARY"
     FLAGS = "FLAGS"
 
     def initAlgorithm(self, config):
@@ -68,27 +70,39 @@ class TopologicalCleanLinesAlgorithm(TopologicalCleanAlgorithm):
                 QgsProcessing.TypeVectorLine,
             )
         )
+        
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.SELECTED, self.tr("Process only selected features")
             )
         )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.TOLERANCE,
-                self.tr("Snap radius"),
-                minValue=0,
-                defaultValue=1,
-                type=QgsProcessingParameterNumber.Double,
-            )
+
+        snapParam = QgsProcessingParameterNumber(
+            self.TOLERANCE,
+            self.tr("Snap radius"),
+            minValue=0,
+            defaultValue=1,
+            type=QgsProcessingParameterNumber.Double,
         )
+        snapParam.setMetadata({"widget_wrapper": {"decimals": 16}})
+        self.addParameter(snapParam)
+
+        areaParam = QgsProcessingParameterNumber(
+            self.MINAREA,
+            self.tr("Minimum area"),
+            minValue=0,
+            defaultValue=1e-8,
+            type=QgsProcessingParameterNumber.Double,
+        )
+        areaParam.setMetadata({"widget_wrapper": {"decimals": 16}})
+        self.addParameter(areaParam)
+
         self.addParameter(
-            QgsProcessingParameterNumber(
-                self.MINAREA,
-                self.tr("Minimum area"),
-                minValue=0,
-                defaultValue=0.0001,
-                type=QgsProcessingParameterNumber.Double,
+            QgsProcessingParameterVectorLayer(
+                self.GEOGRAPHIC_BOUNDARY,
+                self.tr("Geographic Bounds Layer"),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True,
             )
         )
 
@@ -97,6 +111,41 @@ class TopologicalCleanLinesAlgorithm(TopologicalCleanAlgorithm):
                 self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
         )
+    
+    def flagCoverageIssues(self, cleanedCoverage, error, feedback):
+        overlapDict = defaultdict(list)
+        for current, feat in enumerate(cleanedCoverage.getFeatures()):
+            if feedback.isCanceled():
+                break
+            geom = feat.geometry()
+            geomKey = geom.asWkb()
+            overlapDict[geomKey].append(feat)
+        for geomKey, featList in overlapDict.items():
+            if feedback.isCanceled():
+                break
+            if len(featList) == 0:
+                continue
+            elif len(featList) == 1:
+                attrList = featList[0].attributes()
+                if attrList == len(attrList) * [None]:
+                    self.flagFeature(
+                        featList[0].geometry(), self.tr("Gap in coverage.")
+                    )
+                continue
+            groupByLayerDict = defaultdict(list)
+            for f in featList:
+                groupByLayerDict[f["layer"]].append(f["featid"])
+            for fl in groupByLayerDict.values():
+                if len(fl) == 1:
+                    continue
+                txtList = []
+                for i in fl:
+                    txtList += ["{0} (id={1})".format(i["layer"], i["featid"])]
+                txt = ", ".join(txtList)
+                self.flagFeature(
+                    fl[0].geometry(),
+                    self.tr("Features from {0} overlap").format(txt),
+                )
 
     def name(self):
         """
