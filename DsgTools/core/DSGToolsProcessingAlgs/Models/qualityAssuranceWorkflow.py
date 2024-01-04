@@ -356,12 +356,11 @@ class QualityAssuranceWorkflow(QObject):
         Handles Workflow behaviour for a model's flag output.
         :param model: (DsgToolsProcessingModel) model to have its output handled.
         """
-        if model.onFlagsRaised() not in ["warn", "halt", "ignore"]:
-            return
         onFlagsMethod = {
             "warn": partial(self.raiseFlagWarning, model),
             "halt": partial(self.raiseFlagError, model),
             "ignore": partial(self.modelFinished.emit, model),
+            "halt_with_false_positive": partial(self.raiseFlagError, model),
         }[model.onFlagsRaised()]()
 
     def run(self, firstModelName=None, cooldown=None):
