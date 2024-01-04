@@ -499,13 +499,6 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 "DSGTools Plugin",
                 self.qgisStatusDict[code],
             )
-        if code == self.IGNORE_FLAGS:
-            workflow = self.currentWorkflow()
-            outputStatusDict = workflow.getOutputStatusDict()
-            outputStatusDict[modelName]["finishStatus"] = "finished"
-            workflow.setOutputStatusDict(outputStatusDict)
-            self.workflowStatusDict[self.comboBox.currentText()][modelName] = code
-            return
         if (
             modelName in self.workflowStatusDict[self.comboBox.currentText()]
             and code == self.workflowStatusDict[self.comboBox.currentText()][modelName]
@@ -521,6 +514,13 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             and self.workflowStatusDict[self.comboBox.currentText()][modelName]
             in [self.FAILED, self.FINISHED_WITH_FLAGS]
         ):
+            return
+        if code == self.IGNORE_FLAGS:
+            workflow = self.currentWorkflow()
+            outputStatusDict = workflow.getOutputStatusDict()
+            outputStatusDict[modelName]["finishStatus"] = "finished"
+            workflow.setOutputStatusDict(outputStatusDict)
+            self.workflowStatusDict[self.comboBox.currentText()][modelName] = code
             return
         self.workflowStatusDict[self.comboBox.currentText()][modelName] = code
 
