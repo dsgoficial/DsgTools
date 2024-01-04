@@ -702,7 +702,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         Executes current selected workflow.
         """
         workflow = self.currentWorkflow()
-        self.prepareOutputTreeNodes(clearBeforeRunning=True)
+        self.prepareOutputTreeNodes(clearBeforeRunning=True) #TODO: alterar para apagar somente aquilo que for flag (tratar caso de saidas do algoritmo como poligonos da cobertura terrestre)
         if workflow is None:
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTools Q&A Tool Box"),
