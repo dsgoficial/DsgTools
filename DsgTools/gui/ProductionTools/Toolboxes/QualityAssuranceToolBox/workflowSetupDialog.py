@@ -57,16 +57,18 @@ FORM_CLASS, _ = uic.loadUiType(
 
 class WorkflowSetupDialog(QDialog, FORM_CLASS):
     __qgisModelPath__ = ModelerUtils.modelsFolders()[0]
-    ON_FLAGS_HALT, ON_FLAGS_WARN, ON_FLAGS_IGNORE = range(3)
+    ON_FLAGS_HALT, ON_FLAGS_WARN, ON_FLAGS_IGNORE, ON_FLAGS_HALT_WITH_FALSE_POSITIVE = range(4)
     onFlagsDisplayNameMap = {
         ON_FLAGS_HALT: QCoreApplication.translate("WorkflowSetupDialog", "Halt"),
         ON_FLAGS_WARN: QCoreApplication.translate("WorkflowSetupDialog", "Warn"),
         ON_FLAGS_IGNORE: QCoreApplication.translate("WorkflowSetupDialog", "Ignore"),
+        ON_FLAGS_HALT_WITH_FALSE_POSITIVE: QCoreApplication.translate("WorkflowSetupDialog", "Halt with possible false positive"),
     }
     onFlagsValueMap = {
         ON_FLAGS_HALT: "halt",
         ON_FLAGS_WARN: "warn",
         ON_FLAGS_IGNORE: "ignore",
+        ON_FLAGS_HALT_WITH_FALSE_POSITIVE: "halt_with_false_positive",
     }
     (
         MODEL_NAME_HEADER,
@@ -271,6 +273,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 self.onFlagsDisplayNameMap[self.ON_FLAGS_HALT],
                 self.onFlagsDisplayNameMap[self.ON_FLAGS_WARN],
                 self.onFlagsDisplayNameMap[self.ON_FLAGS_IGNORE],
+                self.onFlagsDisplayNameMap[self.ON_FLAGS_HALT_WITH_FALSE_POSITIVE],
             ]
         )
         if option is not None:
@@ -440,6 +443,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                     "halt": self.ON_FLAGS_HALT,
                     "warn": self.ON_FLAGS_WARN,
                     "ignore": self.ON_FLAGS_IGNORE,
+                    "halt_with_false_positive": self.ON_FLAGS_HALT_WITH_FALSE_POSITIVE,
                 }[model.onFlagsRaised()],
                 self.LOAD_OUT_HEADER: model.loadOutput(),
                 self.FLAG_KEYS_HEADER: ",".join(

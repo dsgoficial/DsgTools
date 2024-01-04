@@ -36,14 +36,16 @@ from qgis.core import (
     QgsVectorLayer,
 )
 from qgis.PyQt.QtGui import QBrush, QColor
-from qgis.PyQt.QtCore import Qt, pyqtSlot
+from qgis.PyQt.QtCore import Qt, pyqtSlot, QEvent
 from qgis.PyQt.QtWidgets import (
+    QAction,
     QLineEdit,
     QFileDialog,
     QDockWidget,
     QMessageBox,
     QProgressBar,
     QTableWidgetItem,
+    QMenu,
 )
 
 from DsgTools.gui.ProductionTools.Toolboxes.QualityAssuranceToolBox.workflowSetupDialog import (
@@ -70,7 +72,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         FAILED,
         FINISHED,
         FINISHED_WITH_FLAGS,
-        FINISHED_WITH_POSSIBLE_FALSE_POSITIVE_FLAGS,
+        IGNORE_FLAGS,
     ) = range(9)
 
     def __init__(self, iface, parent=None):
@@ -97,6 +99,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.FAILED: self.tr("Failed"),
             self.FINISHED: self.tr("Completed"),
             self.FINISHED_WITH_FLAGS: self.tr("Completed (raised flags)"),
+            self.IGNORE_FLAGS: self.tr("Completed (false positive flags)"),
         }
         self.colorForeground = {
             self.INITIAL: (0, 0, 0),
@@ -107,7 +110,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.FAILED: (169, 18, 28),
             self.FINISHED: (0, 125, 0),
             self.FINISHED_WITH_FLAGS: (100, 150, 20),
-            self.FINISHED_WITH_POSSIBLE_FALSE_POSITIVE_FLAGS: (0, 0, 0),
+            self.IGNORE_FLAGS: (0, 0, 0),
         }
         self.colorBackground = {
             self.INITIAL: (255, 255, 255, 75),
@@ -118,7 +121,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.FAILED: (169, 18, 28, 85),
             self.FINISHED: (0, 125, 0, 90),
             self.FINISHED_WITH_FLAGS: (100, 150, 20, 45),
-            self.FINISHED_WITH_POSSIBLE_FALSE_POSITIVE_FLAGS: (255, 230, 1),
+            self.IGNORE_FLAGS: (255, 230, 1),
         }
         self.qgisStatusDict = {
             self.RUNNING: Qgis.Info,
@@ -128,7 +131,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.FAILED: Qgis.Critical,
             self.FINISHED: Qgis.Info,
             self.FINISHED_WITH_FLAGS: Qgis.Warning,
-            self.FINISHED_WITH_POSSIBLE_FALSE_POSITIVE_FLAGS: Qgis.Warning,
+            self.IGNORE_FLAGS: Qgis.Warning,
         }
         self.workflowStatusDict = defaultdict(OrderedDict)
         self.setGuiState()
@@ -143,6 +146,23 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         # self.iface.newProjectCreated.connect(self.saveState)
         # self.iface.newProjectCreated.connect(self.loadState)
         self.iface.projectRead.connect(self.loadState)
+  
+    def generateMenu(self, pos, idx, widget, modelName, workflow):
+        currentStatusDict = self.workflowStatusDict.get(workflow.name(), {})
+        if idx == -1 or currentStatusDict.get(modelName, self.INITIAL) not in [self.FINISHED_WITH_FLAGS, self.IGNORE_FLAGS]:
+            return
+        if idx not in self.ignoreFlagsMenuDict:
+            return
+        out = self.ignoreFlagsMenuDict[idx].exec_(widget.mapToGlobal(pos))
+
+    def prepareIgnoreFlagMenuDictItem(self, idx, modelName):
+        self.ignoreFlagsMenuDict[idx] = QMenu(self)
+        action = QAction(self.tr(f"Ignore false positive flags on model {modelName}"), self.ignoreFlagsMenuDict[idx])
+        func = partial(self.setModelStatus, row=idx, modelName=modelName, raiseMessage=True)
+        callback = lambda x: func(code=self.IGNORE_FLAGS if x else self.FINISHED_WITH_FLAGS)
+        action.setCheckable(True)
+        action.triggered.connect(callback)
+        self.ignoreFlagsMenuDict[idx].addAction(action)
 
     def confirmAction(self, msg, showCancel=True):
         """
@@ -318,21 +338,22 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         """
         dlg = WorkflowSetupDialog(parent=self)
         dlg.show()
-        if dlg.exec_() == 1:
-            # if result is 0, a valid workflow was filled and Ok was pressed
-            workflow = dlg.currentWorkflow()
-            name = workflow.displayName()
-            idx = self.comboBox.findText(name)
-            if idx < 0:
-                self.comboBox.addItem(name)
-                self.comboBox.setCurrentText(name)
-                self.workflows[name] = workflow
-                self.setCurrentWorkflow()
-            else:
-                self.comboBox.setCurrentIndex(idx)
-                # what should we do? check version/last modified? replace model?
-            self.setWorkflowTooltip(self.comboBox.currentIndex(), workflow.metadata())
-            self.saveState()
+        # if result is 0, a valid workflow was filled and Ok was pressed
+        if dlg.exec_() != 1:
+            return
+        workflow = dlg.currentWorkflow()
+        name = workflow.displayName()
+        idx = self.comboBox.findText(name)
+        if idx < 0:
+            self.comboBox.addItem(name)
+            self.comboBox.setCurrentText(name)
+            self.workflows[name] = workflow
+            self.setCurrentWorkflow()
+        else:
+            self.comboBox.setCurrentIndex(idx)
+            # what should we do? check version/last modified? replace model?
+        self.setWorkflowTooltip(self.comboBox.currentIndex(), workflow.metadata())
+        self.saveState()
 
     @pyqtSlot(bool, name="on_removePushButton_clicked")
     def removeWorkflow(self):
@@ -461,16 +482,28 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 self.qgisStatusDict[code],
                 duration=3,
             )
+            self.workflowStatusDict[self.comboBox.currentText()][modelName] = code
         if code != self.INITIAL:
             QgsMessageLog.logMessage(
                 self.tr("Model {0} status changed to {1}.").format(modelName, status),
                 "DSGTools Plugin",
                 self.qgisStatusDict[code],
             )
+        if code == self.IGNORE_FLAGS:
+            workflow = self.currentWorkflow()
+            outputStatusDict = workflow.getOutputStatusDict()
+            outputStatusDict[modelName]["finishStatus"] = "finished"
+            workflow.setOutputStatusDict(outputStatusDict)
+            self.workflowStatusDict[self.comboBox.currentText()][modelName] = code
+            return
         if (
             modelName in self.workflowStatusDict[self.comboBox.currentText()]
             and code == self.workflowStatusDict[self.comboBox.currentText()][modelName]
         ):
+            return
+        if code == self.FINISHED and self.workflowStatusDict[self.comboBox.currentText()][modelName] in [self.FAILED, self.FINISHED_WITH_FLAGS]:
+            return
+        if modelName in self.workflowStatusDict[self.comboBox.currentText()] and code == self.INITIAL and self.workflowStatusDict[self.comboBox.currentText()][modelName] in [self.FAILED, self.FINISHED_WITH_FLAGS]:
             return
         self.workflowStatusDict[self.comboBox.currentText()][modelName] = code
 
@@ -510,9 +543,6 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         models = workflow.validModels()
         self.tableWidget.setRowCount(len(models))
 
-        def progressInt(pb, x):
-            pb.setValue(int(x))
-
         currentStatusDict = self.workflowStatusDict.get(workflow.name(), {})
         for row, (modelName, model) in enumerate(models.items()):
             tooltip = self.tr(
@@ -526,9 +556,15 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 model.lastModified(),
                 model.description(),
             )
+            if model.onFlagsRaised() == "halt_with_false_positive":
+                self.prepareIgnoreFlagMenuDictItem(row, modelName)
             nameWidget = self.customLineWidget(modelName, tooltip)
+            nameWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+            nameWidget.customContextMenuRequested.connect(partial(self.generateMenu, idx=row, widget=nameWidget, modelName=modelName, workflow=workflow))
             self.tableWidget.setCellWidget(row, 0, nameWidget)
             statusWidget = self.customLineWidget("", tooltip)
+            statusWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+            statusWidget.customContextMenuRequested.connect(partial(self.generateMenu, idx=row, widget=statusWidget, modelName=modelName, workflow=workflow))
             self.tableWidget.setCellWidget(row, 1, statusWidget)
             code = currentStatusDict.get(modelName, self.INITIAL)
             self.setModelStatus(row, code, modelName)
@@ -538,10 +574,11 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 in [
                     self.FINISHED,
                     self.FINISHED_WITH_FLAGS,
-                    self.FINISHED_WITH_POSSIBLE_FALSE_POSITIVE_FLAGS,
+                    self.IGNORE_FLAGS,
                 ]
                 else 0
             )
+            pb.setContextMenuPolicy(Qt.CustomContextMenu)
             self.tableWidget.setCellWidget(row, 2, pb)
 
     def preProcessing(self, firstModel=None):
@@ -617,6 +654,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         """
         Sets current workflow to table.
         """
+        self.ignoreFlagsMenuDict = dict()
         self.prepareProgressBar()
         workflow = self.currentWorkflow()
         enable = workflow is not None
@@ -666,10 +704,12 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 model.Running: self.RUNNING,
                 model.Complete: self.FINISHED,
                 model.Terminated: self.FAILED,
-                model.WarningFlags: self.FINISHED_WITH_FLAGS,
-                model.HaltedOnFlags: self.HALTED,
-                model.HaltedOnPossibleFalsePositiveFlags: self.FINISHED_WITH_POSSIBLE_FALSE_POSITIVE_FLAGS,
+                model.WarningFlags: self.HALTED,
+                model.HaltedOnFlags: self.FINISHED_WITH_FLAGS,
+                model.HaltedOnPossibleFalsePositiveFlags: self.IGNORE_FLAGS,
             }[status]
+            if status == model.Complete and model.output["finishStatus"] == "halt":
+                code = self.FINISHED_WITH_FLAGS
             if status == model.Terminated and model.output["finishStatus"] != "halt":
                 if self.__workflowCanceled:
                     code = self.CANCELED
@@ -716,7 +756,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 else:
                     model.feedback.progressChanged.disconnect(self.__progressFunc)
                     model.statusChanged.disconnect(self.__statusFunc)
-                    code = self.HALTED
+                    code = self.FINISHED_WITH_FLAGS
                 isAfter = True
                 self.setModelStatus(row, code, model.displayName())
             postProcessing()
@@ -772,16 +812,20 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         workflow.run(firstModelName=None if isFirstModel else workflow.lastModelName())
 
     def prepareOutputTreeNodes(self, clearBeforeRunning=False):
+        self.iface.mapCanvas().freeze(True)
         rootNode = QgsProject.instance().layerTreeRoot()
         groupName = "DSGTools_QA_Toolbox"
         groupNode = rootNode.findGroup(groupName)
-        groupNode = groupNode if groupNode else rootNode.addGroup(groupName)
-        if clearBeforeRunning:
-            for lyrGroup in groupNode.findLayers():
-                lyr = lyrGroup.layer()
-                if isinstance(lyr, QgsVectorLayer):
-                    lyr.rollBack()
-            groupNode.removeAllChildren()
+        groupNode = groupNode if groupNode else rootNode.insertGroup(0, groupName)
+        if not clearBeforeRunning:
+            self.iface.mapCanvas().freeze(False)
+            return groupName
+        for lyrGroup in groupNode.findLayers():
+            lyr = lyrGroup.layer()
+            if isinstance(lyr, QgsVectorLayer):
+                lyr.rollBack()
+        groupNode.removeAllChildren()
+        self.iface.mapCanvas().freeze(False)
         return groupName
 
     def removeEmptyNodes(self):
@@ -873,7 +917,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         if modelName not in self.workflowStatusDict:
             return False
         return all(
-            value in (self.FINISHED, self.FINISHED_WITH_POSSIBLE_FALSE_POSITIVE_FLAGS)
+            value in (self.FINISHED, self.IGNORE_FLAGS)
             for _, value in self.workflowStatusDict[modelName].items()
         )
 

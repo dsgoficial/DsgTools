@@ -61,8 +61,8 @@ class DsgToolsProcessingModel(QgsTask):
             QgsTask.Terminated,
         ]
     )
-    WarningFlags, HaltedOnFlags, HaltedOnPossibleFalsePositiveFlags = range(
-        n + 1, n + 4
+    WarningFlags, HaltedOnFlags, HaltedOnPossibleFalsePositiveFlags, FlagsIgnored = range(
+        n + 1, n + 5
     )
     del n
 

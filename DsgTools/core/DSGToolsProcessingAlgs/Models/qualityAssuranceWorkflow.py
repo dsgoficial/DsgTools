@@ -45,6 +45,7 @@ class QualityAssuranceWorkflow(QObject):
 
     workflowFinished = pyqtSignal()
     haltedOnFlags = pyqtSignal(DsgToolsProcessingModel)
+    haltedOnPossibleFalsePositiveFlags = pyqtSignal(DsgToolsProcessingModel)
     modelStarted = pyqtSignal(DsgToolsProcessingModel)
     modelFinished = pyqtSignal(DsgToolsProcessingModel)
     modelFinishedWithFlags = pyqtSignal(DsgToolsProcessingModel)
@@ -250,12 +251,13 @@ class QualityAssuranceWorkflow(QObject):
         :return: (dict) DSGTools processing model definitions.
         """
         outputDict = dict(self._param)
-        if withOutputDict:
-            outputCopy = dict(self.output)
-            for key, value in outputCopy.items():
-                if "result" in value:
-                    outputCopy[key].pop("result")
-            outputDict.update({"output": outputCopy})
+        if not withOutputDict:
+            return outputDict    
+        outputCopy = dict(self.output)
+        for key, value in outputCopy.items():
+            if "result" in value:
+                outputCopy[key].pop("result")
+        outputDict.update({"output": outputCopy})
         return outputDict
 
     def finished(self):
@@ -354,6 +356,8 @@ class QualityAssuranceWorkflow(QObject):
         Handles Workflow behaviour for a model's flag output.
         :param model: (DsgToolsProcessingModel) model to have its output handled.
         """
+        if model.onFlagsRaised() not in ["warn", "halt", "ignore"]:
+            return
         onFlagsMethod = {
             "warn": partial(self.raiseFlagWarning, model),
             "halt": partial(self.raiseFlagError, model),
