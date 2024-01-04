@@ -493,7 +493,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 duration=3,
             )
             self.workflowStatusDict[self.comboBox.currentText()][modelName] = code
-        if code != self.INITIAL:
+        elif code != self.INITIAL:
             QgsMessageLog.logMessage(
                 self.tr("Model {0} status changed to {1}.").format(modelName, status),
                 "DSGTools Plugin",
