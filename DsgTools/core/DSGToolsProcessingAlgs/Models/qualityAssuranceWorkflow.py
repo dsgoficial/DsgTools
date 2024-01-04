@@ -252,7 +252,7 @@ class QualityAssuranceWorkflow(QObject):
         """
         outputDict = dict(self._param)
         if not withOutputDict:
-            return outputDict    
+            return outputDict
         outputCopy = dict(self.output)
         for key, value in outputCopy.items():
             if "result" in value:

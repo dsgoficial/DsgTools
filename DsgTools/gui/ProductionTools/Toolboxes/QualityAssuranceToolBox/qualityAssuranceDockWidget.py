@@ -146,10 +146,13 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         # self.iface.newProjectCreated.connect(self.saveState)
         # self.iface.newProjectCreated.connect(self.loadState)
         self.iface.projectRead.connect(self.loadState)
-  
+
     def generateMenu(self, pos, idx, widget, modelName, workflow):
         currentStatusDict = self.workflowStatusDict.get(workflow.name(), {})
-        if idx == -1 or currentStatusDict.get(modelName, self.INITIAL) not in [self.FINISHED_WITH_FLAGS, self.IGNORE_FLAGS]:
+        if idx == -1 or currentStatusDict.get(modelName, self.INITIAL) not in [
+            self.FINISHED_WITH_FLAGS,
+            self.IGNORE_FLAGS,
+        ]:
             return
         if idx not in self.ignoreFlagsMenuDict:
             return
@@ -157,9 +160,16 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
 
     def prepareIgnoreFlagMenuDictItem(self, idx, modelName):
         self.ignoreFlagsMenuDict[idx] = QMenu(self)
-        action = QAction(self.tr(f"Ignore false positive flags on model {modelName}"), self.ignoreFlagsMenuDict[idx])
-        func = partial(self.setModelStatus, row=idx, modelName=modelName, raiseMessage=True)
-        callback = lambda x: func(code=self.IGNORE_FLAGS if x else self.FINISHED_WITH_FLAGS)
+        action = QAction(
+            self.tr(f"Ignore false positive flags on model {modelName}"),
+            self.ignoreFlagsMenuDict[idx],
+        )
+        func = partial(
+            self.setModelStatus, row=idx, modelName=modelName, raiseMessage=True
+        )
+        callback = lambda x: func(
+            code=self.IGNORE_FLAGS if x else self.FINISHED_WITH_FLAGS
+        )
         action.setCheckable(True)
         action.triggered.connect(callback)
         self.ignoreFlagsMenuDict[idx].addAction(action)
@@ -501,9 +511,16 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             and code == self.workflowStatusDict[self.comboBox.currentText()][modelName]
         ):
             return
-        if code == self.FINISHED and self.workflowStatusDict[self.comboBox.currentText()][modelName] in [self.FAILED, self.FINISHED_WITH_FLAGS]:
+        if code == self.FINISHED and self.workflowStatusDict[
+            self.comboBox.currentText()
+        ][modelName] in [self.FAILED, self.FINISHED_WITH_FLAGS]:
             return
-        if modelName in self.workflowStatusDict[self.comboBox.currentText()] and code == self.INITIAL and self.workflowStatusDict[self.comboBox.currentText()][modelName] in [self.FAILED, self.FINISHED_WITH_FLAGS]:
+        if (
+            modelName in self.workflowStatusDict[self.comboBox.currentText()]
+            and code == self.INITIAL
+            and self.workflowStatusDict[self.comboBox.currentText()][modelName]
+            in [self.FAILED, self.FINISHED_WITH_FLAGS]
+        ):
             return
         self.workflowStatusDict[self.comboBox.currentText()][modelName] = code
 
@@ -560,11 +577,27 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 self.prepareIgnoreFlagMenuDictItem(row, modelName)
             nameWidget = self.customLineWidget(modelName, tooltip)
             nameWidget.setContextMenuPolicy(Qt.CustomContextMenu)
-            nameWidget.customContextMenuRequested.connect(partial(self.generateMenu, idx=row, widget=nameWidget, modelName=modelName, workflow=workflow))
+            nameWidget.customContextMenuRequested.connect(
+                partial(
+                    self.generateMenu,
+                    idx=row,
+                    widget=nameWidget,
+                    modelName=modelName,
+                    workflow=workflow,
+                )
+            )
             self.tableWidget.setCellWidget(row, 0, nameWidget)
             statusWidget = self.customLineWidget("", tooltip)
             statusWidget.setContextMenuPolicy(Qt.CustomContextMenu)
-            statusWidget.customContextMenuRequested.connect(partial(self.generateMenu, idx=row, widget=statusWidget, modelName=modelName, workflow=workflow))
+            statusWidget.customContextMenuRequested.connect(
+                partial(
+                    self.generateMenu,
+                    idx=row,
+                    widget=statusWidget,
+                    modelName=modelName,
+                    workflow=workflow,
+                )
+            )
             self.tableWidget.setCellWidget(row, 1, statusWidget)
             code = currentStatusDict.get(modelName, self.INITIAL)
             self.setModelStatus(row, code, modelName)

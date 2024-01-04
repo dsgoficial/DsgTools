@@ -61,9 +61,12 @@ class DsgToolsProcessingModel(QgsTask):
             QgsTask.Terminated,
         ]
     )
-    WarningFlags, HaltedOnFlags, HaltedOnPossibleFalsePositiveFlags, FlagsIgnored = range(
-        n + 1, n + 5
-    )
+    (
+        WarningFlags,
+        HaltedOnFlags,
+        HaltedOnPossibleFalsePositiveFlags,
+        FlagsIgnored,
+    ) = range(n + 1, n + 5)
     del n
 
     def __init__(self, parameters, name, taskName=None, flags=None, feedback=None):
