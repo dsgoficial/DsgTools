@@ -220,19 +220,6 @@ class QualityAssuranceWorkflow(QObject):
                 return True
         return False
 
-    # def flagLayer(self):
-    #     """
-    #     Layer to work as a sink to flag output for all models.
-    #     :return: (QgsVectorLayer) flag layer.
-    #     """
-    #     return self._param["flagLayer"] if "flagLayer" in self._param else ""
-
-    # def historyLayer(self):
-    #     """
-    #     A table (a layer with no geometry) to store execution history.
-    #     :return: (QgsVectorLayer) flag layer.
-    #     """
-    #     return self._param["flagLayer"] if "flagLayer" in self._param else ""
 
     def export(self, filepath):
         """
@@ -360,7 +347,6 @@ class QualityAssuranceWorkflow(QObject):
             "warn": partial(self.raiseFlagWarning, model),
             "halt": partial(self.raiseFlagError, model),
             "ignore": partial(self.modelFinished.emit, model),
-            "halt_with_false_positive": partial(self.raiseFlagError, model),
         }[model.onFlagsRaised()]()
 
     def run(self, firstModelName=None, cooldown=None):
@@ -438,3 +424,19 @@ class QualityAssuranceWorkflow(QObject):
 
     def setOutputStatusDict(self, statusDict):
         self.output = statusDict
+    
+    def modelCount(self):
+        return len(self._executionOrder)
+    
+    def getPreviousModelName(self, idx):
+        if idx - 1 < 0:
+            return None
+        return self._executionOrder[idx-1]
+
+    def getNextModelName(self, idx):
+        if idx + 1 > self.modelCount():
+            return None
+        return self._executionOrder[idx+1]
+    
+    def currentFlagsAreFalsePositive(self):
+        pass

@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 
+from functools import partial
 import os, json
 from time import time
 from datetime import datetime
@@ -61,21 +62,16 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         ON_FLAGS_HALT,
         ON_FLAGS_WARN,
         ON_FLAGS_IGNORE,
-        ON_FLAGS_HALT_WITH_FALSE_POSITIVE,
-    ) = range(4)
+    ) = range(3)
     onFlagsDisplayNameMap = {
         ON_FLAGS_HALT: QCoreApplication.translate("WorkflowSetupDialog", "Halt"),
         ON_FLAGS_WARN: QCoreApplication.translate("WorkflowSetupDialog", "Warn"),
         ON_FLAGS_IGNORE: QCoreApplication.translate("WorkflowSetupDialog", "Ignore"),
-        ON_FLAGS_HALT_WITH_FALSE_POSITIVE: QCoreApplication.translate(
-            "WorkflowSetupDialog", "Halt with possible false positive"
-        ),
     }
     onFlagsValueMap = {
         ON_FLAGS_HALT: "halt",
         ON_FLAGS_WARN: "warn",
         ON_FLAGS_IGNORE: "ignore",
-        ON_FLAGS_HALT_WITH_FALSE_POSITIVE: "halt_with_false_positive",
     }
     (
         MODEL_NAME_HEADER,
@@ -83,7 +79,8 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         ON_FLAGS_HEADER,
         LOAD_OUT_HEADER,
         FLAG_KEYS_HEADER,
-    ) = range(5)
+        FLAG_CAN_BE_FALSE_POSITIVE_HEADER,
+    ) = range(6)
 
     def __init__(self, parent=None):
         """
@@ -133,10 +130,42 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                     "setter": "setText",
                     "getter": "text",
                 },
+                self.FLAG_CAN_BE_FALSE_POSITIVE_HEADER: {
+                    "header": self.tr("Flags can be false positive"),
+                    "type": "widget",
+                    "widget": self.falsePositiveFlagsWidget,
+                    "setter": "setChecked",
+                    "getter": "isChecked",
+                },
             }
         )
         self.orderedTableWidget.setHeaderDoubleClickBehaviour("replicate")
         self.promptToAll = None
+        self.orderedTableWidget.rowAdded.connect(self.postAddRowStandard)
+    
+    def _checkFalsePositiveAvailability(self, row):
+        comboBox = self.orderedTableWidget.itemAt(row, 2)
+        checkBox = self.orderedTableWidget.itemAt(row, 5)
+        flagType = comboBox.currentIndex()
+        if flagType != self.ON_FLAGS_HALT:
+            checkBox.setChecked(False)
+            checkBox.setEnabled(False)
+            return
+        checkBox.setEnabled(True)
+    
+    def postAddRowStandard(self, row):
+        """
+        Sets up widgets to work as expected right after they are added to GUI.
+        :param row: (int) row to have its widgets setup.
+        """
+        # in standard GUI, the layer selectors are QgsMapLayerComboBox, and its
+        # layer changed signal should be connected to the filter expression
+        # widget setup
+        comboBox = self.orderedTableWidget.itemAt(row, 2)
+        comboBox.currentIndexChanged.connect(
+            partial(self._checkFalsePositiveAvailability, row)
+        )
+        self.resizeTable()
 
     def resizeTable(self):
         """
@@ -149,10 +178,12 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         onFlagsColSize = self.orderedTableWidget.sectionSize(2)
         loadOutColSize = self.orderedTableWidget.sectionSize(3)
         flagsOutColSize = self.orderedTableWidget.sectionSize(4)
+        falsePositiveColSize = self.orderedTableWidget.sectionSize(5)
         missingBarSize = (
             self.geometry().size().width()
             - dSize
             - onFlagsColSize
+            - falsePositiveColSize
             - loadOutColSize
             - flagsOutColSize
         )
@@ -280,7 +311,6 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 self.onFlagsDisplayNameMap[self.ON_FLAGS_HALT],
                 self.onFlagsDisplayNameMap[self.ON_FLAGS_WARN],
                 self.onFlagsDisplayNameMap[self.ON_FLAGS_IGNORE],
-                self.onFlagsDisplayNameMap[self.ON_FLAGS_HALT_WITH_FALSE_POSITIVE],
             ]
         )
         if option is not None:
@@ -293,6 +323,14 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             combo.setCurrentIndex(optIdx)
         return combo
 
+    def falsePositiveFlagsWidget(self, option=None):
+        cb = QCheckBox()
+        cb.setChecked(False)
+        cb.setStyleSheet("margin-left:50%;margin-right:50%;")
+        if option is not None:
+            cb.setChecked(option)
+        return cb
+
     def loadOutputWidget(self, option=None):
         """
         Gets a new instance for the widget that sets output layer loading
@@ -302,7 +340,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                  definition.
         """
         cb = QCheckBox()
-        cb.setStyleSheet("margin:auto;")
+        cb.setStyleSheet("margin-left:50%;margin-right:50%;")
         if option is not None:
             cb.setChecked(option)
         return cb
@@ -386,6 +424,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         onFlagsIdx = contents[self.ON_FLAGS_HEADER]
         name = contents[self.MODEL_NAME_HEADER].strip()
         loadOutput = contents[self.LOAD_OUT_HEADER]
+        modelCanHaveFalsePositiveFlags = contents[self.FLAG_CAN_BE_FALSE_POSITIVE_HEADER]
         flagLayerNames = contents[self.FLAG_KEYS_HEADER].strip().split(",")
         if not os.path.exists(filepath):
             xml = ""
@@ -396,6 +435,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             "displayName": name,
             "flags": {
                 "onFlagsRaised": self.onFlagsValueMap[onFlagsIdx],
+                "modelCanHaveFalsePositiveFlags": modelCanHaveFalsePositiveFlags,
                 "loadOutput": loadOutput,
                 "flagLayerNames": flagLayerNames,
             },
@@ -450,8 +490,8 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                     "halt": self.ON_FLAGS_HALT,
                     "warn": self.ON_FLAGS_WARN,
                     "ignore": self.ON_FLAGS_IGNORE,
-                    "halt_with_false_positive": self.ON_FLAGS_HALT_WITH_FALSE_POSITIVE,
                 }[model.onFlagsRaised()],
+                self.FLAG_CAN_BE_FALSE_POSITIVE_HEADER: model.modelCanHaveFalsePositiveFlags(),
                 self.LOAD_OUT_HEADER: model.loadOutput(),
                 self.FLAG_KEYS_HEADER: ",".join(
                     map(lambda x: str(x).strip(), model.flagLayerNames())
@@ -589,7 +629,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         ).format(fp=filename)
         lvl = Qgis.Success if result else Qgis.Warning
         self.messageBar.pushMessage(
-            self.tr("Workflow exportation"), msg, level=lvl, duration=5
+            self.tr("Workflow exporting"), msg, level=lvl, duration=5
         )
         return result
 

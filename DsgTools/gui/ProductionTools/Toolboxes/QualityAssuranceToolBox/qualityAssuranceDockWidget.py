@@ -134,6 +134,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.IGNORE_FLAGS: Qgis.Warning,
         }
         self.workflowStatusDict = defaultdict(OrderedDict)
+        self.ignoreFlagsMenuDict = defaultdict(dict)
         self.setGuiState()
         self.continuePushButton.hide()
         self.workflows = dict()
@@ -148,21 +149,26 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.iface.projectRead.connect(self.loadState)
 
     def generateMenu(self, pos, idx, widget, modelName, workflow):
-        currentStatusDict = self.workflowStatusDict.get(workflow.name(), {})
+        workflowName = workflow.name()
+        currentStatusDict = self.workflowStatusDict.get(workflowName, {})
         if idx == -1 or currentStatusDict.get(modelName, self.INITIAL) not in [
             self.FINISHED_WITH_FLAGS,
             self.IGNORE_FLAGS,
         ]:
             return
-        if idx not in self.ignoreFlagsMenuDict:
+        if currentStatusDict.get(modelName, self.INITIAL) == self.IGNORE_FLAGS and currentStatusDict.get(workflow.getNextModelName(idx).name(), self.INITIAL) != self.INITIAL:
             return
-        out = self.ignoreFlagsMenuDict[idx].exec_(widget.mapToGlobal(pos))
+        if idx not in self.ignoreFlagsMenuDict[workflowName]:
+            return
+        
+        out = self.ignoreFlagsMenuDict[workflowName][idx].exec_(widget.mapToGlobal(pos))
 
-    def prepareIgnoreFlagMenuDictItem(self, idx, modelName):
-        self.ignoreFlagsMenuDict[idx] = QMenu(self)
+    def prepareIgnoreFlagMenuDictItem(self, idx, modelName, workflow):
+        workflowName = workflow.name()
+        self.ignoreFlagsMenuDict[workflowName][idx] = QMenu(self)
         action = QAction(
             self.tr(f"Ignore false positive flags on model {modelName}"),
-            self.ignoreFlagsMenuDict[idx],
+            self.ignoreFlagsMenuDict[workflowName][idx],
         )
         func = partial(
             self.setModelStatus, row=idx, modelName=modelName, raiseMessage=True
@@ -172,7 +178,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         )
         action.setCheckable(True)
         action.triggered.connect(callback)
-        self.ignoreFlagsMenuDict[idx].addAction(action)
+        self.ignoreFlagsMenuDict[workflowName][idx].addAction(action)
 
     def confirmAction(self, msg, showCancel=True):
         """
@@ -383,6 +389,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.comboBox.setCurrentIndex(0)
         name = self.currentWorkflowName()
         self.workflows.pop(name, None)
+        self.ignoreFlagsMenuDict.pop(name, None)
         self.saveState()
 
     @pyqtSlot(bool, name="on_editPushButton_clicked")
@@ -492,7 +499,6 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 self.qgisStatusDict[code],
                 duration=3,
             )
-            self.workflowStatusDict[self.comboBox.currentText()][modelName] = code
         elif code != self.INITIAL:
             QgsMessageLog.logMessage(
                 self.tr("Model {0} status changed to {1}.").format(modelName, status),
@@ -506,7 +512,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             return
         if code == self.FINISHED and self.workflowStatusDict[
             self.comboBox.currentText()
-        ][modelName] in [self.FAILED, self.FINISHED_WITH_FLAGS]:
+        ][modelName] in [self.FAILED, self.HALTED, self.FINISHED_WITH_FLAGS]:
             return
         if (
             modelName in self.workflowStatusDict[self.comboBox.currentText()]
@@ -573,8 +579,8 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 model.lastModified(),
                 model.description(),
             )
-            if model.onFlagsRaised() == "halt_with_false_positive":
-                self.prepareIgnoreFlagMenuDictItem(row, modelName)
+            if model.modelCanHaveFalsePositiveFlags():
+                self.prepareIgnoreFlagMenuDictItem(row, modelName, workflow)
             nameWidget = self.customLineWidget(modelName, tooltip)
             nameWidget.setContextMenuPolicy(Qt.CustomContextMenu)
             nameWidget.customContextMenuRequested.connect(
@@ -687,7 +693,6 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         """
         Sets current workflow to table.
         """
-        self.ignoreFlagsMenuDict = dict()
         self.prepareProgressBar()
         workflow = self.currentWorkflow()
         enable = workflow is not None
