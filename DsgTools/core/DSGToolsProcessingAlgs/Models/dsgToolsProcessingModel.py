@@ -304,9 +304,13 @@ class DsgToolsProcessingModel(QgsTask):
         :return: (str) model behaviour on Workflow.
         """
         return self.flags()["onFlagsRaised"] if self.flags() else "halt"
-    
+
     def modelCanHaveFalsePositiveFlags(self):
-        return self.flags().get("modelCanHaveFalsePositiveFlags", False) if self.flags() else False
+        return (
+            self.flags().get("modelCanHaveFalsePositiveFlags", False)
+            if self.flags()
+            else False
+        )
 
     def loadOutput(self):
         """

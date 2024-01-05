@@ -142,7 +142,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         self.orderedTableWidget.setHeaderDoubleClickBehaviour("replicate")
         self.promptToAll = None
         self.orderedTableWidget.rowAdded.connect(self.postAddRowStandard)
-    
+
     def _checkFalsePositiveAvailability(self, row):
         comboBox = self.orderedTableWidget.itemAt(row, 2)
         checkBox = self.orderedTableWidget.itemAt(row, 5)
@@ -152,7 +152,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             checkBox.setEnabled(False)
             return
         checkBox.setEnabled(True)
-    
+
     def postAddRowStandard(self, row):
         """
         Sets up widgets to work as expected right after they are added to GUI.
@@ -424,7 +424,9 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         onFlagsIdx = contents[self.ON_FLAGS_HEADER]
         name = contents[self.MODEL_NAME_HEADER].strip()
         loadOutput = contents[self.LOAD_OUT_HEADER]
-        modelCanHaveFalsePositiveFlags = contents[self.FLAG_CAN_BE_FALSE_POSITIVE_HEADER]
+        modelCanHaveFalsePositiveFlags = contents[
+            self.FLAG_CAN_BE_FALSE_POSITIVE_HEADER
+        ]
         flagLayerNames = contents[self.FLAG_KEYS_HEADER].strip().split(",")
         if not os.path.exists(filepath):
             xml = ""

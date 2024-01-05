@@ -156,11 +156,17 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.IGNORE_FLAGS,
         ]:
             return
-        if currentStatusDict.get(modelName, self.INITIAL) == self.IGNORE_FLAGS and currentStatusDict.get(workflow.getNextModelName(idx).name(), self.INITIAL) != self.INITIAL:
+        if (
+            currentStatusDict.get(modelName, self.INITIAL) == self.IGNORE_FLAGS
+            and currentStatusDict.get(
+                workflow.getNextModelName(idx).name(), self.INITIAL
+            )
+            != self.INITIAL
+        ):
             return
         if idx not in self.ignoreFlagsMenuDict[workflowName]:
             return
-        
+
         out = self.ignoreFlagsMenuDict[workflowName][idx].exec_(widget.mapToGlobal(pos))
 
     def prepareIgnoreFlagMenuDictItem(self, idx, modelName, workflow):
@@ -707,7 +713,9 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         Executes current selected workflow.
         """
         workflow = self.currentWorkflow()
-        self.prepareOutputTreeNodes(clearBeforeRunning=True) #TODO: alterar para apagar somente aquilo que for flag (tratar caso de saidas do algoritmo como poligonos da cobertura terrestre)
+        self.prepareOutputTreeNodes(
+            clearBeforeRunning=True
+        )  # TODO: alterar para apagar somente aquilo que for flag (tratar caso de saidas do algoritmo como poligonos da cobertura terrestre)
         if workflow is None:
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTools Q&A Tool Box"),

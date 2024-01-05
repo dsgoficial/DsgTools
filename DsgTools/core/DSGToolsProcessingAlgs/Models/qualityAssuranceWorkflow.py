@@ -220,7 +220,6 @@ class QualityAssuranceWorkflow(QObject):
                 return True
         return False
 
-
     def export(self, filepath):
         """
         Dumps workflow's parameters as a JSON file.
@@ -424,19 +423,19 @@ class QualityAssuranceWorkflow(QObject):
 
     def setOutputStatusDict(self, statusDict):
         self.output = statusDict
-    
+
     def modelCount(self):
         return len(self._executionOrder)
-    
+
     def getPreviousModelName(self, idx):
         if idx - 1 < 0:
             return None
-        return self._executionOrder[idx-1]
+        return self._executionOrder[idx - 1]
 
     def getNextModelName(self, idx):
         if idx + 1 > self.modelCount():
             return None
-        return self._executionOrder[idx+1]
-    
+        return self._executionOrder[idx + 1]
+
     def currentFlagsAreFalsePositive(self):
         pass
