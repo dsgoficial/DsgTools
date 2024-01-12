@@ -1379,9 +1379,12 @@ class LayerHandler(QObject):
             id = feat.id()
             flagDict = self.checkGeomIsValid(geom, ignoreClosed, feedback)
             if fixInput:
-                self.fixGeometryFromInput(
+                flagDict = dict()
+                outputGeomList = self.fixGeometryFromInput(
                     inputLyr, parameterDict, geometryType, _newFeatSet, feat, geom, id
                 )
+                for g in outputGeomList:
+                    flagDict.update(self.checkGeomIsValid(g, ignoreClosed, feedback))
             return flagDict, _newFeatSet, feat
 
         for current, feat in enumerate(iterator):
@@ -1448,12 +1451,13 @@ class LayerHandler(QObject):
         geom.removeDuplicateNodes(useZValues=parameterDict["hasZValues"])
         fixedGeom = make_valid(geom)
         if originalGeometry.equals(fixedGeom):
-            return
+            return []
         attrMap = {
             idx: feat[field.name()]
             for idx, field in enumerate(feat.fields())
             if idx not in inputLyr.primaryKeyAttributes()
         }
+        returnList = []
         for idx, newGeom in enumerate(
             self.geometryHandler.handleGeometryCollection(
                 fixedGeom, geometryType, parameterDict=parameterDict
@@ -1464,6 +1468,8 @@ class LayerHandler(QObject):
             else:
                 newFeat = QgsVectorLayerUtils.createFeature(inputLyr, newGeom, attrMap)
                 newFeatSet.add(newFeat)
+            returnList.append(newGeom)
+        return returnList
 
     def applyGeometryFixesOnLayer(self, inputLyr, newFeatSet):
         inputLyr.startEditing()
