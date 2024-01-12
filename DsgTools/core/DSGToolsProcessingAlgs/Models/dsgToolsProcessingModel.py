@@ -127,6 +127,8 @@ class DsgToolsProcessingModel(QgsTask):
             }
         if "flagLayerNames" not in parameters["flags"]:
             parameters["flags"]["flagLayerNames"] = []
+        if "pauseAfterExecution" not in parameters:
+            parameters["pauseAfterExecution"] = False
         if "source" not in parameters or not parameters["source"]:
             return self.tr("Model source is not defined.")
         if (
@@ -311,6 +313,9 @@ class DsgToolsProcessingModel(QgsTask):
             if self.flags()
             else False
         )
+    
+    def pauseAfterExecution(self):
+        return self._param.get("pauseAfterExecution", False)
 
     def loadOutput(self):
         """
@@ -518,6 +523,8 @@ class DsgToolsProcessingModel(QgsTask):
         always called right after run is finished (read the docs on QgsTask).
         :param result: (bool) run returned valued.
         """
+        if self.isCanceled():
+            return
         if result and self.onFlagsRaised() == "halt" and self.hasFlags():
             self.cancel()
             self.feedback.cancel()

@@ -93,7 +93,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.statusMap = {
             self.INITIAL: self.tr("Not yet run"),
             self.RUNNING: self.tr("Running..."),
-            self.PAUSED: self.tr("On hold"),
+            self.PAUSED: self.tr("On hold. Check data and resume."),
             self.HALTED: self.tr("Halted on flags"),
             self.CANCELED: self.tr("Canceled"),
             self.FAILED: self.tr("Failed"),
@@ -159,7 +159,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         if (
             currentStatusDict.get(modelName, self.INITIAL) == self.IGNORE_FLAGS
             and currentStatusDict.get(
-                workflow.getNextModelName(idx).name(), self.INITIAL
+                workflow.getNextModelName(idx), self.INITIAL
             )
             != self.INITIAL
         ):
@@ -204,13 +204,15 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         )
 
     @pyqtSlot(bool, name="on_pausePushButton_clicked")
-    def workflowOnHold(self):
+    def workflowOnHold(self, currentModel=None):
         """
         Sets workflow to be on hold.
         """
         self.currentWorkflow().hold()
         self.pausePushButton.hide()
         self.continuePushButton.show()
+        self.runPushButton.setEnabled(False)
+        self.resumePushButton.setEnabled(False)
 
     @pyqtSlot(bool, name="on_continuePushButton_clicked")
     def continueWorkflow(self):
@@ -220,6 +222,8 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.currentWorkflow().unhold()
         self.pausePushButton.show()
         self.continuePushButton.hide()
+        self.runPushButton.setEnabled(False)
+        self.resumePushButton.setEnabled(False)
 
     @pyqtSlot(bool, name="on_cancelPushButton_clicked")
     def cancelWorkflow(self):
@@ -754,9 +758,9 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 model.HaltedOnFlags: self.FINISHED_WITH_FLAGS,
                 model.HaltedOnPossibleFalsePositiveFlags: self.IGNORE_FLAGS,
             }[status]
-            if status == model.Complete and model.output["finishStatus"] == "halt":
+            if status == model.Complete and model.output.get("finishStatus", None) == "halt":
                 code = self.FINISHED_WITH_FLAGS
-            if status == model.Terminated and model.output["finishStatus"] != "halt":
+            if status == model.Terminated and model.output.get("finishStatus", None) != "halt":
                 if self.__workflowCanceled:
                     code = self.CANCELED
                 # if workflow was canceled (through the cancel push button),
@@ -786,6 +790,13 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 model.feedback.progressChanged.disconnect(self.__progressFunc)
                 model.statusChanged.disconnect(self.__statusFunc)
                 return
+        
+        def pause(model):
+            for row in range(self.tableWidget.rowCount()):
+                if self.tableWidget.cellWidget(row, 0).text() != model.name():
+                    continue
+                self.setModelStatus(row, self.PAUSED, model.displayName())
+            postProcessing()
 
         def stopOnFlags(model):
             refreshFeedback()
@@ -826,6 +837,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             workflow.haltedOnFlags.disconnect(stopOnFlags)
             workflow.modelFinishedWithFlags.disconnect(warningFlags)
             workflow.workflowFinished.disconnect(postProcessing)
+            workflow.workflowPaused.disconnect(pause)
             refreshFeedback()
             self.setGuiState(False)
             self.pausePushButton.show()
@@ -850,6 +862,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         workflow.haltedOnFlags.connect(stopOnFlags)
         workflow.modelFinishedWithFlags.connect(warningFlags)
         workflow.workflowFinished.connect(postProcessing)
+        workflow.workflowPaused.connect(pause)
         sender = self.sender()
         isFirstModel = sender is None or sender.objectName() == "runPushButton"
         self.preProcessing(

@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.11 - dev
+## 4.13.12 - dev
 
 Novas Funcionalidades:
 
@@ -15,6 +15,7 @@ Melhorias:
 - Adicionada a opção de rodar o topological douglas peucker levando em consideração a partição espacial (impede alteração do topological douglas fora da moldura);
 - Adicionada a opção de rodar o topological clean levando em consideração a partição espacial (impede alteração do topological douglas fora da moldura) para o caso de linhas;
 - A Caixa de Ferramentas de Controle de Qualidade (QAToolbox) agora admite ignorar flags em processos que admitem falsos positivos;
+- A Caixa de Ferramentas de Controle de Qualidade (QAToolbox) agora permite configurar pontos de parada ao longo do processo;
 
 
 Correção de bug:

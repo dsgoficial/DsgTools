@@ -80,7 +80,8 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         LOAD_OUT_HEADER,
         FLAG_KEYS_HEADER,
         FLAG_CAN_BE_FALSE_POSITIVE_HEADER,
-    ) = range(6)
+        PAUSE_AFTER_EXECUTION,
+    ) = range(7)
 
     def __init__(self, parent=None):
         """
@@ -137,6 +138,13 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                     "setter": "setChecked",
                     "getter": "isChecked",
                 },
+                self.PAUSE_AFTER_EXECUTION: {
+                    "header": self.tr("Pause after execution"),
+                    "type": "widget",
+                    "widget": self.pauseAfterExecutionWidget,
+                    "setter": "setChecked",
+                    "getter": "isChecked",
+                },
             }
         )
         self.orderedTableWidget.setHeaderDoubleClickBehaviour("replicate")
@@ -179,6 +187,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         loadOutColSize = self.orderedTableWidget.sectionSize(3)
         flagsOutColSize = self.orderedTableWidget.sectionSize(4)
         falsePositiveColSize = self.orderedTableWidget.sectionSize(5)
+        pauseAfterExecutionColSize = self.orderedTableWidget.sectionSize(6)
         missingBarSize = (
             self.geometry().size().width()
             - dSize
@@ -186,6 +195,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             - falsePositiveColSize
             - loadOutColSize
             - flagsOutColSize
+            - pauseAfterExecutionColSize
         )
         # the "-11" is empiric: it makes it fit header to table
         self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(
@@ -330,6 +340,14 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         if option is not None:
             cb.setChecked(option)
         return cb
+    
+    def pauseAfterExecutionWidget(self, option=None):
+        cb = QCheckBox()
+        cb.setChecked(False)
+        cb.setStyleSheet("margin-left:50%;margin-right:50%;")
+        if option is not None:
+            cb.setChecked(option)
+        return cb
 
     def loadOutputWidget(self, option=None):
         """
@@ -428,6 +446,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             self.FLAG_CAN_BE_FALSE_POSITIVE_HEADER
         ]
         flagLayerNames = contents[self.FLAG_KEYS_HEADER].strip().split(",")
+        pauseAfterExecution = contents[self.PAUSE_AFTER_EXECUTION]
         if not os.path.exists(filepath):
             xml = ""
         else:
@@ -441,6 +460,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 "loadOutput": loadOutput,
                 "flagLayerNames": flagLayerNames,
             },
+            "pauseAfterExecution": pauseAfterExecution,
             "source": {
                 "type": "xml",
                 "data": xml,
@@ -498,6 +518,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 self.FLAG_KEYS_HEADER: ",".join(
                     map(lambda x: str(x).strip(), model.flagLayerNames())
                 ),
+                self.PAUSE_AFTER_EXECUTION: model.pauseAfterExecution(),
             }
         )
         return True

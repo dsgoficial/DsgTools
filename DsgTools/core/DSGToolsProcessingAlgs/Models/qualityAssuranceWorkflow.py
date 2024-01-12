@@ -44,6 +44,7 @@ class QualityAssuranceWorkflow(QObject):
     """
 
     workflowFinished = pyqtSignal()
+    workflowPaused = pyqtSignal(DsgToolsProcessingModel)
     haltedOnFlags = pyqtSignal(DsgToolsProcessingModel)
     haltedOnPossibleFalsePositiveFlags = pyqtSignal(DsgToolsProcessingModel)
     modelStarted = pyqtSignal(DsgToolsProcessingModel)
@@ -365,6 +366,10 @@ class QualityAssuranceWorkflow(QObject):
             self.output[model.name()] = model.output
             self._multiStepFeedback.setCurrentStep(step)
             self.handleFlags(model)
+            if model.pauseAfterExecution():
+                QgsApplication.taskManager().cancelAll()
+                nextModel = self.getNextModel(model)
+                self.workflowPaused.emit(nextModel)
 
         if firstModelName is not None:
             for idx, model in self._executionOrder.items():
@@ -412,7 +417,7 @@ class QualityAssuranceWorkflow(QObject):
             modelName = self._executionOrder[idx].displayName()
             if (
                 modelName not in self.output
-                or self.output[modelName]["finishStatus"] != "finished"
+                or self.output[modelName].get("finishStatus", "initial") != "finished"
             ):
                 return modelName
         else:
@@ -426,16 +431,28 @@ class QualityAssuranceWorkflow(QObject):
 
     def modelCount(self):
         return len(self._executionOrder)
+    
+    def getNextModel(self, currentModel):
+        currentModelIdx = self.getModelIndexByName(currentModel.name())
+        if currentModelIdx + 1 > self.modelCount():
+            return None
+        return self._executionOrder[currentModelIdx + 1]
+    
+    def getModelIndexByName(self, modelName):
+        for idx, model in self._executionOrder.items():
+            if model.name() == modelName:
+                return idx
+        return None
 
     def getPreviousModelName(self, idx):
         if idx - 1 < 0:
             return None
-        return self._executionOrder[idx - 1]
+        return self._executionOrder[idx - 1].name()
 
     def getNextModelName(self, idx):
         if idx + 1 > self.modelCount():
             return None
-        return self._executionOrder[idx + 1]
+        return self._executionOrder[idx + 1].name()
 
     def currentFlagsAreFalsePositive(self):
         pass
