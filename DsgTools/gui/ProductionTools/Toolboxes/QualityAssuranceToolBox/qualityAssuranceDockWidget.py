@@ -158,9 +158,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             return
         if (
             currentStatusDict.get(modelName, self.INITIAL) == self.IGNORE_FLAGS
-            and currentStatusDict.get(
-                workflow.getNextModelName(idx), self.INITIAL
-            )
+            and currentStatusDict.get(workflow.getNextModelName(idx), self.INITIAL)
             != self.INITIAL
         ):
             return
@@ -758,9 +756,15 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 model.HaltedOnFlags: self.FINISHED_WITH_FLAGS,
                 model.HaltedOnPossibleFalsePositiveFlags: self.IGNORE_FLAGS,
             }[status]
-            if status == model.Complete and model.output.get("finishStatus", None) == "halt":
+            if (
+                status == model.Complete
+                and model.output.get("finishStatus", None) == "halt"
+            ):
                 code = self.FINISHED_WITH_FLAGS
-            if status == model.Terminated and model.output.get("finishStatus", None) != "halt":
+            if (
+                status == model.Terminated
+                and model.output.get("finishStatus", None) != "halt"
+            ):
                 if self.__workflowCanceled:
                     code = self.CANCELED
                 # if workflow was canceled (through the cancel push button),
@@ -790,7 +794,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 model.feedback.progressChanged.disconnect(self.__progressFunc)
                 model.statusChanged.disconnect(self.__statusFunc)
                 return
-        
+
         def pause(model):
             for row in range(self.tableWidget.rowCount()):
                 if self.tableWidget.cellWidget(row, 0).text() != model.name():

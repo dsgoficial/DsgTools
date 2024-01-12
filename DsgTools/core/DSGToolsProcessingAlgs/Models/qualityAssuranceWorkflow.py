@@ -431,13 +431,13 @@ class QualityAssuranceWorkflow(QObject):
 
     def modelCount(self):
         return len(self._executionOrder)
-    
+
     def getNextModel(self, currentModel):
         currentModelIdx = self.getModelIndexByName(currentModel.name())
         if currentModelIdx + 1 > self.modelCount():
             return None
         return self._executionOrder[currentModelIdx + 1]
-    
+
     def getModelIndexByName(self, modelName):
         for idx, model in self._executionOrder.items():
             if model.name() == modelName:

@@ -340,7 +340,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         if option is not None:
             cb.setChecked(option)
         return cb
-    
+
     def pauseAfterExecutionWidget(self, option=None):
         cb = QCheckBox()
         cb.setChecked(False)

@@ -313,7 +313,7 @@ class DsgToolsProcessingModel(QgsTask):
             if self.flags()
             else False
         )
-    
+
     def pauseAfterExecution(self):
         return self._param.get("pauseAfterExecution", False)
 
