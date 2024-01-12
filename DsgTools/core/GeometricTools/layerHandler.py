@@ -1378,13 +1378,14 @@ class LayerHandler(QObject):
             geom = feat.geometry()
             id = feat.id()
             flagDict = self.checkGeomIsValid(geom, ignoreClosed, feedback)
-            if fixInput:
-                flagDict = dict()
-                outputGeomList = self.fixGeometryFromInput(
-                    inputLyr, parameterDict, geometryType, _newFeatSet, feat, geom, id
-                )
-                for g in outputGeomList:
-                    flagDict.update(self.checkGeomIsValid(g, ignoreClosed, feedback))
+            if not fixInput:
+                return flagDict, _newFeatSet, feat
+            flagDict = dict()
+            outputGeomList = self.fixGeometryFromInput(
+                inputLyr, parameterDict, geometryType, _newFeatSet, feat, geom, id
+            )
+            for g in outputGeomList:
+                flagDict.update(self.checkGeomIsValid(g, ignoreClosed, feedback))
             return flagDict, _newFeatSet, feat
 
         for current, feat in enumerate(iterator):
