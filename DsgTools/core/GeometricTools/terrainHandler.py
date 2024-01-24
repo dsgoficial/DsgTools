@@ -30,6 +30,7 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsFeature,
     QgsSpatialIndex,
+    QgsGeometry,
 )
 from typing import Dict, Optional, Set, Tuple
 from . import graphHandler
@@ -325,11 +326,12 @@ class TerrainSlice:
 
     def groupByPolygon(self, polygonFeat: QgsFeature) -> Dict[int, Set[int]]:
         geom = polygonFeat.geometry()
+        polygonBoundary = QgsGeometry(geom.constGet().boundary())
         bbox = geom.boundingBox()
         heightDictOfSets = defaultdict(lambda: defaultdict(int))
         for id in self.spatialIndex.intersects(bbox):
             contourFeat = self.contourDict[id]
-            if not contourFeat.geometry().intersects(geom):
+            if not contourFeat.geometry().intersects(polygonBoundary):
                 continue
             heightDictOfSets[contourFeat[self.contourElevationFieldName]].add(id)
         return heightDictOfSets
