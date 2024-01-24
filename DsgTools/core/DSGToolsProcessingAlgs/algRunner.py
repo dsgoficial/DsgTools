@@ -60,6 +60,16 @@ class AlgRunner:
         Within,
         Cross,
     ) = range(8)
+    (
+        AlignNodesInsertExtraVerticesWhereRequired,  # Prefer aligning nodes, insert extra vertices where required
+        PreferClosestInsertExtraVerticesWhereRequired,  # Prefer closest point, insert extra vertices where required
+        AlignNodesDoNotInsertNewVertices,  # Prefer aligning nodes, don't insert new vertices
+        PreferClosestDoNotInsertNewVertices,  # Prefer closest point, don't insert new vertices
+        MoveEndPointsOnlyPreferAligningNodes,  # Move end points only, prefer aligning nodes
+        MoveEndPointsOnlyPreverClosestPoint,  # Move end points only,prefer closest point
+        SnapEndPointsToEndPointsOnly,  # Snap end points to end points only
+        SnapToAnchorNodes,  # Snap to anchor nodes (single layer only)
+    ) = range(8)
 
     def generateGrassOutputAndError(self):
         uuid_value = str(uuid.uuid4()).replace("-", "")

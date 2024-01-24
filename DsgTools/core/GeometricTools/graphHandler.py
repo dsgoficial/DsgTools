@@ -897,7 +897,12 @@ def identify_unmerged_edges_on_graph(
 
 
 def buildAuxLayersPriorGraphBuilding(
-    networkLayer, context=None, geographicBoundsLayer=None, feedback=None
+    networkLayer,
+    context=None,
+    geographicBoundsLayer=None,
+    feedback=None,
+    clipOnGeographicBounds=False,
+    idFieldName=None,
 ):
     algRunner = AlgRunner()
     nSteps = 6 if geographicBoundsLayer is not None else 4
@@ -913,7 +918,7 @@ def buildAuxLayersPriorGraphBuilding(
     localCache = algRunner.runCreateFieldWithExpression(
         inputLyr=networkLayer,
         expression="$id",
-        fieldName="featid",
+        fieldName="featid" if idFieldName is None else idFieldName,
         fieldType=1,
         context=context,
         feedback=multiStepFeedback,
@@ -928,11 +933,20 @@ def buildAuxLayersPriorGraphBuilding(
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-        localCache = algRunner.runExtractByLocation(
-            inputLyr=localCache,
-            intersectLyr=geographicBoundsLayer,
-            context=context,
-            feedback=multiStepFeedback,
+        localCache = (
+            algRunner.runExtractByLocation(
+                inputLyr=localCache,
+                intersectLyr=geographicBoundsLayer,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            if not clipOnGeographicBounds
+            else algRunner.runClip(
+                inputLayer=localCache,
+                overlayLayer=geographicBoundsLayer,
+                context=context,
+                feedback=multiStepFeedback,
+            )
         )
         currentStep += 1
     if multiStepFeedback is not None:
@@ -955,7 +969,7 @@ def buildAuxLayersPriorGraphBuilding(
     nodesLayer = algRunner.runCreateFieldWithExpression(
         inputLyr=nodesLayer,
         expression="$id",
-        fieldName="nfeatid",
+        fieldName="nfeatid" if idFieldName is None else f"n{idFieldName}",
         fieldType=1,
         context=context,
         feedback=multiStepFeedback,
