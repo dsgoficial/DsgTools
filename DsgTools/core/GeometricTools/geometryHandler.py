@@ -493,6 +493,8 @@ class GeometryHandler(QObject):
                 nodes = geom.asMultiPolygon()
             else:
                 nodes = geom.asPolygon()
+        else:
+            nodes = list(geom.vertices())
         return nodes
 
     def getFirstNode(self, lyr, feat, geomType=None):
@@ -807,6 +809,8 @@ class GeometryHandler(QObject):
         isMulti = geom.isMultipart()
         geomType = geom.type()
         n = self.getGeomNodes(geom, geomType, isMulti)
+        if len(n) == 0:
+            return None, None
         if isMulti:
             if len(n) > 1:
                 return

@@ -751,6 +751,8 @@ class SpatialRelationsHandler(QObject):
         firstNode, lastNode = self.geometryHandler.getFirstAndLastNodeFromGeom(
             feat.geometry()
         )
+        if firstNode is None or lastNode is None:
+            return
         nodeDict[firstNode] += [feat]
         nodeDict[lastNode] += [feat]
         self.layerHandler.addFeatureToSpatialIndex(

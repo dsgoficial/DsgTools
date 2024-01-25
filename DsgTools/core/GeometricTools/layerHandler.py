@@ -1538,6 +1538,8 @@ class LayerHandler(QObject):
             startPoint, endPoint = self.geometryHandler.getFirstAndLastNodeFromGeom(
                 part
             )
+            if startPoint is None or endPoint is None:
+                continue
             startPointGeom = QgsGeometry.fromPointXY(startPoint)
             endPointGeom = QgsGeometry.fromPointXY(endPoint)
             if not startPointGeom.equals(endPointGeom):
