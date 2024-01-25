@@ -42,6 +42,7 @@ from qgis.core import (
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
+from DsgTools.core.GeometricTools.terrainHandler import TerrainModel
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 from .validationAlgorithm import ValidationAlgorithm
@@ -198,7 +199,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         )
 
         invalidDict = (
-            self.spatialRealtionsHandler.validateTerrainModel(
+            self.validateTerrainModel(
                 contourLyr=inputLyr,
                 onlySelected=onlySelected,
                 heightFieldName=heightFieldName,
@@ -238,6 +239,30 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             self.flagFeature(geom, text, fromWkb=False, sink=flagSink)
 
         return {self.POINT_FLAGS: point_flag_id, self.LINE_FLAGS: line_flag_id}
+
+    def validateTerrainModel(
+        self,
+        contourLyr,
+        onlySelected,
+        heightFieldName,
+        elevationPointsLyr,
+        elevationPointHeightFieldName,
+        depressionExpression,
+        threshold,
+        geoBoundsLyr,
+        context,
+        feedback,
+    ):
+        terrainModel = TerrainModel(
+            contourLyr=contourLyr,
+            contourElevationFieldName=heightFieldName,
+            geographicBoundsLyr=geoBoundsLyr,
+            threshold=threshold,
+            depressionExpression=depressionExpression,
+            spotElevationLyr=elevationPointsLyr,
+            spotElevationFieldName=elevationPointHeightFieldName,
+        )
+        return terrainModel.validate(context=context, feedback=feedback)
 
     def validateTerrainModelInParalel(
         self,
@@ -301,18 +326,16 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 if elevationPointsLyr is not None
                 else None
             )
-            return self.spatialRealtionsHandler.validateTerrainModel(
+            terrainModel = TerrainModel(
                 contourLyr=singlePartContours,
-                onlySelected=False,
-                heightFieldName=heightFieldName,
-                elevationPointsLyr=localElevationPointsLyr,
-                elevationPointHeightFieldName=elevationPointHeightFieldName,
-                depressionExpression=depressionExpression,
+                contourElevationFieldName=heightFieldName,
+                geographicBoundsLyr=localGeographicBoundsLyr,
                 threshold=threshold,
-                geoBoundsLyr=localGeographicBoundsLyr,
-                context=localContext,
-                feedback=None,
+                depressionExpression=depressionExpression,
+                spotElevationLyr=localElevationPointsLyr,
+                spotElevationFieldName=elevationPointHeightFieldName,
             )
+            return terrainModel.validate()
 
         multiStepFeedback.setCurrentStep(currentStep)
         nRegions = len(geographicBoundaryLayerList)

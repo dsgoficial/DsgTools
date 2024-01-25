@@ -1913,3 +1913,22 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
+
+    def runSplitLinesByLength(
+        self,
+        inputLayer: QgsVectorLayer,
+        length: float,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:splitlinesbylength",
+            {"INPUT": inputLayer, "LENGTH": length, "OUTPUT": outputLyr},
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]

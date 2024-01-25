@@ -250,22 +250,12 @@ class TerrainModel:
     geographicBoundsLyr: QgsVectorLayer
     threshold: int
     depressionExpression: str = field(default=None)
-    context: QgsProcessingContext = field(default=None)
-    feedback: QgsProcessingFeedback = field(default=None)
     spotElevationLyr: QgsVectorLayer = field(default=None)
     spotElevationFieldName: str = field(default=None)
 
     def __post_init__(self):
+        self.context = QgsProcessingContext()
         self.algRunner = AlgRunner()
-        multiStepFeedback = (
-            QgsProcessingMultiStepFeedback(3, self.feedback)
-            if self.feedback is not None
-            else None
-        )
-        self.context = QgsProcessingContext() if self.context is None else self.context
-        currentStep = 0
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(currentStep)
         (
             self.contourCacheLyr,
             self.nodesLayer,
@@ -273,19 +263,32 @@ class TerrainModel:
             networkLayer=self.contourLyr,
             context=self.context,
             geographicBoundsLayer=self.geographicBoundsLyr,
-            feedback=multiStepFeedback,
+            feedback=None,
             clipOnGeographicBounds=True,
             idFieldName="contourid",
         )
-        currentStep += 1
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(currentStep)
         self.algRunner.runCreateSpatialIndex(
             inputLyr=self.nodesLayer,
             context=self.context,
-            feedback=multiStepFeedback,
+            feedback=None,
             is_child_algorithm=True,
         )
+        self.geoBoundsLineLyr = self.buildBoundaryLines()
+
+    def buildAuxStructures(
+        self,
+        context: Optional[QgsProcessingContext] = None,
+        feedback: Optional[QgsProcessingFeedback] = None,
+    ):
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(3, feedback)
+            if feedback is not None
+            else None
+        )
+        context = QgsProcessingContext() if context is None else context
+        currentStep = 0
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
 
         currentStep += 1
         if multiStepFeedback is not None:
@@ -298,12 +301,12 @@ class TerrainModel:
         (
             self.terrainPolygonsOuterShells,
             self.terrainPolygonHoles,
-        ) = self.getOuterShellAndHolesFromTerrainPolygons(multiStepFeedback)
+        ) = self.getOuterShellAndHolesFromTerrainPolygons(feedback=multiStepFeedback)
 
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-        self.terrainSlicesDict = self.buildTerrainSlices(multiStepFeedback)
+        self.terrainSlicesDict = self.buildTerrainSlices(feedback=multiStepFeedback)
 
         currentStep += 1
         if multiStepFeedback is not None:
@@ -321,19 +324,22 @@ class TerrainModel:
         return QCoreApplication.translate("TerrainModel", string)
 
     def getOuterShellAndHolesFromTerrainPolygons(
-        self, feedback: QgsProcessingFeedback
+        self,
+        context: Optional[QgsProcessingContext] = None,
+        feedback: Optional[QgsProcessingFeedback] = None,
     ) -> Tuple[QgsVectorLayer, QgsVectorLayer]:
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(3, feedback)
             if feedback is not None
             else None
         )
+        context = QgsProcessingContext() if context is None else context
         currentStep = 0
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
         outershell, donuthole = self.algRunner.runDonutHoleExtractor(
             inputLyr=self.terrainPolygonLayer,
-            context=self.context,
+            context=context,
             feedback=multiStepFeedback,
         )
         currentStep += 1
@@ -341,7 +347,7 @@ class TerrainModel:
             multiStepFeedback.setCurrentStep(currentStep)
         self.algRunner.runCreateSpatialIndex(
             inputLyr=outershell,
-            context=self.context,
+            context=context,
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
@@ -351,24 +357,79 @@ class TerrainModel:
             multiStepFeedback.setCurrentStep(currentStep)
         self.algRunner.runCreateSpatialIndex(
             inputLyr=donuthole,
-            context=self.context,
+            context=context,
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
         return outershell, donuthole
 
-    def buildTerrainPolygonLayerFromContours(self) -> QgsVectorLayer:
+    def buildTerrainPolygonLayerFromContours(
+        self,
+        context: Optional[QgsProcessingContext] = None,
+        feedback: Optional[QgsProcessingFeedback] = None,
+    ) -> QgsVectorLayer:
         multiStepFeedback = (
-            QgsProcessingMultiStepFeedback(7, self.feedback)
-            if self.feedback is not None
+            QgsProcessingMultiStepFeedback(4, feedback)
+            if feedback is not None
             else None
         )
+        context = QgsProcessingContext() if context is None else context
+        currentStep = 0
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        lineLyrList = (
+            [self.contourCacheLyr]
+            if self.geoBoundsLineLyr is None
+            else [self.contourCacheLyr, self.geoBoundsLineLyr]
+        )
+        linesLyr = self.algRunner.runMergeVectorLayers(
+            lineLyrList, context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        polygonLyr = self.algRunner.runPolygonize(
+            linesLyr, context, feedback=multiStepFeedback
+        )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        polygonLyr = self.algRunner.runCreateFieldWithExpression(
+            inputLyr=polygonLyr,
+            expression="$id",
+            fieldName="polygonid",
+            fieldType=1,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=polygonLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+        return polygonLyr
+
+    def buildBoundaryLines(
+        self,
+        context: Optional[QgsProcessingContext] = None,
+        feedback: Optional[QgsProcessingFeedback] = None,
+    ) -> QgsVectorLayer:
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(3, feedback)
+            if feedback is not None
+            else None
+        )
+        context = QgsProcessingContext() if context is None else context
         currentStep = 0
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
         boundsLineLyr = (
             self.algRunner.runPolygonsToLines(
-                self.geographicBoundsLyr, self.context, feedback=multiStepFeedback
+                self.geographicBoundsLyr, context, feedback=multiStepFeedback
             )
             if self.geographicBoundsLyr is not None
             else None
@@ -378,7 +439,7 @@ class TerrainModel:
             multiStepFeedback.setCurrentStep(currentStep)
         boundsLineLyr = (
             self.algRunner.runExplodeLines(
-                boundsLineLyr, self.context, feedback=multiStepFeedback
+                boundsLineLyr, context, feedback=multiStepFeedback
             )
             if self.geographicBoundsLyr is not None
             else None
@@ -392,57 +453,22 @@ class TerrainModel:
             self.algRunner.runSnapGeometriesToLayer(
                 inputLayer=boundsLineLyr,
                 referenceLayer=self.contourCacheLyr,
-                tol=1e-5 if self.contourCacheLyr.crs().isGeographic() else 1e-3,
-                context=self.context,
+                tol=1e-6 if self.contourCacheLyr.crs().isGeographic() else 1e-4,
+                context=context,
                 behavior=self.algRunner.AlignNodesInsertExtraVerticesWhereRequired,
                 feedback=multiStepFeedback,
-                is_child_algorithm=True,
+                is_child_algorithm=False,
             )
             if self.geographicBoundsLyr is not None
             else None
         )
 
-        currentStep += 1
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(currentStep)
-        lineLyrList = (
-            [self.contourCacheLyr]
-            if boundsLineLyr is None
-            else [self.contourCacheLyr, boundsLineLyr]
-        )
-        linesLyr = self.algRunner.runMergeVectorLayers(
-            lineLyrList, self.context, feedback=multiStepFeedback
-        )
-        currentStep += 1
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(currentStep)
-        polygonLyr = self.algRunner.runPolygonize(
-            linesLyr, self.context, feedback=multiStepFeedback
-        )
-        currentStep += 1
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(currentStep)
-        polygonLyr = self.algRunner.runCreateFieldWithExpression(
-            inputLyr=polygonLyr,
-            expression="$id",
-            fieldName="polygonid",
-            fieldType=1,
-            context=self.context,
-            feedback=multiStepFeedback,
-        )
-        currentStep += 1
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(
-            inputLyr=polygonLyr,
-            context=self.context,
-            feedback=multiStepFeedback,
-            is_child_algorithm=True,
-        )
-        return polygonLyr
+        return boundsLineLyr
 
     def buildTerrainSlices(
-        self, feedback: QgsProcessingFeedback
+        self,
+        context: Optional[QgsProcessingContext] = None,
+        feedback: Optional[QgsProcessingFeedback] = None,
     ) -> Dict[int, TerrainSlice]:
         polygonBandDict = dict()
         nPolygons = self.terrainPolygonLayer.featureCount()
@@ -453,13 +479,14 @@ class TerrainModel:
             if feedback is not None
             else None
         )
+        context = QgsProcessingContext() if context is None else context
         currentStep = 0
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(0)
         contoursJoinnedByPolygonBand = self.algRunner.runJoinAttributesByLocation(
             inputLyr=self.nodesLayer,
             joinLyr=self.terrainPolygonLayer,
-            context=self.context,
+            context=context,
             feedback=multiStepFeedback,
             predicateList=[self.algRunner.Intersect],
             method=0,
@@ -507,27 +534,188 @@ class TerrainModel:
             )
         return polygonBandDict
 
-    def validate(
-        self, feedback: Optional[QgsProcessingFeedback] = None
+    def findContourOutOfThreshold(
+        self,
+        context: Optional[QgsProcessingContext] = None,
+        feedback: Optional[QgsProcessingFeedback] = None,
     ) -> Dict[QByteArray, str]:
-        if self.spotElevationLyr is None:
-            return self.validateTerrainBands(feedback)
-        invalidDict = dict()
         multiStepFeedback = (
-            QgsProcessingMultiStepFeedback(2, feedback)
+            QgsProcessingMultiStepFeedback(1, feedback)
             if feedback is not None
             else None
         )
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(0)
-            multiStepFeedback.pushInfo(self.tr("Validating terrain bands"))
-        invalidDict.update(self.validateTerrainBands(multiStepFeedback))
+        contourOutOfThreshold = self.algRunner.runFilterExpression(
+            inputLyr=self.contourCacheLyr,
+            expression=f""" "{self.contourElevationFieldName}" % {self.threshold} != 0 """,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if contourOutOfThreshold.featureCount() == 0:
+            return dict()
+        return {
+            feat.geometry().asWkb(): self.tr("Contour out of threshold.")
+            for feat in contourOutOfThreshold.getFeatures()
+        }
+
+    def validate(
+        self,
+        context: Optional[QgsProcessingContext] = None,
+        feedback: Optional[QgsProcessingFeedback] = None,
+    ) -> Dict[QByteArray, str]:
+        invalidDict = dict()
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(4, feedback)
+            if feedback is not None
+            else None
+        )
+        context = QgsProcessingContext() if context is None else context
+        currentStep = 0
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr("Validating contour lines"))
+        invalidDict.update(
+            self.validateContourLines(context=context, feedback=multiStepFeedback)
+        )
         if len(invalidDict) > 0:
             return invalidDict
+        currentStep += 1
         if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(1)
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr("Building terrain aux structures"))
+        self.buildAuxStructures(feedback=multiStepFeedback)
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr("Validating terrain bands"))
+        invalidDict.update(self.validateTerrainBands(feedback=multiStepFeedback))
+        if len(invalidDict) > 0 or self.spotElevationLyr is None:
+            return invalidDict
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(self.tr("Validating spot elevation"))
-        invalidDict.update(self.validateSpotElevation(multiStepFeedback))
+        invalidDict.update(self.validateSpotElevation(feedback=multiStepFeedback))
+        return invalidDict
+
+    def validateContourLines(
+        self,
+        context: Optional[QgsProcessingContext] = None,
+        feedback: Optional[QgsProcessingFeedback] = None,
+    ) -> Dict[QByteArray, str]:
+        invalidDict = dict()
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(8, feedback)
+            if feedback is not None
+            else None
+        )
+        context = QgsProcessingContext() if context is None else context
+        currentStep = 0
+
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        invalidDict.update(
+            self.findContourOutOfThreshold(context=context, feedback=multiStepFeedback)
+        )
+        if len(invalidDict) > 0:
+            return invalidDict
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        countLyr = self.algRunner.runJoinByLocationSummary(
+            inputLyr=self.nodesLayer,
+            joinLyr=self.nodesLayer,
+            predicateList=[0],
+            summaries=[0],
+            joinFields=[self.contourElevationFieldName],
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=False,
+        )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        dangleCandidates = self.algRunner.runExtractByLocation(
+            inputLyr=countLyr,
+            intersectLyr=self.geoBoundsLineLyr,
+            context=context,
+            predicate=[self.algRunner.Disjoint],
+            feedback=multiStepFeedback,
+        )
+        if dangleCandidates.featureCount() > 0:
+            invalidDict.update(
+                {
+                    feat.geometry().asWkb(): self.tr("Dangle on Contour line.")
+                    for feat in dangleCandidates.getFeatures()
+                    if feat[f"{self.contourElevationFieldName}_count"] == 1
+                }
+            )
+            if len(invalidDict) > 0:
+                return invalidDict
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        splitCurves = self.algRunner.runSplitLinesByLength(
+            inputLayer=self.contourCacheLyr,
+            length=1e-2 if self.contourCacheLyr.crs().isGeographic() else 1e3,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(
+            splitCurves, context, multiStepFeedback, is_child_algorithm=True
+        )
+
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+
+        pointIntersectionLyr = self.algRunner.runLineIntersections(
+            inputLyr=splitCurves,
+            intersectLyr=splitCurves,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(
+            pointIntersectionLyr, context, multiStepFeedback, is_child_algorithm=True
+        )
+
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+
+        pointCountLyr = self.algRunner.runJoinByLocationSummary(
+            inputLyr=pointIntersectionLyr,
+            joinLyr=pointIntersectionLyr,
+            predicateList=[0],
+            summaries=[0],
+            joinFields=[self.contourElevationFieldName],
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        for feat in pointCountLyr.getFeatures():
+            if feat[f"{self.contourElevationFieldName}_count"] < 2:
+                continue
+            if feat[f"{self.contourElevationFieldName}_count"] == 2:
+                if (
+                    feat[self.contourElevationFieldName]
+                    != feat[f"{self.contourElevationFieldName}_2"]
+                ):
+                    invalidDict[feat.geometry().asWkb()] = self.tr(
+                        f"""Invalid contour lines intersection: lines with height {feat[self.contourElevationFieldName]} and {feat[f"{self.contourElevationFieldName}_2"]} touch each other."""
+                    )
+                continue
+            invalidDict[feat.geometry().asWkb()] = self.tr(
+                "Invalid contour lines intersection: more than two contour lines intersect."
+            )
         return invalidDict
 
     def validateTerrainBands(
@@ -551,7 +739,9 @@ class TerrainModel:
         return invalidDict
 
     def validateSpotElevation(
-        self, feedback: Optional[QgsProcessingFeedback] = None
+        self,
+        context: Optional[QgsProcessingContext],
+        feedback: Optional[QgsProcessingFeedback] = None,
     ) -> Dict[QByteArray, str]:
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(2, feedback)
@@ -559,12 +749,13 @@ class TerrainModel:
             else None
         )
         currentStep = 0
+        context = QgsProcessingContext() if context is not None else context
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
         spotElevationsThatIntersectContours = self.algRunner.runExtractByLocation(
             inputLyr=self.spotElevationLyr,
             intersectLyr=self.contourLyr,
-            context=self.context,
+            context=context,
             predicate=[self.algRunner.Intersect],
         )
         if spotElevationsThatIntersectContours.featureCount() > 0:
@@ -581,7 +772,7 @@ class TerrainModel:
         joinnedSpotElevation = self.algRunner.runJoinAttributesByLocation(
             inputLyr=self.spotElevationLyr,
             joinLyr=self.terrainPolygonLayer,
-            context=self.context,
+            context=context,
         )
         nFeats = joinnedSpotElevation.featureCount()
         stepSize = 100 / nFeats
