@@ -42,6 +42,8 @@ from qgis.PyQt.Qt import QObject
 from qgis.PyQt.QtCore import QRegExp, QCoreApplication
 from qgis.PyQt.QtGui import QRegExpValidator
 
+from DsgTools.core.GeometricTools.terrainHandler import TerrainModel
+
 from .featureHandler import FeatureHandler
 from .geometryHandler import GeometryHandler
 from .layerHandler import LayerHandler
@@ -104,6 +106,7 @@ class SpatialRelationsHandler(QObject):
         contourLyr,
         heightFieldName,
         threshold,
+        depressionExpression=None,
         elevationPointsLyr=None,
         elevationPointHeightFieldName=None,
         onlySelected=False,
@@ -184,46 +187,65 @@ class SpatialRelationsHandler(QObject):
             return invalidDict
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(self.tr("Building contour area dict.."))
-        contourAreaDict, polygonLyr = self.buildContourAreaDict(
-            inputLyr=splitLinesLyr,
-            geoBoundsLyr=geoBoundsLyr,
-            attributeName=heightFieldName,
-            contourSpatialIdx=contourSpatialIdx,
-            contourIdDict=contourIdDict,
-            depressionExpression=None,  # TODO
-            context=context,
-            feedback=multiStepFeedback,
+            multiStepFeedback.setProgressText(self.tr("Building terrain model.."))
+        terrainModel = TerrainModel(
+            contourLyr=contourLyr,
+            contourElevationFieldName=heightFieldName,
+            geographicBoundsLyr=geoBoundsLyr,
+            threshold=threshold,
+            depressionExpression=depressionExpression,
+            # context=context,
+            # feedback=multiStepFeedback,
+            spotElevationLyr=elevationPointsLyr,
+            spotElevationFieldName=elevationPointHeightFieldName,
         )
-        currentStep += 1
-
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(self.tr("Finding missing contours..."))
-        missingContourDict = self.findMissingContours(
-            contourAreaDict, threshold, context=context, feedback=multiStepFeedback
-        )
-        invalidDict.update(missingContourDict)
-        currentStep += 1
-
-        if elevationPointsLyr is None or len(missingContourDict) > 0:
-            return invalidDict
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(
-                self.tr("Finding elevation points out of threshold...")
-            )
-        pointErrorDict = self.findElevationPointsOutOfThreshold(
-            elevationPointsLyr,
-            polygonLyr,
-            contourAreaDict,
-            threshold,
-            elevationPointHeightFieldName,
-            context=context,
-            feedback=multiStepFeedback,
-        )
-        invalidDict.update(pointErrorDict)
+            multiStepFeedback.setProgressText(self.tr("Validating terrain model.."))
+        invalidDict.update(terrainModel.validate(None))
         return invalidDict
+        # if multiStepFeedback is not None:
+        #     multiStepFeedback.setCurrentStep(currentStep)
+        #     multiStepFeedback.setProgressText(self.tr("Building contour area dict.."))
+        # contourAreaDict, polygonLyr = self.buildContourAreaDict(
+        #     inputLyr=splitLinesLyr,
+        #     geoBoundsLyr=geoBoundsLyr,
+        #     attributeName=heightFieldName,
+        #     contourSpatialIdx=contourSpatialIdx,
+        #     contourIdDict=contourIdDict,
+        #     depressionExpression=None,  # TODO
+        #     context=context,
+        #     feedback=multiStepFeedback,
+        # )
+        # currentStep += 1
+
+        # if multiStepFeedback is not None:
+        #     multiStepFeedback.setCurrentStep(currentStep)
+        #     multiStepFeedback.setProgressText(self.tr("Finding missing contours..."))
+        # missingContourDict = self.findMissingContours(
+        #     contourAreaDict, threshold, context=context, feedback=multiStepFeedback
+        # )
+        # invalidDict.update(missingContourDict)
+        # currentStep += 1
+
+        # if elevationPointsLyr is None or len(missingContourDict) > 0:
+        #     return invalidDict
+        # if multiStepFeedback is not None:
+        #     multiStepFeedback.setCurrentStep(currentStep)
+        #     multiStepFeedback.setProgressText(
+        #         self.tr("Finding elevation points out of threshold...")
+        #     )
+        # pointErrorDict = self.findElevationPointsOutOfThreshold(
+        #     elevationPointsLyr,
+        #     polygonLyr,
+        #     contourAreaDict,
+        #     threshold,
+        #     elevationPointHeightFieldName,
+        #     context=context,
+        #     feedback=multiStepFeedback,
+        # )
+        # invalidDict.update(pointErrorDict)
+        # return invalidDict
 
     def getGeoBoundsGeomEngine(self, geoBoundsLyr, context=None, feedback=None):
         """
@@ -706,138 +728,6 @@ class SpatialRelationsHandler(QObject):
             if feedback is not None:
                 feedback.setProgress(current * stepSize)
         return invalidDict
-
-    def relateDrainagesWithContours(
-        self,
-        drainageLyr,
-        contourLyr,
-        frameLinesLyr,
-        heightFieldName,
-        threshold,
-        topologyRadius,
-        feedback=None,
-    ):
-        """
-        Checks the conformity between directed drainages and contours.
-        Drainages must be propperly directed.
-        :param drainageLyr: QgsVectorLayer (line) with drainage lines.
-        This must have a primary key field;
-        :param contourLyr: QgsVectorLayer (line) with contour lines.
-        This must have a primary key field;
-        :param frameLinesLyrLyr: QgsVectorLayer (line) with frame lines;
-        :param heightFieldName: (str) name of the field that stores
-        contour's height;
-        :param threshold: (int) equidistance between contour lines;
-        :param threshold: (float) topology radius;
-        Process steps:
-        1- Build spatial indexes;
-        2- Compute intersections between drainages and contours;
-        3- Relate intersections grouping by drainages: calculate the
-        distance between the start point and each intersection, then
-        order the points by distance. If the height of each point does
-        not follow this order, flag the intersection.
-        4- After relating everything,
-        """
-        maxSteps = 4
-        multiStepFeedback = (
-            QgsProcessingMultiStepFeedback(maxSteps, feedback)
-            if feedback is not None
-            else None
-        )
-        currentStep = 0
-        if multiStepFeedback is not None:
-            if multiStepFeedback.isCanceled():
-                return []
-            multiStepFeedback.setCurrentStep(currentStep)
-            currentStep += 1
-            multiStepFeedback.pushInfo(self.tr("Building contour structures..."))
-        (
-            contourSpatialIdx,
-            contourIdDict,
-            contourNodeDict,
-            heightsDict,
-        ) = self.buildSpatialIndexAndIdDictRelateNodesAndAttributeGroupDict(
-            inputLyr=contourLyr,
-            attributeName=heightFieldName,
-            feedback=multiStepFeedback,
-        )
-        if multiStepFeedback is not None:
-            if multiStepFeedback.isCanceled():
-                return []
-            multiStepFeedback.setCurrentStep(currentStep)
-            currentStep += 1
-            multiStepFeedback.pushInfo(
-                self.tr("Validating contour structures. Check 1/4...")
-            )
-        invalidDict = self.validateContourRelations(
-            contourNodeDict, feedback=multiStepFeedback
-        )
-        if invalidDict:
-            multiStepFeedback.setCurrentStep(maxSteps - 1)
-            return invalidDict
-
-        if multiStepFeedback is not None:
-            if multiStepFeedback.isCanceled():
-                return []
-            multiStepFeedback.setCurrentStep(currentStep)
-            currentStep += 1
-            multiStepFeedback.pushInfo(self.tr("Building drainage spatial index..."))
-        (
-            drainageSpatialIdx,
-            drainageIdDict,
-            drainageNodeDict,
-        ) = self.buildSpatialIndexAndIdDictAndRelateNodes(
-            inputLyr=drainageLyr, feedback=multiStepFeedback
-        )
-        if multiStepFeedback is not None:
-            if multiStepFeedback.isCanceled():
-                return []
-            multiStepFeedback.setCurrentStep(currentStep)
-            currentStep += 1
-            multiStepFeedback.pushInfo(self.tr("Relating contours with drainages..."))
-        intersectionDict = self.buildIntersectionDict(
-            drainageLyr,
-            drainageIdDict,
-            drainageSpatialIdx,
-            contourIdDict,
-            contourIdDict,
-        )
-
-    def buildSpatialIndexAndIdDictAndRelateNodes(
-        self, inputLyr, feedback=None, featureRequest=None
-    ):
-        """
-        creates a spatial index for the input layer
-        :param inputLyr: (QgsVectorLayer) input layer;
-        :param feedback: (QgsProcessingFeedback) processing feedback;
-        :param featureRequest: (QgsFeatureRequest) optional feature request;
-        """
-        spatialIdx = QgsSpatialIndex()
-        idDict = {}
-        nodeDict = defaultdict(list)
-        featCount = inputLyr.featureCount()
-        size = 100 / featCount if featCount else 0
-        iterator = (
-            inputLyr.getFeatures()
-            if featureRequest is None
-            else inputLyr.getFeatures(featureRequest)
-        )
-        firstAndLastNode = lambda x: self.geometryHandler.getFirstAndLastNode(
-            inputLyr, x
-        )
-        addFeatureAlias = lambda x: self.addFeatureToSpatialIndexAndNodeDict(
-            current=x[0],
-            feat=x[1],
-            spatialIdx=spatialIdx,
-            idDict=idDict,
-            nodeDict=nodeDict,
-            size=size,
-            firstAndLastNode=firstAndLastNode,
-            feedback=feedback,
-        )
-        list(map(addFeatureAlias, enumerate(iterator)))
-
-        return spatialIdx, idDict, nodeDict
 
     def addFeatureToSpatialIndexAndNodeDict(
         self, current, feat, spatialIdx, idDict, nodeDict, size, feedback

@@ -58,22 +58,37 @@ class TerrainSlice:
             self.spatialIndex.addFeature(feat)
         self.outershellDict = self.groupByPolygon(self.outershellFeat)
         self.holesGeomToSetDict = self.buildDictGroupedByPolygons(self.holesFeatSet)
-        self.maxHeight = max(self.outershellDict.keys())
+        self.maxOutershellHeight = max(self.outershellDict.keys())
+        self.minOutershellHeight = min(self.outershellDict.keys())
+        self.maxHeighOnSlice = max(
+            self.contoursOnSlice,
+            key=lambda x: x[self.contourElevationFieldName],
+            default=None,
+        )
+        self.minHeighOnSlice = min(
+            self.contoursOnSlice,
+            key=lambda x: x[self.contourElevationFieldName],
+            default=None,
+        )
 
     def buildDictGroupedByPolygons(self, polygonFeatSet: Set[QgsFeature]):
-        return {
-            polygonFeat.geometry().asWkb(): self.groupByPolygon(polygonFeat)
-            for polygonFeat in polygonFeatSet
-        }
+        polygonDict = dict()
+        for polygonFeat in polygonFeatSet:
+            geom = polygonFeat.geometry()
+            polygonDict[geom.asWkb()] = self.groupByPolygon(polygonFeat)
+        return polygonDict
 
     def groupByPolygon(self, polygonFeat: QgsFeature) -> Dict[int, Set[int]]:
         geom = polygonFeat.geometry()
-        polygonBoundary = QgsGeometry(geom.constGet().boundary())
+        geomConstGet = geom.constGet()
+        bounds = geomConstGet.boundary()
+        polygonBoundary = QgsGeometry(bounds)
         bbox = geom.boundingBox()
         heightDictOfSets = defaultdict(set)
         for id in self.spatialIndex.intersects(bbox):
             contourFeat = self.contourDict[id]
-            if not contourFeat.geometry().intersects(polygonBoundary):
+            contourGeom = contourFeat.geometry()
+            if not contourGeom.intersects(polygonBoundary):
                 continue
             heightDictOfSets[contourFeat[self.contourElevationFieldName]].add(id)
         return heightDictOfSets
@@ -99,6 +114,7 @@ class TerrainSlice:
                 shortestLineGeomList = [
                     geom.shortestLine(i)
                     for i in self.contourDict[self.outershellDict[h2]]
+                    if not i.equals(geom)
                 ]
                 shortestLine = min(shortestLineGeomList, key=lambda x: x.length())
                 missingContourFlagDict.update(
@@ -133,9 +149,21 @@ class TerrainSlice:
                 if diff == self.threshold:
                     continue
                 if abs(diff) > self.threshold:  # missing contour
-                    holeGeom = QgsGeometry()
-                    holeGeom.fromWkb(holeWkb)
-                    shortestLine = self.outershellFeat.geometry().shortestLine(holeGeom)
+                    shortestLineList = [
+                        self.contourDict[a]
+                        .geometry()
+                        .shortestLine(self.contourDict[b].geometry())
+                        for a, b in product(
+                            self.outershellDict[outershellHeight], contourIdSet
+                        )
+                    ]
+                    shortestLine = min(
+                        filter(
+                            lambda x: x.length() > 0 and x.isGeosValid(),
+                            shortestLineList,
+                        ),
+                        key=lambda x: x.length(),
+                    )
                     missingContourFlagDict.update(
                         {
                             shortestLine.asWkb(): self.tr(
@@ -145,7 +173,7 @@ class TerrainSlice:
                     )
                     continue
                 # from now on, there is no missing contour and holeHeight <= outershellHeight, this is only right if the contours are depression
-                if holeHeight == self.maxHeight:
+                if holeHeight == self.maxOutershellHeight:
                     continue
                 for invalidDepressionId in contourIdSet:
                     if (
@@ -157,8 +185,18 @@ class TerrainSlice:
                     invalidDepressionContourGeom = (
                         invalidDepressionContourFeat.geometry()
                     )
-                    shortestLine = self.outershellFeat.geometry().shortestLine(
-                        invalidDepressionContourGeom
+                    shortestLineList = [
+                        invalidDepressionContourGeom.shortestLine(
+                            self.contourDict[h].geometry()
+                        )
+                        for h in self.outershellDict[outershellHeight]
+                    ]
+                    shortestLine = min(
+                        filter(
+                            lambda x: x.length() > 0 and x.isGeosValid(),
+                            shortestLineList,
+                        ),
+                        key=lambda x: x.length(),
                     )
                     missingContourFlagDict.update(
                         {
@@ -176,7 +214,6 @@ class TerrainSlice:
         self,
         depressionIdSet: Set[int],
         feedback: Optional[QgsProcessingFeedback] = None,
-        context: Optional[QgsProcessingContext] = None,
     ) -> Dict[QByteArray, str]:
         flagDict = dict()
         multiStepFeedback = (
@@ -199,7 +236,10 @@ class TerrainSlice:
         )
         return flagDict
 
-    def tr(self, string):
+    def getMinMaxHeight(self) -> Tuple[float, float]:
+        return self.minHeighOnSlice, self.maxHeighOnSlice
+
+    def tr(self, string: str) -> str:
         return QCoreApplication.translate("TerrainSlice", string)
 
 
@@ -209,7 +249,6 @@ class TerrainModel:
     contourElevationFieldName: str
     geographicBoundsLyr: QgsVectorLayer
     threshold: int
-    depressionFieldName: str = field(default=None)
     depressionExpression: str = field(default=None)
     context: QgsProcessingContext = field(default=None)
     feedback: QgsProcessingFeedback = field(default=None)
@@ -217,22 +256,6 @@ class TerrainModel:
     spotElevationFieldName: str = field(default=None)
 
     def __post_init__(self):
-        if (
-            self.spotElevationLyr is None and self.spotElevationFieldName is not None
-        ) or (
-            self.spotElevationLyr is not None and self.spotElevationFieldName is None
-        ):
-            raise ValueError(
-                "Both spot elevation layer and spot elevation field name must be provided if any one of them is provided."
-            )
-        if (
-            self.depressionFieldName is None and self.depressionExpression is not None
-        ) or (
-            self.depressionFieldName is not None and self.depressionExpression is None
-        ):
-            raise ValueError(
-                "Both spot depression field name and depression expression must be provided if any one of them is provided."
-            )
         self.algRunner = AlgRunner()
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(3, self.feedback)
@@ -280,19 +303,22 @@ class TerrainModel:
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-        self.terrainSliceSet = self.buildTerrainSlices(multiStepFeedback)
+        self.terrainSlicesDict = self.buildTerrainSlices(multiStepFeedback)
 
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
         self.depressionSet = (
             set()
-            if self.depressionFieldName is None
+            if self.depressionExpression is None
             else set(
                 f["contourid"]
                 for f in self.contourCacheLyr.getFeatures(self.depressionExpression)
             )
         )
+
+    def tr(self, string: str) -> str:
+        return QCoreApplication.translate("TerrainModel", string)
 
     def getOuterShellAndHolesFromTerrainPolygons(
         self, feedback: QgsProcessingFeedback
@@ -333,7 +359,7 @@ class TerrainModel:
 
     def buildTerrainPolygonLayerFromContours(self) -> QgsVectorLayer:
         multiStepFeedback = (
-            QgsProcessingMultiStepFeedback(6, self.feedback)
+            QgsProcessingMultiStepFeedback(7, self.feedback)
             if self.feedback is not None
             else None
         )
@@ -370,6 +396,7 @@ class TerrainModel:
                 context=self.context,
                 behavior=self.algRunner.AlignNodesInsertExtraVerticesWhereRequired,
                 feedback=multiStepFeedback,
+                is_child_algorithm=True,
             )
             if self.geographicBoundsLyr is not None
             else None
@@ -403,13 +430,24 @@ class TerrainModel:
             context=self.context,
             feedback=multiStepFeedback,
         )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=polygonLyr,
+            context=self.context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
         return polygonLyr
 
-    def buildTerrainSlices(self, feedback: QgsProcessingFeedback) -> List[TerrainSlice]:
-        polygonBandList = list()
+    def buildTerrainSlices(
+        self, feedback: QgsProcessingFeedback
+    ) -> Dict[int, TerrainSlice]:
+        polygonBandDict = dict()
         nPolygons = self.terrainPolygonLayer.featureCount()
         if nPolygons == 0:
-            return polygonBandList
+            return polygonBandDict
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(1 + nPolygons, feedback)
             if feedback is not None
@@ -458,24 +496,125 @@ class TerrainModel:
                     context=QgsProcessingContext(),
                 ).getFeatures()
             )
-            polygonBandList.append(
-                TerrainSlice(
-                    polygonid=polygonFeat["polygonid"],
-                    contourElevationFieldName=self.contourElevationFieldName,
-                    threshold=self.threshold,
-                    outershellFeat=outershellFeat,
-                    holesFeatSet=holesFeatSet,
-                    contoursOnSlice=contoursOnSlice,
-                    contourIdField="contourid",
-                )
+            polygonBandDict[polygonFeat["polygonid"]] = TerrainSlice(
+                polygonid=polygonFeat["polygonid"],
+                contourElevationFieldName=self.contourElevationFieldName,
+                threshold=self.threshold,
+                outershellFeat=outershellFeat,
+                holesFeatSet=holesFeatSet,
+                contoursOnSlice=contoursOnSlice,
+                contourIdField="contourid",
             )
-        return polygonBandList
+        return polygonBandDict
 
-    def validate(self):
+    def validate(
+        self, feedback: Optional[QgsProcessingFeedback] = None
+    ) -> Dict[QByteArray, str]:
+        if self.spotElevationLyr is None:
+            return self.validateTerrainBands(feedback)
         invalidDict = dict()
-        for polygonBand in self.terrainSliceSet:
-            invalidOutputDict = polygonBand.validate(self.depressionSet)
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(2, feedback)
+            if feedback is not None
+            else None
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+            multiStepFeedback.pushInfo(self.tr("Validating terrain bands"))
+        invalidDict.update(self.validateTerrainBands(multiStepFeedback))
+        if len(invalidDict) > 0:
+            return invalidDict
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+            multiStepFeedback.pushInfo(self.tr("Validating spot elevation"))
+        invalidDict.update(self.validateSpotElevation(multiStepFeedback))
+        return invalidDict
+
+    def validateTerrainBands(
+        self, feedback: Optional[QgsProcessingFeedback] = None
+    ) -> Dict[QByteArray, str]:
+        invalidDict = dict()
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(len(self.terrainSlicesDict), feedback)
+            if feedback is not None
+            else None
+        )
+        for currentStep, polygonBand in enumerate(self.terrainSlicesDict.values()):
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
+            invalidOutputDict = polygonBand.validate(
+                self.depressionSet, feedback=feedback
+            )
             if invalidOutputDict == dict():
                 continue
             invalidDict.update(invalidOutputDict)
+        return invalidDict
+
+    def validateSpotElevation(
+        self, feedback: Optional[QgsProcessingFeedback] = None
+    ) -> Dict[QByteArray, str]:
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(2, feedback)
+            if feedback is not None
+            else None
+        )
+        currentStep = 0
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        spotElevationsThatIntersectContours = self.algRunner.runExtractByLocation(
+            inputLyr=self.spotElevationLyr,
+            intersectLyr=self.contourLyr,
+            context=self.context,
+            predicate=[self.algRunner.Intersect],
+        )
+        if spotElevationsThatIntersectContours.featureCount() > 0:
+            flagDict = dict()
+            for feat in spotElevationsThatIntersectContours.getFeatures():
+                geom = feat.geometry()
+                flagDict[geom.asWkb()] = self.tr(
+                    f"Spot elevation with height {feat[self.spotElevationFieldName]} (featid={feat.id()}) intersects contour line."
+                )
+            return flagDict
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+        joinnedSpotElevation = self.algRunner.runJoinAttributesByLocation(
+            inputLyr=self.spotElevationLyr,
+            joinLyr=self.terrainPolygonLayer,
+            context=self.context,
+        )
+        nFeats = joinnedSpotElevation.featureCount()
+        stepSize = 100 / nFeats
+        invalidDict = dict()
+        for current, feat in enumerate(joinnedSpotElevation.getFeatures()):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+            bandId = joinnedSpotElevation["polygonid"]
+            pointHeight = joinnedSpotElevation[self.spotElevationFieldName]
+            h_min, h_max = self.terrainSlicesDict[bandId].getMinMaxHeight()
+            if h_min is None or h_max is None:
+                continue
+            if pointHeight == h_min or pointHeight == h_max:
+                continue
+            if h_min == h_max:
+                if pointHeight > h_max + self.threshold:
+                    flagText = self.tr(
+                        f"Elevation point with height {pointHeight} out of threshold. This value is on a hilltop and should be between {h_max} and {h_max+self.threshold}"
+                    )
+                elif pointHeight < h_min - self.threshold:
+                    flagText = self.tr(
+                        f"Elevation point with height {pointHeight} out of threshold. This value is on a valley/depression and should be between {h_min} and {h_min-self.threshold}"
+                    )
+                else:
+                    continue
+            elif pointHeight < h_min or pointHeight > h_max:
+                flagText = self.tr(
+                    f"Elevation point with height {pointHeight} out of threshold. This value should be between {self.h_min} and {self.h_max}"
+                )
+            else:
+                continue
+            pointGeom = feat.geometry()
+            invalidDict[pointGeom.asWkb()] = flagText
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * stepSize)
         return invalidDict

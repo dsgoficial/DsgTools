@@ -36,6 +36,7 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsProcessingFeatureSourceDefinition,
     QgsProcessingContext,
+    QgsProcessingParameterExpression,
 )
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
@@ -52,6 +53,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
     CONTOUR_INTERVAL = "CONTOUR_INTERVAL"
     GEOGRAPHIC_BOUNDS = "GEOGRAPHIC_BOUNDS"
     CONTOUR_ATTR = "CONTOUR_ATTR"
+    DEPRESSION_EXPRESSION = "DEPRESSION_EXPRESSION"
     INPUT_SPOT_ELEVATION = "INPUT_ELEVATION_POINTS"
     ELEVATION_POINT_ATTR = "ELEVATION_POINT_ATTR"
     GROUP_BY_SPATIAL_PARTITION = "GROUP_BY_SPATIAL_PARTITION"
@@ -82,6 +84,15 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 "cota",
                 "INPUT",
                 QgsProcessingParameterField.Any,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterExpression(
+                self.DEPRESSION_EXPRESSION,
+                self.tr("Filter expression for contour that are depressions."),
+                """ "depressao" = 1 """,
+                self.INPUT,
+                optional=True,
             )
         )
         self.addParameter(
@@ -148,6 +159,11 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         heightFieldName = self.parameterAsFields(parameters, self.CONTOUR_ATTR, context)
         heightFieldName = None if len(heightFieldName) == 0 else heightFieldName[0]
+        depressionExpression = self.parameterAsExpression(
+            parameters, self.DEPRESSION_EXPRESSION, context
+        )
+        if depressionExpression == "":
+            depressionExpression = None
         threshold = self.parameterAsDouble(parameters, self.CONTOUR_INTERVAL, context)
         geoBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDS, context
@@ -188,6 +204,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 heightFieldName=heightFieldName,
                 elevationPointsLyr=elevationPointsLyr,
                 elevationPointHeightFieldName=elevationPointHeightFieldName,
+                depressionExpression=depressionExpression,
                 threshold=threshold,
                 geoBoundsLyr=geoBoundsLyr,
                 feedback=feedback,
@@ -200,6 +217,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 heightFieldName=heightFieldName,
                 elevationPointsLyr=elevationPointsLyr,
                 elevationPointHeightFieldName=elevationPointHeightFieldName,
+                depressionExpression=depressionExpression,
                 threshold=threshold,
                 geoBoundsLyr=geoBoundsLyr,
                 context=context,
@@ -228,6 +246,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         heightFieldName,
         elevationPointsLyr,
         elevationPointHeightFieldName,
+        depressionExpression,
         threshold,
         geoBoundsLyr,
         context,
@@ -288,6 +307,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 heightFieldName=heightFieldName,
                 elevationPointsLyr=localElevationPointsLyr,
                 elevationPointHeightFieldName=elevationPointHeightFieldName,
+                depressionExpression=depressionExpression,
                 threshold=threshold,
                 geoBoundsLyr=localGeographicBoundsLyr,
                 context=localContext,
