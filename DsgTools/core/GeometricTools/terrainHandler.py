@@ -49,6 +49,7 @@ class TerrainSlice:
     outershellFeat: QgsFeature
     holesFeatSet: Set[QgsFeature]
     contoursOnSlice: Set[QgsFeature]
+    contourLineLayer: QgsVectorLayer
     contourIdField: str
 
     def __post_init__(self):
@@ -57,6 +58,10 @@ class TerrainSlice:
         for feat in self.contoursOnSlice:
             self.contourDict[feat.id()] = feat
             self.spatialIndex.addFeature(feat)
+        self.contourLineDict = {
+            feat[self.contourIdField]: feat
+            for feat in self.contourLineLayer.getFeatures()
+        }
         self.outershellDict = self.groupByPolygon(self.outershellFeat)
         self.holesGeomToSetDict = self.buildDictGroupedByPolygons(self.holesFeatSet)
         self.maxOutershellHeight = max(self.outershellDict.keys())
@@ -113,9 +118,11 @@ class TerrainSlice:
                 if feedback is not None and feedback.isCanceled():
                     break
                 shortestLineGeomList = [
-                    geom.shortestLine(i)
-                    for i in self.contourDict[self.outershellDict[h2]]
-                    if not i.equals(geom)
+                    geom.shortestLine(
+                        self.contourLineDict[feat[self.contourIdField]].geometry()
+                    )
+                    for feat in self.contourDict[self.outershellDict[h2]]
+                    if not feat.geometry().equals(geom)
                 ]
                 shortestLine = min(shortestLineGeomList, key=lambda x: x.length())
                 missingContourFlagDict.update(
@@ -151,9 +158,13 @@ class TerrainSlice:
                     continue
                 if abs(diff) > self.threshold:  # missing contour
                     shortestLineList = [
-                        self.contourDict[a]
+                        self.contourLineDict[self.contourDict[a][self.contourIdField]]
                         .geometry()
-                        .shortestLine(self.contourDict[b].geometry())
+                        .shortestLine(
+                            self.contourLineDict[
+                                self.contourDict[b][self.contourIdField]
+                            ].geometry()
+                        )
                         for a, b in product(
                             self.outershellDict[outershellHeight], contourIdSet
                         )
@@ -182,13 +193,17 @@ class TerrainSlice:
                         in depressionIdSet
                     ):
                         continue
-                    invalidDepressionContourFeat = self.contourDict[invalidDepressionId]
+                    invalidDepressionContourFeat = self.contourLineDict[
+                        self.contourDict[invalidDepressionId][self.contourIdField]
+                    ]
                     invalidDepressionContourGeom = (
                         invalidDepressionContourFeat.geometry()
                     )
                     shortestLineList = [
                         invalidDepressionContourGeom.shortestLine(
-                            self.contourDict[h].geometry()
+                            self.contourLineDict[
+                                self.contourDict[h][self.contourIdField]
+                            ].geometry()
                         )
                         for h in self.outershellDict[outershellHeight]
                     ]
@@ -289,6 +304,7 @@ class TerrainModel:
         context = QgsProcessingContext() if context is None else context
         currentStep = 0
         if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(self.tr("Building terrain aux structures"))
             multiStepFeedback.setCurrentStep(currentStep)
 
         currentStep += 1
@@ -472,8 +488,6 @@ class TerrainModel:
         feedback: Optional[QgsProcessingFeedback] = None,
     ) -> Dict[int, TerrainSlice]:
         polygonBandDict = dict()
-        QgsProject.instance().addMapLayer(self.terrainPolygonLayer)
-        QgsProject.instance().addMapLayer(self.nodesLayer)
         nPolygons = self.terrainPolygonLayer.featureCount()
         if nPolygons == 0:
             return polygonBandDict
@@ -526,6 +540,13 @@ class TerrainModel:
                     context=QgsProcessingContext(),
                 ).getFeatures()
             )
+            contourLineLayer = self.algRunner.runFilterExpression(
+                inputLyr=self.contourCacheLyr,
+                expression=f""" "contourid" in {tuple(i["contourid"] for i in contoursOnSlice)}""".replace(
+                    ",)", ")"
+                ),
+                context=QgsProcessingContext(),
+            )
             polygonBandDict[polygonFeat["polygonid"]] = TerrainSlice(
                 polygonid=polygonFeat["polygonid"],
                 contourElevationFieldName=self.contourElevationFieldName,
@@ -533,6 +554,7 @@ class TerrainModel:
                 outershellFeat=outershellFeat,
                 holesFeatSet=holesFeatSet,
                 contoursOnSlice=contoursOnSlice,
+                contourLineLayer=contourLineLayer,
                 contourIdField="contourid",
             )
         return polygonBandDict
