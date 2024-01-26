@@ -120,10 +120,12 @@ class TerrainSlice:
                     break
                 shortestLineGeomList = [
                     geom.shortestLine(
-                        self.contourLineDict[feat[self.contourIdField]].geometry()
+                        self.contourLineDict[
+                            self.contourDict[featId][self.contourIdField]
+                        ].geometry()
                     )
-                    for feat in self.contourDict[self.outershellDict[h2]]
-                    if not feat.geometry().equals(geom)
+                    for featId in self.outershellDict[h2]
+                    if not self.contourDict[featId].geometry().equals(geom)
                 ]
                 shortestLine = min(shortestLineGeomList, key=lambda x: x.length())
                 missingContourFlagDict.update(
@@ -509,9 +511,10 @@ class TerrainModel:
             predicateList=[self.algRunner.Intersect],
             method=0,
             discardNonMatching=False,
+            is_child_algorithm=True,
         )
 
-        def buildTerrainBand(polygonFeat):
+        def buildTerrainBand(polygonFeat, contoursOnSlice):
             outershellFeat = [
                 f
                 for f in self.algRunner.runFilterExpression(
@@ -524,14 +527,6 @@ class TerrainModel:
                 f
                 for f in self.algRunner.runFilterExpression(
                     inputLyr=self.terrainPolygonHoles,
-                    expression=f""" "polygonid" = {polygonFeat["polygonid"]}""",
-                    context=QgsProcessingContext(),
-                ).getFeatures()
-            )
-            contoursOnSlice = set(
-                f
-                for f in self.algRunner.runFilterExpression(
-                    inputLyr=contoursJoinnedByPolygonBand,
                     expression=f""" "polygonid" = {polygonFeat["polygonid"]}""",
                     context=QgsProcessingContext(),
                 ).getFeatures()
@@ -567,7 +562,15 @@ class TerrainModel:
         ):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
-            futures.add(pool.submit(buildTerrainBand, polygonFeat))
+            contoursOnSlice = set(
+                f
+                for f in self.algRunner.runFilterExpression(
+                    inputLyr=contoursJoinnedByPolygonBand,
+                    expression=f""" "polygonid" = {polygonFeat["polygonid"]}""",
+                    context=context,
+                ).getFeatures()
+            )
+            futures.add(pool.submit(buildTerrainBand, polygonFeat, contoursOnSlice))
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(current * stepSize)
 

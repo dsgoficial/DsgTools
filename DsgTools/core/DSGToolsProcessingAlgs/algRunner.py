@@ -943,6 +943,7 @@ class AlgRunner:
         outputLyr=None,
         unjoinnedLyr=None,
         returnUnjoinned=False,
+        is_child_algorithm=False,
     ):
         predicateList = [0] if predicateList is None else predicateList
         joinFields = [] if joinFields is None else joinFields
@@ -963,6 +964,7 @@ class AlgRunner:
             parameters,
             context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
