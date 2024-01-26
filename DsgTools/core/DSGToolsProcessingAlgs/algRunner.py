@@ -812,11 +812,17 @@ class AlgRunner:
         )
         return output["OUTPUT"]
 
-    def runExtractVertices(self, inputLyr, context, feedback=None, outputLyr=None):
+    def runExtractVertices(
+        self, inputLyr, context, feedback=None, outputLyr=None, is_child_algorithm=False
+    ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"INPUT": inputLyr, "OUTPUT": outputLyr}
         output = processing.run(
-            "native:extractvertices", parameters, context=context, feedback=feedback
+            "native:extractvertices",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 

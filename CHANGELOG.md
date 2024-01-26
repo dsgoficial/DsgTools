@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.14 - dev
+## 4.13.15 - dev
 
 Novas Funcionalidades:
 
@@ -18,6 +18,7 @@ Melhorias:
 - A Caixa de Ferramentas de Controle de Qualidade (QAToolbox) agora permite configurar pontos de parada ao longo do processo;
 - A correção automática do processo de identificar geometria inválidas agora verifica novamente a geometria corrigida e só sobe o erro caso ele persista;
 - O processo de verificação de regras do terreno agora identifica curvas de depressão incorretamente atributadas;
+- Adicionada a verificação de self-intersection em linhas e polígonos no algoritmo de identificação de geometria inválida, para os casos de geometrias não simples;
 
 
 Correção de bug:

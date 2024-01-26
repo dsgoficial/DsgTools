@@ -22,7 +22,7 @@
 """
 
 from asyncio import as_completed
-from collections import defaultdict
+from collections import Counter, defaultdict
 import copy
 from functools import partial
 from itertools import combinations
@@ -173,6 +173,7 @@ class LayerHandler(QObject):
         parameterDict["hasMValues"] = QgsWkbTypes.hasM(destinationLayer.wkbType())
         parameterDict["hasZValues"] = QgsWkbTypes.hasZ(destinationLayer.wkbType())  #
         parameterDict["isMulti"] = QgsWkbTypes.isMultiType(destinationLayer.wkbType())
+        parameterDict["crs"] = destinationLayer.crs()
         return parameterDict
 
     def getCoordinateTransformer(self, inputLyr, outputLyr):
@@ -1377,7 +1378,9 @@ class LayerHandler(QObject):
             _newFeatSet = set()
             geom = feat.geometry()
             id = feat.id()
-            flagDict = self.checkGeomIsValid(geom, ignoreClosed, feedback)
+            flagDict = self.checkGeomIsValid(
+                geom, parameterDict, ignoreClosed, feedback
+            )
             if not fixInput:
                 return flagDict, _newFeatSet, feat
             flagDict = dict()
@@ -1385,7 +1388,9 @@ class LayerHandler(QObject):
                 inputLyr, parameterDict, geometryType, _newFeatSet, feat, geom, id
             )
             for g in outputGeomList:
-                flagDict.update(self.checkGeomIsValid(g, ignoreClosed, feedback))
+                flagDict.update(
+                    self.checkGeomIsValid(g, parameterDict, ignoreClosed, feedback)
+                )
             return flagDict, _newFeatSet, feat
 
         for current, feat in enumerate(iterator):
@@ -1426,7 +1431,7 @@ class LayerHandler(QObject):
                 feedback.setProgress(stepSize * current)
         return flagDict, newFeatSet
 
-    def checkGeomIsValid(self, geom, ignoreClosed, feedback=None):
+    def checkGeomIsValid(self, geom, parameterDict, ignoreClosed, feedback=None):
         flagDict = dict()
         if geom is None or geom.isNull() or geom.isEmpty():
             return {}
@@ -1437,7 +1442,12 @@ class LayerHandler(QObject):
             if feedback is not None and feedback.isCanceled():
                 break
             isValid = self.check_validity(
-                ignoreClosed, flagDict, geom, validate_type, method_parameter
+                ignoreClosed,
+                flagDict,
+                geom,
+                validate_type,
+                method_parameter,
+                parameterDict,
             )
             if not isValid:
                 break
@@ -1503,7 +1513,13 @@ class LayerHandler(QObject):
             )
 
     def check_validity(
-        self, ignoreClosed, flagDict, geom, validate_type, method_parameter
+        self,
+        ignoreClosed,
+        flagDict,
+        geom,
+        validate_type,
+        method_parameter,
+        parameterDict,
     ):
         for error in geom.validateGeometry(method_parameter):
             if error.hasWhere():
@@ -1523,6 +1539,9 @@ class LayerHandler(QObject):
                     continue
                 self._add_flag(flagDict, validate_type, error, errorPointXY, flagGeom)
                 return False
+        if not geom.isSimple():
+            self.findSelfIntersection(geom, flagDict, parameterDict)
+            return False
         return True
 
     def _add_flag(self, flagDict, validate_type, error, errorPointXY, flagGeom):
@@ -1547,6 +1566,43 @@ class LayerHandler(QObject):
             if flagGeom.equals(startPointGeom) or flagGeom.equals(endPointGeom):
                 return True
         return False
+
+    def findSelfIntersection(self, geom, flagDict, parameterDict):
+        context = QgsProcessingContext()
+        lyr = self.createMemoryLayerFromGeometry(geom, parameterDict["crs"])
+        vertexLyr = self.algRunner.runExtractVertices(inputLyr=lyr, context=context)
+        self.algRunner.runCreateSpatialIndex(
+            vertexLyr, context, is_child_algorithm=True
+        )
+        segments = self.algRunner.runExplodeLines(lyr, context, is_child_algorithm=True)
+        self.algRunner.runCreateSpatialIndex(segments, context, is_child_algorithm=True)
+        intersections = self.algRunner.runLineIntersections(segments, segments, context)
+        intersectionCounter = Counter(
+            i.geometry().asWkt() for i in vertexLyr.getFeatures()
+        )
+        firstVertexWkb = geom.vertexAt(0).asWkt()
+        for wkt, count in intersectionCounter.items():
+            if count <= 1:
+                continue
+            if wkt == firstVertexWkb:
+                continue
+            errorPointXY = QgsGeometry.fromWkt(wkt).asPoint()
+            flagGeom = QgsGeometry.fromPointXY(errorPointXY)
+            if errorPointXY not in flagDict:
+                flagDict[errorPointXY] = {"geom": flagGeom, "reason": ""}
+            flagDict[errorPointXY]["reason"] += f"Self-intersection.\n"
+        intersectionWithoutVertexFlag = self.algRunner.runExtractByLocation(
+            inputLyr=intersections,
+            intersectLyr=vertexLyr,
+            context=context,
+            predicate=[self.algRunner.Disjoint],
+        )
+        for feat in intersectionWithoutVertexFlag.getFeatures():
+            flagGeom = feat.geometry()
+            errorPointXY = flagGeom.asPoint()
+            if errorPointXY not in flagDict:
+                flagDict[errorPointXY] = {"geom": flagGeom, "reason": ""}
+            flagDict[errorPointXY]["reason"] += f"Self-intersection.\n"
 
     def runGrassDissolve(
         self,
@@ -1817,10 +1873,15 @@ class LayerHandler(QObject):
             dataobjects.createContext(feedback=feedback) if context is None else context
         )
         stepCount = 6 if pointLineLyrList else 5
-        multiStepFeedback = QgsProcessingMultiStepFeedback(stepCount, feedback)
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(stepCount, feedback)
+            if feedback is not None
+            else None
+        )
         currentStep = 0
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Getting lines"))
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr("Getting lines"))
         linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
             inputLineLyrList,
             inputPolygonLyrList,
@@ -1829,8 +1890,9 @@ class LayerHandler(QObject):
             context=context,
         )
         currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Building point merged layer"))
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr("Building point merged layer"))
         pointsLyr = (
             algRunner.runMergeVectorLayers(
                 pointLineLyrList, context, feedback=multiStepFeedback
@@ -1841,7 +1903,8 @@ class LayerHandler(QObject):
         currentStep += 1
 
         if pointsLyr is not None:
-            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
             pointsLyr = algRunner.runMultipartToSingleParts(
                 inputLayer=pointsLyr,
                 context=context,
@@ -1853,22 +1916,25 @@ class LayerHandler(QObject):
         else:
             pointsSet = set()
 
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Building intersections"))
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr("Building intersections"))
         intersectionLyr = algRunner.runLineIntersections(
             linesLyr, linesLyr, feedback=multiStepFeedback, context=context
         )
         currentStep += 1
 
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Finding vertexes"))
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr("Finding vertexes"))
         vertexLyr = algRunner.runExtractVertices(
             linesLyr, feedback=multiStepFeedback, context=context
         )
         currentStep += 1
 
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Finding unshared vertexes"))
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr("Finding unshared vertexes"))
         intersectionDict = {
             feat.geometry().asWkb(): feat for feat in intersectionLyr.getFeatures()
         }
@@ -1885,12 +1951,18 @@ class LayerHandler(QObject):
     ):
         if pointsSet == set():
             return set()
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(2, feedback)
+            if feedback is not None
+            else None
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
         algRunner.runCreateSpatialIndex(
             linesLyr, context, feedback=multiStepFeedback, is_child_algorithm=True
         )
-        multiStepFeedback.setCurrentStep(1)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
 
         def compute(feat):
             geom = feat.geometry()
@@ -1950,15 +2022,19 @@ class LayerHandler(QObject):
             + 1
             + 7 * (inputPolygonLyrList != [] and excludeLinesInsidePolygons)
         )
-        multiStepFeedback = QgsProcessingMultiStepFeedback(
-            nSteps, feedback
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(nSteps, feedback)
+            if feedback is not None
+            else None
         )  # set number of steps
         currentStep = 0
-        multiStepFeedback.pushInfo(
-            self.tr("Converting lines to single part and exploding lines")
-        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(
+                self.tr("Converting lines to single part and exploding lines")
+            )
         for lineLyr in inputLineLyrList:
-            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
             singlePartLyr = algRunner.runMultipartToSingleParts(
                 inputLayer=lineLyr
                 if not onlySelected
@@ -1968,6 +2044,8 @@ class LayerHandler(QObject):
                 is_child_algorithm=True,
             )
             currentStep += 1
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
             explodedLines = algRunner.runExplodeLines(
                 singlePartLyr,
                 context,
@@ -1976,13 +2054,15 @@ class LayerHandler(QObject):
             )
             lineList.append(explodedLines)
             currentStep += 1
-        multiStepFeedback.pushInfo(
-            self.tr("Converting polygons to single part and exploding lines")
-        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(
+                self.tr("Converting polygons to single part and exploding lines")
+            )
         singlePartPolygonList = []
         singlePartGeographicBoundaryLyr = None
         for polygonLyr in inputPolygonLyrList:
-            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
             usedInput = algRunner.runMultipartToSingleParts(
                 inputLayer=polygonLyr
                 if not onlySelected
@@ -1998,11 +2078,14 @@ class LayerHandler(QObject):
                 singlePartGeographicBoundaryLyr = usedInput
             singlePartPolygonList.append(usedInput)
             currentStep += 1
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
             convertedPolygons = algRunner.runPolygonsToLines(
                 usedInput, context, feedback=multiStepFeedback, is_child_algorithm=True
             )
             currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
             explodedLines = algRunner.runExplodeLines(
                 convertedPolygons,
                 context,
@@ -2012,10 +2095,11 @@ class LayerHandler(QObject):
             currentStep += 1
             lineList.append(explodedLines)
         # merge layers
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(
-            self.tr("Adding exploded lines to one single layer.")
-        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(
+                self.tr("Adding exploded lines to one single layer.")
+            )
         mergedLayer = (
             algRunner.runMergeVectorLayers(
                 lineList, context, feedback=multiStepFeedback
@@ -2028,7 +2112,8 @@ class LayerHandler(QObject):
 
         if singlePartPolygonList != [] and excludeLinesInsidePolygons:
             currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
             mergedLayer = algRunner.runCreateFieldWithExpression(
                 inputLyr=mergedLayer,
                 expression="$id",
@@ -2038,7 +2123,8 @@ class LayerHandler(QObject):
                 feedback=multiStepFeedback,
             )
             currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
             algRunner.runCreateSpatialIndex(
                 inputLyr=mergedLayer,
                 context=context,
@@ -2046,10 +2132,12 @@ class LayerHandler(QObject):
                 is_child_algorithm=True,
             )
             currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
 
             currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
             mergedPolygonsInputList = [
                 i for i in singlePartPolygonList if i != singlePartGeographicBoundaryLyr
             ]
@@ -2063,14 +2151,15 @@ class LayerHandler(QObject):
                 else None
             )
             currentStep += 1
-
-            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
             dissolvedPolygons = algRunner.runDissolve(
                 inputLyr=mergedPolygons, context=context, feedback=multiStepFeedback
             )
             currentStep += 1
 
-            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
             algRunner.runCreateSpatialIndex(
                 inputLyr=dissolvedPolygons,
                 context=context,
@@ -2078,8 +2167,8 @@ class LayerHandler(QObject):
                 is_child_algorithm=True,
             )
             currentStep += 1
-
-            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
             mergedLayer = processing.run(
                 "native:joinattributesbylocation",
                 {

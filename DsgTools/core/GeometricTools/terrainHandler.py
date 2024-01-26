@@ -34,6 +34,7 @@ from qgis.core import (
     QgsFeature,
     QgsSpatialIndex,
     QgsGeometry,
+    QgsProject,
 )
 from typing import Dict, List, Optional, Set, Tuple
 from . import graphHandler
@@ -471,6 +472,8 @@ class TerrainModel:
         feedback: Optional[QgsProcessingFeedback] = None,
     ) -> Dict[int, TerrainSlice]:
         polygonBandDict = dict()
+        QgsProject.instance().addMapLayer(self.terrainPolygonLayer)
+        QgsProject.instance().addMapLayer(self.nodesLayer)
         nPolygons = self.terrainPolygonLayer.featureCount()
         if nPolygons == 0:
             return polygonBandDict
