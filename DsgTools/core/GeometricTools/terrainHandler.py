@@ -20,10 +20,11 @@
  *                                                                         *
  ***************************************************************************/
 """
-
+import concurrent.futures
 from collections import defaultdict
 from dataclasses import dataclass, field
 from itertools import combinations, product
+import os
 from PyQt5.QtCore import QCoreApplication
 from qgis.PyQt.QtCore import QByteArray
 from qgis.core import (
@@ -509,13 +510,8 @@ class TerrainModel:
             method=0,
             discardNonMatching=False,
         )
-        for currentStep, polygonFeat in enumerate(
-            self.terrainPolygonLayer.getFeatures(), start=1
-        ):
-            if multiStepFeedback is not None:
-                if multiStepFeedback.isCanceled():
-                    break
-                multiStepFeedback.setCurrentStep(currentStep)
+
+        def buildTerrainBand(polygonFeat):
             outershellFeat = [
                 f
                 for f in self.algRunner.runFilterExpression(
@@ -547,7 +543,7 @@ class TerrainModel:
                 ),
                 context=QgsProcessingContext(),
             )
-            polygonBandDict[polygonFeat["polygonid"]] = TerrainSlice(
+            return polygonFeat["polygonid"], TerrainSlice(
                 polygonid=polygonFeat["polygonid"],
                 contourElevationFieldName=self.contourElevationFieldName,
                 threshold=self.threshold,
@@ -557,6 +553,34 @@ class TerrainModel:
                 contourLineLayer=contourLineLayer,
                 contourIdField="contourid",
             )
+
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+            multiStepFeedback.pushInfo(
+                self.tr("Submitting terrain polygons to thread to build terrain bands.")
+            )
+        futures = set()
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
+        stepSize = 100 / nPolygons
+        for current, polygonFeat in enumerate(
+            self.terrainPolygonLayer.getFeatures(), start=0
+        ):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+            futures.add(pool.submit(buildTerrainBand, polygonFeat))
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * stepSize)
+
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(2)
+            multiStepFeedback.pushInfo(self.tr("Evaluating thread results."))
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+            polygonId, terrainSlice = future.result()
+            polygonBandDict[polygonId] = terrainSlice
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * stepSize)
         return polygonBandDict
 
     def findContourOutOfThreshold(
@@ -748,16 +772,34 @@ class TerrainModel:
     ) -> Dict[QByteArray, str]:
         invalidDict = dict()
         multiStepFeedback = (
-            QgsProcessingMultiStepFeedback(len(self.terrainSlicesDict), feedback)
+            QgsProcessingMultiStepFeedback(2, feedback)
             if feedback is not None
             else None
         )
-        for currentStep, polygonBand in enumerate(self.terrainSlicesDict.values()):
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(self.tr("Validating terrain bands"))
+            multiStepFeedback.setCurrentStep(0)
+        futures = set()
+        pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
+        func = lambda x: x.validate(self.depressionSet)
+        nSlices = len(self.terrainSlicesDict)
+        if nSlices == 0:
+            return invalidDict
+        stepSize = 100 / nSlices
+        for current, polygonBand in enumerate(self.terrainSlicesDict.values()):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+            futures.add(pool.submit(func, polygonBand))
             if multiStepFeedback is not None:
-                multiStepFeedback.setCurrentStep(currentStep)
-            invalidOutputDict = polygonBand.validate(
-                self.depressionSet, feedback=feedback
-            )
+                multiStepFeedback.setProgress(current * stepSize)
+
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(self.tr("Evaluating results"))
+            multiStepFeedback.setCurrentStep(1)
+        for current, future in enumerate(concurrent.futures.as_completed(futures)):
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                break
+            invalidOutputDict = future.result()
             if invalidOutputDict == dict():
                 continue
             invalidDict.update(invalidOutputDict)
