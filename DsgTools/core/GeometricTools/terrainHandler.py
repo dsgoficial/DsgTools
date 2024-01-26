@@ -307,12 +307,12 @@ class TerrainModel:
         context = QgsProcessingContext() if context is None else context
         currentStep = 0
         if multiStepFeedback is not None:
-            multiStepFeedback.pushInfo(self.tr("Building terrain aux structures"))
             multiStepFeedback.setCurrentStep(currentStep)
 
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr("Building terrain polygons"))
         self.terrainPolygonLayer = self.buildTerrainPolygonLayerFromContours()
 
         currentStep += 1
@@ -326,6 +326,7 @@ class TerrainModel:
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr("Building terrain slices"))
         self.terrainSlicesDict = self.buildTerrainSlices(feedback=multiStepFeedback)
 
         currentStep += 1
@@ -514,30 +515,9 @@ class TerrainModel:
             is_child_algorithm=True,
         )
 
-        def buildTerrainBand(polygonFeat, contoursOnSlice):
-            outershellFeat = [
-                f
-                for f in self.algRunner.runFilterExpression(
-                    inputLyr=self.terrainPolygonsOuterShells,
-                    expression=f""" "polygonid" = {polygonFeat["polygonid"]}""",
-                    context=QgsProcessingContext(),
-                ).getFeatures()
-            ][0]
-            holesFeatSet = set(
-                f
-                for f in self.algRunner.runFilterExpression(
-                    inputLyr=self.terrainPolygonHoles,
-                    expression=f""" "polygonid" = {polygonFeat["polygonid"]}""",
-                    context=QgsProcessingContext(),
-                ).getFeatures()
-            )
-            contourLineLayer = self.algRunner.runFilterExpression(
-                inputLyr=self.contourCacheLyr,
-                expression=f""" "contourid" in {tuple(i["contourid"] for i in contoursOnSlice)}""".replace(
-                    ",)", ")"
-                ),
-                context=QgsProcessingContext(),
-            )
+        def buildTerrainBand(
+            polygonFeat, outershellFeat, holesFeatSet, contoursOnSlice, contourLineLayer
+        ):
             return polygonFeat["polygonid"], TerrainSlice(
                 polygonid=polygonFeat["polygonid"],
                 contourElevationFieldName=self.contourElevationFieldName,
@@ -570,7 +550,39 @@ class TerrainModel:
                     context=context,
                 ).getFeatures()
             )
-            futures.add(pool.submit(buildTerrainBand, polygonFeat, contoursOnSlice))
+            outershellFeat = [
+                f
+                for f in self.algRunner.runFilterExpression(
+                    inputLyr=self.terrainPolygonsOuterShells,
+                    expression=f""" "polygonid" = {polygonFeat["polygonid"]}""",
+                    context=context,
+                ).getFeatures()
+            ][0]
+            holesFeatSet = set(
+                f
+                for f in self.algRunner.runFilterExpression(
+                    inputLyr=self.terrainPolygonHoles,
+                    expression=f""" "polygonid" = {polygonFeat["polygonid"]}""",
+                    context=context,
+                ).getFeatures()
+            )
+            contourLineLayer = self.algRunner.runFilterExpression(
+                inputLyr=self.contourCacheLyr,
+                expression=f""" "contourid" in {tuple(i["contourid"] for i in contoursOnSlice)}""".replace(
+                    ",)", ")"
+                ),
+                context=context,
+            )
+            futures.add(
+                pool.submit(
+                    buildTerrainBand,
+                    polygonFeat,
+                    outershellFeat,
+                    holesFeatSet,
+                    contoursOnSlice,
+                    contourLineLayer,
+                )
+            )
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(current * stepSize)
 
@@ -688,19 +700,18 @@ class TerrainModel:
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-        dangleCandidates = self.algRunner.runExtractByLocation(
-            inputLyr=countLyr,
-            intersectLyr=self.geoBoundsLineLyr,
+        dangleCandidates = self.algRunner.runIdentifyDangles(
+            inputLayer=self.contourCacheLyr,
+            searchRadius=1e-5,
             context=context,
-            predicate=[self.algRunner.Disjoint],
-            feedback=multiStepFeedback,
+            ignoreDanglesOnUnsegmentedLines=False,
+            geographicBoundsLyr=self.geographicBoundsLyr,
         )
         if dangleCandidates.featureCount() > 0:
             invalidDict.update(
                 {
                     feat.geometry().asWkb(): self.tr("Dangle on Contour line.")
                     for feat in dangleCandidates.getFeatures()
-                    if feat[f"{self.contourElevationFieldName}_count"] == 1
                 }
             )
             if len(invalidDict) > 0:
