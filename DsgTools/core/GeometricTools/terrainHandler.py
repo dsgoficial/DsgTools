@@ -687,19 +687,6 @@ class TerrainModel:
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-        countLyr = self.algRunner.runJoinByLocationSummary(
-            inputLyr=self.nodesLayer,
-            joinLyr=self.nodesLayer,
-            predicateList=[0],
-            summaries=[0],
-            joinFields=[self.contourElevationFieldName],
-            context=context,
-            feedback=multiStepFeedback,
-            is_child_algorithm=False,
-        )
-        currentStep += 1
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(currentStep)
         dangleCandidates = self.algRunner.runIdentifyDangles(
             inputLayer=self.contourCacheLyr,
             searchRadius=1e-5,
