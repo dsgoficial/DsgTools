@@ -504,7 +504,7 @@ class TerrainModel:
         currentStep = 0
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(0)
-        contoursJoinnedByPolygonBand = self.algRunner.runJoinAttributesByLocation(
+        self.contoursJoinnedByPolygonBand = self.algRunner.runJoinAttributesByLocation(
             inputLyr=self.nodesLayer,
             joinLyr=self.terrainPolygonLayer,
             context=context,
@@ -545,7 +545,7 @@ class TerrainModel:
             contoursOnSlice = set(
                 f
                 for f in self.algRunner.runFilterExpression(
-                    inputLyr=contoursJoinnedByPolygonBand,
+                    inputLyr=self.contoursJoinnedByPolygonBand,
                     expression=f""" "polygonid" = {polygonFeat["polygonid"]}""",
                     context=context,
                 ).getFeatures()
