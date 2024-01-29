@@ -295,7 +295,11 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
             if len(featList) > 1:
                 txtList = []
                 for i in featList:
-                    txtList += ["{0} (id={1})".format(i["layer"], i["featid"])]
+                    txtList += (
+                        [f"""{i["layer"]} (id={i["featid"]})"""]
+                        if "featid" in i.attributeMap()
+                        else [f"""{i["layer"]} (id={i["oldfeatid"]})"""]
+                    )
                 txt = ", ".join(txtList)
                 self.flagFeature(
                     featList[0].geometry(),

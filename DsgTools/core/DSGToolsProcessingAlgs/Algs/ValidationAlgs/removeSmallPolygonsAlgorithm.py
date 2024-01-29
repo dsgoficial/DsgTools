@@ -77,7 +77,6 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
@@ -85,44 +84,24 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(
-            self.tr("Identifying small polygons in layer {0}...").format(
-                inputLyr.name()
-            )
+        featureList, total = self.getIteratorAndFeatureCount(
+            inputLyr, onlySelected=onlySelected
         )
-        flagLyr = algRunner.runIdentifySmallPolygons(
-            inputLyr,
-            tol,
-            context,
-            feedback=multiStepFeedback,
-            onlySelected=onlySelected,
-        )
-
-        multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(
-            self.tr("Removing small polygons from layer {0}...").format(inputLyr.name())
-        )
-        self.removeFeatures(inputLyr, flagLyr, multiStepFeedback)
-
-        return {self.OUTPUT: inputLyr}
-
-    def removeFeatures(self, inputLyr, flagLyr, feedback):
-        """
-        Parses features from flagLyr to get ids from inputLyr to remove.
-        """
-        featureList, total = self.getIteratorAndFeatureCount(flagLyr)
-        localTotal = 100 / total if total else 0
+        if total == 0:
+            return {self.OUTPUT: inputLyr}
+        stepSize = 100 / total
         inputLyr.startEditing()
-        idRemoveList = []
+        idRemoveSet = set()
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
             if feedback.isCanceled():
                 break
-            idRemoveList += [int(feat["reason"].split("=")[-1].split(" ")[0])]
-            feedback.setProgress(current * localTotal)
-        inputLyr.deleteFeatures(idRemoveList)
+            if feat.geometry().area() > tol:
+                continue
+            idRemoveSet.add(feat.id())
+            feedback.setProgress(current * stepSize)
+        inputLyr.deleteFeatures(list(idRemoveSet))
+        return {self.OUTPUT: inputLyr}
 
     def name(self):
         """

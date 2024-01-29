@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.15 - dev
+## 4.13.16 - dev
 
 Novas Funcionalidades:
 
@@ -27,6 +27,8 @@ Correção de bug:
 - Corrige bug oriundo do merge feito errado no lançamento da última versão nos processos de identificar e unir linhas;
 - Corrige bug no cálculo em paralelo da rotina de extrair pontos cotados;
 - Corrige bug no sink de unicodeFilterAlgorithm;
+- Corrige bug na construção do texto da flag do Clean;
+- Corrige bug nos algoritmos de remover linhas pequenas e polígonos pequenos;
 
 ## 4.12.0 - 2023-12-13
 
