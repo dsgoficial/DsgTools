@@ -28,10 +28,12 @@ from PyQt5.QtCore import QCoreApplication
 
 from qgis.core import (
     QgsProject,
+    QgsProcessing,
+    QgsProcessingException,
     QgsProcessingUtils,
     QgsProcessingContext,
     QgsProcessingParameterType,
-    QgsProcessingParameterEnum,
+    QgsProcessingParameterVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterDefinition,
@@ -46,7 +48,7 @@ from .validationAlgorithm import ValidationAlgorithm
 class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
     SELECTED = "SELECTED"
     SNAP_HIERARCHY = "SNAP_HIERARCHY"
-    BEHAVIOR = "BEHAVIOR"
+    GEOGRAPHIC_BOUNDARY = "GEOGRAPHIC_BOUNDARY"
 
     def initAlgorithm(self, config):
         """
@@ -69,15 +71,14 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             )
         )
 
-        self.modes = [
-            self.tr("Prefer aligning nodes, insert extra vertices where required"),
-            self.tr("Prefer closest point, insert extra vertices where required"),
-            self.tr("Prefer aligning nodes, don't insert new vertices"),
-            self.tr("Prefer closest point, don't insert new vertices"),
-            self.tr("Move end points only, prefer aligning nodes"),
-            self.tr("Move end points only, prefer closest point"),
-            self.tr("Snap end points to end points only"),
-        ]
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.GEOGRAPHIC_BOUNDARY,
+                self.tr("Geographic Boundary"),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True,
+            )
+        )
 
     def parameterAsSnapHierarchy(self, parameters, name, context):
         return parameters[name]
@@ -103,17 +104,52 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         )
 
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        geographicBoundary = self.parameterAsVectorLayer(
+            parameters, self.GEOGRAPHIC_BOUNDARY, context
+        )
 
         nSteps = 0
         for item in snapDictList:
+            if item["referenceLayer"] == geographicBoundary.name():
+                raise QgsProcessingException(
+                    self.tr("The Geographic Layer must not be in snap list.")
+                )
             nSteps += len(item["snapLayerList"])
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2 * nSteps + 2, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3 * nSteps + 4, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         snapStructure = self.buildSnapStructure(
             snapDictList, onlySelected, context, multiStepFeedback
         )
         currentStep += 1
+        if geographicBoundary is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
+            auxGeoBounds = self.buildAuxGeographicBoundary(
+                geographicBoundary, context=context, feedback=multiStepFeedback
+            )
+            currentStep += 1
+            for item in snapDictList:
+                multiStepFeedback.setCurrentStep(currentStep)
+                referenceLayerName = item["referenceLayer"]
+                multiStepFeedback.pushInfo(
+                    self.tr(
+                        f"Starting snapping {referenceLayerName} with geographic boundary."
+                    )
+                )
+                snapStructure[referenceLayerName][
+                    "tempLayer"
+                ] = self.snapToReferenceAndUpdateSpatialIndex(
+                    inputLayer=snapStructure[referenceLayerName]["tempLayer"],
+                    referenceLayer=auxGeoBounds,
+                    tol=item["snap"],
+                    behavior=self.algRunner.MoveEndPointsOnlyPreferClosestPoint
+                    if snapStructure[referenceLayerName]["originalLayer"].geometryType()
+                    == QgsWkbTypes.LineGeometry
+                    else item["snap"],
+                    context=context,
+                    feedback=multiStepFeedback,
+                )
+
         for item in snapDictList:
             multiStepFeedback.setCurrentStep(currentStep)
             referenceLayerName = item["referenceLayer"]
@@ -158,6 +194,30 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         )
 
         return {}
+
+    def buildAuxGeographicBoundary(self, geographicBoundary, context, feedback):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        lineBounds = self.algRunner.runPolygonsToLines(
+            inputLyr=geographicBoundary,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+        multiStepFeedback.setCurrentStep(1)
+        explodedLines = self.algRunner.runExplodeLines(
+            inputLyr=lineBounds,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        multiStepFeedback.setCurrentStep(2)
+        self.algRunner.runCreateSpatialIndex(
+            explodedLines,
+            feedback=multiStepFeedback,
+            context=context,
+            is_child_algorithm=True,
+        )
+        return explodedLines
 
     def snapLayersToReference(
         self, refLyrName, snapStructure, lyrList, tol, behavior, context, feedback

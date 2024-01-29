@@ -66,7 +66,7 @@ class AlgRunner:
         AlignNodesDoNotInsertNewVertices,  # Prefer aligning nodes, don't insert new vertices
         PreferClosestDoNotInsertNewVertices,  # Prefer closest point, don't insert new vertices
         MoveEndPointsOnlyPreferAligningNodes,  # Move end points only, prefer aligning nodes
-        MoveEndPointsOnlyPreverClosestPoint,  # Move end points only,prefer closest point
+        MoveEndPointsOnlyPreferClosestPoint,  # Move end points only,prefer closest point
         SnapEndPointsToEndPointsOnly,  # Snap end points to end points only
         SnapToAnchorNodes,  # Snap to anchor nodes (single layer only)
     ) = range(8)
@@ -1814,7 +1814,7 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
-    
+
     def runIdentifySegmentErrorBetweenLines(
         self,
         inputLayer,
