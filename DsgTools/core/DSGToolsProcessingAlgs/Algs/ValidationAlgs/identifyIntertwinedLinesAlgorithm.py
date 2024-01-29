@@ -237,6 +237,9 @@ class IdentifyIntertwinedLinesAlgorithm(ValidationAlgorithm):
         formatting characters.
         """
         return "DSGTools - QA Tools: Line Handling"
+    
+    def shortHelpString(self):
+        return self.tr("Verifica linhas entrelaçadas: linhas que se cruzam mais vezes que a tolerância. Retorna os pontos de interseção.")
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyIntertwinedLinesAlgorithm", string)

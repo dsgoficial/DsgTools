@@ -248,6 +248,9 @@ class IdentifyCrossingLinesAlgorithm(ValidationAlgorithm):
         formatting characters.
         """
         return "DSGTools - QA Tools: Line Handling"
+    
+    def shortHelpString(self):
+        return self.tr("Verifica linhas que se cruzam (descartado primeiro e último vértice da camada de entrada). Para camadas do tipo polígono, apenas as bordas dos polígonos são utilizadas para a comparação.")
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyCrossingLinesAlgorithm", string)
