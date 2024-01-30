@@ -69,6 +69,8 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
             lyr = QgsProcessingUtils.mapLayerFromString(layerName, context)
             if lyr is None:
                 continue
+            if lyr.readOnly():
+                continue
             layerSet.add(lyr.id())
             feedback.setProgress(idx * progressStep)
 
