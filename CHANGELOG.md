@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.17 - dev
+## 4.13.18 - dev
 
 Novas Funcionalidades:
 
@@ -20,6 +20,7 @@ Melhorias:
 - O processo de verificação de regras do terreno agora identifica curvas de depressão incorretamente atributadas;
 - Adicionada a verificação de self-intersection em linhas e polígonos no algoritmo de identificação de geometria inválida, para os casos de geometrias não simples;
 - Adicionada a opção de passar o limite geográfico como parâmetro para o Snap Hierárquico;
+- Adicionada a funcionalidade de propagar as mudanças do Snap Hierárquico somente dentro da região geográfica;
 
 
 Correção de bug:

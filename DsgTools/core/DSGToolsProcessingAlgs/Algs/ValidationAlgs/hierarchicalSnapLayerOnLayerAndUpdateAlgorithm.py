@@ -104,13 +104,13 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         )
 
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        geographicBoundary = self.parameterAsVectorLayer(
+        geographicBoundaryLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
 
         nSteps = 0
         for item in snapDictList:
-            if item["referenceLayer"] == geographicBoundary.name():
+            if item["referenceLayer"] == geographicBoundaryLyr.name():
                 raise QgsProcessingException(
                     self.tr("The Geographic Layer must not be in snap list.")
                 )
@@ -119,22 +119,24 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         snapStructure = self.buildSnapStructure(
-            snapDictList, onlySelected, context, multiStepFeedback
+            snapDictList,
+            onlySelected,
+            context,
+            multiStepFeedback,
+            geographicBoundaryLyr=geographicBoundaryLyr,
         )
         currentStep += 1
-        if geographicBoundary is not None:
+        if geographicBoundaryLyr is not None:
             multiStepFeedback.setCurrentStep(currentStep)
             auxGeoBounds = self.buildAuxGeographicBoundary(
-                geographicBoundary, context=context, feedback=multiStepFeedback
+                geographicBoundaryLyr, context=context, feedback=multiStepFeedback
             )
             currentStep += 1
             for item in snapDictList:
                 multiStepFeedback.setCurrentStep(currentStep)
                 referenceLayerName = item["referenceLayer"]
                 multiStepFeedback.pushInfo(
-                    self.tr(
-                        f"Starting snapping {referenceLayerName} with geographic boundary."
-                    )
+                    self.tr(f"Snapping {referenceLayerName} to geographic boundary.")
                 )
                 snapStructure[referenceLayerName][
                     "tempLayer"
@@ -191,6 +193,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
             context=context,
             feedback=multiStepFeedback,
+            geographicBoundaryLyr=geographicBoundaryLyr,
         )
 
         return {}
@@ -247,12 +250,14 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             )
             snapStructure[lyrName]["tempLayer"] = snappedLyr
 
-    def buildSnapStructure(self, snapDictList, onlySelected, context, feedback):
+    def buildSnapStructure(
+        self, snapDictList, onlySelected, context, feedback, geographicBoundaryLyr=None
+    ):
         snapStructure = dict()
         nItems = len(snapDictList)
         if nItems == 0:
             return snapStructure
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2 * nItems, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3 * nItems, feedback)
         currentStep = 0
         for item in snapDictList:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -272,11 +277,28 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             )
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            self.algRunner.runCreateSpatialIndex(auxLyr, context, multiStepFeedback)
+            if geographicBoundaryLyr is not None:
+                (
+                    insideLyr,
+                    outsideLyr,
+                ) = self.layerHandler.prepareAuxLayerForSpatialConstrainedAlgorithm(
+                    inputLyr=auxLyr,
+                    geographicBoundaryLyr=geographicBoundaryLyr,
+                    context=context,
+                    feedback=multiStepFeedback,
+                )
+            else:
+                insideLyr = auxLyr
+                outsideLyr = None
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.algRunner.runCreateSpatialIndex(insideLyr, context, multiStepFeedback)
             currentStep += 1
             snapStructure[item["referenceLayer"]] = {
                 "originalLayer": lyr,
-                "tempLayer": auxLyr,
+                "tempLayer": insideLyr,
+                "outsideLayer": outsideLyr,
+                "snap": item["snap"],
             }
         return snapStructure
 
@@ -330,7 +352,9 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             )
         return snappedLyr
 
-    def updateOriginalLayers(self, snapStructure, onlySelected, context, feedback):
+    def updateOriginalLayers(
+        self, snapStructure, onlySelected, context, feedback, geographicBoundaryLyr=None
+    ):
         multiStepFeedback = QgsProcessingMultiStepFeedback(len(snapStructure), feedback)
         for current, (lyrName, auxDict) in enumerate(snapStructure.items()):
             multiStepFeedback.setCurrentStep(current)
@@ -338,9 +362,42 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             tempLyr = QgsProcessingUtils.mapLayerFromString(
                 auxDict["tempLayer"], context
             )
+            if geographicBoundaryLyr is None:
+                self.layerHandler.updateOriginalLayersFromUnifiedLayer(
+                    [auxDict["originalLayer"]],
+                    tempLyr,
+                    feedback=multiStepFeedback,
+                    onlySelected=onlySelected,
+                )
+                QgsProject.instance().removeMapLayer(tempLyr.id())
+                continue
+            outputLyr = self.algRunner.runRenameField(
+                inputLayer=tempLyr,
+                field="featid",
+                newName="oldfeatid",
+                context=context,
+            )
+            outsideLyr = self.algRunner.runRenameField(
+                inputLayer=auxDict["outsideLayer"],
+                field="featid",
+                newName="oldfeatid",
+                context=context,
+            )
+            outputLyr = self.layerHandler.integrateSpatialConstrainedAlgorithmOutputAndOutsideLayer(
+                algOutputLyr=outputLyr,
+                outsideLyr=outsideLyr,
+                tol=auxDict["snap"],
+                context=context,
+            )
+            outputLyr = self.algRunner.runRenameField(
+                inputLayer=outputLyr,
+                field="oldfeatid",
+                newName="featid",
+                context=context,
+            )
             self.layerHandler.updateOriginalLayersFromUnifiedLayer(
                 [auxDict["originalLayer"]],
-                tempLyr,
+                outputLyr,
                 feedback=multiStepFeedback,
                 onlySelected=onlySelected,
             )
