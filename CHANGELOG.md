@@ -1,10 +1,11 @@
 # CHANGELOG
 
-## 4.13.18 - dev
+## 4.13.19 - dev
 
 Novas Funcionalidades:
 
 - Novo processo de remover vértices duplicados e atualizar a camada original;
+- Novo processo de identificar mudança de atributo em linhas (portado do ferramentas experimentais);
 
 Melhorias:
 

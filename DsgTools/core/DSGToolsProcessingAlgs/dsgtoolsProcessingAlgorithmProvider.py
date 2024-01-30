@@ -287,6 +287,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAndFixInva
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAnglesInInvalidRangeAlgorithm import (
     IdentifyAnglesInInvalidRangeAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAttributeChangesInLines import (
+    IdentifyAttributeChangesInLines,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyCountourStreamIntersectionAlgorithm import (
     IdentifyCountourStreamIntersectionAlgorithm,
 )
@@ -636,6 +639,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             BuildZipPackageAlgorithm(),
             GeneralizeNetworkEdgesWithLengthAlgorithm(),
             RemoveDuplicateVertexesAlgorithm(),
+            IdentifyAttributeChangesInLines(),
         ]
         return algList
 
