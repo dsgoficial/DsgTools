@@ -114,6 +114,8 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 raise QgsProcessingException(
                     self.tr("The Geographic Layer must not be in snap list.")
                 )
+            if item["snapLayerList"] is None:
+                item["snapLayerList"] = []
             nSteps += len(item["snapLayerList"])
         multiStepFeedback = QgsProcessingMultiStepFeedback(3 * nSteps + 4, feedback)
         currentStep = 0
@@ -138,6 +140,8 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 multiStepFeedback.pushInfo(
                     self.tr(f"Snapping {referenceLayerName} to geographic boundary.")
                 )
+                if referenceLayerName not in snapStructure:
+                    continue
                 snapStructure[referenceLayerName][
                     "tempLayer"
                 ] = self.snapToReferenceAndUpdateSpatialIndex(
@@ -264,6 +268,8 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             if multiStepFeedback.isCanceled():
                 break
             lyr = self.layerFromProject(item["referenceLayer"])
+            if lyr is None:
+                continue
             featCount = (
                 lyr.featureCount() if not onlySelected else lyr.selectedFeatureCount()
             )

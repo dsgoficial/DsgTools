@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.21 - dev
+## 4.13.22 - dev
 
 Novas Funcionalidades:
 
@@ -34,6 +34,7 @@ Correção de bug:
 - Corrige bug nos algoritmos de remover linhas pequenas e polígonos pequenos;
 - Corrige bug na leitura do arquivo .json na ferramenta de carregar temas;
 - Corrige bug no BatchRunAlgorithm quando é utilizada uma expressão de filtro que resulta em string vazia;
+- Corrige bug no snap hierárquico configurado em modelo, quando uma camada prevista não está carregada;
 
 ## 4.12.0 - 2023-12-13
 
