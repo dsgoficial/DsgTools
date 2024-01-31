@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.20 - dev
+## 4.13.21 - dev
 
 Novas Funcionalidades:
 
@@ -26,13 +26,13 @@ Melhorias:
 
 Correção de bug:
 
-- Corrige bug na leitura do arquivo .json na ferramenta de carregar temas;
 - Corrige bug no modo não paralelo do algoritmo de generalizar linhas por comprimento;
 - Corrige bug oriundo do merge feito errado no lançamento da última versão nos processos de identificar e unir linhas;
 - Corrige bug no cálculo em paralelo da rotina de extrair pontos cotados;
 - Corrige bug no sink de unicodeFilterAlgorithm;
 - Corrige bug na construção do texto da flag do Clean;
 - Corrige bug nos algoritmos de remover linhas pequenas e polígonos pequenos;
+- Corrige bug na leitura do arquivo .json na ferramenta de carregar temas;
 - Corrige bug no BatchRunAlgorithm quando é utilizada uma expressão de filtro que resulta em string vazia;
 
 ## 4.12.0 - 2023-12-13
