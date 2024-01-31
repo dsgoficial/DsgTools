@@ -84,10 +84,15 @@ class LoadThemesAlgorithm(QgsProcessingAlgorithm):
             self.parameterAsString(parameters, self.TEXT, context)
         )
         if os.path.exists(inputJSONFile):
-            self.loadThemes(inputJSONFile)
+            self.loadExpressionFieldFromJSONFile(inputJSONFile)
         elif len(inputJSONData) > 0:
             self.loadThemes(inputJSONData)
         return {self.OUTPUT: []}
+    
+    def loadExpressionFieldFromJSONFile(self, inputJSONFile):
+        with open(inputJSONFile, "r") as f:
+            inputJSONData = json.load(f)
+        self.loadThemes(inputJSONData)
 
     def loadThemes(self, themes):
         for theme in themes:

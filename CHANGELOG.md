@@ -26,6 +26,7 @@ Melhorias:
 
 Correção de bug:
 
+- Corrige bug na leitura do arquivo .json na ferramenta de carregar temas;
 - Corrige bug no modo não paralelo do algoritmo de generalizar linhas por comprimento;
 - Corrige bug oriundo do merge feito errado no lançamento da última versão nos processos de identificar e unir linhas;
 - Corrige bug no cálculo em paralelo da rotina de extrair pontos cotados;
