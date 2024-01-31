@@ -111,7 +111,7 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
         outputKey = self.parameterAsString(
             parameters, self.OUTPUT_LAYER_PARAMETER_NAME, context
         )
-        layerNameList = layerCsv.split(",")
+        layerNameList = layerCsv.split(",") if layerCsv != "" else []
         nSteps = len(layerNameList)
         if not nSteps:
             _, flag_id = self.parameterAsSink(

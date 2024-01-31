@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.19 - dev
+## 4.13.20 - dev
 
 Novas Funcionalidades:
 
@@ -32,6 +32,7 @@ Correção de bug:
 - Corrige bug no sink de unicodeFilterAlgorithm;
 - Corrige bug na construção do texto da flag do Clean;
 - Corrige bug nos algoritmos de remover linhas pequenas e polígonos pequenos;
+- Corrige bug no BatchRunAlgorithm quando é utilizada uma expressão de filtro que resulta em string vazia;
 
 ## 4.12.0 - 2023-12-13
 
