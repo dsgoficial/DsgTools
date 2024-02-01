@@ -188,6 +188,11 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
                     self.tr(f"Layer {layerName} is read only. Skipping step.")
                 )
                 continue
+            if layer.featureCount() == 0:
+                multiStepFeedback.pushInfo(
+                    self.tr(f"Layer {layerName} is empty. Skipping step.")
+                )
+                continue
             currentDict = dict(algParameterDict)  # copy of the dict
             currentDict[inputKey] = layerName
             if (
