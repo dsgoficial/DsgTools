@@ -39,6 +39,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeNetw
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildZipPackagesAlgorithm import (
     BuildZipPackageAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithmWithGeographicBoundsConstraint import (
+    BatchRunAlgorithmWithGeographicBoundsConstraint,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridFromCoordinatesAlgorithm import (
     CreateGridFromCoordinatesAlgorithm,
 )
@@ -640,6 +643,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             GeneralizeNetworkEdgesWithLengthAlgorithm(),
             RemoveDuplicateVertexesAlgorithm(),
             IdentifyAttributeChangesInLines(),
+            BatchRunAlgorithmWithGeographicBoundsConstraint(),
         ]
         return algList
 

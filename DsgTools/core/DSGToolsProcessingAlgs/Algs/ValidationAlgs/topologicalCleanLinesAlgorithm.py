@@ -134,16 +134,13 @@ class TopologicalCleanLinesAlgorithm(TopologicalCleanAlgorithm):
                 continue
             groupByLayerDict = defaultdict(list)
             for f in featList:
-                groupByLayerDict[f["layer"]].append(f["featid"])
-            for fl in groupByLayerDict.values():
-                if len(fl) == 1:
+                groupByLayerDict[f["layer"]].append(f)
+            for lyrName, featList in groupByLayerDict.items():
+                if len(featList) == 1:
                     continue
-                txtList = []
-                for i in fl:
-                    txtList += ["{0} (id={1})".format(i["layer"], i["featid"])]
-                txt = ", ".join(txtList)
+                txt = f"""Features with featid in {tuple(f["featid"] for f in featList)} from {lyrName} overlap."""
                 self.flagFeature(
-                    fl[0].geometry(),
+                    featList[0].geometry(),
                     self.tr("Features from {0} overlap").format(txt),
                 )
 
