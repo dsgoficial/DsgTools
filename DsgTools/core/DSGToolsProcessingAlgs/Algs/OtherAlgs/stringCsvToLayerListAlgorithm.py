@@ -77,11 +77,12 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
         return {self.OUTPUT: list(layerSet)}
 
     def getLayerNameSetToLoad(self, layerNameList):
-        loadedLayerNamesSet = set(
-            l.name()
+        loadedLayerDict = {
+            l.name(): l
             for l in QgsProject.instance().mapLayers().values()
             if l.type() == QgsMapLayer.VectorLayer
-        )
+        }
+        loadedLayerNamesSet = set(loadedLayerDict.keys())
         wildCardFilterList = [fi for fi in layerNameList if "*" in fi]
         wildCardLayersSet = set()
         for wildCardFilter in wildCardFilterList:
@@ -91,6 +92,20 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
         layerNamesToLoadSet = (
             set(layerNameList) - set(wildCardFilterList) | wildCardLayersSet
         )
+        for pipeString in filter(lambda x: "|" in x, layerNameList):
+            nameList = pipeString.split("|")
+            for name in nameList:
+                matched = list(
+                    filter(
+                        lambda x: name in x[0] and x[1].featureCount() > 0,
+                        loadedLayerDict.items(),
+                    )
+                )
+                if len(matched) == 0:
+                    continue
+                layerNamesToLoadSet.add(matched[0][0])
+                break
+
         return layerNamesToLoadSet
 
     def name(self):

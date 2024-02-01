@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.23 - dev
+## 4.13.24 - dev
 
 Novas Funcionalidades:
 
@@ -23,6 +23,7 @@ Melhorias:
 - Adicionada a verificação de self-intersection em linhas e polígonos no algoritmo de identificação de geometria inválida, para os casos de geometrias não simples;
 - Adicionada a opção de passar o limite geográfico como parâmetro para o Snap Hierárquico;
 - Adicionada a funcionalidade de propagar as mudanças do Snap Hierárquico somente dentro da região geográfica;
+- StringCsvToLayerListAlgorithm agora aceita a sintaxe do | para pegar a primeira camada com elemento. Exemplo, considere que toda a EDGV Pro esteja carregada e que uma camada de moldura com nome aux_moldura_a esteja carregada. O filtro 'infra_*,moldura|aux_moldura_a' carregará as camadas infra_elemento_infraestrutura_l, infra_elemento_viario_l, infra_mobilidade_urbana_l, infra_via_deslocamento e aux_moldura_a. Esse filtro também é compatível com os algoritmos BatchRunAlgorithm e BatchRunAlgorithmWithGeographicBoundsConstraint, logo, é possível passar filtros de camadas como primitiva linha para o IdentifyDangles, por exemplo.
 
 
 Correção de bug:
