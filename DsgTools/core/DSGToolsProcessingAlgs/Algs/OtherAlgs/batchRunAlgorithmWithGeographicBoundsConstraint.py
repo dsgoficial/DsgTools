@@ -193,7 +193,9 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
                     self.tr(f"Layer {layerName} is empty. Skipping step.")
                 )
                 continue
-            currentDict = self.parseParameterDict(context, algParameterDict)
+            currentDict = self.parseParameterDict(
+                context, algParameterDict, input_id=layer_id
+            )
             currentDict[inputKey] = layerName
             if (
                 geographicBoundaryLyr is not None
@@ -235,7 +237,7 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
             )
         return {self.OUTPUT: self.flag_id}
 
-    def parseParameterDict(self, context, algParameterDict):
+    def parseParameterDict(self, context, algParameterDict, input_id):
         currentDict = dict(algParameterDict)  # copy of the dict
         for k, v in currentDict.items():
             if not isinstance(v, str) or v == "":
@@ -243,7 +245,14 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
             if v[0] != "[" or v[-1] != "]":
                 continue
             if "," in v or "|" in v:
-                currentDict[k] = AlgRunner().runStringCsvToLayerList(v, context)
+                currentDict[k] = list(
+                    filter(
+                        lambda x: x != input_id,
+                        AlgRunner().runStringCsvToLayerList(
+                            v.replace("[", "").replace("]", ""), context
+                        ),
+                    )
+                )
         return currentDict
 
     def loadAlgorithmParametersDict(self, parameters, context, feedback):

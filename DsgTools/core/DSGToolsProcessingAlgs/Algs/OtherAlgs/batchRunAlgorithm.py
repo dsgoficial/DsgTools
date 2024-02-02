@@ -188,7 +188,9 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
             if v[0] != "[" or v[-1] != "]":
                 continue
             if "," in v or "|" in v:
-                currentDict[k] = AlgRunner().runStringCsvToLayerList(v, context)
+                currentDict[k] = AlgRunner().runStringCsvToLayerList(
+                    v.replace("[", "").replace("]", ""), context
+                )
         return currentDict
 
     def loadAlgorithmParametersDict(self, parameters, context, feedback):
