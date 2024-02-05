@@ -246,12 +246,22 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
                 if v == "":
                     continue
                 if "," in v or "|" in v:
-                    outputList = AlgRunner().runStringCsvToLayerList(v, context)
+                    outputList = list(
+                        filter(
+                            lambda x: x != input_id,
+                            AlgRunner().runStringCsvToLayerList(",".join(v), context),
+                        )
+                    )
                     if outputList == []:
                         continue
                     currentDict[k] = outputList[0]
             currentDict[k] = (
-                AlgRunner().runStringCsvToLayerList(",".join(v), context)
+                list(
+                    filter(
+                        lambda x: x != input_id,
+                        AlgRunner().runStringCsvToLayerList(",".join(v), context),
+                    )
+                )
                 if len(v) > 0
                 else []
             )

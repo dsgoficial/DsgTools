@@ -180,7 +180,10 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
             )
         return {self.OUTPUT: self.flag_id}
 
-    def parseParameterDict(self, context, algParameterDict, input_id):
+    def parseParameterDict(self, context, algParameterDict):
+        """
+        Método diferente do caso com limite geográfico. Naquele caso, filtra a entrada
+        """
         currentDict = dict(algParameterDict)  # copy of the dict
         for k, v in currentDict.items():
             if not isinstance(v, list):
