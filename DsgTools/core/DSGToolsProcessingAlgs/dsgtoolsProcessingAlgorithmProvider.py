@@ -51,6 +51,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixSegmentErrorsBe
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallObjectsOnLayersAlgorithm import (
     IdentifySmallObjectsOnLayersAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUncoveredStartAndEndPointsAlgorithm import (
+    IdentifyUncoveredStartAndEndPointsAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWaterBodyAndContourInconsistencies import (
     IdentifyWaterBodyAndContourInconsistencies,
 )
@@ -644,6 +647,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             RemoveDuplicateVertexesAlgorithm(),
             IdentifyAttributeChangesInLines(),
             BatchRunAlgorithmWithGeographicBoundsConstraint(),
+            IdentifyUncoveredStartAndEndPointsAlgorithm(),
         ]
         return algList
 

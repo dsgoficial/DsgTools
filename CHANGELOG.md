@@ -1,12 +1,13 @@
 # CHANGELOG
 
-## 4.13.25 - dev
+## 4.13.26 - dev
 
 Novas Funcionalidades:
 
 - Novo processo de remover vértices duplicados e atualizar a camada original;
 - Novo processo de identificar mudança de atributo em linhas (portado do ferramentas experimentais);
 - Novo processo BatchRunAlgorithmWithGeographicBoundsConstraint: roda em lote, como o BatchRunAlgorithm no modelo, porém tem uma camada de entrada para o limite geográfico (o limite geográfico pode filtrar as flags de saída ou ser input, como no caso do clean com alterações somente dentro da moldura);
+- Novo processo de identificar linhas não cobertas por outras linhas (identifica travessias hidroviárias que não se conectam com vias deslocamento ou com a moldura);
 
 Melhorias:
 
