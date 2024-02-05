@@ -20,31 +20,27 @@
  ***************************************************************************/
 """
 
-from PyQt5.QtCore import QCoreApplication
+
+import fnmatch
 import json
+from collections import Counter, defaultdict
+
+from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
-    QgsProcessing,
-    QgsFeatureSink,
-    QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterFeatureSink,
     QgsFeature,
-    QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
-    QgsProcessingParameterVectorLayer,
+    QgsField,
+    QgsFields,
+    QgsProcessingAlgorithm,
+    QgsProcessingContext,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFile,
+    QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterString,
     QgsWkbTypes,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterMultipleLayers,
-    QgsWkbTypes,
-    QgsProcessingUtils,
-    QgsProject,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterFile,
 )
-from operator import itemgetter
-from collections import defaultdict
-import fnmatch
+from qgis.PyQt.QtCore import QVariant
+
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
 
 class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
@@ -52,6 +48,8 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
     RULEFILE = "RULEFILE"
     RULEDATA = "RULEDATA"
     OUTPUT = "OUTPUT"
+    UNUSUAL_ATTRIBUTES = "UNUSUAL_ATTRIBUTES"
+    FLAGS = "FLAGS"
 
     def __init__(self):
         super(RuleStatisticsAlgorithm, self).__init__()
@@ -80,11 +78,22 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
                 defaultValue="{}",
             )
         )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.UNUSUAL_ATTRIBUTES, self.tr("Atributos incomuns")
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.FLAGS, self.tr("{0} Flags").format(self.displayName())
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
+        self.algRunner = AlgRunner()
         layers_list = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
         inputLyrNamesWithSchemaList = [
             f"{lyr.dataProvider().uri().schema()}.{lyr.dataProvider().uri().table()}"
@@ -92,8 +101,31 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
         ]
         input_data = self.load_rules_from_parameters(parameters)
         rows = self.buildRuleDict(input_data[0], inputLyrNamesWithSchemaList)
-
+        fields = QgsFields()
+        fields.append(QgsField("layer_name", QVariant.String))
+        fields.append(QgsField("type", QVariant.String))
+        fields.append(QgsField("number_of_errors", QVariant.Int))
+        (flagSink, flag_id) = self.parameterAsSink(
+            parameters,
+            self.FLAGS,
+            context,
+            fields,
+            geometryType=QgsWkbTypes.NoGeometry,
+        )
+        (unusualSink, unusual_output_id) = self.parameterAsSink(
+            parameters,
+            self.UNUSUAL_ATTRIBUTES,
+            context,
+            fields,
+            geometryType=QgsWkbTypes.NoGeometry,
+        )
+        flagOutputDict = {
+            "Atributo incomum": unusualSink,
+            "Preencher atributo": flagSink,
+            "Atributo incorreto": flagSink,
+        }
         result = {}
+        counterDict = defaultdict(Counter)
         for i, row in enumerate(rows):
             if not row["type"] in result:
                 result[row["type"]] = []
@@ -107,13 +139,32 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
                     in row["layers"]
                 ],
             )
+            counterDict[row["type"]].update(failed)
             result[row["type"]].append(failed)
         if not input_data:
             self.print_log(
                 "Carregue um arquivos com as Regras ou insira as Regras!", feedback
             )
-            return {}
-        return {self.OUTPUT: self.format_output_result(result)}
+            return {
+                self.OUTPUT: "",
+                self.FLAGS: flag_id,
+                self.UNUSUAL_ATTRIBUTES: unusual_output_id,
+            }
+        for counterType, lyrCounter in counterDict.items():
+            for lyrName, lyrCount in lyrCounter.items():
+                if lyrCount == 0:
+                    continue
+                newFeat = QgsFeature(fields)
+                newFeat["layer_name"] = lyrName
+                newFeat["type"] = counterType
+                newFeat["number_of_errors"] = lyrCount
+                sink = flagOutputDict.get(counterType, flagSink)
+                sink.addFeature(newFeat)
+        return {
+            self.OUTPUT: self.format_output_result(result),
+            self.FLAGS: flag_id,
+            self.UNUSUAL_ATTRIBUTES: unusual_output_id,
+        }
 
     def buildRuleDict(self, inputData, inputLyrNamesWithSchemaList):
         ruleDict = []
@@ -179,14 +230,17 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
 
     def check_rules_on_layers(self, attribute, rule, layers):
         failed = {}
+        context = QgsProcessingContext()
         for lyr in layers:
-            hasAttribute = self.hasAttribute(attribute, lyr)
-            if not hasAttribute:
+            if not self.hasAttribute(attribute, lyr):
                 continue
-            lyr.selectByExpression(rule)
-            count = lyr.selectedFeatureCount()
-            lyr.removeSelection()
-            failed[lyr.name()] = True if count != 0 else False
+            outputLyr = self.algRunner.runFilterExpression(
+                inputLyr=lyr,
+                expression=rule,
+                context=context,
+            )
+            count = outputLyr.featureCount()
+            failed[lyr.name()] = count != 0
         return failed
 
     def format_output_result(self, result):
