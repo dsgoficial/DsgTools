@@ -180,17 +180,24 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
             )
         return {self.OUTPUT: self.flag_id}
 
-    def parseParameterDict(self, context, algParameterDict):
+    def parseParameterDict(self, context, algParameterDict, input_id):
         currentDict = dict(algParameterDict)  # copy of the dict
         for k, v in currentDict.items():
-            if not isinstance(v, str) or v == "":
+            if not isinstance(v, list):
                 continue
-            if v[0] != "[" or v[-1] != "]":
-                continue
-            if "," in v or "|" in v:
-                currentDict[k] = AlgRunner().runStringCsvToLayerList(
-                    v.replace("[", "").replace("]", ""), context
-                )
+            if isinstance(v, str):
+                if v == "":
+                    continue
+                if "," in v or "|" in v:
+                    outputList = AlgRunner().runStringCsvToLayerList(v, context)
+                    if outputList == []:
+                        continue
+                    currentDict[k] = outputList[0]
+            currentDict[k] = (
+                AlgRunner().runStringCsvToLayerList(",".join(v), context)
+                if len(v) > 0
+                else []
+            )
         return currentDict
 
     def loadAlgorithmParametersDict(self, parameters, context, feedback):
