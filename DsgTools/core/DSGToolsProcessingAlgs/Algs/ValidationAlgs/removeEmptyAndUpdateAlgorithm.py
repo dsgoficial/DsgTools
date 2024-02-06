@@ -105,7 +105,7 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
         )
 
-        return {self.OUTPUT: inputLyr}
+        return {self.OUTPUT: inputLyr.id()}
 
     def name(self):
         """
