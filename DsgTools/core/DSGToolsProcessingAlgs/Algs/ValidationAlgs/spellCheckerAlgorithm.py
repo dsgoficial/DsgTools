@@ -24,7 +24,7 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
     INPUT_LAYER = "INPUT_LAYER"
     ATTRIBUTE_NAME = "ATTRIBUTE_NAME"
     PRIMARY_KEY_FIELD = "PRIMARY_KEY_FIELD"
-    OUTPUT = "OUTPUT"
+    FLAGS = "FLAGS"
 
     def __init__(self):
         super(SpellCheckerAlgorithm, self).__init__()
@@ -61,7 +61,9 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSink(self.OUTPUT, self.tr("Flags"))
+            QgsProcessingParameterFeatureSink(
+                self.FLAGS, self.tr(f"{self.displayName()} Flags")
+            )
         )
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -71,6 +73,16 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
         )[0]
         pkField = self.parameterAsFields(parameters, self.PRIMARY_KEY_FIELD, context)[0]
 
+        fields = QgsFields()
+        fields.append(QgsField("column_name", QVariant.String))
+        fields.append(QgsField("number_of_errors", QVariant.Int))
+        (flagSink, flag_id) = self.parameterAsSink(
+            parameters,
+            self.FLAGS,
+            context,
+            fields,
+            geometryType=QgsWkbTypes.NoGeometry,
+        )
         try:
             spellchecker = SpellCheckerCtrl("pt-BR")
         except:
@@ -85,7 +97,8 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
         layer.startEditing()
         attributeIndex = self.getAttributeIndex(attributeName, layer)
         if attributeIndex < 0:
-            return {self.OUTPUT: "Attribute index not found"}
+            feedback.pushWarning("Attribute index not found")
+            return {self.FLAGS: flag_id}
         fieldRelation = layer.fields().field(pkField)
         auxLayer = core.QgsAuxiliaryStorage().createAuxiliaryLayer(fieldRelation, layer)
         vdef = core.QgsPropertyDefinition(
@@ -102,7 +115,7 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
         auxFields = auxLayer.fields()
         for feature in layer.getFeatures():
             if feedback.isCanceled():
-                return {self.OUTPUT: ""}
+                return {self.FLAGS: flag_id}
             attributeValue = feature[attributeIndex]
             if not attributeValue:
                 continue
@@ -122,8 +135,16 @@ class SpellCheckerAlgorithm(QgsProcessingAlgorithm):
             auxFeature["ASPK"] = feature[pkField]
             auxFeature["_{}".format(errorFieldName)] = ";".join(wrongWords)
             auxLayer.addFeature(auxFeature)
-        returnMessage = "Field {} added/edited".format(errorFieldName)
-        return {self.OUTPUT: returnMessage}
+        feedback.pushInfo(f"Field {errorFieldName} added/edited")
+        nErrors = auxLayer.featureCount()
+        if nErrors == 0:
+            return {self.FLAGS: flag_id}
+        flagFeat = QgsFeature(fields)
+        flagFeat["column_name"] = attributeName
+        flagFeat["number_of_errors"] = nErrors
+        flagSink.addFeature(flagFeat)
+
+        return {self.FLAGS: flag_id}
 
     def getAttributeIndex(self, attributeName, layer):
         if not layer.fields().indexOf(attributeName) < 0:
