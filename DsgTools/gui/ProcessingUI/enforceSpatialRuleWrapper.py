@@ -556,7 +556,10 @@ class EnforceSpatialRuleWrapper(WidgetWrapper):
             return False
         for row, rule in enumerate(inputMap):
             # GUI was crashing when passing SpatialRule straight up
-            rule = SpatialRule(**rule)
+            params = dict(rule)
+            if self.dialogType == DIALOG_MODELER:
+                params["checkLoadedLayer"] = False
+            rule = SpatialRule(**params)
             if not rule.isValid():
                 if pushAlert:
                     self.messageBar.pushMessage(

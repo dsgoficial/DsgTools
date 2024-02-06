@@ -143,11 +143,15 @@ class IdentifyUncoveredStartAndEndPointsAlgorithm(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        filteredInputLyr = self.algRunner.runFilterExpression(
-            inputLyr=cacheLyr,
-            expression=filterExpression,
-            context=context,
-            feedback=multiStepFeedback,
+        filteredInputLyr = (
+            self.algRunner.runFilterExpression(
+                inputLyr=cacheLyr,
+                expression=filterExpression,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            if filterExpression is not None
+            else cacheLyr
         )
         if filteredInputLyr.featureCount() == 0:
             return {self.FLAGS: self.flag_id}

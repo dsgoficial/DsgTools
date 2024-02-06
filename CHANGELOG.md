@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.27 - dev
+## 4.13.28 - dev
 
 Novas Funcionalidades:
 
@@ -40,6 +40,7 @@ Correção de bug:
 - Corrige bug na leitura do arquivo .json na ferramenta de carregar temas;
 - Corrige bug no BatchRunAlgorithm quando é utilizada uma expressão de filtro que resulta em string vazia;
 - Corrige bug no snap hierárquico configurado em modelo, quando uma camada prevista não está carregada;
+- Corrige bug no enforce spatial rules no caso de uso de preenchimento por meio do model do QGIS;
 
 ## 4.12.0 - 2023-12-13
 
