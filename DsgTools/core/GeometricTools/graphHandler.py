@@ -20,6 +20,7 @@
  ***************************************************************************/
 """
 from collections import defaultdict
+from enum import Enum
 from itertools import tee
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 from qgis.PyQt.QtCore import QByteArray
@@ -37,6 +38,13 @@ from qgis.core import (
 )
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+
+
+class GraphType(Enum):
+    GRAPH = 0
+    DIGRAPH = 1
+    MULTIGRAPH = 2
+    MULTIDIGRAPH = 3
 
 
 def fetch_connected_nodes(
@@ -118,7 +126,7 @@ def buildGraph(
     hashDict: Dict[int, List[QByteArray]],
     nodeDict: Dict[QByteArray, int],
     feedback: Optional[QgsFeedback] = None,
-    directed: bool = False,
+    graphType: GraphType = 0,
     add_inside_river_attribute: bool = True,
 ) -> Any:
     """
@@ -141,17 +149,29 @@ def buildGraph(
         The optional 'feedback' object can be used to monitor the progress of the function.
 
     """
-    G = nx.Graph() if not directed else nx.DiGraph()
+    graphType = GraphType.GRAPH if graphType == 0 else graphType
+    graphDict = {
+        GraphType.GRAPH: nx.Graph,
+        GraphType.DIGRAPH: nx.DiGraph,
+        GraphType.MULTIGRAPH: nx.MultiGraph,
+        GraphType.MULTIDIGRAPH: nx.MultiDiGraph,
+    }
+    graphObject = graphDict.get(graphType, None)
+    if graphObject is None:
+        raise NotImplementedError("Invalid graph type")
+    G = graphObject()
     progressStep = 100 / len(hashDict)
     for current, (edgeId, (wkb_1, wkb_2)) in enumerate(hashDict.items()):
         if feedback is not None and feedback.isCanceled():
             break
         if wkb_1 == [] or wkb_2 == []:
             continue
-        G.add_edge(nodeDict[wkb_1], nodeDict[wkb_2])
-        G[nodeDict[wkb_1]][nodeDict[wkb_2]]["featid"] = edgeId
         if add_inside_river_attribute:
-            G[nodeDict[wkb_1]][nodeDict[wkb_2]]["inside_river"] = False
+            G.add_edge(
+                nodeDict[wkb_1], nodeDict[wkb_2], featid=edgeId, inside_river=False
+            )
+        else:
+            G.add_edge(nodeDict[wkb_1], nodeDict[wkb_2], featid=edgeId)
         if feedback is not None:
             feedback.setProgress(current * progressStep)
     return G
@@ -162,7 +182,7 @@ def buildAuxStructures(
     nodesLayer: QgsVectorLayer,
     edgesLayer: QgsVectorLayer,
     feedback: Optional[QgsFeedback] = None,
-    directed: Optional[bool] = False,
+    graphType: Optional[GraphType] = 0,
     useWkt: Optional[bool] = False,
     computeNodeLayerIdDict: Optional[bool] = False,
     addEdgeLength: Optional[bool] = False,
@@ -181,8 +201,8 @@ def buildAuxStructures(
         nodesLayer: A QgsVectorLayer representing the nodes in the network.
         edgesLayer: A QgsVectorLayer representing the edges in the network.
         feedback: An optional QgsFeedback object to provide feedback during processing.
-        directed: An optional boolean flag indicating whether the network is directed.
-                  Default is False (undirected network).
+        graphType: An optional enum flag indicating whether the network is directed.
+                  Default is GraphType.GRAPH = 0 (undirected network).
         useWkt: An optional boolean flag indicating whether to use Well-Known Text (WKT)
                 representation for node geometries. Default is False (use WKB representation).
         computeNodeLayerIdDict: An optional boolean flag indicating whether to compute
@@ -240,28 +260,32 @@ def buildAuxStructures(
 
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(2)
-    networkBidirectionalGraph = buildGraph(
-        nx, hashDict, nodeDict, feedback=multiStepFeedback, directed=directed
+    G = buildGraph(
+        nx, hashDict, nodeDict, feedback=multiStepFeedback, graphType=graphType
     )
     if addEdgeLength:
-        for (a, b) in networkBidirectionalGraph.edges:
+        for edge in G.edges:
+            a, b, *c = edge
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
-            featid = networkBidirectionalGraph[a][b]["featid"]
+            featid = G[a][b]["featid"] if c == [] else G[a][b][c[0]]["featid"]
             if featid not in edgeDict:
                 continue
             geom = edgeDict[featid].geometry()
-            networkBidirectionalGraph[a][b]["length"] = geom.length()
+            if c == []:
+                G[a][b]["length"] = geom.length()
+            else:
+                G[a][b][c[0]]["length"] = geom.length()
 
     return (
-        (nodeDict, nodeIdDict, edgeDict, hashDict, networkBidirectionalGraph)
+        (nodeDict, nodeIdDict, edgeDict, hashDict, G)
         if not computeNodeLayerIdDict
         else (
             nodeDict,
             nodeIdDict,
             edgeDict,
             hashDict,
-            networkBidirectionalGraph,
+            G,
             nodeLayerIdDict,
         )
     )
@@ -750,7 +774,9 @@ def buildAuxFlowGraph(
     return DiG
 
 
-def find_mergeable_edges_on_graph(nx, G, feedback: Optional[QgsFeedback] = None):
+def find_mergeable_edges_on_graph(
+    nx, G, nodeIdDict, feedback: Optional[QgsFeedback] = None
+):
     """
     Find mergeable edges in a graph.
 
@@ -798,7 +824,7 @@ def find_mergeable_edges_on_graph(nx, G, feedback: Optional[QgsFeedback] = None)
     }
     ```
     """
-    outputGraphDict = defaultdict(lambda: nx.Graph())
+    outputGraphDict = defaultdict(lambda: nx.MultiGraph())
     degree2nodes = (i for i in G.nodes if G.degree(i) == 2)
     if feedback is not None and feedback.isCanceled():
         return outputGraphDict
@@ -816,32 +842,138 @@ def find_mergeable_edges_on_graph(nx, G, feedback: Optional[QgsFeedback] = None)
         if feedback is not None and feedback.isCanceled():
             break
         for node in candidateSet:
-            for n0, n1 in G.edges(node):
-                outputGraphDict[candidateSet].add_edge(n0, n1)
-                outputGraphDict[candidateSet][n0][n1]["featid"] = G[n0][n1]["featid"]
+            for edge in G.edges(node):
+                n0, n1 = edge
+                if "featid" in G[n0][n1]:
+                    featid = G[n0][n1]["featid"]
+                    if (
+                        n0 in outputGraphDict[candidateSet]
+                        and n1 in outputGraphDict[candidateSet][n0]
+                        and p in outputGraphDict[candidateSet][n0][n1]
+                        and outputGraphDict[candidateSet][n0][n1]["featid"] == featid
+                    ):
+                        continue
+                    outputGraphDict[candidateSet].add_edge(
+                        n0,
+                        n1,
+                        featid=featid,
+                        length=G[n0][n1][p]["length"]
+                        if "length" in G[n0][n1][p]
+                        else 1,
+                    )
+                    continue
+                for p in G[n0][n1].keys():
+                    if (
+                        n0 in outputGraphDict[candidateSet]
+                        and n1 in outputGraphDict[candidateSet][n0]
+                        and p in outputGraphDict[candidateSet][n0][n1]
+                        and outputGraphDict[candidateSet][n0][n1][p]["featid"]
+                        == G[n0][n1][p]["featid"]
+                    ):
+                        continue
+                    outputGraphDict[candidateSet].add_edge(
+                        n0,
+                        n1,
+                        featid=G[n0][n1][p]["featid"],
+                        length=G[n0][n1][p]["length"]
+                        if "length" in G[n0][n1][p]
+                        else 1,
+                    )
         if feedback is not None:
             feedback.setProgress(current * stepSize)
+    keysToPop = set()
+    auxDict = defaultdict(lambda: nx.MultiGraph())
+
+    def distance(start, end):
+        startGeom, endGeom = QgsGeometry(), QgsGeometry()
+        startGeom.fromWkb(nodeIdDict[start])
+        endGeom.fromWkb(nodeIdDict[end])
+        return startGeom.distance(endGeom)
+
+    for keySet, graph in outputGraphDict.items():
+        nodeWithMaxDegree = max(graph.nodes, key=lambda x: graph.degree(x))
+        candidateNodes = list(
+            filter(
+                lambda x: x != nodeWithMaxDegree
+                and graph.degree(x) > 1
+                and nx.has_path(graph, x, nodeWithMaxDegree),
+                graph.nodes,
+            )
+        )
+        nCandidates = len(candidateNodes)
+        if nCandidates == 0:
+            continue
+        elif nCandidates == 1:
+            furthestNode = candidateNodes[0]
+        else:
+            furthestNode = max(
+                candidateNodes, key=lambda x: distance(nodeWithMaxDegree, x)
+            )
+        path_list = list(nx.all_simple_paths(graph, nodeWithMaxDegree, furthestNode))
+        if len(path_list) == 1:
+            continue
+        keysToPop.add(keySet)
+        for path in path_list:
+            newKey = frozenset(path)
+            dictToUpdate = (
+                auxDict[newKey]
+                if newKey not in outputGraphDict
+                else outputGraphDict[newKey]
+            )
+            for n0, n1 in nx.utils.pairwise(path):
+                for p in G[n0][n1].keys():
+                    dictToUpdate.add_edge(
+                        n0,
+                        n1,
+                        featid=G[n0][n1][p]["featid"],
+                        length=G[n0][n1][p]["length"]
+                        if "length" in G[n0][n1][p]
+                        else 1,
+                    )
+    if len(keysToPop) == 0:
+        return outputGraphDict
+    for k in keysToPop:
+        outputGraphDict.pop(k)
+    outputGraphDict.update(auxDict)
     return outputGraphDict
 
 
 def filter_mergeable_graphs_using_attibutes(
-    nx, G, featDict: Dict[int, QgsFeature], attributeNameList: List[str], isMulti: bool
+    nx,
+    G,
+    featDict: Dict[int, QgsFeature],
+    nodeIdDict: Dict[int, QByteArray],
+    attributeNameList: List[str],
+    isMulti: bool,
 ) -> Tuple[Set[int], Set[int]]:
-    auxDict = defaultdict(lambda: nx.Graph())
+    """_summary_
+
+    Args:
+        nx (networkx): networkx library
+        G (nx.MultiDiGraph): MultiDigraph
+        featDict (Dict[int, QgsFeature]): _description_
+        attributeNameList (List[str]): _description_
+        isMulti (bool): _description_
+
+    Returns:
+        Tuple[Set[int], Set[int]]: _description_
+    """
+    auxDict = defaultdict(lambda: nx.MultiGraph())
     featureSetToUpdate, deleteIdSet = set(), set()
-    for n0, n1 in G.edges:
-        featid = G[n0][n1]["featid"]
+    for n0, n1, p in G.edges:
+        featid = G[n0][n1][p]["featid"]
         feat = featDict[featid]
         attrTuple = tuple(feat[i] for i in attributeNameList)
-        auxDict[attrTuple].add_edge(n0, n1)
-        auxDict[attrTuple][n0][n1]["featid"] = featid
+        auxDict[attrTuple].add_edge(n0, n1, featid=featid)
     for auxGraph in auxDict.values():
-        for mergeableG in find_mergeable_edges_on_graph(nx, auxGraph).values():
+        for mergeableG in find_mergeable_edges_on_graph(
+            nx, auxGraph, nodeIdDict
+        ).values():
             if len(mergeableG.edges) < 2:
                 continue
-            idToKeep, *idsToDelete = [
-                mergeableG[n0][n1]["featid"] for n0, n1 in mergeableG.edges
-            ]
+            idToKeep, *idsToDelete = set(
+                mergeableG[n0][n1][p]["featid"] for n0, n1, p in mergeableG.edges
+            )
             outputFeat = featDict[idToKeep]
             geom = outputFeat.geometry()
             for id in idsToDelete:
@@ -864,16 +996,17 @@ def identify_unmerged_edges_on_graph(
     filterLineLayer: QgsVectorLayer,
     attributeNameList: List[str],
 ) -> Set[int]:
-    auxDict = defaultdict(lambda: nx.Graph())
+    auxDict = defaultdict(lambda: nx.MultiGraph())
     outputIdSet = set()
-    for n0, n1 in G.edges:
-        featid = G[n0][n1]["featid"]
+    for n0, n1, p in G.edges:
+        featid = G[n0][n1][p]["featid"]
         feat = featDict[featid]
         attrTuple = tuple(feat[i] for i in attributeNameList)
-        auxDict[attrTuple].add_edge(n0, n1)
-        auxDict[attrTuple][n0][n1]["featid"] = featid
+        auxDict[attrTuple].add_edge(n0, n1, featid=featid)
     for auxGraph in auxDict.values():
-        for idSet, mergeableG in find_mergeable_edges_on_graph(nx, auxGraph).items():
+        for idSet, mergeableG in find_mergeable_edges_on_graph(
+            nx, auxGraph, nodeIdDict
+        ).items():
             if len(mergeableG.edges) < 2:
                 continue
             candidatePointSet = idSet - filterPointSet

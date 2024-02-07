@@ -203,7 +203,7 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
             nodeIdDict,
             edgeDict,
             hashDict,
-            networkBidirectionalGraph,
+            networkBidirectionalMultiGraph,
         ) = graphHandler.buildAuxStructures(
             nx,
             nodesLayer=nodesLayer,
@@ -211,13 +211,17 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
             useWkt=False,
             computeNodeLayerIdDict=False,
-            addEdgeLength=False,
+            addEdgeLength=True,
+            graphType=graphHandler.GraphType.MULTIGRAPH,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Finding mergeable edges"))
         outputGraphDict = graphHandler.find_mergeable_edges_on_graph(
-            nx=nx, G=networkBidirectionalGraph, feedback=multiStepFeedback
+            nx=nx,
+            G=networkBidirectionalMultiGraph,
+            feedback=multiStepFeedback,
+            nodeIdDict=nodeIdDict,
         )
         nSteps = len(outputGraphDict)
         if nSteps == 0:

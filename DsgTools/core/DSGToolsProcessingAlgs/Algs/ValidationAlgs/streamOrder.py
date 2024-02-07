@@ -113,7 +113,7 @@ class StreamOrder(QgsProcessingAlgorithm):
             nodesLayer=nodesLayer,
             edgesLayer=localCache,
             feedback=multiStepFeedback,
-            directed=True,
+            graphType=graphHandler.GraphType.DIGRAPH,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)

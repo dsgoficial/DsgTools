@@ -160,21 +160,25 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
             nodeIdDict,
             edgeDict,
             hashDict,
-            networkBidirectionalGraph,
+            networkMultiGraph,
         ) = graphHandler.buildAuxStructures(
             nx,
             nodesLayer=nodesLayer,
             edgesLayer=localCache,
             feedback=multiStepFeedback,
+            graphType=graphHandler.GraphType.MULTIGRAPH,
             useWkt=False,
             computeNodeLayerIdDict=False,
-            addEdgeLength=False,
+            addEdgeLength=True,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Finding mergeable edges"))
         outputGraphDict = graphHandler.find_mergeable_edges_on_graph(
-            nx=nx, G=networkBidirectionalGraph, feedback=multiStepFeedback
+            nx=nx,
+            G=networkMultiGraph,
+            feedback=multiStepFeedback,
+            nodeIdDict=nodeIdDict,
         )
         nSteps = len(outputGraphDict)
         if nSteps == 0:
@@ -198,6 +202,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
                 featDict=edgeDict,
                 attributeNameList=attributeNameList,
                 isMulti=QgsWkbTypes.isMultiType(inputLyr.wkbType()),
+                nodeIdDict=nodeIdDict,
             )
 
         futures = set()
