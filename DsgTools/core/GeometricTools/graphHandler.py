@@ -785,7 +785,9 @@ def find_mergeable_edges_on_graph(
     can be merged, and values are sets of mergeable edge pairs.
 
     Parameters:
-    - G (networkx.Graph): The input graph to analyze.
+    - nx (module): NetworkX library.
+    - G (nx.Graph): The input graph to analyze.
+    - nodeIdDict (Dict[int, QByteArray]): Dictionary mapping node IDs to QByteArray objects.
     - feedback (Optional[QgsFeedback]): A QgsFeedback object for providing user feedback during
       processing. If provided and canceled, the function will terminate early.
 
@@ -793,12 +795,8 @@ def find_mergeable_edges_on_graph(
     - Dict[Set[Hashable], Set[Tuple[Hashable, Hashable]]]: A dictionary where keys are sets of nodes
       that can be merged, and values are sets of frozenset pairs representing mergeable edges.
 
-    Note:
-    - Mergeable edges are defined as edges that connect the same set of nodes, potentially forming
-      a multi-edge in the graph.
-
     Example:
-    ```
+    ```python
     G = nx.Graph()
     G.add_edges_from([
         (1, 2), (3, 2),
@@ -811,16 +809,17 @@ def find_mergeable_edges_on_graph(
         (13, 14),
         (15, 13), (15, 16),
     ])
-    mergeable_edges = find_mergeable_edges_on_graph(G)
+    nodeIdDict = {1: b'\x00', 2: b'\x01', 3: b'\x02', 4: b'\x03', 5: b'\x04', 6: b'\x05', 7: b'\x06', 8: b'\x07', 9: b'\x08', 10: b'\x09', 11: b'\x0a', 12: b'\x0b', 13: b'\x0c', 14: b'\x0d', 15: b'\x0e', 16: b'\x0f', 17: b'\x10', 18: b'\x11'}
+    mergeable_edges = find_mergeable_edges_on_graph(nx, G, nodeIdDict)
     ```
 
     In the example above, `mergeable_edges` may contain:
-    ```
+    ```python
     {
-        frozenset({4, 5}): {frozenset({4, 5}), frozenset({2, 4})},
-        frozenset({17, 18, 6, 7}): {frozenset({8, 17}), frozenset({18, 2}), frozenset({6, 7}), frozenset({17, 7}), frozenset({18, 6})},
-        frozenset({16, 15}): {frozenset({13, 15}), frozenset({16, 15})},
-        frozenset({9}): {frozenset({8, 9}), frozenset({9, 10})}
+        frozenset({4, 5}): nx.MultiGraph{(4, 5), (2, 4)},
+        frozenset({17, 18, 6, 7}): {(8, 17), (18, 2), (6, 7), (17, 7), (18, 6)},
+        frozenset({16, 15}): {(13, 15), (16, 15)},
+        frozenset({9}): {(8, 9), (9, 10)}
     }
     ```
     """
@@ -946,17 +945,18 @@ def filter_mergeable_graphs_using_attibutes(
     attributeNameList: List[str],
     isMulti: bool,
 ) -> Tuple[Set[int], Set[int]]:
-    """_summary_
+    """Filters mergeable graphs based on specified attributes.
 
     Args:
-        nx (networkx): networkx library
-        G (nx.MultiDiGraph): MultiDigraph
-        featDict (Dict[int, QgsFeature]): _description_
-        attributeNameList (List[str]): _description_
-        isMulti (bool): _description_
+        nx (module): NetworkX library.
+        G (nx.MultiDiGraph): MultiDigraph to filter.
+        featDict (Dict[int, QgsFeature]): Dictionary mapping feature IDs to QgsFeature objects.
+        nodeIdDict (Dict[int, QByteArray]): Dictionary mapping node IDs to QByteArray objects.
+        attributeNameList (List[str]): List of attribute names to consider for filtering.
+        isMulti (bool): Flag indicating whether the graph is a multi-type graph.
 
     Returns:
-        Tuple[Set[int], Set[int]]: _description_
+        Tuple[Set[int], Set[int]]: Tuple containing sets of feature IDs to update and delete.
     """
     auxDict = defaultdict(lambda: nx.MultiGraph())
     featureSetToUpdate, deleteIdSet = set(), set()
