@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.33 - dev
+## 4.13.34 - dev
 
 Novas Funcionalidades:
 
@@ -27,6 +27,7 @@ Melhorias:
 - StringCsvToLayerListAlgorithm agora aceita a sintaxe do | para pegar a primeira camada com elemento. Exemplo, considere que toda a EDGV Pro esteja carregada e que uma camada de moldura com nome aux_moldura_a esteja carregada. O filtro 'infra_*,moldura|aux_moldura_a' carregará as camadas infra_elemento_infraestrutura_l, infra_elemento_viario_l, infra_mobilidade_urbana_l, infra_via_deslocamento e aux_moldura_a. Esse filtro também é compatível com os algoritmos BatchRunAlgorithm e BatchRunAlgorithmWithGeographicBoundsConstraint, logo, é possível passar filtros de camadas como primitiva linha para o IdentifyDangles, por exemplo. Para passar uma lista de camadas nesse formato, no json  deve ser escrito como uma lista de strings. Exemplo: Para a lista de strings ["moldura|aux_moldura_a", "infra_*"] como lista de camadas e as camadas de infra carregadas e a moldura como aux_moldura_a, será passado para o algoritmo a seguinte lista de camadas ["infra_elemento_infraestrutura_l", "infra_elemento_viario_l", "infra_mobilidade_urbana_l", "infra_via_deslocamento", "aux_moldura_a"];
 - O algoritmo RuleStatistics agora tem saídas vetoriais sem geometria para informar o resumo de erros. Tal alteração foi feita para realizar a integração com o workflow;
 - Adiciona camada de saída no algoritmo de verificação de ortografia (SpellChecker) para indicar se há erros;
+- A Caixa de Ferramentas de Controle de Qualidade agora só limpa as camadas que são flags dos processos, mantendo as entradas;
 
 
 Correção de bug:

@@ -545,6 +545,7 @@ class DsgToolsProcessingModel(QgsTask):
             vl.setName(name.split(":", 2)[-1])
             if vl.name() in flagLayerNames and vl.featureCount() == 0:
                 continue
-            self.addLayerToGroup(vl, "DSGTools_QA_Toolbox", self.displayName())
-            self.enableFeatureCount(vl)
+            cloneVl = vl.clone()
+            self.addLayerToGroup(cloneVl, "DSGTools_QA_Toolbox", self.displayName())
+            self.enableFeatureCount(cloneVl)
         iface.mapCanvas().freeze(False)

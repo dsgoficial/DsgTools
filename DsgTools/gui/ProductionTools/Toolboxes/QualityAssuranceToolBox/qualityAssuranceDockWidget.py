@@ -706,9 +706,6 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         Executes current selected workflow.
         """
         workflow = self.currentWorkflow()
-        self.prepareOutputTreeNodes(
-            clearBeforeRunning=True
-        )  # TODO: alterar para apagar somente aquilo que for flag (tratar caso de saidas do algoritmo como poligonos da cobertura terrestre)
         if workflow is None:
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTools Q&A Tool Box"),
@@ -860,31 +857,45 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         workflow.workflowPaused.connect(pause)
         sender = self.sender()
         isFirstModel = sender is None or sender.objectName() == "runPushButton"
-        self.preProcessing(
-            firstModel=None if isFirstModel else workflow.lastModelName()
+        lastModelDisplayName = workflow.lastModelName()
+        self.prepareOutputTreeNodes(
+            lastModelDisplayName=lastModelDisplayName,
+            clearBeforeRunning=True,
         )
-        workflow.run(firstModelName=None if isFirstModel else workflow.lastModelName())
+        self.preProcessing(firstModel=None if isFirstModel else lastModelDisplayName)
+        workflow.run(firstModelName=None if isFirstModel else lastModelDisplayName)
 
-    def prepareOutputTreeNodes(self, clearBeforeRunning=False):
+    def prepareOutputTreeNodes(self, lastModelDisplayName, clearBeforeRunning=False):
         self.iface.mapCanvas().freeze(True)
         rootNode = QgsProject.instance().layerTreeRoot()
-        groupName = "DSGTools_QA_Toolbox"
-        groupNode = rootNode.findGroup(groupName)
-        groupNode = groupNode if groupNode else rootNode.insertGroup(0, groupName)
+        parentGroupName = "DSGTools_QA_Toolbox"
+        parentGroupNode = rootNode.findGroup(parentGroupName)
+        parentGroupNode = (
+            parentGroupNode
+            if parentGroupNode
+            else rootNode.insertGroup(0, parentGroupName)
+        )
+        if lastModelDisplayName is None:
+            return parentGroupName
+        lyrsToRemoveIds = []
+        lastModelGroup = parentGroupNode.findGroup(lastModelDisplayName)
+        if lastModelGroup is None:
+            self.iface.mapCanvas().freeze(False)
+            return parentGroupName
         if not clearBeforeRunning:
             self.iface.mapCanvas().freeze(False)
-            return groupName
-        for lyrGroup in groupNode.findLayers():
+            return parentGroupName
+        for lyrGroup in lastModelGroup.findLayers():
             lyr = lyrGroup.layer()
             if isinstance(lyr, QgsVectorLayer):
                 lyr.rollBack()
-        groupNode.removeAllChildren()
+            lyrsToRemoveIds.append(lyr.id())
+        for lyrId in lyrsToRemoveIds:
+            QgsProject.instance().removeMapLayer(lyrId)
+        if len(lastModelGroup.children()) == 0:
+            parentGroupNode.removeChildrenGroupWithoutLayers()
         self.iface.mapCanvas().freeze(False)
-        return groupName
-
-    def removeEmptyNodes(self):
-        qaNode = self.prepareOutputTreeNodes()
-        qaNode.removeChildrenGroupWithoutLayers()
+        return parentGroupName
 
     @pyqtSlot(bool, name="on_importPushButton_clicked")
     def importWorkflow(self):
