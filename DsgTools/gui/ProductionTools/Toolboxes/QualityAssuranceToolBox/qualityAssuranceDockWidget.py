@@ -388,14 +388,12 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         if idx < 1:
             return
         # raise any confirmation question?
-        msg = self.tr("Are you sure you want to remove workflow {0}?").format(
-            self.currentWorkflowName()
-        )
+        name = self.currentWorkflowName()
+        msg = self.tr(f"Are you sure you want to remove workflow {name}?")
         if not self.confirmAction(msg):
             return
         self.comboBox.removeItem(idx)
         self.comboBox.setCurrentIndex(0)
-        name = self.currentWorkflowName()
         self.workflows.pop(name, None)
         self.ignoreFlagsMenuDict.pop(name, None)
         self.saveState()
@@ -577,17 +575,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         currentStatusDict = self.workflowStatusDict.get(workflow.name(), {})
         for row, (modelName, model) in enumerate(models.items()):
             tooltip = self.tr(
-                "Model name: {0}\n"
-                "Model author: {1}\n"
-                "Model version: {2}\n"
-                "Last modification: {3}\n"
-                "\n{4}"
-            ).format(
-                model.displayName(),
-                model.author(),
-                model.version(),
-                model.lastModified(),
-                model.description(),
+                f"Model name: {model.displayName()}\n{model.description()}"
             )
             if model.modelCanHaveFalsePositiveFlags():
                 self.prepareIgnoreFlagMenuDictItem(row, modelName, workflow)
