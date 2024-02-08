@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.31 - dev
+## 4.13.32 - dev
 
 Novas Funcionalidades:
 
@@ -46,6 +46,7 @@ Correção de bug:
 - Corrige bug de linha fechada no identify unmerged lines (o algoritmo agora não aponta linha não unida quando a união de duas linhas resultar numa linha fechada, que é geometria inválida);
 - Corrige bug nas saídas de processos que estavam ocasionando crashes no MacOS;
 - Corrige bug de flags não carregadas no workflow;
+- Corrige comportamentos estranhos do workflow ao carregar camada (havia manipulação de grupos, que não é thread safe, na thread secundária em que o QgsTask roda);
 
 ## 4.12.0 - 2023-12-13
 

@@ -32,6 +32,7 @@ from qgis.core import (
     QgsProcessingModelAlgorithm,
     QgsVectorLayer,
     QgsProcessingUtils,
+    QgsProcessingContext,
 )
 from qgis.PyQt.QtCore import pyqtSignal, QCoreApplication
 from qgis.utils import iface
@@ -436,23 +437,6 @@ class DsgToolsProcessingModel(QgsTask):
         # hence the popitems
         out.pop("CHILD_INPUTS", None)
         out.pop("CHILD_RESULTS", None)
-        if not self.loadOutput():
-            return out
-        flagLayerNames = self.flagLayerNames()
-        iface.mapCanvas().freeze(True)
-        for name, vl in out.items():
-            if vl is None:
-                continue
-            if isinstance(vl, str):
-                vl = QgsProcessingUtils.mapLayerFromString(vl, context)
-            if not isinstance(vl, QgsMapLayer) or not vl.isValid():
-                continue
-            vl.setName(name.split(":", 2)[-1])
-            if vl.name() in flagLayerNames and vl.featureCount() == 0:
-                continue
-            self.addLayerToGroup(vl, "DSGTools_QA_Toolbox", model.displayName())
-            self.enableFeatureCount(vl)
-        iface.mapCanvas().freeze(False)
         return out
 
     def enableFeatureCount(self, lyr):
@@ -530,24 +514,36 @@ class DsgToolsProcessingModel(QgsTask):
         """
         if self.isCanceled():
             return
+        self.loadOutputs()
         if result and self.onFlagsRaised() == "halt" and self.hasFlags():
             self.cancel()
             self.feedback.cancel()
             self.output["finishStatus"] = "halt"
-            self.loadUnloadedFlags()
         elif not result:
             self.output["finishStatus"] = "failed"
+            msg = self.output.get("errorMessage", "")
+            self.feedback.pushWarning(msg)
         else:
             self.output["finishStatus"] = "finished"
         self.modelFinished.emit(self)
 
-    def loadUnloadedFlags(self):
+    def loadOutputs(self):
+        loadOutput = self.loadOutput()
+        flagLayerNames = self.flagLayerNames()
+        context = QgsProcessingContext()
         iface.mapCanvas().freeze(True)
-        for flagName in self._param["flags"]["flagLayerNames"]:
-            vl = self.output["result"][flagName]
-            if vl.featureCount() == 0:
+        for name, vl in self.output["result"].items():
+            if vl is None:
                 continue
-            if QgsProject.instance().layerTreeRoot().findLayer(vl) is not None:
+            if vl.name() not in flagLayerNames and not loadOutput:
+                continue
+            if isinstance(vl, str):
+                vl = QgsProcessingUtils.mapLayerFromString(vl, context)
+                self.output["result"][name] = vl
+            if not isinstance(vl, QgsMapLayer) or not vl.isValid():
+                continue
+            vl.setName(name.split(":", 2)[-1])
+            if vl.name() in flagLayerNames and vl.featureCount() == 0:
                 continue
             self.addLayerToGroup(vl, "DSGTools_QA_Toolbox", self.displayName())
             self.enableFeatureCount(vl)
