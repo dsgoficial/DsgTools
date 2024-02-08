@@ -47,7 +47,6 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
     BUILD_CACHE = "BUILD_CACHE"
     TOLERANCE = "TOLERANCE"
     BEHAVIOR = "BEHAVIOR"
-    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -101,11 +100,6 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 self.BUILD_CACHE, self.tr("Build local cache of the reference layer")
             )
         )
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT, self.tr("Original layer with snapped features")
-            )
-        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -141,7 +135,9 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(auxLyr, context, multiStepFeedback)
+        algRunner.runCreateSpatialIndex(
+            auxLyr, context, multiStepFeedback, is_child_algorithm=True
+        )
         currentStep += 1
 
         if buildLocalCache:
@@ -173,14 +169,14 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         currentStep += 1
 
         if multiStepFeedback.isCanceled():
-            return {self.OUTPUT: inputLyr}
+            return {}
 
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Updating original layer..."))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
             [inputLyr], snapped, feedback=multiStepFeedback, onlySelected=onlySelected
         )
-        return {self.OUTPUT: inputLyr}
+        return {}
 
     def name(self):
         """

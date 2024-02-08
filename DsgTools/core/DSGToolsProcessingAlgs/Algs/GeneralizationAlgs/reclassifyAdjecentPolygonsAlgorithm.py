@@ -206,7 +206,10 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Creating spatial index on cache"))
         self.algRunner.runCreateSpatialIndex(
-            cacheLyr, context, feedback=multiStepFeedback
+            cacheLyr,
+            context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         currentStep += 1
 
@@ -328,7 +331,9 @@ class ReclassifyAdjacentPolygonsAlgorithm(ValidationAlgorithm):
             if multiStepFeedback.isCanceled():
                 return itemSet
             algRunner.runCreateSpatialIndex(
-                inputLyr=extractedBoundariesLayer, context=context
+                inputLyr=extractedBoundariesLayer,
+                context=context,
+                is_child_algorithm=True,
             )
             if multiStepFeedback.isCanceled():
                 return itemSet

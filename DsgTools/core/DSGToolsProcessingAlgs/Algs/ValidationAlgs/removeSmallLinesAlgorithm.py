@@ -37,7 +37,6 @@ from .validationAlgorithm import ValidationAlgorithm
 class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
     FLAGS = "FLAGS"
     INPUT = "INPUT"
-    OUTPUT = "OUTPUT"
     SELECTED = "SELECTED"
     TOLERANCE = "TOLERANCE"
 
@@ -64,12 +63,6 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
                 type=QgsProcessingParameterNumber.Double,
                 minValue=0,
                 defaultValue=5,
-            )
-        )
-
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT, self.tr("Original layer without small lines")
             )
         )
 
@@ -103,7 +96,7 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
             feedback.setProgress(current * stepSize)
         inputLyr.deleteFeatures(list(idRemoveSet))
         inputLyr.endEditCommand()
-        return {self.OUTPUT: inputLyr.id()}
+        return {}
 
     def name(self):
         """

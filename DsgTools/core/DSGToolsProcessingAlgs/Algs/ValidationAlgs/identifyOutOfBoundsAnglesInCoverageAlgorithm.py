@@ -155,7 +155,10 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Building spatial index"))
         algRunner.runCreateSpatialIndex(
-            inputLyr=splitSegments, context=context, feedback=multiStepFeedback
+            inputLyr=splitSegments,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         currentStep += 1
 

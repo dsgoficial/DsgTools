@@ -197,7 +197,10 @@ class IdentifyCountourStreamIntersectionAlgorithm(ValidationAlgorithm):
 
     def runCreateSpatialIndex(self, inputLyr, feedback):
         processing.run(
-            "native:createspatialindex", {"INPUT": inputLyr}, feedback=feedback
+            "native:createspatialindex",
+            {"INPUT": inputLyr},
+            feedback=feedback,
+            is_child_algorithm=True,
         )
 
     def findProblems(self, feedback, outputPointsSet, outputLinesSet, inputLyr, idDict):

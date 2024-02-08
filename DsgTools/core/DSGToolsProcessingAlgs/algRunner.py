@@ -284,7 +284,7 @@ class AlgRunner:
         output = processing.run(
             "dsgtools:cleangeometries", parameters, context=context, feedback=feedback
         )
-        return output["OUTPUT"]
+        return inputLyr
 
     def runDouglasSimplification(
         self,
@@ -488,7 +488,7 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
-        return output["OUTPUT"]
+        return inputLayer
 
     def runIdentifyDangles(
         self,
@@ -904,7 +904,6 @@ class AlgRunner:
             "INPUT": inputLyr,
             "SELECTED": onlySelected,
             "FLAGS": "memory:",
-            "OUTPUT": outputLyr,
         }
         output = processing.run(
             "dsgtools:removeduplicatedgeometries",
@@ -912,7 +911,7 @@ class AlgRunner:
             context=context,
             feedback=feedback,
         )
-        return output["OUTPUT"]
+        return inputLyr
 
     def runPolygonize(
         self,
@@ -1057,10 +1056,10 @@ class AlgRunner:
             context=context,
             feedback=feedback,
         )
-        return output
+        return inputLyr
 
     def runCreateSpatialIndex(
-        self, inputLyr, context, feedback=None, is_child_algorithm=False
+        self, inputLyr, context, feedback=None, is_child_algorithm=True
     ):
         processing.run(
             "native:createspatialindex",

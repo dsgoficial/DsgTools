@@ -141,7 +141,10 @@ class SmallHoleRemoverAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.setProgressText(self.tr("Building Spatial Index"))
         algRunner.runCreateSpatialIndex(
-            inputLyr=cacheLyr, context=context, feedback=multiStepFeedback
+            inputLyr=cacheLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
 
         multiStepFeedback.setCurrentStep(2)
@@ -154,7 +157,10 @@ class SmallHoleRemoverAlgorithm(ValidationAlgorithm):
             self.tr("Building Spatial Index on point on surface layer")
         )
         algRunner.runCreateSpatialIndex(
-            inputLyr=pointOnSurfaceLyr, context=context, feedback=multiStepFeedback
+            inputLyr=pointOnSurfaceLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         multiStepFeedback.setCurrentStep(4)
         multiStepFeedback.setProgressText(self.tr("Extracting Donut Holes"))

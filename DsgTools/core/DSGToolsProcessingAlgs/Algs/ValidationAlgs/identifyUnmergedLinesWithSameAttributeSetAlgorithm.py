@@ -256,7 +256,7 @@ class IdentifyUnmergedLinesWithSameAttributeSetAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         if mergedLineLyr is not None:
             self.algRunner.runCreateSpatialIndex(
-                mergedLineLyr, context, multiStepFeedback
+                mergedLineLyr, context, multiStepFeedback, is_child_algorithm=True
             )
         filterPointSet = (
             set(i.geometry().asWkb() for i in mergedPointLyr.getFeatures())

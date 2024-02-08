@@ -232,6 +232,7 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
             mergedLines,
             context=context,
             feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         multiStepFeedback.setCurrentStep(1)
         # run intersect
@@ -344,6 +345,7 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
             mergedFilters,
             context=context,
             feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         return mergedFilters
 

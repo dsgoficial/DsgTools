@@ -118,7 +118,10 @@ class IdentifyGeometriesWithLargeVertexDensityAlgorithm(ValidationAlgorithm):
             self.tr("Building spatial index on extracted vertexes...")
         )
         algRunner.runCreateSpatialIndex(
-            inputLyr=vertexLayer, context=context, feedback=multiStepFeedback
+            inputLyr=vertexLayer,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         multiStepFeedback.setCurrentStep(3)
         multiStepFeedback.setProgressText(self.tr("Searching close vertexes..."))

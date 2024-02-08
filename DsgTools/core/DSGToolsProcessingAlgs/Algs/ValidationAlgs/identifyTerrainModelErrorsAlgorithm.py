@@ -394,7 +394,10 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(1)
         self.algRunner.runCreateSpatialIndex(
-            inputLyr=extractedLyr, context=context, feedback=multiStepFeedback
+            inputLyr=extractedLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         return extractedLyr
 

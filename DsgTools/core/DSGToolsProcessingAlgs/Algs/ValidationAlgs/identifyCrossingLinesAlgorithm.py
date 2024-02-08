@@ -115,7 +115,9 @@ class IdentifyCrossingLinesAlgorithm(ValidationAlgorithm):
             feedback=feedback,
             is_child_algorithm=False,
         )
-        self.algRunner.runCreateSpatialIndex(localCache, context, feedback)
+        self.algRunner.runCreateSpatialIndex(
+            localCache, context, feedback, is_child_algorithm=True
+        )
         return localCache
 
     def getCrossingPoints(
@@ -139,7 +141,9 @@ class IdentifyCrossingLinesAlgorithm(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(inputLyr=verticesLyr, context=context)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=verticesLyr, context=context, is_child_algorithm=True
+        )
         toMergeList = []
         stepSize = 100 / len(layerList)
         for current, layer in enumerate(layerList):
@@ -158,13 +162,17 @@ class IdentifyCrossingLinesAlgorithm(ValidationAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-        self.algRunner.runCreateSpatialIndex(inputLyr=layer2, context=context)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=layer2, context=context, is_child_algorithm=True
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         intersectionLyr = self.getIntersectionLyr(
             layer1, layer2, context, multiStepFeedback
         )
-        self.algRunner.runCreateSpatialIndex(inputLyr=intersectionLyr, context=context)
+        self.algRunner.runCreateSpatialIndex(
+            inputLyr=intersectionLyr, context=context, is_child_algorithm=True
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         unjoined = processing.run(
@@ -248,9 +256,11 @@ class IdentifyCrossingLinesAlgorithm(ValidationAlgorithm):
         formatting characters.
         """
         return "DSGTools - QA Tools: Line Handling"
-    
+
     def shortHelpString(self):
-        return self.tr("Verifica linhas que se cruzam (descartado primeiro e último vértice da camada de entrada). Para camadas do tipo polígono, apenas as bordas dos polígonos são utilizadas para a comparação.")
+        return self.tr(
+            "Verifica linhas que se cruzam (descartado primeiro e último vértice da camada de entrada). Para camadas do tipo polígono, apenas as bordas dos polígonos são utilizadas para a comparação."
+        )
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyCrossingLinesAlgorithm", string)

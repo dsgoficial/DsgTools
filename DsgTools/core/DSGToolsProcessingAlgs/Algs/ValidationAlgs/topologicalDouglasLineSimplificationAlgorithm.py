@@ -148,7 +148,7 @@ class TopologicalDouglasPeuckerLineSimplificationAlgorithm(ValidationAlgorithm):
                 threshold,
             )
 
-        return {self.INPUTLAYERS: inputLyrList, self.FLAGS: self.flag_id}
+        return {self.FLAGS: self.flag_id}
 
     def runTopologicalDouglasWithoutGeographicBounds(
         self,

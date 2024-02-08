@@ -79,6 +79,7 @@ class UpdateRunwayAltitudeAlgorithm(QgsProcessingAlgorithm):
                 inputLyr=orig_lyr,
                 context=context,
                 feedback=multiStepFeedback,
+                is_child_algorithm=True,
             )
 
             multiStepFeedback.setCurrentStep(currentStep + 2)

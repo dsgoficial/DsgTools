@@ -40,7 +40,6 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
     FLAGS = "FLAGS"
     INPUT = "INPUT"
     SELECTED = "SELECTED"
-    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -63,11 +62,6 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS, self.tr("{0} Flags").format(self.displayName())
-            )
-        )
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT, self.tr("Original layer without duplicated geometries")
             )
         )
 
@@ -101,7 +95,7 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         )
         self.removeFeatures(inputLyr, flagLyr, multiStepFeedback)
 
-        return {self.OUTPUT: inputLyr}
+        return {}
 
     def removeFeatures(self, inputLyr, flagLyr, feedback):
         featureList, total = self.getIteratorAndFeatureCount(flagLyr)

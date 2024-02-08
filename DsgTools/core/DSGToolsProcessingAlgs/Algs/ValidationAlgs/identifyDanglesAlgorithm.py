@@ -184,7 +184,10 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
 
         multiStepFeedback.setCurrentStep(currentStep)
         algRunner.runCreateSpatialIndex(
-            inputLyr=inputLyr, context=context, feedback=multiStepFeedback
+            inputLyr=inputLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         currentStep += 1
 
@@ -283,7 +286,10 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         if geographicBoundsLyr is not None:
             algRunner.runCreateSpatialIndex(
-                inputLyr=boundaryLyr, context=context, feedback=multiStepFeedback
+                inputLyr=boundaryLyr,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
             )
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)

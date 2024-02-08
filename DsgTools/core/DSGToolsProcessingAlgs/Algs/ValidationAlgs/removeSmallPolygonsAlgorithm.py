@@ -41,7 +41,6 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     SELECTED = "SELECTED"
     TOLERANCE = "TOLERANCE"
-    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -67,12 +66,6 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
             )
         )
 
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT, self.tr("Original layer without small polygons")
-            )
-        )
-
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
@@ -88,7 +81,7 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
             inputLyr, onlySelected=onlySelected
         )
         if total == 0:
-            return {self.OUTPUT: inputLyr}
+            return {}
         stepSize = 100 / total
         inputLyr.startEditing()
         idRemoveSet = set()
@@ -101,7 +94,7 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
             idRemoveSet.add(feat.id())
             feedback.setProgress(current * stepSize)
         inputLyr.deleteFeatures(list(idRemoveSet))
-        return {self.OUTPUT: inputLyr}
+        return {}
 
     def name(self):
         """

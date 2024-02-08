@@ -216,7 +216,10 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
         if geographicBoundsLayer is not None:
             multiStepFeedback.setCurrentStep(currentStep)
             self.algRunner.runCreateSpatialIndex(
-                inputLyr=localCache, context=context, feedback=multiStepFeedback
+                inputLyr=localCache,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
             )
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -229,7 +232,10 @@ class FixDrainageFlowAlgorithm(ValidationAlgorithm):
             currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         self.algRunner.runCreateSpatialIndex(
-            inputLyr=localCache, context=context, feedback=multiStepFeedback
+            inputLyr=localCache,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)

@@ -2290,7 +2290,9 @@ class LayerHandler(QObject):
             inputLyr, context, feedback=multiStepFeedback
         )
         multiStepFeedback.setCurrentStep(3)
-        algRunner.runCreateSpatialIndex(edgeLyr, context, feedback=multiStepFeedback)
+        algRunner.runCreateSpatialIndex(
+            edgeLyr, context, feedback=multiStepFeedback, is_child_algorithm=True
+        )
         multiStepFeedback.setCurrentStep(4)
         explodedEdges = algRunner.runExplodeLines(
             edgeLyr, context, feedback=multiStepFeedback
@@ -2493,7 +2495,9 @@ class LayerHandler(QObject):
         )
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(explodedLines, context, multiStepFeedback)
+        algRunner.runCreateSpatialIndex(
+            explodedLines, context, multiStepFeedback, is_child_algorithm=True
+        )
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -2603,7 +2607,9 @@ class LayerHandler(QObject):
 
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Exploding lines..."))
-        algRunner.runCreateSpatialIndex(linesLyr, context, feedback=multiStepFeedback)
+        algRunner.runCreateSpatialIndex(
+            linesLyr, context, feedback=multiStepFeedback, is_child_algorithm=True
+        )
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)

@@ -142,7 +142,10 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
             self.tr("Building aux structure: spatial index...")
         )
         algRunner.runCreateSpatialIndex(
-            inputLyr=incrementedLyr, context=context, feedback=multiStepFeedback
+            inputLyr=incrementedLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.setProgressText(

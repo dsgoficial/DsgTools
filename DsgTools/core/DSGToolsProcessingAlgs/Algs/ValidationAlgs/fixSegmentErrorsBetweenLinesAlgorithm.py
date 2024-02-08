@@ -46,7 +46,6 @@ class FixSegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     REFERENCE_LINE = "REFERENCE_LINE"
     SEARCH_RADIUS = "SEARCH_RADIUS"
-    FLAGS = "FLAGS"
 
     def initAlgorithm(self, config):
         """
@@ -94,7 +93,7 @@ class FixSegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
         )
         if flagLyr.featureCount() == 0:
-            return
+            return {}
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
@@ -126,6 +125,7 @@ class FixSegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
             referenceLayer=singlePartFlags,
             tol=searchRadius,
         )
+        return {}
 
     def name(self):
         """

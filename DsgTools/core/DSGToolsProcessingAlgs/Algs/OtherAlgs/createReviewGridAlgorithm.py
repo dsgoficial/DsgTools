@@ -130,7 +130,10 @@ class CreateReviewGridAlgorithm(QgsProcessingAlgorithm):
         )
         multiStepFeedback.setCurrentStep(1)
         algRunner.runCreateSpatialIndex(
-            inputLyr=grid, context=context, feedback=multiStepFeedback
+            inputLyr=grid,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         multiStepFeedback.setCurrentStep(2)
         filteredGrid = algRunner.runExtractByLocation(

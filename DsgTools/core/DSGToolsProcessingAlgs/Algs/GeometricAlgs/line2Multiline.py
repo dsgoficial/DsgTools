@@ -89,6 +89,7 @@ class Line2Multiline(QgsProcessingAlgorithm):
             inputLyr=lines,
             context=context,
             feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         currentStep += 1
 

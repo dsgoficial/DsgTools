@@ -41,7 +41,6 @@ from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 
 
 class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
-    OUTPUT = "OUTPUT"
     INPUT = "INPUT"
     SELECTED = "SELECTED"
 
@@ -60,12 +59,6 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.SELECTED, self.tr("Process only selected features")
-            )
-        )
-
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.INPUT, self.tr("Original layer updated")
             )
         )
 
@@ -118,7 +111,7 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
         # statistics, etc. These should all be included in the returned
         # dictionary, with keys matching the feature corresponding parameter
         # or output names.
-        return {self.OUTPUT: target}
+        return {}
 
     def name(self):
         """

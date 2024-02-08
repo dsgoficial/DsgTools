@@ -49,7 +49,6 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
     ATTRIBUTE_BLACK_LIST = "ATTRIBUTE_BLACK_LIST"
     IGNORE_VIRTUAL_FIELDS = "IGNORE_VIRTUAL_FIELDS"
     IGNORE_PK_FIELDS = "IGNORE_PK_FIELDS"
-    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -88,11 +87,6 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
                 self.IGNORE_PK_FIELDS,
                 self.tr("Ignore primary key fields"),
                 defaultValue=True,
-            )
-        )
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT, self.tr("Original layer with merged lines")
             )
         )
 
@@ -182,7 +176,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         )
         nSteps = len(outputGraphDict)
         if nSteps == 0:
-            return {self.OUTPUT: inputLyr}
+            return {}
         stepSize = 100 / nSteps
 
         pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
@@ -242,7 +236,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         inputLyr.deleteFeatures(list(idsToDeleteSet))
         inputLyr.endEditCommand()
 
-        return {self.OUTPUT: inputLyr}
+        return {}
 
     def name(self):
         """

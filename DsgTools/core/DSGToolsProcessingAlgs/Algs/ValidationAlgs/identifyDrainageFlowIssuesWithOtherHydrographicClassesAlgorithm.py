@@ -407,7 +407,10 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         startPointDict = {feat["featid"]: feat for feat in startPointsLyr.getFeatures()}
         multiStepFeedback.setCurrentStep(5)
         self.algRunner.runCreateSpatialIndex(
-            inputLyr=startPointsLyr, context=context, feedback=multiStepFeedback
+            inputLyr=startPointsLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         multiStepFeedback.setCurrentStep(6)
         endPointsLyr = self.algRunner.runExtractSpecificVertices(
@@ -431,7 +434,10 @@ class IdentifyDrainageFlowIssuesWithHydrographyElementsAlgorithm(ValidationAlgor
         endPointDict = {feat["featid"]: feat for feat in endPointsLyr.getFeatures()}
         multiStepFeedback.setCurrentStep(9)
         self.algRunner.runCreateSpatialIndex(
-            inputLyr=endPointsLyr, context=context, feedback=multiStepFeedback
+            inputLyr=endPointsLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         multiStepFeedback.setCurrentStep(10)
         nFeats = cachedInputDrainagesLyr.featureCount()

@@ -41,7 +41,6 @@ class RemoveDuplicateVertexesAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     SELECTED = "SELECTED"
     TOLERANCE = "TOLERANCE"
-    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -67,12 +66,6 @@ class RemoveDuplicateVertexesAlgorithm(ValidationAlgorithm):
         )
         param.setMetadata({"widget_wrapper": {"decimals": 8}})
         self.addParameter(param)
-
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT, self.tr("Original layer without duplicated vertexes")
-            )
-        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -116,7 +109,7 @@ class RemoveDuplicateVertexesAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
         )
 
-        return {self.OUTPUT: inputLyr}
+        return {}
 
     def name(self):
         """

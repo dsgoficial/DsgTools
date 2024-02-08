@@ -55,7 +55,6 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
     IGNORE_CLOSED = "IGNORE_CLOSED"
     TYPE = "TYPE"
     FLAGS = "FLAGS"
-    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -90,12 +89,6 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS, self.tr("{0} Flags").format(self.displayName())
-            )
-        )
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT,
-                self.tr("Original layer (has fixed geometries if fix mode is chosen)"),
             )
         )
 
@@ -138,7 +131,7 @@ class IdentifyAndFixInvalidGeometriesAlgorithm(ValidationAlgorithm):
             )
             multiStepFeedback.setProgress(current * progressSize)
 
-        return {self.FLAGS: self.flag_id, self.OUTPUT: inputLyr}
+        return {self.FLAGS: self.flag_id}
 
     def name(self):
         """

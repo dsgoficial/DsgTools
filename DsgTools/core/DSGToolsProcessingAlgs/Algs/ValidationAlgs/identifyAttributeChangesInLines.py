@@ -179,7 +179,9 @@ class IdentifyAttributeChangesInLines(ValidationAlgorithm):
             feedback=feedback,
             is_child_algorithm=False,
         )
-        algRunner.runCreateSpatialIndex(localCache, context, feedback)
+        algRunner.runCreateSpatialIndex(
+            localCache, context, feedback, is_child_algorithm=True
+        )
         return localCache
 
     def linesTouchedOnPoint(

@@ -41,7 +41,6 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     SELECTED = "SELECTED"
     TOLERANCE = "TOLERANCE"
-    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -68,11 +67,6 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
         )
         param.setMetadata({"widget_wrapper": {"decimals": 12}})
         self.addParameter(param)
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT, self.tr("Original layer with features snapped to grid")
-            )
-        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -117,7 +111,7 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
         )
 
-        return {self.OUTPUT: inputLyr}
+        return {}
 
     def name(self):
         """

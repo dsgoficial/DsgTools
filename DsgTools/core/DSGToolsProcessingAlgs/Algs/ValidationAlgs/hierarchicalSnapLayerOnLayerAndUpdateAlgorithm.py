@@ -298,7 +298,9 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 outsideLyr = None
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
-            self.algRunner.runCreateSpatialIndex(insideLyr, context, multiStepFeedback)
+            self.algRunner.runCreateSpatialIndex(
+                insideLyr, context, multiStepFeedback, is_child_algorithm=True
+            )
             currentStep += 1
             snapStructure[item["referenceLayer"]] = {
                 "originalLayer": lyr,

@@ -183,7 +183,9 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
             return {}
         multiStepFeedback.setCurrentStep(currentStep)
         currentStep += 1
-        algRunner.runCreateSpatialIndex(newFlagsLyr, context, multiStepFeedback)
+        algRunner.runCreateSpatialIndex(
+            newFlagsLyr, context, multiStepFeedback, is_child_algorithm=True
+        )
         multiStepFeedback.setCurrentStep(currentStep)
         currentStep += 1
         LayerHandler().addVertexesToLayers(

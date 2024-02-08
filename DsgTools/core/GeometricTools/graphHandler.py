@@ -1061,7 +1061,10 @@ def buildAuxLayersPriorGraphBuilding(
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
         algRunner.runCreateSpatialIndex(
-            inputLyr=localCache, context=context, feedback=multiStepFeedback
+            inputLyr=localCache,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         currentStep += 1
         if multiStepFeedback is not None:
@@ -1085,7 +1088,10 @@ def buildAuxLayersPriorGraphBuilding(
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(currentStep)
     algRunner.runCreateSpatialIndex(
-        inputLyr=localCache, context=context, feedback=multiStepFeedback
+        inputLyr=localCache,
+        context=context,
+        feedback=multiStepFeedback,
+        is_child_algorithm=True,
     )
     currentStep += 1
     if multiStepFeedback is not None:

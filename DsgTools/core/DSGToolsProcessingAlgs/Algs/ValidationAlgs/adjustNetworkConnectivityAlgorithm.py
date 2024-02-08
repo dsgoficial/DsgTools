@@ -41,7 +41,6 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     SELECTED = "SELECTED"
     TOLERANCE = "TOLERANCE"
-    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -64,11 +63,6 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
                 parentParameterName=self.INPUT,
                 minValue=0,
                 defaultValue=1.0,
-            )
-        )
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT, self.tr("Adjusted original network layer")
             )
         )
 
@@ -134,7 +128,7 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
             behavior=algRunner.PreferClosestInsertExtraVerticesWhereRequired,
         )
         QgsProject.instance().removeMapLayer(dangleLyr.id())
-        return {self.OUTPUT: inputLyr}
+        return {}
 
     def name(self):
         """
