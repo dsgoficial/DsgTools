@@ -577,7 +577,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         currentStatusDict = self.workflowStatusDict.get(workflow.name(), {})
         for row, (modelName, model) in enumerate(models.items()):
             tooltip = self.tr(
-                "Model name: {0}"
+                "Model name: {0}\n"
                 "Model author: {1}\n"
                 "Model version: {2}\n"
                 "Last modification: {3}\n"
