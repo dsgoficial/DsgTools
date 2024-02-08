@@ -396,6 +396,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.comboBox.setCurrentIndex(0)
         self.workflows.pop(name, None)
         self.ignoreFlagsMenuDict.pop(name, None)
+        self.workflowStatusDict.pop(name, None)
         self.saveState()
 
     @pyqtSlot(bool, name="on_editPushButton_clicked")

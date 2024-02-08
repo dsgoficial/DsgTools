@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.32 - dev
+## 4.13.33 - dev
 
 Novas Funcionalidades:
 
@@ -47,6 +47,7 @@ Correção de bug:
 - Corrige bug nas saídas de processos que estavam ocasionando crashes no MacOS;
 - Corrige bug de flags não carregadas no workflow;
 - Corrige comportamentos estranhos do workflow ao carregar camada (havia manipulação de grupos, que não é thread safe, na thread secundária em que o QgsTask roda);
+- Corrige bug de estado guardado no projeto no workflow;
 
 ## 4.12.0 - 2023-12-13
 
