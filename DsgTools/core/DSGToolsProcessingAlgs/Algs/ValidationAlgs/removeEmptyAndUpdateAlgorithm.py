@@ -39,7 +39,6 @@ from .validationAlgorithm import ValidationAlgorithm
 class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     SELECTED = "SELECTED"
-    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -57,11 +56,6 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
                 self.SELECTED, self.tr("Process only selected features")
             )
         )
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT, self.tr("Original layer without empty geometries")
-            )
-        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -71,10 +65,16 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
         algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
-            raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.INPUT)
-            )
+            return {}
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+
+        nFeatures = (
+            inputLyr.featureCount()
+            if not onlySelected
+            else inputLyr.selectedFeatureCount()
+        )
+        if nFeatures == 0:
+            return {}
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
@@ -105,7 +105,7 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
         )
 
-        return {self.OUTPUT: inputLyr.id()}
+        return {}
 
     def name(self):
         """

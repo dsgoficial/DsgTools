@@ -483,19 +483,23 @@ class LayerHandler(QObject):
         """
         parameterDict = {} if parameterDict is None else parameterDict
         idsToRemove, featuresToAdd = set(), set()
-        lyr.startEditing()
-        lyr.beginEditCommand("Updating layer {0}".format(lyr.name()))
         nSteps = len(inputDict)
         if nSteps == 0 or feedback.isCanceled():
             return
+        lyr.startEditing()
+        lyr.beginEditCommand("Updating layer {0}".format(lyr.name()))
         localTotal = 100 / len(inputDict) if inputDict else 0
         futures = set()
         pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(2, feedback)
+            if feedback is not None
+            else None
+        )
 
         def evaluate(id_, featDict):
             idsToRemove, featuresToAdd, geometriesToChange = set(), set(), set()
-            if multiStepFeedback.isCanceled():
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 return idsToRemove, featuresToAdd, geometriesToChange
             outFeats = featDict["featList"]
             if len(outFeats) == 0:
@@ -520,18 +524,23 @@ class LayerHandler(QObject):
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Submitting tasks to thread..."))
         for current, (id_, featDict) in enumerate(inputDict.items()):
-            if feedback is not None and feedback.isCanceled():
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                lyr.endEditCommand()
+                pool.shutdown(wait=False)
                 return
             futures.add(pool.submit(evaluate, id_, featDict))
-            if feedback is not None:
-                feedback.setProgress(localTotal * current)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(localTotal * current)
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr("Evaluating results..."))
         changeGeometryLambda = lambda x: lyr.changeGeometry(
             x[0], x[1], skipDefaultValue=True
         )
+        concurrent.futures.wait(futures, return_when=concurrent.futures.ALL_COMPLETED)
         for current, future in enumerate(concurrent.futures.as_completed(futures)):
-            if feedback is not None and feedback.isCanceled():
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                lyr.endEditCommand()
+                pool.shutdown(wait=False)
                 return
             deletedIds, addedFeatures, geometriesToChange = future.result()
             list(map(changeGeometryLambda, geometriesToChange))
@@ -541,8 +550,8 @@ class LayerHandler(QObject):
                 multiStepFeedback.pushInfo(
                     self.tr(f"Evaluated {current}/{nSteps} results.")
                 )
-            if feedback is not None:
-                feedback.setProgress(localTotal * current)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(localTotal * current)
         lyr.addFeatures(list(featuresToAdd))
         if not keepFeatures:
             lyr.deleteFeatures(list(idsToRemove))
