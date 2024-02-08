@@ -381,7 +381,6 @@ class DsgToolsProcessingModel(QgsTask):
         subGroup = self.createGroups(groupname, subgroupname)
         if clearGroupBeforeAdding:
             self.clearGroup(subGroup)
-        iface.mapCanvas().freeze(True)
         layer = (
             layer
             if isinstance(layer, QgsMapLayer)
@@ -389,7 +388,6 @@ class DsgToolsProcessingModel(QgsTask):
         )
         QgsProject.instance().addMapLayer(layer, addToLegend=False)
         subGroup.addLayer(layer)
-        iface.mapCanvas().freeze(False)
 
     def createGroups(self, groupname, subgroupname):
         root = QgsProject.instance().layerTreeRoot()
@@ -441,9 +439,12 @@ class DsgToolsProcessingModel(QgsTask):
         if not self.loadOutput():
             return out
         flagLayerNames = self.flagLayerNames()
+        iface.mapCanvas().freeze(True)
         for name, vl in out.items():
             if vl is None:
                 continue
+            if isinstance(vl, str):
+                vl = QgsProcessingUtils.mapLayerFromString(vl, context)
             if not isinstance(vl, QgsMapLayer) or not vl.isValid():
                 continue
             vl.setName(name.split(":", 2)[-1])
@@ -451,6 +452,7 @@ class DsgToolsProcessingModel(QgsTask):
                 continue
             self.addLayerToGroup(vl, "DSGTools_QA_Toolbox", model.displayName())
             self.enableFeatureCount(vl)
+        iface.mapCanvas().freeze(False)
         return out
 
     def enableFeatureCount(self, lyr):
@@ -532,8 +534,19 @@ class DsgToolsProcessingModel(QgsTask):
             self.cancel()
             self.feedback.cancel()
             self.output["finishStatus"] = "halt"
+            self.loadUnloadedFlags()
         elif not result:
             self.output["finishStatus"] = "failed"
         else:
             self.output["finishStatus"] = "finished"
         self.modelFinished.emit(self)
+
+    def loadUnloadedFlags(self):
+        iface.mapCanvas().freeze(True)
+        for flagName in self._param["flags"]["flagLayerNames"]:
+            vl = self.output["result"][flagName]
+            if QgsProject.instance().layerTreeRoot().findLayer(vl) is not None:
+                continue
+            self.addLayerToGroup(vl, "DSGTools_QA_Toolbox", self.displayName())
+            self.enableFeatureCount(vl)
+        iface.mapCanvas().freeze(False)
