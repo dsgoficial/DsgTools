@@ -91,6 +91,7 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
             return {self.OUTPUT: inputLyr}
         stepSize = 100 / total
         inputLyr.startEditing()
+        inputLyr.beginEditCommand(self.tr("Removing small lines"))
         idRemoveSet = set()
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
@@ -101,7 +102,8 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
             idRemoveSet.add(feat.id())
             feedback.setProgress(current * stepSize)
         inputLyr.deleteFeatures(list(idRemoveSet))
-        return {self.OUTPUT: inputLyr}
+        inputLyr.endEditCommand()
+        return {self.OUTPUT: inputLyr.id()}
 
     def name(self):
         """

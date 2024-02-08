@@ -153,7 +153,10 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
         geographicBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
-        self.prepareFlagSink(parameters, lineLyrList[0], QgsWkbTypes.Point, context)
+        refLyr = lineLyrList[0] if len(lineLyrList) > 0 else None
+        self.prepareFlagSink(parameters, refLyr, QgsWkbTypes.Point, context)
+        if refLyr is None:
+            return {"FLAGS": self.flag_id}
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Building unified lines layer..."))

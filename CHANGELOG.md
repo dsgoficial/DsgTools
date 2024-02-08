@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.29 - dev
+## 4.13.30 - dev
 
 Novas Funcionalidades:
 
@@ -44,6 +44,7 @@ Correção de bug:
 - Corrige bug no merge lines de arestas paralelas no grafo;
 - Corrige bug no merge lines que formava linhas fechadas na saída: agora o algoritmo identifica se a saída será uma linha fechada e caso seja, quebra em duas, utilizando o início/fim de uma das linhas participantes e o início/fim com maior número de intersecções (maior grau no grafo);
 - Corrige bug de linha fechada no identify unmerged lines (o algoritmo agora não aponta linha não unida quando a união de duas linhas resultar numa linha fechada, que é geometria inválida);
+- Corrige bug nas saídas de processos que estavam ocasionando crashes no MacOS;
 
 ## 4.12.0 - 2023-12-13
 

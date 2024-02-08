@@ -34,6 +34,7 @@ from qgis.core import (
     QgsProcessingUtils,
 )
 from qgis.PyQt.QtCore import pyqtSignal, QCoreApplication
+from qgis.utils import iface
 from processing.tools import dataobjects
 import processing
 
@@ -380,6 +381,7 @@ class DsgToolsProcessingModel(QgsTask):
         subGroup = self.createGroups(groupname, subgroupname)
         if clearGroupBeforeAdding:
             self.clearGroup(subGroup)
+        iface.mapCanvas().freeze(True)
         layer = (
             layer
             if isinstance(layer, QgsMapLayer)
@@ -387,6 +389,7 @@ class DsgToolsProcessingModel(QgsTask):
         )
         QgsProject.instance().addMapLayer(layer, addToLegend=False)
         subGroup.addLayer(layer)
+        iface.mapCanvas().freeze(False)
 
     def createGroups(self, groupname, subgroupname):
         root = QgsProject.instance().layerTreeRoot()

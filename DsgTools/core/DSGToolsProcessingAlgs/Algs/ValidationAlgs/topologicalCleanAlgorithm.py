@@ -159,7 +159,7 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
                 minArea,
             )
 
-        return {self.INPUTLAYERS: inputLyrList, self.FLAGS: self.flagSink}
+        return {self.FLAGS: self.flag_id}
 
     def topologicalCleanWithoutGeographicBounds(
         self,

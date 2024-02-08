@@ -156,7 +156,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
                 geographicBoundsLyr,
             )
 
-        return {self.OUTPUT: inputLyr, self.FLAGS: self.flag_id}
+        return {self.FLAGS: self.flag_id}
 
     def cleanGeometries(
         self,
