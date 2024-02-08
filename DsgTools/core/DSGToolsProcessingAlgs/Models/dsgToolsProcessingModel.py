@@ -545,6 +545,8 @@ class DsgToolsProcessingModel(QgsTask):
         iface.mapCanvas().freeze(True)
         for flagName in self._param["flags"]["flagLayerNames"]:
             vl = self.output["result"][flagName]
+            if vl.featureCount() == 0:
+                continue
             if QgsProject.instance().layerTreeRoot().findLayer(vl) is not None:
                 continue
             self.addLayerToGroup(vl, "DSGTools_QA_Toolbox", self.displayName())
