@@ -107,10 +107,9 @@ class IdentifyUncoveredStartAndEndPointsAlgorithm(ValidationAlgorithm):
         """
         self.algRunner = AlgRunner()
         inputLyr = self.parameterAsLayer(parameters, self.INPUT, context)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
         if inputLyr is None:
-            raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.INPUT)
-            )
+            return {self.FLAGS: self.flag_id}
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         filterExpression = self.parameterAsExpression(
             parameters, self.FILTER_EXPRESSION, context
@@ -124,7 +123,6 @@ class IdentifyUncoveredStartAndEndPointsAlgorithm(ValidationAlgorithm):
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
 
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
 
         nSteps = 9 if geographicBoundaryLyr is None else 10
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
