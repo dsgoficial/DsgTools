@@ -404,7 +404,7 @@ class QualityAssuranceWorkflow(QObject):
         # the task manager
         self.setupModelTask(currentModel)
 
-    def lastModelName(self):
+    def lastModelName(self, returnIdx=False):
         """
         Gets the last model prepared to execute but has either failed or not
         run.
@@ -419,9 +419,9 @@ class QualityAssuranceWorkflow(QObject):
                 modelName not in self.output
                 or self.output[modelName].get("finishStatus", "initial") != "finished"
             ):
-                return modelName
+                return modelName if not returnIdx else idx, modelName
         else:
-            return None
+            return None if not returnIdx else None, None
 
     def getOutputStatusDict(self):
         return self.output

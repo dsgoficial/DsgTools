@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.36 - dev
+## 4.13.37 - dev
 
 Novas Funcionalidades:
 
@@ -28,6 +28,7 @@ Melhorias:
 - O algoritmo RuleStatistics agora tem saídas vetoriais sem geometria para informar o resumo de erros. Tal alteração foi feita para realizar a integração com o workflow;
 - Adiciona camada de saída no algoritmo de verificação de ortografia (SpellChecker) para indicar se há erros;
 - A Caixa de Ferramentas de Controle de Qualidade agora só limpa as camadas que são flags dos processos, mantendo as entradas;
+- Adicionada uma verificação na execução da Caixa de Ferramentas de Controle de Qualidade para evitar que o usuário comece o processo novamente sem querer;
 
 
 Correção de bug:

@@ -849,15 +849,22 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 duration=3,
             )
 
+        sender = self.sender()
+        isFirstModel = sender is None or sender.objectName() == "runPushButton"
+        idx, lastModelDisplayName = workflow.lastModelName(returnIdx=True)
+        if idx != 0 and sender.objectName() == "runPushButton":
+            if not self.confirmAction(msg=self.tr("The workflow has already started running. Would you like to start over?"), showCancel=False):
+                refreshFeedback()
+                self.setGuiState(False)
+                self.pausePushButton.show()
+                self.continuePushButton.hide()
+                return
         workflow.modelStarted.connect(begin)
         workflow.modelFinished.connect(end)
         workflow.haltedOnFlags.connect(stopOnFlags)
         workflow.modelFinishedWithFlags.connect(warningFlags)
         workflow.workflowFinished.connect(postProcessing)
         workflow.workflowPaused.connect(pause)
-        sender = self.sender()
-        isFirstModel = sender is None or sender.objectName() == "runPushButton"
-        lastModelDisplayName = workflow.lastModelName()
         self.prepareOutputTreeNodes(
             lastModelDisplayName=lastModelDisplayName,
             clearBeforeRunning=True,
