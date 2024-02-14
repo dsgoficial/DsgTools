@@ -74,7 +74,7 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
             layerSet.add(lyr.id())
             feedback.setProgress(idx * progressStep)
 
-        return {self.OUTPUT: list(layerSet)}
+        return {self.OUTPUT: [lyr.id() if isinstance(lyr, QgsMapLayer) else lyr for lyr in layerSet]}
 
     def getLayerNameSetToLoad(self, layerNameList):
         loadedLayerDict = {
