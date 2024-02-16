@@ -29,6 +29,7 @@ from qgis.core import (
     QgsProcessingParameterString,
     QgsProcessingUtils,
     QgsProject,
+    QgsVectorLayer,
 )
 
 
@@ -69,12 +70,12 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
             lyr = QgsProcessingUtils.mapLayerFromString(layerName, context)
             if lyr is None:
                 continue
-            if lyr.readOnly():
+            if lyr.readOnly() or not isinstance(lyr, QgsVectorLayer):
                 continue
             layerSet.add(lyr.id())
             feedback.setProgress(idx * progressStep)
 
-        return {self.OUTPUT: [lyr.id() if isinstance(lyr, QgsMapLayer) else lyr for lyr in layerSet]}
+        return {self.OUTPUT: [lyr for lyr in layerSet]}
 
     def getLayerNameSetToLoad(self, layerNameList):
         loadedLayerDict = {

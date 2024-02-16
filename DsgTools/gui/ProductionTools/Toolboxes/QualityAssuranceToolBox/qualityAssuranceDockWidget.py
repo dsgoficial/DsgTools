@@ -853,7 +853,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         isFirstModel = sender is None or sender.objectName() == "runPushButton"
         idx, lastModelDisplayName = workflow.lastModelName(returnIdx=True)
         if idx != 0 and sender.objectName() == "runPushButton":
-            if not self.confirmAction(msg=self.tr("The workflow has already started running. Would you like to start over?"), showCancel=False):
+            if not self.confirmAction(msg=self.tr("The workflow has already started running. Would you like to start over?"), showCancel=True):
                 refreshFeedback()
                 self.setGuiState(False)
                 self.pausePushButton.show()
