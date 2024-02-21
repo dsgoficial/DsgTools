@@ -193,8 +193,9 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
                     self.tr(f"Layer {layerName} is empty. Skipping step.")
                 )
                 continue
+            fieldNameSet = set(f.name() for f in layer.fields())
             currentDict = self.parseParameterDict(
-                context, algParameterDict, input_id=layer_id
+                context, algParameterDict, input_id=layer_id, fieldNameSet=fieldNameSet
             )
             currentDict[inputKey] = layerName
             if (
@@ -237,10 +238,15 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
             )
         return {self.OUTPUT: self.flag_id}
 
-    def parseParameterDict(self, context, algParameterDict, input_id):
+    def parseParameterDict(self, context, algParameterDict, input_id, fieldNameSet):
         currentDict = dict(algParameterDict)  # copy of the dict
         for k, v in currentDict.items():
             if not isinstance(v, list):
+                continue
+            s = set(v).intersection(fieldNameSet)
+            if s != set():
+                # field list
+                currentDict[k] = list(s)
                 continue
             if isinstance(v, str):
                 if v == "":

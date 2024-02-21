@@ -1002,10 +1002,20 @@ class AlgRunner:
         onlySelected=False,
         outputLyr=None,
     ):
+        inputLyr = (
+            QgsProcessingUtils.mapLayerFromString(inputLyr, context)
+            if isinstance(inputLyr, str)
+            else inputLyr
+        )
         usedInput = (
             inputLyr
             if not onlySelected
             else QgsProcessingFeatureSourceDefinition(inputLyr.id(), True)
+        )
+        linesLyr = (
+            QgsProcessingUtils.mapLayerFromString(linesLyr, context)
+            if isinstance(linesLyr, str)
+            else linesLyr
         )
         usedLines = (
             linesLyr
@@ -1686,6 +1696,11 @@ class AlgRunner:
         is_child_algorithm=False,
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
+        inputLayer = (
+            QgsProcessingUtils.mapLayerFromString(inputLayer, context)
+            if isinstance(inputLayer, str)
+            else inputLayer
+        )
         parameters = {
             "INPUT": QgsProcessingFeatureSourceDefinition(
                 inputLayer.source(), selectedFeaturesOnly=onlySelected

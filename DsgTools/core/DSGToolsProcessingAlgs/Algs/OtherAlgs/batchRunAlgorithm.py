@@ -150,7 +150,10 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
                     self.tr(f"Layer {layerName} is empty. Skipping step.")
                 )
                 continue
-            currentDict = self.parseParameterDict(context, algParameterDict)
+            fieldNameSet = set(f.name() for f in layer.fields())
+            currentDict = self.parseParameterDict(
+                context, algParameterDict, fieldNameSet
+            )
             currentDict[inputKey] = layerName
             output = self.runProcessingAlg(
                 algName,
@@ -180,13 +183,18 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
             )
         return {self.OUTPUT: self.flag_id}
 
-    def parseParameterDict(self, context, algParameterDict):
+    def parseParameterDict(self, context, algParameterDict, fieldNameSet):
         """
         Método diferente do caso com limite geográfico. Naquele caso, filtra a entrada
         """
         currentDict = dict(algParameterDict)  # copy of the dict
         for k, v in currentDict.items():
             if not isinstance(v, list):
+                continue
+            s = set(v).intersection(fieldNameSet)
+            if s != set():
+                # field list
+                currentDict[k] = list(s)
                 continue
             if isinstance(v, str):
                 if v == "":

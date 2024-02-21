@@ -362,13 +362,12 @@ class LayerHandler(QObject):
         iterator = lyr.getFeatures(request) if request else lyr.getFeatures()
         localTotal = 100 / lyr.featureCount() if lyr.featureCount() else 0
         for current, feat in enumerate(iterator):
-            if feedback:
-                if feedback.isCanceled():
-                    break
+            if feedback is not None and feedback.isCanceled():
+                break
             fid = feat[pk] if pk else feat.id()
             if fid in inputDict:
                 inputDict[fid]["featList"].append(feat)
-            if feedback:
+            if feedback is not None:
                 feedback.setProgress(localTotal * current)
 
     def updateOriginalLayer(
@@ -426,11 +425,12 @@ class LayerHandler(QObject):
             QgsProcessingMultiStepFeedback(3 * lenList, feedback) if feedback else None
         )
         for i, lyr in enumerate(lyrList):
-            if feedback is not None and multiStepFeedback.isCanceled():
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
             parameterDict = self.getDestinationParameters(lyr)
-            multiStepFeedback.setCurrentStep(3 * i)
-            multiStepFeedback.pushInfo(self.tr(f"Building {lyr.name()} input dict"))
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(3 * i)
+                multiStepFeedback.pushInfo(self.tr(f"Building {lyr.name()} input dict"))
             inputDict = self.buildInputDict(
                 lyr, onlySelected=onlySelected, feedback=multiStepFeedback
             )
@@ -439,8 +439,11 @@ class LayerHandler(QObject):
             request = QgsFeatureRequest(
                 QgsExpression("layer = '{0}'".format(lyr.name()))
             )
-            multiStepFeedback.setCurrentStep(3 * i + 1)
-            multiStepFeedback.pushInfo(self.tr(f"Populating {lyr.name()} input dict"))
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(3 * i + 1)
+                multiStepFeedback.pushInfo(
+                    self.tr(f"Populating {lyr.name()} input dict")
+                )
             self.populateInputDictFeatList(
                 unifiedLyr,
                 inputDict,
@@ -451,8 +454,9 @@ class LayerHandler(QObject):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
             coordinateTransformer = self.getCoordinateTransformer(unifiedLyr, lyr)
-            multiStepFeedback.setCurrentStep(3 * i + 2)
-            multiStepFeedback.pushInfo(self.tr(f"Updating {lyr.name()} features"))
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(3 * i + 2)
+                multiStepFeedback.pushInfo(self.tr(f"Updating {lyr.name()} features"))
             self.updateOriginalLayerFeatures(
                 lyr,
                 inputDict,
@@ -521,8 +525,9 @@ class LayerHandler(QObject):
             featuresToAdd = set(addedFeatures)
             return idsToRemove, featuresToAdd, geometriesToChange
 
-        multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr("Submitting tasks to thread..."))
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+            multiStepFeedback.pushInfo(self.tr("Submitting tasks to thread..."))
         for current, (id_, featDict) in enumerate(inputDict.items()):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 lyr.endEditCommand()
@@ -531,8 +536,9 @@ class LayerHandler(QObject):
             futures.add(pool.submit(evaluate, id_, featDict))
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(localTotal * current)
-        multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(self.tr("Evaluating results..."))
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+            multiStepFeedback.pushInfo(self.tr("Evaluating results..."))
         changeGeometryLambda = lambda x: lyr.changeGeometry(
             x[0], x[1], skipDefaultValue=True
         )
@@ -546,7 +552,7 @@ class LayerHandler(QObject):
             list(map(changeGeometryLambda, geometriesToChange))
             featuresToAdd = featuresToAdd.union(addedFeatures)
             idsToRemove = idsToRemove.union(deletedIds)
-            if current % 1000 == 0:
+            if current % 1000 == 0 and multiStepFeedback is not None:
                 multiStepFeedback.pushInfo(
                     self.tr(f"Evaluated {current}/{nSteps} results.")
                 )
@@ -1662,6 +1668,11 @@ class LayerHandler(QObject):
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Creating index"))
+        inputLyr = (
+            QgsProcessingUtils.mapLayerFromString(inputLyr, context)
+            if isinstance(inputLyr, str)
+            else inputLyr
+        )
         usedInput = (
             inputLyr
             if not onlySelected
@@ -1829,12 +1840,15 @@ class LayerHandler(QObject):
         """
         inputList = inputLineLyrList
         algRunner = AlgRunner() if algRunner is None else algRunner
-        context = (
-            dataobjects.createContext(feedback=feedback) if context is None else context
+        context = QgsProcessingContext()
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(3, feedback)
+            if feedback is not None
+            else None
         )
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr("Getting lines"))
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+            multiStepFeedback.pushInfo(self.tr("Getting lines"))
         linesLyr = self.getLinesLayerFromPolygonsAndLinesLayers(
             inputLineLyrList,
             inputPolygonLyrList,
@@ -1842,8 +1856,9 @@ class LayerHandler(QObject):
             feedback=multiStepFeedback,
             context=context,
         )
-        multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(self.tr("Building vertex near edge dict"))
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+            multiStepFeedback.pushInfo(self.tr("Building vertex near edge dict"))
         # only selected should not be filled because it was already used to build the line lyr
         return self.getVertexNearEdgeDict(
             linesLyr,
@@ -2022,9 +2037,7 @@ class LayerHandler(QObject):
         """
         lineList = []
         algRunner = AlgRunner() if algRunner is None else algRunner
-        context = (
-            dataobjects.createContext(feedback=feedback) if context is None else context
-        )
+        context = QgsProcessingContext() if context is None else context
         nSteps = (
             2 * len(inputLineLyrList)
             + 3 * len(inputPolygonLyrList)
@@ -2044,6 +2057,8 @@ class LayerHandler(QObject):
         for lineLyr in inputLineLyrList:
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(currentStep)
+            if isinstance(lineLyr, str):
+                lineLyr = QgsProcessingUtils.mapLayerFromString(lineLyr, context)
             singlePartLyr = algRunner.runMultipartToSingleParts(
                 inputLayer=lineLyr
                 if not onlySelected
@@ -2072,6 +2087,8 @@ class LayerHandler(QObject):
         for polygonLyr in inputPolygonLyrList:
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(currentStep)
+            if isinstance(polygonLyr, str):
+                polygonLyr = QgsProcessingUtils.mapLayerFromString(polygonLyr, context)
             usedInput = algRunner.runMultipartToSingleParts(
                 inputLayer=polygonLyr
                 if not onlySelected
@@ -2159,6 +2176,8 @@ class LayerHandler(QObject):
                 if len(mergedPolygonsInputList) > 0
                 else None
             )
+            if mergedPolygons is None:
+                return mergedLayer
             currentStep += 1
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(currentStep)
@@ -3025,11 +3044,16 @@ class LayerHandler(QObject):
         if vertexLyr.featureCount() == 0:
             return
         vertexLyrExtent = vertexLyr.extent()
-        multiStepFeedback = QgsProcessingMultiStepFeedback(nLayers, feedback)
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(nLayers, feedback)
+            if feedback is not None
+            else feedback
+        )
         for current, lyr in enumerate(layerList):
-            if multiStepFeedback.isCanceled():
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 return
-            multiStepFeedback.setCurrentStep(current)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(current)
             if not vertexLyrExtent.intersects(lyr.extent()):
                 continue
             self.addVertexesToLayer(
@@ -3050,7 +3074,7 @@ class LayerHandler(QObject):
         changeGeometryLambda = lambda x: layer.changeGeometry(x.id(), x.geometry())
 
         def evaluateAddVertex(feat):
-            if feedback.isCanceled():
+            if feedback is not None and feedback.isCanceled():
                 return None
             vertexSet = set()
             geom = feat.geometry()
@@ -3073,12 +3097,16 @@ class LayerHandler(QObject):
         stepSize = 100 / featCount
         futures = set()
         pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(2, feedback)
+            if feedback is not None
+            else None
+        )
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.setCurrentStep(1)
         updateSet = set()
         for current, feat in enumerate(layer.getFeatures()):
-            if multiStepFeedback.isCanceled():
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 return
             #     futures.add(pool.submit(evaluateAddVertex, feat))
             #     multiStepFeedback.setProgress(current * stepSize)
@@ -3092,7 +3120,8 @@ class LayerHandler(QObject):
             outputFeat = evaluateAddVertex(feat)
             if outputFeat is not None:
                 updateSet.add(outputFeat)
-            multiStepFeedback.setProgress(current * stepSize)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(current * stepSize)
 
         if updateSet == set():
             return

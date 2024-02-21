@@ -178,6 +178,8 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             lyrList = [i for i in item["snapLayerList"] if i in snapStructure]
+            if lyrList == []:
+                continue
             multiStepFeedback.pushInfo(
                 self.tr(f"Starting snapping with reference layer {referenceLayerName}.")
             )
@@ -307,6 +309,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 "tempLayer": insideLyr,
                 "outsideLayer": outsideLyr,
                 "snap": item["snap"],
+                "insideFeatureCount": insideLyr.featureCount(),
             }
         return snapStructure
 
@@ -314,9 +317,14 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         self, inputLayer, referenceLayer, tol, behavior, context, feedback
     ):
         nSteps = 2 if behavior not in [0, 1] else 4
-        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        multiStepFeedback = (
+            QgsProcessingMultiStepFeedback(nSteps, feedback)
+            if feedback is not None
+            else None
+        )
         currentStep = 0
-        multiStepFeedback.setCurrentStep(currentStep)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
         snappedLyr = self.algRunner.runSnapGeometriesToLayer(
             inputLayer=inputLayer,
             referenceLayer=referenceLayer,
@@ -327,7 +335,8 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             is_child_algorithm=True,
         )
         currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(currentStep)
         if behavior not in [0, 1]:
             self.algRunner.runCreateSpatialIndex(
                 snappedLyr, context, multiStepFeedback, is_child_algorithm=True
@@ -354,7 +363,8 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         for lyr in itertools.chain.from_iterable(list(primitiveDict.values())):
             lyr.commitChanges()
             currentStep += 1
-            multiStepFeedback.setCurrentStep(currentStep)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
             self.algRunner.runCreateSpatialIndex(
                 lyr, context, multiStepFeedback, is_child_algorithm=True
             )

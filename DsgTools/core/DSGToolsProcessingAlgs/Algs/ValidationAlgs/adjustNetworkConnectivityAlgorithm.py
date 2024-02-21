@@ -75,7 +75,8 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-
+        if inputLyr is None or inputLyr.featureCount() == 0:
+            return {}
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(
@@ -88,6 +89,8 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
             onlySelected=onlySelected,
         )
+        if dangleLyr.featureCount() == 0:
+            return {}
 
         multiStepFeedback.setCurrentStep(1)
         layerHandler.filterDangles(dangleLyr, tol, feedback=multiStepFeedback)
@@ -127,7 +130,6 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
             behavior=algRunner.PreferClosestInsertExtraVerticesWhereRequired,
         )
-        QgsProject.instance().removeMapLayer(dangleLyr.id())
         return {}
 
     def name(self):

@@ -116,6 +116,10 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUT)
             )
+        self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
+        if inputLyr.featureCount() == 0:
+            feedback.pushWarning(self.tr("Empty input"))
+            return {self.FLAGS: self.flag_id}
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         snap = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         # if snap < 0 and snap != -1:
@@ -131,7 +135,6 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
             raise NotImplementedError(
                 self.tr("Spatial restriction not implemented yet for polygon layers")
             )
-        self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
         if geographicBoundsLyr is None:
             self.cleanGeometries(
                 context,

@@ -176,7 +176,10 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
             context=context,
         )
         multiStepFeedback.setCurrentStep(2)
-        self.flagSink.addFeatures(outputLyr.getFeatures(), QgsFeatureSink.FastInsert)
+        if outputLyr.featureCount() > 0:
+            self.flagSink.addFeatures(
+                outputLyr.getFeatures(), QgsFeatureSink.FastInsert
+            )
         multiStepFeedback.setCurrentStep(3)
         self.getUnsegmentedErrors(
             mergedLines,
