@@ -35,7 +35,6 @@ sys.path.append(os.path.abspath(currentPath))
 
 from qgis.core import QgsApplication
 
-from .gui.guiManager import GuiManager
 from .core.DSGToolsProcessingAlgs.dsgtoolsProcessingAlgorithmProvider import (
     DSGToolsProcessingAlgorithmProvider,
 )
@@ -55,7 +54,7 @@ class DsgTools(object):
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
         # initialize locale
-        locale = QSettings().value("locale/userLocale")[0:2]
+        locale = QSettings().value("locale/userLocale", "en_US")[0:2]
         locale_path = os.path.join(
             self.plugin_dir, "i18n", "DsgTools_{}.qm".format(locale)
         )
@@ -76,7 +75,6 @@ class DsgTools(object):
 
         self.dsgTools = None
         self.menuBar = self.iface.mainWindow().menuBar()
-        self.provider = DSGToolsProcessingAlgorithmProvider()
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -115,7 +113,7 @@ class DsgTools(object):
         """
         Create the menu entries and toolbar icons inside the QGIS GUI
         """
-
+        from .gui.guiManager import GuiManager
         self.dsgTools = QMenu(self.iface.mainWindow())
         self.dsgTools.setObjectName("DsgTools")
         self.dsgTools.setTitle("DSGTools")
@@ -128,4 +126,8 @@ class DsgTools(object):
         )
         self.guiManager.initGui()
         # provider
+        self.initProvider()
+
+    def initProvider(self):
+        self.provider = DSGToolsProcessingAlgorithmProvider()
         QgsApplication.processingRegistry().addProvider(self.provider)

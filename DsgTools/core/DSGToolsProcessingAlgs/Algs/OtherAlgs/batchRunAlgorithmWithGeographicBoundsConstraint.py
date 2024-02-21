@@ -137,9 +137,7 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         layerCsv = self.parameterAsString(parameters, self.INPUTLAYERS, context)
-        algParameterDict = self.loadAlgorithmParametersDict(
-            parameters, context, feedback
-        )
+        algParameterDict = self.loadAlgorithmParametersDict(parameters, context)
         algName = self.parameterAsString(parameters, self.ALG_NAME, context)
         inputKey = self.parameterAsString(
             parameters, self.INPUT_LAYER_PARAMETER_NAME, context
@@ -273,9 +271,8 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
             )
         return currentDict
 
-    def loadAlgorithmParametersDict(self, parameters, context, feedback):
+    def loadAlgorithmParametersDict(self, parameters, context):
         rules_text = self.parameterAsString(parameters, self.PARAMETER_DICT, context)
-        feedback.pushInfo(rules_text)
         return json.loads(rules_text)
 
     def runProcessingAlg(self, algName, outputKey, parameters, context, feedback):

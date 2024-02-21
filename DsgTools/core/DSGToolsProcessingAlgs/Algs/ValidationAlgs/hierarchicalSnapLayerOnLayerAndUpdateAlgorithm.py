@@ -23,6 +23,7 @@
 from collections import defaultdict
 import itertools
 import json
+import gc
 
 from PyQt5.QtCore import QCoreApplication
 
@@ -97,6 +98,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
+        gc.disable()
         self.layerHandler = LayerHandler()
         self.algRunner = AlgRunner()
         snapDictList = self.parameterAsSnapHierarchy(
@@ -201,7 +203,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
             geographicBoundaryLyr=geographicBoundaryLyr,
         )
-
+        gc.enable()
         return {}
 
     def buildAuxGeographicBoundary(self, geographicBoundary, context, feedback):
