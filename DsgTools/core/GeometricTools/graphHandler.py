@@ -775,7 +775,7 @@ def buildAuxFlowGraph(
 
 
 def find_mergeable_edges_on_graph(
-    nx, G, nodeIdDict, feedback: Optional[QgsFeedback] = None
+    nx, G, nodeIdDict, allowClosedLines: bool = False, feedback: Optional[QgsFeedback] = None
 ):
     """
     Find mergeable edges in a graph.
@@ -904,6 +904,8 @@ def find_mergeable_edges_on_graph(
             continue
         elif nCandidates == 1:
             furthestNode = candidateNodes[0]
+            if allowClosedLines:
+                continue
         else:
             furthestNode = max(
                 candidateNodes, key=lambda x: distance(nodeWithMaxDegree, x)
@@ -944,6 +946,7 @@ def filter_mergeable_graphs_using_attibutes(
     nodeIdDict: Dict[int, QByteArray],
     attributeNameList: List[str],
     isMulti: bool,
+    allowClosedLines: bool = False,
 ) -> Tuple[Set[int], Set[int]]:
     """Filters mergeable graphs based on specified attributes.
 
@@ -967,9 +970,9 @@ def filter_mergeable_graphs_using_attibutes(
         auxDict[attrTuple].add_edge(n0, n1, featid=featid)
     for auxGraph in auxDict.values():
         for mergeableG in find_mergeable_edges_on_graph(
-            nx, auxGraph, nodeIdDict
+            nx, auxGraph, nodeIdDict, allowClosedLines=allowClosedLines
         ).values():
-            if len(mergeableG.edges) < 2:
+            if not allowClosedLines and len(mergeableG.edges) < 2:
                 continue
             idToKeep, *idsToDelete = set(
                 mergeableG[n0][n1][p]["featid"] for n0, n1, p in mergeableG.edges

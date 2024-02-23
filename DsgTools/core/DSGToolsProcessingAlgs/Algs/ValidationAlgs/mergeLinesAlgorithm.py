@@ -49,6 +49,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
     ATTRIBUTE_BLACK_LIST = "ATTRIBUTE_BLACK_LIST"
     IGNORE_VIRTUAL_FIELDS = "IGNORE_VIRTUAL_FIELDS"
     IGNORE_PK_FIELDS = "IGNORE_PK_FIELDS"
+    ALLOW_CLOSED_LINES_ON_OUTPUT = "ALLOW_CLOSED_LINES_ON_OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -89,6 +90,13 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
                 defaultValue=True,
             )
         )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.ALLOW_CLOSED_LINES_ON_OUTPUT,
+                self.tr("Allow closed lines on output"),
+                defaultValue=False,
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -113,6 +121,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
             parameters, self.IGNORE_VIRTUAL_FIELDS, context
         )
         ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
+        allowClosedLines = self.parameterAsBool(parameters, self.ALLOW_CLOSED_LINES_ON_OUTPUT, context)
         nSteps = 8
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
@@ -173,6 +182,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
             G=networkMultiGraph,
             feedback=multiStepFeedback,
             nodeIdDict=nodeIdDict,
+            allowClosedLines=allowClosedLines
         )
         nSteps = len(outputGraphDict)
         if nSteps == 0:
@@ -197,6 +207,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
                 attributeNameList=attributeNameList,
                 isMulti=QgsWkbTypes.isMultiType(inputLyr.wkbType()),
                 nodeIdDict=nodeIdDict,
+                allowClosedLines=allowClosedLines,
             )
 
         futures = set()
