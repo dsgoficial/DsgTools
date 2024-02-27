@@ -1951,8 +1951,9 @@ class AlgRunner:
         attributeBlackList=None,
         ignoreVirtualFields=True,
         ignorePkFields=True,
+        allowClosed=False,
         feedback=None,
-    ):
+    ) -> None:
         attributeBlackList = [] if attributeBlackList is None else attributeBlackList
         output = processing.run(
             "dsgtools:mergelineswithsameattributeset",
@@ -1962,6 +1963,7 @@ class AlgRunner:
                 "ATTRIBUTE_BLACK_LIST": attributeBlackList,
                 "IGNORE_VIRTUAL_FIELDS": ignoreVirtualFields,
                 "IGNORE_PK_FIELDS": ignorePkFields,
+                "ALLOW_CLOSED": allowClosed,
             },
             context=context,
             feedback=feedback,
@@ -1976,7 +1978,7 @@ class AlgRunner:
         outputLyr: Optional[QgsVectorLayer] = None,
         feedback: Optional[QgsFeedback] = None,
         is_child_algorithm: bool = False,
-    ):
+    ) -> QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
             "native:renametablefield",
@@ -2000,11 +2002,30 @@ class AlgRunner:
         outputLyr: Optional[QgsVectorLayer] = None,
         feedback: Optional[QgsFeedback] = None,
         is_child_algorithm: bool = False,
-    ):
+    ) -> QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
             "native:splitlinesbylength",
             {"INPUT": inputLayer, "LENGTH": length, "OUTPUT": outputLyr},
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runInterpolatePoint(
+        self,
+        inputLayer: QgsVectorLayer,
+        distance: float,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:interpolatepoint",
+            {"INPUT": inputLayer, "DISTANCE": distance, "OUTPUT": outputLyr},
             context=context,
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
