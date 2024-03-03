@@ -55,6 +55,7 @@ class AbstractDb(QObject):
                 "FTer_2a_Ed": "edgv_FTer_2a_Ed",
                 "3.0": "3",
                 "3.0 Pro": "3_Pro",
+                "3.0 Topo": "3_Topo",
             }
         )
         self.utmGrid = UtmGrid()
@@ -869,6 +870,8 @@ class AbstractDb(QObject):
             qmlPath = os.path.join(qmlVersionPath, "edgv_3")
         elif version == "3.0 Pro":
             qmlPath = os.path.join(qmlVersionPath, "edgv_3_pro")
+        elif version == "3.0 Topo":
+            qmlPath = os.path.join(qmlVersionPath, "edgv_3_topo")
         elif version == "2.1.3":
             qmlPath = os.path.join(qmlVersionPath, "edgv_213")
         elif version == "2.1.3 Pro":

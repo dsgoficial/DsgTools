@@ -6,11 +6,11 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp"#
 SET search_path TO pg_catalog,public,edgv,dominios#
 
 CREATE TABLE public.db_metadata(
-	 edgvversion varchar(50) NOT NULL DEFAULT 'EDGV 3.0 Pro',
+	 edgvversion varchar(50) NOT NULL DEFAULT 'EDGV 3.0 Topo',
 	 dbimplversion varchar(50) NOT NULL DEFAULT '1.3.2',
-	 CONSTRAINT edgvversioncheck CHECK (edgvversion = 'EDGV 3.0 Pro')
+	 CONSTRAINT edgvversioncheck CHECK (edgvversion = 'EDGV 3.0 Topo')
 )#
-INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 3.0 Pro','1.3.2')#
+INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 3.0 Topo','1.3.2')#
 
 CREATE TABLE dominios.exibir_lado_simbologia (
 	 code smallint NOT NULL,
