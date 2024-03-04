@@ -23,25 +23,37 @@
 
 import copy
 from dataclasses import asdict, dataclass, field
-from typing import Callable, Dict, List
-import os, json
-from time import time, sleep
+from enum import Enum
+from typing import Any, Callable, Dict, List
+import os
+from time import time
 
 from qgis.core import (
     QgsTask,
     QgsProject,
     QgsMapLayer,
-    QgsLayerTreeLayer,
     QgsProcessingFeedback,
     QgsProcessingModelAlgorithm,
     QgsVectorLayer,
     QgsProcessingUtils,
     QgsProcessingContext,
+    QgsMessageLog,
+    Qgis,
 )
-from qgis.PyQt.QtCore import pyqtSignal, QCoreApplication
+from qgis.PyQt.QtCore import pyqtSignal, QObject
 from qgis.utils import iface
 from processing.tools import dataobjects
 import processing
+
+
+class ExecutionStatus(Enum):
+    INITIAL = "initial"
+    FAILED = "failed"
+    CANCELED = "canceled"
+    FINISHED = "finished"
+    FINISHED_WITH_FLAGS = "finished with flags"
+    SKIPPED = "skipped"
+    ON_HOLD = "on hold"
 
 @dataclass
 class FlagSettings:
@@ -87,7 +99,14 @@ class Metadata:
     originalName: str
 
 @dataclass
-class DSGToolsWorkflowItem:
+class ModelExecutionOutput:
+    result: Dict[str, Any] = dict()
+    executionTime: float = 0.0
+    executionMessage: str = ""
+    status: ExecutionStatus = ExecutionStatus.INITIAL
+
+@dataclass
+class DSGToolsWorkflowItem(QObject):
     displayName: str
     flags: FlagSettings
     pauseAfterExecution: bool
@@ -95,14 +114,13 @@ class DSGToolsWorkflowItem:
     metadata: Metadata
 
     def __post_init__(self):
-        self.output = {
-            "result": dict(),
-            "status": False,
-            "executionTime": 0.0,
-            "errorMessage": "Thread not started yet.",
-            "finishStatus": "initial",
-        }
+        self.resetItem()
         self.model = self.getModel()
+        self.currentTask = None
+        self.workflowItemExecutionFinished = pyqtSignal(DSGToolsWorkflowItem)
+    
+    def resetItem(self):
+        self.executionOutput = ModelExecutionOutput()
     
     def as_dict(self) -> Dict[str, str]:
         return {k: str(v) for k, v in asdict(self).items()}
@@ -123,17 +141,36 @@ class DSGToolsWorkflowItem:
 
     def getTask(self, feedback: QgsProcessingFeedback) -> QgsTask:
         func = self.getTaskRunningFunction(feedback)
-        on_finished_func = self.getOnFinishedFunction()
-        return QgsTask.fromFunction(
+        on_finished_func = self.getOnFinishedFunction(feedback)
+        self.currentTask = QgsTask.fromFunction(
             func,
             on_finished=on_finished_func,
         )
+        return self.currentTask
+
+    def cancelCurrentTask(self):
+        if self.currentTask is None:
+            return
+        self.currentTask.cancel()
+        self.currentTask = None
+    
+    def pauseCurrentTask(self):
+        if self.currentTask is None:
+            return
+        self.currentTask.hold()
+    
+    def resumeCurrentTask(self):
+        if self.currentTask is None:
+            return
+        self.currentTask.unhold()
 
     def getTaskRunningFunction(self, feedback: QgsProcessingFeedback) -> Callable:
         model = copy.deepcopy(self.model)
         modelParameters = self.getModelParameters()
         def func():
+            start = time()
             context = dataobjects.createContext(feedback=feedback)
+            context.setProject(QgsProject.instance())
             out = processing.run(
                 model,
                 {param: "memory:" for param in modelParameters},
@@ -142,11 +179,134 @@ class DSGToolsWorkflowItem:
             )
             out.pop("CHILD_INPUTS", None)
             out.pop("CHILD_RESULTS", None)
+            out["start_time"] = start
             return out
         return func
 
-    def getOnFinishedFunction(self):
-        return
+    def getOnFinishedFunction(self, feedback: QgsProcessingFeedback) -> Callable:
+        def on_finished_func(exception, result=None):
+            if exception is not None:
+                QgsMessageLog.logMessage(
+                    f"Exception: {exception}",
+                    "DSGTools Plugin",
+                    Qgis.Critical
+                )
+                self.executionOutput = ModelExecutionOutput(
+                    executionMessage=self.tr(f"Model execution has failed:\n {str(exception)}"),
+                    status=ExecutionStatus.FAILED,
+                )
+                self.workflowItemExecutionFinished.emit(self)
+                return
+            if result is not None:
+                self.handleOutputs(result, feedback)
+                self.loadOutputs(feedback)
+            else:
+                self.executionOutput = ModelExecutionOutput(
+                    executionMessage=self.tr(f"Model execution was canceled by the user."),
+                    status=ExecutionStatus.CANCELED,
+                )
+            self.workflowItemExecutionFinished.emit(self)
+            self.currentTask = None
+        
+        return on_finished_func
+
+    def handleOutputs(self, result, feedback):
+        start = result.pop("start_time")
+        context = dataobjects.createContext(feedback=feedback)
+        context.setProject(QgsProject.instance())
+        for paramName, vl in result.items():
+            baseName = paramName.rsplit(":", 1)[-1]
+            name = baseName
+            idx = 1
+            while name in self.executionOutput.result:
+                name = "{0} ({1})".format(baseName, idx)
+                idx += 1
+            if isinstance(vl, str):
+                vl = QgsProcessingUtils.mapLayerFromString(vl, context)
+            vl.setName(name)
+            self.executionOutput.result[name] = vl
+        self.executionOutput.executionTime = time() - start
+        self.executionOutput.executionMessage = self.tr("Model execution finished.")
+    
+    def loadOutput(self) -> bool:
+        return self.flags.loadOutput
+    
+    def getStatus(self) -> ExecutionStatus:
+        return self.executionOutput.status
+    
+    def loadOutputs(self, feedback):
+        loadOutput = self.loadOutput()
+        if not loadOutput:
+            return
+        flagLayerNames = self.flagLayerNames()
+        context = QgsProcessingContext()
+        iface.mapCanvas().freeze(True)
+        for name, vl in self.executionOutput.result.items():
+            if vl is None:
+                continue
+            if vl.name() not in flagLayerNames and not loadOutput:
+                continue
+            if isinstance(vl, str):
+                vl = QgsProcessingUtils.mapLayerFromString(vl, context)
+                self.executionOutput.result[name] = vl
+            if not isinstance(vl, QgsMapLayer) or not vl.isValid():
+                continue
+            vl.setName(name.split(":", 2)[-1])
+            if vl.name() in flagLayerNames and vl.featureCount() == 0:
+                continue
+            cloneVl = vl.clone()
+            self.executionOutput.result[name] = cloneVl
+            self.addLayerToGroup(cloneVl, self.displayName(), clearGroupBeforeAdding=True)
+            self.enableFeatureCount(cloneVl)
+        iface.mapCanvas().freeze(False)
+    
+    def addLayerToGroup(
+        self, layer, subgroupname, clearGroupBeforeAdding=False
+    ):
+        """
+        Adds a layer to a group into layer panel.
+        :param layer: (QgsMapLayer) layer to be added to canvas.
+        :param subgroupname: (str) name for the subgroup to be added.
+        """
+        subGroup = self.createGroups(subgroupname)
+        if clearGroupBeforeAdding:
+            self.clearGroup(subGroup)
+        layer = (
+            layer
+            if isinstance(layer, QgsMapLayer)
+            else QgsProcessingUtils.mapLayerFromString(layer)
+        )
+        QgsProject.instance().addMapLayer(layer, addToLegend=False)
+        subGroup.addLayer(layer)
+
+    def createGroups(self, subgroupname):
+        rootNode = QgsProject.instance().layerTreeRoot()
+        parentGroupName = "DSGTools_QA_Toolbox"
+        parentGroupNode = rootNode.findGroup(parentGroupName)
+        parentGroupNode = (
+            parentGroupNode
+            if parentGroupNode
+            else rootNode.insertGroup(0, parentGroupName)
+        )
+        subGroup = self.createGroup(subgroupname, parentGroupNode)
+        return subGroup
+
+    def createGroup(self, groupName, rootNode):
+        groupNode = rootNode.findGroup(groupName)
+        return groupNode if groupNode else rootNode.addGroup(groupName)
+
+    def prepareGroup(self, model):
+        subGroup = self.createGroups(
+            self.model().model.displayName()
+        )
+        self.clearGroup(subGroup)
+
+    def clearGroup(self, group):
+        for lyrGroup in group.findLayers():
+            lyr = lyrGroup.layer()
+            if isinstance(lyr, QgsVectorLayer):
+                lyr.rollBack()
+        group.removeAllChildren()
 
 def load_from_json(input_dict: dict) -> DSGToolsWorkflowItem:
     params = copy.deepcopy(input_dict)
