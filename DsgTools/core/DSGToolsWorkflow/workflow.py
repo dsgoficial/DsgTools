@@ -53,15 +53,9 @@ class DSGToolsWorkflow(QObject):
         self.workflowHasBeenReset = pyqtSignal()
         self.workflowPaused = pyqtSignal()
         self.currentTaskChanged = pyqtSignal(int, QgsTask)
-        if not self.validateWorkflowItems():
-            raise Exception("Invalid workflow")
 
     def as_dict(self) -> Dict[str, str]:
         return {k: v for k, v in asdict(self).items()}
-
-    def validateWorkflowItems(self):
-        # TODO
-        return True
 
     def getCurrentWorkflowStepIndex(self) -> int:
         return self.currentStepIndex
