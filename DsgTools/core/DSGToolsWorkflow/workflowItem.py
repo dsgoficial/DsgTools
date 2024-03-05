@@ -48,6 +48,7 @@ import processing
 
 class ExecutionStatus(Enum):
     INITIAL = "initial"
+    RUNNING = "running"
     FAILED = "failed"
     CANCELED = "canceled"
     FINISHED = "finished"
@@ -147,6 +148,10 @@ class DSGToolsWorkflowItem(QObject):
             on_finished=on_finished_func,
         )
         return self.currentTask
+    
+    def changeCurrentStatus(self, status: ExecutionStatus, executionMessage: str) -> None:
+        self.executionOutput.status = status
+        self.executionOutput.executionMessage = executionMessage
 
     def cancelCurrentTask(self):
         if self.currentTask is None:

@@ -50,6 +50,7 @@ class DSGToolsWorkflow(QObject):
             len(self.workflowItemList), self.feedback
         )
         self.currentWorkflowItemStatusChanged = pyqtSignal(int, DSGToolsWorkflowItem)
+        self.workflowHasBeenReset = pyqtSignal()
         self.currentTaskChanged = pyqtSignal(int, QgsTask)
         if not self.validateWorkflowItems():
             raise Exception("Invalid workflow")
@@ -102,18 +103,27 @@ class DSGToolsWorkflow(QObject):
         if resumeFromStart:
             self.resetWorkflowItems()
             self.setCurrentWorkflowItem(0)
+            self.workflowHasBeenReset.emit()
         currentTask: QgsTask = self.prepareTask()
+        currentWorkflowItem = self.getCurrentWorkflowItem()
+        currentWorkflowItem.changeCurrentStatus(status=ExecutionStatus.RUNNING, executionMessage=self.tr("Execution started"))
         self.multiStepFeedback.setCurrentStep(self.currentStepIndex)
-        self.currentWorkflowItemStatusChanged.emit(self.currentStepIndex, self.getCurrentWorkflowItem())
-        self.currentTaskChanged.emmit(self.currentStepIndex, currentTask)
+        self.currentWorkflowItemStatusChanged.emit(self.currentStepIndex, currentWorkflowItem)
+        self.currentTaskChanged.emit(self.currentStepIndex, currentTask)
         QgsApplication.taskManager().addTask(currentTask)
     
     def cancelCurrentRun(self):
         currentWorkflowItem = self.getCurrentWorkflowItem()
         currentWorkflowItem.cancelCurrentTask()
+        self.multiStepFeedback.setCurrentStep(self.currentStepIndex)
         self.currentWorkflowItemStatusChanged.emit(self.currentStepIndex, currentWorkflowItem)
     
     def pauseCurrentRun(self):
+        currentWorkflowItem = self.getCurrentWorkflowItem()
+        currentWorkflowItem.pauseCurrentTask()
+        self.currentWorkflowItemStatusChanged.emit(self.currentStepIndex, currentWorkflowItem)
+    
+    def resumeCurrentRun(self):
         currentWorkflowItem = self.getCurrentWorkflowItem()
         currentWorkflowItem.pauseCurrentTask()
         self.currentWorkflowItemStatusChanged.emit(self.currentStepIndex, currentWorkflowItem)
