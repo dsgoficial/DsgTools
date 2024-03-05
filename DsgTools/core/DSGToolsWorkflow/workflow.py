@@ -21,8 +21,8 @@
  ***************************************************************************/
 """
 
-from dataclasses import dataclass, field
-from typing import List
+from dataclasses import asdict, dataclass, field
+from typing import Dict, List
 
 from qgis.core import (QgsApplication, QgsProcessingFeedback,
                        QgsProcessingMultiStepFeedback, QgsTask)
@@ -39,9 +39,9 @@ class WorkflowMetadata:
 
 @dataclass
 class DSGToolsWorkflow(QObject):
-    workflowItemList: List[DSGToolsWorkflowItem]
     displayName: str
     metadata: WorkflowMetadata
+    workflowItemList: List[DSGToolsWorkflowItem]
 
     def __post_init__(self):
         self.currentStepIndex = 0
@@ -51,9 +51,13 @@ class DSGToolsWorkflow(QObject):
         )
         self.currentWorkflowItemStatusChanged = pyqtSignal(int, DSGToolsWorkflowItem)
         self.workflowHasBeenReset = pyqtSignal()
+        self.workflowPaused = pyqtSignal()
         self.currentTaskChanged = pyqtSignal(int, QgsTask)
         if not self.validateWorkflowItems():
             raise Exception("Invalid workflow")
+
+    def as_dict(self) -> Dict[str, str]:
+        return {k: v for k, v in asdict(self).items()}
 
     def validateWorkflowItems(self):
         # TODO
@@ -97,6 +101,11 @@ class DSGToolsWorkflow(QObject):
         if self.currentStepIndex is None:
             self.multiStepFeedback.setProgress(100)
             return
+        if workflowItem.pauseAfterExecution:
+            currentWorkflowItem = self.getCurrentWorkflowItem()
+            currentWorkflowItem.pauseBeforeRunning()
+            self.currentWorkflowItemStatusChanged.emit(self.currentStepIndex, currentWorkflowItem)
+            return
         self.run(resumeFromStart=False)
     
     def run(self, resumeFromStart=True):
@@ -104,14 +113,24 @@ class DSGToolsWorkflow(QObject):
             self.resetWorkflowItems()
             self.setCurrentWorkflowItem(0)
             self.workflowHasBeenReset.emit()
-        currentTask: QgsTask = self.prepareTask()
         currentWorkflowItem = self.getCurrentWorkflowItem()
+        if currentWorkflowItem.getStatus() == ExecutionStatus.IGNORE_FLAGS:
+            self.currentStepIndex = self.getNextWorkflowStep()
+            if self.currentStepIndex is None:
+                self.multiStepFeedback.setProgress(100)
+                return
+            currentWorkflowItem = self.getCurrentWorkflowItem()
+        currentTask: QgsTask = self.prepareTask()
         currentWorkflowItem.changeCurrentStatus(status=ExecutionStatus.RUNNING, executionMessage=self.tr("Execution started"))
         self.multiStepFeedback.setCurrentStep(self.currentStepIndex)
         self.currentWorkflowItemStatusChanged.emit(self.currentStepIndex, currentWorkflowItem)
         self.currentTaskChanged.emit(self.currentStepIndex, currentTask)
         QgsApplication.taskManager().addTask(currentTask)
     
+    def setIgnoreFlagsStatusOnCurrentStep(self):
+        currentWorkflowItem = self.getCurrentWorkflowItem()
+        currentWorkflowItem.setCurrentStateToIgnoreFlags()
+
     def cancelCurrentRun(self):
         currentWorkflowItem = self.getCurrentWorkflowItem()
         currentWorkflowItem.cancelCurrentTask()

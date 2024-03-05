@@ -53,8 +53,9 @@ class ExecutionStatus(Enum):
     CANCELED = "canceled"
     FINISHED = "finished"
     FINISHED_WITH_FLAGS = "finished with flags"
-    SKIPPED = "skipped"
     ON_HOLD = "on hold"
+    PAUSED_BEFORE_RUNNING = "paused before running"
+    IGNORE_FLAGS = "ignore flags"
 
 @dataclass
 class FlagSettings:
@@ -62,6 +63,10 @@ class FlagSettings:
     modelCanHaveFalsePositiveFlags: bool
     loadOutput: bool
     flagLayerNames: List[str] = field(default_factory=[])
+
+    def __post_init__(self):
+        if self.onFlagsRaised not in ("halt", "warn", "ignore"):
+            raise ValueError("Invalid on flags raised flag.")
 
 @dataclass
 class ModelSource:
@@ -101,7 +106,7 @@ class Metadata:
 
 @dataclass
 class ModelExecutionOutput:
-    result: Dict[str, Any] = dict()
+    result: Dict[str, Any] = field(default_factory=dict)
     executionTime: float = 0.0
     executionMessage: str = ""
     status: ExecutionStatus = ExecutionStatus.INITIAL
@@ -124,7 +129,7 @@ class DSGToolsWorkflowItem(QObject):
         self.executionOutput = ModelExecutionOutput()
     
     def as_dict(self) -> Dict[str, str]:
-        return {k: str(v) for k, v in asdict(self).items()}
+        return {k: v for k, v in asdict(self).items()}
 
     def getModel(self) -> QgsProcessingModelAlgorithm:
         return self.source.modelFromXml()
@@ -149,6 +154,21 @@ class DSGToolsWorkflowItem(QObject):
         )
         return self.currentTask
     
+    def pauseBeforeRunning(self):
+        self.executionOutput = ModelExecutionOutput(
+            executionMessage=self.tr(f"Workflow item {self.displayName} execution paused by previous step."),
+            status=ExecutionStatus.PAUSED_BEFORE_RUNNING,
+        )
+    
+    def setCurrentStateToIgnoreFlags(self):
+        if not self.flags.modelCanHaveFalsePositiveFlags:
+            return
+        self.changeCurrentStatus(
+            status=ExecutionStatus.IGNORE_FLAGS,
+            executionMessage=self.tr(f"Workflow item {self.displayName} flags were ignored by the user.")
+        )
+        # não emite sinal pois esse passo é feito fora da execução.
+
     def changeCurrentStatus(self, status: ExecutionStatus, executionMessage: str) -> None:
         self.executionOutput.status = status
         self.executionOutput.executionMessage = executionMessage
@@ -197,7 +217,7 @@ class DSGToolsWorkflowItem(QObject):
                     Qgis.Critical
                 )
                 self.executionOutput = ModelExecutionOutput(
-                    executionMessage=self.tr(f"Model execution has failed:\n {str(exception)}"),
+                    executionMessage=self.tr(f"Workflow item {self.displayName} execution has failed:\n {str(exception)}"),
                     status=ExecutionStatus.FAILED,
                 )
                 self.workflowItemExecutionFinished.emit(self)
@@ -205,9 +225,15 @@ class DSGToolsWorkflowItem(QObject):
             if result is not None:
                 self.handleOutputs(result, feedback)
                 self.loadOutputs(feedback)
+                status = ExecutionStatus.FINISHED_WITH_FLAGS if any(lyr.featureCount() > 0 for k, lyr in self.executionOutput.result.items() if lyr.name() in self.flagLayerNames()) else ExecutionStatus.FINISHED
+                statusMsg = self.tr("finished with flags.") if status == ExecutionStatus.FINISHED_WITH_FLAGS else self.tr("finished.")
+                self.changeCurrentStatus(
+                    status=status,
+                    executionMessage=self.tr(f"Workflow item {self.displayName} {statusMsg}")
+                )
             else:
                 self.executionOutput = ModelExecutionOutput(
-                    executionMessage=self.tr(f"Model execution was canceled by the user."),
+                    executionMessage=self.tr(f"Workflow item {self.displayName} execution was canceled by the user."),
                     status=ExecutionStatus.CANCELED,
                 )
             self.workflowItemExecutionFinished.emit(self)
@@ -231,7 +257,6 @@ class DSGToolsWorkflowItem(QObject):
             vl.setName(name)
             self.executionOutput.result[name] = vl
         self.executionOutput.executionTime = time() - start
-        self.executionOutput.executionMessage = self.tr("Model execution finished.")
     
     def loadOutput(self) -> bool:
         return self.flags.loadOutput
