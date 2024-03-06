@@ -36,6 +36,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.appendFeatures
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeNetworkEdgesFromLengthAlgorithm import (
     GeneralizeNetworkEdgesWithLengthAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyPixelsToNearestNeighborAlgorithm import ReclassifyAdjacentPixelsToNearestNeighborAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildZipPackagesAlgorithm import (
     BuildZipPackageAlgorithm,
 )
@@ -648,6 +649,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyAttributeChangesInLines(),
             BatchRunAlgorithmWithGeographicBoundsConstraint(),
             IdentifyUncoveredStartAndEndPointsAlgorithm(),
+            ReclassifyAdjacentPixelsToNearestNeighborAlgorithm(),
         ]
         return algList
 

@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.39 - dev
+## 4.13.40 - dev
 
 Novas Funcionalidades:
 
@@ -9,6 +9,7 @@ Novas Funcionalidades:
 - Novo processo BatchRunAlgorithmWithGeographicBoundsConstraint: roda em lote, como o BatchRunAlgorithm no modelo, porém tem uma camada de entrada para o limite geográfico (o limite geográfico pode filtrar as flags de saída ou ser input, como no caso do clean com alterações somente dentro da moldura);
 - Novo processo de identificar linhas não cobertas por outras linhas (identifica travessias hidroviárias que não se conectam com vias deslocamento ou com a moldura);
 - Adiciona suporte para a EDGV 3.0 Topo;
+- Novo processo de reclassificar pixel adjacente em raster para o vizinho mais próximo (útil para generalizar raster de vegetação classificada);
 
 Melhorias:
 

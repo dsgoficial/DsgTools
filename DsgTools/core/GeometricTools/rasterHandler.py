@@ -258,3 +258,18 @@ def createMaxPointFeatListFromRasterLayer(
         transform=transform,
         defaultAtributeMap=defaultAtributeMap,
     )
+
+def writeOutputRaster(outputRaster, npRaster, ds, outputType=None):
+    outputType = gdal.GDT_Int32 if outputType is None else outputType
+    driver = gdal.GetDriverByName("GTiff")
+    out_ds = driver.Create(
+        outputRaster, npRaster.shape[1], npRaster.shape[0], 1, outputType
+    )
+    out_ds.SetProjection(ds.GetProjection())
+    out_ds.SetGeoTransform(ds.GetGeoTransform())
+    out_ds.GetRasterBand(1).SetNoDataValue(-9999)
+    band = out_ds.GetRasterBand(1)
+    band.WriteArray(npRaster)
+    band.FlushCache()
+    band.ComputeStatistics(False)
+    out_ds = None
