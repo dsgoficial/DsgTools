@@ -22,7 +22,7 @@
 """
 
 from dataclasses import asdict, dataclass, field
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from qgis.core import (QgsApplication, QgsProcessingFeedback,
                        QgsProcessingMultiStepFeedback, QgsTask)
@@ -54,7 +54,7 @@ class DSGToolsWorkflow(QObject):
         self.workflowPaused = pyqtSignal()
         self.currentTaskChanged = pyqtSignal(int, QgsTask)
 
-    def as_dict(self) -> Dict[str, str]:
+    def as_dict(self) -> Dict[str, Any]:
         return {k: v for k, v in asdict(self).items()}
 
     def getCurrentWorkflowStepIndex(self) -> int:
