@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.40 - dev
+## 4.13.41 - dev
 
 Novas Funcionalidades:
 
@@ -10,6 +10,7 @@ Novas Funcionalidades:
 - Novo processo de identificar linhas não cobertas por outras linhas (identifica travessias hidroviárias que não se conectam com vias deslocamento ou com a moldura);
 - Adiciona suporte para a EDGV 3.0 Topo;
 - Novo processo de reclassificar pixel adjacente em raster para o vizinho mais próximo (útil para generalizar raster de vegetação classificada);
+- Novo processo de reclassificar conjunto de pixels adjacentes em raster para o vizinho mais próximo (variação do algoritmo de reclassificar pixel adjacente em raster para o vizinho mais próximo que considera área do agrupamento de pixels);
 
 Melhorias:
 

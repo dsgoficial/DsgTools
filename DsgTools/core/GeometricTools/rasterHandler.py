@@ -19,9 +19,10 @@
  *                                                                         *
  ***************************************************************************/
 """
-
 from typing import Dict, List, Tuple, Union
 from uuid import uuid4
+
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
 from .affine import Affine
 import numpy as np
@@ -40,14 +41,16 @@ from qgis.core import (
 )
 
 
-def readAsNumpy(inputRaster: Union[str, QgsRasterLayer]) -> Tuple[Dataset, np.array]:
+def readAsNumpy(inputRaster: Union[str, QgsRasterLayer], dtype=None) -> Tuple[Dataset, np.array]:
     inputRaster = (
         inputRaster.dataProvider().dataSourceUri()
         if isinstance(inputRaster, QgsRasterLayer)
         else inputRaster
     )
     ds = gdal.Open(inputRaster)
-    return ds, np.array(ds.GetRasterBand(1).ReadAsArray().transpose())
+    if dtype is None:
+        return ds, np.array(ds.GetRasterBand(1).ReadAsArray().transpose())
+    return ds, np.array(ds.GetRasterBand(1).ReadAsArray().transpose(), dtype=dtype)
 
 
 def getCoordinateTransform(ds: Dataset) -> Affine:
@@ -273,3 +276,55 @@ def writeOutputRaster(outputRaster, npRaster, ds, outputType=None):
     band.FlushCache()
     band.ComputeStatistics(False)
     out_ds = None
+
+def getNumpyViewFromPolygon(npRaster: np.array, transform: Affine, geom: QgsGeometry) -> np.array:
+    bbox = geom.boundingBox()
+    terrain_xmin, terrain_ymin, terrain_xmax, terrain_ymax = bbox.toRectF().getCoords()
+    a, b = map(int, ~transform * (terrain_xmin, terrain_ymin))
+    c, d = map(int, ~transform * (terrain_xmax, terrain_ymax))
+    xmin, xmax = min(a, c), max(a, c)
+    ymin, ymax = min(b, d), max(b, d)
+    return npRaster[xmin:xmax+1, ymin:ymax+1]
+
+def buildNumpyNodataMaskForPolygon(x_res, y_res, npRaster, geom: QgsGeometry, crs, valueToBurnAsMask=np.nan):
+    _out = QgsProcessingUtils.generateTempFilename(f"clip_{str(uuid4().hex)}.tif")
+    _temp_in = QgsProcessingUtils.generateTempFilename(f"feats_{str(uuid4().hex)}.shp")
+
+    NoData_value = -9999
+    bbox = geom.boundingBox()
+    x_min, y_min, x_max, y_max = bbox.toRectF().getCoords()
+
+    # 4. Create Target - TIFF
+    cols, rows = npRaster.shape
+    # cols = int((x_max - x_min) / x_res)
+    # rows = int((y_max - y_min) / y_res)
+
+    _raster = gdal.GetDriverByName("GTiff").Create(_out, cols, rows, 1, gdal.GDT_Byte)
+    _raster.SetGeoTransform((x_min, x_res, 0, y_max, 0, -y_res))
+    _band = _raster.GetRasterBand(1)
+    _band.SetNoDataValue(NoData_value)
+
+    vectorLyr = LayerHandler().createMemoryLayerFromGeometry(
+        geom, crs
+    )
+
+    save_options = QgsVectorFileWriter.SaveVectorOptions()
+    save_options.driverName = "ESRI Shapefile"
+    save_options.fileEncoding = "UTF-8"
+    transform_context = QgsProject.instance().transformContext()
+    error = QgsVectorFileWriter.writeAsVectorFormatV3(
+        vectorLyr, _temp_in, transform_context, save_options
+    )
+
+    # 3. Open Shapefile
+    driver = ogr.GetDriverByName("ESRI Shapefile")
+    source_ds = driver.Open(_temp_in, 0)
+    source_layer = source_ds.GetLayer()
+
+    gdal.RasterizeLayer(_raster, [1], source_layer, burn_values=[255.0])
+    _raster = None
+    ds = gdal.Open(_out)
+    outputNpRaster = np.array(ds.GetRasterBand(1).ReadAsArray(), dtype=float)
+    ds = None
+    outputNpRaster[outputNpRaster == 255.0] = valueToBurnAsMask
+    return outputNpRaster
