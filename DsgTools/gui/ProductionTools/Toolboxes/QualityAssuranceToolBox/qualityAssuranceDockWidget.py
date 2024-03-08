@@ -83,7 +83,9 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.statusMap = {
             ExecutionStatus.INITIAL: self.tr("Not yet run"),
             ExecutionStatus.RUNNING: self.tr("Running..."),
-            ExecutionStatus.PAUSED_BEFORE_RUNNING: self.tr("On hold. Check data and resume."),
+            ExecutionStatus.PAUSED_BEFORE_RUNNING: self.tr(
+                "On hold. Check data and resume."
+            ),
             ExecutionStatus.ON_HOLD: self.tr("Task paused."),
             ExecutionStatus.CANCELED: self.tr("Canceled"),
             ExecutionStatus.FAILED: self.tr("Failed"),
@@ -608,7 +610,6 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             )
             pb.setContextMenuPolicy(Qt.CustomContextMenu)
             self.tableWidget.setCellWidget(row, 2, pb)
-
 
     def saveState(self):
         """

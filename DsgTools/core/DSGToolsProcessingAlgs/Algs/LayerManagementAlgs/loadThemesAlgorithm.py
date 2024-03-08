@@ -88,7 +88,7 @@ class LoadThemesAlgorithm(QgsProcessingAlgorithm):
         elif len(inputJSONData) > 0:
             self.loadThemes(inputJSONData)
         return {self.OUTPUT: []}
-    
+
     def loadExpressionFieldFromJSONFile(self, inputJSONFile):
         with open(inputJSONFile, "r") as f:
             inputJSONData = json.load(f)

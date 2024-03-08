@@ -57,7 +57,11 @@ class ToolBoxesGuiManager(QObject):
         self.stackButton = stackButton
         self.iconBasePath = ":/plugins/DsgTools/icons/"
 
-        self.acquisitionMenuCtrl = AcquisitionMenuCtrl() if acquisitionMenuCtrl is None else acquisitionMenuCtrl
+        self.acquisitionMenuCtrl = (
+            AcquisitionMenuCtrl()
+            if acquisitionMenuCtrl is None
+            else acquisitionMenuCtrl
+        )
 
     def initGui(self):
         self.qaToolBox = None

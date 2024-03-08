@@ -114,6 +114,7 @@ class DsgTools(object):
         Create the menu entries and toolbar icons inside the QGIS GUI
         """
         from .gui.guiManager import GuiManager
+
         self.dsgTools = QMenu(self.iface.mainWindow())
         self.dsgTools.setObjectName("DsgTools")
         self.dsgTools.setTitle("DSGTools")

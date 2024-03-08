@@ -57,6 +57,7 @@ class ExecutionStatus(Enum):
     PAUSED_BEFORE_RUNNING = "paused before running"
     IGNORE_FLAGS = "ignore flags"
 
+
 @dataclass
 class FlagSettings:
     onFlagsRaised: str
@@ -67,6 +68,7 @@ class FlagSettings:
     def __post_init__(self):
         if self.onFlagsRaised not in ("halt", "warn", "ignore"):
             raise ValueError("Invalid on flags raised flag.")
+
 
 @dataclass
 class ModelSource:
@@ -100,9 +102,11 @@ class ModelSource:
         os.remove(temp)
         return alg
 
+
 @dataclass
 class Metadata:
     originalName: str
+
 
 @dataclass
 class ModelExecutionOutput:
@@ -110,6 +114,7 @@ class ModelExecutionOutput:
     executionTime: float = 0.0
     executionMessage: str = ""
     status: ExecutionStatus = ExecutionStatus.INITIAL
+
 
 @dataclass
 class DSGToolsWorkflowItem(QObject):
@@ -124,10 +129,10 @@ class DSGToolsWorkflowItem(QObject):
         self.model = self.getModel()
         self.currentTask = None
         self.workflowItemExecutionFinished = pyqtSignal(DSGToolsWorkflowItem)
-    
+
     def resetItem(self):
         self.executionOutput = ModelExecutionOutput()
-    
+
     def as_dict(self) -> Dict[str, str]:
         return {k: v for k, v in asdict(self).items()}
 
@@ -138,10 +143,10 @@ class DSGToolsWorkflowItem(QObject):
         if self.model is None:
             return []
         return [param.name() for param in self.model.parameterDefinitions()]
-    
+
     def getFlagNames(self) -> List[str]:
         return self.flags.flagLayerNames
-    
+
     def getOutputFlags(self):
         pass
 
@@ -153,23 +158,29 @@ class DSGToolsWorkflowItem(QObject):
             on_finished=on_finished_func,
         )
         return self.currentTask
-    
+
     def pauseBeforeRunning(self):
         self.executionOutput = ModelExecutionOutput(
-            executionMessage=self.tr(f"Workflow item {self.displayName} execution paused by previous step."),
+            executionMessage=self.tr(
+                f"Workflow item {self.displayName} execution paused by previous step."
+            ),
             status=ExecutionStatus.PAUSED_BEFORE_RUNNING,
         )
-    
+
     def setCurrentStateToIgnoreFlags(self):
         if not self.flags.modelCanHaveFalsePositiveFlags:
             return
         self.changeCurrentStatus(
             status=ExecutionStatus.IGNORE_FLAGS,
-            executionMessage=self.tr(f"Workflow item {self.displayName} flags were ignored by the user.")
+            executionMessage=self.tr(
+                f"Workflow item {self.displayName} flags were ignored by the user."
+            ),
         )
         # não emite sinal pois esse passo é feito fora da execução.
 
-    def changeCurrentStatus(self, status: ExecutionStatus, executionMessage: str) -> None:
+    def changeCurrentStatus(
+        self, status: ExecutionStatus, executionMessage: str
+    ) -> None:
         self.executionOutput.status = status
         self.executionOutput.executionMessage = executionMessage
 
@@ -178,12 +189,12 @@ class DSGToolsWorkflowItem(QObject):
             return
         self.currentTask.cancel()
         self.currentTask = None
-    
+
     def pauseCurrentTask(self):
         if self.currentTask is None:
             return
         self.currentTask.hold()
-    
+
     def resumeCurrentTask(self):
         if self.currentTask is None:
             return
@@ -192,6 +203,7 @@ class DSGToolsWorkflowItem(QObject):
     def getTaskRunningFunction(self, feedback: QgsProcessingFeedback) -> Callable:
         model = copy.deepcopy(self.model)
         modelParameters = self.getModelParameters()
+
         def func():
             start = time()
             context = dataobjects.createContext(feedback=feedback)
@@ -206,18 +218,19 @@ class DSGToolsWorkflowItem(QObject):
             out.pop("CHILD_RESULTS", None)
             out["start_time"] = start
             return out
+
         return func
 
     def getOnFinishedFunction(self, feedback: QgsProcessingFeedback) -> Callable:
         def on_finished_func(exception, result=None):
             if exception is not None:
                 QgsMessageLog.logMessage(
-                    f"Exception: {exception}",
-                    "DSGTools Plugin",
-                    Qgis.Critical
+                    f"Exception: {exception}", "DSGTools Plugin", Qgis.Critical
                 )
                 self.executionOutput = ModelExecutionOutput(
-                    executionMessage=self.tr(f"Workflow item {self.displayName} execution has failed:\n {str(exception)}"),
+                    executionMessage=self.tr(
+                        f"Workflow item {self.displayName} execution has failed:\n {str(exception)}"
+                    ),
                     status=ExecutionStatus.FAILED,
                 )
                 self.workflowItemExecutionFinished.emit(self)
@@ -225,20 +238,36 @@ class DSGToolsWorkflowItem(QObject):
             if result is not None:
                 self.handleOutputs(result, feedback)
                 self.loadOutputs(feedback)
-                status = ExecutionStatus.FINISHED_WITH_FLAGS if any(lyr.featureCount() > 0 for k, lyr in self.executionOutput.result.items() if lyr.name() in self.flagLayerNames()) else ExecutionStatus.FINISHED
-                statusMsg = self.tr("finished with flags.") if status == ExecutionStatus.FINISHED_WITH_FLAGS else self.tr("finished.")
+                status = (
+                    ExecutionStatus.FINISHED_WITH_FLAGS
+                    if any(
+                        lyr.featureCount() > 0
+                        for k, lyr in self.executionOutput.result.items()
+                        if lyr.name() in self.flagLayerNames()
+                    )
+                    else ExecutionStatus.FINISHED
+                )
+                statusMsg = (
+                    self.tr("finished with flags.")
+                    if status == ExecutionStatus.FINISHED_WITH_FLAGS
+                    else self.tr("finished.")
+                )
                 self.changeCurrentStatus(
                     status=status,
-                    executionMessage=self.tr(f"Workflow item {self.displayName} {statusMsg}")
+                    executionMessage=self.tr(
+                        f"Workflow item {self.displayName} {statusMsg}"
+                    ),
                 )
             else:
                 self.executionOutput = ModelExecutionOutput(
-                    executionMessage=self.tr(f"Workflow item {self.displayName} execution was canceled by the user."),
+                    executionMessage=self.tr(
+                        f"Workflow item {self.displayName} execution was canceled by the user."
+                    ),
                     status=ExecutionStatus.CANCELED,
                 )
             self.workflowItemExecutionFinished.emit(self)
             self.currentTask = None
-        
+
         return on_finished_func
 
     def handleOutputs(self, result, feedback):
@@ -257,13 +286,13 @@ class DSGToolsWorkflowItem(QObject):
             vl.setName(name)
             self.executionOutput.result[name] = vl
         self.executionOutput.executionTime = time() - start
-    
+
     def loadOutput(self) -> bool:
         return self.flags.loadOutput
-    
+
     def getStatus(self) -> ExecutionStatus:
         return self.executionOutput.status
-    
+
     def loadOutputs(self, feedback):
         loadOutput = self.loadOutput()
         if not loadOutput:
@@ -286,13 +315,13 @@ class DSGToolsWorkflowItem(QObject):
                 continue
             cloneVl = vl.clone()
             self.executionOutput.result[name] = cloneVl
-            self.addLayerToGroup(cloneVl, self.displayName(), clearGroupBeforeAdding=True)
+            self.addLayerToGroup(
+                cloneVl, self.displayName(), clearGroupBeforeAdding=True
+            )
             self.enableFeatureCount(cloneVl)
         iface.mapCanvas().freeze(False)
-    
-    def addLayerToGroup(
-        self, layer, subgroupname, clearGroupBeforeAdding=False
-    ):
+
+    def addLayerToGroup(self, layer, subgroupname, clearGroupBeforeAdding=False):
         """
         Adds a layer to a group into layer panel.
         :param layer: (QgsMapLayer) layer to be added to canvas.
@@ -326,9 +355,7 @@ class DSGToolsWorkflowItem(QObject):
         return groupNode if groupNode else rootNode.addGroup(groupName)
 
     def prepareGroup(self, model):
-        subGroup = self.createGroups(
-            self.model().model.displayName()
-        )
+        subGroup = self.createGroups(self.model().model.displayName())
         self.clearGroup(subGroup)
 
     def clearGroup(self, group):
@@ -337,6 +364,7 @@ class DSGToolsWorkflowItem(QObject):
             if isinstance(lyr, QgsVectorLayer):
                 lyr.rollBack()
         group.removeAllChildren()
+
 
 def load_from_json(input_dict: dict) -> DSGToolsWorkflowItem:
     params = copy.deepcopy(input_dict)

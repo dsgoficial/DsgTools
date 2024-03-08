@@ -24,11 +24,18 @@
 from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, List
 
-from qgis.core import (QgsApplication, QgsProcessingFeedback,
-                       QgsProcessingMultiStepFeedback, QgsTask)
+from qgis.core import (
+    QgsApplication,
+    QgsProcessingFeedback,
+    QgsProcessingMultiStepFeedback,
+    QgsTask,
+)
 from qgis.PyQt.QtCore import pyqtSignal, QObject
 
-from DsgTools.core.DSGToolsWorkflow.workflowItem import DSGToolsWorkflowItem, ExecutionStatus
+from DsgTools.core.DSGToolsWorkflow.workflowItem import (
+    DSGToolsWorkflowItem,
+    ExecutionStatus,
+)
 
 
 @dataclass
@@ -36,6 +43,7 @@ class WorkflowMetadata:
     author: str
     version: str
     lastModified: str
+
 
 @dataclass
 class DSGToolsWorkflow(QObject):
@@ -59,28 +67,30 @@ class DSGToolsWorkflow(QObject):
 
     def getCurrentWorkflowStepIndex(self) -> int:
         return self.currentStepIndex
-    
+
     def getNextWorkflowStep(self) -> int:
         nextIndex = self.currentStepIndex + 1
         return nextIndex if nextIndex <= len(self.workflowItemList) - 1 else None
-    
+
     def getCurrentWorkflowItem(self) -> DSGToolsWorkflowItem:
         idx = self.getCurrentWorkflowStepIndex()
         return self.workflowItemList[idx]
-    
+
     def setCurrentWorkflowItem(self, idx) -> None:
         if idx < 0 or idx >= len(self.workflowItemList):
             return
         self.currentStepIndex = idx
-    
+
     def connectSignals(self) -> None:
         for workflowItem in self.workflowItemList:
-            workflowItem.workflowItemExecutionFinished.connect(self.postProcessWorkflowItem)
-    
+            workflowItem.workflowItemExecutionFinished.connect(
+                self.postProcessWorkflowItem
+            )
+
     def resetWorkflowItems(self):
         for workflowItem in self.workflowItemList:
             workflowItem.resetItem()
-    
+
     def prepareTask(self) -> QgsTask:
         currentWorkflowItem: DSGToolsWorkflowItem = self.getCurrentWorkflowItem()
         return currentWorkflowItem.getTask(self.feedback)
@@ -88,7 +98,11 @@ class DSGToolsWorkflow(QObject):
     def postProcessWorkflowItem(self, workflowItem: DSGToolsWorkflowItem):
         self.currentTask = None
         self.currentWorkflowItemStatusChanged.emit(self.currentStepIndex, workflowItem)
-        if workflowItem.getStatus() in [ExecutionStatus.FAILED, ExecutionStatus.FINISHED_WITH_FLAGS, ExecutionStatus.CANCELED]:
+        if workflowItem.getStatus() in [
+            ExecutionStatus.FAILED,
+            ExecutionStatus.FINISHED_WITH_FLAGS,
+            ExecutionStatus.CANCELED,
+        ]:
             self.multiStepFeedback.setCurrentStep(self.currentStepIndex)
             return
         self.currentStepIndex = self.getNextWorkflowStep()
@@ -98,10 +112,12 @@ class DSGToolsWorkflow(QObject):
         if workflowItem.pauseAfterExecution:
             currentWorkflowItem = self.getCurrentWorkflowItem()
             currentWorkflowItem.pauseBeforeRunning()
-            self.currentWorkflowItemStatusChanged.emit(self.currentStepIndex, currentWorkflowItem)
+            self.currentWorkflowItemStatusChanged.emit(
+                self.currentStepIndex, currentWorkflowItem
+            )
             return
         self.run(resumeFromStart=False)
-    
+
     def run(self, resumeFromStart=True):
         if resumeFromStart:
             self.resetWorkflowItems()
@@ -115,12 +131,17 @@ class DSGToolsWorkflow(QObject):
                 return
             currentWorkflowItem = self.getCurrentWorkflowItem()
         currentTask: QgsTask = self.prepareTask()
-        currentWorkflowItem.changeCurrentStatus(status=ExecutionStatus.RUNNING, executionMessage=self.tr("Execution started"))
+        currentWorkflowItem.changeCurrentStatus(
+            status=ExecutionStatus.RUNNING,
+            executionMessage=self.tr("Execution started"),
+        )
         self.multiStepFeedback.setCurrentStep(self.currentStepIndex)
-        self.currentWorkflowItemStatusChanged.emit(self.currentStepIndex, currentWorkflowItem)
+        self.currentWorkflowItemStatusChanged.emit(
+            self.currentStepIndex, currentWorkflowItem
+        )
         self.currentTaskChanged.emit(self.currentStepIndex, currentTask)
         QgsApplication.taskManager().addTask(currentTask)
-    
+
     def setIgnoreFlagsStatusOnCurrentStep(self):
         currentWorkflowItem = self.getCurrentWorkflowItem()
         currentWorkflowItem.setCurrentStateToIgnoreFlags()
@@ -129,14 +150,20 @@ class DSGToolsWorkflow(QObject):
         currentWorkflowItem = self.getCurrentWorkflowItem()
         currentWorkflowItem.cancelCurrentTask()
         self.multiStepFeedback.setCurrentStep(self.currentStepIndex)
-        self.currentWorkflowItemStatusChanged.emit(self.currentStepIndex, currentWorkflowItem)
-    
+        self.currentWorkflowItemStatusChanged.emit(
+            self.currentStepIndex, currentWorkflowItem
+        )
+
     def pauseCurrentRun(self):
         currentWorkflowItem = self.getCurrentWorkflowItem()
         currentWorkflowItem.pauseCurrentTask()
-        self.currentWorkflowItemStatusChanged.emit(self.currentStepIndex, currentWorkflowItem)
-    
+        self.currentWorkflowItemStatusChanged.emit(
+            self.currentStepIndex, currentWorkflowItem
+        )
+
     def resumeCurrentRun(self):
         currentWorkflowItem = self.getCurrentWorkflowItem()
         currentWorkflowItem.pauseCurrentTask()
-        self.currentWorkflowItemStatusChanged.emit(self.currentStepIndex, currentWorkflowItem)
+        self.currentWorkflowItemStatusChanged.emit(
+            self.currentStepIndex, currentWorkflowItem
+        )
