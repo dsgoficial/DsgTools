@@ -93,7 +93,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         inputRaster = self.parameterAsRasterLayer(parameters, self.INPUT, context)
         min_area = self.parameterAsDouble(parameters, self.MIN_AREA, context)
         outputRaster = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(8, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Running initial polygonize"))
@@ -125,6 +125,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         polygonsWithCount = algRunner.runJoinByLocationSummary(
             inputLyr=selectedPolygonLayer,
             joinLyr=selectedPolygonLayer,
+            joinFields=[],
             predicateList=[AlgRunner.Intersect],
             summaries=[0],
             feedback=multiStepFeedback,
@@ -145,7 +146,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         multiStepFeedback.pushInfo(self.tr("Masking for each polygon"))
         crs = selectedPolygonLayer.crs()
         request = QgsFeatureRequest()
-        request.setFilterExpression(""" "id_count" = 1 """)
+        request.setFilterExpression(""" "DN_count" = 1 """)
         self.reclassifyGroupsOfPixelsInsidePolygons(
             KDTree,
             multiStepFeedback,
@@ -169,22 +170,33 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         orderby = QgsFeatureRequest.OrderBy([clause])
         request.setOrderBy(orderby)
 
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Evaluating remaining polygons"))
+
+        ds, npRaster = rasterHandler.readAsNumpy(outputRaster, dtype=np.int8)
+        transform = rasterHandler.getCoordinateTransform(ds)
+        polygonLayer = algRunner.runGdalPolygonize(
+            inputRaster=outputRaster,
+            context=context,
+        )
+        selectedPolygonLayer = algRunner.runFilterExpression(
+            inputLyr=polygonLayer,
+            expression=f"$area < {min_area}",
+            context=context,
+        )
+        remainingFeatCount = selectedPolygonLayer.featureCount()
+        if remainingFeatCount == 0:
+            return {self.OUTPUT: outputRaster}
+
+        innerFeedback = QgsProcessingMultiStepFeedback(remainingFeatCount, multiStepFeedback)
+        innerFeedback.setCurrentStep(0)
+
         while True:
-            ds, npRaster = rasterHandler.readAsNumpy(outputRaster, dtype=np.int8)
-            transform = rasterHandler.getCoordinateTransform(ds)
-            polygonLayer = algRunner.runGdalPolygonize(
-                inputRaster=outputRaster,
-                context=context,
-            )
-            if multiStepFeedback.isCanceled():
+            if innerFeedback.isCanceled():
                 break
-            selectedPolygonLayer = algRunner.runFilterExpression(
-                inputLyr=polygonLayer,
-                expression=f"$area < {min_area}",
-                context=context,
-            )
             if (
-                multiStepFeedback.isCanceled()
+                innerFeedback.isCanceled()
                 or selectedPolygonLayer.featureCount() == 0
             ):
                 break
@@ -195,6 +207,26 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
                 KDTree, x_res, y_res, npRaster, transform, crs, nextFeat
             )
             rasterHandler.writeOutputRaster(outputRaster, npRaster.T, ds)
+
+            ds, npRaster = rasterHandler.readAsNumpy(outputRaster, dtype=np.int8)
+            transform = rasterHandler.getCoordinateTransform(ds)
+            polygonLayer = algRunner.runGdalPolygonize(
+                inputRaster=outputRaster,
+                context=context,
+            )
+            if (
+                innerFeedback.isCanceled()
+                or selectedPolygonLayer.featureCount() == 0
+            ):
+                break
+
+            selectedPolygonLayer = algRunner.runFilterExpression(
+                inputLyr=polygonLayer,
+                expression=f"$area < {min_area}",
+                context=context,
+            )
+
+            innerFeedback.setCurrentStep(remainingFeatCount - selectedPolygonLayer.featureCount() - 1)
 
         return {self.OUTPUT: outputRaster}
 
@@ -230,14 +262,14 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         geom = polygonFeat.geometry()
 
         currentView = rasterHandler.getNumpyViewFromPolygon(
-            npRaster=npRaster, transform=transform, geom=geom
+            npRaster=npRaster, transform=transform, geom=geom, pixelBuffer=0
         )
         mask = rasterHandler.buildNumpyNodataMaskForPolygon(
             x_res, y_res, currentView, geom, crs, valueToBurnAsMask=np.nan
         )
         v = polygonFeat["DN"]
         maskedCurrentView = ma.masked_array(
-            currentView, currentView == v & np.isnan(mask.T), np.int8
+            currentView, currentView == v, np.int8
         )
         # maskedCurrentView = ma.masked_array(mask, mask==np.nan, dtype=np.int8)
         x, y = np.mgrid[0 : maskedCurrentView.shape[0], 0 : maskedCurrentView.shape[1]]
@@ -246,7 +278,9 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         maskedCurrentView[maskedCurrentView.mask] = maskedCurrentView[
             ~maskedCurrentView.mask
         ][KDTree(xygood).query(xybad)[1]]
-        currentView = maskedCurrentView
+        outputMask = currentView + mask.T
+        outputMask[np.isnan(outputMask)] = maskedCurrentView[np.isnan(outputMask)]
+        currentView = outputMask
 
     def name(self):
         """

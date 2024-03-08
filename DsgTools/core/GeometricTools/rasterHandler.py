@@ -19,6 +19,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from itertools import product
 from typing import Dict, List, Tuple, Union
 from uuid import uuid4
 
@@ -277,14 +278,29 @@ def writeOutputRaster(outputRaster, npRaster, ds, outputType=None):
     band.ComputeStatistics(False)
     out_ds = None
 
-def getNumpyViewFromPolygon(npRaster: np.array, transform: Affine, geom: QgsGeometry) -> np.array:
+def getNumpyViewFromPolygon(npRaster: np.array, transform: Affine, geom: QgsGeometry, pixelBuffer: int = 2) -> np.array:
     bbox = geom.boundingBox()
     terrain_xmin, terrain_ymin, terrain_xmax, terrain_ymax = bbox.toRectF().getCoords()
     a, b = map(int, ~transform * (terrain_xmin, terrain_ymin))
     c, d = map(int, ~transform * (terrain_xmax, terrain_ymax))
     xmin, xmax = min(a, c), max(a, c)
     ymin, ymax = min(b, d), max(b, d)
-    return npRaster[xmin:xmax+1, ymin:ymax+1]
+    return npRaster[max(xmin-pixelBuffer, 0):xmax+pixelBuffer+1, max(ymin-pixelBuffer, 0):ymax+pixelBuffer+1]
+    # npView = npRaster[max(xmin-pixelBuffer, 0):xmax+pixelBuffer+1, max(ymin-pixelBuffer, 0):ymax+pixelBuffer+1]
+    # mask = np.zeros((1, npView.shape[0] * npView.shape[1]))
+    # productPairList = list(product(range(max(xmin-pixelBuffer, 0), xmax+pixelBuffer+1), range(max(ymin-pixelBuffer, 0), ymax+pixelBuffer+1)))
+    # maxIdx = npView.shape[0] * npView.shape[1]
+    # for idx, transformedPair in enumerate(productPairList):
+    #     transfCoord = transform * transformedPair
+    #     candGeom = QgsGeometry(QgsPoint(*transfCoord))
+    #     if not candGeom.intersects(geom):
+    #         continue
+    #     if idx >= maxIdx:
+    #         break
+    #     mask[:, idx] = np.nan
+    # mask = mask.reshape(npView.shape)
+    # return npView, mask
+
 
 def buildNumpyNodataMaskForPolygon(x_res, y_res, npRaster, geom: QgsGeometry, crs, valueToBurnAsMask=np.nan):
     _out = QgsProcessingUtils.generateTempFilename(f"clip_{str(uuid4().hex)}.tif")
@@ -300,6 +316,7 @@ def buildNumpyNodataMaskForPolygon(x_res, y_res, npRaster, geom: QgsGeometry, cr
     # rows = int((y_max - y_min) / y_res)
 
     _raster = gdal.GetDriverByName("GTiff").Create(_out, cols, rows, 1, gdal.GDT_Byte)
+    # _raster.SetGeoTransform(transform.to_gdal())
     _raster.SetGeoTransform((x_min, x_res, 0, y_max, 0, -y_res))
     _band = _raster.GetRasterBand(1)
     _band.SetNoDataValue(NoData_value)
