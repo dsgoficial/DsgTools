@@ -20,13 +20,7 @@
  ***************************************************************************/
 """
 
-from collections import defaultdict
-import itertools
-import json
-import os
 
-import concurrent.futures
-from osgeo import gdal, ogr
 import numpy as np
 import numpy.ma as ma
 
@@ -34,28 +28,15 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorith
     ValidationAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
-from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from DsgTools.core.GeometricTools import rasterHandler
 
-from qgis.PyQt.Qt import QVariant
 from PyQt5.QtCore import QCoreApplication
 
 from qgis.core import (
-    QgsProcessing,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterVectorLayer,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterField,
     QgsProcessingException,
     QgsProcessingParameterDistance,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingFeatureSourceDefinition,
-    QgsGeometry,
-    QgsProcessingParameterString,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterExpression,
     QgsFeatureRequest,
-    QgsProcessingContext,
     QgsProcessingParameterRasterLayer,
     QgsProcessingParameterRasterDestination,
 )
