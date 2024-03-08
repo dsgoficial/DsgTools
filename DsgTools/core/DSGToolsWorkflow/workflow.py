@@ -40,6 +40,14 @@ from DsgTools.core.DSGToolsWorkflow.workflowItem import (
 
 @dataclass
 class WorkflowMetadata:
+    """Dataclass representing metadata for a workflow.
+
+    Attributes:
+        author (str): The author of the workflow.
+        version (str): The version of the workflow.
+        lastModified (str): The last modification date of the workflow.
+    """
+
     author: str
     version: str
     lastModified: str
@@ -47,11 +55,26 @@ class WorkflowMetadata:
 
 @dataclass
 class DSGToolsWorkflow(QObject):
+    """Class representing a workflow in DSGTools.
+
+    Attributes:
+        displayName (str): The display name of the workflow.
+        metadata (WorkflowMetadata): Metadata associated with the workflow.
+        workflowItemList (List[DSGToolsWorkflowItem]): List of workflow items.
+
+    Signals:
+        currentWorkflowItemStatusChanged: Emitted when the status of the current workflow item changes.
+        workflowHasBeenReset: Emitted when the workflow has been reset.
+        workflowPaused: Emitted when the workflow is paused.
+        currentTaskChanged: Emitted when the current task changes.
+    """
+
     displayName: str
     metadata: WorkflowMetadata
     workflowItemList: List[DSGToolsWorkflowItem]
 
     def __post_init__(self):
+        """Initialize post dataclass creation."""
         self.currentStepIndex = 0
         self.feedback = QgsProcessingFeedback()
         self.multiStepFeedback = QgsProcessingMultiStepFeedback(
@@ -63,39 +86,72 @@ class DSGToolsWorkflow(QObject):
         self.currentTaskChanged = pyqtSignal(int, QgsTask)
 
     def as_dict(self) -> Dict[str, Any]:
+        """Convert the workflow object to a dictionary."""
         return {k: v for k, v in asdict(self).items()}
 
     def getCurrentWorkflowStepIndex(self) -> int:
+        """Get the index of the current workflow step.
+
+        Returns:
+            int: The index of the current workflow step.
+        """
         return self.currentStepIndex
 
     def getNextWorkflowStep(self) -> int:
+        """Get the index of the next workflow step.
+
+        Returns:
+            int: The index of the next workflow step, or None if at the end of the workflow.
+        """
         nextIndex = self.currentStepIndex + 1
         return nextIndex if nextIndex <= len(self.workflowItemList) - 1 else None
 
     def getCurrentWorkflowItem(self) -> DSGToolsWorkflowItem:
+        """Get the current workflow item.
+
+        Returns:
+            DSGToolsWorkflowItem: The current workflow item.
+        """
         idx = self.getCurrentWorkflowStepIndex()
         return self.workflowItemList[idx]
 
     def setCurrentWorkflowItem(self, idx) -> None:
+        """Set the current workflow item by index.
+
+        Args:
+            idx (int): The index of the workflow item to set as current.
+        """
         if idx < 0 or idx >= len(self.workflowItemList):
             return
         self.currentStepIndex = idx
 
     def connectSignals(self) -> None:
+        """Connect signals for each workflow item."""
         for workflowItem in self.workflowItemList:
             workflowItem.workflowItemExecutionFinished.connect(
                 self.postProcessWorkflowItem
             )
 
     def resetWorkflowItems(self):
+        """Reset all workflow items."""
         for workflowItem in self.workflowItemList:
             workflowItem.resetItem()
 
     def prepareTask(self) -> QgsTask:
+        """Prepare the current task based on the current workflow item.
+
+        Returns:
+            QgsTask: The prepared task.
+        """
         currentWorkflowItem: DSGToolsWorkflowItem = self.getCurrentWorkflowItem()
         return currentWorkflowItem.getTask(self.feedback)
 
     def postProcessWorkflowItem(self, workflowItem: DSGToolsWorkflowItem):
+        """Handle post-processing for a completed workflow item.
+
+        Args:
+            workflowItem (DSGToolsWorkflowItem): The completed workflow item.
+        """
         self.currentTask = None
         self.currentWorkflowItemStatusChanged.emit(self.currentStepIndex, workflowItem)
         if workflowItem.getStatus() in [
@@ -119,6 +175,12 @@ class DSGToolsWorkflow(QObject):
         self.run(resumeFromStart=False)
 
     def run(self, resumeFromStart=True):
+        """Run the workflow.
+
+        Args:
+            resumeFromStart (bool): Whether to resume the workflow from the start.
+
+        """
         if resumeFromStart:
             self.resetWorkflowItems()
             self.setCurrentWorkflowItem(0)
@@ -143,10 +205,12 @@ class DSGToolsWorkflow(QObject):
         QgsApplication.taskManager().addTask(currentTask)
 
     def setIgnoreFlagsStatusOnCurrentStep(self):
+        """Set the status to ignore flags on the current workflow step."""
         currentWorkflowItem = self.getCurrentWorkflowItem()
         currentWorkflowItem.setCurrentStateToIgnoreFlags()
 
     def cancelCurrentRun(self):
+        """Cancel the current run of the workflow."""
         currentWorkflowItem = self.getCurrentWorkflowItem()
         currentWorkflowItem.cancelCurrentTask()
         self.multiStepFeedback.setCurrentStep(self.currentStepIndex)
@@ -155,6 +219,7 @@ class DSGToolsWorkflow(QObject):
         )
 
     def pauseCurrentRun(self):
+        """Pause the current run of the workflow."""
         currentWorkflowItem = self.getCurrentWorkflowItem()
         currentWorkflowItem.pauseCurrentTask()
         self.currentWorkflowItemStatusChanged.emit(
@@ -162,6 +227,7 @@ class DSGToolsWorkflow(QObject):
         )
 
     def resumeCurrentRun(self):
+        """Resume the current run of the workflow."""
         currentWorkflowItem = self.getCurrentWorkflowItem()
         currentWorkflowItem.pauseCurrentTask()
         self.currentWorkflowItemStatusChanged.emit(

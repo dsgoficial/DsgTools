@@ -47,6 +47,20 @@ import processing
 
 
 class ExecutionStatus(Enum):
+    """Enumeration representing the execution status of a workflow item.
+
+    Attributes:
+        INITIAL: Initial state.
+        RUNNING: Currently running.
+        FAILED: Execution failed.
+        CANCELED: Execution canceled.
+        FINISHED: Execution finished successfully.
+        FINISHED_WITH_FLAGS: Execution finished with flags raised.
+        ON_HOLD: Execution on hold.
+        PAUSED_BEFORE_RUNNING: Execution paused before running.
+        IGNORE_FLAGS: Flags are ignored for this step.
+    """
+
     INITIAL = "initial"
     RUNNING = "running"
     FAILED = "failed"
@@ -60,6 +74,15 @@ class ExecutionStatus(Enum):
 
 @dataclass
 class FlagSettings:
+    """Dataclass representing settings related to flags in a workflow item.
+
+    Attributes:
+        onFlagsRaised (str): Action to take when flags are raised - "halt", "warn", or "ignore".
+        modelCanHaveFalsePositiveFlags (bool): Whether the model can have false positive flags.
+        loadOutput (bool): Whether to load the output.
+        flagLayerNames (List[str]): List of flag layer names.
+    """
+
     onFlagsRaised: str
     modelCanHaveFalsePositiveFlags: bool
     loadOutput: bool
@@ -72,6 +95,20 @@ class FlagSettings:
 
 @dataclass
 class ModelSource:
+    """Dataclass representing the source of a processing model.
+
+    Attributes:
+        type (str): Type of the model source.
+        data (str): Data related to the model source.
+
+    Methods:
+        modelFromFile(filepath: str) -> QgsProcessingModelAlgorithm:
+            Initiates a model from a filepath.
+
+        modelFromXml() -> QgsProcessingModelAlgorithm:
+            Creates a processing model object from XML text.
+    """
+
     type: str
     data: str
 
@@ -105,11 +142,26 @@ class ModelSource:
 
 @dataclass
 class Metadata:
+    """Dataclass representing metadata for a workflow item.
+
+    Attributes:
+        originalName (str): The original name of the workflow item.
+    """
+
     originalName: str
 
 
 @dataclass
 class ModelExecutionOutput:
+    """Dataclass representing the output of a model execution.
+
+    Attributes:
+        result (Dict[str, Any]): Execution result.
+        executionTime (float): Execution time in seconds.
+        executionMessage (str): Message related to the execution.
+        status (ExecutionStatus): Execution status.
+    """
+
     result: Dict[str, Any] = field(default_factory=dict)
     executionTime: float = 0.0
     executionMessage: str = ""
@@ -118,6 +170,19 @@ class ModelExecutionOutput:
 
 @dataclass
 class DSGToolsWorkflowItem(QObject):
+    """Class representing a workflow item in DSGTools.
+
+    Attributes:
+        displayName (str): Display name of the workflow item.
+        flags (FlagSettings): Settings related to flags in the workflow item.
+        pauseAfterExecution (bool): Whether to pause after execution.
+        source (ModelSource): Source of the processing model.
+        metadata (Metadata): Metadata related to the workflow item.
+
+    Signals:
+        workflowItemExecutionFinished: Emitted when the workflow item execution is finished.
+    """
+
     displayName: str
     flags: FlagSettings
     pauseAfterExecution: bool
@@ -125,32 +190,59 @@ class DSGToolsWorkflowItem(QObject):
     metadata: Metadata
 
     def __post_init__(self):
+        """Initialize post dataclass creation."""
         self.resetItem()
         self.model = self.getModel()
         self.currentTask = None
         self.workflowItemExecutionFinished = pyqtSignal(DSGToolsWorkflowItem)
 
     def resetItem(self):
+        """Reset the workflow item."""
         self.executionOutput = ModelExecutionOutput()
 
     def as_dict(self) -> Dict[str, str]:
+        """Convert the workflow item to a dictionary."""
         return {k: v for k, v in asdict(self).items()}
 
     def getModel(self) -> QgsProcessingModelAlgorithm:
+        """Get the processing model from the source.
+
+        Returns:
+            QgsProcessingModelAlgorithm: The processing model.
+        """
         return self.source.modelFromXml()
 
     def getModelParameters(self) -> List[str]:
+        """Get the parameters of the processing model.
+
+        Returns:
+            List[str]: List of parameter names.
+        """
         if self.model is None:
             return []
         return [param.name() for param in self.model.parameterDefinitions()]
 
     def getFlagNames(self) -> List[str]:
+        """Get the names of flag layers.
+
+        Returns:
+            List[str]: List of flag layer names.
+        """
         return self.flags.flagLayerNames
 
     def getOutputFlags(self):
+        """Get the output flags."""
         pass
 
     def getTask(self, feedback: QgsProcessingFeedback) -> QgsTask:
+        """Prepare the task for the workflow item execution.
+
+        Args:
+            feedback (QgsProcessingFeedback): Feedback for the task.
+
+        Returns:
+            QgsTask: The prepared task.
+        """
         func = self.getTaskRunningFunction(feedback)
         on_finished_func = self.getOnFinishedFunction(feedback)
         self.currentTask = QgsTask.fromFunction(
@@ -160,6 +252,7 @@ class DSGToolsWorkflowItem(QObject):
         return self.currentTask
 
     def pauseBeforeRunning(self):
+        """Pause the workflow item before running."""
         self.executionOutput = ModelExecutionOutput(
             executionMessage=self.tr(
                 f"Workflow item {self.displayName} execution paused by previous step."
@@ -168,6 +261,7 @@ class DSGToolsWorkflowItem(QObject):
         )
 
     def setCurrentStateToIgnoreFlags(self):
+        """Set the status to ignore flags on the current workflow step."""
         if not self.flags.modelCanHaveFalsePositiveFlags:
             return
         self.changeCurrentStatus(
@@ -181,26 +275,43 @@ class DSGToolsWorkflowItem(QObject):
     def changeCurrentStatus(
         self, status: ExecutionStatus, executionMessage: str
     ) -> None:
+        """Change the current status of the workflow item.
+
+        Args:
+            status (ExecutionStatus): The new status.
+            executionMessage (str): Message related to the status change.
+        """
         self.executionOutput.status = status
         self.executionOutput.executionMessage = executionMessage
 
     def cancelCurrentTask(self):
+        """Cancel the current task."""
         if self.currentTask is None:
             return
         self.currentTask.cancel()
         self.currentTask = None
 
     def pauseCurrentTask(self):
+        """Pause the current task."""
         if self.currentTask is None:
             return
         self.currentTask.hold()
 
     def resumeCurrentTask(self):
+        """Resume the current task."""
         if self.currentTask is None:
             return
         self.currentTask.unhold()
 
     def getTaskRunningFunction(self, feedback: QgsProcessingFeedback) -> Callable:
+        """Get the function to run for the task.
+
+        Args:
+            feedback (QgsProcessingFeedback): Feedback for the task.
+
+        Returns:
+            Callable: The function to run for the task.
+        """
         model = copy.deepcopy(self.model)
         modelParameters = self.getModelParameters()
 
@@ -222,6 +333,15 @@ class DSGToolsWorkflowItem(QObject):
         return func
 
     def getOnFinishedFunction(self, feedback: QgsProcessingFeedback) -> Callable:
+        """Get the function to run when the task is finished.
+
+        Args:
+            feedback (QgsProcessingFeedback): Feedback for the task.
+
+        Returns:
+            Callable: The function to run when the task is finished.
+        """
+
         def on_finished_func(exception, result=None):
             if exception is not None:
                 QgsMessageLog.logMessage(
@@ -271,6 +391,12 @@ class DSGToolsWorkflowItem(QObject):
         return on_finished_func
 
     def handleOutputs(self, result, feedback):
+        """Handle the outputs of the task.
+
+        Args:
+            result: The result of the task.
+            feedback (QgsProcessingFeedback): Feedback for the task.
+        """
         start = result.pop("start_time")
         context = dataobjects.createContext(feedback=feedback)
         context.setProject(QgsProject.instance())
@@ -288,12 +414,27 @@ class DSGToolsWorkflowItem(QObject):
         self.executionOutput.executionTime = time() - start
 
     def loadOutput(self) -> bool:
+        """Check if output loading is enabled.
+
+        Returns:
+            bool: True if output loading is enabled, False otherwise.
+        """
         return self.flags.loadOutput
 
     def getStatus(self) -> ExecutionStatus:
+        """Get the current status of the workflow item.
+
+        Returns:
+            ExecutionStatus: The current status.
+        """
         return self.executionOutput.status
 
     def loadOutputs(self, feedback):
+        """Load the outputs of the workflow item.
+
+        Args:
+            feedback (QgsProcessingFeedback): Feedback for the task.
+        """
         loadOutput = self.loadOutput()
         if not loadOutput:
             return
@@ -322,10 +463,12 @@ class DSGToolsWorkflowItem(QObject):
         iface.mapCanvas().freeze(False)
 
     def addLayerToGroup(self, layer, subgroupname, clearGroupBeforeAdding=False):
-        """
-        Adds a layer to a group into layer panel.
-        :param layer: (QgsMapLayer) layer to be added to canvas.
-        :param subgroupname: (str) name for the subgroup to be added.
+        """Add a layer to a group in the layer panel.
+
+        Args:
+            layer (QgsMapLayer): The layer to be added.
+            subgroupname (str): Name for the subgroup to be added.
+            clearGroupBeforeAdding (bool): Whether to clear the group before adding the layer.
         """
         subGroup = self.createGroups(subgroupname)
         if clearGroupBeforeAdding:
@@ -339,6 +482,14 @@ class DSGToolsWorkflowItem(QObject):
         subGroup.addLayer(layer)
 
     def createGroups(self, subgroupname):
+        """Create groups in the layer panel.
+
+        Args:
+            subgroupname (str): Name for the subgroup to be created.
+
+        Returns:
+            QgsLayerTreeGroup: The created subgroup.
+        """
         rootNode = QgsProject.instance().layerTreeRoot()
         parentGroupName = "DSGTools_QA_Toolbox"
         parentGroupNode = rootNode.findGroup(parentGroupName)
@@ -351,14 +502,33 @@ class DSGToolsWorkflowItem(QObject):
         return subGroup
 
     def createGroup(self, groupName, rootNode):
+        """Create a group in the layer panel.
+
+        Args:
+            groupName (str): Name for the group.
+            rootNode (QgsLayerTree): The root node for the group.
+
+        Returns:
+            QgsLayerTreeGroup: The created group.
+        """
         groupNode = rootNode.findGroup(groupName)
         return groupNode if groupNode else rootNode.addGroup(groupName)
 
     def prepareGroup(self, model):
+        """Prepare the group for the layer panel.
+
+        Args:
+            model: The model to be prepared.
+        """
         subGroup = self.createGroups(self.model().model.displayName())
         self.clearGroup(subGroup)
 
     def clearGroup(self, group):
+        """Clear a group in the layer panel.
+
+        Args:
+            group (QgsLayerTreeGroup): The group to be cleared.
+        """
         for lyrGroup in group.findLayers():
             lyr = lyrGroup.layer()
             if isinstance(lyr, QgsVectorLayer):
@@ -367,6 +537,14 @@ class DSGToolsWorkflowItem(QObject):
 
 
 def load_from_json(input_dict: dict) -> DSGToolsWorkflowItem:
+    """Load a DSGToolsWorkflowItem from a JSON-like dictionary.
+
+    Args:
+        input_dict (dict): The dictionary containing the information for the workflow item.
+
+    Returns:
+        DSGToolsWorkflowItem: The loaded DSGToolsWorkflowItem.
+    """
     params = copy.deepcopy(input_dict)
     params["flags"] = FlagSettings(**params["flags"])
     params["source"] = ModelSource(**params["source"])
