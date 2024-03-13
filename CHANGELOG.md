@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.41 - dev
+## 4.13.42 - dev
 
 Novas Funcionalidades:
 
@@ -33,6 +33,7 @@ Melhorias:
 - A Caixa de Ferramentas de Controle de Qualidade agora só limpa as camadas que são flags dos processos, mantendo as entradas;
 - Adicionada uma verificação na execução da Caixa de Ferramentas de Controle de Qualidade para evitar que o usuário comece o processo novamente sem querer;
 - Adiciona a opção de permitir linhas fechadas no processamento de unir linhas (utilizado para fechar curvas de nível em processamentos específicos de estilos na edição);
+- Altera o valor default da ferramenta de revisão para Pan to Next;
 
 
 Correção de bug:

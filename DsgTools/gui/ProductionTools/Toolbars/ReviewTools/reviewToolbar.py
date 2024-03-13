@@ -28,25 +28,19 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
     QgsFeatureRequest,
-    QgsMapLayer,
     QgsProject,
     QgsRectangle,
     QgsVectorLayer,
-    QgsWkbTypes,
     QgsFeature,
     QgsExpression,
 )
-from qgis.gui import QgsMapTool, QgsMessageBar, QgisInterface
-from qgis.PyQt import QtCore, QtGui, uic
-from qgis.PyQt.Qt import QObject, QVariant
-from qgis.PyQt.QtCore import QObject, QSettings, Qt, pyqtSignal, pyqtSlot
+from qgis.gui import QgsMapTool, QgisInterface
+from qgis.PyQt.Qt import QVariant
+from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction, QMessageBox, QSpinBox, QWidget
-from qgis.PyQt.QtXml import QDomDocument
-from qgis.core.additions.edit import edit
+from qgis.PyQt.QtWidgets import QAction, QMessageBox, QWidget
 
 from .review_ui import Ui_ReviewToolbar
-from enum import Enum
 
 
 class ReviewToolbar(QWidget, Ui_ReviewToolbar):
@@ -72,7 +66,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         self.visitedFieldComboBox.setAllowEmptyFieldName(True)
         self.rankFieldComboBox.setToolTip(self.tr("Set rank field"))
         self.rankFieldComboBox.setAllowEmptyFieldName(True)
-        self.zoomComboBox.setCurrentIndex(ReviewToolbar.ZoomToNext)
+        self.zoomComboBox.setCurrentIndex(ReviewToolbar.PanToNext)
         icon_path = ":/plugins/DsgTools/icons/attributeSelector.png"
         text = self.tr("DSGTools: Mark tile as done")
         self.applyPushButtonAction = self.add_action(
@@ -614,7 +608,7 @@ class ReviewToolbar(QWidget, Ui_ReviewToolbar):
         layer: QgsVectorLayer,
         rankFieldName: str,
         visitedFieldName: str,
-        zoomType: int = 0,
+        zoomType: int = 1,
         currentTile: Optional[int] = None,
     ):
         self.mMapLayerComboBox.setLayer(layer)
