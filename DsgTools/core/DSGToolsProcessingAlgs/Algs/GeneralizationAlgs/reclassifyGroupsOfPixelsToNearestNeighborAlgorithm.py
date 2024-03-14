@@ -108,8 +108,10 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         min_area = self.parameterAsDouble(parameters, self.MIN_AREA, context)
         nodata = self.parameterAsDouble(parameters, self.NODATA_VALUE, context)
         outputRaster = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(11, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(12, feedback)
         currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Running initial polygonize"))
         polygonLayer = self.algRunner.runGdalPolygonize(
@@ -128,6 +130,16 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         )
         nFeats = selectedPolygonLayer.featureCount()
         if nFeats == 0:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.algRunner.runRasterClipByExtent(
+                inputRaster=inputRaster,
+                extent=inputRaster.extent(),
+                nodata=nodata,
+                context=context,
+                outputLyr=outputRaster,
+                feedback=multiStepFeedback
+            )
             return {self.OUTPUT: outputRaster}
 
         currentStep += 1
@@ -150,6 +162,18 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             predicate=[AlgRunner.Disjoint],
             feedback=multiStepFeedback
         )
+        if polygonsNotOnEdge.featureCount() == 0:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.algRunner.runRasterClipByExtent(
+                inputRaster=inputRaster,
+                extent=inputRaster.extent(),
+                nodata=nodata,
+                context=context,
+                outputLyr=outputRaster,
+                feedback=multiStepFeedback
+            )
+            return {self.OUTPUT: outputRaster} 
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)

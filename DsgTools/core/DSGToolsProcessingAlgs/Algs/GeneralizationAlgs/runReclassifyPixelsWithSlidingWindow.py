@@ -327,6 +327,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
         selectedGrid = self.algRunner.runExtractByLocation(
             inputLyr=grid,
             intersectLyr=polygonsNotOnEdge,
+            predicate=[AlgRunner.Contain],
             context=context,
             feedback=multiStepFeedback
         )
