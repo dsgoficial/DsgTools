@@ -38,6 +38,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeNetw
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithm import ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyPixelsToNearestNeighborAlgorithm import ReclassifyAdjacentPixelsToNearestNeighborAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.runReclassifyPixelsWithSlidingWindow import ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildZipPackagesAlgorithm import (
     BuildZipPackageAlgorithm,
 )
@@ -652,6 +653,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyUncoveredStartAndEndPointsAlgorithm(),
             ReclassifyAdjacentPixelsToNearestNeighborAlgorithm(),
             ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(),
+            ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(),
         ]
         return algList
 

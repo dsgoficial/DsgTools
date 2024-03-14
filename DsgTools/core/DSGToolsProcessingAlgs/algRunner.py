@@ -32,6 +32,8 @@ from qgis.core import (
     QgsProcessingUtils,
     QgsVectorLayer,
     QgsFeedback,
+    QgsRasterLayer,
+    QgsRectangle,
 )
 
 
@@ -2038,6 +2040,54 @@ class AlgRunner:
         output = processing.run(
             "native:polygonfromlayerextent",
             {"INPUT": inputLayer, "ROUND_TO": roundTo, "OUTPUT": outputLyr},
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runGdalRasterizeOverFixedValue(self, inputLayer: QgsVectorLayer, inputRaster: QgsRasterLayer, value: int, context: QgsProcessingContext, feedback: Optional[QgsFeedback]=None, is_child_algorithm: bool=False):
+        processing.run(
+            "gdal:rasterize_over_fixed_value", 
+            {
+                "INPUT": inputLayer,
+                "INPUT_RASTER": inputRaster,
+                "BURN": value,
+                "ADD": False,
+                "EXTRA": False,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
+        )
+    
+    def runDSGToolsReclassifyGroupsOfPixels(self, inputRaster: QgsRasterLayer, minArea: float, nodataValue: int, context: QgsProcessingContext, outputLyr: Optional[QgsRasterLayer] = None, feedback: Optional[QgsFeedback]=None, is_child_algorithm: bool=False) -> QgsRasterLayer:
+        outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
+        output = processing.run(
+            "dsgtools:reclassifygroupsofpixelstonearestneighboralgorithm",
+            {
+                'INPUT': inputRaster,
+                'MIN_AREA': minArea,
+                'NODATA_VALUE': nodataValue,
+                'OUTPUT': outputLyr,
+            }
+        )
+        return output["OUTPUT"]
+
+    def runRasterClipByExtent(self, inputRaster: QgsRasterLayer, extent: QgsRectangle, nodata, context, outputLyr: Optional[QgsRasterLayer] = None, feedback: Optional[QgsFeedback]=None, is_child_algorithm: bool=False) -> QgsRasterLayer:
+        outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
+        output = processing.run(
+             "gdal:cliprasterbyextent",
+             {
+                'INPUT': inputRaster,
+                'PROJWIN': extent,
+                'OVERCRS': False,
+                'NODATA': nodata,
+                'OPTIONS': '',
+                'DATA_TYPE': 0,
+                'EXTRA': '',
+                'OUTPUT': outputLyr,
+            },
             context=context,
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,

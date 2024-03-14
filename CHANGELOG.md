@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.42 - dev
+## 4.13.43 - dev
 
 Novas Funcionalidades:
 
@@ -11,6 +11,7 @@ Novas Funcionalidades:
 - Adiciona suporte para a EDGV 3.0 Topo;
 - Novo processo de reclassificar pixel adjacente em raster para o vizinho mais próximo (útil para generalizar raster de vegetação classificada);
 - Novo processo de reclassificar conjunto de pixels adjacentes em raster para o vizinho mais próximo (variação do algoritmo de reclassificar pixel adjacente em raster para o vizinho mais próximo que considera área do agrupamento de pixels);
+- Novo processo de reclassificar conjunto de pixels adjacenter por meio de janela deslizante;
 
 Melhorias:
 

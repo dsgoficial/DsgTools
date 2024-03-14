@@ -21,6 +21,7 @@
 """
 
 
+import math
 from typing import Any, Dict
 import numpy as np
 import numpy.ma as ma
@@ -32,6 +33,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools import rasterHandler
 
 from PyQt5.QtCore import QCoreApplication
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
 from qgis.core import (
     QgsProcessingException,
@@ -43,13 +45,21 @@ from qgis.core import (
     QgsProcessingContext,
     QgsFeedback,
     QgsProcessingParameterNumber,
+    QgsProcessingParameterMultipleLayers,
+    QgsProcessing,
 )
 
 
-class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
+class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     MIN_AREA = "MIN_AREA"
     NODATA_VALUE = "NODATA_VALUE"
+    HSPACING = "HSPACING"
+    VSPACING = "VSPACING"
+    HOVERLAY = "HOVERLAY"
+    VOVERLAY = "VOVERLAY"
+    NODATA_POLYGON_LAYERS = "NODATA_POLYGON_LAYERS"
+    NEGATIVE_BUFFER_DISTANCE = "BUFFER_DISTANCE"
     OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
@@ -85,6 +95,72 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             )
         )
 
+        param = QgsProcessingParameterDistance(
+            self.HSPACING,
+            self.tr(
+                "Tile horizontal size"
+            ),
+            parentParameterName=self.INPUT,
+            defaultValue=1e-8,
+        )
+        param.setMetadata({"widget_wrapper": {"decimals": 10}})
+        self.addParameter(param)
+
+        param = QgsProcessingParameterDistance(
+            self.VSPACING,
+            self.tr(
+                "Tile vertical size"
+            ),
+            parentParameterName=self.INPUT,
+            defaultValue=1e-8,
+        )
+        param.setMetadata({"widget_wrapper": {"decimals": 10}})
+        self.addParameter(param)
+
+        param = QgsProcessingParameterDistance(
+            self.HOVERLAY,
+            self.tr(
+                "Tile horizontal superposition"
+            ),
+            parentParameterName=self.INPUT,
+            defaultValue=1e-8,
+        )
+        param.setMetadata({"widget_wrapper": {"decimals": 10}})
+        self.addParameter(param)
+
+        param = QgsProcessingParameterDistance(
+            self.VOVERLAY,
+            self.tr(
+                "Tile vertical superposition"
+            ),
+            parentParameterName=self.INPUT,
+            defaultValue=1e-8,
+        )
+        param.setMetadata({"widget_wrapper": {"decimals": 10}})
+        self.addParameter(param)
+
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.NODATA_POLYGON_LAYERS,
+                self.tr("Polygons with nodata values"),
+                QgsProcessing.TypeVectorPolygon,
+                optional=True,
+            )
+        )
+
+        param = QgsProcessingParameterDistance(
+            self.NEGATIVE_BUFFER_DISTANCE,
+            self.tr(
+                "Negative buffer distance"
+            ),
+            parentParameterName=self.INPUT,
+            defaultValue=0.001,
+        )
+        param.setMetadata({"widget_wrapper": {"decimals": 10}})
+        self.addParameter(param)
+        
+
+
         self.addParameter(
             QgsProcessingParameterRasterDestination(
                 self.OUTPUT, self.tr("Output Raster")
@@ -104,12 +180,18 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
                 )
             )
         self.algRunner = AlgRunner()
+        self.layerHandler = LayerHandler()
         inputRaster = self.parameterAsRasterLayer(parameters, self.INPUT, context)
         min_area = self.parameterAsDouble(parameters, self.MIN_AREA, context)
         nodata = self.parameterAsDouble(parameters, self.NODATA_VALUE, context)
         outputRaster = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
         multiStepFeedback = QgsProcessingMultiStepFeedback(11, feedback)
         currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Preparing output raster"))
+        self.buildOutputRaster(outputRaster, parameters, context, multiStepFeedback)
+        currentStep += 1
+
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Running initial polygonize"))
         polygonLayer = self.algRunner.runGdalPolygonize(
@@ -120,6 +202,68 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Building grid"))
+        selectedGrid = self.buildGrid(parameters=parameters, context=context, inputRaster=inputRaster, polygonLayer=polygonLayer, feedback=multiStepFeedback)
+        if selectedGrid is None:
+            return {self.OUTPUT: outputRaster}
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Reading output raster"))
+        ds, npRaster = rasterHandler.readAsNumpy(outputRaster, dtype=np.int16)
+        transform = rasterHandler.getCoordinateTransform(ds)
+        if multiStepFeedback.isCanceled():
+            return {self.OUTPUT: outputRaster}
+
+        multiStepFeedback.pushInfo(self.tr("Computing tiles"))
+        nTiles = selectedGrid.featureCount()
+        innerMultiStepFeedback = QgsProcessingMultiStepFeedback(2*nTiles, multiStepFeedback)
+        request = QgsFeatureRequest()
+        clause1 = QgsFeatureRequest.OrderByClause("row_index", ascending=True)
+        clause2 = QgsFeatureRequest.OrderByClause("col_index", ascending=True)
+        orderby = QgsFeatureRequest.OrderBy([clause1, clause2])
+        request.setOrderBy(orderby)
+        for current, gridFeat in enumerate(selectedGrid.getFeatures(request)):
+            if innerMultiStepFeedback.isCanceled():
+                break
+            innerMultiStepFeedback.setCurrentStep(2*current)
+            innerMultiStepFeedback.pushInfo(self.tr(f"Processing tile {current+1}/{nTiles}"))
+            geom = gridFeat.geometry()
+            maskLyr = self.layerHandler.createMemoryLayerFromGeometry(
+                geom=geom,
+                crs=inputRaster.crs(),
+            )
+            clippedRaster = self.algRunner.runClipRasterLayer(
+                inputRaster=inputRaster,
+                mask=maskLyr,
+                context=context,
+                feedback=innerMultiStepFeedback,
+            )
+            innerMultiStepFeedback.setCurrentStep(2*current + 1)
+            npView = rasterHandler.getNumpyViewFromPolygon(
+                npRaster=npRaster, transform=transform, geom=geom, pixelBuffer=0
+            )
+            reclassified = self.algRunner.runDSGToolsReclassifyGroupsOfPixels(
+                inputRaster=clippedRaster,
+                minArea=min_area,
+                nodataValue=nodata,
+                context=context,
+                feedback=innerMultiStepFeedback
+            )
+            if innerMultiStepFeedback.isCanceled():
+                break
+            _, reclass_npRaster = rasterHandler.readAsNumpy(reclassified, dtype=np.int16)
+            npView = reclass_npRaster
+            rasterHandler.writeOutputRaster(outputRaster, npRaster.T, ds)
+
+        return {self.OUTPUT: outputRaster}
+
+    def buildGrid(self, parameters, context, inputRaster, feedback, polygonLayer):
+        min_area = self.parameterAsDouble(parameters, self.MIN_AREA, context)
+        nodata = self.parameterAsDouble(parameters, self.NODATA_VALUE, context)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(8, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
         selectedPolygonLayer = self.algRunner.runFilterExpression(
             inputLyr=polygonLayer,
             expression=f"""$area < {min_area} and "DN" != {nodata} """,
@@ -128,7 +272,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         )
         nFeats = selectedPolygonLayer.featureCount()
         if nFeats == 0:
-            return {self.OUTPUT: outputRaster}
+            return None
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -158,125 +302,87 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         )
 
         currentStep += 1
-        polygonsWithCount = self.algRunner.runJoinByLocationSummary(
-            inputLyr=polygonsNotOnEdge,
-            joinLyr=polygonsNotOnEdge,
-            joinFields=[],
-            predicateList=[AlgRunner.Intersect],
-            summaries=[0],
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr("Building grid"))
+        grid = self.algRunner.runCreateGrid(
+            extent=inputRaster.extent(),
+            crs=inputRaster.crs(),
+            hSpacing=parameters[self.HSPACING],
+            vSpacing=parameters[self.VSPACING],
+            hOverlay=parameters[self.HOVERLAY],
+            vOverlay=parameters[self.VOVERLAY],
+            is_child_algorithm=True,
+            context=context,
             feedback=multiStepFeedback,
-            context=context,
         )
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Reading input numpy array"))
-        x_res = inputRaster.rasterUnitsPerPixelX()
-        y_res = inputRaster.rasterUnitsPerPixelY()
-
-        ds, npRaster = rasterHandler.readAsNumpy(inputRaster, dtype=np.int16)
-        transform = rasterHandler.getCoordinateTransform(ds)
-        currentStep += 1
-
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Masking for each polygon"))
-        request = QgsFeatureRequest()
-        request.setFilterExpression(""" "DN_count" = 1 """)
-        self.reclassifyGroupsOfPixelsInsidePolygons(
-            KDTree,
-            multiStepFeedback,
-            polygonsWithCount,
-            npRaster,
-            transform,
-            request,
-            nodata,
+        self.algRunner.runCreateSpatialIndex(
+            grid, context, multiStepFeedback, is_child_algorithm=True
         )
 
         currentStep += 1
-
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Writing output"))
-        rasterHandler.writeOutputRaster(outputRaster, npRaster.T, ds)
-
-        request = QgsFeatureRequest()
-        clause = QgsFeatureRequest.OrderByClause("$area", ascending=True)
-        orderby = QgsFeatureRequest.OrderBy([clause])
-        request.setOrderBy(orderby)
-
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr("Evaluating remaining polygons"))
-
-        ds, npRaster = rasterHandler.readAsNumpy(outputRaster, dtype=np.int16)
-        transform = rasterHandler.getCoordinateTransform(ds)
-        polygonLayer = self.algRunner.runGdalPolygonize(
-            inputRaster=outputRaster,
+        selectedGrid = self.algRunner.runExtractByLocation(
+            inputLyr=grid,
+            intersectLyr=polygonsNotOnEdge,
             context=context,
-        )
-        selectedPolygonLayer = self.algRunner.runFilterExpression(
-            inputLyr=polygonLayer,
-            expression=f"""$area < {min_area} and "DN" != {nodata} """,
-            context=context,
-        )
-        polygonsNotOnEdge = self.algRunner.runExtractByLocation(
-            inputLyr=selectedPolygonLayer,
-            intersectLyr=explodedBboxLine,
-            context=context,
-            predicate=[AlgRunner.Disjoint],
             feedback=multiStepFeedback
         )
-        remainingFeatCount = polygonsNotOnEdge.featureCount()
-        if remainingFeatCount == 0:
-            return {self.OUTPUT: outputRaster}
-        
-        multiStepFeedback.pushInfo(self.tr(f"Evaluating {remainingFeatCount} groups of remaining pixels"))
+        return selectedGrid
 
-        innerFeedback = QgsProcessingMultiStepFeedback(remainingFeatCount, multiStepFeedback)
-        innerFeedback.setCurrentStep(0)
 
-        while True:
-            if innerFeedback.isCanceled():
-                break
-            if (
-                innerFeedback.isCanceled()
-                or polygonsNotOnEdge.featureCount() == 0
-            ):
-                break
-            nextFeat = next(polygonsNotOnEdge.getFeatures(request), None)
-            if nextFeat is None:
-                break
-            self.processPixelGroup(
-                KDTree, npRaster, transform, nextFeat, nodata
-            )
-            rasterHandler.writeOutputRaster(outputRaster, npRaster.T, ds)
+    
 
-            ds, npRaster = rasterHandler.readAsNumpy(outputRaster, dtype=np.int16)
-            transform = rasterHandler.getCoordinateTransform(ds)
-            polygonLayer = self.algRunner.runGdalPolygonize(
-                inputRaster=outputRaster,
-                context=context,
-            )
-            if (
-                innerFeedback.isCanceled()
-                or selectedPolygonLayer.featureCount() == 0
-            ):
-                break
+    def buildOutputRaster(self, outputRaster, parameters: Dict[str, Any], context: QgsProcessingContext, feedback: QgsFeedback):
+        inputRaster = self.parameterAsRasterLayer(parameters, self.INPUT, context)
+        nodata = self.parameterAsDouble(parameters, self.NODATA_VALUE, context)
+        polygonLayerList = self.parameterAsLayerList(
+            parameters, self.NODATA_POLYGON_LAYERS, context
+        )
+        nSteps = 1 if len(polygonLayerList) == 0 else 4
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        burnedRaster = self.algRunner.runRasterClipByExtent(
+            inputRaster=inputRaster,
+            extent=inputRaster.extent(),
+            nodata=nodata,
+            context=context,
+            feedback=multiStepFeedback,
+            outputLyr=outputRaster,
+        )
+        if len(polygonLayerList) == 0:
+            return
 
-            selectedPolygonLayer = self.algRunner.runFilterExpression(
-                inputLyr=polygonLayer,
-                expression=f"""$area < {min_area} and "DN" != {nodata} """,
-                context=context,
-            )
-            polygonsNotOnEdge = self.algRunner.runExtractByLocation(
-                inputLyr=selectedPolygonLayer,
-                intersectLyr=explodedBboxLine,
-                context=context,
-                predicate=[AlgRunner.Disjoint],
-            )
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        mergedLyr = self.algRunner.runMergeVectorLayers(
+            inputList=polygonLayerList,
+            context=context,
+            feedback=multiStepFeedback,
+            crs=inputRaster.crs(),
+        )
 
-            innerFeedback.setCurrentStep(remainingFeatCount - polygonsNotOnEdge.featureCount())
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        minusBuffer = self.algRunner.runBuffer(
+            inputLayer=mergedLyr,
+            distance=-math.abs(parameters[self.NEGATIVE_BUFFER_DISTANCE]),
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
 
-        return {self.OUTPUT: outputRaster}
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runGdalRasterizeOverFixedValue(
+            inputLayer=minusBuffer,
+            inputRaster=burnedRaster,
+            context=context,
+            feedback=multiStepFeedback,
+        )
 
     def computeBboxLine(self, parameters: Dict[str, Any], context: QgsProcessingContext, feedback: QgsFeedback):
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
@@ -314,59 +420,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         )
         
         return explodedBboxLine
-
-    def reclassifyGroupsOfPixelsInsidePolygons(
-        self,
-        KDTree,
-        multiStepFeedback,
-        polygonsWithCount,
-        npRaster,
-        transform,
-        request,
-        nodata,
-    ):
-        polygonList = sorted(
-            polygonsWithCount.getFeatures(request),
-            key=lambda x: x.geometry().area(),
-            reverse=False,
-        )
-        stepSize = 100 / len(polygonList)
-        for current, polygonFeat in enumerate(polygonList):
-            if multiStepFeedback.isCanceled():
-                break
-            self.processPixelGroup(
-                KDTree, npRaster, transform, polygonFeat, nodata
-            )
-            multiStepFeedback.setProgress(current * stepSize)
-
-    def processPixelGroup(
-        self, KDTree, npRaster, transform, polygonFeat, nodata,
-    ):
-        geom = polygonFeat.geometry()
-
-        currentView, mask = rasterHandler.getNumpyViewAndMaskFromPolygon(
-            npRaster=npRaster, transform=transform, geom=geom, pixelBuffer=2
-        )
-        v = polygonFeat["DN"]
-        originalCopy = np.array(currentView)
-        maskedCurrentView = ma.masked_array(
-            currentView, currentView == v, np.int16
-        )
-        maskedCurrentView = ma.masked_array(maskedCurrentView, currentView == nodata, dtype=np.int16)
-        x, y = np.mgrid[0 : maskedCurrentView.shape[0], 0 : maskedCurrentView.shape[1]]
-        xygood = np.array((x[~maskedCurrentView.mask], y[~maskedCurrentView.mask])).T
-        xybad = np.array((x[maskedCurrentView.mask], y[maskedCurrentView.mask])).T
-        maskedCurrentView[maskedCurrentView.mask] = maskedCurrentView[
-            ~maskedCurrentView.mask
-        ][KDTree(xygood).query(xybad)[1]]
-        currentView = maskedCurrentView.data
-        currentView[~np.isnan(mask)] = originalCopy[~np.isnan(mask)]
-        currentView[originalCopy==nodata] = originalCopy[originalCopy==nodata]
-        # currentView[~np.isnan(mask.T)] = originalCopy[~np.isnan(mask.T)]
-        # outputMask = maskedCurrentView + mask.T
-        # outputMask[np.isnan(mask.T)] = originalCopy[np.isnan(mask.T)]
-        # currentView = outputMask
-
+        
     def name(self):
         """
         Returns the algorithm name, used for identifying the algorithm. This
@@ -375,14 +429,14 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "reclassifygroupsofpixelstonearestneighboralgorithm"
+        return "reclassifygroupsofpixelstonearestneighborwithslidingwindowalgorithm"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Reclassify Groups of Pixels to Nearest Neighbor Algorithm")
+        return self.tr("Reclassify Groups of Pixels to Nearest Neighbor With Sliding Window Algorithm")
 
     def group(self):
         """
@@ -403,8 +457,8 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate(
-            "ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm", string
+            "ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm", string
         )
 
     def createInstance(self):
-        return ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm()
+        return ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm()
