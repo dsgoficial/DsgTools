@@ -21,6 +21,7 @@
 """
 
 
+from typing import Any, Dict
 import numpy as np
 import numpy.ma as ma
 
@@ -39,6 +40,8 @@ from qgis.core import (
     QgsFeatureRequest,
     QgsProcessingParameterRasterLayer,
     QgsProcessingParameterRasterDestination,
+    QgsProcessingContext,
+    QgsFeedback,
 )
 
 
@@ -89,15 +92,15 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
                     "This algorithm requires the Python scipy library. Please install this library and try again."
                 )
             )
-        algRunner = AlgRunner()
+        self.algRunner = AlgRunner()
         inputRaster = self.parameterAsRasterLayer(parameters, self.INPUT, context)
         min_area = self.parameterAsDouble(parameters, self.MIN_AREA, context)
         outputRaster = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(8, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(11, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Running initial polygonize"))
-        polygonLayer = algRunner.runGdalPolygonize(
+        polygonLayer = self.algRunner.runGdalPolygonize(
             inputRaster=inputRaster,
             context=context,
             feedback=multiStepFeedback,
@@ -105,7 +108,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
-        selectedPolygonLayer = algRunner.runFilterExpression(
+        selectedPolygonLayer = self.algRunner.runFilterExpression(
             inputLyr=polygonLayer,
             expression=f"$area < {min_area}",
             context=context,
@@ -117,14 +120,35 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(
+        self.algRunner.runCreateSpatialIndex(
             selectedPolygonLayer, context, multiStepFeedback, is_child_algorithm=True
         )
 
         currentStep += 1
-        polygonsWithCount = algRunner.runJoinByLocationSummary(
+        multiStepFeedback.setCurrentStep(currentStep)
+        explodedBboxLine = self.computeBboxLine(parameters, context, multiStepFeedback)
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        polygonsNotOnEdge = self.algRunner.runExtractByLocation(
             inputLyr=selectedPolygonLayer,
-            joinLyr=selectedPolygonLayer,
+            intersectLyr=explodedBboxLine,
+            context=context,
+            predicate=[AlgRunner.Disjoint],
+            feedback=multiStepFeedback
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(
+            polygonsNotOnEdge, context, multiStepFeedback, is_child_algorithm=True
+        )
+
+        currentStep += 1
+        polygonsWithCount = self.algRunner.runJoinByLocationSummary(
+            inputLyr=polygonsNotOnEdge,
+            joinLyr=polygonsNotOnEdge,
             joinFields=[],
             predicateList=[AlgRunner.Intersect],
             summaries=[0],
@@ -176,18 +200,27 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
 
         ds, npRaster = rasterHandler.readAsNumpy(outputRaster, dtype=np.int8)
         transform = rasterHandler.getCoordinateTransform(ds)
-        polygonLayer = algRunner.runGdalPolygonize(
+        polygonLayer = self.algRunner.runGdalPolygonize(
             inputRaster=outputRaster,
             context=context,
         )
-        selectedPolygonLayer = algRunner.runFilterExpression(
+        selectedPolygonLayer = self.algRunner.runFilterExpression(
             inputLyr=polygonLayer,
             expression=f"$area < {min_area}",
             context=context,
         )
-        remainingFeatCount = selectedPolygonLayer.featureCount()
+        polygonsNotOnEdge = self.algRunner.runExtractByLocation(
+            inputLyr=selectedPolygonLayer,
+            intersectLyr=explodedBboxLine,
+            context=context,
+            predicate=[AlgRunner.Disjoint],
+            feedback=multiStepFeedback
+        )
+        remainingFeatCount = polygonsNotOnEdge.featureCount()
         if remainingFeatCount == 0:
             return {self.OUTPUT: outputRaster}
+        
+        multiStepFeedback.pushInfo(self.tr(f"Evaluating {remainingFeatCount} groups of remaining pixels"))
 
         innerFeedback = QgsProcessingMultiStepFeedback(remainingFeatCount, multiStepFeedback)
         innerFeedback.setCurrentStep(0)
@@ -197,10 +230,10 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
                 break
             if (
                 innerFeedback.isCanceled()
-                or selectedPolygonLayer.featureCount() == 0
+                or polygonsNotOnEdge.featureCount() == 0
             ):
                 break
-            nextFeat = next(selectedPolygonLayer.getFeatures(request), None)
+            nextFeat = next(polygonsNotOnEdge.getFeatures(request), None)
             if nextFeat is None:
                 break
             self.processPixelGroup(
@@ -210,7 +243,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
 
             ds, npRaster = rasterHandler.readAsNumpy(outputRaster, dtype=np.int8)
             transform = rasterHandler.getCoordinateTransform(ds)
-            polygonLayer = algRunner.runGdalPolygonize(
+            polygonLayer = self.algRunner.runGdalPolygonize(
                 inputRaster=outputRaster,
                 context=context,
             )
@@ -220,15 +253,58 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             ):
                 break
 
-            selectedPolygonLayer = algRunner.runFilterExpression(
+            selectedPolygonLayer = self.algRunner.runFilterExpression(
                 inputLyr=polygonLayer,
                 expression=f"$area < {min_area}",
                 context=context,
             )
+            polygonsNotOnEdge = self.algRunner.runExtractByLocation(
+                inputLyr=selectedPolygonLayer,
+                intersectLyr=explodedBboxLine,
+                context=context,
+                predicate=[AlgRunner.Disjoint],
+            )
 
-            innerFeedback.setCurrentStep(remainingFeatCount - selectedPolygonLayer.featureCount() - 1)
+            innerFeedback.setCurrentStep(remainingFeatCount - polygonsNotOnEdge.featureCount())
 
         return {self.OUTPUT: outputRaster}
+
+    def computeBboxLine(self, parameters: Dict[str, Any], context: QgsProcessingContext, feedback: QgsFeedback):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        bbox = self.algRunner.runPolygonFromLayerExtent(
+            inputLayer=parameters[self.INPUT],
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        bboxLine = self.algRunner.runPolygonsToLines(
+            inputLyr=bbox,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        explodedBboxLine = self.algRunner.runExplodeLines(
+            inputLyr=bboxLine,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True
+        )
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        self.algRunner.runCreateSpatialIndex(
+            explodedBboxLine, context, multiStepFeedback, is_child_algorithm=True
+        )
+        
+        return explodedBboxLine
 
     def reclassifyGroupsOfPixelsInsidePolygons(
         self,
@@ -261,13 +337,14 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
     ):
         geom = polygonFeat.geometry()
 
-        currentView = rasterHandler.getNumpyViewFromPolygon(
-            npRaster=npRaster, transform=transform, geom=geom, pixelBuffer=0
+        currentView, mask = rasterHandler.getNumpyViewFromPolygon(
+            npRaster=npRaster, transform=transform, geom=geom, pixelBuffer=2
         )
-        mask = rasterHandler.buildNumpyNodataMaskForPolygon(
-            x_res, y_res, currentView, geom, crs, valueToBurnAsMask=np.nan
-        )
+        # mask = rasterHandler.buildNumpyNodataMaskForPolygon(
+        #     x_res, y_res, currentView, geom, crs, valueToBurnAsMask=np.nan
+        # )
         v = polygonFeat["DN"]
+        originalCopy = np.array(currentView)
         maskedCurrentView = ma.masked_array(
             currentView, currentView == v, np.int8
         )
@@ -278,9 +355,12 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         maskedCurrentView[maskedCurrentView.mask] = maskedCurrentView[
             ~maskedCurrentView.mask
         ][KDTree(xygood).query(xybad)[1]]
-        outputMask = currentView + mask.T
-        outputMask[np.isnan(outputMask)] = maskedCurrentView[np.isnan(outputMask)]
-        currentView = outputMask
+        currentView = maskedCurrentView.data
+        currentView[~np.isnan(mask)] = originalCopy[~np.isnan(mask)]
+        # currentView[~np.isnan(mask.T)] = originalCopy[~np.isnan(mask.T)]
+        # outputMask = maskedCurrentView + mask.T
+        # outputMask[np.isnan(mask.T)] = originalCopy[np.isnan(mask.T)]
+        # currentView = outputMask
 
     def name(self):
         """

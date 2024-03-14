@@ -26,6 +26,7 @@ from typing import List, Optional
 import processing
 from qgis.core import (
     Qgis,
+    QgsMapLayer,
     QgsProcessingContext,
     QgsProcessingFeatureSourceDefinition,
     QgsProcessingUtils,
@@ -2026,6 +2027,17 @@ class AlgRunner:
         output = processing.run(
             "native:interpolatepoint",
             {"INPUT": inputLayer, "DISTANCE": distance, "OUTPUT": outputLyr},
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runPolygonFromLayerExtent(self, inputLayer: QgsMapLayer, context: QgsProcessingContext, roundTo: Optional[float] = 0.0, outputLyr: Optional[QgsVectorLayer] = None, feedback: Optional[QgsFeedback]=None, is_child_algorithm: bool=False) -> QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:polygonfromlayerextent",
+            {"INPUT": inputLayer, "ROUND_TO": roundTo, "OUTPUT": outputLyr},
             context=context,
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,

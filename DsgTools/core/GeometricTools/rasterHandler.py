@@ -285,21 +285,21 @@ def getNumpyViewFromPolygon(npRaster: np.array, transform: Affine, geom: QgsGeom
     c, d = map(int, ~transform * (terrain_xmax, terrain_ymax))
     xmin, xmax = min(a, c), max(a, c)
     ymin, ymax = min(b, d), max(b, d)
-    return npRaster[max(xmin-pixelBuffer, 0):xmax+pixelBuffer+1, max(ymin-pixelBuffer, 0):ymax+pixelBuffer+1]
-    # npView = npRaster[max(xmin-pixelBuffer, 0):xmax+pixelBuffer+1, max(ymin-pixelBuffer, 0):ymax+pixelBuffer+1]
-    # mask = np.zeros((1, npView.shape[0] * npView.shape[1]))
-    # productPairList = list(product(range(max(xmin-pixelBuffer, 0), xmax+pixelBuffer+1), range(max(ymin-pixelBuffer, 0), ymax+pixelBuffer+1)))
-    # maxIdx = npView.shape[0] * npView.shape[1]
-    # for idx, transformedPair in enumerate(productPairList):
-    #     transfCoord = transform * transformedPair
-    #     candGeom = QgsGeometry(QgsPoint(*transfCoord))
-    #     if not candGeom.intersects(geom):
-    #         continue
-    #     if idx >= maxIdx:
-    #         break
-    #     mask[:, idx] = np.nan
-    # mask = mask.reshape(npView.shape)
-    # return npView, mask
+    # return npRaster[max(xmin-pixelBuffer, 0):xmax+pixelBuffer+1, max(ymin-pixelBuffer, 0):ymax+pixelBuffer+1]
+    npView = npRaster[max(xmin-pixelBuffer, 0):xmax+pixelBuffer+1, max(ymin-pixelBuffer, 0):ymax+pixelBuffer+1]
+    mask = np.zeros((1, npView.shape[0] * npView.shape[1]))
+    productPairList = list(product(range(max(xmin-pixelBuffer, 0), xmax+pixelBuffer+1), range(max(ymin-pixelBuffer, 0), ymax+pixelBuffer+1)))
+    maxIdx = npView.shape[0] * npView.shape[1]
+    for idx, transformedPair in enumerate(productPairList):
+        transfCoord = transform * transformedPair
+        candGeom = QgsGeometry(QgsPoint(*transfCoord))
+        if not candGeom.intersects(geom):
+            continue
+        if idx >= maxIdx:
+            break
+        mask[:, idx] = np.nan
+    mask = mask.reshape(npView.shape)
+    return npView, mask
 
 
 def buildNumpyNodataMaskForPolygon(x_res, y_res, npRaster, geom: QgsGeometry, crs, valueToBurnAsMask=np.nan):
