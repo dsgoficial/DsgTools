@@ -106,7 +106,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         self.algRunner = AlgRunner()
         inputRaster = self.parameterAsRasterLayer(parameters, self.INPUT, context)
         min_area = self.parameterAsDouble(parameters, self.MIN_AREA, context)
-        nodata = self.parameterAsDouble(parameters, self.NODATA_VALUE, context)
+        nodata = self.parameterAsInt(parameters, self.NODATA_VALUE, context)
         outputRaster = self.parameterAsOutputLayer(parameters, self.OUTPUT, context)
         multiStepFeedback = QgsProcessingMultiStepFeedback(12, feedback)
         currentStep = 0
@@ -287,6 +287,8 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
 
             ds, npRaster = rasterHandler.readAsNumpy(outputRaster, dtype=np.int16)
             transform = rasterHandler.getCoordinateTransform(ds)
+            if innerFeedback.isCanceled():
+                break
             polygonLayer = self.algRunner.runGdalPolygonize(
                 inputRaster=outputRaster,
                 context=context,
@@ -302,6 +304,8 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
                 expression=f"""$area < {min_area} and "DN" != {nodata} """,
                 context=context,
             )
+            if innerFeedback.isCanceled():
+                break
             polygonsNotOnEdge = self.algRunner.runExtractByLocation(
                 inputLyr=selectedPolygonLayer,
                 intersectLyr=explodedBboxLine,
