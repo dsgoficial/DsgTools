@@ -195,8 +195,6 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Reading input numpy array"))
-        x_res = inputRaster.rasterUnitsPerPixelX()
-        y_res = inputRaster.rasterUnitsPerPixelY()
 
         ds, npRaster = rasterHandler.readAsNumpy(inputRaster, dtype=np.int16)
         transform = rasterHandler.getCoordinateTransform(ds)
@@ -206,7 +204,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         multiStepFeedback.pushInfo(self.tr("Masking for each polygon"))
         request = QgsFeatureRequest()
         request.setFilterExpression(""" "DN_count" = 1 """)
-        self.reclassifyGroupsOfPixelsInsidePolygons(
+        out = self.reclassifyGroupsOfPixelsInsidePolygons(
             KDTree,
             multiStepFeedback,
             polygonsWithCount,
@@ -215,6 +213,19 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             request,
             nodata,
         )
+
+        if not out:
+            currentStep += 1
+            multiStepFeedback.setCurrentStep(currentStep)
+            self.algRunner.runRasterClipByExtent(
+                inputRaster=inputRaster,
+                extent=inputRaster.extent(),
+                nodata=nodata,
+                context=context,
+                outputLyr=outputRaster,
+                feedback=multiStepFeedback
+            )
+            return {self.OUTPUT: outputRaster}
 
         currentStep += 1
 
@@ -354,6 +365,8 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             key=lambda x: x.geometry().area(),
             reverse=False,
         )
+        if len(polygonList) == 0:
+            return False
         stepSize = 100 / len(polygonList)
         for current, polygonFeat in enumerate(polygonList):
             if multiStepFeedback.isCanceled():
@@ -362,6 +375,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
                 KDTree, npRaster, transform, polygonFeat, nodata
             )
             multiStepFeedback.setProgress(current * stepSize)
+        return True
 
     def processPixelGroup(
         self, KDTree, npRaster, transform, polygonFeat, nodata,
