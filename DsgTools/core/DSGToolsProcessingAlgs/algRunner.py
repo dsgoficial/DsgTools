@@ -2093,3 +2093,19 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
+    
+    def runOverlapAnalysis(self, inputLayer: QgsVectorLayer, layerList: List[QgsVectorLayer], context: QgsProcessingContext, gridSize: Optional[float] = None, outputLyr: Optional[QgsRasterLayer] = None, feedback: Optional[QgsFeedback]=None, is_child_algorithm: bool=False) -> QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:calculatevectoroverlaps",
+            {
+                'INPUT': inputLayer,
+                'LAYERS': layerList,
+                'OUTPUT': outputLyr,
+                'GRID_SIZE': gridSize
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
+        )
+        return output["OUTPUT"]

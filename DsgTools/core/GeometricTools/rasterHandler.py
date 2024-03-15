@@ -24,6 +24,7 @@ from typing import Dict, List, Tuple, Union
 from uuid import uuid4
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
 from .affine import Affine
 import numpy as np
@@ -39,6 +40,7 @@ from qgis.core import (
     QgsRasterLayer,
     QgsVectorFileWriter,
     QgsVectorLayer,
+    QgsProcessingContext,
 )
 
 
@@ -355,3 +357,12 @@ def buildNumpyNodataMaskForPolygon(x_res, y_res, npRaster, geom: QgsGeometry, cr
     ds = None
     outputNpRaster[outputNpRaster == 255.0] = valueToBurnAsMask
     return outputNpRaster
+
+def polygonizeFromNumpyArray(npRaster, ds):
+    _out = QgsProcessingUtils.generateTempFilename(f"polygonize_{str(uuid4().hex)}.tif")
+    writeOutputRaster(_out, npRaster, ds)
+    outputLyr = AlgRunner().runGdalPolygonize(
+        inputRaster=_out,
+        context=QgsProcessingContext(),
+    )
+    return outputLyr
