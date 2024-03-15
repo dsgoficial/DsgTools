@@ -22,6 +22,8 @@
 
 
 import math
+import concurrent.futures
+import os
 from typing import Any, Dict
 import numpy as np
 import numpy.ma as ma
@@ -34,6 +36,7 @@ from DsgTools.core.GeometricTools import rasterHandler
 
 from PyQt5.QtCore import QCoreApplication
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from DsgTools.core.Utils.threadingTools import concurrently
 
 from qgis.core import (
     QgsProcessingException,
@@ -223,12 +226,9 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
         clause2 = QgsFeatureRequest.OrderByClause("col_index", ascending=True)
         orderby = QgsFeatureRequest.OrderBy([clause1, clause2])
         request.setOrderBy(orderby)
-        for current, gridFeat in enumerate(selectedGrid.getFeatures(request)):
-            if innerMultiStepFeedback.isCanceled():
-                break
-            innerMultiStepFeedback.setCurrentStep(2*current)
-            innerMultiStepFeedback.pushInfo(self.tr(f"Processing tile {current+1}/{nTiles}"))
+        def compute(gridFeat):
             geom = gridFeat.geometry()
+            localContext = QgsProcessingContext()
             maskLyr = self.layerHandler.createMemoryLayerFromGeometry(
                 geom=geom,
                 crs=inputRaster.crs(),
@@ -236,19 +236,25 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
             clippedRaster = self.algRunner.runClipRasterLayer(
                 inputRaster=inputRaster,
                 mask=maskLyr,
-                context=context,
-                feedback=innerMultiStepFeedback,
+                context=localContext,
             )
-            innerMultiStepFeedback.setCurrentStep(2*current + 1)
-            npView = rasterHandler.getNumpyViewFromPolygon(
-                npRaster=npRaster, transform=transform, geom=geom, pixelBuffer=0
-            )
-            reclassified = self.algRunner.runDSGToolsReclassifyGroupsOfPixels(
+            return geom, self.algRunner.runDSGToolsReclassifyGroupsOfPixels(
                 inputRaster=clippedRaster,
                 minArea=min_area,
                 nodataValue=nodata,
-                context=context,
-                feedback=innerMultiStepFeedback
+                context=localContext,
+            )
+        multiStepFeedback.setProgressText(self.tr("Submitting tasks to thread..."))
+        for current, (geom, reclassified) in enumerate(
+            concurrently(compute, selectedGrid.getFeatures(request), max_concurrency=5, feedback=innerMultiStepFeedback),
+            start=0,
+        ):
+            if innerMultiStepFeedback.isCanceled():
+                break
+            innerMultiStepFeedback.setCurrentStep(current)
+            innerMultiStepFeedback.pushInfo(self.tr(f"Processing thread output for tile {current+1}/{nTiles}"))
+            npView = rasterHandler.getNumpyViewFromPolygon(
+                npRaster=npRaster, transform=transform, geom=geom, pixelBuffer=0
             )
             if innerMultiStepFeedback.isCanceled():
                 break
