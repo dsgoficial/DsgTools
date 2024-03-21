@@ -777,7 +777,7 @@ class AlgRunner:
         sortAscending=True,
         sortNullsFirst=False,
         is_child_algorithm=False,
-    ):
+    ) -> QgsVectorLayer:
         fieldName = "featid" if fieldName is None else fieldName
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {
@@ -946,7 +946,7 @@ class AlgRunner:
         unjoinnedLyr=None,
         returnUnjoinned=False,
         is_child_algorithm=False,
-    ):
+    ) -> QgsVectorLayer:
         predicateList = [0] if predicateList is None else predicateList
         joinFields = [] if joinFields is None else joinFields
         method = 0 if method is None else method
@@ -2035,7 +2035,15 @@ class AlgRunner:
         )
         return output["OUTPUT"]
 
-    def runPolygonFromLayerExtent(self, inputLayer: QgsMapLayer, context: QgsProcessingContext, roundTo: Optional[float] = 0.0, outputLyr: Optional[QgsVectorLayer] = None, feedback: Optional[QgsFeedback]=None, is_child_algorithm: bool=False) -> QgsVectorLayer:
+    def runPolygonFromLayerExtent(
+        self,
+        inputLayer: QgsMapLayer,
+        context: QgsProcessingContext,
+        roundTo: Optional[float] = 0.0,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
             "native:polygonfromlayerextent",
@@ -2046,9 +2054,17 @@ class AlgRunner:
         )
         return output["OUTPUT"]
 
-    def runGdalRasterizeOverFixedValue(self, inputLayer: QgsVectorLayer, inputRaster: QgsRasterLayer, value: int, context: QgsProcessingContext, feedback: Optional[QgsFeedback]=None, is_child_algorithm: bool=False):
+    def runGdalRasterizeOverFixedValue(
+        self,
+        inputLayer: QgsVectorLayer,
+        inputRaster: QgsRasterLayer,
+        value: int,
+        context: QgsProcessingContext,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ):
         processing.run(
-            "gdal:rasterize_over_fixed_value", 
+            "gdal:rasterize_over_fixed_value",
             {
                 "INPUT": inputLayer,
                 "INPUT_RASTER": inputRaster,
@@ -2058,55 +2074,82 @@ class AlgRunner:
             },
             context=context,
             feedback=feedback,
-            is_child_algorithm=is_child_algorithm
+            is_child_algorithm=is_child_algorithm,
         )
-    
-    def runDSGToolsReclassifyGroupsOfPixels(self, inputRaster: QgsRasterLayer, minArea: float, nodataValue: int, context: QgsProcessingContext, outputLyr: Optional[QgsRasterLayer] = None, feedback: Optional[QgsFeedback]=None, is_child_algorithm: bool=False) -> QgsRasterLayer:
+
+    def runDSGToolsReclassifyGroupsOfPixels(
+        self,
+        inputRaster: QgsRasterLayer,
+        minArea: float,
+        nodataValue: int,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsRasterLayer:
         outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
         output = processing.run(
             "dsgtools:reclassifygroupsofpixelstonearestneighboralgorithm",
             {
-                'INPUT': inputRaster,
-                'MIN_AREA': minArea,
-                'NODATA_VALUE': nodataValue,
-                'OUTPUT': outputLyr,
-            }
+                "INPUT": inputRaster,
+                "MIN_AREA": minArea,
+                "NODATA_VALUE": nodataValue,
+                "OUTPUT": outputLyr,
+            },
         )
         return output["OUTPUT"]
 
-    def runRasterClipByExtent(self, inputRaster: QgsRasterLayer, extent: QgsRectangle, nodata, context, outputLyr: Optional[QgsRasterLayer] = None, feedback: Optional[QgsFeedback]=None, is_child_algorithm: bool=False) -> QgsRasterLayer:
+    def runRasterClipByExtent(
+        self,
+        inputRaster: QgsRasterLayer,
+        extent: QgsRectangle,
+        nodata,
+        context,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsRasterLayer:
         outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
         output = processing.run(
-             "gdal:cliprasterbyextent",
-             {
-                'INPUT': inputRaster,
-                'PROJWIN': extent,
-                'OVERCRS': False,
-                'NODATA': nodata,
-                'OPTIONS': '',
-                'DATA_TYPE': 0,
-                'EXTRA': '',
-                'OUTPUT': outputLyr,
+            "gdal:cliprasterbyextent",
+            {
+                "INPUT": inputRaster,
+                "PROJWIN": extent,
+                "OVERCRS": False,
+                "NODATA": nodata,
+                "OPTIONS": "",
+                "DATA_TYPE": 0,
+                "EXTRA": "",
+                "OUTPUT": outputLyr,
             },
             context=context,
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
-    
-    def runOverlapAnalysis(self, inputLayer: QgsVectorLayer, layerList: List[QgsVectorLayer], context: QgsProcessingContext, gridSize: Optional[float] = None, outputLyr: Optional[QgsRasterLayer] = None, feedback: Optional[QgsFeedback]=None, is_child_algorithm: bool=False) -> QgsVectorLayer:
+
+    def runOverlapAnalysis(
+        self,
+        inputLayer: QgsVectorLayer,
+        layerList: List[QgsVectorLayer],
+        context: QgsProcessingContext,
+        gridSize: Optional[float] = None,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
             "native:calculatevectoroverlaps",
             {
-                'INPUT': inputLayer,
-                'LAYERS': layerList,
-                'OUTPUT': outputLyr,
-                'GRID_SIZE': gridSize
+                "INPUT": inputLayer,
+                "LAYERS": layerList,
+                "OUTPUT": outputLyr,
+                "GRID_SIZE": gridSize,
             },
             context=context,
             feedback=feedback,
-            is_child_algorithm=is_child_algorithm
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 

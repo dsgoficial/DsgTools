@@ -59,6 +59,7 @@ Correção de bug:
 - Corrige bug de estado guardado no projeto no workflow;
 - Corrige crashes no dsgtools nos processings (versão 4.13.35, para refrência em caso de problemas);
 - Corrige bug com camada vazia em models do workflow ao executar o processo de identificar linhas não cobertas por outras linhas (IdentifyUncoveredStartAndEndPointsAlgorithm);
+- Corrige bug em Update Runway Altitude;
 
 ## 4.12.0 - 2023-12-13
 
