@@ -1,3 +1,4 @@
+from typing import List
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessing,
@@ -7,6 +8,8 @@ from qgis.core import (
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterRasterLayer,
     QgsProcessingParameterNumber,
+    QgsVectorLayer,
+    QgsRasterLayer,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
@@ -54,7 +57,13 @@ class UpdateRunwayAltitudeAlgorithm(QgsProcessingAlgorithm):
         )
 
     def updateLyrs(
-        self, inputLyrs, altitudeField, raster, decimals, context, feedback=None
+        self,
+        inputLyrs: List[QgsVectorLayer],
+        altitudeField,
+        raster: QgsRasterLayer,
+        decimals,
+        context,
+        feedback=None,
     ):
         layerIds = []
         if feedback is not None:
@@ -68,7 +77,7 @@ class UpdateRunwayAltitudeAlgorithm(QgsProcessingAlgorithm):
                 break
             fields = original_lyr.fields()
             altitude = fields.indexFromName(altitudeField)
-            orig_lyr = self.algRunner.runAddAutoIncrementalField(
+            lyr = self.algRunner.runAddAutoIncrementalField(
                 inputLyr=original_lyr,
                 context=context,
                 feedback=multiStepFeedback,
@@ -76,21 +85,16 @@ class UpdateRunwayAltitudeAlgorithm(QgsProcessingAlgorithm):
             )
             multiStepFeedback.setCurrentStep(currentStep + 1)
             self.algRunner.runCreateSpatialIndex(
-                inputLyr=orig_lyr,
+                inputLyr=lyr,
                 context=context,
                 feedback=multiStepFeedback,
                 is_child_algorithm=True,
             )
 
             multiStepFeedback.setCurrentStep(currentStep + 2)
-            lyr = self.algRunner.runJoinAttributesByLocation(
-                inputLyr=orig_lyr,
-                joinLyr=orig_lyr,
-                context=context,
-                feedback=multiStepFeedback,
-            )
+
             data = {}
-            for f in lyr.getFeatures():
+            for f in original_lyr.getFeatures():
                 c = f.geometry().centroid().asPoint()
                 value, success = raster.dataProvider().sample(c, 1)
                 if decimals != -1:
