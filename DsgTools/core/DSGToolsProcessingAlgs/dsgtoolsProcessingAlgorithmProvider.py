@@ -33,12 +33,14 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.rightAngleT
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.appendFeaturesToLayerAlgorithm import (
     AppendFeaturesToLayerAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.findSmallClosedLinesAlgorithm import FindSmallClosedLinesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeNetworkEdgesFromLengthAlgorithm import (
     GeneralizeNetworkEdgesWithLengthAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithm import ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyPixelsToNearestNeighborAlgorithm import ReclassifyAdjacentPixelsToNearestNeighborAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.runReclassifyPixelsWithSlidingWindow import ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.setLineOrientation import SetLineOrientation
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildZipPackagesAlgorithm import (
     BuildZipPackageAlgorithm,
 )
@@ -654,6 +656,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             ReclassifyAdjacentPixelsToNearestNeighborAlgorithm(),
             ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(),
             ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(),
+            FindSmallClosedLinesAlgorithm(),
+            SetLineOrientation(),
         ]
         return algList
 

@@ -1291,3 +1291,31 @@ def find_smaller_first_order_path_with_length_smaller_than_threshold(
         total_length_dict.keys(), key=lambda x: total_length_dict[x]
     )
     return edges_to_remove_dict[smaller_path_node]
+
+def find_small_closed_line_groups(
+    nx,
+    G,
+    minLength: float,
+    lengthField: Optional[str] = "length",
+    idField: Optional[str] = "featid",
+    feedback: Optional[QgsFeedback] = None
+) -> set:
+    idsToRemove = set()
+    loopList = list(nx.simple_cycles(G))
+    nLoops = len(loopList)
+    if nLoops == 0:
+        return idsToRemove
+    stepSize = 100/nLoops
+    for current, loop in enumerate(loopList):
+        if feedback is not None and feedback.isCanceled():
+            break
+        pairs = set(pairwise(loop))
+        pairs.add((loop[-1], loop[0]))
+        currentLen = sum(map(lambda x: G[x[0]][x[1]][0][lengthField], pairs))
+        if currentLen > minLength:
+            continue
+        for pair in pairs:
+            idsToRemove.add(G[pair[0]][pair[1]][0][idField])
+        if feedback is not None:
+            feedback.setProgress(current * stepSize)
+    return idsToRemove

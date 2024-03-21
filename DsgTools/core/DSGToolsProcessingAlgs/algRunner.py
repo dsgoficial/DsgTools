@@ -2109,3 +2109,23 @@ class AlgRunner:
             is_child_algorithm=is_child_algorithm
         )
         return output["OUTPUT"]
+
+    def runReverseLineDirection(self, inputLayer: QgsVectorLayer, context: QgsProcessingContext, outputLyr: Optional[QgsRasterLayer] = None, feedback: Optional[QgsFeedback]=None, is_child_algorithm: bool=False) -> QgsVectorLayer:
+        output = processing.run(
+            "native:reverselinedirection",
+            {"INPUT": inputLayer, "OUTPUT": "memory:"},
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
+        )
+        return output["OUTPUT"]
+
+    def runSetLineOrientation(self, inputLayer: QgsVectorLayer, context: QgsProcessingContext, orientation: Optional[int] = 0, outputLyr: Optional[QgsRasterLayer] = None, feedback: Optional[QgsFeedback]=None, is_child_algorithm: bool=False) -> QgsVectorLayer:
+        output = processing.run(
+            "dsgtools:setlineorientation",
+            {"INPUT": inputLayer, "ORIENTATION": orientation, "OUTPUT": "memory:"},
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
+        )
+        return output["OUTPUT"]
