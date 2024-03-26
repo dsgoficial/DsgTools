@@ -221,6 +221,42 @@ class QgisCtrl:
                 value = ProjectQgis(self.iface).getVariableProject(variable)"""
                 feature.setAttribute(indx, attributeValue)
 
+    def attributeFeatureV2(self, feature, layer, attributes, featureOrigin, layerOrigin):
+        for fieldName in layerOrigin.fields().names():
+            indxDest = layer.fields().indexFromName(fieldName)
+            if indxDest < 0 or indxDest in self.getLayerPrimaryKeyIndexes(layer):
+                continue
+            config = layer.editorWidgetSetup(indxDest).config()
+            isMapValue = "map" in config
+            attributeValue = featureOrigin[fieldName]
+            if isMapValue:
+                valueMap = self.formatMapValues(config["map"])
+                if attributeValue in list(valueMap.values()):
+                    feature.setAttribute(indxDest, attributeValue)
+            elif attributeValue and attributeValue in ["NULL"]:
+                feature.setAttribute(indxDest, None)
+            elif attributeValue:
+                feature.setAttribute(indxDest, attributeValue)
+            
+        for fieldName in attributes:
+            indx = layer.fields().indexFromName(fieldName)
+            if indx < 0:
+                continue
+            config = layer.editorWidgetSetup(indx).config()
+            isMapValue = "map" in config
+            attributeValue = attributes[fieldName]
+            if isMapValue:
+                valueMap = self.formatMapValues(config["map"])
+                if attributeValue in valueMap:
+                    feature.setAttribute(indx, valueMap[attributeValue])
+            elif attributeValue and attributeValue in ["NULL"]:
+                feature.setAttribute(indx, None)
+            elif attributeValue and not (attributeValue in ["NULL", "IGNORAR"]):
+                """if re.match('^\@value\(".+"\)$', value):
+                variable = value.split('"')[-2]
+                value = ProjectQgis(self.iface).getVariableProject(variable)"""
+                feature.setAttribute(indx, attributeValue)
+
     def cutAndPasteSelectedFeatures(self, layer, destinatonLayer, attributes):
         geometryFilterDict = {
             QgsWkbTypes.PointGeometry: (QgsWkbTypes.PointGeometry,),
@@ -249,7 +285,13 @@ class QgisCtrl:
                 else feature.geometry()
             )
             newFeat.setGeometry(newGeom)
-            self.attributeFeature(newFeat, destinatonLayer, attributes)
+            self.attributeFeatureV2(
+                newFeat, 
+                destinatonLayer, 
+                attributes,
+                feature,
+                layer
+            )
             newFeatures.append(newFeat)
         layer.deleteSelectedFeatures()
         destinatonLayer.addFeatures(newFeatures)

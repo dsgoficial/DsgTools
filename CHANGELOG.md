@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 4.13.46 - dev
+
+Melhorias:
+
+- Adiciona a melhoria no menu de reclassificação para puxar os campos idênticos da camada de origem.
+
 ## 4.13.45 - dev
 
 Novas Funcionalidades:
