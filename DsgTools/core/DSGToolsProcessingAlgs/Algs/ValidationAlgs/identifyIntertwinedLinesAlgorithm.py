@@ -193,6 +193,15 @@ class IdentifyIntertwinedLinesAlgorithm(ValidationAlgorithm):
             intersections.convertToMultiType()
             if intersections.isEmpty():
                 continue
+            if intersections.wkbType() == QgsWkbTypes.GeometryCollection:
+                points = []
+                for intersection in intersections.asGeometryCollection():
+                    if intersection.wkbType() == QgsWkbTypes.LineString:
+                        points.extend(intersection.asPolyline())
+                    if intersection.wkbType() == QgsWkbTypes.Point:
+                        points.extend([intersection.asPoint()])
+                geom = QgsGeometry()
+                intersections = geom.fromMultiPointXY(points)
             if intersections.wkbType() == QgsWkbTypes.MultiLineString:
                 points = []
                 for line in intersections.asMultiPolyline():

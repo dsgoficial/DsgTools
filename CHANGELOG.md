@@ -1,12 +1,6 @@
 # CHANGELOG
 
-## 4.13.46 - dev
-
-Melhorias:
-
-- Adiciona a melhoria no menu de reclassificação para puxar os campos idênticos da camada de origem.
-
-## 4.13.45 - dev
+## 4.13.47 - dev
 
 Novas Funcionalidades:
 
@@ -42,6 +36,7 @@ Melhorias:
 - Adicionada uma verificação na execução da Caixa de Ferramentas de Controle de Qualidade para evitar que o usuário comece o processo novamente sem querer;
 - Adiciona a opção de permitir linhas fechadas no processamento de unir linhas (utilizado para fechar curvas de nível em processamentos específicos de estilos na edição);
 - Altera o valor default da ferramenta de revisão para Pan to Next;
+- Adiciona a melhoria no menu de reclassificação para puxar os campos idênticos da camada de origem;
 
 
 Correção de bug:
@@ -66,6 +61,7 @@ Correção de bug:
 - Corrige crashes no dsgtools nos processings (versão 4.13.35, para refrência em caso de problemas);
 - Corrige bug com camada vazia em models do workflow ao executar o processo de identificar linhas não cobertas por outras linhas (IdentifyUncoveredStartAndEndPointsAlgorithm);
 - Corrige bug em Update Runway Altitude;
+- Corrige bug em Identify Intertwined Lines para tratar caso de Geometry Collection (linhas que se cruzam e se sobrepoem);
 
 ## 4.12.0 - 2023-12-13
 
