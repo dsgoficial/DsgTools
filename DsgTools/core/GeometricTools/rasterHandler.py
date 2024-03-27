@@ -224,6 +224,7 @@ def createMaxPointFeatFromRasterLayer(
     fieldName: str,
     defaultAtributeMap: Dict = None,
     maxValue: float = None,
+    minValue: float = None,
 ) -> QgsFeature:
     ds, npRaster = readAsNumpy(inputRaster)
     transform = getCoordinateTransform(ds)
@@ -232,6 +233,8 @@ def createMaxPointFeatFromRasterLayer(
     npRaster[nanIndexes] = np.nan
     if maxValue is not None:
         npRaster[npRaster >= maxValue] = np.nan
+    if minValue is not None:
+        npRaster[npRaster <= maxValue] = np.nan
     pixelCoordinates = getMaxCoordinatesFromNpArray(npRaster)
     pixelCoordinates = (
         tuple(pixelCoordinates.reshape(1, -1)[0])
