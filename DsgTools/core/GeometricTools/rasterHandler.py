@@ -234,7 +234,7 @@ def createMaxPointFeatFromRasterLayer(
     if maxValue is not None:
         npRaster[npRaster >= maxValue] = np.nan
     if minValue is not None:
-        npRaster[npRaster <= maxValue] = np.nan
+        npRaster[npRaster <= minValue] = np.nan
     pixelCoordinates = getMaxCoordinatesFromNpArray(npRaster)
     pixelCoordinates = (
         tuple(pixelCoordinates.reshape(1, -1)[0])
