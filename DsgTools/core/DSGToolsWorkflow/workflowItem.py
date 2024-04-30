@@ -191,6 +191,7 @@ class DSGToolsWorkflowItem(QObject):
 
     def __post_init__(self):
         """Initialize post dataclass creation."""
+        super().__init__()
         self.resetItem()
         self.model = self.getModel()
         self.currentTask = None

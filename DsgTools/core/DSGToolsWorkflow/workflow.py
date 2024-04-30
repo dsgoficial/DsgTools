@@ -22,6 +22,7 @@
 """
 
 from dataclasses import asdict, dataclass, field
+import json
 from typing import Any, Dict, List
 
 from qgis.core import (
@@ -35,6 +36,7 @@ from qgis.PyQt.QtCore import pyqtSignal, QObject
 from DsgTools.core.DSGToolsWorkflow.workflowItem import (
     DSGToolsWorkflowItem,
     ExecutionStatus,
+    load_from_json,
 )
 
 
@@ -75,6 +77,7 @@ class DSGToolsWorkflow(QObject):
 
     def __post_init__(self):
         """Initialize post dataclass creation."""
+        super().__init__()
         self.currentStepIndex = 0
         self.feedback = QgsProcessingFeedback()
         self.multiStepFeedback = QgsProcessingMultiStepFeedback(
@@ -233,3 +236,32 @@ class DSGToolsWorkflow(QObject):
         self.currentWorkflowItemStatusChanged.emit(
             self.currentStepIndex, currentWorkflowItem
         )
+
+def dsgtools_workflow_from_json(json_file):
+    """Create a DSGToolsWorkflow object from a JSON file."""
+    with open(json_file, 'r') as f:
+        data = json.load(f)
+    return dsgtools_workflow_from_dict(data)
+
+def dsgtools_workflow_from_dict(data):
+    # Extract data for initialization
+    display_name = data.get('displayName')
+    metadata = WorkflowMetadata(
+        author=data['metadata'].get('author'),
+        version=data['metadata'].get('version'),
+        lastModified=data['metadata'].get('lastModified')
+    )
+
+    if display_name is None or None in (metadata.author, metadata.version, metadata.lastModified):
+        raise ValueError("Display name, author, version, and last modified are required fields.")
+
+    workflow_item_list = [
+        load_from_json(item_data)
+        for item_data in data.get('workflowItemList', [])
+    ]
+
+    if not workflow_item_list:
+        raise ValueError("Workflow item list cannot be empty.")
+
+    # Create and return DSGToolsWorkflow object
+    return DSGToolsWorkflow(displayName=display_name, metadata=metadata, workflowItemList=workflow_item_list)

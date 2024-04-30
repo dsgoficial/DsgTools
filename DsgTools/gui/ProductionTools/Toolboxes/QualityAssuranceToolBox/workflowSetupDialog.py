@@ -26,6 +26,7 @@ import os, json
 from time import time
 from datetime import datetime
 
+from DsgTools.core.DSGToolsWorkflow.workflowItem import DSGToolsWorkflowItem
 from qgis.PyQt import uic
 from qgis.core import Qgis
 from qgis.gui import QgsMessageBar
@@ -44,12 +45,7 @@ from processing.modeler.ModelerUtils import ModelerUtils
 from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import (
     SelectFileWidget,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Models.qualityAssuranceWorkflow import (
-    QualityAssuranceWorkflow,
-)
-from DsgTools.core.DSGToolsProcessingAlgs.Models.dsgToolsProcessingModel import (
-    DsgToolsProcessingModel,
-)
+from DsgTools.core.DSGToolsWorkflow.workflow import DSGToolsWorkflow, WorkflowMetadata, dsgtools_workflow_from_dict, dsgtools_workflow_from_json
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "workflowSetupDialog.ui")
@@ -472,7 +468,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             },
         }
 
-    def setModelToRow(self, row, model):
+    def setModelToRow(self, row: int, workflowItem: DSGToolsWorkflowItem):
         """
         Reads model's parameters from model parameters default map.
         :param row: (int) row to have its widgets filled with model's
@@ -480,17 +476,17 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         :param model: (DsgToolsProcessingModel) model object.
         """
         # all model files handled by this tool are read/written on QGIS model dir
-        data = model.data()
-        if model.source() == "file" and os.path.exists(data):
+        data = workflowItem.source.data
+        if workflowItem.source.type == "file" and os.path.exists(data):
             with open(data, "r", encoding="utf-8") as f:
                 xml = f.read()
             originalName = os.path.basename(data)
-        elif model.source() == "xml":
+        elif workflowItem.source.type == "xml":
             xml = data
-            meta = model.metadata()
+            meta = workflowItem.metadata
             originalName = (
-                model.originalName()
-                if model.originalName()
+                meta.originalName
+                if os.path.exists(meta.originalName)
                 else "temp_{0}.model3".format(hash(time()))
             )
         else:
@@ -506,19 +502,19 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 f.write(xml)
         self.orderedTableWidget.addRow(
             contents={
-                self.MODEL_NAME_HEADER: model.displayName(),
+                self.MODEL_NAME_HEADER: workflowItem.displayName,
                 self.MODEL_SOURCE_HEADER: path,
                 self.ON_FLAGS_HEADER: {
                     "halt": self.ON_FLAGS_HALT,
                     "warn": self.ON_FLAGS_WARN,
                     "ignore": self.ON_FLAGS_IGNORE,
-                }[model.onFlagsRaised()],
-                self.FLAG_CAN_BE_FALSE_POSITIVE_HEADER: model.modelCanHaveFalsePositiveFlags(),
-                self.LOAD_OUT_HEADER: model.loadOutput(),
+                }[workflowItem.flags.onFlagsRaised],
+                self.FLAG_CAN_BE_FALSE_POSITIVE_HEADER: workflowItem.flags.modelCanHaveFalsePositiveFlags,
+                self.LOAD_OUT_HEADER: workflowItem.flags.loadOutput,
                 self.FLAG_KEYS_HEADER: ",".join(
-                    map(lambda x: str(x).strip(), model.flagLayerNames())
+                    map(lambda x: str(x).strip(), workflowItem.flags.flagLayerNames)
                 ),
-                self.PAUSE_AFTER_EXECUTION: model.pauseAfterExecution(),
+                self.PAUSE_AFTER_EXECUTION: workflowItem.pauseAfterExecution,
             }
         )
         return True
@@ -535,7 +531,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             return self.tr("Model is empty or file was not found.")
         return ""
 
-    def models(self):
+    def workflowItems(self):
         """
         Reads all table contents and sets it as a DsgToolsProcessingAlgorithm's
         set of parameters.
@@ -556,7 +552,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             msg = self.validateRowContents(self.readRow(row))
             if msg:
                 return "Row {row}: '{error}'".format(row=row + 1, error=msg)
-        if len(self.models()) != self.modelCount():
+        if len(self.workflowItems()) != self.modelCount():
             return self.tr("Check if no model name is repeated.")
         return ""
 
@@ -566,7 +562,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         """
         return {
             "displayName": self.workflowName(),
-            "models": self.models(),
+            "workflowItemList": self.workflowItems(),
             "metadata": {
                 "author": self.author(),
                 "version": self.version(),
@@ -580,7 +576,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         :return: (QualityAssuranceWorkflow) current workflow object.
         """
         try:
-            return QualityAssuranceWorkflow(self.workflowParameterMap())
+            return dsgtools_workflow_from_dict(self.workflowParameterMap())
         except:
             return None
 
@@ -661,15 +657,13 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         Sets workflow contents from an imported DSGTools Workflow dump file.
         :param filepath: (str) workflow file to be imported.
         """
-        with open(filepath, "r", encoding="utf-8") as f:
-            xml = json.load(f)
-        workflow = QualityAssuranceWorkflow(xml)
+        workflow = dsgtools_workflow_from_json(filepath)
         self.clear()
-        self.setWorkflowAuthor(workflow.author())
-        self.setWorkflowVersion(workflow.version())
-        self.setWorkflowName(workflow.displayName())
-        for row, modelParam in enumerate(xml["models"].values()):
-            self.setModelToRow(row, DsgToolsProcessingModel(modelParam, ""))
+        self.setWorkflowAuthor(workflow.metadata.author)
+        self.setWorkflowVersion(workflow.metadata.version)
+        self.setWorkflowName(workflow.displayName)
+        for row, workflowItem in enumerate(workflow.workflowItemList):
+            self.setModelToRow(row, workflowItem)
 
     @pyqtSlot(bool, name="on_importPushButton_clicked")
     def import_(self):

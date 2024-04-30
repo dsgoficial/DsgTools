@@ -55,6 +55,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Models.qualityAssuranceWorkflow import
     QualityAssuranceWorkflow,
 )
 from DsgTools.core.DSGToolsWorkflow.workflowItem import ExecutionStatus
+from DsgTools.core.DSGToolsWorkflow.workflow import DSGToolsWorkflow
 
 
 FORM_CLASS, _ = uic.loadUiType(
