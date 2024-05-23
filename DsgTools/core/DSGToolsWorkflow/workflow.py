@@ -95,7 +95,10 @@ class DSGToolsWorkflow(QObject):
     def as_dict(self) -> Dict[str, Any]:
         """Convert the workflow object to a dictionary."""
         return {
-            k: v for k, v in asdict(self).items() if k not in [
+            k: v
+            for k, v in asdict(self).items()
+            if k
+            not in [
                 "currentWorkflowItemStatusChanged",
                 "workflowHasBeenReset",
                 "workflowPaused",
@@ -106,12 +109,12 @@ class DSGToolsWorkflow(QObject):
     def getCurrentWorkflowItemStatus(self) -> ExecutionStatus:
         currentWorkflowItem = self.getCurrentWorkflowItem()
         return currentWorkflowItem.getStatus()
-    
+
     def setStatusDict(self, data: Dict[str, Dict[str, Any]]) -> None:
         """
         Sets the status dict on each workflow item.
         data has the following format:
-        {  
+        {
             "workflowItemName": {
                 "executionTime": int,
                 "executionMessage": str,
@@ -124,10 +127,11 @@ class DSGToolsWorkflow(QObject):
             if d is None:
                 continue
             workflowItem.setStatusFromDict(d)
-    
+
     def getStatusDict(self) -> Dict[str, Dict[str, Any]]:
         return {
-            workflowItem.displayName: workflowItem.executionStatusAsDict() for workflowItem in self.workflowItemList
+            workflowItem.displayName: workflowItem.executionStatusAsDict()
+            for workflowItem in self.workflowItemList
         }
 
     def getCurrentWorkflowStepIndex(self) -> int:
@@ -165,7 +169,7 @@ class DSGToolsWorkflow(QObject):
         if idx < 0 or idx >= len(self.workflowItemList):
             return
         self.currentStepIndex = idx
-    
+
     def getWorklowItemFromName(self, name):
         for workflowItem in self.workflowItemList:
             if workflowItem.displayName == name:
@@ -181,8 +185,9 @@ class DSGToolsWorkflow(QObject):
 
     def resetWorkflowItems(self) -> None:
         """Reset all workflow items."""
-        for workflowItem in self.workflowItemList:
+        for idx, workflowItem in enumerate(self.workflowItemList):
             workflowItem.resetItem()
+            self.currentWorkflowItemStatusChanged.emit(idx, workflowItem)
 
     def prepareTask(self) -> QgsTask:
         """Prepare the current task based on the current workflow item.
@@ -234,7 +239,7 @@ class DSGToolsWorkflow(QObject):
             self.setCurrentWorkflowItem(0)
             self.workflowHasBeenReset.emit()
         currentWorkflowItem = self.getCurrentWorkflowItem()
-        if currentWorkflowItem.getStatus() == ExecutionStatus.IGNORE_FLAGS:
+        if currentWorkflowItem.getStatus() in [ExecutionStatus.IGNORE_FLAGS]:
             self.currentStepIndex = self.getNextWorkflowStep()
             if self.currentStepIndex is None:
                 self.multiStepFeedback.setProgress(100)
@@ -281,7 +286,7 @@ class DSGToolsWorkflow(QObject):
         self.currentWorkflowItemStatusChanged.emit(
             self.currentStepIndex, currentWorkflowItem
         )
-    
+
     def export(self, filepath: str) -> bool:
         """
         Dumps workflow's parameters as a JSON file.
@@ -295,29 +300,37 @@ class DSGToolsWorkflow(QObject):
 
 def dsgtools_workflow_from_json(json_file: str) -> DSGToolsWorkflow:
     """Create a DSGToolsWorkflow object from a JSON file."""
-    with open(json_file, 'r') as f:
+    with open(json_file, "r") as f:
         data = json.load(f)
     return dsgtools_workflow_from_dict(data)
 
+
 def dsgtools_workflow_from_dict(data: Dict[str, Any]) -> DSGToolsWorkflow:
     # Extract data for initialization
-    display_name = data.get('displayName')
+    display_name = data.get("displayName")
     metadata = WorkflowMetadata(
-        author=data['metadata'].get('author'),
-        version=data['metadata'].get('version'),
-        lastModified=data['metadata'].get('lastModified')
+        author=data["metadata"].get("author"),
+        version=data["metadata"].get("version"),
+        lastModified=data["metadata"].get("lastModified"),
     )
 
-    if display_name is None or None in (metadata.author, metadata.version, metadata.lastModified):
-        raise ValueError("Display name, author, version, and last modified are required fields.")
+    if display_name is None or None in (
+        metadata.author,
+        metadata.version,
+        metadata.lastModified,
+    ):
+        raise ValueError(
+            "Display name, author, version, and last modified are required fields."
+        )
 
     workflow_item_list = [
-        load_from_json(item_data)
-        for item_data in data.get('workflowItemList', [])
+        load_from_json(item_data) for item_data in data.get("workflowItemList", [])
     ]
 
     if not workflow_item_list:
         raise ValueError("Workflow item list cannot be empty.")
 
     # Create and return DSGToolsWorkflow object
-    return DSGToolsWorkflow(displayName=display_name, metadata=metadata, workflowItemList=workflow_item_list)
+    return DSGToolsWorkflow(
+        displayName=display_name, metadata=metadata, workflowItemList=workflow_item_list
+    )

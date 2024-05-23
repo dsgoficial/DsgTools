@@ -45,6 +45,7 @@ from qgis.utils import iface
 from processing.tools import dataobjects
 import processing
 
+
 @unique
 class ExecutionStatus(str, Enum):
     """Enumeration representing the execution status of a workflow item.
@@ -209,11 +210,15 @@ class DSGToolsWorkflowItem(QObject):
 
     def as_dict(self) -> Dict[str, str]:
         """Convert the workflow item to a dictionary."""
-        return {k: v for k, v in asdict(self).items() if k not in ["workflowItemExecutionFinished"]}
-    
+        return {
+            k: v
+            for k, v in asdict(self).items()
+            if k not in ["workflowItemExecutionFinished"]
+        }
+
     def setStatusFromDict(self, data: dict[str, Any]):
         self.executionOutput = ModelExecutionOutput(**data)
-    
+
     def executionStatusAsDict(self):
         d = asdict(self.executionOutput)
         d.pop("result")
@@ -244,7 +249,7 @@ class DSGToolsWorkflowItem(QObject):
             List[str]: List of flag layer names.
         """
         return self.flags.flagLayerNames
-    
+
     def flagsCanHaveFalsePositiveResults(self) -> bool:
         return self.flags.modelCanHaveFalsePositiveFlags
 
@@ -281,6 +286,7 @@ class DSGToolsWorkflowItem(QObject):
             ),
             status=ExecutionStatus.PAUSED_BEFORE_RUNNING,
         )
+        self.workflowItemExecutionFinished.emit(self)
 
     def setCurrentStateToIgnoreFlags(self):
         """Set the status to ignore flags on the current workflow step."""
@@ -298,7 +304,7 @@ class DSGToolsWorkflowItem(QObject):
         self,
         status: ExecutionStatus,
         executionMessage: Optional[str] = None,
-        executionTime: Optional[float] = None
+        executionTime: Optional[float] = None,
     ) -> None:
         """Change the current status of the workflow item.
 
@@ -306,8 +312,12 @@ class DSGToolsWorkflowItem(QObject):
             status (ExecutionStatus): The new status.
             executionMessage (str): Message related to the status change.
         """
-        self.executionOutput.status = status if isinstance(status, ExecutionStatus) else ExecutionStatus(status)
-        self.executionOutput.executionMessage = executionMessage if executionMessage is not None else ""
+        self.executionOutput.status = (
+            status if isinstance(status, ExecutionStatus) else ExecutionStatus(status)
+        )
+        self.executionOutput.executionMessage = (
+            executionMessage if executionMessage is not None else ""
+        )
         if executionTime is not None:
             self.executionOutput.executionTime = executionTime
 
@@ -315,7 +325,10 @@ class DSGToolsWorkflowItem(QObject):
         """Cancel the current task."""
         if self.currentTask is None:
             return
-        self.currentTask.cancel()
+        try:
+            self.currentTask.cancel()
+        except:
+            pass
         self.currentTask = None
 
     def pauseCurrentTask(self):
@@ -464,7 +477,7 @@ class DSGToolsWorkflowItem(QObject):
         loadOutput = self.loadOutput()
         if not loadOutput:
             return
-        flagLayerNames = self.flagLayerNames()
+        flagLayerNames = self.flags.flagLayerNames
         context = QgsProcessingContext()
         iface.mapCanvas().freeze(True)
         for name, vl in self.executionOutput.result.items():
@@ -482,9 +495,7 @@ class DSGToolsWorkflowItem(QObject):
                 continue
             cloneVl = vl.clone()
             self.executionOutput.result[name] = cloneVl
-            self.addLayerToGroup(
-                cloneVl, self.displayName(), clearGroupBeforeAdding=True
-            )
+            self.addLayerToGroup(cloneVl, self.displayName, clearGroupBeforeAdding=True)
             self.enableFeatureCount(cloneVl)
         iface.mapCanvas().freeze(False)
 
@@ -560,6 +571,11 @@ class DSGToolsWorkflowItem(QObject):
             if isinstance(lyr, QgsVectorLayer):
                 lyr.rollBack()
         group.removeAllChildren()
+
+    def enableFeatureCount(self, lyr):
+        root = QgsProject.instance().layerTreeRoot()
+        lyrNode = root.findLayer(lyr.id())
+        lyrNode.setCustomProperty("showFeatureCount", True)
 
 
 def load_from_json(input_dict: dict) -> DSGToolsWorkflowItem:

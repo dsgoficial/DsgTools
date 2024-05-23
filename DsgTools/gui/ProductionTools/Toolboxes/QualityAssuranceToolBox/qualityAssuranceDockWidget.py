@@ -55,7 +55,11 @@ from DsgTools.core.DSGToolsProcessingAlgs.Models.qualityAssuranceWorkflow import
     QualityAssuranceWorkflow,
 )
 from DsgTools.core.DSGToolsWorkflow.workflowItem import ExecutionStatus
-from DsgTools.core.DSGToolsWorkflow.workflow import DSGToolsWorkflow, dsgtools_workflow_from_dict, dsgtools_workflow_from_json
+from DsgTools.core.DSGToolsWorkflow.workflow import (
+    DSGToolsWorkflow,
+    dsgtools_workflow_from_dict,
+    dsgtools_workflow_from_json,
+)
 
 
 FORM_CLASS, _ = uic.loadUiType(
@@ -142,20 +146,20 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         # self.iface.projectRead.connect(self.loadState)
 
     def generateMenu(self, pos, idx, widget, modelName, workflow):
-        workflowName = workflow.name()
+        workflowName = workflow.displayName
         currentWorkflowItem = workflow.getWorklowItemFromName(modelName)
         if currentWorkflowItem is None:
             return
         currentWorkflowStatus = currentWorkflowItem.getStatus()
         if idx == -1 or currentWorkflowStatus not in [
-            self.FINISHED_WITH_FLAGS,
-            self.IGNORE_FLAGS,
+            ExecutionStatus.FINISHED_WITH_FLAGS,
+            ExecutionStatus.IGNORE_FLAGS,
         ]:
             return
         nextWorkflowItem = workflow.getCurrentWorkflowItem()
-        if (
-            currentWorkflowStatus == ExecutionStatus.IGNORE_FLAGS
-            and (nextWorkflowItem is not None and nextWorkflowItem.getStatus() != ExecutionStatus.INITIAL)
+        if currentWorkflowStatus == ExecutionStatus.IGNORE_FLAGS and (
+            nextWorkflowItem is not None
+            and nextWorkflowItem.getStatus() != ExecutionStatus.INITIAL
         ):
             return
         if idx not in self.ignoreFlagsMenuDict[workflowName]:
@@ -174,7 +178,9 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.setModelStatus, row=idx, modelName=modelName, raiseMessage=True
         )
         callback = lambda x: func(
-            code=self.IGNORE_FLAGS if x else self.FINISHED_WITH_FLAGS
+            code=ExecutionStatus.IGNORE_FLAGS
+            if x
+            else ExecutionStatus.FINISHED_WITH_FLAGS
         )
         action.setCheckable(True)
         action.triggered.connect(callback)
@@ -494,18 +500,23 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         status = self.statusMap[code]
         self.setRowStatus(row, code)
         self.tableWidget.cellWidget(row, 1).setText(status)
+        self.setGuiState(code == ExecutionStatus.RUNNING)
         if code in [ExecutionStatus.FAILED, ExecutionStatus.FINISHED_WITH_FLAGS]:
             # advise user a model status has changed only if it came from a
             # signal call
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTools Q&A Toolbox"),
-                self.tr(f"model {workflowItem.displayName} status changed to {status}."),
+                self.tr(
+                    f"model {workflowItem.displayName} status changed to {status}."
+                ),
                 self.qgisStatusDict[code],
                 duration=3,
             )
         elif code != ExecutionStatus.INITIAL:
             QgsMessageLog.logMessage(
-                self.tr(f"Model {workflowItem.displayName} status changed to {status}."),
+                self.tr(
+                    f"Model {workflowItem.displayName} status changed to {status}."
+                ),
                 "DSGTools Plugin",
                 self.qgisStatusDict[code],
             )
@@ -549,7 +560,9 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 f"Model name: {workflowItem.displayName}\n{workflowItem.getDescription()}"
             )
             if workflowItem.flagsCanHaveFalsePositiveResults():
-                self.prepareIgnoreFlagMenuDictItem(row, workflowItem.displayName, workflow)
+                self.prepareIgnoreFlagMenuDictItem(
+                    row, workflowItem.displayName, workflow
+                )
             nameWidget = self.customLineWidget(workflowItem.displayName, tooltip)
             nameWidget.setContextMenuPolicy(Qt.CustomContextMenu)
             nameWidget.customContextMenuRequested.connect(
@@ -589,6 +602,12 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             pb.setContextMenuPolicy(Qt.CustomContextMenu)
             self.tableWidget.setCellWidget(row, 2, pb)
         workflow.currentWorkflowItemStatusChanged.connect(self.setModelStatus)
+        workflow.currentTaskChanged.connect(self.setupProgressBar)
+
+    def setupProgressBar(self, idx, currentTask):
+        currentTask.progressChanged.connect(
+            lambda x: self.tableWidget.cellWidget(idx, 2).setValue(x)
+        )
 
     def saveState(self):
         """
@@ -596,13 +615,9 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         QgsProject, making it "loadable" along with saved QGIS projects.
         """
         # workflow objects cannot be serialized, so they must be passed as dict
-        workflows = {
-            w.displayName: w.as_dict()
-            for w in self.workflows.values()
-        }
+        workflows = {w.displayName: w.as_dict() for w in self.workflows.values()}
         workflowStatusDict = {
-            w.displayName: w.getStatusDict()
-            for w in self.workflows.values()
+            w.displayName: w.getStatusDict() for w in self.workflows.values()
         }
 
         QgsExpressionContextUtils.setProjectVariable(
