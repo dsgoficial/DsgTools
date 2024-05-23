@@ -537,11 +537,9 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         set of parameters.
         :return: (dict) map to each model's set of parameters.
         """
-        models = dict()
-        for row in range(self.modelCount()):
-            contents = self.readRow(row)
-            models[contents["displayName"]] = contents
-        return models
+        return [
+            self.readRow(row) for row in range(self.modelCount())
+        ]
 
     def validateModels(self):
         """
@@ -596,12 +594,13 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             return msg
         return ""
 
-    def exportWorkflow(self, filepath):
+    def exportWorkflow(self, filepath: str) -> bool:
         """
         Exports current data to a JSON file.
         :param filepath: (str) output file directory.
         """
-        QualityAssuranceWorkflow(self.workflowParameterMap()).export(filepath)
+        workflow = dsgtools_workflow_from_dict(self.workflowParameterMap())
+        return workflow.export(filepath=filepath)
 
     @pyqtSlot(bool, name="on_exportPushButton_clicked")
     def export(self):
@@ -629,7 +628,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             else "{0}.workflow".format(filename)
         )
         try:
-            self.exportWorkflow(filename)
+            result = self.exportWorkflow(filename)
         except Exception as e:
             self.messageBar.pushMessage(
                 self.tr("Invalid workflow"),
@@ -640,7 +639,6 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 duration=5,
             )
             return False
-        result = os.path.exists(filename)
         msg = (
             self.tr("Workflow exported to {fp}")
             if result
@@ -652,7 +650,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         )
         return result
 
-    def importWorkflow(self, filepath):
+    def importWorkflow(self, filepath: str) -> None:
         """
         Sets workflow contents from an imported DSGTools Workflow dump file.
         :param filepath: (str) workflow file to be imported.
@@ -666,7 +664,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             self.setModelToRow(row, workflowItem)
 
     @pyqtSlot(bool, name="on_importPushButton_clicked")
-    def import_(self):
+    def import_(self) -> None:
         """
         Request a file for Workflow importation and sets it to GUI.
         :return: (bool) operation status.
@@ -700,7 +698,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         return True
 
     @pyqtSlot(bool, name="on_okPushButton_clicked")
-    def ok(self):
+    def ok(self) -> None:
         """
         Closes dialog and checks if current workflow is valid.
         """
@@ -716,7 +714,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             )
 
     @pyqtSlot(bool, name="on_cancelPushButton_clicked")
-    def cancel(self):
+    def cancel(self) -> None:
         """
         Restores GUI to last state and closes it.
         """

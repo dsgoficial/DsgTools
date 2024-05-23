@@ -55,7 +55,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Models.qualityAssuranceWorkflow import
     QualityAssuranceWorkflow,
 )
 from DsgTools.core.DSGToolsWorkflow.workflowItem import ExecutionStatus
-from DsgTools.core.DSGToolsWorkflow.workflow import DSGToolsWorkflow
+from DsgTools.core.DSGToolsWorkflow.workflow import DSGToolsWorkflow, dsgtools_workflow_from_dict, dsgtools_workflow_from_json
 
 
 FORM_CLASS, _ = uic.loadUiType(
@@ -143,16 +143,19 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
 
     def generateMenu(self, pos, idx, widget, modelName, workflow):
         workflowName = workflow.name()
-        currentStatusDict = self.workflowStatusDict.get(workflowName, {})
-        if idx == -1 or currentStatusDict.get(modelName, self.INITIAL) not in [
+        currentWorkflowItem = workflow.getWorklowItemFromName(modelName)
+        if currentWorkflowItem is None:
+            return
+        currentWorkflowStatus = currentWorkflowItem.getStatus()
+        if idx == -1 or currentWorkflowStatus not in [
             self.FINISHED_WITH_FLAGS,
             self.IGNORE_FLAGS,
         ]:
             return
+        nextWorkflowItem = workflow.getCurrentWorkflowItem()
         if (
-            currentStatusDict.get(modelName, self.INITIAL) == self.IGNORE_FLAGS
-            and currentStatusDict.get(workflow.getNextModelName(idx), self.INITIAL)
-            != self.INITIAL
+            currentWorkflowStatus == ExecutionStatus.IGNORE_FLAGS
+            and (nextWorkflowItem is not None and nextWorkflowItem.getStatus() != ExecutionStatus.INITIAL)
         ):
             return
         if idx not in self.ignoreFlagsMenuDict[workflowName]:
@@ -161,7 +164,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         out = self.ignoreFlagsMenuDict[workflowName][idx].exec_(widget.mapToGlobal(pos))
 
     def prepareIgnoreFlagMenuDictItem(self, idx, modelName, workflow):
-        workflowName = workflow.name()
+        workflowName = workflow.displayName
         self.ignoreFlagsMenuDict[workflowName][idx] = QMenu(self)
         action = QAction(
             self.tr(f"Ignore false positive flags on model {modelName}"),
@@ -199,7 +202,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         """
         Sets workflow to be on hold.
         """
-        self.currentWorkflow().hold()
+        self.currentWorkflow().pauseCurrentRun()
         self.pausePushButton.hide()
         self.continuePushButton.show()
         self.runPushButton.setEnabled(False)
@@ -210,7 +213,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         """
         Sets workflow to be on hold.
         """
-        self.currentWorkflow().unhold()
+        self.currentWorkflow().resumeCurrentRun()
         self.pausePushButton.show()
         self.continuePushButton.hide()
         self.runPushButton.setEnabled(False)
@@ -221,7 +224,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         """
         Cancels current workflow's execution.
         """
-        self.currentWorkflow().feedback.cancel()
+        self.currentWorkflow().cancelCurrentRun()
         self.pausePushButton.show()
         self.continuePushButton.hide()
         self.setGuiState(False)
@@ -245,9 +248,9 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.progressBar.setValue(0)
         if self._previousWorkflow is not None:
             self._previousWorkflow.feedback.progressChanged.disconnect(self.setProgress)
-        self._previousWorkflow = self.currentWorkflow()
-        if self._previousWorkflow is not None:
-            self._previousWorkflow.feedback.progressChanged.connect(self.setProgress)
+        currentWorkflow = self.currentWorkflow()
+        if currentWorkflow is not None:
+            currentWorkflow.feedback.progressChanged.connect(self.setProgress)
 
     def showEditionButton(self, show=False):
         """
@@ -321,10 +324,10 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.comboBox.setItemData(
             idx,
             self.tr(
-                "Workflow author: {author}\n"
-                "Workflow version: {version}\n"
-                "Last modification: {lastModified}"
-            ).format(**metadata),
+                f"Workflow author: {metadata.author}\n"
+                f"Workflow version: {metadata.version}\n"
+                f"Last modification: {metadata.lastModified}"
+            ),
             Qt.ToolTipRole,
         )
 
@@ -478,7 +481,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.tableWidget.cellWidget(row, 0).setStyleSheet(styleSheet)
         self.tableWidget.cellWidget(row, 1).setStyleSheet(styleSheet)
 
-    def setModelStatus(self, row, code, modelName, raiseMessage=False):
+    def setModelStatus(self, row, workflowItem):
         """
         Sets model execution status to its cell.
         :param row: (int) model's row on GUI.
@@ -487,53 +490,30 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                           should be passed only through dynamic changes in order
                           to avoid polluting QGIS main window.
         """
+        code = workflowItem.getStatus()
         status = self.statusMap[code]
         self.setRowStatus(row, code)
         self.tableWidget.cellWidget(row, 1).setText(status)
-        if raiseMessage or code in [self.HALTED, self.FAILED, self.FINISHED_WITH_FLAGS]:
+        if code in [ExecutionStatus.FAILED, ExecutionStatus.FINISHED_WITH_FLAGS]:
             # advise user a model status has changed only if it came from a
             # signal call
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTools Q&A Toolbox"),
-                self.tr("model {0} status changed to {1}.").format(modelName, status),
+                self.tr(f"model {workflowItem.displayName} status changed to {status}."),
                 self.qgisStatusDict[code],
                 duration=3,
             )
-        elif code != self.INITIAL:
+        elif code != ExecutionStatus.INITIAL:
             QgsMessageLog.logMessage(
-                self.tr("Model {0} status changed to {1}.").format(modelName, status),
+                self.tr(f"Model {workflowItem.displayName} status changed to {status}."),
                 "DSGTools Plugin",
                 self.qgisStatusDict[code],
             )
-        if (
-            modelName in self.workflowStatusDict[self.comboBox.currentText()]
-            and code == self.workflowStatusDict[self.comboBox.currentText()][modelName]
-        ):
-            return
-        if code == self.FINISHED and self.workflowStatusDict[
-            self.comboBox.currentText()
-        ][modelName] in [self.FAILED, self.HALTED, self.FINISHED_WITH_FLAGS]:
-            return
-        if (
-            modelName in self.workflowStatusDict[self.comboBox.currentText()]
-            and code == self.INITIAL
-            and self.workflowStatusDict[self.comboBox.currentText()][modelName]
-            in [self.FAILED, self.FINISHED_WITH_FLAGS]
-        ):
-            return
-        if code == self.IGNORE_FLAGS:
-            workflow = self.currentWorkflow()
-            outputStatusDict = workflow.getOutputStatusDict()
-            outputStatusDict[modelName]["finishStatus"] = "finished"
-            workflow.setOutputStatusDict(outputStatusDict)
-            self.workflowStatusDict[self.comboBox.currentText()][modelName] = code
-            return
-        self.workflowStatusDict[self.comboBox.currentText()][modelName] = code
 
     def setRowStatus(self, row, code):
         colorForeground = self.colorForeground[code]
         colorBackground = self.colorBackground[code]
-        if code == self.INITIAL:
+        if code == ExecutionStatus.INITIAL:
             # dark mode does not look good with this color pallete...
             self.tableWidget.cellWidget(row, 0).setStyleSheet("")
             self.tableWidget.cellWidget(row, 1).setStyleSheet("")
@@ -563,24 +543,21 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.clearTable()
         if workflow is None:
             return
-        models = workflow.validModels()
-        self.tableWidget.setRowCount(len(models))
-
-        currentStatusDict = self.workflowStatusDict.get(workflow.name(), {})
-        for row, (modelName, model) in enumerate(models.items()):
+        self.tableWidget.setRowCount(len(workflow.workflowItemList))
+        for row, workflowItem in enumerate(workflow.workflowItemList):
             tooltip = self.tr(
-                f"Model name: {model.displayName()}\n{model.description()}"
+                f"Model name: {workflowItem.displayName}\n{workflowItem.getDescription()}"
             )
-            if model.modelCanHaveFalsePositiveFlags():
-                self.prepareIgnoreFlagMenuDictItem(row, modelName, workflow)
-            nameWidget = self.customLineWidget(modelName, tooltip)
+            if workflowItem.flagsCanHaveFalsePositiveResults():
+                self.prepareIgnoreFlagMenuDictItem(row, workflowItem.displayName, workflow)
+            nameWidget = self.customLineWidget(workflowItem.displayName, tooltip)
             nameWidget.setContextMenuPolicy(Qt.CustomContextMenu)
             nameWidget.customContextMenuRequested.connect(
                 partial(
                     self.generateMenu,
                     idx=row,
                     widget=nameWidget,
-                    modelName=modelName,
+                    modelName=workflowItem.displayName,
                     workflow=workflow,
                 )
             )
@@ -592,13 +569,13 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                     self.generateMenu,
                     idx=row,
                     widget=statusWidget,
-                    modelName=modelName,
+                    modelName=workflowItem.displayName,
                     workflow=workflow,
                 )
             )
             self.tableWidget.setCellWidget(row, 1, statusWidget)
-            code = currentStatusDict.get(modelName, ExecutionStatus.INITIAL)
-            self.setModelStatus(row, code, modelName)
+            code = workflowItem.getStatus()
+            self.setModelStatus(row, workflowItem)
             pb = self.progressWidget(
                 value=100
                 if code
@@ -611,6 +588,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             )
             pb.setContextMenuPolicy(Qt.CustomContextMenu)
             self.tableWidget.setCellWidget(row, 2, pb)
+        workflow.currentWorkflowItemStatusChanged.connect(self.setModelStatus)
 
     def saveState(self):
         """
@@ -619,7 +597,11 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         """
         # workflow objects cannot be serialized, so they must be passed as dict
         workflows = {
-            w.displayName(): w.asDict(withOutputDict=True)
+            w.displayName: w.as_dict()
+            for w in self.workflows.values()
+        }
+        workflowStatusDict = {
+            w.displayName: w.getStatusDict()
             for w in self.workflows.values()
         }
 
@@ -631,7 +613,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                     "workflows": workflows,
                     "current_workflow": self.comboBox.currentIndex(),
                     "show_buttons": self._showButtons,
-                    "workflow_status_dict": self.workflowStatusDict,
+                    "workflow_status_dict": workflowStatusDict,
                 }
             ),
         )
@@ -654,12 +636,10 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         workflow_status_dict = state.get("workflow_status_dict", {})
         self.resetComboBox()
         for idx, (name, workflowMap) in enumerate(workflows.items()):
-            self.workflows[name] = QualityAssuranceWorkflow(workflowMap)
+            self.workflows[name] = dsgtools_workflow_from_dict(workflowMap)
             self.comboBox.addItem(name)
-            self.setWorkflowTooltip(idx + 1, self.workflows[name].metadata())
-            self.workflowStatusDict[name] = OrderedDict(
-                workflow_status_dict.get(name, {})
-            )
+            self.setWorkflowTooltip(idx + 1, self.workflows[name].metadata)
+            self.workflows[name].setStatusDict(workflow_status_dict[name])
         currentIdx = state["current_workflow"] if "current_workflow" in state else 0
         self.comboBox.setCurrentIndex(currentIdx)
         showButtons = state["show_buttons"] if "show_buttons" in state else True
@@ -697,9 +677,12 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         # these methods are defined locally as they are not supposed to be
         # outside thread execution setup and should all be handled from
         # within this method - at runtime
+        sender = self.sender()
+        resumeFromStart = sender is None or sender.objectName() == "runPushButton"
+        workflow.run(resumeFromStart=resumeFromStart)
 
     @pyqtSlot(bool, name="on_importPushButton_clicked")
-    def importWorkflow(self):
+    def importWorkflow(self) -> None:
         """
         Directly imports an workflow instead of going through the Workflow
         Setup Dialog.
@@ -714,9 +697,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             return
         for wPath in paths:
             try:
-                with open(wPath, "r", encoding="utf-8") as f:
-                    wMap = json.load(f)
-                workflow = QualityAssuranceWorkflow(wMap)
+                workflow = dsgtools_workflow_from_json(wPath)
             except Exception as e:
                 self.iface.messageBar().pushMessage(
                     self.tr("DSGTools Q&A Tool Box"),
@@ -729,8 +710,8 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 continue
             self.addWorkflowItem(workflow)
 
-    def addWorkflowItem(self, workflow: QualityAssuranceWorkflow):
-        name = workflow.displayName()
+    def addWorkflowItem(self, workflow: DSGToolsWorkflow) -> None:
+        name = workflow.displayName
         idx = self.comboBox.findText(name)
         if idx < 0:
             self.comboBox.addItem(name)
@@ -740,7 +721,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         else:
             self.comboBox.setCurrentIndex(idx)
             # what should we do? check version/last modified? replace model?
-        self.setWorkflowTooltip(self.comboBox.currentIndex(), workflow.metadata())
+        self.setWorkflowTooltip(self.comboBox.currentIndex(), workflow.metadata)
         self.saveState()
         QgsMessageLog.logMessage(
             self.tr("Model {model} imported.").format(model=name),
@@ -748,7 +729,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             Qgis.Info,
         )
 
-    def importWorkflowFromJsonPayload(self, data: List[Dict]):
+    def importWorkflowFromJsonPayload(self, data: List[Dict]) -> None:
         for workflow_dict in data:
             try:
                 workflow = QualityAssuranceWorkflow(workflow_dict)

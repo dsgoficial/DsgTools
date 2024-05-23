@@ -23,8 +23,8 @@
 
 import copy
 from dataclasses import asdict, dataclass, field
-from enum import Enum
-from typing import Any, Callable, Dict, List
+from enum import Enum, unique
+from typing import Any, Callable, Dict, List, Optional
 import os
 from time import time
 
@@ -45,8 +45,8 @@ from qgis.utils import iface
 from processing.tools import dataobjects
 import processing
 
-
-class ExecutionStatus(Enum):
+@unique
+class ExecutionStatus(str, Enum):
     """Enumeration representing the execution status of a workflow item.
 
     Attributes:
@@ -167,6 +167,10 @@ class ModelExecutionOutput:
     executionMessage: str = ""
     status: ExecutionStatus = ExecutionStatus.INITIAL
 
+    def __post_init__(self):
+        if isinstance(self.status, str):
+            self.status = ExecutionStatus(self.status)
+
 
 @dataclass
 class DSGToolsWorkflowItem(QObject):
@@ -189,13 +193,15 @@ class DSGToolsWorkflowItem(QObject):
     source: ModelSource
     metadata: Metadata
 
+    workflowItemExecutionFinished = pyqtSignal(object)
+
     def __post_init__(self):
         """Initialize post dataclass creation."""
         super().__init__()
         self.resetItem()
         self.model = self.getModel()
         self.currentTask = None
-        self.workflowItemExecutionFinished = pyqtSignal(DSGToolsWorkflowItem)
+        self.executionOutput = ModelExecutionOutput()
 
     def resetItem(self):
         """Reset the workflow item."""
@@ -203,7 +209,15 @@ class DSGToolsWorkflowItem(QObject):
 
     def as_dict(self) -> Dict[str, str]:
         """Convert the workflow item to a dictionary."""
-        return {k: v for k, v in asdict(self).items()}
+        return {k: v for k, v in asdict(self).items() if k not in ["workflowItemExecutionFinished"]}
+    
+    def setStatusFromDict(self, data: dict[str, Any]):
+        self.executionOutput = ModelExecutionOutput(**data)
+    
+    def executionStatusAsDict(self):
+        d = asdict(self.executionOutput)
+        d.pop("result")
+        return d
 
     def getModel(self) -> QgsProcessingModelAlgorithm:
         """Get the processing model from the source.
@@ -230,6 +244,12 @@ class DSGToolsWorkflowItem(QObject):
             List[str]: List of flag layer names.
         """
         return self.flags.flagLayerNames
+    
+    def flagsCanHaveFalsePositiveResults(self) -> bool:
+        return self.flags.modelCanHaveFalsePositiveFlags
+
+    def getDescription(self) -> str:
+        return self.model.shortDescription()
 
     def getOutputFlags(self):
         """Get the output flags."""
@@ -247,6 +267,7 @@ class DSGToolsWorkflowItem(QObject):
         func = self.getTaskRunningFunction(feedback)
         on_finished_func = self.getOnFinishedFunction(feedback)
         self.currentTask = QgsTask.fromFunction(
+            self.model.name(),
             func,
             on_finished=on_finished_func,
         )
@@ -263,7 +284,7 @@ class DSGToolsWorkflowItem(QObject):
 
     def setCurrentStateToIgnoreFlags(self):
         """Set the status to ignore flags on the current workflow step."""
-        if not self.flags.modelCanHaveFalsePositiveFlags:
+        if not self.flagsCanHaveFalsePositiveResults():
             return
         self.changeCurrentStatus(
             status=ExecutionStatus.IGNORE_FLAGS,
@@ -274,7 +295,10 @@ class DSGToolsWorkflowItem(QObject):
         # não emite sinal pois esse passo é feito fora da execução.
 
     def changeCurrentStatus(
-        self, status: ExecutionStatus, executionMessage: str
+        self,
+        status: ExecutionStatus,
+        executionMessage: Optional[str] = None,
+        executionTime: Optional[float] = None
     ) -> None:
         """Change the current status of the workflow item.
 
@@ -282,8 +306,10 @@ class DSGToolsWorkflowItem(QObject):
             status (ExecutionStatus): The new status.
             executionMessage (str): Message related to the status change.
         """
-        self.executionOutput.status = status
-        self.executionOutput.executionMessage = executionMessage
+        self.executionOutput.status = status if isinstance(status, ExecutionStatus) else ExecutionStatus(status)
+        self.executionOutput.executionMessage = executionMessage if executionMessage is not None else ""
+        if executionTime is not None:
+            self.executionOutput.executionTime = executionTime
 
     def cancelCurrentTask(self):
         """Cancel the current task."""
@@ -313,15 +339,14 @@ class DSGToolsWorkflowItem(QObject):
         Returns:
             Callable: The function to run for the task.
         """
-        model = copy.deepcopy(self.model)
         modelParameters = self.getModelParameters()
 
-        def func():
+        def func(obj=None):
             start = time()
             context = dataobjects.createContext(feedback=feedback)
             context.setProject(QgsProject.instance())
             out = processing.run(
-                model,
+                self.model,
                 {param: "memory:" for param in modelParameters},
                 feedback=feedback,
                 context=context,
@@ -364,7 +389,7 @@ class DSGToolsWorkflowItem(QObject):
                     if any(
                         lyr.featureCount() > 0
                         for k, lyr in self.executionOutput.result.items()
-                        if lyr.name() in self.flagLayerNames()
+                        if lyr.name() in self.flags.flagLayerNames
                     )
                     else ExecutionStatus.FINISHED
                 )
