@@ -475,8 +475,6 @@ class DSGToolsWorkflowItem(QObject):
             feedback (QgsProcessingFeedback): Feedback for the task.
         """
         loadOutput = self.loadOutput()
-        if not loadOutput:
-            return
         flagLayerNames = self.flags.flagLayerNames
         context = QgsProcessingContext()
         iface.mapCanvas().freeze(True)

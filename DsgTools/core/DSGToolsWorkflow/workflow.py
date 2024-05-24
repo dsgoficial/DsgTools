@@ -214,7 +214,6 @@ class DSGToolsWorkflow(QObject):
             self.multiStepFeedback.setCurrentStep(self.currentStepIndex)
             self.workflowPaused.emit()
             return
-        self.currentStepIndex = self.getNextWorkflowStep()
         if self.currentStepIndex is None:
             self.multiStepFeedback.setProgress(100)
             return
@@ -225,6 +224,7 @@ class DSGToolsWorkflow(QObject):
                 self.currentStepIndex, currentWorkflowItem
             )
             return
+        self.currentStepIndex = self.getNextWorkflowStep()
         self.run(resumeFromStart=False)
 
     def run(self, resumeFromStart: bool = True) -> None:
