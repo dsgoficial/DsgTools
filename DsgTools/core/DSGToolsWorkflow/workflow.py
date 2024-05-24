@@ -196,7 +196,7 @@ class DSGToolsWorkflow(QObject):
             QgsTask: The prepared task.
         """
         currentWorkflowItem: DSGToolsWorkflowItem = self.getCurrentWorkflowItem()
-        return currentWorkflowItem.getTask(self.feedback)
+        return currentWorkflowItem.getTask()
 
     def postProcessWorkflowItem(self, workflowItem: DSGToolsWorkflowItem) -> None:
         """Handle post-processing for a completed workflow item.
@@ -266,23 +266,8 @@ class DSGToolsWorkflow(QObject):
         """Cancel the current run of the workflow."""
         currentWorkflowItem = self.getCurrentWorkflowItem()
         currentWorkflowItem.cancelCurrentTask()
+        QgsApplication.taskManager().cancelAll()
         self.multiStepFeedback.setCurrentStep(self.currentStepIndex)
-        self.currentWorkflowItemStatusChanged.emit(
-            self.currentStepIndex, currentWorkflowItem
-        )
-
-    def pauseCurrentRun(self) -> None:
-        """Pause the current run of the workflow."""
-        currentWorkflowItem = self.getCurrentWorkflowItem()
-        currentWorkflowItem.pauseCurrentTask()
-        self.currentWorkflowItemStatusChanged.emit(
-            self.currentStepIndex, currentWorkflowItem
-        )
-
-    def resumeCurrentRun(self) -> None:
-        """Resume the current run of the workflow."""
-        currentWorkflowItem = self.getCurrentWorkflowItem()
-        currentWorkflowItem.pauseCurrentTask()
         self.currentWorkflowItemStatusChanged.emit(
             self.currentStepIndex, currentWorkflowItem
         )

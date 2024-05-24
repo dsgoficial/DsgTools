@@ -125,6 +125,8 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
         nSteps = len(layerList)
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         for idx, layer_id in enumerate(layerList):
+            if feedback.isCanceled():
+                break
             layer = QgsProcessingUtils.mapLayerFromString(layer_id, context)
             layerName = layer.name()
             multiStepFeedback.setCurrentStep(idx)
