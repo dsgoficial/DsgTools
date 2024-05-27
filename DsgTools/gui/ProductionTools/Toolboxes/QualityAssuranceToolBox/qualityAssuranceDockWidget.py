@@ -51,9 +51,6 @@ from qgis.PyQt.QtWidgets import (
 from DsgTools.gui.ProductionTools.Toolboxes.QualityAssuranceToolBox.workflowSetupDialog import (
     WorkflowSetupDialog,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Models.qualityAssuranceWorkflow import (
-    QualityAssuranceWorkflow,
-)
 from DsgTools.core.DSGToolsWorkflow.workflowItem import DSGToolsWorkflowItem, ExecutionStatus
 from DsgTools.core.DSGToolsWorkflow.workflow import (
     DSGToolsWorkflow,
