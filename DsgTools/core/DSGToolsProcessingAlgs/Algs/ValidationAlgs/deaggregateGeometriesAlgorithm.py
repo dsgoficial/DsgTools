@@ -89,7 +89,7 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
 
         for current, feature in enumerate(features):
             if feedback.isCanceled():
-                break
+                return {}
             if not feature.geometry():
                 target.deleteFeature(feature.id())
                 feedback.setProgress(int(current * total))

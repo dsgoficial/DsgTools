@@ -68,7 +68,6 @@ class ExecutionStatus(str, Enum):
     CANCELED = "canceled"
     FINISHED = "finished"
     FINISHED_WITH_FLAGS = "finished with flags"
-    ON_HOLD = "on hold"
     PAUSED_BEFORE_RUNNING = "paused before running"
     IGNORE_FLAGS = "ignore flags"
 
@@ -203,6 +202,9 @@ class DSGToolsWorkflowItem(QObject):
         self.model = self.getModel()
         self.currentTask = None
         self.executionOutput = ModelExecutionOutput()
+        self.feedback = QgsProcessingFeedback()
+        self.context = dataobjects.createContext(feedback=self.feedback)
+        self.context.setProject(QgsProject.instance())
 
     def resetItem(self):
         """Reset the workflow item."""
@@ -260,7 +262,7 @@ class DSGToolsWorkflowItem(QObject):
         """Get the output flags."""
         pass
 
-    def getTask(self, feedback: QgsProcessingFeedback) -> QgsTask:
+    def getTask(self) -> QgsTask:
         """Prepare the task for the workflow item execution.
 
         Args:
@@ -269,8 +271,8 @@ class DSGToolsWorkflowItem(QObject):
         Returns:
             QgsTask: The prepared task.
         """
-        func = self.getTaskRunningFunction(feedback)
-        on_finished_func = self.getOnFinishedFunction(feedback)
+        func = self.getTaskRunningFunction()
+        on_finished_func = self.getOnFinishedFunction()
         self.currentTask = QgsTask.fromFunction(
             self.model.name(),
             func,
@@ -286,11 +288,18 @@ class DSGToolsWorkflowItem(QObject):
             ),
             status=ExecutionStatus.PAUSED_BEFORE_RUNNING,
         )
-        self.workflowItemExecutionFinished.emit(self)
 
     def setCurrentStateToIgnoreFlags(self):
         """Set the status to ignore flags on the current workflow step."""
         if not self.flagsCanHaveFalsePositiveResults():
+            return
+        if self.executionOutput.status == ExecutionStatus.IGNORE_FLAGS:
+            self.changeCurrentStatus(
+                status=ExecutionStatus.FINISHED_WITH_FLAGS,
+                executionMessage=self.tr(
+                    f"Workflow item {self.displayName} status changed from ignore flags to finished with flags."
+                ),
+            )
             return
         self.changeCurrentStatus(
             status=ExecutionStatus.IGNORE_FLAGS,
@@ -330,20 +339,14 @@ class DSGToolsWorkflowItem(QObject):
         except:
             pass
         self.currentTask = None
+        self.changeCurrentStatus(
+            status=ExecutionStatus.CANCELED,
+            executionMessage=self.tr(
+                f"Workflow item {self.displayName} canceled by user."
+            ),
+        )
 
-    def pauseCurrentTask(self):
-        """Pause the current task."""
-        if self.currentTask is None:
-            return
-        self.currentTask.hold()
-
-    def resumeCurrentTask(self):
-        """Resume the current task."""
-        if self.currentTask is None:
-            return
-        self.currentTask.unhold()
-
-    def getTaskRunningFunction(self, feedback: QgsProcessingFeedback) -> Callable:
+    def getTaskRunningFunction(self) -> Callable:
         """Get the function to run for the task.
 
         Args:
@@ -353,16 +356,15 @@ class DSGToolsWorkflowItem(QObject):
             Callable: The function to run for the task.
         """
         modelParameters = self.getModelParameters()
+        self.feedback.setProgress(0)
 
         def func(obj=None):
             start = time()
-            context = dataobjects.createContext(feedback=feedback)
-            context.setProject(QgsProject.instance())
             out = processing.run(
                 self.model,
                 {param: "memory:" for param in modelParameters},
-                feedback=feedback,
-                context=context,
+                feedback=self.feedback,
+                context=self.context,
             )
             out.pop("CHILD_INPUTS", None)
             out.pop("CHILD_RESULTS", None)
@@ -371,7 +373,7 @@ class DSGToolsWorkflowItem(QObject):
 
         return func
 
-    def getOnFinishedFunction(self, feedback: QgsProcessingFeedback) -> Callable:
+    def getOnFinishedFunction(self) -> Callable:
         """Get the function to run when the task is finished.
 
         Args:
@@ -395,8 +397,8 @@ class DSGToolsWorkflowItem(QObject):
                 self.workflowItemExecutionFinished.emit(self)
                 return
             if result is not None:
-                self.handleOutputs(result, feedback)
-                self.loadOutputs(feedback)
+                self.handleOutputs(result, self.feedback)
+                self.loadOutputs(self.feedback)
                 status = (
                     ExecutionStatus.FINISHED_WITH_FLAGS
                     if any(
