@@ -438,6 +438,16 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         """
         name = self.currentWorkflowName()
         return self.workflows.get(name, None)
+    
+    def currentWorkflowFinishedExecutionMessage(self):
+        currentWorkflow = self.currentWorkflow()
+        if currentWorkflow is None:
+            return
+        self.iface.messageBar().pushMessage(
+            self.tr("DSGTools Q&A Tool Box"),
+            self.tr(f"Workflow {currentWorkflow.displayName} execution has finished."),
+            Qgis.Info, duration=3
+        )
 
     def setRowColor(self, row, backgroundColor, foregroundColor):
         """
@@ -573,6 +583,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             workflowItem.feedback.progressChanged.connect(partial(self.intWrapper, row))
             self.tableWidget.setCellWidget(row, 2, pb)
         workflow.currentWorkflowItemStatusChanged.connect(self.setModelStatus)
+        workflow.currentWorkflowExecutionFinished.connect(self.currentWorkflowFinishedExecutionMessage)
         # workflow.currentTaskChanged.connect(self.setupProgressBar)
     
     def intWrapper(self, idx, v):
@@ -726,7 +737,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
     def importWorkflowFromJsonPayload(self, data: List[Dict]) -> None:
         for workflow_dict in data:
             try:
-                workflow = QualityAssuranceWorkflow(workflow_dict)
+                workflow = dsgtools_workflow_from_dict(workflow_dict)
             except Exception as e:
                 self.iface.messageBar().pushMessage(
                     self.tr("DSGTools Q&A Tool Box"),

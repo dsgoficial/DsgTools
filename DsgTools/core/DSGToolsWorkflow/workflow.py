@@ -80,6 +80,7 @@ class DSGToolsWorkflow(QObject):
     currentWorkflowItemStatusChanged = pyqtSignal(int, DSGToolsWorkflowItem)
     workflowHasBeenReset = pyqtSignal()
     workflowPaused = pyqtSignal()
+    currentWorkflowExecutionFinished = pyqtSignal()
     currentTaskChanged = pyqtSignal(int, QgsTask)
 
     def __post_init__(self) -> None:
@@ -239,6 +240,9 @@ class DSGToolsWorkflow(QObject):
             self.setCurrentWorkflowItem(0)
             self.workflowHasBeenReset.emit()
         currentWorkflowItem = self.getCurrentWorkflowItem()
+        if currentWorkflowItem is None:
+            self.currentWorkflowExecutionFinished.emit()
+            return
         if currentWorkflowItem.getStatus() in [ExecutionStatus.IGNORE_FLAGS]:
             self.currentStepIndex = self.getNextWorkflowStep()
             if self.currentStepIndex is None:

@@ -251,6 +251,11 @@ class DSGToolsWorkflowItem(QObject):
             List[str]: List of flag layer names.
         """
         return self.flags.flagLayerNames
+    
+    def getAllOutputNamesFromModel(self) -> List[str]:
+        return [
+            outputDef.name().split(":")[-1] for outputDef in self.model.outputDefinitions()
+        ]
 
     def flagsCanHaveFalsePositiveResults(self) -> bool:
         return self.flags.modelCanHaveFalsePositiveFlags
