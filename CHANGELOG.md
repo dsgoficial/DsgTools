@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.47 - dev
+## 4.13.48 - dev
 
 Novas Funcionalidades:
 
@@ -62,6 +62,7 @@ Correção de bug:
 - Corrige bug com camada vazia em models do workflow ao executar o processo de identificar linhas não cobertas por outras linhas (IdentifyUncoveredStartAndEndPointsAlgorithm);
 - Corrige bug em Update Runway Altitude;
 - Corrige bug em Identify Intertwined Lines para tratar caso de Geometry Collection (linhas que se cruzam e se sobrepoem);
+- Corrige bug nos Batch Run, valor padrão removido para compatibilidade com models nas versões mais atuais do QGIS (a partir da 3.30), não afeta versões mais antigas do QGIS;
 
 ## 4.12.0 - 2023-12-13
 
