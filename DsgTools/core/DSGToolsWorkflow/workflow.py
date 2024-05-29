@@ -219,6 +219,9 @@ class DSGToolsWorkflow(QObject):
             self.multiStepFeedback.setProgress(100)
             return
         if workflowItem.pauseAfterExecution:
+            if workflowItem.getStatus() != ExecutionStatus.FINISHED:
+                return
+            self.currentStepIndex = self.getNextWorkflowStep()
             currentWorkflowItem = self.getCurrentWorkflowItem()
             currentWorkflowItem.pauseBeforeRunning()
             self.currentWorkflowItemStatusChanged.emit(
@@ -249,6 +252,7 @@ class DSGToolsWorkflow(QObject):
                 self.multiStepFeedback.setProgress(100)
                 return
             currentWorkflowItem = self.getCurrentWorkflowItem()
+        currentWorkflowItem.clearFlagsBeforeRunning()
         currentTask: QgsTask = self.prepareTask()
         currentWorkflowItem.changeCurrentStatus(
             status=ExecutionStatus.RUNNING,

@@ -499,7 +499,7 @@ class DSGToolsWorkflowItem(QObject):
             if vl.name() in flagLayerNames and vl.featureCount() == 0:
                 continue
             cloneVl = vl.clone()
-            self.executionOutput.result[name] = cloneVl
+            self.executionOutput.result[cloneVl.name()] = cloneVl
             self.addLayerToGroup(cloneVl, self.displayName, clearGroupBeforeAdding=True)
             self.enableFeatureCount(cloneVl)
         iface.mapCanvas().freeze(False)
@@ -522,6 +522,16 @@ class DSGToolsWorkflowItem(QObject):
         )
         QgsProject.instance().addMapLayer(layer, addToLegend=False)
         subGroup.addLayer(layer)
+    
+    def clearFlagsBeforeRunning(self):
+        lyrKeysToPop = []
+        for lyrName, vl in self.executionOutput.result.items():
+            if lyrName not in self.flags.flagLayerNames:
+                continue
+            QgsProject.instance().removeMapLayer(vl.id())
+            lyrKeysToPop.append(lyrName)
+        for key in lyrKeysToPop:
+            self.executionOutput.result.pop(key)
 
     def createGroups(self, subgroupname):
         """Create groups in the layer panel.

@@ -23,10 +23,12 @@
 
 from functools import partial
 import os, json
+from pathlib import Path
 from time import time
 from datetime import datetime
 
 from DsgTools.core.DSGToolsWorkflow.workflowItem import DSGToolsWorkflowItem
+from DsgTools.gui.CustomWidgets.SelectionWidgets.importExportFileWidget import ImportExportFileWidget
 from qgis.PyQt import uic
 from qgis.core import Qgis
 from qgis.gui import QgsMessageBar
@@ -103,8 +105,8 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                     "header": self.tr("Model source"),
                     "type": "widget",
                     "widget": self.modelWidget,
-                    "setter": "setText",
-                    "getter": "text",
+                    "setter": "setFile",
+                    "getter": "getFile",
                 },
                 self.ON_FLAGS_HEADER: {
                     "header": self.tr("On flags"),
@@ -289,19 +291,14 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         :parma filepath: (str) path to a model.
         :return: (SelectFileWidget) DSGTools custom file selection widget.
         """
-        widget = SelectFileWidget()
-        widget.label.hide()
-        widget.selectFilePushButton.setText("...")
+        widget = ImportExportFileWidget()
         widget.selectFilePushButton.setMaximumWidth(32)
         widget.lineEdit.setPlaceholderText(self.tr("Select a model..."))
         widget.lineEdit.setFrame(False)
         widget.setCaption(self.tr("Select a QGIS Processing model file"))
         widget.setFilter(self.tr("Select a QGIS Processing model (*.model *.model3)"))
         # defining setter and getter methods for composed widgets into OTW
-        widget.setText = widget.lineEdit.setText
-        widget.text = widget.lineEdit.text
-        if filepath is not None:
-            widget.setText(filepath)
+        widget.fileExported.connect(lambda x: self.pushMessage(x))
         return widget
 
     def onFlagsWidget(self, option=None):
@@ -434,7 +431,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         :return: (dict) parameters map.
         """
         contents = self.orderedTableWidget.row(row)
-        filepath = contents[self.MODEL_SOURCE_HEADER].strip()
+        fileName, xml = contents[self.MODEL_SOURCE_HEADER]
         onFlagsIdx = contents[self.ON_FLAGS_HEADER]
         name = contents[self.MODEL_NAME_HEADER].strip()
         loadOutput = contents[self.LOAD_OUT_HEADER]
@@ -443,11 +440,6 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         ]
         flagLayerNames = contents[self.FLAG_KEYS_HEADER].strip().split(",")
         pauseAfterExecution = contents[self.PAUSE_AFTER_EXECUTION]
-        if not os.path.exists(filepath):
-            xml = ""
-        else:
-            with open(filepath, "r", encoding="utf-8") as f:
-                xml = f.read()
         return {
             "displayName": name,
             "flags": {
@@ -462,9 +454,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 "data": xml,
             },
             "metadata": {
-                "originalName": os.path.relpath(
-                    os.path.realpath(filepath), os.path.realpath(self.__qgisModelPath__)
-                ),
+                "originalName": fileName,
             },
         }
 
@@ -477,33 +467,12 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         """
         # all model files handled by this tool are read/written on QGIS model dir
         data = workflowItem.source.data
-        if workflowItem.source.type == "file" and os.path.exists(data):
-            with open(data, "r", encoding="utf-8") as f:
-                xml = f.read()
-            originalName = os.path.basename(data)
-        elif workflowItem.source.type == "xml":
-            xml = data
-            meta = workflowItem.metadata
-            originalName = (
-                meta.originalName
-                if os.path.exists(meta.originalName)
-                else "temp_{0}.model3".format(hash(time()))
-            )
-        else:
-            return False
-        path = os.path.join(self.__qgisModelPath__, originalName)
-        msg = self.tr(
-            "Model '{0}' is already imported would you like to overwrite it?"
-        ).format(path)
-        if os.path.exists(path) and self.confirmAction(msg, addPromptToAll=True):
-            os.remove(path)
-        if not os.path.exists(path):
-            with open(path, "w") as f:
-                f.write(xml)
+        meta = workflowItem.metadata
+        originalName = Path(meta.originalName).name
         self.orderedTableWidget.addRow(
             contents={
                 self.MODEL_NAME_HEADER: workflowItem.displayName,
-                self.MODEL_SOURCE_HEADER: path,
+                self.MODEL_SOURCE_HEADER: {"fileName":originalName, "fileContent":data},
                 self.ON_FLAGS_HEADER: {
                     "halt": self.ON_FLAGS_HALT,
                     "warn": self.ON_FLAGS_WARN,
@@ -601,6 +570,11 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         """
         workflow = dsgtools_workflow_from_dict(self.workflowParameterMap())
         return workflow.export(filepath=filepath)
+    
+    def pushMessage(self, message):
+        self.messageBar.pushMessage(
+            self.tr("Info"), message, level=Qgis.Warning, duration=5
+        )
 
     @pyqtSlot(bool, name="on_exportPushButton_clicked")
     def export(self):

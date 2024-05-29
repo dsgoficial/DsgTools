@@ -386,7 +386,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             os.path.dirname(__file__), "temp_workflow_{0}.workflow".format(hash(time()))
         )
         with open(temp, "w+", encoding="utf-8") as f:
-            json.dump(workflow.asDict(), f)
+            json.dump(workflow.as_dict(), f)
         dlg.importWorkflow(temp)
         os.remove(temp)
         if dlg.exec_() != 1:
@@ -448,6 +448,8 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.tr(f"Workflow {currentWorkflow.displayName} execution has finished."),
             Qgis.Info, duration=3
         )
+        self.progressBar.setValue(100)
+        self.resumePushButton.setEnabled(False)
 
     def setRowColor(self, row, backgroundColor, foregroundColor):
         """
@@ -679,6 +681,8 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         # outside thread execution setup and should all be handled from
         # within this method - at runtime
         sender = self.sender()
+        if sender.objectName() == "runPushButton":
+            self.resumePushButton.setEnabled(True)
         resumeFromStart = sender is None or sender.objectName() == "runPushButton"
         if resumeFromStart:
             workflow.resetWorkflowItems()
