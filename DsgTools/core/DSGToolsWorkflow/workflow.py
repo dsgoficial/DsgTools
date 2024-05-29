@@ -32,6 +32,7 @@ from qgis.core import (
     QgsProcessingFeedback,
     QgsProcessingMultiStepFeedback,
     QgsTask,
+    QgsProject,
 )
 from qgis.PyQt.QtCore import pyqtSignal, QObject
 
@@ -242,8 +243,10 @@ class DSGToolsWorkflow(QObject):
             self.resetWorkflowItems()
             self.setCurrentWorkflowItem(0)
             self.workflowHasBeenReset.emit()
+        self.removeEmptyGroups()
         currentWorkflowItem = self.getCurrentWorkflowItem()
         if currentWorkflowItem is None:
+            self.feedback.setProgress(100)
             self.currentWorkflowExecutionFinished.emit()
             return
         if currentWorkflowItem.getStatus() in [ExecutionStatus.IGNORE_FLAGS]:
@@ -252,7 +255,7 @@ class DSGToolsWorkflow(QObject):
                 self.multiStepFeedback.setProgress(100)
                 return
             currentWorkflowItem = self.getCurrentWorkflowItem()
-        currentWorkflowItem.clearFlagsBeforeRunning()
+        currentWorkflowItem.clearOutputs(onlyFlags=True)
         currentTask: QgsTask = self.prepareTask()
         currentWorkflowItem.changeCurrentStatus(
             status=ExecutionStatus.RUNNING,
@@ -264,6 +267,18 @@ class DSGToolsWorkflow(QObject):
         )
         self.currentTaskChanged.emit(self.currentStepIndex, currentTask)
         QgsApplication.taskManager().addTask(currentTask)
+
+    def clearAllLayersBeforeRunning(self):
+        for workflowItem in self.workflowItemList:
+            workflowItem.clearOutputs()
+    
+    def removeEmptyGroups(self):
+        rootNode = QgsProject.instance().layerTreeRoot()
+        parentGroupName = "DSGTools_QA_Toolbox"
+        parentGroupNode = rootNode.findGroup(parentGroupName)
+        if parentGroupNode is None:
+            return
+        parentGroupNode.removeChildrenGroupWithoutLayers()
 
     def setIgnoreFlagsStatusOnCurrentStep(self):
         """Set the status to ignore flags on the current workflow step."""

@@ -208,6 +208,8 @@ class DSGToolsWorkflowItem(QObject):
 
     def resetItem(self):
         """Reset the workflow item."""
+        if hasattr(self, "executionOutput"):
+            self.clearOutputs()
         self.executionOutput = ModelExecutionOutput()
 
     def as_dict(self) -> Dict[str, str]:
@@ -523,15 +525,20 @@ class DSGToolsWorkflowItem(QObject):
         QgsProject.instance().addMapLayer(layer, addToLegend=False)
         subGroup.addLayer(layer)
     
-    def clearFlagsBeforeRunning(self):
+    def clearOutputs(self, onlyFlags=False):
         lyrKeysToPop = []
+        iface.mapCanvas().freeze(True)
         for lyrName, vl in self.executionOutput.result.items():
-            if lyrName not in self.flags.flagLayerNames:
+            if onlyFlags and lyrName not in self.flags.flagLayerNames:
                 continue
-            QgsProject.instance().removeMapLayer(vl.id())
+            try:
+                QgsProject.instance().removeMapLayer(vl.id())
+            except:
+                pass
             lyrKeysToPop.append(lyrName)
         for key in lyrKeysToPop:
             self.executionOutput.result.pop(key)
+        iface.mapCanvas().freeze(False)
 
     def createGroups(self, subgroupname):
         """Create groups in the layer panel.
