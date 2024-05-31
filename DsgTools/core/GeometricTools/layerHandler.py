@@ -3273,6 +3273,8 @@ class LayerHandler(QObject):
             context=context,
             feedback=multiStepFeedback,
         )
+        if mergedLayer.geometryType() == QgsWkbTypes.PointGeometry:
+            return mergedLayer
         if mergedLayer.geometryType() == QgsWkbTypes.PolygonGeometry:
             # TODO: adicionar lógica de dissolver polígonos de borda
             return mergedLayer

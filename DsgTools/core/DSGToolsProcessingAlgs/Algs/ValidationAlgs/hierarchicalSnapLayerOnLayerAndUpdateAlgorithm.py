@@ -345,6 +345,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             )
             return snappedLyr
         primitiveDict = {
+            QgsWkbTypes.PointGeometry: [],
             QgsWkbTypes.LineGeometry: [],
             QgsWkbTypes.PolygonGeometry: [],
         }
