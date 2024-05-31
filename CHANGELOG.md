@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.48 - dev
+## 4.13.49 - dev
 
 Novas Funcionalidades:
 
@@ -37,6 +37,9 @@ Melhorias:
 - Adiciona a opção de permitir linhas fechadas no processamento de unir linhas (utilizado para fechar curvas de nível em processamentos específicos de estilos na edição);
 - Altera o valor default da ferramenta de revisão para Pan to Next;
 - Adiciona a melhoria no menu de reclassificação para puxar os campos idênticos da camada de origem;
+- Workflow refatorado para corrigir constantes crashes durante a utilização;
+- Alterada a forma de importar e exportar os modelos de dentro do workflow;
+- Alterada a interface de gerência de flags na construção do workflow (combo box selecionando as saídas);
 
 
 Correção de bug:

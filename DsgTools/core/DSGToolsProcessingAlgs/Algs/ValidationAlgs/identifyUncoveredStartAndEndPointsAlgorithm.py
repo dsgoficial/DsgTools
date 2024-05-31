@@ -123,7 +123,6 @@ class IdentifyUncoveredStartAndEndPointsAlgorithm(ValidationAlgorithm):
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
 
-
         nSteps = 9 if geographicBoundaryLyr is None else 10
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0

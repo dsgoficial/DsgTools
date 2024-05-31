@@ -228,7 +228,10 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
                 raise Exception(
                     self.tr("Setter method must be defined for widget type.")
                 )
-            getattr(widget, setter)(value)
+            if isinstance(value, dict):
+                getattr(widget, setter)(**value)
+            else:
+                getattr(widget, setter)(value)
 
     def rowCount(self):
         """
@@ -340,7 +343,10 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
             else:
                 widget = properties["widget"]()
                 if value is not None:
-                    getattr(widget, properties["setter"])(value)
+                    if isinstance(value, dict):
+                        getattr(widget, properties["setter"])(**value)
+                    else:
+                        getattr(widget, properties["setter"])(value)
                 if isinstance(widget, QDoubleSpinBox):
                     widget.setDecimals(16)
                 self.tableWidget.setCellWidget(row, col, widget)
