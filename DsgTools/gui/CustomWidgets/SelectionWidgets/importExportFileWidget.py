@@ -39,7 +39,7 @@ FORM_CLASS, _ = uic.loadUiType(
 
 
 class ImportExportFileWidget(QtWidgets.QWidget, FORM_CLASS):
-    fileSelected = pyqtSignal()
+    fileSelected = pyqtSignal(str, str)
     fileExported = pyqtSignal(str)
 
     def __init__(self, parent=None):
@@ -67,10 +67,13 @@ class ImportExportFileWidget(QtWidgets.QWidget, FORM_CLASS):
             selectedFile[0] if isinstance(selectedFile, tuple) else selectedFile
         )
         self.lineEdit.setText(self.fileName)
-        with open(self.selectedFilePath, "r") as f:
-            self.fileContent = f.readlines()
+        if selectedFile == '':
+            self.fileContent = None
+            return
+        with open(selectedFile, "r") as f:
+            self.fileContent = f.read()
         self.exportFilePushButton.setEnabled(True)
-        self.fileSelected.emit()
+        self.fileSelected.emit(self.fileName, self.fileContent)
     
     @pyqtSlot(bool)
     def on_exportFilePushButton_clicked(self):
@@ -85,7 +88,7 @@ class ImportExportFileWidget(QtWidgets.QWidget, FORM_CLASS):
             else f"{filename[0]}.{self.filter}"
         )
         with open(filename, "w") as f:
-            f.writelines(self.fileContent)
+            f.write(self.fileContent)
         self.fileExported.emit(filename[0])
 
     def resetAll(self):
@@ -123,6 +126,7 @@ class ImportExportFileWidget(QtWidgets.QWidget, FORM_CLASS):
         self.fileContent = fileContent
         self.lineEdit.setText(self.fileName)
         self.exportFilePushButton.setEnabled(self.fileName is not None and self.fileContent is not None)
+        self.fileSelected.emit(self.fileName, self.fileContent)
     
     def getFile(self):
-        return (self.fileName, self.fileContent)
+        return {"fileName": self.fileName, "fileContent":self.fileContent}

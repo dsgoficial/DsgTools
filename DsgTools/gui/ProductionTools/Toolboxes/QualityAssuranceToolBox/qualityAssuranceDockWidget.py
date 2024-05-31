@@ -483,6 +483,10 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.setRowStatus(row, code)
         self.tableWidget.cellWidget(row, 1).setText(status)
         self.setGuiState(code == ExecutionStatus.RUNNING)
+        if code == ExecutionStatus.RUNNING:
+            pageStep = self.tableWidget.verticalScrollBar().pageStep()
+            if row >= pageStep:
+                self.tableWidget.verticalScrollBar().setValue(row)
         if code in [ExecutionStatus.FAILED, ExecutionStatus.FINISHED_WITH_FLAGS, ExecutionStatus.IGNORE_FLAGS]:
             # advise user a model status has changed only if it came from a
             # signal call

@@ -27,12 +27,13 @@ from pathlib import Path
 from time import time
 from datetime import datetime
 
-from DsgTools.core.DSGToolsWorkflow.workflowItem import DSGToolsWorkflowItem
+from DsgTools.core.DSGToolsWorkflow.workflowItem import DSGToolsWorkflowItem, ModelSource
+from DsgTools.gui.CustomWidgets.SelectionWidgets.customCheckableComboBox import CustomCheckableComboBox
 from DsgTools.gui.CustomWidgets.SelectionWidgets.importExportFileWidget import ImportExportFileWidget
-from qgis.PyQt import uic
+from qgis.PyQt import uic, QtCore, QtWidgets
 from qgis.core import Qgis
-from qgis.gui import QgsMessageBar
-from qgis.PyQt.QtCore import QSize, QCoreApplication, pyqtSlot
+from qgis.gui import QgsMessageBar, QgsCheckableComboBox
+from qgis.PyQt.QtCore import QSize, QCoreApplication, pyqtSlot, Qt
 from qgis.PyQt.QtWidgets import (
     QDialog,
     QComboBox,
@@ -74,11 +75,11 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
     (
         MODEL_NAME_HEADER,
         MODEL_SOURCE_HEADER,
-        ON_FLAGS_HEADER,
-        LOAD_OUT_HEADER,
         FLAG_KEYS_HEADER,
+        ON_FLAGS_HEADER,
         FLAG_CAN_BE_FALSE_POSITIVE_HEADER,
-        PAUSE_AFTER_EXECUTION,
+        PAUSE_AFTER_EXECUTION_HEADER,
+        LOAD_OUTPUTS_THAT_ARE_NOT_FLAG_HEADER,
     ) = range(7)
 
     def __init__(self, parent=None):
@@ -108,26 +109,19 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                     "setter": "setFile",
                     "getter": "getFile",
                 },
+                self.FLAG_KEYS_HEADER: {
+                    "header": self.tr("Flag keys"),
+                    "type": "widget",
+                    "widget": self.loadFlagLayers,
+                    "setter": "setData",
+                    "getter": "checkedItems",
+                },
                 self.ON_FLAGS_HEADER: {
                     "header": self.tr("On flags"),
                     "type": "widget",
                     "widget": self.onFlagsWidget,
                     "setter": "setCurrentIndex",
                     "getter": "currentIndex",
-                },
-                self.LOAD_OUT_HEADER: {
-                    "header": self.tr("Load output"),
-                    "type": "widget",
-                    "widget": self.loadOutputWidget,
-                    "setter": "setChecked",
-                    "getter": "isChecked",
-                },
-                self.FLAG_KEYS_HEADER: {
-                    "header": self.tr("Flag keys"),
-                    "type": "widget",
-                    "widget": self.loadFlagLayers,
-                    "setter": "setText",
-                    "getter": "text",
                 },
                 self.FLAG_CAN_BE_FALSE_POSITIVE_HEADER: {
                     "header": self.tr("Flags can be false positive"),
@@ -136,28 +130,33 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                     "setter": "setChecked",
                     "getter": "isChecked",
                 },
-                self.PAUSE_AFTER_EXECUTION: {
+                self.PAUSE_AFTER_EXECUTION_HEADER: {
                     "header": self.tr("Pause after execution"),
                     "type": "widget",
                     "widget": self.pauseAfterExecutionWidget,
                     "setter": "setChecked",
                     "getter": "isChecked",
                 },
+                self.LOAD_OUTPUTS_THAT_ARE_NOT_FLAG_HEADER: {
+                    "header": self.tr("Load output layers that are not flags"),
+                    "type": "widget",
+                    "widget": self.loadOutputWidget,
+                    "setter": "setChecked",
+                    "getter": "isChecked",
+                },
             }
         )
         self.orderedTableWidget.setHeaderDoubleClickBehaviour("replicate")
+        self.orderedTableWidget.horizontalHeader().setStretchLastSection(True)
+        self.orderedTableWidget.tableWidget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.orderedTableWidget.tableWidget.horizontalHeader().setDefaultSectionSize(150)
+        self.orderedTableWidget.tableWidget.horizontalHeader().setMinimumSectionSize(100)
+        self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(self.MODEL_NAME_HEADER, 200)
+        self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(self.MODEL_SOURCE_HEADER, 250)
+        self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(self.FLAG_KEYS_HEADER, 200)
+        self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(self.ON_FLAGS_HEADER, 100)
         self.promptToAll = None
         self.orderedTableWidget.rowAdded.connect(self.postAddRowStandard)
-
-    def _checkFalsePositiveAvailability(self, row):
-        comboBox = self.orderedTableWidget.itemAt(row, 2)
-        checkBox = self.orderedTableWidget.itemAt(row, 5)
-        flagType = comboBox.currentIndex()
-        if flagType != self.ON_FLAGS_HALT:
-            checkBox.setChecked(False)
-            checkBox.setEnabled(False)
-            return
-        checkBox.setEnabled(True)
 
     def postAddRowStandard(self, row):
         """
@@ -167,41 +166,23 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         # in standard GUI, the layer selectors are QgsMapLayerComboBox, and its
         # layer changed signal should be connected to the filter expression
         # widget setup
-        comboBox = self.orderedTableWidget.itemAt(row, 2)
-        comboBox.currentIndexChanged.connect(
-            partial(self._checkFalsePositiveAvailability, row)
+        importExportFileWidget = self.orderedTableWidget.itemAt(row, self.MODEL_SOURCE_HEADER)
+        importExportFileWidget.fileSelected.connect(
+            partial(self._getModelOutputs, row)
         )
-        self.resizeTable()
-
-    def resizeTable(self):
-        """
-        Adjusts table columns sizes.
-        """
-        dSize = (
-            self.orderedTableWidget.geometry().width()
-            - self.orderedTableWidget.horizontalHeader().geometry().width()
+    
+    def _getModelOutputs(self, row, fileName, fileContent):
+        currentModelSource = ModelSource(
+            type="xml",
+            data=fileContent
         )
-        onFlagsColSize = self.orderedTableWidget.sectionSize(2)
-        loadOutColSize = self.orderedTableWidget.sectionSize(3)
-        flagsOutColSize = self.orderedTableWidget.sectionSize(4)
-        falsePositiveColSize = self.orderedTableWidget.sectionSize(5)
-        pauseAfterExecutionColSize = self.orderedTableWidget.sectionSize(6)
-        missingBarSize = (
-            self.geometry().size().width()
-            - dSize
-            - onFlagsColSize
-            - falsePositiveColSize
-            - loadOutColSize
-            - flagsOutColSize
-            - pauseAfterExecutionColSize
-        )
-        # the "-11" is empiric: it makes it fit header to table
-        self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(
-            0, int(0.4 * missingBarSize) - 11
-        )
-        self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(
-            1, missingBarSize - int(0.4 * missingBarSize) - 11
-        )
+        currentModel = currentModelSource.modelFromXml()
+        outputs = [
+            outputDef.name().split(":")[-1] for outputDef in currentModel.outputDefinitions()
+        ]
+        currentCheckableCombobBox = self.orderedTableWidget.itemAt(row, self.FLAG_KEYS_HEADER)
+        currentCheckableCombobBox.clear()
+        currentCheckableCombobBox.setData(outputs)
 
     def resizeEvent(self, e):
         """
@@ -216,7 +197,6 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 40,  # this felt nicer than the original height (30)
             )
         )
-        self.resizeTable()
 
     def confirmAction(self, msg, showCancel=True, addPromptToAll=False):
         """
@@ -283,6 +263,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         if name is not None:
             le.setText(name)
         le.setFrame(False)
+        le.textChanged.connect(lambda x: le.setToolTip(x))
         return le
 
     def modelWidget(self, filepath=None):
@@ -357,7 +338,13 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         return cb
 
     def loadFlagLayers(self):
-        return QLineEdit()
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        widget = CustomCheckableComboBox()
+        widget.setSizePolicy(sizePolicy)
+        widget.setMinimumSize(QtCore.QSize(100, 25))
+        return widget
 
     def now(self):
         """
@@ -434,12 +421,12 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         fileName, xml = contents[self.MODEL_SOURCE_HEADER]
         onFlagsIdx = contents[self.ON_FLAGS_HEADER]
         name = contents[self.MODEL_NAME_HEADER].strip()
-        loadOutput = contents[self.LOAD_OUT_HEADER]
+        loadOutput = contents[self.LOAD_OUTPUTS_THAT_ARE_NOT_FLAG_HEADER]
         modelCanHaveFalsePositiveFlags = contents[
             self.FLAG_CAN_BE_FALSE_POSITIVE_HEADER
         ]
-        flagLayerNames = contents[self.FLAG_KEYS_HEADER].strip().split(",")
-        pauseAfterExecution = contents[self.PAUSE_AFTER_EXECUTION]
+        flagLayerNames = contents[self.FLAG_KEYS_HEADER]
+        pauseAfterExecution = contents[self.PAUSE_AFTER_EXECUTION_HEADER]
         return {
             "displayName": name,
             "flags": {
@@ -479,11 +466,14 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                     "ignore": self.ON_FLAGS_IGNORE,
                 }[workflowItem.flags.onFlagsRaised],
                 self.FLAG_CAN_BE_FALSE_POSITIVE_HEADER: workflowItem.flags.modelCanHaveFalsePositiveFlags,
-                self.LOAD_OUT_HEADER: workflowItem.flags.loadOutput,
-                self.FLAG_KEYS_HEADER: ",".join(
-                    map(lambda x: str(x).strip(), workflowItem.flags.flagLayerNames)
-                ),
-                self.PAUSE_AFTER_EXECUTION: workflowItem.pauseAfterExecution,
+                self.LOAD_OUTPUTS_THAT_ARE_NOT_FLAG_HEADER: workflowItem.flags.loadOutput,
+                self.FLAG_KEYS_HEADER: {
+                    "items": workflowItem.getAllOutputNamesFromModel(),
+                    "checkedItems": ",".join(
+                        map(lambda x: str(x).strip(), workflowItem.flags.flagLayerNames)
+                    )
+                },
+                self.PAUSE_AFTER_EXECUTION_HEADER: workflowItem.pauseAfterExecution,
             }
         )
         return True
