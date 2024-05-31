@@ -87,9 +87,11 @@ class ImportExportFileWidget(QtWidgets.QWidget, FORM_CLASS):
             if Path(filename[0]).suffix in map(lambda x: x.strip(), self.filter.replace("(","").replace(")","").split("*")[1::])
             else f"{filename[0]}.{self.filter}"
         )
+        if ".model3" not in filename or ".model" not in filename:
+            filename = filename + ".model3"
         with open(filename, "w") as f:
             f.write(self.fileContent)
-        self.fileExported.emit(filename[0])
+        self.fileExported.emit(filename)
 
     def resetAll(self):
         """

@@ -277,9 +277,9 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         widget.lineEdit.setPlaceholderText(self.tr("Select a model..."))
         widget.lineEdit.setFrame(False)
         widget.setCaption(self.tr("Select a QGIS Processing model file"))
-        widget.setFilter(self.tr("Select a QGIS Processing model (*.model *.model3)"))
+        widget.setFilter(self.tr("Select a QGIS Processing model (*.model3 *.model)"))
         # defining setter and getter methods for composed widgets into OTW
-        widget.fileExported.connect(lambda x: self.pushMessage(x))
+        widget.fileExported.connect(lambda x: self.pushMessage(self.tr(f"Model source exported to file {x}")))
         return widget
 
     def onFlagsWidget(self, option=None):
