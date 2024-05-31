@@ -563,7 +563,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
     
     def pushMessage(self, message):
         self.messageBar.pushMessage(
-            self.tr("Info"), message, level=Qgis.Warning, duration=5
+            self.tr("Info"), message, level=Qgis.Info, duration=5
         )
 
     @pyqtSlot(bool, name="on_exportPushButton_clicked")
