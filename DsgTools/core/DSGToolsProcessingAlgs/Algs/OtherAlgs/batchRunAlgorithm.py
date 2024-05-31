@@ -88,7 +88,7 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterString(
                 self.OUTPUT_LAYER_PARAMETER_NAME,
                 self.tr("Output layer parameter name"),
-                defaultValue="FLAGS",
+                # defaultValue="FLAGS",
                 optional=True,
             )
         )

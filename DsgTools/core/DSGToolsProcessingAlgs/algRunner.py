@@ -26,11 +26,14 @@ from typing import List, Optional
 import processing
 from qgis.core import (
     Qgis,
+    QgsMapLayer,
     QgsProcessingContext,
     QgsProcessingFeatureSourceDefinition,
     QgsProcessingUtils,
     QgsVectorLayer,
     QgsFeedback,
+    QgsRasterLayer,
+    QgsRectangle,
 )
 
 
@@ -774,7 +777,7 @@ class AlgRunner:
         sortAscending=True,
         sortNullsFirst=False,
         is_child_algorithm=False,
-    ):
+    ) -> QgsVectorLayer:
         fieldName = "featid" if fieldName is None else fieldName
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {
@@ -943,7 +946,7 @@ class AlgRunner:
         unjoinnedLyr=None,
         returnUnjoinned=False,
         is_child_algorithm=False,
-    ):
+    ) -> QgsVectorLayer:
         predicateList = [0] if predicateList is None else predicateList
         joinFields = [] if joinFields is None else joinFields
         method = 0 if method is None else method
@@ -1951,8 +1954,9 @@ class AlgRunner:
         attributeBlackList=None,
         ignoreVirtualFields=True,
         ignorePkFields=True,
+        allowClosed=False,
         feedback=None,
-    ):
+    ) -> None:
         attributeBlackList = [] if attributeBlackList is None else attributeBlackList
         output = processing.run(
             "dsgtools:mergelineswithsameattributeset",
@@ -1962,6 +1966,7 @@ class AlgRunner:
                 "ATTRIBUTE_BLACK_LIST": attributeBlackList,
                 "IGNORE_VIRTUAL_FIELDS": ignoreVirtualFields,
                 "IGNORE_PK_FIELDS": ignorePkFields,
+                "ALLOW_CLOSED": allowClosed,
             },
             context=context,
             feedback=feedback,
@@ -1976,7 +1981,7 @@ class AlgRunner:
         outputLyr: Optional[QgsVectorLayer] = None,
         feedback: Optional[QgsFeedback] = None,
         is_child_algorithm: bool = False,
-    ):
+    ) -> QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
             "native:renametablefield",
@@ -2000,7 +2005,7 @@ class AlgRunner:
         outputLyr: Optional[QgsVectorLayer] = None,
         feedback: Optional[QgsFeedback] = None,
         is_child_algorithm: bool = False,
-    ):
+    ) -> QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
             "native:splitlinesbylength",
@@ -2008,5 +2013,162 @@ class AlgRunner:
             context=context,
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runInterpolatePoint(
+        self,
+        inputLayer: QgsVectorLayer,
+        distance: float,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:interpolatepoint",
+            {"INPUT": inputLayer, "DISTANCE": distance, "OUTPUT": outputLyr},
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runPolygonFromLayerExtent(
+        self,
+        inputLayer: QgsMapLayer,
+        context: QgsProcessingContext,
+        roundTo: Optional[float] = 0.0,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:polygonfromlayerextent",
+            {"INPUT": inputLayer, "ROUND_TO": roundTo, "OUTPUT": outputLyr},
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runGdalRasterizeOverFixedValue(
+        self,
+        inputLayer: QgsVectorLayer,
+        inputRaster: QgsRasterLayer,
+        value: int,
+        context: QgsProcessingContext,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ):
+        processing.run(
+            "gdal:rasterize_over_fixed_value",
+            {
+                "INPUT": inputLayer,
+                "INPUT_RASTER": inputRaster,
+                "BURN": value,
+                "ADD": False,
+                "EXTRA": False,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+
+    def runDSGToolsReclassifyGroupsOfPixels(
+        self,
+        inputRaster: QgsRasterLayer,
+        minArea: float,
+        nodataValue: int,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsRasterLayer:
+        outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
+        output = processing.run(
+            "dsgtools:reclassifygroupsofpixelstonearestneighboralgorithm",
+            {
+                "INPUT": inputRaster,
+                "MIN_AREA": minArea,
+                "NODATA_VALUE": nodataValue,
+                "OUTPUT": outputLyr,
+            },
+        )
+        return output["OUTPUT"]
+
+    def runRasterClipByExtent(
+        self,
+        inputRaster: QgsRasterLayer,
+        extent: QgsRectangle,
+        nodata,
+        context,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsRasterLayer:
+        outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
+        output = processing.run(
+            "gdal:cliprasterbyextent",
+            {
+                "INPUT": inputRaster,
+                "PROJWIN": extent,
+                "OVERCRS": False,
+                "NODATA": nodata,
+                "OPTIONS": "",
+                "DATA_TYPE": 0,
+                "EXTRA": "",
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runOverlapAnalysis(
+        self,
+        inputLayer: QgsVectorLayer,
+        layerList: List[QgsVectorLayer],
+        context: QgsProcessingContext,
+        gridSize: Optional[float] = None,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:calculatevectoroverlaps",
+            {
+                "INPUT": inputLayer,
+                "LAYERS": layerList,
+                "OUTPUT": outputLyr,
+                "GRID_SIZE": gridSize,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runReverseLineDirection(self, inputLayer: QgsVectorLayer, context: QgsProcessingContext, outputLyr: Optional[QgsRasterLayer] = None, feedback: Optional[QgsFeedback]=None, is_child_algorithm: bool=False) -> QgsVectorLayer:
+        output = processing.run(
+            "native:reverselinedirection",
+            {"INPUT": inputLayer, "OUTPUT": "memory:"},
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
+        )
+        return output["OUTPUT"]
+
+    def runSetLineOrientation(self, inputLayer: QgsVectorLayer, context: QgsProcessingContext, orientation: Optional[int] = 0, outputLyr: Optional[QgsRasterLayer] = None, feedback: Optional[QgsFeedback]=None, is_child_algorithm: bool=False) -> QgsVectorLayer:
+        output = processing.run(
+            "dsgtools:setlineorientation",
+            {"INPUT": inputLayer, "ORIENTATION": orientation, "OUTPUT": "memory:"},
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
         )
         return output["OUTPUT"]

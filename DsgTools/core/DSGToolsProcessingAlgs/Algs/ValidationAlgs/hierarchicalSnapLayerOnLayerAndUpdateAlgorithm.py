@@ -112,7 +112,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
 
         nSteps = 0
         for item in snapDictList:
-            if item["referenceLayer"] == geographicBoundaryLyr.name():
+            if geographicBoundaryLyr is not None and item["referenceLayer"] == geographicBoundaryLyr.name():
                 raise QgsProcessingException(
                     self.tr("The Geographic Layer must not be in snap list.")
                 )

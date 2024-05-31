@@ -26,7 +26,7 @@ import concurrent.futures
 import itertools
 
 
-def concurrently(handler, inputs, *, max_concurrency=5):
+def concurrently(handler, inputs, *, max_concurrency=5, feedback=None):
     """
     Calls the function ``handler`` on the values ``inputs``.
 
@@ -57,7 +57,9 @@ def concurrently(handler, inputs, *, max_concurrency=5):
             for fut in done:
                 original_input = futures.pop(fut)
                 yield fut.result()
-
+            if feedback is not None and feedback.isCanceled():
+                executor.shutdown(cancel_futures=True, wait=False)
+                break
             for input in itertools.islice(handler_inputs, len(done)):
                 fut = executor.submit(handler, input)
                 futures[fut] = input
