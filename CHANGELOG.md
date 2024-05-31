@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.37 - dev
+## 4.13.49 - dev
 
 Novas Funcionalidades:
 
@@ -8,6 +8,11 @@ Novas Funcionalidades:
 - Novo processo de identificar mudança de atributo em linhas (portado do ferramentas experimentais);
 - Novo processo BatchRunAlgorithmWithGeographicBoundsConstraint: roda em lote, como o BatchRunAlgorithm no modelo, porém tem uma camada de entrada para o limite geográfico (o limite geográfico pode filtrar as flags de saída ou ser input, como no caso do clean com alterações somente dentro da moldura);
 - Novo processo de identificar linhas não cobertas por outras linhas (identifica travessias hidroviárias que não se conectam com vias deslocamento ou com a moldura);
+- Adiciona suporte para a EDGV 3.0 Topo;
+- Novo processo de reclassificar pixel adjacente em raster para o vizinho mais próximo (útil para generalizar raster de vegetação classificada);
+- Novo processo de reclassificar conjunto de pixels adjacentes em raster para o vizinho mais próximo (variação do algoritmo de reclassificar pixel adjacente em raster para o vizinho mais próximo que considera área do agrupamento de pixels);
+- Novo processo de reclassificar conjunto de pixels adjacenter por meio de janela deslizante;
+- Novo processo de selecionar conjuntos de linhas fechadas pequenos;
 
 Melhorias:
 
@@ -29,6 +34,10 @@ Melhorias:
 - Adiciona camada de saída no algoritmo de verificação de ortografia (SpellChecker) para indicar se há erros;
 - A Caixa de Ferramentas de Controle de Qualidade agora só limpa as camadas que são flags dos processos, mantendo as entradas;
 - Adicionada uma verificação na execução da Caixa de Ferramentas de Controle de Qualidade para evitar que o usuário comece o processo novamente sem querer;
+- Adiciona a opção de permitir linhas fechadas no processamento de unir linhas (utilizado para fechar curvas de nível em processamentos específicos de estilos na edição);
+- Altera o valor default da ferramenta de revisão para Pan to Next;
+- Adiciona a melhoria no menu de reclassificação para puxar os campos idênticos da camada de origem;
+- Workflow refatorado para corrigir constantes crashes durante a utilização;
 
 
 Correção de bug:
@@ -52,6 +61,9 @@ Correção de bug:
 - Corrige bug de estado guardado no projeto no workflow;
 - Corrige crashes no dsgtools nos processings (versão 4.13.35, para refrência em caso de problemas);
 - Corrige bug com camada vazia em models do workflow ao executar o processo de identificar linhas não cobertas por outras linhas (IdentifyUncoveredStartAndEndPointsAlgorithm);
+- Corrige bug em Update Runway Altitude;
+- Corrige bug em Identify Intertwined Lines para tratar caso de Geometry Collection (linhas que se cruzam e se sobrepoem);
+- Corrige bug nos Batch Run, valor padrão removido para compatibilidade com models nas versões mais atuais do QGIS (a partir da 3.30), não afeta versões mais antigas do QGIS;
 
 ## 4.12.0 - 2023-12-13
 
