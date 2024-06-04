@@ -418,7 +418,8 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         :return: (dict) parameters map.
         """
         contents = self.orderedTableWidget.row(row)
-        fileName, xml = contents[self.MODEL_SOURCE_HEADER]
+        output = contents[self.MODEL_SOURCE_HEADER]
+        fileName, xml = output["fileName"], output["fileContent"]
         onFlagsIdx = contents[self.ON_FLAGS_HEADER]
         name = contents[self.MODEL_NAME_HEADER].strip()
         loadOutput = contents[self.LOAD_OUTPUTS_THAT_ARE_NOT_FLAG_HEADER]
