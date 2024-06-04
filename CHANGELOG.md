@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.53 - dev
+## 4.13.54 - dev
 
 Novas Funcionalidades:
 
@@ -11,8 +11,9 @@ Novas Funcionalidades:
 - Adiciona suporte para a EDGV 3.0 Topo;
 - Novo processo de reclassificar pixel adjacente em raster para o vizinho mais próximo (útil para generalizar raster de vegetação classificada);
 - Novo processo de reclassificar conjunto de pixels adjacentes em raster para o vizinho mais próximo (variação do algoritmo de reclassificar pixel adjacente em raster para o vizinho mais próximo que considera área do agrupamento de pixels);
-- Novo processo de reclassificar conjunto de pixels adjacenter por meio de janela deslizante;
+- Novo processo de reclassificar conjunto de pixels adjacentes por meio de janela deslizante;
 - Novo processo de selecionar conjuntos de linhas fechadas pequenos;
+- 4 novos processos para identificar relações de interseção, elemento faltando na interseção ou elemento de interseção fora da interseção;
 
 Melhorias:
 
@@ -63,10 +64,10 @@ Correção de bug:
 - Corrige bug de flags não carregadas no workflow;
 - Corrige comportamentos estranhos do workflow ao carregar camada (havia manipulação de grupos, que não é thread safe, na thread secundária em que o QgsTask roda);
 - Corrige bug de estado guardado no projeto no workflow;
-- Corrige crashes no dsgtools nos processings (versão 4.13.35, para refrência em caso de problemas);
+- Corrige crashes no dsgtools nos processings (versão 4.13.35, para referência em caso de problemas);
 - Corrige bug com camada vazia em models do workflow ao executar o processo de identificar linhas não cobertas por outras linhas (IdentifyUncoveredStartAndEndPointsAlgorithm);
 - Corrige bug em Update Runway Altitude;
-- Corrige bug em Identify Intertwined Lines para tratar caso de Geometry Collection (linhas que se cruzam e se sobrepoem);
+- Corrige bug em Identify Intertwined Lines para tratar caso de Geometry Collection (linhas que se cruzam e se sobrepõem);
 - Corrige bug nos Batch Run, valor padrão removido para compatibilidade com models nas versões mais atuais do QGIS (a partir da 3.30), não afeta versões mais antigas do QGIS;
 - Corrige bug no snap hierárquico de não funcionar com camadas de primitiva ponto (bug introduzido quando foi adaptado para restringir as alterações somente dentro da camada de moldura);
 - Corrige bug ao salvar o workflow (introduzido na versão 4.13.50);
