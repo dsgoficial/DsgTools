@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.51 - dev
+## 4.13.52 - dev
 
 Novas Funcionalidades:
 
@@ -40,6 +40,7 @@ Melhorias:
 - Workflow refatorado para corrigir constantes crashes durante a utilização;
 - Alterada a forma de importar e exportar os modelos de dentro do workflow;
 - Alterada a interface de gerência de flags na construção do workflow (combo box selecionando as saídas);
+- Melhoria de desempenho no deaggregator (aproximadamente 10x mais rápido após a atualização);
 
 
 Correção de bug:
