@@ -64,9 +64,9 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.XML_TEMPLATE_FILE,
-                self.tr('XML template'),
+                self.tr("XML template"),
                 behavior=QgsProcessingParameterFile.File,
-                fileFilter='XML (*.xml)',
+                fileFilter="XML (*.xml)",
             )
         )
         self.addParameter(
@@ -97,7 +97,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             raise QgsProcessingException(
                 "Não foram encontrados arquivos .tif na pasta de entrada."
             )
-        
+
         input_file_path = Path(inputFolder).resolve()
         output_base_path = Path(output_path).resolve()
         multiStepFeedback = QgsProcessingMultiStepFeedback(nInputs, feedback)
@@ -110,9 +110,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 )
             )
             multiStepFeedback.setProgressText(
-                self.tr(
-                    f"Converting {current+1}/{nInputs}"
-                )
+                self.tr(f"Converting {current+1}/{nInputs}")
             )
             multiStepFeedback.setCurrentStep(current)
             if feedback.isCanceled():
@@ -131,7 +129,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                     self.buildXML(
                         rasterLayer=rasterLayer,
                         matchedFeature=matchedFeature,
-                        output_xml_file=str(output_file_path).replace(".tif", '.xml')
+                        output_xml_file=str(output_file_path).replace(".tif", ".xml"),
                     )
             processing.run(
                 "gdal:warpreproject",
@@ -142,7 +140,9 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                     "RESAMPLING": 0,
                     "NODATA": None,
                     "TARGET_RESOLUTION": None,
-                    "OPTIONS": "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE|PHOTOMETRIC=YCbCr" if bandcount > 1 else "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE",
+                    "OPTIONS": "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE|PHOTOMETRIC=YCbCr"
+                    if bandcount > 1
+                    else "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE",
                     "DATA_TYPE": 0,
                     "TARGET_EXTENT": None,
                     "TARGET_EXTENT_CRS": None,
@@ -161,38 +161,44 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
     def getRasterLayer(self, input_path: str) -> QgsRasterLayer:
         options = QgsRasterLayer.LayerOptions()
         options.loadDefaultStyle = False
-        rasterLayer = QgsRasterLayer(str(input_path), Path(input_path).stem, "gdal", options)
+        rasterLayer = QgsRasterLayer(
+            str(input_path), Path(input_path).stem, "gdal", options
+        )
         return rasterLayer
-    
+
     def getSeamlinesDict(self, inputFolder: str) -> Dict[str, QgsVectorLayer]:
         seamlinesDict = dict()
         for zipPath in Path(inputFolder).rglob("*.zip"):
-            with zipfile.ZipFile(zipPath, 'r') as zip_ref:
+            with zipfile.ZipFile(zipPath, "r") as zip_ref:
                 zip_ref.extractall(self.tempFolder)
         for shp in Path(self.tempFolder).rglob("*.shp"):
             if "_SEAMLINES_SHAPE" not in str(shp):
                 continue
-            key = str(shp.name).replace(".shp", "").replace("_SEAMLINES_SHAPE","")
+            key = str(shp.name).replace(".shp", "").replace("_SEAMLINES_SHAPE", "")
             seamlinesDict[key] = QgsVectorLayer(str(shp), key, "ogr")
 
         return seamlinesDict
-    
-    def buildXML(self, rasterLayer: QgsRasterLayer, matchedFeature: QgsFeature, output_xml_file: str) -> None:
+
+    def buildXML(
+        self,
+        rasterLayer: QgsRasterLayer,
+        matchedFeature: QgsFeature,
+        output_xml_file: str,
+    ) -> None:
         extent = rasterLayer.extent()
         substitutions = {
-            'X_MIN': f"{extent.xMinimum()}",
-            'X_MAX': f"{extent.xMaximum()}",
-            'Y_MIN': f"{extent.yMinimum()}",
-            'Y_MAX': f"{extent.xMaximum()}",
-            'NOME_PRODUTO': f"""{matchedFeature["source"]}_{matchedFeature["productTyp"].replace(" ","_")}_{re.sub("T.+", "", matchedFeature["acquisitio"])}_{re.sub("_R.+", "", rasterLayer.name())}""",
-            'DATA_IMAGEM': re.sub("T.+", "", matchedFeature["acquisitio"]),
+            "X_MIN": f"{extent.xMinimum()}",
+            "X_MAX": f"{extent.xMaximum()}",
+            "Y_MIN": f"{extent.yMinimum()}",
+            "Y_MAX": f"{extent.xMaximum()}",
+            "NOME_PRODUTO": f"""{matchedFeature["source"]}_{matchedFeature["productTyp"].replace(" ","_")}_{re.sub("T.+", "", matchedFeature["acquisitio"])}_{re.sub("_R.+", "", rasterLayer.name())}""",
+            "DATA_IMAGEM": re.sub("T.+", "", matchedFeature["acquisitio"]),
         }
-        with open(self.xml_template_path, 'r') as f:
+        with open(self.xml_template_path, "r") as f:
             xmlstring = f.read()
-        pattern = re.compile(r'{{([^{}]+)}}')
-        xmlstring = re.sub(
-            pattern, lambda m: substitutions[m.group(1)], xmlstring)
-        with open(output_xml_file, 'w') as f:
+        pattern = re.compile(r"{{([^{}]+)}}")
+        xmlstring = re.sub(pattern, lambda m: substitutions[m.group(1)], xmlstring)
+        with open(output_xml_file, "w") as f:
             f.write(xmlstring)
 
     def tr(self, string):
