@@ -23,7 +23,9 @@
 
 import glob
 import itertools
+import zipfile
 from pathlib import Path
+from typing import Dict
 import processing
 from osgeo import gdal
 from PyQt5.QtCore import QCoreApplication
@@ -36,6 +38,8 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsProcessingParameterBoolean,
     QgsRasterLayer,
+    QgsProcessingUtils,
+    QgsVectorLayer,
 )
 
 
@@ -76,13 +80,21 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             raise QgsProcessingException(
                 "Não foram encontrados arquivos .tif na pasta de entrada."
             )
+        
         input_file_path = Path(inputFolder).resolve()
         output_base_path = Path(output_path).resolve()
         multiStepFeedback = QgsProcessingMultiStepFeedback(nInputs, feedback)
+        self.tempFolder = QgsProcessingUtils.tempFolder()
+        self.seamlinesDict = self.getSeamlinesDict(inputFolder)
         for current, input_path in enumerate(inputFiles):
             multiStepFeedback.pushInfo(
                 self.tr(
                     f"Converting {current+1}/{nInputs}: Converting file {input_path}"
+                )
+            )
+            multiStepFeedback.setProgressText(
+                self.tr(
+                    f"Converting {current+1}/{nInputs}"
                 )
             )
             multiStepFeedback.setCurrentStep(current)
@@ -92,10 +104,9 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             output_dir = output_base_path / relative_path
             output_dir.mkdir(parents=True, exist_ok=True)
             output_file_path = output_dir / input_path.name
-            options = QgsRasterLayer.LayerOptions()
-            options.loadDefaultStyle = False
-            rasterLayer = QgsRasterLayer(str(input_path), str(input_path), "gdal", options)
+            rasterLayer = self.getRasterLayer(input_path)
             bandcount = rasterLayer.bandCount()
+            self.buildXML(rasterLayer=rasterLayer, output_xml_file=str(output_file_path).replace(".tif", '.xml'))
             processing.run(
                 "gdal:warpreproject",
                 {
@@ -109,7 +120,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                     "DATA_TYPE": 0,
                     "TARGET_EXTENT": None,
                     "TARGET_EXTENT_CRS": None,
-                    "MULTITHREADING": False,
+                    "MULTITHREADING": True,
                     "EXTRA": "",
                     "OUTPUT": str(output_file_path),
                 },
@@ -121,19 +132,27 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             "OUTPUT_FOLDER": output_path,
         }
 
-    def writeOutputRaster(self, outputRaster, npRaster, ds, outputType=gdal.GDT_Int32):
-        driver = gdal.GetDriverByName("GTiff")
-        out_ds = driver.Create(
-            outputRaster, npRaster.shape[1], npRaster.shape[0], 1, outputType
-        )
-        out_ds.SetProjection(ds.GetProjection())
-        out_ds.SetGeoTransform(ds.GetGeoTransform())
-        out_ds.GetRasterBand(1).SetNoDataValue(-9999)
-        band = out_ds.GetRasterBand(1)
-        band.WriteArray(npRaster)
-        band.FlushCache()
-        band.ComputeStatistics(False)
-        out_ds = None
+    def getRasterLayer(self, input_path: str) -> QgsRasterLayer:
+        options = QgsRasterLayer.LayerOptions()
+        options.loadDefaultStyle = False
+        rasterLayer = QgsRasterLayer(str(input_path), str(input_path), "gdal", options)
+        return rasterLayer
+    
+    def getSeamlinesDict(self, inputFolder: str) -> Dict[str, QgsVectorLayer]:
+        seamlinesDict = dict()
+        for zipPath in Path(inputFolder).rglob("*.zip"):
+            with zipfile.ZipFile(zipPath, 'r') as zip_ref:
+                zip_ref.extractall(self.tempFolder)
+        for shp in Path(self.tempFolder).rglob("*.shp"):
+            if "_SEAMLINES_SHAPE" not in str(shp):
+                continue
+            key = str(shp.name).replace(".shp", "").replace("_SEAMLINES_SHAPE","")
+            seamlinesDict[key] = QgsVectorLayer(str(shp), key, "ogr")
+
+        return seamlinesDict
+    
+    def buildXML(self, rasterLayer: QgsRasterLayer, output_xml_file: str) -> None:
+        pass
 
     def tr(self, string):
         return QCoreApplication.translate("BatchRasterPackagingForBDGEx", string)
