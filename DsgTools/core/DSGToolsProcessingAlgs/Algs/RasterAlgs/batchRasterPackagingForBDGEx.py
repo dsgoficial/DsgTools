@@ -23,7 +23,11 @@
 
 import glob
 import itertools
+import re
 import zipfile
+import json
+import xml.dom.minidom
+import datetime
 from pathlib import Path
 from typing import Dict
 import processing
@@ -36,7 +40,7 @@ from qgis.core import (
     QgsProcessingParameterFolderDestination,
     QgsProcessingException,
     QgsCoordinateReferenceSystem,
-    QgsProcessingParameterBoolean,
+    QgsFeature,
     QgsRasterLayer,
     QgsProcessingUtils,
     QgsVectorLayer,
@@ -46,7 +50,7 @@ from qgis.core import (
 class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
 
     INPUT_FOLDER = "INPUT_FOLDER"
-    XML_TEMPLATE = "XML_TEMPLATE"
+    XML_TEMPLATE_FILE = "XML_TEMPLATE_FILE"
     OUTPUT_FOLDER = "OUTPUT_FOLDER"
 
     def initAlgorithm(self, config=None):
@@ -58,6 +62,14 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             )
         )
         self.addParameter(
+            QgsProcessingParameterFile(
+                self.XML_TEMPLATE_FILE,
+                self.tr('XML template'),
+                behavior=QgsProcessingParameterFile.File,
+                fileFilter='XML (*.xml)',
+            )
+        )
+        self.addParameter(
             QgsProcessingParameterFolderDestination(
                 self.OUTPUT_FOLDER, self.tr("Pasta para salvar os arquivos exportados")
             )
@@ -66,6 +78,11 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
         output_path = self.parameterAsString(parameters, self.OUTPUT_FOLDER, context)
         inputFolder = self.parameterAsFile(parameters, self.INPUT_FOLDER, context)
+        self.xml_template_path = self.parameterAsFile(
+            parameters,
+            self.XML_TEMPLATE_FILE,
+            context,
+        )
         inputFiles = list(
             set(
                 [
@@ -106,7 +123,16 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             output_file_path = output_dir / input_path.name
             rasterLayer = self.getRasterLayer(input_path)
             bandcount = rasterLayer.bandCount()
-            self.buildXML(rasterLayer=rasterLayer, output_xml_file=str(output_file_path).replace(".tif", '.xml'))
+            matchedLayer = self.seamlinesDict.get(input_path.parent.stem, None)
+            if matchedLayer is not None:
+                matchedFeatures = [i for i in matchedLayer.getFeatures()]
+                if len(matchedFeatures) > 0:
+                    matchedFeature = matchedFeatures[0]
+                    self.buildXML(
+                        rasterLayer=rasterLayer,
+                        matchedFeature=matchedFeature,
+                        output_xml_file=str(output_file_path).replace(".tif", '.xml')
+                    )
             processing.run(
                 "gdal:warpreproject",
                 {
@@ -135,7 +161,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
     def getRasterLayer(self, input_path: str) -> QgsRasterLayer:
         options = QgsRasterLayer.LayerOptions()
         options.loadDefaultStyle = False
-        rasterLayer = QgsRasterLayer(str(input_path), str(input_path), "gdal", options)
+        rasterLayer = QgsRasterLayer(str(input_path), Path(input_path).stem, "gdal", options)
         return rasterLayer
     
     def getSeamlinesDict(self, inputFolder: str) -> Dict[str, QgsVectorLayer]:
@@ -151,8 +177,23 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
 
         return seamlinesDict
     
-    def buildXML(self, rasterLayer: QgsRasterLayer, output_xml_file: str) -> None:
-        pass
+    def buildXML(self, rasterLayer: QgsRasterLayer, matchedFeature: QgsFeature, output_xml_file: str) -> None:
+        extent = rasterLayer.extent()
+        substitutions = {
+            'X_MIN': f"{extent.xMinimum()}",
+            'X_MAX': f"{extent.xMaximum()}",
+            'Y_MIN': f"{extent.yMinimum()}",
+            'Y_MAX': f"{extent.xMaximum()}",
+            'NOME_PRODUTO': f"""{matchedFeature["source"]}_{matchedFeature["productTyp"].replace(" ","_")}_{re.sub("T.+", "", matchedFeature["acquisitio"])}_{re.sub("_R.+", "", rasterLayer.name())}""",
+            'DATA_IMAGEM': re.sub("T.+", "", matchedFeature["acquisitio"]),
+        }
+        with open(self.xml_template_path, 'r') as f:
+            xmlstring = f.read()
+        pattern = re.compile(r'{{([^{}]+)}}')
+        xmlstring = re.sub(
+            pattern, lambda m: substitutions[m.group(1)], xmlstring)
+        with open(output_xml_file, 'w') as f:
+            f.write(xmlstring)
 
     def tr(self, string):
         return QCoreApplication.translate("BatchRasterPackagingForBDGEx", string)

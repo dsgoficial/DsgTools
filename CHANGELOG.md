@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.54 - dev
+## 4.13.55 - dev
 
 Novas Funcionalidades:
 
@@ -14,6 +14,7 @@ Novas Funcionalidades:
 - Novo processo de reclassificar conjunto de pixels adjacentes por meio de janela deslizante;
 - Novo processo de selecionar conjuntos de linhas fechadas pequenos;
 - 4 novos processos para identificar relações de interseção, elemento faltando na interseção ou elemento de interseção fora da interseção;
+- Novo processo de converter imagens e preencher metadados para carga no BDGEx;
 
 Melhorias:
 
