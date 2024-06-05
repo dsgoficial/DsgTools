@@ -61,7 +61,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.INPUT_FOLDER,
-                self.tr("Pasta com os arquivos no formato zip"),
+                self.tr("Pasta com os arquivos no formato tif"),
                 behavior=QgsProcessingParameterFile.Folder,
             )
         )
