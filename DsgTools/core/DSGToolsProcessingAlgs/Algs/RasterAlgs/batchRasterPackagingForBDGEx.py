@@ -35,13 +35,13 @@ from qgis.core import (
     QgsProcessingException,
     QgsCoordinateReferenceSystem,
     QgsProcessingParameterBoolean,
+    QgsRasterLayer,
 )
 
 
 class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
 
     INPUT_FOLDER = "INPUT_FOLDER"
-    USE_PHOTOMETRIC = "USE_PHOTOMETRIC"
     XML_TEMPLATE = "XML_TEMPLATE"
     OUTPUT_FOLDER = "OUTPUT_FOLDER"
 
@@ -54,13 +54,6 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             )
         )
         self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.USE_PHOTOMETRIC,
-                self.tr("Use Photometric YCbCr"),
-                defaultValue=True,
-            )
-        )
-        self.addParameter(
             QgsProcessingParameterFolderDestination(
                 self.OUTPUT_FOLDER, self.tr("Pasta para salvar os arquivos exportados")
             )
@@ -69,7 +62,6 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
         output_path = self.parameterAsString(parameters, self.OUTPUT_FOLDER, context)
         inputFolder = self.parameterAsFile(parameters, self.INPUT_FOLDER, context)
-        usePhotometric = self.parameterAsBoolean(parameters, self.USE_PHOTOMETRIC, context)
         inputFiles = list(
             set(
                 [
@@ -84,7 +76,6 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             raise QgsProcessingException(
                 "Não foram encontrados arquivos .tif na pasta de entrada."
             )
-        stepSize = 100 / nInputs
         input_file_path = Path(inputFolder).resolve()
         output_base_path = Path(output_path).resolve()
         multiStepFeedback = QgsProcessingMultiStepFeedback(nInputs, feedback)
@@ -101,16 +92,20 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             output_dir = output_base_path / relative_path
             output_dir.mkdir(parents=True, exist_ok=True)
             output_file_path = output_dir / input_path.name
+            options = QgsRasterLayer.LayerOptions()
+            options.loadDefaultStyle = False
+            rasterLayer = QgsRasterLayer(str(input_path), str(input_path), "gdal", options)
+            bandcount = rasterLayer.bandCount()
             processing.run(
                 "gdal:warpreproject",
                 {
-                    "INPUT": str(input_path),
+                    "INPUT": rasterLayer,
                     "SOURCE_CRS": None,
                     "TARGET_CRS": QgsCoordinateReferenceSystem("EPSG:4674"),
                     "RESAMPLING": 0,
                     "NODATA": None,
                     "TARGET_RESOLUTION": None,
-                    "OPTIONS": "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE|PHOTOMETRIC=YCbCr" if usePhotometric else "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE",
+                    "OPTIONS": "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE|PHOTOMETRIC=YCbCr" if bandcount > 1 else "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE",
                     "DATA_TYPE": 0,
                     "TARGET_EXTENT": None,
                     "TARGET_EXTENT_CRS": None,
