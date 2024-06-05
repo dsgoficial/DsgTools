@@ -60,6 +60,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithmWithGe
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridFromCoordinatesAlgorithm import (
     CreateGridFromCoordinatesAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.batchRasterPackagingForBDGEx import (
+    BatchRasterPackagingForBDGEx,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixSegmentErrorsBetweenLinesAlgorithm import (
     FixSegmentErrorsBetweenLinesAlgorithm,
 )
@@ -684,6 +687,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyMissingLinesOnPolygonLineIntersections(),
             IdentifyMissingPointsOnLineIntersections(),
             IdentifyMissingPolygonLineIntersectionsOnLines(),
+            BatchRasterPackagingForBDGEx(),
         ]
         return algList
 
