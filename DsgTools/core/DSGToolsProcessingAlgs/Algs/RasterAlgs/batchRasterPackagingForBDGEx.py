@@ -24,32 +24,18 @@
 import glob
 import itertools
 from pathlib import Path
-from uuid import uuid4
-import numpy as np
-import json
 import processing
-from osgeo import gdal, ogr
-from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from osgeo import gdal
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
-    QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterRasterDestination,
-    QgsProcessingParameterRasterLayer,
-    QgsProcessingUtils,
-    QgsProject,
-    QgsProcessingParameterFileDestination,
-    QgsVectorFileWriter,
     QgsProcessingParameterFile,
     QgsProcessingParameterFolderDestination,
     QgsProcessingException,
     QgsCoordinateReferenceSystem,
     QgsProcessingParameterBoolean,
 )
-from scipy import signal
 
 
 class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
