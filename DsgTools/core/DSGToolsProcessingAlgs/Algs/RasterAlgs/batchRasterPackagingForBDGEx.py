@@ -87,13 +87,8 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         inputFiles = list(
             set(
                 [
-                    Path(i)
-                    for i in itertools.chain.from_iterable(
-                        [
-                            glob.glob(f"{inputFolder}/**/*.tif"),
-                            glob.glob(f"{inputFolder}/*.tif"),
-                        ]
-                    )
+                    i
+                    for i in Path(inputFolder).rglob("*.tif")
                     if "browse" not in str(i).lower()
                 ]
             )
