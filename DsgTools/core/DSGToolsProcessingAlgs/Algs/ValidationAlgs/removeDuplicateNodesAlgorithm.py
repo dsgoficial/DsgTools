@@ -85,8 +85,9 @@ class RemoveDuplicateVertexesAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Populating temp layer..."))
+        inputLyrList = [inputLyr]
         auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
-            [inputLyr],
+            inputLyrList,
             geomType=inputLyr.wkbType(),
             onlySelected=onlySelected,
             feedback=multiStepFeedback,
@@ -103,7 +104,7 @@ class RemoveDuplicateVertexesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr("Updating original layer..."))
         layerHandler.updateOriginalLayersFromUnifiedLayer(
-            [inputLyr],
+            inputLyrList,
             outputLyr,
             feedback=multiStepFeedback,
             onlySelected=onlySelected,
