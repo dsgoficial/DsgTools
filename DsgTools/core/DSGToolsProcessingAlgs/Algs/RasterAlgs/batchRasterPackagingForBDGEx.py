@@ -34,12 +34,14 @@ from qgis.core import (
     QgsProcessingParameterFolderDestination,
     QgsProcessingException,
     QgsCoordinateReferenceSystem,
+    QgsProcessingParameterBoolean,
 )
 
 
 class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
 
     INPUT_FOLDER = "INPUT_FOLDER"
+    USE_PHOTOMETRIC = "USE_PHOTOMETRIC"
     XML_TEMPLATE = "XML_TEMPLATE"
     OUTPUT_FOLDER = "OUTPUT_FOLDER"
 
@@ -47,8 +49,15 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFile(
                 self.INPUT_FOLDER,
-                self.tr("Pasta com os arquivos no formato zip"),
+                self.tr("Pasta com os arquivos no formato tif"),
                 behavior=QgsProcessingParameterFile.Folder,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.USE_PHOTOMETRIC,
+                self.tr("Use Photometric YCbCr"),
+                defaultValue=True,
             )
         )
         self.addParameter(
@@ -60,6 +69,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
         output_path = self.parameterAsString(parameters, self.OUTPUT_FOLDER, context)
         inputFolder = self.parameterAsFile(parameters, self.INPUT_FOLDER, context)
+        usePhotometric = self.parameterAsBoolean(parameters, self.USE_PHOTOMETRIC, context)
         inputFiles = list(
             set(
                 [
@@ -105,7 +115,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                     "RESAMPLING": 0,
                     "NODATA": None,
                     "TARGET_RESOLUTION": None,
-                    "OPTIONS": "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE|PHOTOMETRIC=YCbCr",
+                    "OPTIONS": "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE|PHOTOMETRIC=YCbCr" if usePhotometric else "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE",
                     "DATA_TYPE": 0,
                     "TARGET_EXTENT": None,
                     "TARGET_EXTENT_CRS": None,
