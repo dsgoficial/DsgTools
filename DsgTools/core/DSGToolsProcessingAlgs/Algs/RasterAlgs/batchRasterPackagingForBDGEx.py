@@ -186,12 +186,13 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         output_xml_file: str,
     ) -> None:
         extent = rasterLayer.extent()
+        prefix = "".join(re.findall(r"R\d+C\d+", rasterLayer.name()))
         substitutions = {
             "X_MIN": f"{extent.xMinimum()}",
             "X_MAX": f"{extent.xMaximum()}",
             "Y_MIN": f"{extent.yMinimum()}",
             "Y_MAX": f"{extent.xMaximum()}",
-            "NOME_PRODUTO": f"""{matchedFeature["source"]}_{matchedFeature["productTyp"].replace(" ","_")}_{re.sub("T.+", "", matchedFeature["acquisitio"])}_{re.sub("_R.+", "", rasterLayer.name())}""",
+            "NOME_PRODUTO": f"""{matchedFeature["source"]}_{matchedFeature["productTyp"].replace(" ","_")}_{re.sub("T.+", "", matchedFeature["acquisitio"]).replace("-","")}_{prefix}""",
             "DATA_IMAGEM": re.sub("T.+", "", matchedFeature["acquisitio"]),
         }
         with open(self.xml_template_path, "r") as f:
