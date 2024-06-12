@@ -2816,7 +2816,7 @@ class LayerHandler(QObject):
                     # attr = tuple(attr)
                     builtPolygonToCenterPointDict[geomKey][attr] = fields
                 if feedback is not None:
-                    feedback.setCurrentStep(current * size)
+                    feedback.setProgress(current * size)
         return builtPolygonToCenterPointDict
 
     def getFieldsFromAttributeBlackList(
