@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.55 - dev
+## 4.13.56 - dev
 
 Novas Funcionalidades:
 
@@ -72,6 +72,7 @@ Correção de bug:
 - Corrige bug nos Batch Run, valor padrão removido para compatibilidade com models nas versões mais atuais do QGIS (a partir da 3.30), não afeta versões mais antigas do QGIS;
 - Corrige bug no snap hierárquico de não funcionar com camadas de primitiva ponto (bug introduzido quando foi adaptado para restringir as alterações somente dentro da camada de moldura);
 - Corrige bug ao salvar o workflow (introduzido na versão 4.13.50);
+- Corrige crash no workflow quando executa uma grande quantidade de processos em um mesmo passo (acionado o garbage collector antes de rodar cada item do workflow);
 
 ## 4.12.0 - 2023-12-13
 

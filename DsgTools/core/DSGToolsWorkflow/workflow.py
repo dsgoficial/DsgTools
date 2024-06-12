@@ -23,6 +23,7 @@
 
 import copy
 from dataclasses import asdict, dataclass, field
+import gc
 import json
 import os
 from typing import Any, Dict, List
@@ -185,11 +186,14 @@ class DSGToolsWorkflow(QObject):
                 self.postProcessWorkflowItem
             )
 
-    def resetWorkflowItems(self) -> None:
+    def resetWorkflowItems(self, startIdx=0) -> None:
         """Reset all workflow items."""
         for idx, workflowItem in enumerate(self.workflowItemList):
+            if idx < startIdx:
+                continue
             workflowItem.resetItem()
             self.currentWorkflowItemStatusChanged.emit(idx, workflowItem)
+        self.setCurrentWorkflowItem(startIdx)
 
     def prepareTask(self) -> QgsTask:
         """Prepare the current task based on the current workflow item.
@@ -239,6 +243,7 @@ class DSGToolsWorkflow(QObject):
             resumeFromStart (bool): Whether to resume the workflow from the start.
 
         """
+        gc.collect(generation=2)
         if resumeFromStart:
             self.resetWorkflowItems()
             self.setCurrentWorkflowItem(0)
