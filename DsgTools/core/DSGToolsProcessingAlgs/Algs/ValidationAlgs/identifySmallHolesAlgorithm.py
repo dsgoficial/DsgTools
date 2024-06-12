@@ -33,6 +33,7 @@ from qgis.core import (
     QgsFeature,
     QgsFields,
     QgsProcessingParameterMultipleLayers,
+    QgsWkbTypes,
 )
 from qgis.utils import iface
 
@@ -94,7 +95,7 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
         if len(smallRings) == 0:
             flagLayer = self.tr(f"Holes smaller than {str(maxSize)} were not found")
             return {self.OUTPUT: flagLayer}
-        flagLayer = self.outputLayer(parameters, context, smallRings, CRS, 6)
+        flagLayer = self.outputLayer(parameters, context, smallRings, CRS, QgsWkbTypes.MultiPolygon)
         return {self.OUTPUT: flagLayer}
 
     def outputLayer(self, parameters, context, smallRings, CRS, geomType):
