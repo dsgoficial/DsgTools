@@ -44,6 +44,7 @@ from qgis.PyQt.QtWidgets import (
     QTableWidgetItem,
 )
 from processing.modeler.ModelerUtils import ModelerUtils
+from processing.modeler.ModelerDialog import ModelerDialog
 
 from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import (
     SelectFileWidget,
@@ -280,7 +281,24 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         widget.setFilter(self.tr("Select a QGIS Processing model (*.model3 *.model)"))
         # defining setter and getter methods for composed widgets into OTW
         widget.fileExported.connect(lambda x: self.pushMessage(self.tr(f"Model source exported to file {x}")))
+        widget.fileExported.connect(self.openExportedModel)
         return widget
+    
+    def openExportedModel(self, filename):
+        if not (
+            QMessageBox.question(
+                self,
+                self.tr("Confirm Action"),
+                self.tr("Would you like to open the exported file on Model Designer?"),
+                QMessageBox.Yes | QMessageBox.No,
+            )
+            == QMessageBox.Yes
+        ):
+            return
+        dlg = ModelerDialog.create()
+        dlg.loadModel(filename)
+        dlg.show()
+        dlg.activate()
 
     def onFlagsWidget(self, option=None):
         """

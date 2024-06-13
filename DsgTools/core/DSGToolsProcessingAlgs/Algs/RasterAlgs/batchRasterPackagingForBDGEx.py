@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 
+from collections import defaultdict
 import glob
 import itertools
 import re
@@ -30,6 +31,7 @@ import xml.dom.minidom
 import datetime
 from pathlib import Path
 from typing import Dict
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 import processing
 from osgeo import gdal
 from PyQt5.QtCore import QCoreApplication
@@ -44,6 +46,7 @@ from qgis.core import (
     QgsRasterLayer,
     QgsProcessingUtils,
     QgsVectorLayer,
+    QgsFeatureSource,
 )
 
 
@@ -83,6 +86,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             self.XML_TEMPLATE_FILE,
             context,
         )
+        self.algRunner = AlgRunner()
         inputFiles = list(
             set(
                 [
@@ -102,7 +106,9 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         output_base_path = Path(output_path).resolve()
         multiStepFeedback = QgsProcessingMultiStepFeedback(nInputs, feedback)
         self.tempFolder = QgsProcessingUtils.tempFolder()
-        self.seamlinesDict = self.getSeamlinesDict(inputFolder)
+        self.shapefilesDict = self.getShapefilesDict(inputFolder)
+        self.relatedPolygonsDict = self.relatePolygons(multiStepFeedback, context)
+
         for current, input_path in enumerate(inputFiles):
             multiStepFeedback.pushInfo(
                 self.tr(
@@ -121,7 +127,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             output_file_path = output_dir / input_path.name
             rasterLayer = self.getRasterLayer(input_path)
             bandcount = rasterLayer.bandCount()
-            matchedLayer = self.seamlinesDict.get(input_path.parent.stem, None)
+            matchedLayer = self.shapefilesDict.get(input_path.parent.stem, None)
             if matchedLayer is not None:
                 matchedFeatures = [i for i in matchedLayer.getFeatures()]
                 if len(matchedFeatures) > 0:
@@ -166,18 +172,75 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         )
         return rasterLayer
 
-    def getSeamlinesDict(self, inputFolder: str) -> Dict[str, QgsVectorLayer]:
-        seamlinesDict = dict()
+    def getShapefilesDict(self, inputFolder: str) -> Dict[str, QgsVectorLayer]:
+        shapefilesDict = defaultdict(dict)
         for zipPath in Path(inputFolder).rglob("*.zip"):
             with zipfile.ZipFile(zipPath, "r") as zip_ref:
                 zip_ref.extractall(self.tempFolder)
         for shp in Path(self.tempFolder).rglob("*.shp"):
-            if "_SEAMLINES_SHAPE" not in str(shp):
+            if "_SEAMLINES_SHAPE" in str(shp):
+                key = str(shp.name).replace(".shp", "").replace("_SEAMLINES_SHAPE", "")
+                shapefilesDict[key]["SEAMLINES_SHAPE"] = QgsVectorLayer(str(shp), key, "ogr")
+            elif "_TILE_SHAPE" in str(shp):
+                key = str(shp.name).replace(".shp", "").replace("_TILE_SHAPE", "")
+                shapefilesDict[key]["TILE_SHAPE"] = QgsVectorLayer(str(shp), key, "ogr")
+            else:
                 continue
-            key = str(shp.name).replace(".shp", "").replace("_SEAMLINES_SHAPE", "")
-            seamlinesDict[key] = QgsVectorLayer(str(shp), key, "ogr")
 
-        return seamlinesDict
+        return shapefilesDict
+    
+    def relatePolygons(self, feedback, context):
+        relatedItemsDict = defaultdict(lambda: defaultdict(list))
+        nItems = len(self.shapefilesDict)
+        if nItems == 0:
+            return relatedItemsDict
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4*nItems, feedback)
+        for current, (key, valueDict) in enumerate(self.shapefilesDict.items()):
+            if multiStepFeedback.isCanceled():
+                break
+            if "SEAMLINES_SHAPE" not in valueDict or "TILE_SHAPE" not in valueDict:
+                multiStepFeedback.setCurrentStep(4*current+3)
+                continue
+            multiStepFeedback.setCurrentStep(4*current)
+            if multiStepFeedback.isCanceled():
+                break
+            if valueDict["SEAMLINES_SHAPE"].hasSpatialIndex() != QgsFeatureSource.SpatialIndexPresence.SpatialIndexPresent:
+                self.algRunner.runCreateSpatialIndex(
+                    inputLyr=valueDict["SEAMLINES_SHAPE"],
+                    context=context,
+                    feedback=multiStepFeedback,
+                    is_child_algorithm=True
+                )
+            multiStepFeedback.setCurrentStep(4*current+1)
+            if multiStepFeedback.isCanceled():
+                break
+            if valueDict["TILE_SHAPE"].hasSpatialIndex() != QgsFeatureSource.SpatialIndexPresence.SpatialIndexPresent:
+                self.algRunner.runCreateSpatialIndex(
+                    inputLyr=valueDict["TILE_SHAPE"],
+                    context=context,
+                    feedback=multiStepFeedback,
+                    is_child_algorithm=True
+                )
+            multiStepFeedback.setCurrentStep(4*current+2)
+            if multiStepFeedback.isCanceled():
+                break
+            joinnedSeamline = self.algRunner.runJoinAttributesByLocation(
+                inputLyr=valueDict["SEAMLINES_SHAPE"],
+                joinLyr=valueDict["TILE_SHAPE"],
+                predicateList=[AlgRunner.Intersect],
+                method=0
+            )
+            if multiStepFeedback.isCanceled():
+                break
+            multiStepFeedback.setCurrentStep(4*current+3)
+            for feat in joinnedSeamline.getFeatures():
+                if multiStepFeedback.isCanceled():
+                    break
+                geom = feat.geometry()
+                geomKey = geom.asWkb()
+                relatedItemsDict[key][geomKey].append(feat["fileName"])
+        return relatedItemsDict
+
 
     def buildXML(
         self,
