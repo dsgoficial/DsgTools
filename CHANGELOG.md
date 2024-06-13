@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.57 - dev
+## 4.13.58 - dev
 
 Novas Funcionalidades:
 
@@ -45,6 +45,7 @@ Melhorias:
 - Melhoria de desempenho no deaggregator (aproximadamente 10x mais rápido após a atualização);
 - Melhoria de desempenho no remove geometria nula;
 - Melhoria na interface de construção do workflow, agora existe a opção de abrir a interface de edição do modelo do qgis após a exportação no workflow;
+- Melhoria na interface do workflow: agora é possível voltar a execução para um determinado passo já executado;
 
 
 Correção de bug:

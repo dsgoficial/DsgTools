@@ -24,7 +24,7 @@ from collections import defaultdict
 import os, json
 from time import time
 from functools import partial
-from typing import Dict, List, OrderedDict
+from typing import Dict, List, OrderedDict, Union
 
 from qgis.PyQt import uic
 from qgis.core import (
@@ -137,28 +137,45 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         # self.iface.newProjectCreated.connect(self.loadState)
         # self.iface.projectRead.connect(self.loadState)
 
-    def generateMenu(self, pos, idx, widget, modelName, workflow):
+    def generateMenu(self, pos, idx, widget, modelName, workflow: DSGToolsWorkflow):
         workflowName = workflow.displayName
         currentWorkflowItem = workflow.getWorklowItemFromName(modelName)
-        if currentWorkflowItem is None:
+        if currentWorkflowItem is None or idx == -1:
             return
+        currentWorkflowIndexFromWorkflow = workflow.getCurrentWorkflowStepIndex()
+        menu = self.getIgnoreFlagsMenu(idx, workflowName, workflow, currentWorkflowItem)
+        if menu is None and idx > currentWorkflowIndexFromWorkflow:
+            return
+        menu: QMenu = QMenu(self) if menu is None else menu
+        if idx <= currentWorkflowIndexFromWorkflow:
+            action = QAction(
+                self.tr(f"Set {modelName} as current step"),
+                menu,
+            )
+            func = partial(
+                self.setCurrentWorkflowItem, idx=idx
+            )
+            callback = lambda x: func()
+            action.triggered.connect(callback)
+        out = menu.exec_(widget.mapToGlobal(pos))
+
+    def getIgnoreFlagsMenu(self, idx: int, workflowName: str, workflow: DSGToolsWorkflow, currentWorkflowItem: DSGToolsWorkflowItem) -> Union[None, QMenu]:
         currentWorkflowStatus = currentWorkflowItem.getStatus()
-        if idx == -1 or currentWorkflowStatus not in [
+        if currentWorkflowStatus not in [
             ExecutionStatus.FINISHED_WITH_FLAGS,
             ExecutionStatus.IGNORE_FLAGS,
         ]:
-            return
-        nextWorkflowItem = workflow.getCurrentWorkflowItem()
+            return None
+        nextWorkflowItem = workflow.getNextWorkflowStep()
         if currentWorkflowStatus == ExecutionStatus.IGNORE_FLAGS and (
             nextWorkflowItem is not None
             and nextWorkflowItem.getStatus() != ExecutionStatus.INITIAL
         ):
-            return
+            return None
         if idx not in self.ignoreFlagsMenuDict[workflowName]:
-            return
-
-        out = self.ignoreFlagsMenuDict[workflowName][idx].exec_(widget.mapToGlobal(pos))
-
+            return None
+        return self.ignoreFlagsMenuDict[workflowName][idx]
+    
     def prepareIgnoreFlagMenuDictItem(self, idx, modelName, workflow):
         workflowName = workflow.displayName
         self.ignoreFlagsMenuDict[workflowName][idx] = QMenu(self)
@@ -174,6 +191,25 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         action.triggered.connect(callback)
         self.ignoreFlagsMenuDict[workflowName][idx].addAction(action)
     
+    def setCurrentWorkflowItem(self, idx):
+        workflow: DSGToolsWorkflow = self.currentWorkflow()
+        currentWorkflowItem: DSGToolsWorkflowItem = workflow.getCurrentWorkflowItem()
+        if not self.confirmAction(
+            msg=self.tr(f"Would you like to set model '{currentWorkflowItem.displayName}' as current model of workflow '{workflow.displayName}'?")
+        ):
+            return
+        workflow.resetWorkflowItems(startIdx=idx)
+        currentWorkflowItem: DSGToolsWorkflowItem = workflow.getCurrentWorkflowItem()
+
+        self.iface.messageBar().pushMessage(
+            self.tr("DSGTools Q&A Toolbox"),
+            self.tr(
+                f"The user has set the current workflow item of the workflow '{workflow.displayName}' as '{currentWorkflowItem.displayName}'."
+            ),
+            Qgis.Info,
+            duration=3,
+        )
+        
     def setCurrentWorkflowItemToIgnoreFlags(self, row):
         workflow: DSGToolsWorkflow = self.currentWorkflow()
         workflow.setIgnoreFlagsStatusOnCurrentStep()
