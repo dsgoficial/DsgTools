@@ -154,6 +154,10 @@ class DSGToolsWorkflow(QObject):
         nextIndex = self.currentStepIndex + 1
         return nextIndex if nextIndex <= len(self.workflowItemList) - 1 else None
 
+    def getNextWorkflowItem(self) -> DSGToolsWorkflowItem:
+        nextStepIdx = self.getNextWorkflowStep()
+        return self.workflowItemList[nextStepIdx]
+
     def getCurrentWorkflowItem(self) -> DSGToolsWorkflowItem:
         """Get the current workflow item.
 
@@ -194,6 +198,7 @@ class DSGToolsWorkflow(QObject):
             workflowItem.resetItem()
             self.currentWorkflowItemStatusChanged.emit(idx, workflowItem)
         self.setCurrentWorkflowItem(startIdx)
+        self.multiStepFeedback.setCurrentStep(startIdx)
 
     def prepareTask(self) -> QgsTask:
         """Prepare the current task based on the current workflow item.
@@ -276,7 +281,7 @@ class DSGToolsWorkflow(QObject):
     def clearAllLayersBeforeRunning(self):
         for workflowItem in self.workflowItemList:
             workflowItem.clearOutputs()
-    
+
     def removeEmptyGroups(self):
         rootNode = QgsProject.instance().layerTreeRoot()
         parentGroupName = "DSGTools_QA_Toolbox"

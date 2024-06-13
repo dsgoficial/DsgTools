@@ -198,19 +198,20 @@ class DSGToolsWorkflowItem(QObject):
     def __post_init__(self):
         """Initialize post dataclass creation."""
         super().__init__()
+        self.feedback = QgsProcessingFeedback()
+        self.context = dataobjects.createContext(feedback=self.feedback)
+        self.context.setProject(QgsProject.instance())
         self.resetItem()
         self.model = self.getModel()
         self.currentTask = None
         self.executionOutput = ModelExecutionOutput()
-        self.feedback = QgsProcessingFeedback()
-        self.context = dataobjects.createContext(feedback=self.feedback)
-        self.context.setProject(QgsProject.instance())
 
     def resetItem(self):
         """Reset the workflow item."""
         if hasattr(self, "executionOutput"):
             self.clearOutputs()
         self.executionOutput = ModelExecutionOutput()
+        self.feedback.setProgress(0)
 
     def as_dict(self) -> Dict[str, str]:
         """Convert the workflow item to a dictionary."""
@@ -253,10 +254,11 @@ class DSGToolsWorkflowItem(QObject):
             List[str]: List of flag layer names.
         """
         return self.flags.flagLayerNames
-    
+
     def getAllOutputNamesFromModel(self) -> List[str]:
         return [
-            outputDef.name().split(":")[-1] for outputDef in self.model.outputDefinitions()
+            outputDef.name().split(":")[-1]
+            for outputDef in self.model.outputDefinitions()
         ]
 
     def flagsCanHaveFalsePositiveResults(self) -> bool:
@@ -524,7 +526,7 @@ class DSGToolsWorkflowItem(QObject):
         )
         QgsProject.instance().addMapLayer(layer, addToLegend=False)
         subGroup.addLayer(layer)
-    
+
     def clearOutputs(self, onlyFlags=False):
         lyrKeysToPop = []
         iface.mapCanvas().freeze(True)

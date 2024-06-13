@@ -51,7 +51,10 @@ from qgis.PyQt.QtWidgets import (
 from DsgTools.gui.ProductionTools.Toolboxes.QualityAssuranceToolBox.workflowSetupDialog import (
     WorkflowSetupDialog,
 )
-from DsgTools.core.DSGToolsWorkflow.workflowItem import DSGToolsWorkflowItem, ExecutionStatus
+from DsgTools.core.DSGToolsWorkflow.workflowItem import (
+    DSGToolsWorkflowItem,
+    ExecutionStatus,
+)
 from DsgTools.core.DSGToolsWorkflow.workflow import (
     DSGToolsWorkflow,
     dsgtools_workflow_from_dict,
@@ -148,25 +151,34 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             return
         menu: QMenu = QMenu(self) if menu is None else menu
         if idx <= currentWorkflowIndexFromWorkflow:
-            action = QAction(
-                self.tr(f"Set {modelName} as current step"),
-                menu,
-            )
-            func = partial(
-                self.setCurrentWorkflowItem, idx=idx
-            )
-            callback = lambda x: func()
-            action.triggered.connect(callback)
+            actionTextList: List[str] = [action.text() for action in menu.actions()]
+            actionName = self.tr(f"Set model as current step")
+            if actionName not in actionTextList:
+                action = QAction(
+                    actionName,
+                    menu,
+                )
+                func = partial(self.setCurrentWorkflowItem, idx=idx)
+                callback = lambda x: func()
+                action.triggered.connect(callback)
+                menu.addAction(action)
+
         out = menu.exec_(widget.mapToGlobal(pos))
 
-    def getIgnoreFlagsMenu(self, idx: int, workflowName: str, workflow: DSGToolsWorkflow, currentWorkflowItem: DSGToolsWorkflowItem) -> Union[None, QMenu]:
+    def getIgnoreFlagsMenu(
+        self,
+        idx: int,
+        workflowName: str,
+        workflow: DSGToolsWorkflow,
+        currentWorkflowItem: DSGToolsWorkflowItem,
+    ) -> Union[None, QMenu]:
         currentWorkflowStatus = currentWorkflowItem.getStatus()
         if currentWorkflowStatus not in [
             ExecutionStatus.FINISHED_WITH_FLAGS,
             ExecutionStatus.IGNORE_FLAGS,
         ]:
             return None
-        nextWorkflowItem = workflow.getNextWorkflowStep()
+        nextWorkflowItem = workflow.getNextWorkflowItem()
         if currentWorkflowStatus == ExecutionStatus.IGNORE_FLAGS and (
             nextWorkflowItem is not None
             and nextWorkflowItem.getStatus() != ExecutionStatus.INITIAL
@@ -175,7 +187,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         if idx not in self.ignoreFlagsMenuDict[workflowName]:
             return None
         return self.ignoreFlagsMenuDict[workflowName][idx]
-    
+
     def prepareIgnoreFlagMenuDictItem(self, idx, modelName, workflow):
         workflowName = workflow.displayName
         self.ignoreFlagsMenuDict[workflowName][idx] = QMenu(self)
@@ -183,23 +195,30 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.tr(f"Ignore false positive flags on model {modelName}"),
             self.ignoreFlagsMenuDict[workflowName][idx],
         )
-        func = partial(
-            self.setCurrentWorkflowItemToIgnoreFlags, row=idx
-        )
+        func = partial(self.setCurrentWorkflowItemToIgnoreFlags, row=idx)
         callback = lambda x: func()
         action.setCheckable(True)
         action.triggered.connect(callback)
         self.ignoreFlagsMenuDict[workflowName][idx].addAction(action)
-    
+
     def setCurrentWorkflowItem(self, idx):
         workflow: DSGToolsWorkflow = self.currentWorkflow()
         currentWorkflowItem: DSGToolsWorkflowItem = workflow.getCurrentWorkflowItem()
         if not self.confirmAction(
-            msg=self.tr(f"Would you like to set model '{currentWorkflowItem.displayName}' as current model of workflow '{workflow.displayName}'?")
+            msg=self.tr(
+                f"Would you like to set model '{currentWorkflowItem.displayName}' as current model of workflow '{workflow.displayName}'?"
+            )
         ):
             return
         workflow.resetWorkflowItems(startIdx=idx)
         currentWorkflowItem: DSGToolsWorkflowItem = workflow.getCurrentWorkflowItem()
+        for key, menu in self.ignoreFlagsMenuDict[workflow.displayName].items():
+            if key < idx:
+                continue
+            for action in menu.actions():
+                if "Ignore false positive flags on model" not in action.text():
+                    continue
+                action.setChecked(False)
 
         self.iface.messageBar().pushMessage(
             self.tr("DSGTools Q&A Toolbox"),
@@ -209,14 +228,13 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             Qgis.Info,
             duration=3,
         )
-        
+
     def setCurrentWorkflowItemToIgnoreFlags(self, row):
         workflow: DSGToolsWorkflow = self.currentWorkflow()
         workflow.setIgnoreFlagsStatusOnCurrentStep()
         code = workflow.getCurrentWorkflowItemStatus()
         self.setRowStatus(row, code)
         self.tableWidget.cellWidget(row, 1).setText(self.statusMap[code])
-
 
     def confirmAction(self, msg, showCancel=True):
         """
@@ -474,7 +492,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         """
         name = self.currentWorkflowName()
         return self.workflows.get(name, None)
-    
+
     def currentWorkflowFinishedExecutionMessage(self):
         currentWorkflow = self.currentWorkflow()
         if currentWorkflow is None:
@@ -482,7 +500,8 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.iface.messageBar().pushMessage(
             self.tr("DSGTools Q&A Tool Box"),
             self.tr(f"Workflow {currentWorkflow.displayName} execution has finished."),
-            Qgis.Info, duration=3
+            Qgis.Info,
+            duration=3,
         )
         self.progressBar.setValue(100)
         self.resumePushButton.setEnabled(False)
@@ -523,7 +542,11 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             pageStep = self.tableWidget.verticalScrollBar().pageStep()
             if row >= pageStep:
                 self.tableWidget.verticalScrollBar().setValue(row)
-        if code in [ExecutionStatus.FAILED, ExecutionStatus.FINISHED_WITH_FLAGS, ExecutionStatus.IGNORE_FLAGS]:
+        if code in [
+            ExecutionStatus.FAILED,
+            ExecutionStatus.FINISHED_WITH_FLAGS,
+            ExecutionStatus.IGNORE_FLAGS,
+        ]:
             # advise user a model status has changed only if it came from a
             # signal call
             self.iface.messageBar().pushMessage(
@@ -625,9 +648,11 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             workflowItem.feedback.progressChanged.connect(partial(self.intWrapper, row))
             self.tableWidget.setCellWidget(row, 2, pb)
         workflow.currentWorkflowItemStatusChanged.connect(self.setModelStatus)
-        workflow.currentWorkflowExecutionFinished.connect(self.currentWorkflowFinishedExecutionMessage)
+        workflow.currentWorkflowExecutionFinished.connect(
+            self.currentWorkflowFinishedExecutionMessage
+        )
         # workflow.currentTaskChanged.connect(self.setupProgressBar)
-    
+
     def intWrapper(self, idx, v):
         pb = self.tableWidget.cellWidget(idx, 2)
         pb.setValue(int(v))
