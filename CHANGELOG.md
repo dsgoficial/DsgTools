@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.59 - dev
+## 4.13.60 - dev
 
 Novas Funcionalidades:
 
@@ -76,6 +76,7 @@ Correção de bug:
 - Corrige bug ao salvar o workflow (introduzido na versão 4.13.50);
 - Corrige crash no workflow quando executa uma grande quantidade de processos em um mesmo passo (acionado o garbage collector antes de rodar cada item do workflow);
 - Corrige o action que não estava mais funcionando na ferramenta de inventário;
+- Corrige o bug de não carregar múltiplas saídas no workflow;
 
 ## 4.12.0 - 2023-12-13
 

@@ -489,6 +489,7 @@ class DSGToolsWorkflowItem(QObject):
         flagLayerNames = self.flags.flagLayerNames
         context = QgsProcessingContext()
         iface.mapCanvas().freeze(True)
+        layerAdded = False
         for name, vl in self.executionOutput.result.items():
             if vl is None:
                 continue
@@ -504,8 +505,9 @@ class DSGToolsWorkflowItem(QObject):
                 continue
             cloneVl = vl.clone()
             self.executionOutput.result[cloneVl.name()] = cloneVl
-            self.addLayerToGroup(cloneVl, self.displayName, clearGroupBeforeAdding=True)
+            self.addLayerToGroup(cloneVl, self.displayName, clearGroupBeforeAdding=not layerAdded)
             self.enableFeatureCount(cloneVl)
+            layerAdded = True
         iface.mapCanvas().freeze(False)
 
     def addLayerToGroup(self, layer, subgroupname, clearGroupBeforeAdding=False):
