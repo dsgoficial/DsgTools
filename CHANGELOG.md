@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.58 - dev
+## 4.13.59 - dev
 
 Novas Funcionalidades:
 
@@ -75,6 +75,7 @@ Correção de bug:
 - Corrige bug no snap hierárquico de não funcionar com camadas de primitiva ponto (bug introduzido quando foi adaptado para restringir as alterações somente dentro da camada de moldura);
 - Corrige bug ao salvar o workflow (introduzido na versão 4.13.50);
 - Corrige crash no workflow quando executa uma grande quantidade de processos em um mesmo passo (acionado o garbage collector antes de rodar cada item do workflow);
+- Corrige o action que não estava mais funcionando na ferramenta de inventário;
 
 ## 4.12.0 - 2023-12-13
 
