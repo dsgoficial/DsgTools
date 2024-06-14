@@ -170,13 +170,14 @@ class FileInventoryAlgorithm(QgsProcessingAlgorithm):
             "Load Vector Layer",
             f"from pathlib import Path\np=Path(r'{field}')\nqgis.utils.iface.addVectorLayer(str(p), p.stem)",
         )
+        vectorAction.setActionScopes(["Feature", "Field"])
         actions.addAction(vectorAction)
         rasterAction = QgsAction(
             QgsAction.GenericPython,
             "Load Raster Layer",
             f"from pathlib import Path\np=Path(r'{field}')\nqgis.utils.iface.addRasterLayer(str(p), p.stem)",
         )
-        rasterAction.setActionScopes(["Feature"])
+        rasterAction.setActionScopes(["Feature", "Field"])
         actions.addAction(rasterAction)
         return {"OUTPUT": self.output_dest_id} 
 
