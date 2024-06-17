@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 import uuid
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import processing
 from qgis.core import (
@@ -34,6 +34,7 @@ from qgis.core import (
     QgsFeedback,
     QgsRasterLayer,
     QgsRectangle,
+    QgsCoordinateReferenceSystem,
 )
 
 
@@ -2170,5 +2171,88 @@ class AlgRunner:
             context=context,
             feedback=feedback,
             is_child_algorithm=is_child_algorithm
+        )
+        return output["OUTPUT"]
+    
+    def runGdalWarp(
+            self,
+            rasterLayer: QgsRasterLayer,
+            targetCrs: QgsCoordinateReferenceSystem,
+            context: QgsProcessingContext,
+            sourceCrs: Optional[QgsCoordinateReferenceSystem] = None,
+            nodata: Optional[int] = None,
+            options: Optional[str] = None,
+            outputLyr: Optional[QgsRasterLayer] = None,
+            targetResolution: Optional[float] = None,
+            dataType: Optional[int] = None,
+            multiThreading: Optional[bool] = False,
+            targetExtent: Optional[list] = None,
+            targetExtentCrs: Optional[QgsCoordinateReferenceSystem] = None,
+            resampling: Optional[int] = 0,
+            extra: Optional[str] = None,
+            feedback: Optional[QgsFeedback]=None,
+            is_child_algorithm: Optional[bool] = False,
+        ) -> Union[str, QgsRasterLayer]:
+        outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
+        extra = "" if extra is None else extra
+        output = processing.run(
+            "gdal:warpreproject",
+            {
+                "INPUT": rasterLayer,
+                "SOURCE_CRS": sourceCrs,
+                "TARGET_CRS": targetCrs,
+                "RESAMPLING": resampling,
+                "NODATA": nodata,
+                "TARGET_RESOLUTION": targetResolution,
+                "OPTIONS": options,
+                "DATA_TYPE": dataType,
+                "TARGET_EXTENT": targetExtent,
+                "TARGET_EXTENT_CRS": targetExtentCrs,
+                "MULTITHREADING": multiThreading,
+                "EXTRA": extra,
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm
+        )
+        return output["OUTPUT"]
+    
+    def runBuildVRT(
+            self,
+            inputRasterList: List[Union[str, QgsRasterLayer]],
+            context: QgsProcessingContext,
+            assignCrs: Optional[QgsCoordinateReferenceSystem] = None,
+            separate: Optional[bool] = False,
+            projDifference: Optional[bool] = False,
+            addAlpha: Optional[bool] = False,
+            outputLyr: Optional[QgsRasterLayer] = None,
+            resolution: Optional[float] = 0,
+            srcNodata: Optional[int] = None,
+            resampling: Optional[int] = 0,
+            extra: Optional[str] = None,
+            feedback: Optional[QgsFeedback]=None,
+            is_child_algorithm: Optional[bool] = False,
+        ) -> Union[str, QgsRasterLayer]:
+        outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
+        extra = "" if extra is None else extra
+        srcNodata = "" if srcNodata is None else srcNodata
+        output = processing.run(
+            "gdal:buildvirtualraster",
+            {
+                'INPUT': inputRasterList,
+                'RESOLUTION': resolution,
+                'SEPARATE': separate,
+                'PROJ_DIFFERENCE': projDifference,
+                'ADD_ALPHA': addAlpha,
+                'ASSIGN_CRS': assignCrs,
+                'RESAMPLING': resampling,
+                'SRC_NODATA': srcNodata,
+                'EXTRA': extra,
+                'OUTPUT': outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]

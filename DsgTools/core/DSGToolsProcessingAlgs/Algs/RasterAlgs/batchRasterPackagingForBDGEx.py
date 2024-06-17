@@ -102,10 +102,13 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 "Não foram encontrados arquivos .tif na pasta de entrada."
             )
 
-        input_file_path = Path(inputFolder).resolve()
+        input_folder_path = Path(inputFolder).resolve()
         output_base_path = Path(output_path).resolve()
         multiStepFeedback = QgsProcessingMultiStepFeedback(nInputs, feedback)
         self.tempFolder = QgsProcessingUtils.tempFolder()
+        self.inputFilesDict = {
+            p.name: {"path": p, "size_in_gb": p.stat().st_size /(1024 ** 3)} for p in inputFiles
+        }
         self.shapefilesDict = self.getShapefilesDict(inputFolder)
         self.relatedPolygonsDict = self.relatePolygons(multiStepFeedback, context)
 
@@ -121,7 +124,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             multiStepFeedback.setCurrentStep(current)
             if feedback.isCanceled():
                 break
-            relative_path = Path(input_path).relative_to(input_file_path).parent
+            relative_path = Path(input_path).relative_to(input_folder_path).parent
             output_dir = output_base_path / relative_path
             output_dir.mkdir(parents=True, exist_ok=True)
             output_file_path = output_dir / input_path.name
@@ -137,27 +140,17 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                         matchedFeature=matchedFeature,
                         output_xml_file=str(output_file_path).replace(".tif", ".xml"),
                     )
-            processing.run(
-                "gdal:warpreproject",
-                {
-                    "INPUT": rasterLayer,
-                    "SOURCE_CRS": None,
-                    "TARGET_CRS": QgsCoordinateReferenceSystem("EPSG:4674"),
-                    "RESAMPLING": 0,
-                    "NODATA": None,
-                    "TARGET_RESOLUTION": None,
-                    "OPTIONS": "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE|PHOTOMETRIC=YCbCr"
+            self.algRunner.runGdalWarp(
+                rasterLayer=rasterLayer,
+                targetCrs=QgsCoordinateReferenceSystem("EPSG:4674"),
+                resampling=0,
+                options="COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE|PHOTOMETRIC=YCbCr"
                     if bandcount > 1
                     else "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE",
-                    "DATA_TYPE": 0,
-                    "TARGET_EXTENT": None,
-                    "TARGET_EXTENT_CRS": None,
-                    "MULTITHREADING": True,
-                    "EXTRA": "",
-                    "OUTPUT": str(output_file_path),
-                },
+                multiThreading=True,
+                outputLyr=str(output_file_path),
                 context=context,
-                feedback=multiStepFeedback,
+                feedback=multiStepFeedback,        
             )
 
         return {
