@@ -732,7 +732,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         """
         Executes current selected workflow.
         """
-        workflow = self.currentWorkflow()
+        workflow: DSGToolsWorkflow = self.currentWorkflow()
         if workflow is None:
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTools Q&A Tool Box"),
@@ -747,6 +747,25 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         # within this method - at runtime
         sender = self.sender()
         if sender.objectName() == "runPushButton":
+            idx = workflow.getCurrentWorkflowStepIndex()
+            if idx > 0 or (
+                idx == 0
+                and workflow.getCurrentWorkflowItemStatus() != ExecutionStatus.INITIAL
+            ):
+                if (
+                    QMessageBox.question(
+                        self,
+                        self.tr("DSGTools Q&A Tool Box: Confirm action"),
+                        self.tr(
+                            f"Would you like to restart workflow '{workflow.displayName}'?"
+                        ),
+                        QMessageBox.Yes | QMessageBox.No,
+                        defaultButton=QMessageBox.No,
+                    )
+                    == QMessageBox.No
+                ):
+                    self.setGuiState(False)
+                    return
             self.resumePushButton.setEnabled(True)
         resumeFromStart = sender is None or sender.objectName() == "runPushButton"
         if resumeFromStart:

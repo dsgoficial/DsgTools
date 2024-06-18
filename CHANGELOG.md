@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.13.60 - dev
+## 4.13.61 - dev
 
 Novas Funcionalidades:
 
@@ -46,6 +46,7 @@ Melhorias:
 - Melhoria de desempenho no remove geometria nula;
 - Melhoria na interface de construção do workflow, agora existe a opção de abrir a interface de edição do modelo do qgis após a exportação no workflow;
 - Melhoria na interface do workflow: agora é possível voltar a execução para um determinado passo já executado;
+- Melhoria na interface do workflow: agora quando o usuário clica em rodar com um fluxo já em execução, a caixa de ferramentas pergunta se o usuário quer de fato reiniciar;
 
 
 Correção de bug:
