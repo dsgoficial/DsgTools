@@ -221,7 +221,9 @@ class QgisCtrl:
                 value = ProjectQgis(self.iface).getVariableProject(variable)"""
                 feature.setAttribute(indx, attributeValue)
 
-    def attributeFeatureV2(self, feature, layer, attributes, featureOrigin, layerOrigin):
+    def attributeFeatureV2(
+        self, feature, layer, attributes, featureOrigin, layerOrigin
+    ):
         for fieldName in layerOrigin.fields().names():
             indxDest = layer.fields().indexFromName(fieldName)
             if indxDest < 0 or indxDest in self.getLayerPrimaryKeyIndexes(layer):
@@ -237,7 +239,7 @@ class QgisCtrl:
                 feature.setAttribute(indxDest, None)
             elif attributeValue:
                 feature.setAttribute(indxDest, attributeValue)
-            
+
         for fieldName in attributes:
             indx = layer.fields().indexFromName(fieldName)
             if indx < 0:
@@ -286,11 +288,7 @@ class QgisCtrl:
             )
             newFeat.setGeometry(newGeom)
             self.attributeFeatureV2(
-                newFeat, 
-                destinatonLayer, 
-                attributes,
-                feature,
-                layer
+                newFeat, destinatonLayer, attributes, feature, layer
             )
             newFeatures.append(newFeat)
         layer.deleteSelectedFeatures()

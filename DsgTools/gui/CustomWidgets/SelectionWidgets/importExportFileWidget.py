@@ -67,14 +67,14 @@ class ImportExportFileWidget(QtWidgets.QWidget, FORM_CLASS):
             selectedFile[0] if isinstance(selectedFile, tuple) else selectedFile
         )
         self.lineEdit.setText(self.fileName)
-        if selectedFile == '':
+        if selectedFile == "":
             self.fileContent = None
             return
         with open(selectedFile, "r") as f:
             self.fileContent = f.read()
         self.exportFilePushButton.setEnabled(True)
         self.fileSelected.emit(self.fileName, self.fileContent)
-    
+
     @pyqtSlot(bool)
     def on_exportFilePushButton_clicked(self):
         if self.fileContent is None:
@@ -84,7 +84,11 @@ class ImportExportFileWidget(QtWidgets.QWidget, FORM_CLASS):
         filename = fd.getSaveFileName(caption=self.caption, filter=self.filter)
         filename = (
             filename[0]
-            if Path(filename[0]).suffix in map(lambda x: x.strip(), self.filter.replace("(","").replace(")","").split("*")[1::])
+            if Path(filename[0]).suffix
+            in map(
+                lambda x: x.strip(),
+                self.filter.replace("(", "").replace(")", "").split("*")[1::],
+            )
             else f"{filename[0]}.{self.filter}"
         )
         if ".model3" not in filename or ".model" not in filename:
@@ -127,8 +131,10 @@ class ImportExportFileWidget(QtWidgets.QWidget, FORM_CLASS):
         self.fileName = fileName
         self.fileContent = fileContent
         self.lineEdit.setText(self.fileName)
-        self.exportFilePushButton.setEnabled(self.fileName is not None and self.fileContent is not None)
+        self.exportFilePushButton.setEnabled(
+            self.fileName is not None and self.fileContent is not None
+        )
         self.fileSelected.emit(self.fileName, self.fileContent)
-    
+
     def getFile(self):
-        return {"fileName": self.fileName, "fileContent":self.fileContent}
+        return {"fileName": self.fileName, "fileContent": self.fileContent}

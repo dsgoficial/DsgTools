@@ -505,7 +505,9 @@ class DSGToolsWorkflowItem(QObject):
                 continue
             cloneVl = vl.clone()
             self.executionOutput.result[cloneVl.name()] = cloneVl
-            self.addLayerToGroup(cloneVl, self.displayName, clearGroupBeforeAdding=not layerAdded)
+            self.addLayerToGroup(
+                cloneVl, self.displayName, clearGroupBeforeAdding=not layerAdded
+            )
             self.enableFeatureCount(cloneVl)
             layerAdded = True
         iface.mapCanvas().freeze(False)

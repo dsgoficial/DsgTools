@@ -2154,45 +2154,60 @@ class AlgRunner:
         )
         return output["OUTPUT"]
 
-    def runReverseLineDirection(self, inputLayer: QgsVectorLayer, context: QgsProcessingContext, outputLyr: Optional[QgsRasterLayer] = None, feedback: Optional[QgsFeedback]=None, is_child_algorithm: bool=False) -> QgsVectorLayer:
+    def runReverseLineDirection(
+        self,
+        inputLayer: QgsVectorLayer,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
         output = processing.run(
             "native:reverselinedirection",
             {"INPUT": inputLayer, "OUTPUT": "memory:"},
             context=context,
             feedback=feedback,
-            is_child_algorithm=is_child_algorithm
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
-    def runSetLineOrientation(self, inputLayer: QgsVectorLayer, context: QgsProcessingContext, orientation: Optional[int] = 0, outputLyr: Optional[QgsRasterLayer] = None, feedback: Optional[QgsFeedback]=None, is_child_algorithm: bool=False) -> QgsVectorLayer:
+    def runSetLineOrientation(
+        self,
+        inputLayer: QgsVectorLayer,
+        context: QgsProcessingContext,
+        orientation: Optional[int] = 0,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
         output = processing.run(
             "dsgtools:setlineorientation",
             {"INPUT": inputLayer, "ORIENTATION": orientation, "OUTPUT": "memory:"},
             context=context,
             feedback=feedback,
-            is_child_algorithm=is_child_algorithm
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
-    
+
     def runGdalWarp(
-            self,
-            rasterLayer: QgsRasterLayer,
-            targetCrs: QgsCoordinateReferenceSystem,
-            context: QgsProcessingContext,
-            sourceCrs: Optional[QgsCoordinateReferenceSystem] = None,
-            nodata: Optional[int] = None,
-            options: Optional[str] = None,
-            outputLyr: Optional[QgsRasterLayer] = None,
-            targetResolution: Optional[float] = None,
-            dataType: Optional[int] = None,
-            multiThreading: Optional[bool] = False,
-            targetExtent: Optional[list] = None,
-            targetExtentCrs: Optional[QgsCoordinateReferenceSystem] = None,
-            resampling: Optional[int] = 0,
-            extra: Optional[str] = None,
-            feedback: Optional[QgsFeedback]=None,
-            is_child_algorithm: Optional[bool] = False,
-        ) -> Union[str, QgsRasterLayer]:
+        self,
+        rasterLayer: QgsRasterLayer,
+        targetCrs: QgsCoordinateReferenceSystem,
+        context: QgsProcessingContext,
+        sourceCrs: Optional[QgsCoordinateReferenceSystem] = None,
+        nodata: Optional[int] = None,
+        options: Optional[str] = None,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        targetResolution: Optional[float] = None,
+        dataType: Optional[int] = None,
+        multiThreading: Optional[bool] = False,
+        targetExtent: Optional[list] = None,
+        targetExtentCrs: Optional[QgsCoordinateReferenceSystem] = None,
+        resampling: Optional[int] = 0,
+        extra: Optional[str] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: Optional[bool] = False,
+    ) -> Union[str, QgsRasterLayer]:
         outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
         extra = "" if extra is None else extra
         output = processing.run(
@@ -2214,42 +2229,42 @@ class AlgRunner:
             },
             context=context,
             feedback=feedback,
-            is_child_algorithm=is_child_algorithm
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
-    
+
     def runBuildVRT(
-            self,
-            inputRasterList: List[Union[str, QgsRasterLayer]],
-            context: QgsProcessingContext,
-            assignCrs: Optional[QgsCoordinateReferenceSystem] = None,
-            separate: Optional[bool] = False,
-            projDifference: Optional[bool] = False,
-            addAlpha: Optional[bool] = False,
-            outputLyr: Optional[QgsRasterLayer] = None,
-            resolution: Optional[float] = 0,
-            srcNodata: Optional[int] = None,
-            resampling: Optional[int] = 0,
-            extra: Optional[str] = None,
-            feedback: Optional[QgsFeedback]=None,
-            is_child_algorithm: Optional[bool] = False,
-        ) -> Union[str, QgsRasterLayer]:
+        self,
+        inputRasterList: List[Union[str, QgsRasterLayer]],
+        context: QgsProcessingContext,
+        assignCrs: Optional[QgsCoordinateReferenceSystem] = None,
+        separate: Optional[bool] = False,
+        projDifference: Optional[bool] = False,
+        addAlpha: Optional[bool] = False,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        resolution: Optional[float] = 0,
+        srcNodata: Optional[int] = None,
+        resampling: Optional[int] = 0,
+        extra: Optional[str] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: Optional[bool] = False,
+    ) -> Union[str, QgsRasterLayer]:
         outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
         extra = "" if extra is None else extra
         srcNodata = "" if srcNodata is None else srcNodata
         output = processing.run(
             "gdal:buildvirtualraster",
             {
-                'INPUT': inputRasterList,
-                'RESOLUTION': resolution,
-                'SEPARATE': separate,
-                'PROJ_DIFFERENCE': projDifference,
-                'ADD_ALPHA': addAlpha,
-                'ASSIGN_CRS': assignCrs,
-                'RESAMPLING': resampling,
-                'SRC_NODATA': srcNodata,
-                'EXTRA': extra,
-                'OUTPUT': outputLyr,
+                "INPUT": inputRasterList,
+                "RESOLUTION": resolution,
+                "SEPARATE": separate,
+                "PROJ_DIFFERENCE": projDifference,
+                "ADD_ALPHA": addAlpha,
+                "ASSIGN_CRS": assignCrs,
+                "RESAMPLING": resampling,
+                "SRC_NODATA": srcNodata,
+                "EXTRA": extra,
+                "OUTPUT": outputLyr,
             },
             context=context,
             feedback=feedback,

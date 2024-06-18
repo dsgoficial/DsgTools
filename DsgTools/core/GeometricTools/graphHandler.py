@@ -775,7 +775,11 @@ def buildAuxFlowGraph(
 
 
 def find_mergeable_edges_on_graph(
-    nx, G, nodeIdDict, allowClosedLines: bool = False, feedback: Optional[QgsFeedback] = None
+    nx,
+    G,
+    nodeIdDict,
+    allowClosedLines: bool = False,
+    feedback: Optional[QgsFeedback] = None,
 ):
     """
     Find mergeable edges in a graph.
@@ -1292,20 +1296,21 @@ def find_smaller_first_order_path_with_length_smaller_than_threshold(
     )
     return edges_to_remove_dict[smaller_path_node]
 
+
 def find_small_closed_line_groups(
     nx,
     G,
     minLength: float,
     lengthField: Optional[str] = "length",
     idField: Optional[str] = "featid",
-    feedback: Optional[QgsFeedback] = None
+    feedback: Optional[QgsFeedback] = None,
 ) -> set:
     idsToRemove = set()
     loopList = list(nx.simple_cycles(G))
     nLoops = len(loopList)
     if nLoops == 0:
         return idsToRemove
-    stepSize = 100/nLoops
+    stepSize = 100 / nLoops
     for current, loop in enumerate(loopList):
         if feedback is not None and feedback.isCanceled():
             break

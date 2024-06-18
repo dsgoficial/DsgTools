@@ -52,9 +52,7 @@ class SetLineOrientation(QgsProcessingAlgorithm):
     def initAlgorithm(self, config=None):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
-                self.INPUT,
-                self.tr("Input"),
-                [QgsProcessing.TypeVectorLine]
+                self.INPUT, self.tr("Input"), [QgsProcessing.TypeVectorLine]
             )
         )
 
@@ -99,16 +97,18 @@ class SetLineOrientation(QgsProcessingAlgorithm):
         featDict = dict()
         futures = set()
         pool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() - 1)
+
         def compute(feat):
             if not should_flip(feat.geometry(), ccw=ccw):
                 return None
             return feat
+
         for current, feat in enumerate(inputSource.getFeatures()):
             if multiStepFeedback.isCanceled():
                 return {"OUTPUT": dest_id}
             futures.add(pool.submit(compute, feat))
             multiStepFeedback.setProgress(current * stepSize)
-        
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         for current, future in enumerate(concurrent.futures.as_completed(futures)):
@@ -145,14 +145,12 @@ class SetLineOrientation(QgsProcessingAlgorithm):
             feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
-        
+
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
         flippedFeatures = self.algRunner.runReverseLineDirection(
-            inputLayer=selectedFeatures,
-            context=context,
-            feedback=multiStepFeedback
+            inputLayer=selectedFeatures, context=context, feedback=multiStepFeedback
         )
         flippedDict = {feat["featid"]: feat for feat in flippedFeatures.getFeatures()}
         if len(flippedFeatures) == 0:
@@ -203,7 +201,7 @@ class SetLineOrientation(QgsProcessingAlgorithm):
         return self.tr("The algorithm sets the line orientation")
 
 
-def should_flip(geom: QgsGeometry, ccw: Optional[bool]=True) -> bool:
+def should_flip(geom: QgsGeometry, ccw: Optional[bool] = True) -> bool:
     vertexList = list(geom.vertices())
     if vertexList[0] == vertexList[-1]:
         vertexList.pop(-1)
@@ -220,6 +218,7 @@ def should_flip(geom: QgsGeometry, ccw: Optional[bool]=True) -> bool:
         z += np.sign(np.cross(a, b)[-1])
     return z > 0 if not ccw else z < 0
 
+
 def sliding_window_iter(iterable, size):
     """..."""
     iterable = iter(iterable)
@@ -227,7 +226,7 @@ def sliding_window_iter(iterable, size):
     for item in iterable:
         yield tuple(window)
         window.append(item)
-    if window:  
+    if window:
         # needed because if iterable was already empty before the `for`,
         # then the window would be yielded twice.
         yield tuple(window)

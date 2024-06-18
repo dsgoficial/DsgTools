@@ -81,7 +81,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
                 self.NODATA_VALUE,
                 self.tr("NODATA pixel value"),
                 type=QgsProcessingParameterNumber.Integer,
-                defaultValue=-9999
+                defaultValue=-9999,
             )
         )
 
@@ -138,7 +138,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
                 nodata=nodata,
                 context=context,
                 outputLyr=outputRaster,
-                feedback=multiStepFeedback
+                feedback=multiStepFeedback,
             )
             return {self.OUTPUT: outputRaster}
 
@@ -160,7 +160,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             intersectLyr=explodedBboxLine,
             context=context,
             predicate=[AlgRunner.Disjoint],
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         if polygonsNotOnEdge.featureCount() == 0:
             currentStep += 1
@@ -171,9 +171,9 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
                 nodata=nodata,
                 context=context,
                 outputLyr=outputRaster,
-                feedback=multiStepFeedback
+                feedback=multiStepFeedback,
             )
-            return {self.OUTPUT: outputRaster} 
+            return {self.OUTPUT: outputRaster}
 
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -223,7 +223,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
                 nodata=nodata,
                 context=context,
                 outputLyr=outputRaster,
-                feedback=multiStepFeedback
+                feedback=multiStepFeedback,
             )
             return {self.OUTPUT: outputRaster}
 
@@ -258,31 +258,30 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             intersectLyr=explodedBboxLine,
             context=context,
             predicate=[AlgRunner.Disjoint],
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         remainingFeatCount = polygonsNotOnEdge.featureCount()
         if remainingFeatCount == 0:
             return {self.OUTPUT: outputRaster}
-        
-        multiStepFeedback.pushInfo(self.tr(f"Evaluating {remainingFeatCount} groups of remaining pixels"))
 
-        innerFeedback = QgsProcessingMultiStepFeedback(remainingFeatCount, multiStepFeedback)
+        multiStepFeedback.pushInfo(
+            self.tr(f"Evaluating {remainingFeatCount} groups of remaining pixels")
+        )
+
+        innerFeedback = QgsProcessingMultiStepFeedback(
+            remainingFeatCount, multiStepFeedback
+        )
         innerFeedback.setCurrentStep(0)
 
         while True:
             if innerFeedback.isCanceled():
                 break
-            if (
-                innerFeedback.isCanceled()
-                or polygonsNotOnEdge.featureCount() == 0
-            ):
+            if innerFeedback.isCanceled() or polygonsNotOnEdge.featureCount() == 0:
                 break
             nextFeat = next(polygonsNotOnEdge.getFeatures(request), None)
             if nextFeat is None:
                 break
-            self.processPixelGroup(
-                KDTree, npRaster, transform, nextFeat, nodata
-            )
+            self.processPixelGroup(KDTree, npRaster, transform, nextFeat, nodata)
             rasterHandler.writeOutputRaster(outputRaster, npRaster.T, ds)
 
             ds, npRaster = rasterHandler.readAsNumpy(outputRaster, dtype=np.int16)
@@ -293,10 +292,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
                 inputRaster=outputRaster,
                 context=context,
             )
-            if (
-                innerFeedback.isCanceled()
-                or selectedPolygonLayer.featureCount() == 0
-            ):
+            if innerFeedback.isCanceled() or selectedPolygonLayer.featureCount() == 0:
                 break
 
             selectedPolygonLayer = self.algRunner.runFilterExpression(
@@ -313,11 +309,18 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
                 predicate=[AlgRunner.Disjoint],
             )
 
-            innerFeedback.setCurrentStep(remainingFeatCount - polygonsNotOnEdge.featureCount())
+            innerFeedback.setCurrentStep(
+                remainingFeatCount - polygonsNotOnEdge.featureCount()
+            )
 
         return {self.OUTPUT: outputRaster}
 
-    def computeBboxLine(self, parameters: Dict[str, Any], context: QgsProcessingContext, feedback: QgsFeedback):
+    def computeBboxLine(
+        self,
+        parameters: Dict[str, Any],
+        context: QgsProcessingContext,
+        feedback: QgsFeedback,
+    ):
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
@@ -334,7 +337,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             inputLyr=bbox,
             context=context,
             feedback=multiStepFeedback,
-            is_child_algorithm=True
+            is_child_algorithm=True,
         )
 
         currentStep += 1
@@ -343,7 +346,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
             inputLyr=bboxLine,
             context=context,
             feedback=multiStepFeedback,
-            is_child_algorithm=True
+            is_child_algorithm=True,
         )
 
         currentStep += 1
@@ -351,7 +354,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         self.algRunner.runCreateSpatialIndex(
             explodedBboxLine, context, multiStepFeedback, is_child_algorithm=True
         )
-        
+
         return explodedBboxLine
 
     def reclassifyGroupsOfPixelsInsidePolygons(
@@ -375,14 +378,17 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         for current, polygonFeat in enumerate(polygonList):
             if multiStepFeedback.isCanceled():
                 break
-            self.processPixelGroup(
-                KDTree, npRaster, transform, polygonFeat, nodata
-            )
+            self.processPixelGroup(KDTree, npRaster, transform, polygonFeat, nodata)
             multiStepFeedback.setProgress(current * stepSize)
         return True
 
     def processPixelGroup(
-        self, KDTree, npRaster, transform, polygonFeat, nodata,
+        self,
+        KDTree,
+        npRaster,
+        transform,
+        polygonFeat,
+        nodata,
     ):
         geom = polygonFeat.geometry()
 
@@ -391,10 +397,10 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         )
         v = polygonFeat["DN"]
         originalCopy = np.array(currentView)
+        maskedCurrentView = ma.masked_array(currentView, currentView == v, np.int16)
         maskedCurrentView = ma.masked_array(
-            currentView, currentView == v, np.int16
+            maskedCurrentView, currentView == nodata, dtype=np.int16
         )
-        maskedCurrentView = ma.masked_array(maskedCurrentView, currentView == nodata, dtype=np.int16)
         x, y = np.mgrid[0 : maskedCurrentView.shape[0], 0 : maskedCurrentView.shape[1]]
         xygood = np.array((x[~maskedCurrentView.mask], y[~maskedCurrentView.mask])).T
         xybad = np.array((x[maskedCurrentView.mask], y[maskedCurrentView.mask])).T
@@ -403,7 +409,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(ValidationAlgorithm):
         ][KDTree(xygood).query(xybad)[1]]
         currentView = maskedCurrentView.data
         currentView[~np.isnan(mask)] = originalCopy[~np.isnan(mask)]
-        currentView[originalCopy==nodata] = originalCopy[originalCopy==nodata]
+        currentView[originalCopy == nodata] = originalCopy[originalCopy == nodata]
         # currentView[~np.isnan(mask.T)] = originalCopy[~np.isnan(mask.T)]
         # outputMask = maskedCurrentView + mask.T
         # outputMask[np.isnan(mask.T)] = originalCopy[np.isnan(mask.T)]

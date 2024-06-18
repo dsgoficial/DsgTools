@@ -959,7 +959,7 @@ def fix_geom_vertices(newGeom: QgsGeometry) -> QgsGeometry:
 def find_nan_or_inf_vertex_neighbor(geom: QgsGeometry) -> QgsPoint:
     vertexList = list(geom.vertices())
     vertex_np = np.array([(i.x(), i.y()) for i in vertexList])
-    problem = np.argwhere(np.isinf(np.array(vertex_np))) 
+    problem = np.argwhere(np.isinf(np.array(vertex_np)))
     if len(problem) == 0:
         return vertexList[0]
     problemIdx = problem[0][0]

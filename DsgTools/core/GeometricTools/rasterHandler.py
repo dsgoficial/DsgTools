@@ -44,16 +44,22 @@ from qgis.core import (
 )
 
 
-def readAsNumpy(inputRaster: Union[str, QgsRasterLayer], dtype=None, nodataValue=None) -> Tuple[Dataset, np.array]:
+def readAsNumpy(
+    inputRaster: Union[str, QgsRasterLayer], dtype=None, nodataValue=None
+) -> Tuple[Dataset, np.array]:
     inputRaster = (
         inputRaster.dataProvider().dataSourceUri()
         if isinstance(inputRaster, QgsRasterLayer)
         else inputRaster
     )
     ds = gdal.Open(inputRaster)
-    npArray = np.array(ds.GetRasterBand(1).ReadAsArray().transpose()) if dtype is None else np.array(ds.GetRasterBand(1).ReadAsArray().transpose(), dtype=dtype)
+    npArray = (
+        np.array(ds.GetRasterBand(1).ReadAsArray().transpose())
+        if dtype is None
+        else np.array(ds.GetRasterBand(1).ReadAsArray().transpose(), dtype=dtype)
+    )
     if nodataValue is not None:
-        npArray[npArray==nodataValue] = np.nan
+        npArray[npArray == nodataValue] = np.nan
     return ds, npArray
 
 
@@ -272,6 +278,7 @@ def createMaxPointFeatListFromRasterLayer(
         defaultAtributeMap=defaultAtributeMap,
     )
 
+
 def writeOutputRaster(outputRaster, npRaster, ds, outputType=None):
     outputType = gdal.GDT_Int32 if outputType is None else outputType
     driver = gdal.GetDriverByName("GTiff")
@@ -287,26 +294,43 @@ def writeOutputRaster(outputRaster, npRaster, ds, outputType=None):
     band.ComputeStatistics(False)
     out_ds = None
 
-def getNumpyViewFromPolygon(npRaster: np.array, transform: Affine, geom: QgsGeometry, pixelBuffer: int = 2) -> np.array:
+
+def getNumpyViewFromPolygon(
+    npRaster: np.array, transform: Affine, geom: QgsGeometry, pixelBuffer: int = 2
+) -> np.array:
     bbox = geom.boundingBox()
     terrain_xmin, terrain_ymin, terrain_xmax, terrain_ymax = bbox.toRectF().getCoords()
     a, b = map(int, ~transform * (terrain_xmin, terrain_ymin))
     c, d = map(int, ~transform * (terrain_xmax, terrain_ymax))
     xmin, xmax = min(a, c), max(a, c)
     ymin, ymax = min(b, d), max(b, d)
-    npView = npRaster[max(xmin-pixelBuffer, 0):xmax+pixelBuffer+1, max(ymin-pixelBuffer, 0):ymax+pixelBuffer+1]
+    npView = npRaster[
+        max(xmin - pixelBuffer, 0) : xmax + pixelBuffer + 1,
+        max(ymin - pixelBuffer, 0) : ymax + pixelBuffer + 1,
+    ]
     return npView
 
-def getNumpyViewAndMaskFromPolygon(npRaster: np.array, transform: Affine, geom: QgsGeometry, pixelBuffer: int = 2) -> Tuple[np.array, np.array]:
+
+def getNumpyViewAndMaskFromPolygon(
+    npRaster: np.array, transform: Affine, geom: QgsGeometry, pixelBuffer: int = 2
+) -> Tuple[np.array, np.array]:
     bbox = geom.boundingBox()
     terrain_xmin, terrain_ymin, terrain_xmax, terrain_ymax = bbox.toRectF().getCoords()
     a, b = map(int, ~transform * (terrain_xmin, terrain_ymin))
     c, d = map(int, ~transform * (terrain_xmax, terrain_ymax))
     xmin, xmax = min(a, c), max(a, c)
     ymin, ymax = min(b, d), max(b, d)
-    npView = npRaster[max(xmin-pixelBuffer, 0):xmax+pixelBuffer+1, max(ymin-pixelBuffer, 0):ymax+pixelBuffer+1]
+    npView = npRaster[
+        max(xmin - pixelBuffer, 0) : xmax + pixelBuffer + 1,
+        max(ymin - pixelBuffer, 0) : ymax + pixelBuffer + 1,
+    ]
     mask = np.zeros((1, npView.shape[0] * npView.shape[1]))
-    productPairList = list(product(range(max(xmin-pixelBuffer, 0), xmax+pixelBuffer+1), range(max(ymin-pixelBuffer, 0), ymax+pixelBuffer+1)))
+    productPairList = list(
+        product(
+            range(max(xmin - pixelBuffer, 0), xmax + pixelBuffer + 1),
+            range(max(ymin - pixelBuffer, 0), ymax + pixelBuffer + 1),
+        )
+    )
     maxIdx = npView.shape[0] * npView.shape[1]
     for idx, transformedPair in enumerate(productPairList):
         transfCoord = transform * transformedPair
@@ -320,7 +344,9 @@ def getNumpyViewAndMaskFromPolygon(npRaster: np.array, transform: Affine, geom: 
     return npView, mask
 
 
-def buildNumpyNodataMaskForPolygon(x_res, y_res, npRaster, geom: QgsGeometry, crs, valueToBurnAsMask=np.nan):
+def buildNumpyNodataMaskForPolygon(
+    x_res, y_res, npRaster, geom: QgsGeometry, crs, valueToBurnAsMask=np.nan
+):
     _out = QgsProcessingUtils.generateTempFilename(f"clip_{str(uuid4().hex)}.tif")
     _temp_in = QgsProcessingUtils.generateTempFilename(f"feats_{str(uuid4().hex)}.shp")
 
@@ -339,9 +365,7 @@ def buildNumpyNodataMaskForPolygon(x_res, y_res, npRaster, geom: QgsGeometry, cr
     _band = _raster.GetRasterBand(1)
     _band.SetNoDataValue(NoData_value)
 
-    vectorLyr = LayerHandler().createMemoryLayerFromGeometry(
-        geom, crs
-    )
+    vectorLyr = LayerHandler().createMemoryLayerFromGeometry(geom, crs)
 
     save_options = QgsVectorFileWriter.SaveVectorOptions()
     save_options.driverName = "ESRI Shapefile"
@@ -363,6 +387,7 @@ def buildNumpyNodataMaskForPolygon(x_res, y_res, npRaster, geom: QgsGeometry, cr
     ds = None
     outputNpRaster[outputNpRaster == 255.0] = valueToBurnAsMask
     return outputNpRaster
+
 
 def polygonizeFromNumpyArray(npRaster, ds):
     _out = QgsProcessingUtils.generateTempFilename(f"polygonize_{str(uuid4().hex)}.tif")

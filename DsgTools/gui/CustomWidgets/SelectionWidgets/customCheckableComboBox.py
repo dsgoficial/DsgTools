@@ -24,14 +24,21 @@
 from typing import List, Optional, Union
 from qgis.gui import QgsCheckableComboBox
 
+
 class CustomCheckableComboBox(QgsCheckableComboBox):
     def __init__(self):
         super(CustomCheckableComboBox, self).__init__()
 
-    def setData(self, items: Union[List[str], str], checkedItems: Optional[Union[List[str], str]] = None):
-        itemList = items.split(',') if isinstance(items, str) else items
+    def setData(
+        self,
+        items: Union[List[str], str],
+        checkedItems: Optional[Union[List[str], str]] = None,
+    ):
+        itemList = items.split(",") if isinstance(items, str) else items
         self.addItems(itemList)
         if checkedItems is None:
             return
-        checkedItemList = checkedItems.split(',') if isinstance(checkedItems, str) else checkedItems
+        checkedItemList = (
+            checkedItems.split(",") if isinstance(checkedItems, str) else checkedItems
+        )
         self.setCheckedItems(checkedItemList)

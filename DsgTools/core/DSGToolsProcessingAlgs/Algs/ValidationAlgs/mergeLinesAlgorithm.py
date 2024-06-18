@@ -121,7 +121,9 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
             parameters, self.IGNORE_VIRTUAL_FIELDS, context
         )
         ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
-        allowClosedLines = self.parameterAsBool(parameters, self.ALLOW_CLOSED_LINES_ON_OUTPUT, context)
+        allowClosedLines = self.parameterAsBool(
+            parameters, self.ALLOW_CLOSED_LINES_ON_OUTPUT, context
+        )
         nSteps = 8
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
@@ -182,7 +184,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
             G=networkMultiGraph,
             feedback=multiStepFeedback,
             nodeIdDict=nodeIdDict,
-            allowClosedLines=allowClosedLines
+            allowClosedLines=allowClosedLines,
         )
         nSteps = len(outputGraphDict)
         if nSteps == 0:

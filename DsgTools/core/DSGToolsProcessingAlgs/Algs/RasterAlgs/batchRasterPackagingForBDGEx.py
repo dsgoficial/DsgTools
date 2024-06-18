@@ -107,7 +107,8 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(nInputs, feedback)
         self.tempFolder = QgsProcessingUtils.tempFolder()
         self.inputFilesDict = {
-            p.name: {"path": p, "size_in_gb": p.stat().st_size /(1024 ** 3)} for p in inputFiles
+            p.name: {"path": p, "size_in_gb": p.stat().st_size / (1024**3)}
+            for p in inputFiles
         }
         self.shapefilesDict = self.getShapefilesDict(inputFolder)
         self.relatedPolygonsDict = self.relatePolygons(multiStepFeedback, context)
@@ -145,12 +146,12 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 targetCrs=QgsCoordinateReferenceSystem("EPSG:4674"),
                 resampling=0,
                 options="COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE|PHOTOMETRIC=YCbCr"
-                    if bandcount > 1
-                    else "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE",
+                if bandcount > 1
+                else "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE",
                 multiThreading=True,
                 outputLyr=str(output_file_path),
                 context=context,
-                feedback=multiStepFeedback,        
+                feedback=multiStepFeedback,
             )
 
         return {
@@ -173,7 +174,9 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         for shp in Path(self.tempFolder).rglob("*.shp"):
             if "_SEAMLINES_SHAPE" in str(shp):
                 key = str(shp.name).replace(".shp", "").replace("_SEAMLINES_SHAPE", "")
-                shapefilesDict[key]["SEAMLINES_SHAPE"] = QgsVectorLayer(str(shp), key, "ogr")
+                shapefilesDict[key]["SEAMLINES_SHAPE"] = QgsVectorLayer(
+                    str(shp), key, "ogr"
+                )
             elif "_TILE_SHAPE" in str(shp):
                 key = str(shp.name).replace(".shp", "").replace("_TILE_SHAPE", "")
                 shapefilesDict[key]["TILE_SHAPE"] = QgsVectorLayer(str(shp), key, "ogr")
@@ -181,51 +184,57 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 continue
 
         return shapefilesDict
-    
+
     def relatePolygons(self, feedback, context):
         relatedItemsDict = defaultdict(lambda: defaultdict(list))
         nItems = len(self.shapefilesDict)
         if nItems == 0:
             return relatedItemsDict
-        multiStepFeedback = QgsProcessingMultiStepFeedback(4*nItems, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4 * nItems, feedback)
         for current, (key, valueDict) in enumerate(self.shapefilesDict.items()):
             if multiStepFeedback.isCanceled():
                 break
             if "SEAMLINES_SHAPE" not in valueDict or "TILE_SHAPE" not in valueDict:
-                multiStepFeedback.setCurrentStep(4*current+3)
+                multiStepFeedback.setCurrentStep(4 * current + 3)
                 continue
-            multiStepFeedback.setCurrentStep(4*current)
+            multiStepFeedback.setCurrentStep(4 * current)
             if multiStepFeedback.isCanceled():
                 break
-            if valueDict["SEAMLINES_SHAPE"].hasSpatialIndex() != QgsFeatureSource.SpatialIndexPresence.SpatialIndexPresent:
+            if (
+                valueDict["SEAMLINES_SHAPE"].hasSpatialIndex()
+                != QgsFeatureSource.SpatialIndexPresence.SpatialIndexPresent
+            ):
                 self.algRunner.runCreateSpatialIndex(
                     inputLyr=valueDict["SEAMLINES_SHAPE"],
                     context=context,
                     feedback=multiStepFeedback,
-                    is_child_algorithm=True
+                    is_child_algorithm=True,
                 )
-            multiStepFeedback.setCurrentStep(4*current+1)
+            multiStepFeedback.setCurrentStep(4 * current + 1)
             if multiStepFeedback.isCanceled():
                 break
-            if valueDict["TILE_SHAPE"].hasSpatialIndex() != QgsFeatureSource.SpatialIndexPresence.SpatialIndexPresent:
+            if (
+                valueDict["TILE_SHAPE"].hasSpatialIndex()
+                != QgsFeatureSource.SpatialIndexPresence.SpatialIndexPresent
+            ):
                 self.algRunner.runCreateSpatialIndex(
                     inputLyr=valueDict["TILE_SHAPE"],
                     context=context,
                     feedback=multiStepFeedback,
-                    is_child_algorithm=True
+                    is_child_algorithm=True,
                 )
-            multiStepFeedback.setCurrentStep(4*current+2)
+            multiStepFeedback.setCurrentStep(4 * current + 2)
             if multiStepFeedback.isCanceled():
                 break
             joinnedSeamline = self.algRunner.runJoinAttributesByLocation(
                 inputLyr=valueDict["SEAMLINES_SHAPE"],
                 joinLyr=valueDict["TILE_SHAPE"],
                 predicateList=[AlgRunner.Intersect],
-                method=0
+                method=0,
             )
             if multiStepFeedback.isCanceled():
                 break
-            multiStepFeedback.setCurrentStep(4*current+3)
+            multiStepFeedback.setCurrentStep(4 * current + 3)
             for feat in joinnedSeamline.getFeatures():
                 if multiStepFeedback.isCanceled():
                     break
@@ -233,7 +242,6 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 geomKey = geom.asWkb()
                 relatedItemsDict[key][geomKey].append(feat["fileName"])
         return relatedItemsDict
-
 
     def buildXML(
         self,

@@ -192,7 +192,7 @@ class FindSmallClosedLinesAlgorithm(ValidationAlgorithm):
         idsToRemove = graphHandler.find_small_closed_line_groups(
             nx, networkDirectedGraph, minLength=minLen, feedback=multiStepFeedback
         )
-        
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         self.manageSelectedIdsUsingInputMethod(inputLayer, method, idsToRemove)
@@ -243,9 +243,7 @@ class FindSmallClosedLinesAlgorithm(ValidationAlgorithm):
         return "DSGTools - Generalization Algorithms"
 
     def tr(self, string):
-        return QCoreApplication.translate(
-            "FindSmallClosedLinesAlgorithm", string
-        )
+        return QCoreApplication.translate("FindSmallClosedLinesAlgorithm", string)
 
     def createInstance(self):
         return FindSmallClosedLinesAlgorithm()

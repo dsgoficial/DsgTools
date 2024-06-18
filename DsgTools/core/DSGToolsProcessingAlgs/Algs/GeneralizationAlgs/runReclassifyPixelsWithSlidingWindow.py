@@ -53,7 +53,9 @@ from qgis.core import (
 )
 
 
-class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(ValidationAlgorithm):
+class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(
+    ValidationAlgorithm
+):
     INPUT = "INPUT"
     MIN_AREA = "MIN_AREA"
     NODATA_VALUE = "NODATA_VALUE"
@@ -94,15 +96,13 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
                 self.NODATA_VALUE,
                 self.tr("NODATA pixel value"),
                 type=QgsProcessingParameterNumber.Integer,
-                defaultValue=-9999
+                defaultValue=-9999,
             )
         )
 
         param = QgsProcessingParameterDistance(
             self.HSPACING,
-            self.tr(
-                "Horizontal tile size"
-            ),
+            self.tr("Horizontal tile size"),
             parentParameterName=self.INPUT,
             defaultValue=1e-8,
         )
@@ -111,9 +111,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
 
         param = QgsProcessingParameterDistance(
             self.VSPACING,
-            self.tr(
-                "Vertical tile size"
-            ),
+            self.tr("Vertical tile size"),
             parentParameterName=self.INPUT,
             defaultValue=1e-8,
         )
@@ -122,9 +120,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
 
         param = QgsProcessingParameterDistance(
             self.HOVERLAY,
-            self.tr(
-                "Horizontal tile superposition"
-            ),
+            self.tr("Horizontal tile superposition"),
             parentParameterName=self.INPUT,
             defaultValue=1e-8,
         )
@@ -133,9 +129,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
 
         param = QgsProcessingParameterDistance(
             self.VOVERLAY,
-            self.tr(
-                "Vertical tile superposition"
-            ),
+            self.tr("Vertical tile superposition"),
             parentParameterName=self.INPUT,
             defaultValue=1e-8,
         )
@@ -153,16 +147,12 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
 
         param = QgsProcessingParameterDistance(
             self.NEGATIVE_BUFFER_DISTANCE,
-            self.tr(
-                "Negative buffer distance"
-            ),
+            self.tr("Negative buffer distance"),
             parentParameterName=self.INPUT,
             defaultValue=0.001,
         )
         param.setMetadata({"widget_wrapper": {"decimals": 10}})
         self.addParameter(param)
-        
-
 
         self.addParameter(
             QgsProcessingParameterRasterDestination(
@@ -206,7 +196,13 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
 
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Building grid"))
-        selectedGrid = self.buildGrid(parameters=parameters, context=context, inputRaster=inputRaster, polygonLayer=polygonLayer, feedback=multiStepFeedback)
+        selectedGrid = self.buildGrid(
+            parameters=parameters,
+            context=context,
+            inputRaster=inputRaster,
+            polygonLayer=polygonLayer,
+            feedback=multiStepFeedback,
+        )
         if selectedGrid is None:
             return {self.OUTPUT: outputRaster}
 
@@ -220,12 +216,15 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
 
         multiStepFeedback.pushInfo(self.tr("Computing tiles"))
         nTiles = selectedGrid.featureCount()
-        innerMultiStepFeedback = QgsProcessingMultiStepFeedback(2*nTiles, multiStepFeedback)
+        innerMultiStepFeedback = QgsProcessingMultiStepFeedback(
+            2 * nTiles, multiStepFeedback
+        )
         request = QgsFeatureRequest()
         clause1 = QgsFeatureRequest.OrderByClause("row_index", ascending=True)
         clause2 = QgsFeatureRequest.OrderByClause("col_index", ascending=True)
         orderby = QgsFeatureRequest.OrderBy([clause1, clause2])
         request.setOrderBy(orderby)
+
         def compute(gridFeat):
             geom = gridFeat.geometry()
             localContext = QgsProcessingContext()
@@ -244,21 +243,31 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
                 nodataValue=nodata,
                 context=localContext,
             )
+
         multiStepFeedback.setProgressText(self.tr("Submitting tasks to thread..."))
         for current, (geom, reclassified) in enumerate(
-            concurrently(compute, selectedGrid.getFeatures(request), max_concurrency=5, feedback=innerMultiStepFeedback),
+            concurrently(
+                compute,
+                selectedGrid.getFeatures(request),
+                max_concurrency=5,
+                feedback=innerMultiStepFeedback,
+            ),
             start=0,
         ):
             if innerMultiStepFeedback.isCanceled():
                 break
             innerMultiStepFeedback.setCurrentStep(current)
-            innerMultiStepFeedback.pushInfo(self.tr(f"Processing thread output for tile {current+1}/{nTiles}"))
+            innerMultiStepFeedback.pushInfo(
+                self.tr(f"Processing thread output for tile {current+1}/{nTiles}")
+            )
             npView = rasterHandler.getNumpyViewFromPolygon(
                 npRaster=npRaster, transform=transform, geom=geom, pixelBuffer=0
             )
             if innerMultiStepFeedback.isCanceled():
                 break
-            _, reclass_npRaster = rasterHandler.readAsNumpy(reclassified, dtype=np.int16)
+            _, reclass_npRaster = rasterHandler.readAsNumpy(
+                reclassified, dtype=np.int16
+            )
             npView = reclass_npRaster
         rasterHandler.writeOutputRaster(outputRaster, npRaster.T, ds)
 
@@ -298,7 +307,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
             intersectLyr=explodedBboxLine,
             context=context,
             predicate=[AlgRunner.Disjoint],
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
 
         currentStep += 1
@@ -330,7 +339,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
             clip=True,
             context=context,
             feedback=multiStepFeedback,
-            is_child_algorithm=True
+            is_child_algorithm=True,
         )
 
         currentStep += 1
@@ -346,14 +355,17 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
             intersectLyr=polygonsNotOnEdge,
             predicate=[AlgRunner.Contain],
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         return selectedGrid
 
-
-    
-
-    def buildOutputRaster(self, outputRaster, parameters: Dict[str, Any], context: QgsProcessingContext, feedback: QgsFeedback):
+    def buildOutputRaster(
+        self,
+        outputRaster,
+        parameters: Dict[str, Any],
+        context: QgsProcessingContext,
+        feedback: QgsFeedback,
+    ):
         inputRaster = self.parameterAsRasterLayer(parameters, self.INPUT, context)
         nodata = self.parameterAsDouble(parameters, self.NODATA_VALUE, context)
         polygonLayerList = self.parameterAsLayerList(
@@ -402,7 +414,12 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
             feedback=multiStepFeedback,
         )
 
-    def computeBboxLine(self, parameters: Dict[str, Any], context: QgsProcessingContext, feedback: QgsFeedback):
+    def computeBboxLine(
+        self,
+        parameters: Dict[str, Any],
+        context: QgsProcessingContext,
+        feedback: QgsFeedback,
+    ):
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
@@ -419,7 +436,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
             inputLyr=bbox,
             context=context,
             feedback=multiStepFeedback,
-            is_child_algorithm=True
+            is_child_algorithm=True,
         )
 
         currentStep += 1
@@ -428,7 +445,7 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
             inputLyr=bboxLine,
             context=context,
             feedback=multiStepFeedback,
-            is_child_algorithm=True
+            is_child_algorithm=True,
         )
 
         currentStep += 1
@@ -436,9 +453,9 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
         self.algRunner.runCreateSpatialIndex(
             explodedBboxLine, context, multiStepFeedback, is_child_algorithm=True
         )
-        
+
         return explodedBboxLine
-        
+
     def name(self):
         """
         Returns the algorithm name, used for identifying the algorithm. This
@@ -454,7 +471,9 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr("Reclassify Groups of Pixels to Nearest Neighbor With Sliding Window Algorithm")
+        return self.tr(
+            "Reclassify Groups of Pixels to Nearest Neighbor With Sliding Window Algorithm"
+        )
 
     def group(self):
         """
@@ -475,7 +494,8 @@ class ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(Valida
 
     def tr(self, string):
         return QCoreApplication.translate(
-            "ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm", string
+            "ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm",
+            string,
         )
 
     def createInstance(self):

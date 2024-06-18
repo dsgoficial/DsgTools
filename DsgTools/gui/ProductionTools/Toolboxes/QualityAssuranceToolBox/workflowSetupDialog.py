@@ -27,9 +27,16 @@ from pathlib import Path
 from time import time
 from datetime import datetime
 
-from DsgTools.core.DSGToolsWorkflow.workflowItem import DSGToolsWorkflowItem, ModelSource
-from DsgTools.gui.CustomWidgets.SelectionWidgets.customCheckableComboBox import CustomCheckableComboBox
-from DsgTools.gui.CustomWidgets.SelectionWidgets.importExportFileWidget import ImportExportFileWidget
+from DsgTools.core.DSGToolsWorkflow.workflowItem import (
+    DSGToolsWorkflowItem,
+    ModelSource,
+)
+from DsgTools.gui.CustomWidgets.SelectionWidgets.customCheckableComboBox import (
+    CustomCheckableComboBox,
+)
+from DsgTools.gui.CustomWidgets.SelectionWidgets.importExportFileWidget import (
+    ImportExportFileWidget,
+)
 from qgis.PyQt import uic, QtCore, QtWidgets
 from qgis.core import Qgis
 from qgis.gui import QgsMessageBar, QgsCheckableComboBox
@@ -49,7 +56,12 @@ from processing.modeler.ModelerDialog import ModelerDialog
 from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import (
     SelectFileWidget,
 )
-from DsgTools.core.DSGToolsWorkflow.workflow import DSGToolsWorkflow, WorkflowMetadata, dsgtools_workflow_from_dict, dsgtools_workflow_from_json
+from DsgTools.core.DSGToolsWorkflow.workflow import (
+    DSGToolsWorkflow,
+    WorkflowMetadata,
+    dsgtools_workflow_from_dict,
+    dsgtools_workflow_from_json,
+)
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "workflowSetupDialog.ui")
@@ -149,13 +161,27 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         )
         self.orderedTableWidget.setHeaderDoubleClickBehaviour("replicate")
         self.orderedTableWidget.horizontalHeader().setStretchLastSection(True)
-        self.orderedTableWidget.tableWidget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.orderedTableWidget.tableWidget.horizontalHeader().setDefaultSectionSize(150)
-        self.orderedTableWidget.tableWidget.horizontalHeader().setMinimumSectionSize(100)
-        self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(self.MODEL_NAME_HEADER, 200)
-        self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(self.MODEL_SOURCE_HEADER, 250)
-        self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(self.FLAG_KEYS_HEADER, 200)
-        self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(self.ON_FLAGS_HEADER, 100)
+        self.orderedTableWidget.tableWidget.setHorizontalScrollBarPolicy(
+            QtCore.Qt.ScrollBarAsNeeded
+        )
+        self.orderedTableWidget.tableWidget.horizontalHeader().setDefaultSectionSize(
+            150
+        )
+        self.orderedTableWidget.tableWidget.horizontalHeader().setMinimumSectionSize(
+            100
+        )
+        self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(
+            self.MODEL_NAME_HEADER, 200
+        )
+        self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(
+            self.MODEL_SOURCE_HEADER, 250
+        )
+        self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(
+            self.FLAG_KEYS_HEADER, 200
+        )
+        self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(
+            self.ON_FLAGS_HEADER, 100
+        )
         self.promptToAll = None
         self.orderedTableWidget.rowAdded.connect(self.postAddRowStandard)
 
@@ -167,21 +193,21 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         # in standard GUI, the layer selectors are QgsMapLayerComboBox, and its
         # layer changed signal should be connected to the filter expression
         # widget setup
-        importExportFileWidget = self.orderedTableWidget.itemAt(row, self.MODEL_SOURCE_HEADER)
-        importExportFileWidget.fileSelected.connect(
-            partial(self._getModelOutputs, row)
+        importExportFileWidget = self.orderedTableWidget.itemAt(
+            row, self.MODEL_SOURCE_HEADER
         )
-    
+        importExportFileWidget.fileSelected.connect(partial(self._getModelOutputs, row))
+
     def _getModelOutputs(self, row, fileName, fileContent):
-        currentModelSource = ModelSource(
-            type="xml",
-            data=fileContent
-        )
+        currentModelSource = ModelSource(type="xml", data=fileContent)
         currentModel = currentModelSource.modelFromXml()
         outputs = [
-            outputDef.name().split(":")[-1] for outputDef in currentModel.outputDefinitions()
+            outputDef.name().split(":")[-1]
+            for outputDef in currentModel.outputDefinitions()
         ]
-        currentCheckableCombobBox = self.orderedTableWidget.itemAt(row, self.FLAG_KEYS_HEADER)
+        currentCheckableCombobBox = self.orderedTableWidget.itemAt(
+            row, self.FLAG_KEYS_HEADER
+        )
         currentCheckableCombobBox.clear()
         currentCheckableCombobBox.setData(outputs)
 
@@ -280,10 +306,12 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         widget.setCaption(self.tr("Select a QGIS Processing model file"))
         widget.setFilter(self.tr("Select a QGIS Processing model (*.model3 *.model)"))
         # defining setter and getter methods for composed widgets into OTW
-        widget.fileExported.connect(lambda x: self.pushMessage(self.tr(f"Model source exported to file {x}")))
+        widget.fileExported.connect(
+            lambda x: self.pushMessage(self.tr(f"Model source exported to file {x}"))
+        )
         widget.fileExported.connect(self.openExportedModel)
         return widget
-    
+
     def openExportedModel(self, filename):
         if not (
             QMessageBox.question(
@@ -356,7 +384,9 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         return cb
 
     def loadFlagLayers(self):
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         widget = CustomCheckableComboBox()
@@ -478,7 +508,10 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         self.orderedTableWidget.addRow(
             contents={
                 self.MODEL_NAME_HEADER: workflowItem.displayName,
-                self.MODEL_SOURCE_HEADER: {"fileName":originalName, "fileContent":data},
+                self.MODEL_SOURCE_HEADER: {
+                    "fileName": originalName,
+                    "fileContent": data,
+                },
                 self.ON_FLAGS_HEADER: {
                     "halt": self.ON_FLAGS_HALT,
                     "warn": self.ON_FLAGS_WARN,
@@ -490,7 +523,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                     "items": workflowItem.getAllOutputNamesFromModel(),
                     "checkedItems": ",".join(
                         map(lambda x: str(x).strip(), workflowItem.flags.flagLayerNames)
-                    )
+                    ),
                 },
                 self.PAUSE_AFTER_EXECUTION_HEADER: workflowItem.pauseAfterExecution,
             }
@@ -515,9 +548,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         set of parameters.
         :return: (dict) map to each model's set of parameters.
         """
-        return [
-            self.readRow(row) for row in range(self.modelCount())
-        ]
+        return [self.readRow(row) for row in range(self.modelCount())]
 
     def validateModels(self):
         """
@@ -579,7 +610,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         """
         workflow = dsgtools_workflow_from_dict(self.workflowParameterMap())
         return workflow.export(filepath=filepath)
-    
+
     def pushMessage(self, message):
         self.messageBar.pushMessage(
             self.tr("Info"), message, level=Qgis.Info, duration=5

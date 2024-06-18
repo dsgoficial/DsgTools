@@ -160,9 +160,11 @@ class FileInventoryAlgorithm(QgsProcessingAlgorithm):
         output_sink.addFeatures(featList, QgsFeatureSink.FastInsert)
 
         return {"OUTPUT": self.output_dest_id}
-    
+
     def postProcessAlgorithm(self, context, feedback):
-        processed_layer = QgsProcessingUtils.mapLayerFromString(self.output_dest_id, context)
+        processed_layer = QgsProcessingUtils.mapLayerFromString(
+            self.output_dest_id, context
+        )
         actions = processed_layer.actions()
         field = '[% "fileName" %]'
         vectorAction = QgsAction(
@@ -179,7 +181,7 @@ class FileInventoryAlgorithm(QgsProcessingAlgorithm):
         )
         rasterAction.setActionScopes(["Feature", "Field"])
         actions.addAction(rasterAction)
-        return {"OUTPUT": self.output_dest_id} 
+        return {"OUTPUT": self.output_dest_id}
 
     def name(self):
         """

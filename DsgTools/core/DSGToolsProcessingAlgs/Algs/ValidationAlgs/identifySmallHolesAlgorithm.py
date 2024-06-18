@@ -70,7 +70,9 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
 
     def processAlgorithm(self, parameters, context, feedback):
         feedback.setProgressText(self.tr("Searching holes smaller than tolerance"))
-        layerList = self.parameterAsLayerList(parameters, self.INPUT_LAYER_LIST, context)
+        layerList = self.parameterAsLayerList(
+            parameters, self.INPUT_LAYER_LIST, context
+        )
         maxSize = self.parameterAsDouble(parameters, self.MAX_HOLE_SIZE, context)
         crsStr = iface.mapCanvas().mapSettings().destinationCrs().authid()
         crs = QgsCoordinateReferenceSystem(crsStr)
@@ -98,7 +100,9 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
             feedback.setProgress(step * progressStep)
 
         if len(smallRings) == 0:
-            feedback.pushInfo(self.tr(f"Holes smaller than {str(maxSize)} were not found"))
+            feedback.pushInfo(
+                self.tr(f"Holes smaller than {str(maxSize)} were not found")
+            )
             return {self.OUTPUT: self.sink_id}
         self.outputLayer(smallRings, newField)
         return {self.OUTPUT: self.sink_id}
@@ -111,7 +115,6 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
             newFeat.setFields(newField)
             newFeat["area"] = feature.area()
             self.sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
-
 
     def name(self):
         """

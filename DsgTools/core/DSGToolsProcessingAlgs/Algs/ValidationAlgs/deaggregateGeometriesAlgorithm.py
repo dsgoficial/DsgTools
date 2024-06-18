@@ -95,13 +95,11 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
         nFeats = cacheLyr.featureCount()
         if nFeats == 0:
             return {}
-        
+
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         deaggregatedLyr = algRunner.runMultipartToSingleParts(
-            inputLayer=cacheLyr,
-            context=context,
-            feedback=multiStepFeedback
+            inputLayer=cacheLyr, context=context, feedback=multiStepFeedback
         )
 
         deaggregatedFeatureCount = deaggregatedLyr.featureCount()
