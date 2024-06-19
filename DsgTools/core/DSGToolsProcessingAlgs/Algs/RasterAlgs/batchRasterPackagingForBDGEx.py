@@ -412,6 +412,9 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             f.write(xmlstring)
 
     def cleanupTempFolder(self):
+        del self.shapefilesDict
+        del self.inputFilesDict
+        del self.relatedPolygonsDict
         folder_path = Path(self.tempFolder)
         if not folder_path.exists():
             return
