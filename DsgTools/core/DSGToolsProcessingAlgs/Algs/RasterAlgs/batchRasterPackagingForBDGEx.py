@@ -30,11 +30,13 @@ import json
 import xml.dom.minidom
 import datetime
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List, Union
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 import processing
 from osgeo import gdal
 from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QByteArray
 from qgis.core import (
     QgsProcessingAlgorithm,
     QgsProcessingMultiStepFeedback,
@@ -47,6 +49,9 @@ from qgis.core import (
     QgsProcessingUtils,
     QgsVectorLayer,
     QgsFeatureSource,
+    QgsFeedback,
+    QgsProcessingContext,
+    QgsGeometry,
 )
 
 
@@ -87,6 +92,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             context,
         )
         self.algRunner = AlgRunner()
+        self.layerHandler = LayerHandler()
         inputFiles = list(
             set(
                 [
@@ -102,57 +108,108 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 "Não foram encontrados arquivos .tif na pasta de entrada."
             )
 
+        self.tempFolder = QgsProcessingUtils.tempFolder()
         input_folder_path = Path(inputFolder).resolve()
         output_base_path = Path(output_path).resolve()
+        self.shapefilesDict = self.getShapefilesDict(inputFolder)
+        nInputs = 1 + sum(
+            [
+                v.get("TILE_SHAPE", None).featureCount()
+                for v in self.shapefilesDict.values()
+                if v.get("TILE_SHAPE", None) is not None
+            ]
+        )
         multiStepFeedback = QgsProcessingMultiStepFeedback(nInputs, feedback)
-        self.tempFolder = QgsProcessingUtils.tempFolder()
         self.inputFilesDict = {
             p.name: {"path": p, "size_in_gb": p.stat().st_size / (1024**3)}
             for p in inputFiles
         }
-        self.shapefilesDict = self.getShapefilesDict(inputFolder)
+        multiStepFeedback.setCurrentStep(0)
         self.relatedPolygonsDict = self.relatePolygons(multiStepFeedback, context)
 
-        for current, input_path in enumerate(inputFiles):
-            multiStepFeedback.pushInfo(
-                self.tr(
-                    f"Converting {current+1}/{nInputs}: Converting file {input_path}"
+        for current, (folderKey, geomDict) in enumerate(
+            self.relatedPolygonsDict.items(), start=1
+        ):
+            for inner, (geomWkb, fileNameList) in enumerate(geomDict.items()):
+                currentIndex = current * inner
+                multiStepFeedback.pushInfo(
+                    self.tr(f"Evaluating {currentIndex+1}/{nInputs} seamlines")
                 )
-            )
-            multiStepFeedback.setProgressText(
-                self.tr(f"Converting {current+1}/{nInputs}")
-            )
-            multiStepFeedback.setCurrentStep(current)
-            if feedback.isCanceled():
-                break
-            relative_path = Path(input_path).relative_to(input_folder_path).parent
-            output_dir = output_base_path / relative_path
-            output_dir.mkdir(parents=True, exist_ok=True)
-            output_file_path = output_dir / input_path.name
-            rasterLayer = self.getRasterLayer(input_path)
-            bandcount = rasterLayer.bandCount()
-            matchedLayer = self.shapefilesDict.get(input_path.parent.stem, None)
-            if matchedLayer is not None:
-                matchedFeatures = [i for i in matchedLayer.getFeatures()]
-                if len(matchedFeatures) > 0:
-                    matchedFeature = matchedFeatures[0]
-                    self.buildXML(
+                multiStepFeedback.setProgressText(
+                    self.tr(f"Evaluating {currentIndex+1}/{nInputs} seamlines")
+                )
+                multiStepFeedback.setCurrentStep(currentIndex)
+                if multiStepFeedback.isCanceled():
+                    break
+                if len(fileNameList) == 0:
+                    continue
+                diskSize = sum(
+                    self.inputFilesDict.get(fileName, {}).get("size_in_gb", 0)
+                    for fileName in fileNameList
+                )
+                input_path = self.inputFilesDict.get(fileNameList[0], {}).get(
+                    "path", None
+                )
+                if input_path is None:
+                    raise QgsProcessingException("Invalid Path")
+                relative_path = Path(input_path).relative_to(input_folder_path).parent
+                output_dir = output_base_path / relative_path
+                output_dir.mkdir(parents=True, exist_ok=True)
+                prefix = "".join(re.findall(r"R\d+C\d+", input_path.name))
+                output_file_path = output_dir / str(input_path.name).replace(
+                    prefix, str(inner)
+                )
+                if diskSize < 2:
+                    vrt = self.algRunner.runBuildVRT(
+                        inputRasterList=[
+                            str(self.inputFilesDict[f]["path"]) for f in fileNameList
+                        ],
+                        context=context,
+                        feedback=multiStepFeedback,
+                        outputLyr=QgsProcessingUtils.generateTempFilename(
+                            f"{folderKey}{inner}.tif"
+                        ),
+                    )
+                    rasterLayer = (
+                        self.getRasterLayer(vrt)
+                        if not isinstance(vrt, QgsRasterLayer)
+                        else vrt
+                    )
+                    geom = QgsGeometry()
+                    geom.fromWkb(geomWkb)
+                    clipLayer = self.layerHandler.createMemoryLayerFromGeometry(
+                        geom, rasterLayer.crs()
+                    )
+                    multiStepFeedback.setCurrentStep(currentIndex + 1)
+                    clipped = self.algRunner.runClipRasterLayer(
+                        inputRaster=rasterLayer,
+                        mask=clipLayer,
+                        context=context,
+                        feedback=multiStepFeedback,
+                        outputRaster=str(output_file_path),
+                    )
+                    multiStepFeedback.setCurrentStep(currentIndex + 2)
+                    bandcount = rasterLayer.bandCount()
+                    self.algRunner.runGdalWarp(
                         rasterLayer=rasterLayer,
-                        matchedFeature=matchedFeature,
+                        targetCrs=QgsCoordinateReferenceSystem("EPSG:4674"),
+                        resampling=0,
+                        options="COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE|PHOTOMETRIC=YCbCr"
+                        if bandcount > 1
+                        else "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE",
+                        multiThreading=True,
+                        outputLyr=str(output_file_path),
+                        context=context,
+                        feedback=multiStepFeedback,
+                    )
+                    multiStepFeedback.setCurrentStep(currentIndex + 3)
+                    self.buildXML(
+                        rasterLayer=clipped,
+                        matchedFeature=self.shapefilesDict[folderKey]["FEAT_DICT"][
+                            geomWkb
+                        ],
                         output_xml_file=str(output_file_path).replace(".tif", ".xml"),
                     )
-            self.algRunner.runGdalWarp(
-                rasterLayer=rasterLayer,
-                targetCrs=QgsCoordinateReferenceSystem("EPSG:4674"),
-                resampling=0,
-                options="COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE|PHOTOMETRIC=YCbCr"
-                if bandcount > 1
-                else "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE",
-                multiThreading=True,
-                outputLyr=str(output_file_path),
-                context=context,
-                feedback=multiStepFeedback,
-            )
 
         return {
             "OUTPUT_FOLDER": output_path,
@@ -166,7 +223,9 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         )
         return rasterLayer
 
-    def getShapefilesDict(self, inputFolder: str) -> Dict[str, QgsVectorLayer]:
+    def getShapefilesDict(
+        self, inputFolder: str
+    ) -> Dict[str, Union[QgsVectorLayer, Dict[QByteArray, QgsFeature], Path]]:
         shapefilesDict = defaultdict(dict)
         for zipPath in Path(inputFolder).rglob("*.zip"):
             with zipfile.ZipFile(zipPath, "r") as zip_ref:
@@ -180,12 +239,20 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             elif "_TILE_SHAPE" in str(shp):
                 key = str(shp.name).replace(".shp", "").replace("_TILE_SHAPE", "")
                 shapefilesDict[key]["TILE_SHAPE"] = QgsVectorLayer(str(shp), key, "ogr")
+                shapefilesDict[key]["FEAT_DICT"] = dict()
+                for feat in shapefilesDict[key]["TILE_SHAPE"].getFeatures():
+                    geom = feat.geometry()
+                    geomWkb = geom.asWkb()
+                    shapefilesDict[key]["FEAT_DICT"][geomWkb] = feat
+
             else:
                 continue
 
         return shapefilesDict
 
-    def relatePolygons(self, feedback, context):
+    def relatePolygons(
+        self, feedback: QgsFeedback, context: QgsProcessingContext
+    ) -> Dict[str, Dict[QByteArray, List[str]]]:
         relatedItemsDict = defaultdict(lambda: defaultdict(list))
         nItems = len(self.shapefilesDict)
         if nItems == 0:
@@ -231,6 +298,8 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 joinLyr=valueDict["TILE_SHAPE"],
                 predicateList=[AlgRunner.Intersect],
                 method=0,
+                context=context,
+                feedback=multiStepFeedback,
             )
             if multiStepFeedback.isCanceled():
                 break
