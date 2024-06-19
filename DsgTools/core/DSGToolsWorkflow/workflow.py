@@ -125,11 +125,19 @@ class DSGToolsWorkflow(QObject):
             }
         }
         """
-        for workflowItem in self.workflowItemList:
+        initialIdx = None
+        for idx, workflowItem in enumerate(self.workflowItemList):
             d = data.get(workflowItem.displayName, None)
             if d is None:
                 continue
             workflowItem.setStatusFromDict(d)
+            if (
+                initialIdx is None
+                and workflowItem.getStatus() == ExecutionStatus.INITIAL
+            ):
+                initialIdx = idx - 1
+            self.currentWorkflowItemStatusChanged.emit(idx, workflowItem)
+        self.setCurrentWorkflowItem(initialIdx if initialIdx > 0 else 0)
 
     def getStatusDict(self) -> Dict[str, Dict[str, Any]]:
         return {

@@ -132,13 +132,13 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.workflows = dict()
         self.resetComboBox()
         self.resetTable()
-        # self.loadState()
+        self.loadState()
         self.prepareProgressBar()
         # make sure workflows are loaded as per project instances
-        # QgsProject.instance().projectSaved.connect(self.saveState)
-        # self.iface.newProjectCreated.connect(self.saveState)
-        # self.iface.newProjectCreated.connect(self.loadState)
-        # self.iface.projectRead.connect(self.loadState)
+        QgsProject.instance().projectSaved.connect(self.saveState)
+        self.iface.newProjectCreated.connect(self.saveState)
+        self.iface.newProjectCreated.connect(self.loadState)
+        self.iface.projectRead.connect(self.loadState)
 
     def generateMenu(self, pos, idx, widget, modelName, workflow: DSGToolsWorkflow):
         workflowName = workflow.displayName
