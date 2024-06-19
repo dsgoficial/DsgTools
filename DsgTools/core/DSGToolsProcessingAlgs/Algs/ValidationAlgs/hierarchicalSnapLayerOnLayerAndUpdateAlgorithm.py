@@ -98,6 +98,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
+        gc.collect()
         gc.disable()
         self.layerHandler = LayerHandler()
         self.algRunner = AlgRunner()
@@ -207,6 +208,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             geographicBoundaryLyr=geographicBoundaryLyr,
         )
         gc.enable()
+        gc.collect()
         return {}
 
     def buildAuxGeographicBoundary(self, geographicBoundary, context, feedback):
@@ -393,7 +395,6 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                     feedback=multiStepFeedback,
                     onlySelected=onlySelected,
                 )
-                QgsProject.instance().removeMapLayer(tempLyr.id())
                 continue
             outputLyr = self.algRunner.runRenameField(
                 inputLayer=tempLyr,
@@ -425,7 +426,6 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 feedback=multiStepFeedback,
                 onlySelected=onlySelected,
             )
-            QgsProject.instance().removeMapLayer(tempLyr.id())
 
     def name(self):
         """

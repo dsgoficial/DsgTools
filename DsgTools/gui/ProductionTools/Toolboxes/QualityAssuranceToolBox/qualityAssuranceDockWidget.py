@@ -748,7 +748,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         sender = self.sender()
         if sender.objectName() == "runPushButton":
             idx = workflow.getCurrentWorkflowStepIndex()
-            if idx > 0 or (
+            if idx is not None and idx > 0 or (
                 idx == 0
                 and workflow.getCurrentWorkflowItemStatus() != ExecutionStatus.INITIAL
             ):

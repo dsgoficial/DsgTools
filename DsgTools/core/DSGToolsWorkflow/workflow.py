@@ -298,6 +298,8 @@ class DSGToolsWorkflow(QObject):
     def cancelCurrentRun(self) -> None:
         """Cancel the current run of the workflow."""
         currentWorkflowItem = self.getCurrentWorkflowItem()
+        if currentWorkflowItem is None:
+            return
         currentWorkflowItem.cancelCurrentTask()
         QgsApplication.taskManager().cancelAll()
         self.multiStepFeedback.setCurrentStep(self.currentStepIndex)

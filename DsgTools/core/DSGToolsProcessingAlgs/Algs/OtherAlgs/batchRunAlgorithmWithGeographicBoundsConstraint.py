@@ -197,7 +197,7 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
             currentDict = self.parseParameterDict(
                 context, algParameterDict, input_id=layer_id, fieldNameSet=fieldNameSet
             )
-            currentDict[inputKey] = layerName
+            currentDict[inputKey] = layer
             if (
                 geographicBoundaryLyr is not None
                 and geographicBoundaryKey is not None
@@ -211,12 +211,14 @@ class BatchRunAlgorithmWithGeographicBoundsConstraint(QgsProcessingAlgorithm):
                 context=context,
                 feedback=multiStepFeedback,
             )
+            if output is None:
+                continue
             outputLyr = (
                 QgsProcessingUtils.mapLayerFromString(output, context)
                 if isinstance(output, str)
                 else output
             )
-            if outputLyr is None:
+            if outputLyr.featureCount() == 0:
                 continue
             if self.flagSink is None:
                 self.prepareFlagSink(parameters, outputLyr, context)

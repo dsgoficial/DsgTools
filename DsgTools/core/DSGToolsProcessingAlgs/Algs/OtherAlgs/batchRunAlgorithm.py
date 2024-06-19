@@ -154,7 +154,7 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
             currentDict = self.parseParameterDict(
                 context, algParameterDict, fieldNameSet
             )
-            currentDict[inputKey] = layerName
+            currentDict[inputKey] = layer
             output = self.runProcessingAlg(
                 algName,
                 outputKey,
@@ -162,12 +162,14 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
                 context=context,
                 feedback=multiStepFeedback,
             )
+            if output is None:
+                continue
             outputLyr = (
                 QgsProcessingUtils.mapLayerFromString(output, context)
                 if isinstance(output, str)
                 else output
             )
-            if outputLyr is None:
+            if outputLyr.featureCount() == 0:
                 continue
             if self.flagSink is None:
                 self.prepareFlagSink(parameters, outputLyr, context)
