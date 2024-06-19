@@ -147,10 +147,16 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             return
         currentWorkflowIndexFromWorkflow = workflow.getCurrentWorkflowStepIndex()
         menu = self.getIgnoreFlagsMenu(idx, workflowName, workflow, currentWorkflowItem)
-        if (menu is None) and (currentWorkflowIndexFromWorkflow is not None and idx > currentWorkflowIndexFromWorkflow):
+        if (menu is None) and (
+            currentWorkflowIndexFromWorkflow is not None
+            and idx > currentWorkflowIndexFromWorkflow
+        ):
             return
         menu: QMenu = QMenu(self) if menu is None else menu
-        if currentWorkflowIndexFromWorkflow is None or idx <= currentWorkflowIndexFromWorkflow:
+        if (
+            currentWorkflowIndexFromWorkflow is None
+            or idx <= currentWorkflowIndexFromWorkflow
+        ):
             actionTextList: List[str] = [action.text() for action in menu.actions()]
             actionName = self.tr(f"Set model as current step")
             if actionName not in actionTextList:
@@ -203,7 +209,9 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
 
     def setCurrentWorkflowItem(self, idx):
         workflow: DSGToolsWorkflow = self.currentWorkflow()
-        currentWorkflowItem: DSGToolsWorkflowItem = workflow.getWorkflowItemFromIndex(idx)
+        currentWorkflowItem: DSGToolsWorkflowItem = workflow.getWorkflowItemFromIndex(
+            idx
+        )
         if not self.confirmAction(
             msg=self.tr(
                 f"Would you like to set model '{currentWorkflowItem.displayName}' as current model of workflow '{workflow.displayName}'?"
@@ -717,7 +725,9 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.saveState()
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTools Q&A Tool Box"),
-                self.tr(f"The workflows saved in the project are in the older version. We will not load these versions. Please convert your workflows, import them and save."),
+                self.tr(
+                    f"The workflows saved in the project are in the older version. We will not load these versions. Please convert your workflows, import them and save."
+                ),
                 Qgis.Warning,
                 duration=3,
             )
@@ -757,9 +767,14 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         sender = self.sender()
         if sender.objectName() == "runPushButton":
             idx = workflow.getCurrentWorkflowStepIndex()
-            if idx is not None and idx > 0 or (
-                idx == 0
-                and workflow.getCurrentWorkflowItemStatus() != ExecutionStatus.INITIAL
+            if (
+                idx is not None
+                and idx > 0
+                or (
+                    idx == 0
+                    and workflow.getCurrentWorkflowItemStatus()
+                    != ExecutionStatus.INITIAL
+                )
             ):
                 if (
                     QMessageBox.question(

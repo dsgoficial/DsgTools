@@ -178,31 +178,34 @@ class ModelExecutionOutput:
             return
         for key, value in self.result.items():
             self.result[key] = self.loadGeojsonAsQgsVectorLayer(key, value)
-    
+
     def as_dict(self):
         output_dict = {
-           "executionTime": self.executionTime,
-           "executionMessage": self.executionMessage,
-           "status": self.status,
+            "executionTime": self.executionTime,
+            "executionMessage": self.executionMessage,
+            "status": self.status,
         }
         output_dict["result"] = {
             k: self.getGeoJsonFromQgsVectorLayer(v) for k, v in self.result.items()
         }
         return output_dict
-    
+
     def loadGeojsonAsQgsVectorLayer(self, layerName: str, data: dict) -> QgsVectorLayer:
         layer = QgsVectorLayer(json.dumps(data), layerName, "ogr")
         return layer
 
     def getGeoJsonFromQgsVectorLayer(self, lyr: QgsVectorLayer) -> dict:
-        temp_geojson = tempfile.NamedTemporaryFile(suffix='.geojson', delete=False)
+        temp_geojson = tempfile.NamedTemporaryFile(suffix=".geojson", delete=False)
         temp_geojson.close()
-        error = QgsVectorFileWriter.writeAsVectorFormat(lyr, temp_geojson.name, "utf-8", lyr.crs(), "GeoJSON")
-        with open(temp_geojson.name, 'r', encoding='utf-8') as f:
+        error = QgsVectorFileWriter.writeAsVectorFormat(
+            lyr, temp_geojson.name, "utf-8", lyr.crs(), "GeoJSON"
+        )
+        with open(temp_geojson.name, "r", encoding="utf-8") as f:
             geojson_content = f.read()
         Path(temp_geojson.name).unlink()
-    
+
         return geojson_content
+
 
 @dataclass
 class DSGToolsWorkflowItem(QObject):
