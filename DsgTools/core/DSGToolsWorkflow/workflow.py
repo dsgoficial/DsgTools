@@ -176,6 +176,11 @@ class DSGToolsWorkflow(QObject):
         if idx < 0 or idx >= len(self.workflowItemList):
             return
         self.currentStepIndex = idx
+    
+    def getWorkflowItemFromIndex(self, idx):
+        if idx < 0 or idx >= len(self.workflowItemList):
+            return None
+        return self.workflowItemList[idx]
 
     def getWorklowItemFromName(self, name):
         for workflowItem in self.workflowItemList:

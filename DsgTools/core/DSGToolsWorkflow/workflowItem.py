@@ -24,9 +24,12 @@
 import copy
 from dataclasses import asdict, dataclass, field
 from enum import Enum, unique
+import json
+from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 import os
 from time import time
+import tempfile
 
 from qgis.core import (
     QgsTask,
@@ -39,6 +42,7 @@ from qgis.core import (
     QgsProcessingContext,
     QgsMessageLog,
     Qgis,
+    QgsVectorFileWriter,
 )
 from qgis.PyQt.QtCore import pyqtSignal, QObject
 from qgis.utils import iface
@@ -170,7 +174,35 @@ class ModelExecutionOutput:
     def __post_init__(self):
         if isinstance(self.status, str):
             self.status = ExecutionStatus(self.status)
+        if len(self.result) == 0:
+            return
+        for key, value in self.result.items():
+            self.result[key] = self.loadGeojsonAsQgsVectorLayer(key, value)
+    
+    def as_dict(self):
+        output_dict = {
+           "executionTime": self.executionTime,
+           "executionMessage": self.executionMessage,
+           "status": self.status,
+        }
+        output_dict["result"] = {
+            k: self.getGeoJsonFromQgsVectorLayer(v) for k, v in self.result.items()
+        }
+        return output_dict
+    
+    def loadGeojsonAsQgsVectorLayer(self, layerName: str, data: dict) -> QgsVectorLayer:
+        layer = QgsVectorLayer(json.dumps(data), layerName, "ogr")
+        return layer
 
+    def getGeoJsonFromQgsVectorLayer(self, lyr: QgsVectorLayer) -> dict:
+        temp_geojson = tempfile.NamedTemporaryFile(suffix='.geojson', delete=False)
+        temp_geojson.close()
+        error = QgsVectorFileWriter.writeAsVectorFormat(lyr, temp_geojson.name, "utf-8", lyr.crs(), "GeoJSON")
+        with open(temp_geojson.name, 'r', encoding='utf-8') as f:
+            geojson_content = f.read()
+        Path(temp_geojson.name).unlink()
+    
+        return geojson_content
 
 @dataclass
 class DSGToolsWorkflowItem(QObject):
@@ -225,8 +257,8 @@ class DSGToolsWorkflowItem(QObject):
         self.executionOutput = ModelExecutionOutput(**data)
 
     def executionStatusAsDict(self):
-        d = asdict(self.executionOutput)
-        d.pop("result")
+        d = self.executionOutput.as_dict()
+        # d.pop("result")
         return d
 
     def getModel(self) -> QgsProcessingModelAlgorithm:

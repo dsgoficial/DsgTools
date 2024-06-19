@@ -147,10 +147,10 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             return
         currentWorkflowIndexFromWorkflow = workflow.getCurrentWorkflowStepIndex()
         menu = self.getIgnoreFlagsMenu(idx, workflowName, workflow, currentWorkflowItem)
-        if menu is None and idx > currentWorkflowIndexFromWorkflow:
+        if (menu is None) and (currentWorkflowIndexFromWorkflow is not None and idx > currentWorkflowIndexFromWorkflow):
             return
         menu: QMenu = QMenu(self) if menu is None else menu
-        if idx <= currentWorkflowIndexFromWorkflow:
+        if currentWorkflowIndexFromWorkflow is None or idx <= currentWorkflowIndexFromWorkflow:
             actionTextList: List[str] = [action.text() for action in menu.actions()]
             actionName = self.tr(f"Set model as current step")
             if actionName not in actionTextList:
@@ -203,7 +203,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
 
     def setCurrentWorkflowItem(self, idx):
         workflow: DSGToolsWorkflow = self.currentWorkflow()
-        currentWorkflowItem: DSGToolsWorkflowItem = workflow.getCurrentWorkflowItem()
+        currentWorkflowItem: DSGToolsWorkflowItem = workflow.getWorkflowItemFromIndex(idx)
         if not self.confirmAction(
             msg=self.tr(
                 f"Would you like to set model '{currentWorkflowItem.displayName}' as current model of workflow '{workflow.displayName}'?"
@@ -703,15 +703,24 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         workflows = state["workflows"] if "workflows" in state else {}
         workflow_status_dict = state.get("workflow_status_dict", {})
         self.resetComboBox()
-        for idx, (name, workflowMap) in enumerate(workflows.items()):
-            self.workflows[name] = dsgtools_workflow_from_dict(workflowMap)
-            self.comboBox.addItem(name)
-            self.setWorkflowTooltip(idx + 1, self.workflows[name].metadata)
-            self.workflows[name].setStatusDict(workflow_status_dict[name])
-        currentIdx = state["current_workflow"] if "current_workflow" in state else 0
-        self.comboBox.setCurrentIndex(currentIdx)
-        showButtons = state["show_buttons"] if "show_buttons" in state else True
-        self.showEditionButton(showButtons)
+        try:
+            for idx, (name, workflowMap) in enumerate(workflows.items()):
+                self.workflows[name] = dsgtools_workflow_from_dict(workflowMap)
+                self.comboBox.addItem(name)
+                self.setWorkflowTooltip(idx + 1, self.workflows[name].metadata)
+                self.workflows[name].setStatusDict(workflow_status_dict[name])
+            currentIdx = state["current_workflow"] if "current_workflow" in state else 0
+            self.comboBox.setCurrentIndex(currentIdx)
+            showButtons = state["show_buttons"] if "show_buttons" in state else True
+            self.showEditionButton(showButtons)
+        except:
+            self.saveState()
+            self.iface.messageBar().pushMessage(
+                self.tr("DSGTools Q&A Tool Box"),
+                self.tr(f"The workflows saved in the project are in the older version. We will not load these versions. Please convert your workflows, import them and save."),
+                Qgis.Warning,
+                duration=3,
+            )
 
     @pyqtSlot(int, name="on_comboBox_currentIndexChanged")
     @pyqtSlot(str, name="on_comboBox_currentTextChanged")
