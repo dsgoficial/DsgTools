@@ -24,7 +24,10 @@
 from collections import defaultdict
 import glob
 import itertools
+import math
 import re
+import shutil
+from uuid import uuid4
 import zipfile
 import json
 import xml.dom.minidom
@@ -52,6 +55,8 @@ from qgis.core import (
     QgsFeedback,
     QgsProcessingContext,
     QgsGeometry,
+    QgsRectangle,
+    NULL,
 )
 
 
@@ -108,45 +113,40 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 "Não foram encontrados arquivos .tif na pasta de entrada."
             )
 
-        self.tempFolder = QgsProcessingUtils.tempFolder()
+        self.tempFolder = Path(QgsProcessingUtils.tempFolder()) / uuid4().hex
+        if not self.tempFolder.exists():
+            self.tempFolder.mkdir(parents=True, exist_ok=True)
         input_folder_path = Path(inputFolder).resolve()
         output_base_path = Path(output_path).resolve()
         self.shapefilesDict = self.getShapefilesDict(inputFolder)
-        nInputs = 1 + sum(
-            [
-                v.get("TILE_SHAPE", None).featureCount()
-                for v in self.shapefilesDict.values()
-                if v.get("TILE_SHAPE", None) is not None
-            ]
-        )
-        multiStepFeedback = QgsProcessingMultiStepFeedback(nInputs, feedback)
         self.inputFilesDict = {
             p.name: {"path": p, "size_in_gb": p.stat().st_size / (1024**3)}
             for p in inputFiles
         }
-        multiStepFeedback.setCurrentStep(0)
-        self.relatedPolygonsDict = self.relatePolygons(multiStepFeedback, context)
-
-        for current, (folderKey, geomDict) in enumerate(
-            self.relatedPolygonsDict.items(), start=1
-        ):
+        self.relatedPolygonsDict = self.relatePolygons(feedback, context)
+        nInputs = 2*sum(
+            [
+                v.get("SEAMLINES_SHAPE", None).featureCount()
+                for v in self.shapefilesDict.values()
+                if v.get("SEAMLINES_SHAPE", None) is not None
+            ]
+        )
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nInputs, feedback)
+        currentIndex = 0
+        currentSeamline = 0
+        for folderKey, geomDict in self.relatedPolygonsDict.items():
             for inner, (geomWkb, fileNameList) in enumerate(geomDict.items()):
-                currentIndex = current * inner
                 multiStepFeedback.pushInfo(
-                    self.tr(f"Evaluating {currentIndex+1}/{nInputs} seamlines")
+                    self.tr(f"Evaluating {currentSeamline+1}/{nInputs//2} seamlines")
                 )
                 multiStepFeedback.setProgressText(
-                    self.tr(f"Evaluating {currentIndex+1}/{nInputs} seamlines")
+                    self.tr(f"Evaluating {currentSeamline+1}/{nInputs//2} seamlines")
                 )
                 multiStepFeedback.setCurrentStep(currentIndex)
                 if multiStepFeedback.isCanceled():
                     break
                 if len(fileNameList) == 0:
                     continue
-                diskSize = sum(
-                    self.inputFilesDict.get(fileName, {}).get("size_in_gb", 0)
-                    for fileName in fileNameList
-                )
                 input_path = self.inputFilesDict.get(fileNameList[0], {}).get(
                     "path", None
                 )
@@ -156,64 +156,134 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 output_dir = output_base_path / relative_path
                 output_dir.mkdir(parents=True, exist_ok=True)
                 prefix = "".join(re.findall(r"R\d+C\d+", input_path.name))
-                output_file_path = output_dir / str(input_path.name).replace(
-                    prefix, str(inner)
+                diskSize = sum(
+                    self.inputFilesDict.get(fileName, {}).get("size_in_gb", 0)
+                    for fileName in fileNameList
                 )
-                if diskSize < 2:
-                    vrt = self.algRunner.runBuildVRT(
-                        inputRasterList=[
-                            str(self.inputFilesDict[f]["path"]) for f in fileNameList
-                        ],
-                        context=context,
-                        feedback=multiStepFeedback,
-                        outputLyr=QgsProcessingUtils.generateTempFilename(
-                            f"{folderKey}{inner}.tif"
-                        ),
-                    )
-                    rasterLayer = (
-                        self.getRasterLayer(vrt)
-                        if not isinstance(vrt, QgsRasterLayer)
-                        else vrt
-                    )
-                    geom = QgsGeometry()
-                    geom.fromWkb(geomWkb)
-                    clipLayer = self.layerHandler.createMemoryLayerFromGeometry(
-                        geom, rasterLayer.crs()
-                    )
-                    multiStepFeedback.setCurrentStep(currentIndex + 1)
+                matchedFeature = self.shapefilesDict[folderKey]["FEAT_DICT"][geomWkb]
+                productName = f"""{matchedFeature["source"]}"""
+                if matchedFeature["productTyp"] != NULL:
+                    productName += f"""_{matchedFeature["productTyp"].replace(" ","_")}"""
+                productName += f"""_{re.sub("T.+", "", matchedFeature["acquisitio"]).replace("-","")}_id_{matchedFeature['featureId']}"""
+                output_file_path = output_dir / f"{productName}{input_path.suffix}"
+                vrt = self.algRunner.runBuildVRT(
+                    inputRasterList=[
+                        str(self.inputFilesDict[f]["path"]) for f in fileNameList
+                    ],
+                    context=context,
+                    feedback=multiStepFeedback,
+                    outputLyr=QgsProcessingUtils.generateTempFilename(
+                        f"{folderKey}{inner}.tif"
+                    ),
+                )
+                rasterLayer = (
+                    self.getRasterLayer(vrt)
+                    if not isinstance(vrt, QgsRasterLayer)
+                    else vrt
+                )
+                bandcount = rasterLayer.bandCount()
+                currentIndex += 1
+                for i, clipLayer in enumerate(self.getClipPolygonLayers(rasterLayer, diskSize, geomWkb, context), start=1):
+                    multiStepFeedback.setCurrentStep(currentIndex)
+                    clippedOutputPath = str(output_file_path) if diskSize < 2 else str(output_file_path.parent / f"{output_file_path.stem}_{i}{output_file_path.suffix}")
                     clipped = self.algRunner.runClipRasterLayer(
                         inputRaster=rasterLayer,
                         mask=clipLayer,
-                        context=context,
-                        feedback=multiStepFeedback,
-                        outputRaster=str(output_file_path),
-                    )
-                    multiStepFeedback.setCurrentStep(currentIndex + 2)
-                    bandcount = rasterLayer.bandCount()
-                    self.algRunner.runGdalWarp(
-                        rasterLayer=rasterLayer,
                         targetCrs=QgsCoordinateReferenceSystem("EPSG:4674"),
-                        resampling=0,
                         options="COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE|PHOTOMETRIC=YCbCr"
                         if bandcount > 1
                         else "COMPRESS=JPEG|JPEG_QUALITY=75|TILED=TRUE",
-                        multiThreading=True,
-                        outputLyr=str(output_file_path),
                         context=context,
+                        multiThreading=True,
                         feedback=multiStepFeedback,
+                        outputRaster=clippedOutputPath,
                     )
-                    multiStepFeedback.setCurrentStep(currentIndex + 3)
+                    currentIndex += 1
+                    multiStepFeedback.setCurrentStep(currentIndex)
+                    clippedRasterLayer = (
+                        self.getRasterLayer(clipped)
+                        if not isinstance(clipped, QgsRasterLayer)
+                        else clipped
+                    )
                     self.buildXML(
-                        rasterLayer=clipped,
-                        matchedFeature=self.shapefilesDict[folderKey]["FEAT_DICT"][
-                            geomWkb
-                        ],
-                        output_xml_file=str(output_file_path).replace(".tif", ".xml"),
+                        rasterLayer=clippedRasterLayer,
+                        matchedFeature=matchedFeature,
+                        output_xml_file=clippedOutputPath.replace(".tif", ".xml"),
+                        productName=Path(clippedOutputPath).stem
                     )
-
+                    currentIndex += 1
+                currentSeamline += 1
+        self.cleanupTempFolder()
         return {
             "OUTPUT_FOLDER": output_path,
         }
+    
+    def getClipPolygonLayers(self, rasterLayer: QgsRasterLayer, diskSize: float, geomWkb: QByteArray, context: QgsProcessingContext) -> List[QgsVectorLayer]:
+        geom = QgsGeometry()
+        geom.fromWkb(geomWkb)
+        polygonLayer = self.layerHandler.createMemoryLayerFromGeometry(
+            geom, rasterLayer.crs()
+        )
+        if diskSize < 2:
+            return [polygonLayer]
+        bbox = geom.boundingBox()
+        outputLayerList = []
+        crs = rasterLayer.crs()
+        n = math.ceil(diskSize / 2)
+        for rect in self.split_rectangle(bbox, n):
+            rectGeom = QgsGeometry.fromRect(rect)
+            rectLyr = self.layerHandler.createMemoryLayerFromGeometry(rectGeom, crs)
+            clippedLyr = self.algRunner.runClip(
+                inputLayer=polygonLayer,
+                overlayLayer=rectLyr,
+                context=context,
+                is_child_algorithm=False
+            )
+            outputLayerList.append(clippedLyr)
+        return outputLayerList
+    
+    @staticmethod
+    def split_rectangle(rect: QgsRectangle, n: int) -> List[QgsRectangle]:
+        """
+        Splits a QgsRectangle into n equal parts along its largest dimension.
+
+        :param rect: QgsRectangle to be split.
+        :param n: Number of parts to split the rectangle into.
+        :return: List of QgsRectangle objects representing the split parts.
+        """
+        # Calculate the width and height of the rectangle
+        width = rect.width()
+        height = rect.height()
+        
+        # Determine the largest dimension
+        if width > height:
+            # Split along the horizontal dimension
+            part_width = width / n
+            parts = []
+            for i in range(n):
+                part_rect = QgsRectangle(
+                    rect.xMinimum() + i * part_width,
+                    rect.yMinimum(),
+                    rect.xMinimum() + (i + 1) * part_width,
+                    rect.yMaximum()
+                )
+                parts.append(part_rect)
+        else:
+            # Split along the vertical dimension
+            part_height = height / n
+            parts = []
+            for i in range(n):
+                part_rect = QgsRectangle(
+                    rect.xMinimum(),
+                    rect.yMinimum() + i * part_height,
+                    rect.xMaximum(),
+                    rect.yMinimum() + (i + 1) * part_height
+                )
+                parts.append(part_rect)
+        
+        return parts
+
+
 
     def getRasterLayer(self, input_path: str) -> QgsRasterLayer:
         options = QgsRasterLayer.LayerOptions()
@@ -236,14 +306,14 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 shapefilesDict[key]["SEAMLINES_SHAPE"] = QgsVectorLayer(
                     str(shp), key, "ogr"
                 )
-            elif "_TILE_SHAPE" in str(shp):
-                key = str(shp.name).replace(".shp", "").replace("_TILE_SHAPE", "")
-                shapefilesDict[key]["TILE_SHAPE"] = QgsVectorLayer(str(shp), key, "ogr")
                 shapefilesDict[key]["FEAT_DICT"] = dict()
-                for feat in shapefilesDict[key]["TILE_SHAPE"].getFeatures():
+                for feat in shapefilesDict[key]["SEAMLINES_SHAPE"].getFeatures():
                     geom = feat.geometry()
                     geomWkb = geom.asWkb()
                     shapefilesDict[key]["FEAT_DICT"][geomWkb] = feat
+            elif "_TILE_SHAPE" in str(shp):
+                key = str(shp.name).replace(".shp", "").replace("_TILE_SHAPE", "")
+                shapefilesDict[key]["TILE_SHAPE"] = QgsVectorLayer(str(shp), key, "ogr")
 
             else:
                 continue
@@ -257,16 +327,11 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         nItems = len(self.shapefilesDict)
         if nItems == 0:
             return relatedItemsDict
-        multiStepFeedback = QgsProcessingMultiStepFeedback(4 * nItems, feedback)
         for current, (key, valueDict) in enumerate(self.shapefilesDict.items()):
-            if multiStepFeedback.isCanceled():
+            if feedback.isCanceled():
                 break
             if "SEAMLINES_SHAPE" not in valueDict or "TILE_SHAPE" not in valueDict:
-                multiStepFeedback.setCurrentStep(4 * current + 3)
                 continue
-            multiStepFeedback.setCurrentStep(4 * current)
-            if multiStepFeedback.isCanceled():
-                break
             if (
                 valueDict["SEAMLINES_SHAPE"].hasSpatialIndex()
                 != QgsFeatureSource.SpatialIndexPresence.SpatialIndexPresent
@@ -274,11 +339,9 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 self.algRunner.runCreateSpatialIndex(
                     inputLyr=valueDict["SEAMLINES_SHAPE"],
                     context=context,
-                    feedback=multiStepFeedback,
                     is_child_algorithm=True,
                 )
-            multiStepFeedback.setCurrentStep(4 * current + 1)
-            if multiStepFeedback.isCanceled():
+            if feedback.isCanceled():
                 break
             if (
                 valueDict["TILE_SHAPE"].hasSpatialIndex()
@@ -287,11 +350,9 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 self.algRunner.runCreateSpatialIndex(
                     inputLyr=valueDict["TILE_SHAPE"],
                     context=context,
-                    feedback=multiStepFeedback,
                     is_child_algorithm=True,
                 )
-            multiStepFeedback.setCurrentStep(4 * current + 2)
-            if multiStepFeedback.isCanceled():
+            if feedback.isCanceled():
                 break
             joinnedSeamline = self.algRunner.runJoinAttributesByLocation(
                 inputLyr=valueDict["SEAMLINES_SHAPE"],
@@ -299,13 +360,11 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 predicateList=[AlgRunner.Intersect],
                 method=0,
                 context=context,
-                feedback=multiStepFeedback,
             )
-            if multiStepFeedback.isCanceled():
+            if feedback.isCanceled():
                 break
-            multiStepFeedback.setCurrentStep(4 * current + 3)
             for feat in joinnedSeamline.getFeatures():
-                if multiStepFeedback.isCanceled():
+                if feedback.isCanceled():
                     break
                 geom = feat.geometry()
                 geomKey = geom.asWkb()
@@ -317,15 +376,16 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         rasterLayer: QgsRasterLayer,
         matchedFeature: QgsFeature,
         output_xml_file: str,
+        productName: str,
     ) -> None:
         extent = rasterLayer.extent()
-        prefix = "".join(re.findall(r"R\d+C\d+", rasterLayer.name()))
+        # prefix = "".join(re.findall(r"R\d+C\d+", rasterLayer.name()))
         substitutions = {
             "X_MIN": f"{extent.xMinimum()}",
             "X_MAX": f"{extent.xMaximum()}",
             "Y_MIN": f"{extent.yMinimum()}",
             "Y_MAX": f"{extent.xMaximum()}",
-            "NOME_PRODUTO": f"""{matchedFeature["source"]}_{matchedFeature["productTyp"].replace(" ","_")}_{re.sub("T.+", "", matchedFeature["acquisitio"]).replace("-","")}_{prefix}""",
+            "NOME_PRODUTO": productName,
             "DATA_IMAGEM": re.sub("T.+", "", matchedFeature["acquisitio"]),
         }
         with open(self.xml_template_path, "r") as f:
@@ -335,6 +395,12 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         with open(output_xml_file, "w") as f:
             f.write(xmlstring)
 
+    def cleanupTempFolder(self):
+       folder_path = Path(self.tempFolder) 
+       if not folder_path.exists():
+           return
+       shutil.rmtree(folder_path)
+    
     def tr(self, string):
         return QCoreApplication.translate("BatchRasterPackagingForBDGEx", string)
 

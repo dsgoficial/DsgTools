@@ -1150,32 +1150,55 @@ class AlgRunner:
         return output["OUTPUT"]
 
     def runClipRasterLayer(
-        self, inputRaster, mask, context, feedback=None, outputRaster=None, noData=None
+        self,
+        inputRaster: QgsRasterLayer,
+        mask: QgsRasterLayer,
+        context: QgsProcessingContext,
+        sourceCrs: Optional[QgsCoordinateReferenceSystem] = None,
+        targetCrs: Optional[QgsCoordinateReferenceSystem] = None,
+        nodata: Optional[int] = None,
+        options: Optional[str] = None,
+        outputRaster: Optional[QgsRasterLayer] = None,
+        xResolution: Optional[float] = None,
+        yResolution: Optional[float] = None,
+        setResolution: Optional[bool] = False,
+        keepResolution: Optional[bool] = False,
+        cropToCutline: Optional[bool] = True,
+        alphaBand: Optional[bool] = False,
+        dataType: Optional[int] = 0,
+        multiThreading: Optional[bool] = False,
+        targetExtent: Optional[list] = None,
+        extra: Optional[str] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: Optional[bool] = False,
     ):
         outputRaster = "TEMPORARY_OUTPUT" if outputRaster is None else outputRaster
+        options = "" if options is None else options
+        extra = "" if extra is None else extra
         output = processing.run(
             "gdal:cliprasterbymasklayer",
             {
                 "INPUT": inputRaster,
                 "MASK": mask,
-                "SOURCE_CRS": None,
-                "TARGET_CRS": None,
-                "TARGET_EXTENT": None,
-                "NODATA": noData,
-                "ALPHA_BAND": False,
-                "CROP_TO_CUTLINE": True,
-                "KEEP_RESOLUTION": False,
-                "SET_RESOLUTION": False,
-                "X_RESOLUTION": None,
-                "Y_RESOLUTION": None,
-                "MULTITHREADING": False,
-                "OPTIONS": "",
-                "DATA_TYPE": 0,
-                "EXTRA": "",
+                "SOURCE_CRS": sourceCrs,
+                "TARGET_CRS": targetCrs,
+                "TARGET_EXTENT": targetExtent,
+                "NODATA": nodata,
+                "ALPHA_BAND": alphaBand,
+                "CROP_TO_CUTLINE": cropToCutline,
+                "KEEP_RESOLUTION": keepResolution,
+                "SET_RESOLUTION": setResolution,
+                "X_RESOLUTION": xResolution,
+                "Y_RESOLUTION": yResolution,
+                "MULTITHREADING": multiThreading,
+                "OPTIONS": options,
+                "DATA_TYPE": dataType,
+                "EXTRA": extra,
                 "OUTPUT": outputRaster,
             },
-            # context=context,
+            context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
