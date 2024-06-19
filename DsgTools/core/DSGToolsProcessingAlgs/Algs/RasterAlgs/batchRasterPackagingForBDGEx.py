@@ -124,7 +124,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             for p in inputFiles
         }
         self.relatedPolygonsDict = self.relatePolygons(feedback, context)
-        nInputs = 2*sum(
+        nInputs = 2 * sum(
             [
                 v.get("SEAMLINES_SHAPE", None).featureCount()
                 for v in self.shapefilesDict.values()
@@ -163,7 +163,9 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 matchedFeature = self.shapefilesDict[folderKey]["FEAT_DICT"][geomWkb]
                 productName = f"""{matchedFeature["source"]}"""
                 if matchedFeature["productTyp"] != NULL:
-                    productName += f"""_{matchedFeature["productTyp"].replace(" ","_")}"""
+                    productName += (
+                        f"""_{matchedFeature["productTyp"].replace(" ","_")}"""
+                    )
                 productName += f"""_{re.sub("T.+", "", matchedFeature["acquisitio"]).replace("-","")}_id_{matchedFeature['featureId']}"""
                 output_file_path = output_dir / f"{productName}{input_path.suffix}"
                 vrt = self.algRunner.runBuildVRT(
@@ -183,9 +185,19 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 )
                 bandcount = rasterLayer.bandCount()
                 currentIndex += 1
-                for i, clipLayer in enumerate(self.getClipPolygonLayers(rasterLayer, diskSize, geomWkb, context), start=1):
+                for i, clipLayer in enumerate(
+                    self.getClipPolygonLayers(rasterLayer, diskSize, geomWkb, context),
+                    start=1,
+                ):
                     multiStepFeedback.setCurrentStep(currentIndex)
-                    clippedOutputPath = str(output_file_path) if diskSize < 2 else str(output_file_path.parent / f"{output_file_path.stem}_{i}{output_file_path.suffix}")
+                    clippedOutputPath = (
+                        str(output_file_path)
+                        if diskSize < 2
+                        else str(
+                            output_file_path.parent
+                            / f"{output_file_path.stem}_{i}{output_file_path.suffix}"
+                        )
+                    )
                     clipped = self.algRunner.runClipRasterLayer(
                         inputRaster=rasterLayer,
                         mask=clipLayer,
@@ -209,7 +221,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                         rasterLayer=clippedRasterLayer,
                         matchedFeature=matchedFeature,
                         output_xml_file=clippedOutputPath.replace(".tif", ".xml"),
-                        productName=Path(clippedOutputPath).stem
+                        productName=Path(clippedOutputPath).stem,
                     )
                     currentIndex += 1
                 currentSeamline += 1
@@ -217,8 +229,14 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         return {
             "OUTPUT_FOLDER": output_path,
         }
-    
-    def getClipPolygonLayers(self, rasterLayer: QgsRasterLayer, diskSize: float, geomWkb: QByteArray, context: QgsProcessingContext) -> List[QgsVectorLayer]:
+
+    def getClipPolygonLayers(
+        self,
+        rasterLayer: QgsRasterLayer,
+        diskSize: float,
+        geomWkb: QByteArray,
+        context: QgsProcessingContext,
+    ) -> List[QgsVectorLayer]:
         geom = QgsGeometry()
         geom.fromWkb(geomWkb)
         polygonLayer = self.layerHandler.createMemoryLayerFromGeometry(
@@ -237,11 +255,11 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                 inputLayer=polygonLayer,
                 overlayLayer=rectLyr,
                 context=context,
-                is_child_algorithm=False
+                is_child_algorithm=False,
             )
             outputLayerList.append(clippedLyr)
         return outputLayerList
-    
+
     @staticmethod
     def split_rectangle(rect: QgsRectangle, n: int) -> List[QgsRectangle]:
         """
@@ -254,7 +272,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
         # Calculate the width and height of the rectangle
         width = rect.width()
         height = rect.height()
-        
+
         # Determine the largest dimension
         if width > height:
             # Split along the horizontal dimension
@@ -265,7 +283,7 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                     rect.xMinimum() + i * part_width,
                     rect.yMinimum(),
                     rect.xMinimum() + (i + 1) * part_width,
-                    rect.yMaximum()
+                    rect.yMaximum(),
                 )
                 parts.append(part_rect)
         else:
@@ -277,13 +295,11 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
                     rect.xMinimum(),
                     rect.yMinimum() + i * part_height,
                     rect.xMaximum(),
-                    rect.yMinimum() + (i + 1) * part_height
+                    rect.yMinimum() + (i + 1) * part_height,
                 )
                 parts.append(part_rect)
-        
+
         return parts
-
-
 
     def getRasterLayer(self, input_path: str) -> QgsRasterLayer:
         options = QgsRasterLayer.LayerOptions()
@@ -396,11 +412,11 @@ class BatchRasterPackagingForBDGEx(QgsProcessingAlgorithm):
             f.write(xmlstring)
 
     def cleanupTempFolder(self):
-       folder_path = Path(self.tempFolder) 
-       if not folder_path.exists():
-           return
-       shutil.rmtree(folder_path)
-    
+        folder_path = Path(self.tempFolder)
+        if not folder_path.exists():
+            return
+        shutil.rmtree(folder_path)
+
     def tr(self, string):
         return QCoreApplication.translate("BatchRasterPackagingForBDGEx", string)
 
