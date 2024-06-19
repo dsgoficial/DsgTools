@@ -2201,7 +2201,7 @@ class LayerHandler(QObject):
                 "native:joinattributesbylocation",
                 {
                     "INPUT": mergedLayer,
-                    "PREDICATE": [6],
+                    "PREDICATE": [AlgRunner.Within],
                     "JOIN": dissolvedPolygons,
                     "JOIN_FIELDS": [],
                     "METHOD": 0,
