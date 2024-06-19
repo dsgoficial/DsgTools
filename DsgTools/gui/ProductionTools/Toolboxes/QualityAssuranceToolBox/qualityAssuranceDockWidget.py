@@ -726,7 +726,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTools Q&A Tool Box"),
                 self.tr(
-                    f"The workflows saved in the project are in the older version. We will not load these versions. Please convert your workflows, import them and save."
+                    f"The workflows saved in the project are in the older version. We will not load these versions. Please convert your workflows, import them again and save."
                 ),
                 Qgis.Warning,
                 duration=3,
