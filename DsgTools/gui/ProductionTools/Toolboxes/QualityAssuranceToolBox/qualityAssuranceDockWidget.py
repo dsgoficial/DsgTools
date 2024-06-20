@@ -314,8 +314,8 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         header = self.tableWidget.horizontalHeader()
         dSize = abs(self.geometry().width() - header.geometry().width())
         missingBarSize = self.geometry().size().width() - dSize
-        col1Size = int(0.4 * missingBarSize)
-        col2Size = int(0.3 * missingBarSize)
+        col1Size = int(0.6 * missingBarSize)
+        col2Size = int(0.2 * missingBarSize)
         col3Size = missingBarSize - col1Size - col2Size
         header.resizeSection(0, col1Size)
         header.resizeSection(1, col2Size)
