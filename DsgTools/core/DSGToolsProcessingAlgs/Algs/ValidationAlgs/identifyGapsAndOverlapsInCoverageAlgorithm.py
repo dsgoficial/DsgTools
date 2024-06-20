@@ -43,7 +43,7 @@ from qgis.core import (
     QgsProcessingUtils,
     QgsProject,
     QgsWkbTypes,
-    QgsProcessingMultiStepFeedback
+    QgsProcessingMultiStepFeedback,
 )
 
 from .validationAlgorithm import ValidationAlgorithm
@@ -118,7 +118,10 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Creating unified layer"))
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
-            inputLyrList, QgsWkbTypes.Polygon, onlySelected=onlySelected, feedback=multiStepFeedback
+            inputLyrList,
+            QgsWkbTypes.Polygon,
+            onlySelected=onlySelected,
+            feedback=multiStepFeedback,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -127,7 +130,9 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
         currentStep += 1
         if frameLyr:
             multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.setProgressText(self.tr("Getting gaps with geographic bounds"))
+            multiStepFeedback.setProgressText(
+                self.tr("Getting gaps with geographic bounds")
+            )
             self.getGapsOfCoverageWithFrame(lyr, frameLyr, context)
             currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -160,7 +165,9 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
             "GRASS_VECTOR_DSCO": "",
             "GRASS_VECTOR_LCO": "",
         }
-        x = processing.run("grass7:v.overlay", parameters, context=context, feedback=feedback)
+        x = processing.run(
+            "grass7:v.overlay", parameters, context=context, feedback=feedback
+        )
         lyr = QgsProcessingUtils.mapLayerFromString(x["output"], context)
         lyr.setCrs(coverage.crs())
         return lyr
@@ -287,7 +294,7 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
         return help().shortHelpString(self.name())
 
     def helpUrl(self):
-        return  help().helpUrl(self.name())
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyGapsAndOverlapsInCoverageAlgorithm()

@@ -42,6 +42,7 @@ from uuid import uuid4
 from collections import defaultdict
 import codecs, os, json, binascii, re
 import psycopg2
+import time
 
 
 class PostgisDb(AbstractDb):
@@ -116,9 +117,10 @@ class PostgisDb(AbstractDb):
         if not self.testCredentials(host, port, database, user, password):
             self.getCredentials(host, port, user, database)
 
-    def getCredentials(self, host, port, user, database):
+    def getCredentials(self, host, port, user, database, timeout=100):
         conInfo = "host={0} port={1} dbname={2}".format(host, port, database)
         check = False
+        startTime = time.time()
         while not check:
             (success, user, password) = QgsCredentials.instance().get(
                 conInfo, user, None
@@ -128,6 +130,8 @@ class PostgisDb(AbstractDb):
             if self.testCredentials(host, port, database, user, password):
                 check = True
                 QgsCredentials.instance().put(conInfo, user, password)
+            if time.time() - startTime > timeout:
+                return
 
     def testCredentials(self, host, port, database, user, password):
         try:
@@ -3474,6 +3478,8 @@ class PostgisDb(AbstractDb):
             return "template_edgv_3"
         elif version in ("EDGV 3.0 Pro", "3.0 Pro"):
             return "template_edgv_3_pro"
+        elif version in ("EDGV 3.0 Topo", "3.0 Topo"):
+            return "template_edgv_3_topo"
         elif version in ("EDGV 3.0 Orto", "3.0 Orto"):
             return "template_edgv_3_orto"
 
@@ -3570,6 +3576,18 @@ class PostgisDb(AbstractDb):
                 "PostGIS",
                 "3_Pro",
                 "edgv3_pro.sql",
+            )
+        elif version in ("3.0 Topo", "EDGV 3.0 Topo"):
+            edgvPath = os.path.join(
+                currentPath,
+                "..",
+                "..",
+                "..",
+                "core",
+                "DbModels",
+                "PostGIS",
+                "3_Topo",
+                "edgv3_topo.sql",
             )
         elif version in ("3.0 Orto", "EDGV 3.0 Orto"):
             edgvPath = os.path.join(

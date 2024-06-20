@@ -21,16 +21,20 @@
  ***************************************************************************/
 """
 import uuid
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import processing
 from qgis.core import (
     Qgis,
+    QgsMapLayer,
     QgsProcessingContext,
     QgsProcessingFeatureSourceDefinition,
     QgsProcessingUtils,
     QgsVectorLayer,
     QgsFeedback,
+    QgsRasterLayer,
+    QgsRectangle,
+    QgsCoordinateReferenceSystem,
 )
 
 
@@ -59,6 +63,16 @@ class AlgRunner:
         Overlap,
         Within,
         Cross,
+    ) = range(8)
+    (
+        AlignNodesInsertExtraVerticesWhereRequired,  # Prefer aligning nodes, insert extra vertices where required
+        PreferClosestInsertExtraVerticesWhereRequired,  # Prefer closest point, insert extra vertices where required
+        AlignNodesDoNotInsertNewVertices,  # Prefer aligning nodes, don't insert new vertices
+        PreferClosestDoNotInsertNewVertices,  # Prefer closest point, don't insert new vertices
+        MoveEndPointsOnlyPreferAligningNodes,  # Move end points only, prefer aligning nodes
+        MoveEndPointsOnlyPreferClosestPoint,  # Move end points only,prefer closest point
+        SnapEndPointsToEndPointsOnly,  # Snap end points to end points only
+        SnapToAnchorNodes,  # Snap to anchor nodes (single layer only)
     ) = range(8)
 
     def generateGrassOutputAndError(self):
@@ -93,6 +107,8 @@ class AlgRunner:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         field = [] if field is None else field
         parameters = {"INPUT": inputLyr, "FIELD": field, "OUTPUT": outputLyr}
+        if Qgis.QGIS_VERSION_INT >= 32800:
+            parameters["SEPARATE_DISJOINT"] = True
         output = processing.run(
             "native:dissolve",
             parameters,
@@ -255,6 +271,7 @@ class AlgRunner:
         onlySelected=False,
         snap=None,
         minArea=None,
+        geographicBoundaryLyr=None,
         flags=None,
     ):
         snap = -1 if snap is None else snap
@@ -265,12 +282,13 @@ class AlgRunner:
             "SELECTED": onlySelected,
             "TOLERANCE": snap,
             "MINAREA": minArea,
+            "GEOGRAPHIC_BOUNDARY": geographicBoundaryLyr,
             "FLAGS": flags,
         }
         output = processing.run(
             "dsgtools:cleangeometries", parameters, context=context, feedback=feedback
         )
-        return output["OUTPUT"]
+        return inputLyr
 
     def runDouglasSimplification(
         self,
@@ -474,7 +492,7 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
-        return output["OUTPUT"]
+        return inputLayer
 
     def runIdentifyDangles(
         self,
@@ -557,7 +575,13 @@ class AlgRunner:
         return output["OUTPUT"]
 
     def runSymDiff(
-        self, inputLayer, overlayLayer, context, feedback=None, outputLyr=None
+        self,
+        inputLayer,
+        overlayLayer,
+        context,
+        feedback=None,
+        outputLyr=None,
+        is_child_algorithm=False,
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"INPUT": inputLayer, "OVERLAY": overlayLayer, "OUTPUT": outputLyr}
@@ -566,6 +590,7 @@ class AlgRunner:
             parameters,
             context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -660,7 +685,13 @@ class AlgRunner:
         return output["OUTPUT"]
 
     def runFilterExpression(
-        self, inputLyr, expression, context, outputLyr=None, feedback=None, is_child_algorithm=False,
+        self,
+        inputLyr,
+        expression,
+        context,
+        outputLyr=None,
+        feedback=None,
+        is_child_algorithm=False,
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"EXPRESSION": expression, "INPUT": inputLyr, "OUTPUT": outputLyr}
@@ -747,7 +778,7 @@ class AlgRunner:
         sortAscending=True,
         sortNullsFirst=False,
         is_child_algorithm=False,
-    ):
+    ) -> QgsVectorLayer:
         fieldName = "featid" if fieldName is None else fieldName
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {
@@ -785,11 +816,17 @@ class AlgRunner:
         )
         return output["OUTPUT"]
 
-    def runExtractVertices(self, inputLyr, context, feedback=None, outputLyr=None):
+    def runExtractVertices(
+        self, inputLyr, context, feedback=None, outputLyr=None, is_child_algorithm=False
+    ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"INPUT": inputLyr, "OUTPUT": outputLyr}
         output = processing.run(
-            "native:extractvertices", parameters, context=context, feedback=feedback
+            "native:extractvertices",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -871,7 +908,6 @@ class AlgRunner:
             "INPUT": inputLyr,
             "SELECTED": onlySelected,
             "FLAGS": "memory:",
-            "OUTPUT": outputLyr,
         }
         output = processing.run(
             "dsgtools:removeduplicatedgeometries",
@@ -879,7 +915,7 @@ class AlgRunner:
             context=context,
             feedback=feedback,
         )
-        return output["OUTPUT"]
+        return inputLyr
 
     def runPolygonize(
         self,
@@ -910,7 +946,8 @@ class AlgRunner:
         outputLyr=None,
         unjoinnedLyr=None,
         returnUnjoinned=False,
-    ):
+        is_child_algorithm=False,
+    ) -> QgsVectorLayer:
         predicateList = [0] if predicateList is None else predicateList
         joinFields = [] if joinFields is None else joinFields
         method = 0 if method is None else method
@@ -930,6 +967,7 @@ class AlgRunner:
             parameters,
             context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -968,10 +1006,20 @@ class AlgRunner:
         onlySelected=False,
         outputLyr=None,
     ):
+        inputLyr = (
+            QgsProcessingUtils.mapLayerFromString(inputLyr, context)
+            if isinstance(inputLyr, str)
+            else inputLyr
+        )
         usedInput = (
             inputLyr
             if not onlySelected
             else QgsProcessingFeatureSourceDefinition(inputLyr.id(), True)
+        )
+        linesLyr = (
+            QgsProcessingUtils.mapLayerFromString(linesLyr, context)
+            if isinstance(linesLyr, str)
+            else linesLyr
         )
         usedLines = (
             linesLyr
@@ -994,6 +1042,7 @@ class AlgRunner:
         feedback=None,
         outputLyr=None,
         onlySelected=False,
+        is_child_algorithm=False,
     ):
         groupBy = "NULL" if groupBy is None else groupBy
         aggregates = [] if aggregates is None else aggregates
@@ -1005,7 +1054,11 @@ class AlgRunner:
             "OUTPUT": outputLyr,
         }
         output = processing.run(
-            "qgis:aggregate", parameters, context=context, feedback=feedback
+            "qgis:aggregate",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -1017,10 +1070,10 @@ class AlgRunner:
             context=context,
             feedback=feedback,
         )
-        return output
+        return inputLyr
 
     def runCreateSpatialIndex(
-        self, inputLyr, context, feedback=None, is_child_algorithm=False
+        self, inputLyr, context, feedback=None, is_child_algorithm=True
     ):
         processing.run(
             "native:createspatialindex",
@@ -1097,32 +1150,55 @@ class AlgRunner:
         return output["OUTPUT"]
 
     def runClipRasterLayer(
-        self, inputRaster, mask, context, feedback=None, outputRaster=None, noData=None
+        self,
+        inputRaster: QgsRasterLayer,
+        mask: QgsRasterLayer,
+        context: QgsProcessingContext,
+        sourceCrs: Optional[QgsCoordinateReferenceSystem] = None,
+        targetCrs: Optional[QgsCoordinateReferenceSystem] = None,
+        nodata: Optional[int] = None,
+        options: Optional[str] = None,
+        outputRaster: Optional[QgsRasterLayer] = None,
+        xResolution: Optional[float] = None,
+        yResolution: Optional[float] = None,
+        setResolution: Optional[bool] = False,
+        keepResolution: Optional[bool] = False,
+        cropToCutline: Optional[bool] = True,
+        alphaBand: Optional[bool] = False,
+        dataType: Optional[int] = 0,
+        multiThreading: Optional[bool] = False,
+        targetExtent: Optional[list] = None,
+        extra: Optional[str] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: Optional[bool] = False,
     ):
         outputRaster = "TEMPORARY_OUTPUT" if outputRaster is None else outputRaster
+        options = "" if options is None else options
+        extra = "" if extra is None else extra
         output = processing.run(
             "gdal:cliprasterbymasklayer",
             {
                 "INPUT": inputRaster,
                 "MASK": mask,
-                "SOURCE_CRS": None,
-                "TARGET_CRS": None,
-                "TARGET_EXTENT": None,
-                "NODATA": noData,
-                "ALPHA_BAND": False,
-                "CROP_TO_CUTLINE": True,
-                "KEEP_RESOLUTION": False,
-                "SET_RESOLUTION": False,
-                "X_RESOLUTION": None,
-                "Y_RESOLUTION": None,
-                "MULTITHREADING": False,
-                "OPTIONS": "",
-                "DATA_TYPE": 0,
-                "EXTRA": "",
+                "SOURCE_CRS": sourceCrs,
+                "TARGET_CRS": targetCrs,
+                "TARGET_EXTENT": targetExtent,
+                "NODATA": nodata,
+                "ALPHA_BAND": alphaBand,
+                "CROP_TO_CUTLINE": cropToCutline,
+                "KEEP_RESOLUTION": keepResolution,
+                "SET_RESOLUTION": setResolution,
+                "X_RESOLUTION": xResolution,
+                "Y_RESOLUTION": yResolution,
+                "MULTITHREADING": multiThreading,
+                "OPTIONS": options,
+                "DATA_TYPE": dataType,
+                "EXTRA": extra,
                 "OUTPUT": outputRaster,
             },
-            # context=context,
+            context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
@@ -1647,6 +1723,11 @@ class AlgRunner:
         is_child_algorithm=False,
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
+        inputLayer = (
+            QgsProcessingUtils.mapLayerFromString(inputLayer, context)
+            if isinstance(inputLayer, str)
+            else inputLayer
+        )
         parameters = {
             "INPUT": QgsProcessingFeatureSourceDefinition(
                 inputLayer.source(), selectedFeaturesOnly=onlySelected
@@ -1774,3 +1855,442 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
+
+    def runIdentifySegmentErrorBetweenLines(
+        self,
+        inputLayer,
+        referenceLineLayer,
+        searchRadius,
+        context,
+        flagLyr=None,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        flagLyr = "memory:" if flagLyr is None else flagLyr
+        output = processing.run(
+            "dsgtools:identifysegmenterrorsbetweenlines",
+            {
+                "INPUT": inputLayer,
+                "REFERENCE_LINE": referenceLineLayer,
+                "SEARCH_RADIUS": searchRadius,
+                "FLAGS": flagLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["FLAGS"]
+
+    def runDetectDatasetChanges(
+        self,
+        inputLayer,
+        reviewedLayer,
+        attributesList,
+        matchComparation,
+        context,
+        unchangedLayer=None,
+        addedLayer=None,
+        deletedLayer=None,
+        feedback=None,
+    ):
+        unchangedLayer = "memory:" if unchangedLayer is None else unchangedLayer
+        addedLayer = "memory:" if addedLayer is None else addedLayer
+        deletedLayer = "memory:" if deletedLayer is None else deletedLayer
+        output = processing.run(
+            "native:detectvectorchanges",
+            {
+                "ORIGINAL": inputLayer,
+                "REVISED": reviewedLayer,
+                "COMPARE_ATTRIBUTES": attributesList,
+                "MATCH_TYPE": matchComparation,
+                "UNCHANGED": unchangedLayer,
+                "ADDED": addedLayer,
+                "DELETED": deletedLayer,
+            },
+            context=context,
+            feedback=feedback,
+        )
+        return output["UNCHANGED"], output["ADDED"], output["DELETED"]
+
+    def runRemoveDuplicateVertex(
+        self,
+        inputLyr,
+        tolerance,
+        context,
+        useZValue=False,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        output = processing.run(
+            "native:removeduplicatevertices",
+            {
+                "INPUT": inputLyr,
+                "TOLERANCE": tolerance,
+                "USE_Z_VALUE": useZValue,
+                "OUTPUT": "memory:",
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runJoinAttributesTable(
+        self,
+        layerA,
+        fieldA,
+        layerB,
+        fieldB,
+        context,
+        method,
+        fieldsToCopy=None,
+        discardNonMatching=False,
+        prefix=None,
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        fieldsToCopy = [] if fieldsToCopy is None else fieldsToCopy
+        prefix = "" if prefix is None else prefix
+        output = processing.run(
+            "native:joinattributestable",
+            {
+                "INPUT": layerA,
+                "FIELD": fieldA,
+                "INPUT_2": layerB,
+                "FIELD_2": fieldB,
+                "FIELDS_TO_COPY": [],
+                "METHOD": method,
+                "DISCARD_NONMATCHING": discardNonMatching,
+                "PREFIX": prefix,
+                "OUTPUT": "memory:",
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runDSGToolsMergeLines(
+        self,
+        inputLayer,
+        context,
+        onlySelected=False,
+        attributeBlackList=None,
+        ignoreVirtualFields=True,
+        ignorePkFields=True,
+        allowClosed=False,
+        feedback=None,
+    ) -> None:
+        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
+        output = processing.run(
+            "dsgtools:mergelineswithsameattributeset",
+            {
+                "INPUT": inputLayer,
+                "SELECTED": onlySelected,
+                "ATTRIBUTE_BLACK_LIST": attributeBlackList,
+                "IGNORE_VIRTUAL_FIELDS": ignoreVirtualFields,
+                "IGNORE_PK_FIELDS": ignorePkFields,
+                "ALLOW_CLOSED": allowClosed,
+            },
+            context=context,
+            feedback=feedback,
+        )
+
+    def runRenameField(
+        self,
+        inputLayer: QgsVectorLayer,
+        field: str,
+        newName: str,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:renametablefield",
+            {
+                "INPUT": inputLayer,
+                "FIELD": field,
+                "NEW_NAME": newName,
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runSplitLinesByLength(
+        self,
+        inputLayer: QgsVectorLayer,
+        length: float,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:splitlinesbylength",
+            {"INPUT": inputLayer, "LENGTH": length, "OUTPUT": outputLyr},
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runInterpolatePoint(
+        self,
+        inputLayer: QgsVectorLayer,
+        distance: float,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:interpolatepoint",
+            {"INPUT": inputLayer, "DISTANCE": distance, "OUTPUT": outputLyr},
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runPolygonFromLayerExtent(
+        self,
+        inputLayer: QgsMapLayer,
+        context: QgsProcessingContext,
+        roundTo: Optional[float] = 0.0,
+        outputLyr: Optional[QgsVectorLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:polygonfromlayerextent",
+            {"INPUT": inputLayer, "ROUND_TO": roundTo, "OUTPUT": outputLyr},
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runGdalRasterizeOverFixedValue(
+        self,
+        inputLayer: QgsVectorLayer,
+        inputRaster: QgsRasterLayer,
+        value: int,
+        context: QgsProcessingContext,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ):
+        processing.run(
+            "gdal:rasterize_over_fixed_value",
+            {
+                "INPUT": inputLayer,
+                "INPUT_RASTER": inputRaster,
+                "BURN": value,
+                "ADD": False,
+                "EXTRA": False,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+
+    def runDSGToolsReclassifyGroupsOfPixels(
+        self,
+        inputRaster: QgsRasterLayer,
+        minArea: float,
+        nodataValue: int,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsRasterLayer:
+        outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
+        output = processing.run(
+            "dsgtools:reclassifygroupsofpixelstonearestneighboralgorithm",
+            {
+                "INPUT": inputRaster,
+                "MIN_AREA": minArea,
+                "NODATA_VALUE": nodataValue,
+                "OUTPUT": outputLyr,
+            },
+        )
+        return output["OUTPUT"]
+
+    def runRasterClipByExtent(
+        self,
+        inputRaster: QgsRasterLayer,
+        extent: QgsRectangle,
+        nodata,
+        context,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsRasterLayer:
+        outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
+        output = processing.run(
+            "gdal:cliprasterbyextent",
+            {
+                "INPUT": inputRaster,
+                "PROJWIN": extent,
+                "OVERCRS": False,
+                "NODATA": nodata,
+                "OPTIONS": "",
+                "DATA_TYPE": 0,
+                "EXTRA": "",
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runOverlapAnalysis(
+        self,
+        inputLayer: QgsVectorLayer,
+        layerList: List[QgsVectorLayer],
+        context: QgsProcessingContext,
+        gridSize: Optional[float] = None,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        output = processing.run(
+            "native:calculatevectoroverlaps",
+            {
+                "INPUT": inputLayer,
+                "LAYERS": layerList,
+                "OUTPUT": outputLyr,
+                "GRID_SIZE": gridSize,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runReverseLineDirection(
+        self,
+        inputLayer: QgsVectorLayer,
+        context: QgsProcessingContext,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
+        output = processing.run(
+            "native:reverselinedirection",
+            {"INPUT": inputLayer, "OUTPUT": "memory:"},
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runSetLineOrientation(
+        self,
+        inputLayer: QgsVectorLayer,
+        context: QgsProcessingContext,
+        orientation: Optional[int] = 0,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: bool = False,
+    ) -> QgsVectorLayer:
+        output = processing.run(
+            "dsgtools:setlineorientation",
+            {"INPUT": inputLayer, "ORIENTATION": orientation, "OUTPUT": "memory:"},
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runGdalWarp(
+        self,
+        rasterLayer: QgsRasterLayer,
+        targetCrs: QgsCoordinateReferenceSystem,
+        context: QgsProcessingContext,
+        sourceCrs: Optional[QgsCoordinateReferenceSystem] = None,
+        nodata: Optional[int] = None,
+        options: Optional[str] = None,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        targetResolution: Optional[float] = None,
+        dataType: Optional[int] = None,
+        multiThreading: Optional[bool] = False,
+        targetExtent: Optional[list] = None,
+        targetExtentCrs: Optional[QgsCoordinateReferenceSystem] = None,
+        resampling: Optional[int] = 0,
+        extra: Optional[str] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: Optional[bool] = False,
+    ) -> Union[str, QgsRasterLayer]:
+        outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
+        extra = "" if extra is None else extra
+        output = processing.run(
+            "gdal:warpreproject",
+            {
+                "INPUT": rasterLayer,
+                "SOURCE_CRS": sourceCrs,
+                "TARGET_CRS": targetCrs,
+                "RESAMPLING": resampling,
+                "NODATA": nodata,
+                "TARGET_RESOLUTION": targetResolution,
+                "OPTIONS": options,
+                "DATA_TYPE": dataType,
+                "TARGET_EXTENT": targetExtent,
+                "TARGET_EXTENT_CRS": targetExtentCrs,
+                "MULTITHREADING": multiThreading,
+                "EXTRA": extra,
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
+    def runBuildVRT(
+        self,
+        inputRasterList: List[Union[str, QgsRasterLayer]],
+        context: QgsProcessingContext,
+        assignCrs: Optional[QgsCoordinateReferenceSystem] = None,
+        separate: Optional[bool] = False,
+        projDifference: Optional[bool] = False,
+        addAlpha: Optional[bool] = False,
+        outputLyr: Optional[QgsRasterLayer] = None,
+        resolution: Optional[float] = 0,
+        srcNodata: Optional[int] = None,
+        resampling: Optional[int] = 0,
+        extra: Optional[str] = None,
+        feedback: Optional[QgsFeedback] = None,
+        is_child_algorithm: Optional[bool] = False,
+    ) -> Union[str, QgsRasterLayer]:
+        outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
+        extra = "" if extra is None else extra
+        srcNodata = "" if srcNodata is None else srcNodata
+        output = processing.run(
+            "gdal:buildvirtualraster",
+            {
+                "INPUT": inputRasterList,
+                "RESOLUTION": resolution,
+                "SEPARATE": separate,
+                "PROJ_DIFFERENCE": projDifference,
+                "ADD_ALPHA": addAlpha,
+                "ASSIGN_CRS": assignCrs,
+                "RESAMPLING": resampling,
+                "SRC_NODATA": srcNodata,
+                "EXTRA": extra,
+                "OUTPUT": outputLyr,
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]

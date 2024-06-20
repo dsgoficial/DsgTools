@@ -23,8 +23,9 @@
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import QgsProcessingParameterString
 
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.dsgtoolsBaseSetParametersAlgorithm import \
-    DsgToolsBaseSetParametersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.dsgtoolsBaseSetParametersAlgorithm import (
+    DsgToolsBaseSetParametersAlgorithm,
+)
 
 
 class GenericSelectionToolParametersAlgorithm(DsgToolsBaseSetParametersAlgorithm):
@@ -41,7 +42,9 @@ class GenericSelectionToolParametersAlgorithm(DsgToolsBaseSetParametersAlgorithm
         self.addParameter(
             QgsProcessingParameterString(
                 self.VALUE_LIST,
-                self.tr("Black list for Generic Selection Tool (values must be separated by ;)"),
+                self.tr(
+                    "Black list for Generic Selection Tool (values must be separated by ;)"
+                ),
                 multiLine=False,
                 defaultValue="aux_grid_revisao_a;Created Review Grid;grid;moldura",
             )
@@ -82,7 +85,9 @@ class GenericSelectionToolParametersAlgorithm(DsgToolsBaseSetParametersAlgorithm
         return "DSGTools - Environment Setters"
 
     def tr(self, string):
-        return QCoreApplication.translate("GenericSelectionToolParametersAlgorithm", string)
+        return QCoreApplication.translate(
+            "GenericSelectionToolParametersAlgorithm", string
+        )
 
     def createInstance(self):
         return GenericSelectionToolParametersAlgorithm()

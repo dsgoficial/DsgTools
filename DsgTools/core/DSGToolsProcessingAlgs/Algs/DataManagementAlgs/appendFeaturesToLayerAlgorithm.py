@@ -61,7 +61,6 @@ class AppendFeaturesToLayerAlgorithm(ValidationAlgorithm):
             )
         )
 
-
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.

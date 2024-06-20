@@ -309,10 +309,11 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         Filters the items to make it easier to spot and select them
         """
         lowerText = text.lower()
-        allTuples = [tuple(node[i].lower() for i in self.filterColumnKeyList) for node in self.fromLs]
-        itemTupleList = set(
-            t for t in allTuples if any(lowerText in i for i in t)
-        )
+        allTuples = [
+            tuple(node[i].lower() for i in self.filterColumnKeyList)
+            for node in self.fromLs
+        ]
+        itemTupleList = set(t for t in allTuples if any(lowerText in i for i in t))
         destinationTupleSet = set(
             tuple(
                 node[i].lower() for i in self.filterColumnKeyList for node in self.toLs
@@ -332,7 +333,10 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         rootNode = treeWidget.invisibleRootItem()
         # remove items that are not in filterList
         for item in controlList:
-            if tuple(item[i].lower() for i in self.filterColumnKeyList) not in filterList:
+            if (
+                tuple(item[i].lower() for i in self.filterColumnKeyList)
+                not in filterList
+            ):
                 continue
             firstColumnChild = self.getChildNode(
                 rootNode, [item[0]] + [""] * (len(item) - 1)

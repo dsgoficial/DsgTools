@@ -45,7 +45,6 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
     ATTRIBUTE_BLACK_LIST = "ATTRIBUTE_BLACK_LIST"
     IGNORE_VIRTUAL_FIELDS = "IGNORE_VIRTUAL_FIELDS"
     IGNORE_PK_FIELDS = "IGNORE_PK_FIELDS"
-    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -68,9 +67,7 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
             minValue=0,
             optional=True,
         )
-        param.setMetadata( {'widget_wrapper':
-        { 'decimals': 10 }
-        })
+        param.setMetadata({"widget_wrapper": {"decimals": 10}})
         self.addParameter(param)
         self.addParameter(
             QgsProcessingParameterField(
@@ -95,11 +92,6 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
                 self.IGNORE_PK_FIELDS,
                 self.tr("Ignore primary key fields"),
                 defaultValue=True,
-            )
-        )
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT, self.tr("Original layer with dissolved polygons")
             )
         )
 
@@ -156,7 +148,7 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
         )
 
-        return {self.OUTPUT: inputLyr}
+        return {}
 
     def name(self):
         """

@@ -50,6 +50,7 @@ from qgis.core import (
 from .validationAlgorithm import ValidationAlgorithm
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
+
 class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
     FLAGS = "FLAGS"
     INPUT = "INPUT"
@@ -141,7 +142,10 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
             self.tr("Building aux structure: spatial index...")
         )
         algRunner.runCreateSpatialIndex(
-            inputLyr=incrementedLyr, context=context, feedback=multiStepFeedback
+            inputLyr=incrementedLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.setProgressText(
@@ -239,7 +243,7 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr("QA Tools: Polygon Handling")
+        return self.tr("QA Tools: Basic Geometry Construction Issues Handling")
 
     def groupId(self):
         """
@@ -249,7 +253,7 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "DSGTools - QA Tools: Polygon Handling"
+        return "DSGTools - QA Tools: Basic Geometry Construction Issues Handling"
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyOverlapsAlgorithm", string)
@@ -258,7 +262,7 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         return help().shortHelpString(self.name())
 
     def helpUrl(self):
-        return  help().helpUrl(self.name())
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyOverlapsAlgorithm()

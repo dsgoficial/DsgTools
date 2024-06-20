@@ -44,6 +44,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorith
 )
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
+
 class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
     RULES_SET = "RULES_SET"
     POINT_FLAGS = "POINT_FLAGS"
@@ -124,8 +125,7 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         return help().shortHelpString(self.name())
 
     def helpUrl(self):
-        return  help().helpUrl(self.name())
-
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         return EnforceSpatialRulesAlgorithm()
@@ -175,7 +175,8 @@ class EnforceSpatialRulesAlgorithm(ValidationAlgorithm):
         rules = self.parameterAsSpatialRulesSet(parameters, self.RULES_SET, context)
         # GUI was crashing when the SpatialRule was passed...
         rules = [SpatialRule(**r, checkLoadedLayer=False) for r in rules]
-        if not rules or not self.validateRuleSet(rules):
+        rules = list(filter(lambda x: x.isValid(checkLoaded=True) is True, rules))
+        if not rules:
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.RULES_SET)
             )

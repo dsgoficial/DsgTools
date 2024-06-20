@@ -46,7 +46,7 @@ class ToolBoxesGuiManager(QObject):
         parentMenu=None,
         toolbar=None,
         stackButton=None,
-        acquisitionMenuCtrl=AcquisitionMenuCtrl(),
+        acquisitionMenuCtrl=None,
     ):
         """Constructor."""
         super(ToolBoxesGuiManager, self).__init__()
@@ -57,7 +57,11 @@ class ToolBoxesGuiManager(QObject):
         self.stackButton = stackButton
         self.iconBasePath = ":/plugins/DsgTools/icons/"
 
-        self.acquisitionMenuCtrl = acquisitionMenuCtrl
+        self.acquisitionMenuCtrl = (
+            AcquisitionMenuCtrl()
+            if acquisitionMenuCtrl is None
+            else acquisitionMenuCtrl
+        )
 
     def initGui(self):
         self.qaToolBox = None
@@ -81,7 +85,7 @@ class ToolBoxesGuiManager(QObject):
             "customFeatureToolBox.png",
             self.tr("Reclassify Mode"),
             parentButton=self.stackButton,
-            withShortcut=True
+            withShortcut=True,
         )
 
         self.calcContour = None
@@ -102,7 +106,13 @@ class ToolBoxesGuiManager(QObject):
         )
 
     def addTool(
-        self, callback, iconBaseName, text, setDefaultAction=False, parentButton=None, withShortcut=False
+        self,
+        callback,
+        iconBaseName,
+        text,
+        setDefaultAction=False,
+        parentButton=None,
+        withShortcut=False,
     ):
         action = self.manager.add_action(
             os.path.join(self.iconBasePath, iconBaseName),

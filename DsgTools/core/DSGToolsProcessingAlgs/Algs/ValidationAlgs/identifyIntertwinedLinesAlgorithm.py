@@ -139,7 +139,9 @@ class IdentifyIntertwinedLinesAlgorithm(ValidationAlgorithm):
             feedback=feedback,
             is_child_algorithm=False,
         )
-        self.algRunner.runCreateSpatialIndex(localCache, context, feedback)
+        self.algRunner.runCreateSpatialIndex(
+            localCache, context, feedback, is_child_algorithm=True
+        )
         return localCache
 
     def getIntersections(
@@ -191,6 +193,15 @@ class IdentifyIntertwinedLinesAlgorithm(ValidationAlgorithm):
             intersections.convertToMultiType()
             if intersections.isEmpty():
                 continue
+            if intersections.wkbType() == QgsWkbTypes.GeometryCollection:
+                points = []
+                for intersection in intersections.asGeometryCollection():
+                    if intersection.wkbType() == QgsWkbTypes.LineString:
+                        points.extend(intersection.asPolyline())
+                    if intersection.wkbType() == QgsWkbTypes.Point:
+                        points.extend([intersection.asPoint()])
+                geom = QgsGeometry()
+                intersections = geom.fromMultiPointXY(points)
             if intersections.wkbType() == QgsWkbTypes.MultiLineString:
                 points = []
                 for line in intersections.asMultiPolyline():
@@ -237,6 +248,11 @@ class IdentifyIntertwinedLinesAlgorithm(ValidationAlgorithm):
         formatting characters.
         """
         return "DSGTools - QA Tools: Line Handling"
+
+    def shortHelpString(self):
+        return self.tr(
+            "Verifica linhas entrelaçadas: linhas que se cruzam mais vezes que a tolerância. Retorna os pontos de interseção."
+        )
 
     def tr(self, string):
         return QCoreApplication.translate("IdentifyIntertwinedLinesAlgorithm", string)

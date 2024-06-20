@@ -44,6 +44,7 @@ from qgis.core import (
     QgsProject,
     QgsSpatialIndex,
     QgsWkbTypes,
+    QgsProcessingException,
 )
 
 from ...algRunner import AlgRunner
@@ -165,7 +166,7 @@ class TopologicalDouglasPeuckerAreaSimplificationAlgorithm(ValidationAlgorithm):
 
         self.flagCoverageIssues(simplifiedCoverage, error, feedback)
 
-        return {self.INPUTLAYERS: inputLyrList, self.FLAGS: self.flag_id}
+        return {self.FLAGS: self.flag_id}
 
     def flagCoverageIssues(self, cleanedCoverage, error, feedback):
         """

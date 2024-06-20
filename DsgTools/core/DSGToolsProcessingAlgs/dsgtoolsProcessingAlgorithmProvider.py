@@ -33,17 +33,50 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.EnvironmentSetterAlgs.rightAngleT
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.DataManagementAlgs.appendFeaturesToLayerAlgorithm import (
     AppendFeaturesToLayerAlgorithm,
 )
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeNetworkEdgesFromLengthAlgorithm import GeneralizeNetworkEdgesWithLengthAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildZipPackagesAlgorithm import BuildZipPackageAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridFromCoordinatesAlgorithm import CreateGridFromCoordinatesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.findSmallClosedLinesAlgorithm import (
+    FindSmallClosedLinesAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeNetworkEdgesFromLengthAlgorithm import (
+    GeneralizeNetworkEdgesWithLengthAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithm import (
+    ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyPixelsToNearestNeighborAlgorithm import (
+    ReclassifyAdjacentPixelsToNearestNeighborAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.runReclassifyPixelsWithSlidingWindow import (
+    ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.setLineOrientation import (
+    SetLineOrientation,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.buildZipPackagesAlgorithm import (
+    BuildZipPackageAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.batchRunAlgorithmWithGeographicBoundsConstraint import (
+    BatchRunAlgorithmWithGeographicBoundsConstraint,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createGridFromCoordinatesAlgorithm import (
+    CreateGridFromCoordinatesAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.RasterAlgs.batchRasterPackagingForBDGEx import (
+    BatchRasterPackagingForBDGEx,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.fixSegmentErrorsBetweenLinesAlgorithm import (
     FixSegmentErrorsBetweenLinesAlgorithm,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallObjectsOnLayersAlgorithm import (
     IdentifySmallObjectsOnLayersAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyUncoveredStartAndEndPointsAlgorithm import (
+    IdentifyUncoveredStartAndEndPointsAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyWaterBodyAndContourInconsistencies import (
     IdentifyWaterBodyAndContourInconsistencies,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeDuplicateNodesAlgorithm import (
+    RemoveDuplicateVertexesAlgorithm,
 )
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from PyQt5.QtCore import QCoreApplication
@@ -278,6 +311,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAndFixInva
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAnglesInInvalidRangeAlgorithm import (
     IdentifyAnglesInInvalidRangeAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAttributeChangesInLines import (
+    IdentifyAttributeChangesInLines,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyCountourStreamIntersectionAlgorithm import (
     IdentifyCountourStreamIntersectionAlgorithm,
 )
@@ -345,6 +381,18 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyInvalidUUI
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyMultiPartGeometriesAlgorithm import (
     IdentifyMultiPartGeometriesAlgorithm,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyMissingLineIntersectionsOnPoints import (
+    IdentifyMissingLineIntersectionsOnPoints,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyMissingLinesOnPolygonLineIntersections import (
+    IdentifyMissingLinesOnPolygonLineIntersections,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyMissingPointsOnLineIntersections import (
+    IdentifyMissingPointsOnLineIntersections,
+)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyMissingPolygonLinesIntersectionsOnLines import (
+    IdentifyMissingPolygonLineIntersectionsOnLines,
 )
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyNetworkConstructionIssuesAlgorithm import (
     IdentifyNetworkConstructionIssuesAlgorithm,
@@ -626,6 +674,20 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             CreateGridFromCoordinatesAlgorithm(),
             BuildZipPackageAlgorithm(),
             GeneralizeNetworkEdgesWithLengthAlgorithm(),
+            RemoveDuplicateVertexesAlgorithm(),
+            IdentifyAttributeChangesInLines(),
+            BatchRunAlgorithmWithGeographicBoundsConstraint(),
+            IdentifyUncoveredStartAndEndPointsAlgorithm(),
+            ReclassifyAdjacentPixelsToNearestNeighborAlgorithm(),
+            ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm(),
+            ReclassifyGroupsOfPixelsToNearestNeighborWithSlidingWindowAlgorithm(),
+            FindSmallClosedLinesAlgorithm(),
+            SetLineOrientation(),
+            IdentifyMissingLineIntersectionsOnPoints(),
+            IdentifyMissingLinesOnPolygonLineIntersections(),
+            IdentifyMissingPointsOnLineIntersections(),
+            IdentifyMissingPolygonLineIntersectionsOnLines(),
+            BatchRasterPackagingForBDGEx(),
         ]
         return algList
 

@@ -167,7 +167,9 @@ class GeometricaAcquisition(QgsMapTool):
         )
 
     def completePolygon(self, geom, p4):
-        filteredGeom = list(filter(lambda x: x is not None and isinstance(x, QgsPointXY), self.geometry))
+        filteredGeom = list(
+            filter(lambda x: x is not None and isinstance(x, QgsPointXY), self.geometry)
+        )
         if (len(geom) >= 2) and (len(geom) % 2 == 0):
             p1 = geom[1]
             p2 = geom[0]
@@ -262,10 +264,14 @@ class GeometricaAcquisition(QgsMapTool):
     def getRubberBand(self):
         geomType = self.iface.activeLayer().geometryType()
         if geomType == QgsWkbTypes.PolygonGeometry:
-            rubberBand = QgsRubberBand(self.canvas, geometryType=QgsWkbTypes.PolygonGeometry)
+            rubberBand = QgsRubberBand(
+                self.canvas, geometryType=QgsWkbTypes.PolygonGeometry
+            )
             rubberBand.setFillColor(QColor(255, 0, 0, 40))
         elif geomType == QgsWkbTypes.LineGeometry:
-            rubberBand = QgsRubberBand(self.canvas, geometryType=QgsWkbTypes.LineGeometry)
+            rubberBand = QgsRubberBand(
+                self.canvas, geometryType=QgsWkbTypes.LineGeometry
+            )
         rubberBand.setSecondaryStrokeColor(QColor(255, 0, 0, 200))
         rubberBand.setWidth(2)
         return rubberBand

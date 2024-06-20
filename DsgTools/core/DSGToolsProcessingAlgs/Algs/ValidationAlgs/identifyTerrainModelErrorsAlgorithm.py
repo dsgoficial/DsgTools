@@ -36,11 +36,13 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsProcessingFeatureSourceDefinition,
     QgsProcessingContext,
+    QgsProcessingParameterExpression,
 )
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
+from DsgTools.core.GeometricTools.terrainHandler import TerrainModel
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
 from .validationAlgorithm import ValidationAlgorithm
@@ -52,6 +54,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
     CONTOUR_INTERVAL = "CONTOUR_INTERVAL"
     GEOGRAPHIC_BOUNDS = "GEOGRAPHIC_BOUNDS"
     CONTOUR_ATTR = "CONTOUR_ATTR"
+    DEPRESSION_EXPRESSION = "DEPRESSION_EXPRESSION"
     INPUT_SPOT_ELEVATION = "INPUT_ELEVATION_POINTS"
     ELEVATION_POINT_ATTR = "ELEVATION_POINT_ATTR"
     GROUP_BY_SPATIAL_PARTITION = "GROUP_BY_SPATIAL_PARTITION"
@@ -82,6 +85,15 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 "cota",
                 "INPUT",
                 QgsProcessingParameterField.Any,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterExpression(
+                self.DEPRESSION_EXPRESSION,
+                self.tr("Filter expression for contour that are depressions."),
+                """ "depressao" = 1 """,
+                self.INPUT,
+                optional=True,
             )
         )
         self.addParameter(
@@ -148,6 +160,11 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         heightFieldName = self.parameterAsFields(parameters, self.CONTOUR_ATTR, context)
         heightFieldName = None if len(heightFieldName) == 0 else heightFieldName[0]
+        depressionExpression = self.parameterAsExpression(
+            parameters, self.DEPRESSION_EXPRESSION, context
+        )
+        if depressionExpression == "":
+            depressionExpression = None
         threshold = self.parameterAsDouble(parameters, self.CONTOUR_INTERVAL, context)
         geoBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDS, context
@@ -182,12 +199,13 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         )
 
         invalidDict = (
-            self.spatialRealtionsHandler.validateTerrainModel(
+            self.validateTerrainModel(
                 contourLyr=inputLyr,
                 onlySelected=onlySelected,
                 heightFieldName=heightFieldName,
                 elevationPointsLyr=elevationPointsLyr,
                 elevationPointHeightFieldName=elevationPointHeightFieldName,
+                depressionExpression=depressionExpression,
                 threshold=threshold,
                 geoBoundsLyr=geoBoundsLyr,
                 feedback=feedback,
@@ -200,6 +218,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 heightFieldName=heightFieldName,
                 elevationPointsLyr=elevationPointsLyr,
                 elevationPointHeightFieldName=elevationPointHeightFieldName,
+                depressionExpression=depressionExpression,
                 threshold=threshold,
                 geoBoundsLyr=geoBoundsLyr,
                 context=context,
@@ -221,6 +240,30 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
 
         return {self.POINT_FLAGS: point_flag_id, self.LINE_FLAGS: line_flag_id}
 
+    def validateTerrainModel(
+        self,
+        contourLyr,
+        onlySelected,
+        heightFieldName,
+        elevationPointsLyr,
+        elevationPointHeightFieldName,
+        depressionExpression,
+        threshold,
+        geoBoundsLyr,
+        context,
+        feedback,
+    ):
+        terrainModel = TerrainModel(
+            contourLyr=contourLyr,
+            contourElevationFieldName=heightFieldName,
+            geographicBoundsLyr=geoBoundsLyr,
+            threshold=threshold,
+            depressionExpression=depressionExpression,
+            spotElevationLyr=elevationPointsLyr,
+            spotElevationFieldName=elevationPointHeightFieldName,
+        )
+        return terrainModel.validate(context=context, feedback=feedback)
+
     def validateTerrainModelInParalel(
         self,
         contourLyr,
@@ -228,6 +271,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         heightFieldName,
         elevationPointsLyr,
         elevationPointHeightFieldName,
+        depressionExpression,
         threshold,
         geoBoundsLyr,
         context,
@@ -282,17 +326,16 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 if elevationPointsLyr is not None
                 else None
             )
-            return self.spatialRealtionsHandler.validateTerrainModel(
+            terrainModel = TerrainModel(
                 contourLyr=singlePartContours,
-                onlySelected=False,
-                heightFieldName=heightFieldName,
-                elevationPointsLyr=localElevationPointsLyr,
-                elevationPointHeightFieldName=elevationPointHeightFieldName,
+                contourElevationFieldName=heightFieldName,
+                geographicBoundsLyr=localGeographicBoundsLyr,
                 threshold=threshold,
-                geoBoundsLyr=localGeographicBoundsLyr,
-                context=localContext,
-                feedback=None,
+                depressionExpression=depressionExpression,
+                spotElevationLyr=localElevationPointsLyr,
+                spotElevationFieldName=elevationPointHeightFieldName,
             )
+            return terrainModel.validate()
 
         multiStepFeedback.setCurrentStep(currentStep)
         nRegions = len(geographicBoundaryLayerList)
@@ -351,7 +394,10 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(1)
         self.algRunner.runCreateSpatialIndex(
-            inputLyr=extractedLyr, context=context, feedback=multiStepFeedback
+            inputLyr=extractedLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         return extractedLyr
 

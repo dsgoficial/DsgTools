@@ -32,6 +32,7 @@ from qgis.core import (
     QgsProcessingParameterDistance,
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterVectorLayer,
+    QgsProcessingUtils,
 )
 
 from ...algRunner import AlgRunner
@@ -101,6 +102,7 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         Here is where the processing itself takes place.
         """
         algRunner = AlgRunner()
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         inputPointLyrList = self.parameterAsLayerList(
             parameters, self.INPUT_POINTS, context
         )
@@ -110,23 +112,48 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         inputPolygonLyrList = self.parameterAsLayerList(
             parameters, self.INPUT_POLYGONS, context
         )
+        inputPointLyrList = list(
+            filter(
+                lambda x: x.featureCount() > 0
+                if not onlySelected
+                else x.selectedFeatureCount() > 0,
+                inputPointLyrList,
+            )
+        )
+        inputLineLyrList = list(
+            filter(
+                lambda x: x.featureCount() > 0
+                if not onlySelected
+                else x.selectedFeatureCount() > 0,
+                inputLineLyrList,
+            )
+        )
+        inputPolygonLyrList = list(
+            filter(
+                lambda x: x.featureCount() > 0
+                if not onlySelected
+                else x.selectedFeatureCount() > 0,
+                inputPolygonLyrList,
+            )
+        )
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
         geographicBoundary = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
         if inputPointLyrList + inputLineLyrList + inputPolygonLyrList == []:
             raise QgsProcessingException(self.tr("Select at least one layer"))
-        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         lyrList = list(chain(inputPointLyrList, inputLineLyrList, inputPolygonLyrList))
         nLyrs = len(lyrList)
+        if nLyrs == 0:
+            return {}
         multiStepFeedback = QgsProcessingMultiStepFeedback(
             nLyrs + 4 + 2 * (geographicBoundary is not None), feedback
         )
         multiStepFeedback.setCurrentStep(0)
         flagsLyr = algRunner.runIdentifyUnsharedVertexOnIntersectionsAlgorithm(
-            pointLayerList=inputPointLyrList,
-            lineLayerList=inputLineLyrList,
-            polygonLayerList=inputPolygonLyrList,
+            pointLayerList=[i.clone() for i in inputPointLyrList],
+            lineLayerList=[i.clone() for i in inputLineLyrList],
+            polygonLayerList=[i.clone() for i in inputPolygonLyrList],
             onlySelected=onlySelected,
             context=context,
             feedback=multiStepFeedback,
@@ -162,8 +189,8 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         newFlagsLyr = algRunner.runIdentifyUnsharedVertexOnIntersectionsAlgorithm(
             pointLayerList=[],
-            lineLayerList=inputLineLyrList,
-            polygonLayerList=inputPolygonLyrList,
+            lineLayerList=[i.clone() for i in inputLineLyrList],
+            polygonLayerList=[i.clone() for i in inputPolygonLyrList],
             onlySelected=onlySelected,
             context=context,
             feedback=multiStepFeedback,
@@ -175,11 +202,10 @@ class AddUnsharedVertexOnIntersectionsAlgorithm(ValidationAlgorithm):
                 newFlagsLyr, geographicBoundary, context, feedback=multiStepFeedback
             )
             currentStep += 1
-        if newFlagsLyr.featureCount() == 0:
-            return {}
-
         multiStepFeedback.setCurrentStep(currentStep)
-        algRunner.runCreateSpatialIndex(newFlagsLyr, context, multiStepFeedback, is_child_algorithm=True)
+        algRunner.runCreateSpatialIndex(
+            newFlagsLyr, context, multiStepFeedback, is_child_algorithm=True
+        )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         LayerHandler().addVertexesToLayers(

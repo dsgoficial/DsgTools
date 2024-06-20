@@ -179,7 +179,7 @@ class IdentifyWrongBuildingAnglesAlgorithm(ValidationAlgorithm):
         return help().shortHelpString(self.name())
 
     def helpUrl(self):
-        return  help().helpUrl(self.name())
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyWrongBuildingAnglesAlgorithm()

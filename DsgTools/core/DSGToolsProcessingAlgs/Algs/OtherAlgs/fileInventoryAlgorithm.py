@@ -56,6 +56,8 @@ from qgis.core import (
     QgsProcessingParameterFile,
     QgsCoordinateReferenceSystem,
     QgsFields,
+    QgsAction,
+    QgsActionScope,
 )
 
 
@@ -138,7 +140,7 @@ class FileInventoryAlgorithm(QgsProcessingAlgorithm):
         for field in inventory.layer_attributes:
             sinkFields.append(field)
 
-        (output_sink, output_dest_id) = self.parameterAsSink(
+        (output_sink, self.output_dest_id) = self.parameterAsSink(
             parameters,
             self.OUTPUT,
             context,
@@ -157,7 +159,29 @@ class FileInventoryAlgorithm(QgsProcessingAlgorithm):
 
         output_sink.addFeatures(featList, QgsFeatureSink.FastInsert)
 
-        return {"OUTPUT": output_dest_id}
+        return {"OUTPUT": self.output_dest_id}
+
+    def postProcessAlgorithm(self, context, feedback):
+        processed_layer = QgsProcessingUtils.mapLayerFromString(
+            self.output_dest_id, context
+        )
+        actions = processed_layer.actions()
+        field = '[% "fileName" %]'
+        vectorAction = QgsAction(
+            QgsAction.GenericPython,
+            "Load Vector Layer",
+            f"from pathlib import Path\np=Path(r'{field}')\nqgis.utils.iface.addVectorLayer(str(p), p.stem)",
+        )
+        vectorAction.setActionScopes(["Feature", "Field"])
+        actions.addAction(vectorAction)
+        rasterAction = QgsAction(
+            QgsAction.GenericPython,
+            "Load Raster Layer",
+            f"from pathlib import Path\np=Path(r'{field}')\nqgis.utils.iface.addRasterLayer(str(p), p.stem)",
+        )
+        rasterAction.setActionScopes(["Feature", "Field"])
+        actions.addAction(rasterAction)
+        return {"OUTPUT": self.output_dest_id}
 
     def name(self):
         """

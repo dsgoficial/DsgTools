@@ -20,6 +20,7 @@
  ***************************************************************************/
 """
 from collections import defaultdict
+from enum import Enum
 from itertools import tee
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 from qgis.PyQt.QtCore import QByteArray
@@ -37,6 +38,13 @@ from qgis.core import (
 )
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+
+
+class GraphType(Enum):
+    GRAPH = 0
+    DIGRAPH = 1
+    MULTIGRAPH = 2
+    MULTIDIGRAPH = 3
 
 
 def fetch_connected_nodes(
@@ -118,7 +126,7 @@ def buildGraph(
     hashDict: Dict[int, List[QByteArray]],
     nodeDict: Dict[QByteArray, int],
     feedback: Optional[QgsFeedback] = None,
-    directed: bool = False,
+    graphType: GraphType = 0,
     add_inside_river_attribute: bool = True,
 ) -> Any:
     """
@@ -141,17 +149,29 @@ def buildGraph(
         The optional 'feedback' object can be used to monitor the progress of the function.
 
     """
-    G = nx.Graph() if not directed else nx.DiGraph()
+    graphType = GraphType.GRAPH if graphType == 0 else graphType
+    graphDict = {
+        GraphType.GRAPH: nx.Graph,
+        GraphType.DIGRAPH: nx.DiGraph,
+        GraphType.MULTIGRAPH: nx.MultiGraph,
+        GraphType.MULTIDIGRAPH: nx.MultiDiGraph,
+    }
+    graphObject = graphDict.get(graphType, None)
+    if graphObject is None:
+        raise NotImplementedError("Invalid graph type")
+    G = graphObject()
     progressStep = 100 / len(hashDict)
     for current, (edgeId, (wkb_1, wkb_2)) in enumerate(hashDict.items()):
         if feedback is not None and feedback.isCanceled():
             break
         if wkb_1 == [] or wkb_2 == []:
             continue
-        G.add_edge(nodeDict[wkb_1], nodeDict[wkb_2])
-        G[nodeDict[wkb_1]][nodeDict[wkb_2]]["featid"] = edgeId
         if add_inside_river_attribute:
-            G[nodeDict[wkb_1]][nodeDict[wkb_2]]["inside_river"] = False
+            G.add_edge(
+                nodeDict[wkb_1], nodeDict[wkb_2], featid=edgeId, inside_river=False
+            )
+        else:
+            G.add_edge(nodeDict[wkb_1], nodeDict[wkb_2], featid=edgeId)
         if feedback is not None:
             feedback.setProgress(current * progressStep)
     return G
@@ -162,7 +182,7 @@ def buildAuxStructures(
     nodesLayer: QgsVectorLayer,
     edgesLayer: QgsVectorLayer,
     feedback: Optional[QgsFeedback] = None,
-    directed: Optional[bool] = False,
+    graphType: Optional[GraphType] = 0,
     useWkt: Optional[bool] = False,
     computeNodeLayerIdDict: Optional[bool] = False,
     addEdgeLength: Optional[bool] = False,
@@ -181,8 +201,8 @@ def buildAuxStructures(
         nodesLayer: A QgsVectorLayer representing the nodes in the network.
         edgesLayer: A QgsVectorLayer representing the edges in the network.
         feedback: An optional QgsFeedback object to provide feedback during processing.
-        directed: An optional boolean flag indicating whether the network is directed.
-                  Default is False (undirected network).
+        graphType: An optional enum flag indicating whether the network is directed.
+                  Default is GraphType.GRAPH = 0 (undirected network).
         useWkt: An optional boolean flag indicating whether to use Well-Known Text (WKT)
                 representation for node geometries. Default is False (use WKB representation).
         computeNodeLayerIdDict: An optional boolean flag indicating whether to compute
@@ -240,28 +260,32 @@ def buildAuxStructures(
 
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(2)
-    networkBidirectionalGraph = buildGraph(
-        nx, hashDict, nodeDict, feedback=multiStepFeedback, directed=directed
+    G = buildGraph(
+        nx, hashDict, nodeDict, feedback=multiStepFeedback, graphType=graphType
     )
     if addEdgeLength:
-        for (a, b) in networkBidirectionalGraph.edges:
+        for edge in G.edges:
+            a, b, *c = edge
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
-            featid = networkBidirectionalGraph[a][b]["featid"]
+            featid = G[a][b]["featid"] if c == [] else G[a][b][c[0]]["featid"]
             if featid not in edgeDict:
                 continue
             geom = edgeDict[featid].geometry()
-            networkBidirectionalGraph[a][b]["length"] = geom.length()
+            if c == []:
+                G[a][b]["length"] = geom.length()
+            else:
+                G[a][b][c[0]]["length"] = geom.length()
 
     return (
-        (nodeDict, nodeIdDict, edgeDict, hashDict, networkBidirectionalGraph)
+        (nodeDict, nodeIdDict, edgeDict, hashDict, G)
         if not computeNodeLayerIdDict
         else (
             nodeDict,
             nodeIdDict,
             edgeDict,
             hashDict,
-            networkBidirectionalGraph,
+            G,
             nodeLayerIdDict,
         )
     )
@@ -750,7 +774,13 @@ def buildAuxFlowGraph(
     return DiG
 
 
-def find_mergeable_edges_on_graph(nx, G, feedback: Optional[QgsFeedback] = None):
+def find_mergeable_edges_on_graph(
+    nx,
+    G,
+    nodeIdDict,
+    allowClosedLines: bool = False,
+    feedback: Optional[QgsFeedback] = None,
+):
     """
     Find mergeable edges in a graph.
 
@@ -759,7 +789,9 @@ def find_mergeable_edges_on_graph(nx, G, feedback: Optional[QgsFeedback] = None)
     can be merged, and values are sets of mergeable edge pairs.
 
     Parameters:
-    - G (networkx.Graph): The input graph to analyze.
+    - nx (module): NetworkX library.
+    - G (nx.Graph): The input graph to analyze.
+    - nodeIdDict (Dict[int, QByteArray]): Dictionary mapping node IDs to QByteArray objects.
     - feedback (Optional[QgsFeedback]): A QgsFeedback object for providing user feedback during
       processing. If provided and canceled, the function will terminate early.
 
@@ -767,12 +799,8 @@ def find_mergeable_edges_on_graph(nx, G, feedback: Optional[QgsFeedback] = None)
     - Dict[Set[Hashable], Set[Tuple[Hashable, Hashable]]]: A dictionary where keys are sets of nodes
       that can be merged, and values are sets of frozenset pairs representing mergeable edges.
 
-    Note:
-    - Mergeable edges are defined as edges that connect the same set of nodes, potentially forming
-      a multi-edge in the graph.
-
     Example:
-    ```
+    ```python
     G = nx.Graph()
     G.add_edges_from([
         (1, 2), (3, 2),
@@ -785,20 +813,21 @@ def find_mergeable_edges_on_graph(nx, G, feedback: Optional[QgsFeedback] = None)
         (13, 14),
         (15, 13), (15, 16),
     ])
-    mergeable_edges = find_mergeable_edges_on_graph(G)
+    nodeIdDict = {1: b'\x00', 2: b'\x01', 3: b'\x02', 4: b'\x03', 5: b'\x04', 6: b'\x05', 7: b'\x06', 8: b'\x07', 9: b'\x08', 10: b'\x09', 11: b'\x0a', 12: b'\x0b', 13: b'\x0c', 14: b'\x0d', 15: b'\x0e', 16: b'\x0f', 17: b'\x10', 18: b'\x11'}
+    mergeable_edges = find_mergeable_edges_on_graph(nx, G, nodeIdDict)
     ```
 
     In the example above, `mergeable_edges` may contain:
-    ```
+    ```python
     {
-        frozenset({4, 5}): {frozenset({4, 5}), frozenset({2, 4})},
-        frozenset({17, 18, 6, 7}): {frozenset({8, 17}), frozenset({18, 2}), frozenset({6, 7}), frozenset({17, 7}), frozenset({18, 6})},
-        frozenset({16, 15}): {frozenset({13, 15}), frozenset({16, 15})},
-        frozenset({9}): {frozenset({8, 9}), frozenset({9, 10})}
+        frozenset({4, 5}): nx.MultiGraph{(4, 5), (2, 4)},
+        frozenset({17, 18, 6, 7}): {(8, 17), (18, 2), (6, 7), (17, 7), (18, 6)},
+        frozenset({16, 15}): {(13, 15), (16, 15)},
+        frozenset({9}): {(8, 9), (9, 10)}
     }
     ```
     """
-    outputGraphDict = defaultdict(lambda: nx.Graph())
+    outputGraphDict = defaultdict(lambda: nx.MultiGraph())
     degree2nodes = (i for i in G.nodes if G.degree(i) == 2)
     if feedback is not None and feedback.isCanceled():
         return outputGraphDict
@@ -816,32 +845,142 @@ def find_mergeable_edges_on_graph(nx, G, feedback: Optional[QgsFeedback] = None)
         if feedback is not None and feedback.isCanceled():
             break
         for node in candidateSet:
-            for n0, n1 in G.edges(node):
-                outputGraphDict[candidateSet].add_edge(n0, n1)
-                outputGraphDict[candidateSet][n0][n1]["featid"] = G[n0][n1]["featid"]
+            for edge in G.edges(node):
+                n0, n1 = edge
+                if "featid" in G[n0][n1]:
+                    featid = G[n0][n1]["featid"]
+                    if (
+                        n0 in outputGraphDict[candidateSet]
+                        and n1 in outputGraphDict[candidateSet][n0]
+                        and p in outputGraphDict[candidateSet][n0][n1]
+                        and outputGraphDict[candidateSet][n0][n1]["featid"] == featid
+                    ):
+                        continue
+                    outputGraphDict[candidateSet].add_edge(
+                        n0,
+                        n1,
+                        featid=featid,
+                        length=G[n0][n1][p]["length"]
+                        if "length" in G[n0][n1][p]
+                        else 1,
+                    )
+                    continue
+                for p in G[n0][n1].keys():
+                    if (
+                        n0 in outputGraphDict[candidateSet]
+                        and n1 in outputGraphDict[candidateSet][n0]
+                        and p in outputGraphDict[candidateSet][n0][n1]
+                        and outputGraphDict[candidateSet][n0][n1][p]["featid"]
+                        == G[n0][n1][p]["featid"]
+                    ):
+                        continue
+                    outputGraphDict[candidateSet].add_edge(
+                        n0,
+                        n1,
+                        featid=G[n0][n1][p]["featid"],
+                        length=G[n0][n1][p]["length"]
+                        if "length" in G[n0][n1][p]
+                        else 1,
+                    )
         if feedback is not None:
             feedback.setProgress(current * stepSize)
+    keysToPop = set()
+    auxDict = defaultdict(lambda: nx.MultiGraph())
+
+    def distance(start, end):
+        startGeom, endGeom = QgsGeometry(), QgsGeometry()
+        startGeom.fromWkb(nodeIdDict[start])
+        endGeom.fromWkb(nodeIdDict[end])
+        return startGeom.distance(endGeom)
+
+    for keySet, graph in outputGraphDict.items():
+        nodeWithMaxDegree = max(graph.nodes, key=lambda x: graph.degree(x))
+        candidateNodes = list(
+            filter(
+                lambda x: x != nodeWithMaxDegree
+                and graph.degree(x) > 1
+                and nx.has_path(graph, x, nodeWithMaxDegree),
+                graph.nodes,
+            )
+        )
+        nCandidates = len(candidateNodes)
+        if nCandidates == 0:
+            continue
+        elif nCandidates == 1:
+            furthestNode = candidateNodes[0]
+            if allowClosedLines:
+                continue
+        else:
+            furthestNode = max(
+                candidateNodes, key=lambda x: distance(nodeWithMaxDegree, x)
+            )
+        path_list = list(nx.all_simple_paths(graph, nodeWithMaxDegree, furthestNode))
+        if len(path_list) == 1:
+            continue
+        keysToPop.add(keySet)
+        for path in path_list:
+            newKey = frozenset(path)
+            dictToUpdate = (
+                auxDict[newKey]
+                if newKey not in outputGraphDict
+                else outputGraphDict[newKey]
+            )
+            for n0, n1 in nx.utils.pairwise(path):
+                for p in G[n0][n1].keys():
+                    dictToUpdate.add_edge(
+                        n0,
+                        n1,
+                        featid=G[n0][n1][p]["featid"],
+                        length=G[n0][n1][p]["length"]
+                        if "length" in G[n0][n1][p]
+                        else 1,
+                    )
+    if len(keysToPop) == 0:
+        return outputGraphDict
+    for k in keysToPop:
+        outputGraphDict.pop(k)
+    outputGraphDict.update(auxDict)
     return outputGraphDict
 
 
 def filter_mergeable_graphs_using_attibutes(
-    nx, G, featDict: Dict[int, QgsFeature], attributeNameList: List[str], isMulti: bool
+    nx,
+    G,
+    featDict: Dict[int, QgsFeature],
+    nodeIdDict: Dict[int, QByteArray],
+    attributeNameList: List[str],
+    isMulti: bool,
+    allowClosedLines: bool = False,
 ) -> Tuple[Set[int], Set[int]]:
-    auxDict = defaultdict(lambda: nx.Graph())
+    """Filters mergeable graphs based on specified attributes.
+
+    Args:
+        nx (module): NetworkX library.
+        G (nx.MultiDiGraph): MultiDigraph to filter.
+        featDict (Dict[int, QgsFeature]): Dictionary mapping feature IDs to QgsFeature objects.
+        nodeIdDict (Dict[int, QByteArray]): Dictionary mapping node IDs to QByteArray objects.
+        attributeNameList (List[str]): List of attribute names to consider for filtering.
+        isMulti (bool): Flag indicating whether the graph is a multi-type graph.
+
+    Returns:
+        Tuple[Set[int], Set[int]]: Tuple containing sets of feature IDs to update and delete.
+    """
+    auxDict = defaultdict(lambda: nx.MultiGraph())
     featureSetToUpdate, deleteIdSet = set(), set()
-    for n0, n1 in G.edges:
-        featid = G[n0][n1]["featid"]
+    for n0, n1, p in G.edges:
+        featid = G[n0][n1][p]["featid"]
         feat = featDict[featid]
         attrTuple = tuple(feat[i] for i in attributeNameList)
-        auxDict[attrTuple].add_edge(n0, n1)
-        auxDict[attrTuple][n0][n1]["featid"] = featid
+        auxDict[attrTuple].add_edge(n0, n1, featid=featid)
     for auxGraph in auxDict.values():
-        for mergeableG in find_mergeable_edges_on_graph(nx, auxGraph).values():
-            if len(mergeableG.edges) < 2:
+        for mergeableG in find_mergeable_edges_on_graph(
+            nx, auxGraph, nodeIdDict, allowClosedLines=allowClosedLines
+        ).values():
+            if not allowClosedLines and len(mergeableG.edges) < 2:
                 continue
-            idToKeep, *idsToDelete = [
-                mergeableG[n0][n1]["featid"] for n0, n1 in mergeableG.edges
-            ]
+            idToKeep, *idsToDelete = set(
+                mergeableG[n0][n1][p]["featid"] for n0, n1, p in mergeableG.edges
+            )
             outputFeat = featDict[idToKeep]
             geom = outputFeat.geometry()
             for id in idsToDelete:
@@ -864,16 +1003,17 @@ def identify_unmerged_edges_on_graph(
     filterLineLayer: QgsVectorLayer,
     attributeNameList: List[str],
 ) -> Set[int]:
-    auxDict = defaultdict(lambda: nx.Graph())
+    auxDict = defaultdict(lambda: nx.MultiGraph())
     outputIdSet = set()
-    for n0, n1 in G.edges:
-        featid = G[n0][n1]["featid"]
+    for n0, n1, p in G.edges:
+        featid = G[n0][n1][p]["featid"]
         feat = featDict[featid]
         attrTuple = tuple(feat[i] for i in attributeNameList)
-        auxDict[attrTuple].add_edge(n0, n1)
-        auxDict[attrTuple][n0][n1]["featid"] = featid
+        auxDict[attrTuple].add_edge(n0, n1, featid=featid)
     for auxGraph in auxDict.values():
-        for idSet, mergeableG in find_mergeable_edges_on_graph(nx, auxGraph).items():
+        for idSet, mergeableG in find_mergeable_edges_on_graph(
+            nx, auxGraph, nodeIdDict
+        ).items():
             if len(mergeableG.edges) < 2:
                 continue
             candidatePointSet = idSet - filterPointSet
@@ -897,7 +1037,12 @@ def identify_unmerged_edges_on_graph(
 
 
 def buildAuxLayersPriorGraphBuilding(
-    networkLayer, context=None, geographicBoundsLayer=None, feedback=None
+    networkLayer,
+    context=None,
+    geographicBoundsLayer=None,
+    feedback=None,
+    clipOnGeographicBounds=False,
+    idFieldName=None,
 ):
     algRunner = AlgRunner()
     nSteps = 6 if geographicBoundsLayer is not None else 4
@@ -913,7 +1058,7 @@ def buildAuxLayersPriorGraphBuilding(
     localCache = algRunner.runCreateFieldWithExpression(
         inputLyr=networkLayer,
         expression="$id",
-        fieldName="featid",
+        fieldName="featid" if idFieldName is None else idFieldName,
         fieldType=1,
         context=context,
         feedback=multiStepFeedback,
@@ -923,22 +1068,37 @@ def buildAuxLayersPriorGraphBuilding(
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
         algRunner.runCreateSpatialIndex(
-            inputLyr=localCache, context=context, feedback=multiStepFeedback
+            inputLyr=localCache,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         currentStep += 1
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-        localCache = algRunner.runExtractByLocation(
-            inputLyr=localCache,
-            intersectLyr=geographicBoundsLayer,
-            context=context,
-            feedback=multiStepFeedback,
+        localCache = (
+            algRunner.runExtractByLocation(
+                inputLyr=localCache,
+                intersectLyr=geographicBoundsLayer,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+            if not clipOnGeographicBounds
+            else algRunner.runClip(
+                inputLayer=localCache,
+                overlayLayer=geographicBoundsLayer,
+                context=context,
+                feedback=multiStepFeedback,
+            )
         )
         currentStep += 1
     if multiStepFeedback is not None:
         multiStepFeedback.setCurrentStep(currentStep)
     algRunner.runCreateSpatialIndex(
-        inputLyr=localCache, context=context, feedback=multiStepFeedback
+        inputLyr=localCache,
+        context=context,
+        feedback=multiStepFeedback,
+        is_child_algorithm=True,
     )
     currentStep += 1
     if multiStepFeedback is not None:
@@ -955,20 +1115,21 @@ def buildAuxLayersPriorGraphBuilding(
     nodesLayer = algRunner.runCreateFieldWithExpression(
         inputLyr=nodesLayer,
         expression="$id",
-        fieldName="nfeatid",
+        fieldName="nfeatid" if idFieldName is None else f"n{idFieldName}",
         fieldType=1,
         context=context,
         feedback=multiStepFeedback,
     )
     return localCache, nodesLayer
 
+
 def getInAndOutNodesOnGeographicBounds(
-        nodeDict: Dict[QByteArray, int],
-        nodesLayer: QgsVectorLayer,
-        geographicBoundsLayer: QgsVectorLayer,
-        context: Optional[QgsProcessingContext] = None,
-        feedback: Optional[QgsFeedback] = None,
-    ) -> Tuple[Set[int], Set[int]]:
+    nodeDict: Dict[QByteArray, int],
+    nodesLayer: QgsVectorLayer,
+    geographicBoundsLayer: QgsVectorLayer,
+    context: Optional[QgsProcessingContext] = None,
+    feedback: Optional[QgsFeedback] = None,
+) -> Tuple[Set[int], Set[int]]:
     """
     Get the in-nodes and out-nodes that fall within the geographic bounds.
 
@@ -994,7 +1155,9 @@ def getInAndOutNodesOnGeographicBounds(
 
         The feedback object is used to monitor the progress of the function.
     """
-    multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
+    multiStepFeedback = (
+        QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
+    )
     context = context if context is not None else QgsProcessingContext()
     algRunner = AlgRunner()
     currentStep = 0
@@ -1027,35 +1190,44 @@ def getInAndOutNodesOnGeographicBounds(
     for current, nodeFeat in enumerate(nodesOutsideGeographicBounds.getFeatures()):
         if multiStepFeedback is not None and multiStepFeedback.isCanceled():
             break
-        selectedSet = (
-            fixedInNodeSet if nodeFeat["vertex_pos"] == 0 else fixedOutNodeSet
-        )
+        selectedSet = fixedInNodeSet if nodeFeat["vertex_pos"] == 0 else fixedOutNodeSet
         geom = nodeFeat.geometry()
         selectedSet.add(nodeDict[geom.asWkb()])
         if multiStepFeedback is not None:
             multiStepFeedback.setProgress(current * stepSize)
     return fixedInNodeSet, fixedOutNodeSet
 
+
 def find_constraint_points(
     nodesLayer: QgsVectorLayer,
     constraintLayer: QgsVectorLayer,
     nodeDict: Dict[QByteArray, int],
     nodeLayerIdDict: Dict[int, Dict[int, QByteArray]],
-    useBuffer: bool =True,
+    useBuffer: bool = True,
     context: Optional[QgsProcessingContext] = None,
     feedback: Optional[QgsFeedback] = None,
 ) -> Set[int]:
-    multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
+    multiStepFeedback = (
+        QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
+    )
     context = context if context is not None else QgsProcessingContext()
     algRunner = AlgRunner()
     constraintSet = set()
-    layerToRelate = algRunner.runBuffer(
-        inputLayer=constraintLayer,
-        distance=1e-6,
-        context=context,
-        is_child_algorithm=True,
-    ) if constraintLayer.geometryType() != QgsWkbTypes.PointGeometry and useBuffer else constraintLayer
-    predicate = AlgRunner.Intersect if constraintLayer.geometryType() != QgsWkbTypes.PointGeometry else AlgRunner.Equal
+    layerToRelate = (
+        algRunner.runBuffer(
+            inputLayer=constraintLayer,
+            distance=1e-6,
+            context=context,
+            is_child_algorithm=True,
+        )
+        if constraintLayer.geometryType() != QgsWkbTypes.PointGeometry and useBuffer
+        else constraintLayer
+    )
+    predicate = (
+        AlgRunner.Intersect
+        if constraintLayer.geometryType() != QgsWkbTypes.PointGeometry
+        else AlgRunner.Equal
+    )
     selectedNodesFromOcean = algRunner.runExtractByLocation(
         inputLyr=nodesLayer,
         intersectLyr=layerToRelate,
@@ -1069,6 +1241,7 @@ def find_constraint_points(
         constraintSet.add(nodeDict[nodeLayerIdDict[feat["nfeatid"]]])
     return constraintSet
 
+
 def generalize_edges_according_to_degrees(
     G,
     constraintSet: Set[int],
@@ -1077,40 +1250,40 @@ def generalize_edges_according_to_degrees(
 ):
     G_copy = G.copy()
     pairsToRemove = find_smaller_first_order_path_with_length_smaller_than_threshold(
-        G=G_copy,
-        constraintSet=constraintSet,
-        threshold=threshold,
-        feedback=feedback
+        G=G_copy, constraintSet=constraintSet, threshold=threshold, feedback=feedback
     )
     while pairsToRemove is not None:
         if feedback is not None and feedback.isCanceled():
             break
         for n0, n1 in pairsToRemove:
             G_copy.remove_edge(n0, n1)
-        pairsToRemove = find_smaller_first_order_path_with_length_smaller_than_threshold(
-            G=G_copy,
-            constraintSet=constraintSet,
-            threshold=threshold,
-            feedback=feedback
+        pairsToRemove = (
+            find_smaller_first_order_path_with_length_smaller_than_threshold(
+                G=G_copy,
+                constraintSet=constraintSet,
+                threshold=threshold,
+                feedback=feedback,
+            )
         )
     return G_copy
-    
+
 
 def find_smaller_first_order_path_with_length_smaller_than_threshold(
-    G, 
-    constraintSet: Set[int],
-    threshold: float,
-    feedback: Optional[QgsFeedback] = None
+    G, constraintSet: Set[int], threshold: float, feedback: Optional[QgsFeedback] = None
 ) -> frozenset[frozenset]:
     total_length_dict = dict()
     edges_to_remove_dict = dict()
-    for node in set(node for node in G.nodes if G.degree(node) == 1 and node not in constraintSet):
+    for node in set(
+        node for node in G.nodes if G.degree(node) == 1 and node not in constraintSet
+    ):
         if feedback is not None and feedback.isCanceled():
             return None
         connectedNodes = fetch_connected_nodes(G, node, 2)
         if set(connectedNodes).intersection(constraintSet):
             continue
-        pairs = frozenset([frozenset([a, b]) for i in connectedNodes for a, b in G.edges(i)])
+        pairs = frozenset(
+            [frozenset([a, b]) for i in connectedNodes for a, b in G.edges(i)]
+        )
         total_length = sum(G[a][b]["length"] for a, b in pairs)
         if total_length >= threshold:
             continue
@@ -1118,5 +1291,36 @@ def find_smaller_first_order_path_with_length_smaller_than_threshold(
         total_length_dict[node] = total_length
     if len(total_length_dict) == 0:
         return None
-    smaller_path_node = min(total_length_dict.keys(), key=lambda x: total_length_dict[x])
+    smaller_path_node = min(
+        total_length_dict.keys(), key=lambda x: total_length_dict[x]
+    )
     return edges_to_remove_dict[smaller_path_node]
+
+
+def find_small_closed_line_groups(
+    nx,
+    G,
+    minLength: float,
+    lengthField: Optional[str] = "length",
+    idField: Optional[str] = "featid",
+    feedback: Optional[QgsFeedback] = None,
+) -> set:
+    idsToRemove = set()
+    loopList = list(nx.simple_cycles(G))
+    nLoops = len(loopList)
+    if nLoops == 0:
+        return idsToRemove
+    stepSize = 100 / nLoops
+    for current, loop in enumerate(loopList):
+        if feedback is not None and feedback.isCanceled():
+            break
+        pairs = set(pairwise(loop))
+        pairs.add((loop[-1], loop[0]))
+        currentLen = sum(map(lambda x: G[x[0]][x[1]][0][lengthField], pairs))
+        if currentLen > minLength:
+            continue
+        for pair in pairs:
+            idsToRemove.add(G[pair[0]][pair[1]][0][idField])
+        if feedback is not None:
+            feedback.setProgress(current * stepSize)
+    return idsToRemove

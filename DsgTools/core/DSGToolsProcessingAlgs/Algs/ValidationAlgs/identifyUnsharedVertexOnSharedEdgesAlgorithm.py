@@ -40,6 +40,7 @@ from qgis.core import (
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
+    QgsProcessingUtils,
 )
 
 from ...algRunner import AlgRunner
@@ -118,6 +119,18 @@ class IdentifyUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
         # get features from source
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
+        inputLineLyrList = [
+            QgsProcessingUtils.mapLayerFromString(lyr, context)
+            if isinstance(lyr, str)
+            else lyr
+            for lyr in inputLineLyrList
+        ]
+        inputPolygonLyrList = [
+            QgsProcessingUtils.mapLayerFromString(lyr, context)
+            if isinstance(lyr, str)
+            else lyr
+            for lyr in inputPolygonLyrList
+        ]
         vertexNearEdgeFlagDict = layerHandler.getUnsharedVertexOnSharedEdgesDict(
             inputLineLyrList,
             inputPolygonLyrList,
@@ -187,7 +200,7 @@ class IdentifyUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
         return help().shortHelpString(self.name())
 
     def helpUrl(self):
-        return  help().helpUrl(self.name())
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         return IdentifyUnsharedVertexOnSharedEdgesAlgorithm()

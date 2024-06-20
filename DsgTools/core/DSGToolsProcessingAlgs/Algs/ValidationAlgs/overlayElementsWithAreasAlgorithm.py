@@ -43,7 +43,6 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
     OVERLAY = "OVERLAY"
     SELECTED_OVERLAY = "SELECTED_OVERLAY"
     BEHAVIOR = "BEHAVIOR"
-    OUTPUT = "OUTPUT"
     RemoveOutside, RemoveInside, OverlayAndKeep = list(range(3))
 
     def initAlgorithm(self, config):
@@ -84,11 +83,6 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.BEHAVIOR, self.tr("Behavior"), options=self.modes, defaultValue=0
-            )
-        )
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT, self.tr("Original layer with overlayed elements")
             )
         )
 
@@ -136,7 +130,9 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
             overlayLyr.renameAttribute(0, "fid")
             overlayLyr.renameAttribute(1, "cl")
             overlayLyr.commitChanges()
-            self.algRunner.runCreateSpatialIndex(overlayLyr, context=context)
+            self.algRunner.runCreateSpatialIndex(
+                overlayLyr, context=context, is_child_algorithm=True
+            )
         # 1- check method
         # 2- if overlay and keep, use clip and symetric difference
         # 3- if remove outside, use clip
@@ -152,7 +148,7 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
             [inputLyr], outputLyr, feedback=multiStepFeedback, onlySelected=onlySelected
         )
 
-        return {self.OUTPUT: inputLyr}
+        return {}
 
     def runOverlay(self, lyr, overlayLyr, behavior, context, feedback):
         nSteps = 2 if behavior == 2 else 1
@@ -164,7 +160,14 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
             OverlayElementsWithAreasAlgorithm.OverlayAndKeep,
         ]:
             outputLyr = self.algRunner.runClip(
-                lyr, overlayLyr, context, feedback=localFeedback
+                lyr,
+                overlayLyr,
+                context,
+                feedback=localFeedback,
+                is_child_algorithm=True,
+            )
+            outputLyr = self.algRunner.runMultipartToSingleParts(
+                inputLayer=outputDiffLyr, context=context
             )
             if behavior == OverlayElementsWithAreasAlgorithm.RemoveOutside:
                 return outputLyr
@@ -174,7 +177,14 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
             OverlayElementsWithAreasAlgorithm.OverlayAndKeep,
         ]:
             outputDiffLyr = self.algRunner.runSymDiff(
-                lyr, overlayLyr, context, feedback=localFeedback
+                lyr,
+                overlayLyr,
+                context,
+                feedback=localFeedback,
+                is_child_algorithm=True,
+            )
+            outputDiffLyr = self.algRunner.runMultipartToSingleParts(
+                inputLayer=outputDiffLyr, context=context
             )
             if behavior == OverlayElementsWithAreasAlgorithm.RemoveInside:
                 return outputDiffLyr

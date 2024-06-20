@@ -21,9 +21,12 @@
 """
 
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterMultipleLayers)
+from qgis.core import (
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingOutputMultipleLayers,
+    QgsProcessingParameterMultipleLayers,
+)
 from qgis.utils import iface
 
 
@@ -46,7 +49,9 @@ class SelectFeaturesOnCurrentCanvas(QgsProcessingAlgorithm):
             )
         )
         self.addOutput(
-            QgsProcessingOutputMultipleLayers(self.OUTPUT, self.tr("Layers with selected features"))
+            QgsProcessingOutputMultipleLayers(
+                self.OUTPUT, self.tr("Layers with selected features")
+            )
         )
 
     def processAlgorithm(self, parameters, context, feedback):

@@ -77,7 +77,12 @@ class DetectChangesBetweenGroups(ValidationAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterString(self.GROUP, self.tr("Primary key attribute on input layers to group by (id, for example)"))
+            QgsProcessingParameterString(
+                self.GROUP,
+                self.tr(
+                    "Primary key attribute on input layers to group by (id, for example)"
+                ),
+            )
         )
 
         self.addParameter(

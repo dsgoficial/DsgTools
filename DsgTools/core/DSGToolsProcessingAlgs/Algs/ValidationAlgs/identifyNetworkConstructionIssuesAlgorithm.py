@@ -153,7 +153,10 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
         geographicBoundsLyr = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
-        self.prepareFlagSink(parameters, lineLyrList[0], QgsWkbTypes.Point, context)
+        refLyr = lineLyrList[0] if len(lineLyrList) > 0 else None
+        self.prepareFlagSink(parameters, refLyr, QgsWkbTypes.Point, context)
+        if refLyr is None:
+            return {"FLAGS": self.flag_id}
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Building unified lines layer..."))
@@ -173,7 +176,10 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
             context=context,
         )
         multiStepFeedback.setCurrentStep(2)
-        self.flagSink.addFeatures(outputLyr.getFeatures(), QgsFeatureSink.FastInsert)
+        if outputLyr.featureCount() > 0:
+            self.flagSink.addFeatures(
+                outputLyr.getFeatures(), QgsFeatureSink.FastInsert
+            )
         multiStepFeedback.setCurrentStep(3)
         self.getUnsegmentedErrors(
             mergedLines,
@@ -229,6 +235,7 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
             mergedLines,
             context=context,
             feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         multiStepFeedback.setCurrentStep(1)
         # run intersect
@@ -341,6 +348,7 @@ class IdentifyNetworkConstructionIssuesAlgorithm(ValidationAlgorithm):
             mergedFilters,
             context=context,
             feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         return mergedFilters
 

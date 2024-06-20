@@ -650,7 +650,7 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         if constraintLinesLyr is not None:
             self.algRunner.runCreateSpatialIndex(
-                constraintLinesLyr, context, multiStepFeedback
+                constraintLinesLyr, context, multiStepFeedback, is_child_algorithm=True
             )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -668,7 +668,10 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currentStep)
         if constraintPolygonsLyr is not None:
             self.algRunner.runCreateSpatialIndex(
-                constraintPolygonsLyr, context, multiStepFeedback
+                constraintPolygonsLyr,
+                context,
+                multiStepFeedback,
+                is_child_algorithm=True,
             )
         currentStep += 1
 
@@ -846,7 +849,10 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
                 feedback=None,
             )
             algRunner.runCreateSpatialIndex(
-                inputLyr=segments, context=localContext, feedback=None
+                inputLyr=segments,
+                context=localContext,
+                feedback=None,
+                is_child_algorithm=True,
             )
             if multiStepFeedback.isCanceled():
                 return
@@ -975,7 +981,10 @@ class BuildPolygonsFromCenterPointsAndBoundariesAlgorithm(ValidationAlgorithm):
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(1)
         self.algRunner.runCreateSpatialIndex(
-            inputLyr=extractedLyr, context=context, feedback=multiStepFeedback
+            inputLyr=extractedLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         return extractedLyr
 

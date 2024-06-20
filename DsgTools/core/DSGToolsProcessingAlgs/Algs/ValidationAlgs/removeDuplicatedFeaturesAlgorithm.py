@@ -41,7 +41,6 @@ class RemoveDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
     ATTRIBUTE_BLACK_LIST = "ATTRIBUTE_BLACK_LIST"
     IGNORE_VIRTUAL_FIELDS = "IGNORE_VIRTUAL_FIELDS"
     IGNORE_PK_FIELDS = "IGNORE_PK_FIELDS"
-    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -86,11 +85,6 @@ class RemoveDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
                 defaultValue=True,
             )
         )
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT, self.tr("Original layer without duplicated features")
-            )
-        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -127,7 +121,7 @@ class RemoveDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
             inputLyr, duplicatedGeomDict, multiStepFeedback
         )
 
-        return {self.OUTPUT: inputLyr}
+        return {}
 
     def deleteDuplicatedFeaturesFlags(self, inputLyr, duplicatedGeomDict, feedback):
         size = 100 / len(duplicatedGeomDict) if duplicatedGeomDict else 0

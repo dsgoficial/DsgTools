@@ -27,7 +27,6 @@ from qgis.core import (
 
 
 class DsgToolsBaseSetParametersAlgorithm(QgsProcessingAlgorithm):
-
     def getValueFromQSettings(self, v):
         settings = QSettings()
         settings.beginGroup("PythonPlugins/DsgTools/Options")
@@ -49,5 +48,3 @@ class DsgToolsBaseSetParametersAlgorithm(QgsProcessingAlgorithm):
         self.storeParametersInConfig(parameters)
 
         return {}
-
-    

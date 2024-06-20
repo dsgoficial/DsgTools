@@ -41,6 +41,7 @@ from qgis.core import (
     QgsProcessingParameterMultipleLayers,
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
+    QgsProcessingUtils,
 )
 
 from ...algRunner import AlgRunner
@@ -107,19 +108,38 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
             parameters, self.INPUT_POLYGONS, context
         )
         if inputLineLyrList + inputPolygonLyrList == []:
-            raise QgsProcessingException(self.tr("Select at least one layer"))
+            feedback.pushWarning(self.tr("Select at least one layer"))
+            return {}
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        inputLineLyrList = list(
+            filter(
+                lambda x: x.featureCount() > 0
+                if not onlySelected
+                else x.selectedFeatureCount() > 0,
+                inputLineLyrList,
+            )
+        )
+        inputPolygonLyrList = list(
+            filter(
+                lambda x: x.featureCount() > 0
+                if not onlySelected
+                else x.selectedFeatureCount() > 0,
+                inputPolygonLyrList,
+            )
+        )
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
         geographicBoundary = self.parameterAsVectorLayer(
             parameters, self.GEOGRAPHIC_BOUNDARY, context
         )
         lyrList = list(chain(inputLineLyrList, inputPolygonLyrList))
         nLyrs = len(lyrList)
+        if nLyrs == 0:
+            return {}
         multiStepFeedback = QgsProcessingMultiStepFeedback(nLyrs + 4, feedback)
         multiStepFeedback.setCurrentStep(0)
         flagsLyr = algRunner.runIdentifyUnsharedVertexOnSharedEdgesAlgorithm(
-            lineLayerList=inputLineLyrList,
-            polygonLayerList=inputPolygonLyrList,
+            lineLayerList=[i.clone() for i in inputLineLyrList],
+            polygonLayerList=[i.clone() for i in inputPolygonLyrList],
             onlySelected=onlySelected,
             searchRadius=searchRadius,
             context=context,
@@ -165,13 +185,15 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
         currentStep = current + 1 + (geographicBoundary is not None)
         multiStepFeedback.setCurrentStep(currentStep)
         newFlagsLyr = algRunner.runIdentifyUnsharedVertexOnSharedEdgesAlgorithm(
-            lineLayerList=inputLineLyrList,
-            polygonLayerList=inputPolygonLyrList,
+            lineLayerList=[i.clone() for i in inputLineLyrList],
+            polygonLayerList=[i.clone() for i in inputPolygonLyrList],
             onlySelected=onlySelected,
             searchRadius=searchRadius,
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
+        if newFlagsLyr.featureCount() == 0:
+            return {}
         currentStep += 1
         if geographicBoundary is not None:
             multiStepFeedback.setCurrentStep(currentStep)
@@ -179,18 +201,20 @@ class AddUnsharedVertexOnSharedEdgesAlgorithm(ValidationAlgorithm):
                 newFlagsLyr, geographicBoundary, context, feedback=multiStepFeedback
             )
             currentStep += 1
-        if newFlagsLyr.featureCount() == 0:
-            return {}
+            if newFlagsLyr.featureCount() == 0:
+                return {}
         multiStepFeedback.setCurrentStep(currentStep)
         currentStep += 1
-        algRunner.runCreateSpatialIndex(newFlagsLyr, context, multiStepFeedback)
+        algRunner.runCreateSpatialIndex(
+            newFlagsLyr, context, multiStepFeedback, is_child_algorithm=True
+        )
         multiStepFeedback.setCurrentStep(currentStep)
         currentStep += 1
         LayerHandler().addVertexesToLayers(
             vertexLyr=newFlagsLyr,
             layerList=list(chain(inputLineLyrList, inputPolygonLyrList)),
             searchRadius=searchRadius,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
 
         return {}

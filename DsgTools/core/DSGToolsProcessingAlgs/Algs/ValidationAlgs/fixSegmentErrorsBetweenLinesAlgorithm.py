@@ -46,7 +46,6 @@ class FixSegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     REFERENCE_LINE = "REFERENCE_LINE"
     SEARCH_RADIUS = "SEARCH_RADIUS"
-    FLAGS = "FLAGS"
 
     def initAlgorithm(self, config):
         """
@@ -91,10 +90,10 @@ class FixSegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
             referenceLineLayer=parameters[self.REFERENCE_LINE],
             searchRadius=searchRadius,
             context=context,
-            feedback=multiStepFeedback
+            feedback=multiStepFeedback,
         )
         if flagLyr.featureCount() == 0:
-            return
+            return {}
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
@@ -102,11 +101,16 @@ class FixSegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
             flagLyr, context, is_child_algorithm=True
         )
         currentStep += 1
-        
+
         multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(singlePartFlags, context, feedback=multiStepFeedback, is_child_algorithm=True)
+        self.algRunner.runCreateSpatialIndex(
+            singlePartFlags,
+            context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
         currentStep += 1
-        
+
         multiStepFeedback.setCurrentStep(currentStep)
         self.algRunner.runSnapLayerOnLayer(
             inputLayer=inputSource,
@@ -114,15 +118,14 @@ class FixSegmentErrorsBetweenLinesAlgorithm(ValidationAlgorithm):
             tol=searchRadius,
         )
         currentStep += 1
-        
+
         multiStepFeedback.setCurrentStep(currentStep)
         self.algRunner.runSnapLayerOnLayer(
             inputLayer=referenceSource,
             referenceLayer=singlePartFlags,
             tol=searchRadius,
         )
-
-    
+        return {}
 
     def name(self):
         """

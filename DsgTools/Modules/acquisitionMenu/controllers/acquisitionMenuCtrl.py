@@ -5,10 +5,13 @@ import json
 from qgis.core import QgsWkbTypes
 from qgis.utils import iface
 
+
 class AcquisitionMenuCtrl:
     def __init__(self, qgis=None, widgetFactory=None):
         self.qgis = qgis if qgis is not None else QgisCtrl()
-        self.widgetFactory = widgetFactory if widgetFactory is not None else WidgetFactory()
+        self.widgetFactory = (
+            widgetFactory if widgetFactory is not None else WidgetFactory()
+        )
         self.menuDock = None
         self.menuEditor = None
         self.addMenuTab = None
@@ -152,9 +155,9 @@ class AcquisitionMenuCtrl:
 
     def getAttributesConfigByLayerName(self, layerName):
         return self.qgis.getAttributesConfigByLayerName(layerName)
-    
+
     def clickReclassfyMode(self):
-        self.menuDock.handleReclassifyMode() if self.menuDock else ''
+        self.menuDock.handleReclassifyMode() if self.menuDock else ""
 
     def createMenuDock(self, menuConfigs):
         self.removeMenuDock()
@@ -169,7 +172,11 @@ class AcquisitionMenuCtrl:
     def openReclassifyDialog(self, buttonConfig, callback):
         layers = self.qgis.getVectorLayersByName(buttonConfig["buttonLayer"])
         layer = layers[0]
-        layerName = layer.dataProvider().uri().table() if layer.providerType() == "postgres" else layer.name()
+        layerName = (
+            layer.dataProvider().uri().table()
+            if layer.providerType() == "postgres"
+            else layer.name()
+        )
         layersToReclassification = self.getLayersForReclassification(
             layerName, layer.geometryType()
         )
@@ -180,7 +187,9 @@ class AcquisitionMenuCtrl:
         self.reclassifyDialog = self.widgetFactory.createWidget(
             "ReclassifyDialog", self
         )
-        suppressReclassificationDialog = buttonConfig.get("buttonSuppressReclassificationForm", False)
+        suppressReclassificationDialog = buttonConfig.get(
+            "buttonSuppressReclassificationForm", False
+        )
         self.reclassifyDialog.setAttributeTableWidget(self.getAttributeTableWidget())
         self.reclassifyDialog.loadAttributes(
             self.getAttributesConfigByLayerName(buttonConfig["buttonLayer"])
@@ -201,7 +210,11 @@ class AcquisitionMenuCtrl:
         if len(layers) > 1:
             raise Exception("Há camadas repetidas!")
         layer = layers[0]
-        layerName = layer.dataProvider().uri().table() if layer.providerType() == "postgres" else layer.name()
+        layerName = (
+            layer.dataProvider().uri().table()
+            if layer.providerType() == "postgres"
+            else layer.name()
+        )
         layersToReclassification = self.getLayersForReclassification(
             layerName, layer.geometryType()
         )
@@ -227,19 +240,22 @@ class AcquisitionMenuCtrl:
                     layer, destinatonLayer, attributes
                 )
         destinatonLayer.triggerRepaint()
-        
 
     def getLayersForReclassification(self, layerName, geometryType):
         layers = self.qgis.getLoadedVectorLayers()
         geometryFilterDict = {
-            QgsWkbTypes.PointGeometry: (QgsWkbTypes.PointGeometry, QgsWkbTypes.PolygonGeometry),
-            QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry, ),
-            QgsWkbTypes.PolygonGeometry: (QgsWkbTypes.PolygonGeometry, ),
+            QgsWkbTypes.PointGeometry: (
+                QgsWkbTypes.PointGeometry,
+                QgsWkbTypes.PolygonGeometry,
+            ),
+            QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry,),
+            QgsWkbTypes.PolygonGeometry: (QgsWkbTypes.PolygonGeometry,),
         }
         return [
             l
             for l in layers
-            if l.selectedFeatureCount() > 0 and l.geometryType() in geometryFilterDict[l.geometryType()]
+            if l.selectedFeatureCount() > 0
+            and l.geometryType() in geometryFilterDict[l.geometryType()]
         ]
 
     def activeMenuButton(self, buttonConfig):

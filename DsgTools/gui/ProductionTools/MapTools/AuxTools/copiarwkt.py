@@ -60,7 +60,7 @@ def copywkt():
             "Warning",
             "Selecione uma camada antes de rodar o processo",
             level=Qgis.Warning,
-            duration=5
+            duration=5,
         )
 
     result, destCrs = callDialog(layer.crs())

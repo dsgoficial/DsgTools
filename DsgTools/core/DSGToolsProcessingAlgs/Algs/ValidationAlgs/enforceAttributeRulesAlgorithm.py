@@ -42,6 +42,7 @@ from qgis.PyQt.QtWidgets import QMessageBox
 from .validationAlgorithm import ValidationAlgorithm
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
+
 class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
     """
     Algorithm for applying user-defined attribute rules to
@@ -336,7 +337,7 @@ class EnforceAttributeRulesAlgorithm(QgsProcessingAlgorithm):
         return help().shortHelpString(self.name())
 
     def helpUrl(self):
-        return  help().helpUrl(self.name())
+        return help().helpUrl(self.name())
 
     def createInstance(self):
         """

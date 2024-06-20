@@ -74,7 +74,11 @@ class ShortcutTool(QObject):
         except:
             pass
         qSettings = QSettings()
-        qSettingsKey = "digitizing/marker-only-for-selected" if Qgis.QGIS_VERSION_INT >= 33000 else "qgis/digitizing/marker_only_for_selected"
+        qSettingsKey = (
+            "digitizing/marker-only-for-selected"
+            if Qgis.QGIS_VERSION_INT >= 33000
+            else "qgis/digitizing/marker_only_for_selected"
+        )
         currentState = qSettings.value(qSettingsKey)
         qSettings.setValue(qSettingsKey, not currentState)
         self.iface.mapCanvas().refresh()

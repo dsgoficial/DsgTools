@@ -51,7 +51,7 @@ class BDGExGuiManager(QObject):
             "topocharts": [
                 {
                     "icon": ":/plugins/DsgTools/icons/eb.png",
-                    "menu_entry": self.tr("Multi scale mosaic"),
+                    "menu_entry": self.tr("Multi Scale Mosaic"),
                     "layers": ["ctm25", "ctm50", "ctm100", "ctm250"],
                     "service": "mapcache",
                     "service_type": "WMS",
@@ -325,6 +325,8 @@ class BDGExGuiManager(QObject):
         self.load_menus("vector_mapindex", self.vectorIndex)
 
     def loadServiceLayer(self, legendName, service, layerList, serviceType="WMS"):
+        if "BDGEx" not in legendName:
+            legendName = f"BDGEx {legendName}"
         urlWithParams = self.BDGExRequestHandler.get_url_string(
             service, layerList, serviceType
         )

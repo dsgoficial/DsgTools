@@ -27,7 +27,6 @@ from qgis.core import (
     QgsProcessingParameterBoolean,
     QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingMultiStepFeedback,
     QgsProcessingException,
 )
 
@@ -38,7 +37,6 @@ from .validationAlgorithm import ValidationAlgorithm
 class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
     FLAGS = "FLAGS"
     INPUT = "INPUT"
-    OUTPUT = "OUTPUT"
     SELECTED = "SELECTED"
     TOLERANCE = "TOLERANCE"
 
@@ -68,17 +66,10 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
             )
         )
 
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT, self.tr("Original layer without small lines")
-            )
-        )
-
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
-        algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(
@@ -86,40 +77,26 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
             )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(
-            self.tr("Identifying small lines in layer {0}...").format(inputLyr.name())
+        featureList, total = self.getIteratorAndFeatureCount(
+            inputLyr, onlySelected=onlySelected
         )
-        flagLyr = algRunner.runIdentifySmallLines(
-            inputLyr,
-            tol,
-            context,
-            feedback=multiStepFeedback,
-            onlySelected=onlySelected,
-        )
-
-        multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(
-            self.tr("Removing small lines from layer {0}...").format(inputLyr.name())
-        )
-        self.removeFeatures(inputLyr, flagLyr, multiStepFeedback)
-
-        return {self.OUTPUT: inputLyr}
-
-    def removeFeatures(self, inputLyr, flagLyr, feedback, progressDelta=100):
-        featureList, total = self.getIteratorAndFeatureCount(flagLyr)
-        currentProgress = feedback.progress()
-        localTotal = progressDelta / total if total else 0
+        if total == 0:
+            return {self.OUTPUT: inputLyr}
+        stepSize = 100 / total
         inputLyr.startEditing()
-        idRemoveList = []
+        inputLyr.beginEditCommand(self.tr("Removing small lines"))
+        idRemoveSet = set()
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
             if feedback.isCanceled():
                 break
-            idRemoveList += [int(feat["reason"].split("=")[-1].split(" ")[0])]
-            feedback.setProgress(currentProgress + (current * localTotal))
-        inputLyr.deleteFeatures(idRemoveList)
+            if feat.geometry().length() > tol:
+                continue
+            idRemoveSet.add(feat.id())
+            feedback.setProgress(current * stepSize)
+        inputLyr.deleteFeatures(list(idRemoveSet))
+        inputLyr.endEditCommand()
+        return {}
 
     def name(self):
         """

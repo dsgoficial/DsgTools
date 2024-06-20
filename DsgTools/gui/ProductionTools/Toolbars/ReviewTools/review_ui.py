@@ -92,7 +92,6 @@ class Ui_ReviewToolbar(object):
         self.setActiveLayerPushButton.setIconSize(QtCore.QSize(16, 16))
         self.setActiveLayerPushButton.setObjectName("setActiveLayerPushButton")
 
-
         self.rankFieldComboBox = QgsFieldComboBox(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed

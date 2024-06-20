@@ -69,32 +69,37 @@ class BuildZipPackageAlgorithm(QgsProcessingAlgorithm):
             )
         )
 
-        
-
     def processAlgorithm(self, parameters, context, feedback):
-        folderPath = self.parameterAsString(parameters, self.INPUT_SHAPEFILE_FOLDER, context)
+        folderPath = self.parameterAsString(
+            parameters, self.INPUT_SHAPEFILE_FOLDER, context
+        )
         outputPrefix = self.parameterAsString(parameters, self.OUTPUT_PREFIX, context)
-        outputFolderPath = self.parameterAsString(parameters, self.OUTPUT_ZIP_FOLDER, context)
+        outputFolderPath = self.parameterAsString(
+            parameters, self.OUTPUT_ZIP_FOLDER, context
+        )
         p = Path(folderPath)
         folderList = [f.stem for f in p.iterdir() if f.is_dir()]
         if len(folderList) == 0:
             return {}
-        stepSize = 100/len(folderList)
+        stepSize = 100 / len(folderList)
         for current, folderName in enumerate(folderList):
             if feedback.isCanceled():
                 break
             outputZipName = f"{outputPrefix}{folderName}"
             with zipfile.ZipFile(
-                Path(outputFolderPath, f'{outputZipName}.zip'), 'w', zipfile.ZIP_DEFLATED
+                Path(outputFolderPath, f"{outputZipName}.zip"),
+                "w",
+                zipfile.ZIP_DEFLATED,
             ) as zf:
                 for item in Path(p / folderName).glob("*"):
-                    if '.DS_Store' in str(item) or '__MACOSX/' in str(item):
+                    if ".DS_Store" in str(item) or "__MACOSX/" in str(item):
                         continue
-                    zf.write(item, Path(folderName / item.relative_to(os.path.dirname(item))))
+                    zf.write(
+                        item, Path(folderName / item.relative_to(os.path.dirname(item)))
+                    )
 
             feedback.setProgress(current * stepSize)
         return {}
-
 
     def name(self):
         """
@@ -148,6 +153,8 @@ class BuildZipPackageAlgorithm(QgsProcessingAlgorithm):
         method from QgsLayerTreeGroup is not thread safe.
         """
         return super().flags() | QgsProcessingAlgorithm.FlagNoThreading
-    
+
     def shortHelpString(self):
-        return self.tr("This algorithm loads shapefiles from folders. If a folder with subfolders is selected, one extra node is created for each subfolder")
+        return self.tr(
+            "This algorithm loads shapefiles from folders. If a folder with subfolders is selected, one extra node is created for each subfolder"
+        )

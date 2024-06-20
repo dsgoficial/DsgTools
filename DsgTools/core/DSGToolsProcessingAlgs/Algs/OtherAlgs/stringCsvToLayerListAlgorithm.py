@@ -29,6 +29,7 @@ from qgis.core import (
     QgsProcessingParameterString,
     QgsProcessingUtils,
     QgsProject,
+    QgsVectorLayer,
 )
 
 
@@ -57,9 +58,9 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         layerCsv = self.parameterAsString(parameters, self.INPUTLAYERS, context)
-        layerNameList = layerCsv.split(",")
+        layerNameList = layerCsv.split(",") if layerCsv != "" else []
         if not len(layerNameList):
-            return {self.OUTPUT: None}
+            return {self.OUTPUT: []}
         layerSet = set()
         layerNamesToLoadSet = self.getLayerNameSetToLoad(layerNameList)
         progressStep = 100 / len(layerNamesToLoadSet)
@@ -69,17 +70,20 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
             lyr = QgsProcessingUtils.mapLayerFromString(layerName, context)
             if lyr is None:
                 continue
+            if lyr.readOnly() or not isinstance(lyr, QgsVectorLayer):
+                continue
             layerSet.add(lyr.id())
             feedback.setProgress(idx * progressStep)
 
-        return {self.OUTPUT: list(layerSet)}
+        return {self.OUTPUT: [lyr for lyr in layerSet]}
 
     def getLayerNameSetToLoad(self, layerNameList):
-        loadedLayerNamesSet = set(
-            l.name()
+        loadedLayerDict = {
+            l.name(): l
             for l in QgsProject.instance().mapLayers().values()
             if l.type() == QgsMapLayer.VectorLayer
-        )
+        }
+        loadedLayerNamesSet = set(loadedLayerDict.keys())
         wildCardFilterList = [fi for fi in layerNameList if "*" in fi]
         wildCardLayersSet = set()
         for wildCardFilter in wildCardFilterList:
@@ -89,6 +93,20 @@ class StringCsvToLayerListAlgorithm(QgsProcessingAlgorithm):
         layerNamesToLoadSet = (
             set(layerNameList) - set(wildCardFilterList) | wildCardLayersSet
         )
+        for pipeString in filter(lambda x: "|" in x, layerNameList):
+            nameList = pipeString.split("|")
+            for name in nameList:
+                matched = list(
+                    filter(
+                        lambda x: name in x[0] and x[1].featureCount() > 0,
+                        loadedLayerDict.items(),
+                    )
+                )
+                if len(matched) == 0:
+                    continue
+                layerNamesToLoadSet.add(matched[0][0])
+                break
+
         return layerNamesToLoadSet
 
     def name(self):

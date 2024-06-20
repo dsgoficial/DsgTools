@@ -89,6 +89,7 @@ class Line2Multiline(QgsProcessingAlgorithm):
             inputLyr=lines,
             context=context,
             feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         currentStep += 1
 
@@ -176,7 +177,9 @@ class Line2Multiline(QgsProcessingAlgorithm):
                 return mls_array
 
             matching_features_ids = set(
-                el for el in self.matching_features[current_id] if el in self.ids_in_stack
+                el
+                for el in self.matching_features[current_id]
+                if el in self.ids_in_stack
             )
 
             self.ids_in_stack = self.ids_in_stack - matching_features_ids

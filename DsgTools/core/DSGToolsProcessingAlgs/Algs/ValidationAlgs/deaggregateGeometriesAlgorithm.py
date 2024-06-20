@@ -21,7 +21,9 @@
  ***************************************************************************/
 """
 
+from collections import Counter, defaultdict
 from PyQt5.QtCore import QCoreApplication
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from qgis.core import (
     QgsProcessing,
     QgsFeatureSink,
@@ -34,6 +36,8 @@ from qgis.core import (
     QgsProcessingParameterVectorLayer,
     QgsWkbTypes,
     QgsProcessingParameterBoolean,
+    QgsProcessingFeatureSourceDefinition,
+    QgsProcessingMultiStepFeedback,
 )
 
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
@@ -41,7 +45,6 @@ from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 
 
 class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
-    OUTPUT = "OUTPUT"
     INPUT = "INPUT"
     SELECTED = "SELECTED"
 
@@ -63,62 +66,79 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
             )
         )
 
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.INPUT, self.tr("Original layer updated")
-            )
-        )
-
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
-        source = self.parameterAsSource(parameters, self.INPUT, context)
+        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        target = self.parameterAsVectorLayer(parameters, self.INPUT, context)
 
-        target.startEditing()
-        target.beginEditCommand("Updating layer")
-        fields = target.fields()
-        paramDict = LayerHandler().getDestinationParameters(target)
+        algRunner = AlgRunner()
+        paramDict = LayerHandler().getDestinationParameters(inputLyr)
         featHandler = FeatureHandler()
-        featuresToAdd = []
-        if onlySelected:
-            total = (
-                100.0 / target.selectedFeatureCount()
-                if target.selectedFeatureCount()
-                else 0
-            )
-            features = target.getSelectedFeatures()
-        else:
-            total = 100.0 / target.featureCount() if target.featureCount() else 0
-            features = target.getFeatures()
 
-        for current, feature in enumerate(features):
-            if feedback.isCanceled():
-                break
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        cacheLyr = algRunner.runCreateFieldWithExpression(
+            inputLyr=inputLyr
+            if not onlySelected
+            else QgsProcessingFeatureSourceDefinition(inputLyr.id(), True),
+            expression="$id",
+            fieldType=1,
+            fieldName="_featid",
+            feedback=multiStepFeedback,
+            context=context,
+        )
+
+        nFeats = cacheLyr.featureCount()
+        if nFeats == 0:
+            return {}
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        deaggregatedLyr = algRunner.runMultipartToSingleParts(
+            inputLayer=cacheLyr, context=context, feedback=multiStepFeedback
+        )
+
+        deaggregatedFeatureCount = deaggregatedLyr.featureCount()
+        if deaggregatedFeatureCount == nFeats or deaggregatedFeatureCount == 0:
+            return {}
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        itemCounter = Counter(f["_featid"] for f in deaggregatedLyr.getFeatures())
+        candidateIdList = [k for k, v in itemCounter.items() if v > 1]
+        nCandidates = len(candidateIdList)
+        if nCandidates == 0:
+            return {}
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
+        inputLyr.startEditing()
+        inputLyr.beginEditCommand(f"Updating layer {inputLyr.name()}")
+        stepSize = 100 / nCandidates
+        featuresToAdd = []
+        for current, feature in enumerate(inputLyr.getFeatures(candidateIdList)):
+            if multiStepFeedback.isCanceled():
+                return {}
             if not feature.geometry():
-                target.deleteFeature(feature.id())
-                feedback.setProgress(int(current * total))
+                inputLyr.deleteFeature(feature.id())
+                feedback.setProgress(int(current * stepSize))
                 continue
             updtGeom, newFeatList, update = featHandler.handleFeature(
-                [feature], feature, target, paramDict
+                [feature], feature, inputLyr, paramDict
             )
             if not update:
                 feature.setGeometry(updtGeom)
-                target.updateFeature(feature)
+                inputLyr.updateFeature(feature)
                 featuresToAdd += newFeatList
-            feedback.setProgress(int(current * total))
+            feedback.setProgress(int(current * stepSize))
         if featuresToAdd:
-            target.addFeatures(featuresToAdd, QgsFeatureSink.FastInsert)
-        target.endEditCommand()
-        # Return the results of the algorithm. In this case our only result is
-        # the feature sink which contains the processed features, but some
-        # algorithms may return multiple feature sinks, calculated numeric
-        # statistics, etc. These should all be included in the returned
-        # dictionary, with keys matching the feature corresponding parameter
-        # or output names.
-        return {self.OUTPUT: target}
+            inputLyr.addFeatures(featuresToAdd, QgsFeatureSink.FastInsert)
+        inputLyr.endEditCommand()
+        return {}
 
     def name(self):
         """

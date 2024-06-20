@@ -7,20 +7,22 @@ from qgis import gui
 
 
 class MenuDock(QtWidgets.QDockWidget):
-    def __init__(
-        self, controller, messageFactory=None
-    ):
+    def __init__(self, controller, messageFactory=None):
         super(MenuDock, self).__init__()
         uic.loadUi(self.getUiPath(), self)
         self.controller = controller
         self.menuWidget = None
         self.currentMenu = None
         self.currentButton = None
-        self.messageFactory = messageFactory if messageFactory is not None else UtilsFactory().createMessageFactory()
+        self.messageFactory = (
+            messageFactory
+            if messageFactory is not None
+            else UtilsFactory().createMessageFactory()
+        )
         self.menusCb.currentIndexChanged.connect(self.setCurrentMenu)
-    
+
     def handleReclassifyMode(self):
-        self.reclassifyCkb.setChecked( not self.reclassifyCkb.isChecked() )
+        self.reclassifyCkb.setChecked(not self.reclassifyCkb.isChecked())
 
     def showError(self, title, message):
         errorMessageBox = self.messageFactory.createMessage("ErrorMessageBox")
@@ -58,7 +60,7 @@ class MenuDock(QtWidgets.QDockWidget):
         try:
             self.setLastLayer(iface.activeLayer())
             if self.reclassifyCkb.isChecked():
-               self.getController().validLayersToReclassification(buttonConfig)
+                self.getController().validLayersToReclassification(buttonConfig)
 
             currentButton = self.getCurrentButtonConfig()
             if currentButton:
@@ -68,8 +70,7 @@ class MenuDock(QtWidgets.QDockWidget):
             if not self.reclassifyCkb.isChecked():
                 return
             self.getController().openReclassifyDialog(
-                buttonConfig, 
-                self.callbackReclassify
+                buttonConfig, self.callbackReclassify
             )
         except Exception as e:
             self.showError("Erro", str(e))

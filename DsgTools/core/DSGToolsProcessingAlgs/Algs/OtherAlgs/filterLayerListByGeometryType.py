@@ -21,10 +21,14 @@
 """
 
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsWkbTypes)
+from qgis.core import (
+    QgsProcessing,
+    QgsProcessingAlgorithm,
+    QgsProcessingOutputMultipleLayers,
+    QgsProcessingParameterMultipleLayers,
+    QgsWkbTypes,
+)
+
 
 class FilterLayerListByGeometryType(QgsProcessingAlgorithm):
     INPUT_LAYERS = "INPUT_LAYERS"
@@ -47,13 +51,17 @@ class FilterLayerListByGeometryType(QgsProcessingAlgorithm):
             )
         )
         self.addOutput(
-            QgsProcessingOutputMultipleLayers(self.POINT_OUTPUT, self.tr("Point layers"))
+            QgsProcessingOutputMultipleLayers(
+                self.POINT_OUTPUT, self.tr("Point layers")
+            )
         )
         self.addOutput(
             QgsProcessingOutputMultipleLayers(self.LINE_OUTPUT, self.tr("Line layers"))
         )
         self.addOutput(
-            QgsProcessingOutputMultipleLayers(self.POLYGON_OUTPUT, self.tr("Polygon layers"))
+            QgsProcessingOutputMultipleLayers(
+                self.POLYGON_OUTPUT, self.tr("Polygon layers")
+            )
         )
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -66,7 +74,7 @@ class FilterLayerListByGeometryType(QgsProcessingAlgorithm):
         geometryDict = {
             QgsWkbTypes.PointGeometry: [],
             QgsWkbTypes.LineGeometry: [],
-            QgsWkbTypes.PolygonGeometry: []
+            QgsWkbTypes.PolygonGeometry: [],
         }
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():

@@ -30,6 +30,7 @@ from qgis.core import (
     QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterVectorLayer,
+    QgsProcessingFeatureSourceDefinition,
 )
 
 from ...algRunner import AlgRunner
@@ -39,7 +40,6 @@ from .validationAlgorithm import ValidationAlgorithm
 class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     SELECTED = "SELECTED"
-    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -57,11 +57,6 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
                 self.SELECTED, self.tr("Process only selected features")
             )
         )
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT, self.tr("Original layer without empty geometries")
-            )
-        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -71,41 +66,55 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
         algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
-            raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.INPUT)
-            )
+            return {}
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr("Populating temp layer..."))
-        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
-            [inputLyr],
-            geomType=inputLyr.wkbType(),
-            onlySelected=onlySelected,
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+
+        cacheLyr = algRunner.runCreateFieldWithExpression(
+            inputLyr=inputLyr
+            if not onlySelected
+            else QgsProcessingFeatureSourceDefinition(inputLyr.id(), True),
+            expression="$id",
+            fieldType=1,
+            fieldName="_featid",
             feedback=multiStepFeedback,
+            context=context,
         )
 
-        multiStepFeedback.setCurrentStep(1)
+        nFeats = cacheLyr.featureCount()
+        if nFeats == 0 or multiStepFeedback.isCanceled():
+            return {}
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(
             self.tr("Removing empty geometries from layer {input}...").format(
                 input=inputLyr.name()
             )
         )
         notNullLayer = algRunner.runRemoveNull(
-            auxLyr, context, feedback=multiStepFeedback
+            cacheLyr, context, feedback=multiStepFeedback
         )
 
-        multiStepFeedback.setCurrentStep(2)
+        notNullCount = notNullLayer.featureCount()
+        if notNullCount == nFeats or multiStepFeedback.isCanceled():
+            return {}
+
+        currentStep += 1
+        multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr("Updating original layer..."))
-        layerHandler.updateOriginalLayersFromUnifiedLayer(
-            [inputLyr],
-            notNullLayer,
-            feedback=multiStepFeedback,
-            onlySelected=onlySelected,
+        idsToDeleteSet = set(f["_featid"] for f in cacheLyr.getFeatures()) - set(
+            f["_featid"] for f in notNullCount.getFeatures()
         )
+        inputLyr.startEditing()
+        inputLyr.beginEditCommand(f"Deleting null values from {inputLyr.name()}")
+        inputLyr.deleteFeatures(list(idsToDeleteSet))
+        inputLyr.endEditCommand()
 
-        return {self.OUTPUT: inputLyr}
+        return {}
 
     def name(self):
         """

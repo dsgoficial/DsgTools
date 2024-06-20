@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>338</width>
-    <height>628</height>
+    <width>357</width>
+    <height>622</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>&amp;DSGTools: Geospatial Data Quality Assurance Toolbox</string>
+   <string>DSGTools: Geospatial Data Quality Assurance Toolbox</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
@@ -134,6 +134,18 @@
     </item>
     <item row="1" column="0" colspan="2">
      <widget class="QTableWidget" name="tableWidget">
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="contextMenuPolicy">
+       <enum>Qt::CustomContextMenu</enum>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::NoSelection</enum>
+      </property>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectRows</enum>
+      </property>
       <attribute name="horizontalHeaderStretchLastSection">
        <bool>true</bool>
       </attribute>
@@ -168,54 +180,6 @@
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
-        <widget class="QPushButton" name="continuePushButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>30</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../../../../resources.qrc">
-           <normaloff>:/plugins/DsgTools/icons/runModel.png</normaloff>:/plugins/DsgTools/icons/runModel.png</iconset>
-         </property>
-         <property name="flat">
-          <bool>true</bool>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="pausePushButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>30</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../../../../resources.qrc">
-           <normaloff>:/plugins/DsgTools/icons/pause.png</normaloff>:/plugins/DsgTools/icons/pause.png</iconset>
-         </property>
-         <property name="flat">
-          <bool>true</bool>
-         </property>
-        </widget>
         <widget class="QPushButton" name="cancelPushButton">
          <property name="enabled">
           <bool>true</bool>

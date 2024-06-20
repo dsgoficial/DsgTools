@@ -252,7 +252,9 @@ class VerifyAdjacentGeographicBoundaryDataAlgorithm(ValidationAlgorithm):
                 is_child_algorithm=False,
             )
 
-            algRunner.runCreateSpatialIndex(tempPolyLyr, context)
+            algRunner.runCreateSpatialIndex(
+                tempPolyLyr, context, is_child_algorithm=True
+            )
 
             # Spatial Index of polygons
             dictPolygon, idPolygon, polygonSpatialIdx = self.spatialIndex(tempPolyLyr)

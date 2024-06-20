@@ -26,6 +26,7 @@ import itertools
 import sys
 import os
 from qgis.core import (
+    NULL,
     QgsMessageLog,
     QgsVectorLayer,
     QgsGeometry,
@@ -155,8 +156,11 @@ class FeatureHandler(QObject):
         newFeat = QgsFeature(referenceFeature)
         # provider = lyr.dataProvider()
         # in case of no PK found, use the FIRST registered column
-        for idx in lyr.primaryKeyAttributes() or [0]:
-            newFeat.setAttribute(idx, None)
+        pkFields = lyr.primaryKeyAttributes()
+        for idx, field in enumerate(lyr.fields()):
+            fieldName = field.name()
+            value = NULL if idx in pkFields else referenceFeature[fieldName]
+            newFeat[fieldName] = value
         return newFeat
 
     def newFeature(self, geom=None, fields=None, attributeMap=None):
@@ -208,10 +212,16 @@ class FeatureHandler(QObject):
             if idx == 0:
                 geomToUpdate = geom
                 continue
-            else:
-                newFeat = self.getNewFeatureWithoutGeom(featureWithoutGeom, lyr)
-                newFeat.setGeometry(geom)
-                newFeatList.append(newFeat)
+            newFeat = QgsVectorLayerUtils.createFeature(
+                layer=lyr,
+                geometry=geom,
+                attributes={
+                    idx: featureWithoutGeom[f.name()]
+                    for idx, f in enumerate(featureWithoutGeom.fields())
+                    if idx not in lyr.primaryKeyAttributes()
+                },
+            )
+            newFeatList.append(newFeat)
         return geomToUpdate, newFeatList, False
 
     def handleConvertedFeature(

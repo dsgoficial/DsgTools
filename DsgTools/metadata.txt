@@ -10,7 +10,7 @@
 name=DSG Tools
 qgisMinimumVersion=3.22
 description=Brazilian Army Cartographic Production Tools
-version=4.12.0
+version=4.14.0
 author=Brazilian Army Geographic Service
 email=dsgtools@dsg.eb.mil.br
 about=
@@ -44,6 +44,78 @@ about=
 
 # Uncomment the following line and add your changelog:
 changelog=
+	4.14.0:
+		Novas Funcionalidades:
+			- Novo processo de remover vértices duplicados e atualizar a camada original;
+			- Novo processo de identificar mudança de atributo em linhas (portado do ferramentas experimentais);
+			- Novo processo BatchRunAlgorithmWithGeographicBoundsConstraint: roda em lote, como o BatchRunAlgorithm no modelo, porém tem uma camada de entrada para o limite geográfico (o limite geográfico pode filtrar as flags de saída ou ser input, como no caso do clean com alterações somente dentro da moldura);
+			- Novo processo de identificar linhas não cobertas por outras linhas (identifica travessias hidroviárias que não se conectam com vias deslocamento ou com a moldura);
+			- Adiciona suporte para a EDGV 3.0 Topo;
+			- Novo processo de reclassificar pixel adjacente em raster para o vizinho mais próximo (útil para generalizar raster de vegetação classificada);
+			- Novo processo de reclassificar conjunto de pixels adjacentes em raster para o vizinho mais próximo (variação do algoritmo de reclassificar pixel adjacente em raster para o vizinho mais próximo que considera área do agrupamento de pixels);
+			- Novo processo de reclassificar conjunto de pixels adjacentes por meio de janela deslizante;
+			- Novo processo de selecionar conjuntos de linhas fechadas pequenos;
+			- 4 novos processos para identificar relações de interseção, elemento faltando na interseção ou elemento de interseção fora da interseção;
+			- Novo processo de converter imagens e preencher metadados para carga no BDGEx;
+		Melhorias:
+			- Adiciona a melhoria no dissolve nativo do qgis introduzida na versão 3.28.0 (foi feito o backport para manter o funcionamento nas versões anteriores);
+			- O processo Batch Run Algorithm agora ignora camadas somente leitura;
+			- Adicionada a opção de rodar o clean levando em consideração a partição espacial (impede alteração do clean fora da moldura), para o caso de linhas;
+			- Melhoria no processo topological douglas peucker: agora antes de rodar a simplificação, é rodado um clean, as feições são quebradas nas intersecções e, após rodar o topological douglas, as linhas são unidas novamente;
+			- Adicionada a opção de rodar o topological douglas peucker levando em consideração a partição espacial (impede alteração do topological douglas fora da moldura);
+			- Adicionada a opção de rodar o topological clean levando em consideração a partição espacial (impede alteração do topological douglas fora da moldura) para o caso de linhas;
+			- A Caixa de Ferramentas de Controle de Qualidade (QAToolbox) agora admite ignorar flags em processos que admitem falsos positivos;
+			- A Caixa de Ferramentas de Controle de Qualidade (QAToolbox) agora permite configurar pontos de parada ao longo do processo;
+			- A correção automática do processo de identificar geometria inválidas agora verifica novamente a geometria corrigida e só sobe o erro caso ele persista;
+			- O processo de verificação de regras do terreno agora identifica curvas de depressão incorretamente atributadas;
+			- Adicionada a verificação de self-intersection em linhas e polígonos no algoritmo de identificação de geometria inválida, para os casos de geometrias não simples;
+			- Adicionada a opção de passar o limite geográfico como parâmetro para o Snap Hierárquico;
+			- Adicionada a funcionalidade de propagar as mudanças do Snap Hierárquico somente dentro da região geográfica;
+			- StringCsvToLayerListAlgorithm agora aceita a sintaxe do | para pegar a primeira camada com elemento. Exemplo, considere que toda a EDGV Pro esteja carregada e que uma camada de moldura com nome aux_moldura_a esteja carregada. O filtro 'infra_*,moldura|aux_moldura_a' carregará as camadas infra_elemento_infraestrutura_l, infra_elemento_viario_l, infra_mobilidade_urbana_l, infra_via_deslocamento e aux_moldura_a. Esse filtro também é compatível com os algoritmos BatchRunAlgorithm e BatchRunAlgorithmWithGeographicBoundsConstraint, logo, é possível passar filtros de camadas como primitiva linha para o IdentifyDangles, por exemplo. Para passar uma lista de camadas nesse formato, no json  deve ser escrito como uma lista de strings. Exemplo: Para a lista de strings ["moldura|aux_moldura_a", "infra_*"] como lista de camadas e as camadas de infra carregadas e a moldura como aux_moldura_a, será passado para o algoritmo a seguinte lista de camadas ["infra_elemento_infraestrutura_l", "infra_elemento_viario_l", "infra_mobilidade_urbana_l", "infra_via_deslocamento", "aux_moldura_a"];
+			- O algoritmo RuleStatistics agora tem saídas vetoriais sem geometria para informar o resumo de erros. Tal alteração foi feita para realizar a integração com o workflow;
+			- Adiciona camada de saída no algoritmo de verificação de ortografia (SpellChecker) para indicar se há erros;
+			- A Caixa de Ferramentas de Controle de Qualidade agora só limpa as camadas que são flags dos processos, mantendo as entradas;
+			- Adicionada uma verificação na execução da Caixa de Ferramentas de Controle de Qualidade para evitar que o usuário comece o processo novamente sem querer;
+			- Adiciona a opção de permitir linhas fechadas no processamento de unir linhas (utilizado para fechar curvas de nível em processamentos específicos de estilos na edição);
+			- Altera o valor default da ferramenta de revisão para Pan to Next;
+			- Adiciona a melhoria no menu de reclassificação para puxar os campos idênticos da camada de origem;
+			- Workflow refatorado para corrigir constantes crashes durante a utilização;
+			- Alterada a forma de importar e exportar os modelos de dentro do workflow;
+			- Alterada a interface de gerência de flags na construção do workflow (combo box selecionando as saídas);
+			- Melhoria de desempenho no deaggregator (aproximadamente 10x mais rápido após a atualização);
+			- Melhoria de desempenho no remove geometria nula;
+			- Melhoria na interface de construção do workflow, agora existe a opção de abrir a interface de edição do modelo do qgis após a exportação no workflow;
+			- Melhoria na interface do workflow: agora é possível voltar a execução para um determinado passo já executado;
+			- Melhoria na interface do workflow: agora quando o usuário clica em rodar com um fluxo já em execução, a caixa de ferramentas pergunta se o usuário quer de fato reiniciar;
+			- Adiciona compatibilidade com o novo formato do workflow ao guardar estado no projeto;
+		Correção de bug:
+			- Corrige bug no modo não paralelo do algoritmo de generalizar linhas por comprimento;
+			- Corrige bug oriundo do merge feito errado no lançamento da última versão nos processos de identificar e unir linhas;
+			- Corrige bug no cálculo em paralelo da rotina de extrair pontos cotados;
+			- Corrige bug no sink de unicodeFilterAlgorithm;
+			- Corrige bug na construção do texto da flag do Clean;
+			- Corrige bug nos algoritmos de remover linhas pequenas e polígonos pequenos;
+			- Corrige bug na leitura do arquivo .json na ferramenta de carregar temas;
+			- Corrige bug no BatchRunAlgorithm quando é utilizada uma expressão de filtro que resulta em string vazia;
+			- Corrige bug no snap hierárquico configurado em modelo, quando uma camada prevista não está carregada;
+			- Corrige bug no enforce spatial rules no caso de uso de preenchimento por meio do model do QGIS;
+			- Corrige bug no merge lines de arestas paralelas no grafo;
+			- Corrige bug no merge lines que formava linhas fechadas na saída: agora o algoritmo identifica se a saída será uma linha fechada e caso seja, quebra em duas, utilizando o início/fim de uma das linhas participantes e o início/fim com maior número de intersecções (maior grau no grafo);
+			- Corrige bug de linha fechada no identify unmerged lines (o algoritmo agora não aponta linha não unida quando a união de duas linhas resultar numa linha fechada, que é geometria inválida);
+			- Corrige bug nas saídas de processos que estavam ocasionando crashes no MacOS;
+			- Corrige bug de flags não carregadas no workflow;
+			- Corrige comportamentos estranhos do workflow ao carregar camada (havia manipulação de grupos, que não é thread safe, na thread secundária em que o QgsTask roda);
+			- Corrige bug de estado guardado no projeto no workflow;
+			- Corrige crashes no dsgtools nos processings (versão 4.13.35, para referência em caso de problemas);
+			- Corrige bug com camada vazia em models do workflow ao executar o processo de identificar linhas não cobertas por outras linhas (IdentifyUncoveredStartAndEndPointsAlgorithm);
+			- Corrige bug em Update Runway Altitude;
+			- Corrige bug em Identify Intertwined Lines para tratar caso de Geometry Collection (linhas que se cruzam e se sobrepõem);
+			- Corrige bug nos Batch Run, valor padrão removido para compatibilidade com models nas versões mais atuais do QGIS (a partir da 3.30), não afeta versões mais antigas do QGIS;
+			- Corrige bug no snap hierárquico de não funcionar com camadas de primitiva ponto (bug introduzido quando foi adaptado para restringir as alterações somente dentro da camada de moldura);
+			- Corrige bug ao salvar o workflow (introduzido na versão 4.13.50);
+			- Corrige crash no workflow quando executa uma grande quantidade de processos em um mesmo passo (acionado o garbage collector antes de rodar cada item do workflow);
+			- Corrige o action que não estava mais funcionando na ferramenta de inventário;
+			- Corrige o bug de não carregar múltiplas saídas no workflow;
 	4.12.0:
 		Novas Funcionalidades:
 			- Novo processo de corrigir erros de segmentação em linhas (barragem versus rodovias);
@@ -116,7 +188,7 @@ changelog=
 			- Novo processo de ajustar parâmetros da ferramenta de aquisição com ângulos retos (integração com o FP/SAP);
 			- Novo processo de converter entre bancos de mesma modelagem, clipando com um polígono feito para integração com FP/SAP (ClipAndCopyFeaturesBetweenDatabasesAlgorithm);
 			- Novo processo de verificar ligação na moldura;
-		
+
 		Melhorias:
 			- Melhoria de desempenho na construção de polígonos quando se utiliza polígonos na entrada que contém linhas que podem delimitar (caso área edificada versus via deslocamento);
 			- Adicionado registro de alteração do tile na barra de ferramentas de revisão;

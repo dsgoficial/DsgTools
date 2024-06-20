@@ -39,7 +39,9 @@ class DsgLineTool(QgsMapTool):
 
         self.canvas = canvas
         self.rubberBand = None
-        self.geometryType = QgsWkbTypes.LineGeometry if geometryType is None else geometryType
+        self.geometryType = (
+            QgsWkbTypes.LineGeometry if geometryType is None else geometryType
+        )
         self.reset()
 
     def deactivate(self):
@@ -117,6 +119,9 @@ class DsgLineTool(QgsMapTool):
         else:
             return self.canvas.getCoordinateTransform().toMapCoordinates(p)
 
+
 class DsgPolygonTool(DsgLineTool):
     def __init__(self, canvas):
-        super(DsgPolygonTool, self).__init__(canvas, geometryType=QgsWkbTypes.PolygonGeometry)
+        super(DsgPolygonTool, self).__init__(
+            canvas, geometryType=QgsWkbTypes.PolygonGeometry
+        )

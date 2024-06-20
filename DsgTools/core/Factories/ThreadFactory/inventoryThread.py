@@ -500,7 +500,7 @@ class InventoryThread(GenericThread):
         creationDate = time.ctime(os.path.getctime(line))
         size = os.path.getsize(line) / 1000.0
 
-        return [str(line), creationDate, size, extension]
+        return [line.decode(encoding="UTF-8"), creationDate, size, extension]
 
     def getRasterExtent(self, gt, cols, rows):
         """

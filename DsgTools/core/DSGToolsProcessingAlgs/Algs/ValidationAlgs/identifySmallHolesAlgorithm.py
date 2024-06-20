@@ -33,6 +33,7 @@ from qgis.core import (
     QgsFeature,
     QgsFields,
     QgsProcessingParameterMultipleLayers,
+    QgsWkbTypes,
 )
 from qgis.utils import iface
 
@@ -69,17 +70,24 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
 
     def processAlgorithm(self, parameters, context, feedback):
         feedback.setProgressText(self.tr("Searching holes smaller than tolerance"))
-        layerList = self.parameterAsLayerList(parameters, "INPUT_LAYER_LIST", context)
-        maxSize = self.parameterAsDouble(parameters, "MAX_HOLE_SIZE", context)
-        CRSstr = iface.mapCanvas().mapSettings().destinationCrs().authid()
-        CRS = QgsCoordinateReferenceSystem(CRSstr)
+        layerList = self.parameterAsLayerList(
+            parameters, self.INPUT_LAYER_LIST, context
+        )
+        maxSize = self.parameterAsDouble(parameters, self.MAX_HOLE_SIZE, context)
+        crsStr = iface.mapCanvas().mapSettings().destinationCrs().authid()
+        crs = QgsCoordinateReferenceSystem(crsStr)
         smallRings = []
         listSize = len(layerList)
         progressStep = 100 / listSize if listSize else 0
         step = 0
+        newField = QgsFields()
+        newField.append(QgsField("area", QVariant.Double))
+        (self.sink, self.sink_id) = self.parameterAsSink(
+            parameters, self.OUTPUT, context, newField, QgsWkbTypes.MultiPolygon, crs
+        )
         for step, layer in enumerate(layerList):
             if feedback.isCanceled():
-                return {self.OUTPUT: smallRings}
+                break
             for feature in layer.getFeatures():
                 if not feature.hasGeometry():
                     continue
@@ -92,26 +100,21 @@ class IdentifySmallHolesAlgorithm(ValidationAlgorithm):
             feedback.setProgress(step * progressStep)
 
         if len(smallRings) == 0:
-            flagLayer = self.tr(f"Holes smaller than {str(maxSize)} were not found")
-            return {self.OUTPUT: flagLayer}
-        flagLayer = self.outputLayer(parameters, context, smallRings, CRS, 6)
-        return {self.OUTPUT: flagLayer}
+            feedback.pushInfo(
+                self.tr(f"Holes smaller than {str(maxSize)} were not found")
+            )
+            return {self.OUTPUT: self.sink_id}
+        self.outputLayer(smallRings, newField)
+        return {self.OUTPUT: self.sink_id}
 
-    def outputLayer(self, parameters, context, smallRings, CRS, geomType):
-        newField = QgsFields()
-        newField.append(QgsField("area", QVariant.Double))
+    def outputLayer(self, smallRings, newField):
         features = smallRings
-        (sink, newLayer) = self.parameterAsSink(
-            parameters, self.OUTPUT, context, newField, geomType, CRS
-        )
         for feature in features:
             newFeat = QgsFeature()
             newFeat.setGeometry(feature)
             newFeat.setFields(newField)
             newFeat["area"] = feature.area()
-            sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
-
-        return newLayer
+            self.sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
 
     def name(self):
         """

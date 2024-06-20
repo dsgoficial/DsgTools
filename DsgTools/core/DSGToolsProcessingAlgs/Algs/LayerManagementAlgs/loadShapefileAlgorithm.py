@@ -61,14 +61,18 @@ class LoadShapefileAlgorithm(QgsProcessingAlgorithm):
         folderPath = self.parameterAsString(parameters, self.FOLDER_SHAPEFILES, context)
         folder_pathlib_obj = Path(folderPath)
         output = []
-        file_iter = folder_pathlib_obj.glob('*/*.shp') \
-            if len(list(folder_pathlib_obj.glob('*/*.shp'))) > 0 \
-            else folder_pathlib_obj.glob('*.shp')
+        file_iter = (
+            folder_pathlib_obj.glob("*/*.shp")
+            if len(list(folder_pathlib_obj.glob("*/*.shp"))) > 0
+            else folder_pathlib_obj.glob("*.shp")
+        )
         shapefileData = [
             {"name": p.stem, "path": p, "parent_folder": p.parent.stem}
             for p in file_iter
         ]
-        shapefileData = sorted(shapefileData, key=lambda k: (k["parent_folder"], k["name"]))
+        shapefileData = sorted(
+            shapefileData, key=lambda k: (k["parent_folder"], k["name"])
+        )
         groupDict = dict()
         rootNodeList = []
         parentFolderSet = set(i["parent_folder"] for i in shapefileData)
@@ -87,9 +91,12 @@ class LoadShapefileAlgorithm(QgsProcessingAlgorithm):
                 break
             iface.mapCanvas().freeze(True)
             ml = QgsProject.instance().addMapLayer(
-                QgsVectorLayer(str(data["path"]), data["name"], "ogr"), addToLegend=False
+                QgsVectorLayer(str(data["path"]), data["name"], "ogr"),
+                addToLegend=False,
             )
-            groupDict[data["parent_folder"]][QgsWkbTypes.geometryType(ml.wkbType())].addLayer(ml)
+            groupDict[data["parent_folder"]][
+                QgsWkbTypes.geometryType(ml.wkbType())
+            ].addLayer(ml)
             output.append(ml.id())
             iface.mapCanvas().freeze(False)
             feedback.setProgress(step * progressStep)
@@ -158,6 +165,8 @@ class LoadShapefileAlgorithm(QgsProcessingAlgorithm):
         method from QgsLayerTreeGroup is not thread safe.
         """
         return super().flags() | QgsProcessingAlgorithm.FlagNoThreading
-    
+
     def shortHelpString(self):
-        return self.tr("This algorithm loads shapefiles from folders. If a folder with subfolders is selected, one extra node is created for each subfolder")
+        return self.tr(
+            "This algorithm loads shapefiles from folders. If a folder with subfolders is selected, one extra node is created for each subfolder"
+        )

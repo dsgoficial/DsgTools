@@ -5,9 +5,12 @@ import json
 from DsgTools.Modules.qgis.factories.actionsFactory import ActionsFactory
 from qgis.core import QgsWkbTypes
 
+
 class QgisCtrl:
     def __init__(self, actionsFactory=None):
-        self.actionsFactory = actionsFactory if actionsFactory is not None else ActionsFactory()
+        self.actionsFactory = (
+            actionsFactory if actionsFactory is not None else ActionsFactory()
+        )
 
     def getLoadedVectorLayerNames(self):
         layerNames = []
@@ -21,7 +24,7 @@ class QgisCtrl:
                 layerName = (
                     l.dataProvider().uri().uri().split("|")[-1].split("=")[-1][1:-1]
                 )
-                if layerName == '':
+                if layerName == "":
                     layerName = l.name()
             else:
                 layerName = l.name()
@@ -42,7 +45,7 @@ class QgisCtrl:
                 layerName = (
                     l.dataProvider().uri().uri().split("|")[-1].split("=")[-1][1:-1]
                 )
-                if layerName == '':
+                if layerName == "":
                     layerName = l.name()
             else:
                 layerName = l.name()
@@ -70,7 +73,7 @@ class QgisCtrl:
                 layerName = (
                     l.dataProvider().uri().uri().split("|")[-1].split("=")[-1][1:-1]
                 )
-                if layerName == '':
+                if layerName == "":
                     layerName = l.name()
             else:
                 layerName = l.name()
@@ -218,13 +221,57 @@ class QgisCtrl:
                 value = ProjectQgis(self.iface).getVariableProject(variable)"""
                 feature.setAttribute(indx, attributeValue)
 
+    def attributeFeatureV2(
+        self, feature, layer, attributes, featureOrigin, layerOrigin
+    ):
+        for fieldName in layerOrigin.fields().names():
+            indxDest = layer.fields().indexFromName(fieldName)
+            if indxDest < 0 or indxDest in self.getLayerPrimaryKeyIndexes(layer):
+                continue
+            config = layer.editorWidgetSetup(indxDest).config()
+            isMapValue = "map" in config
+            attributeValue = featureOrigin[fieldName]
+            if isMapValue:
+                valueMap = self.formatMapValues(config["map"])
+                if attributeValue in list(valueMap.values()):
+                    feature.setAttribute(indxDest, attributeValue)
+            elif attributeValue and attributeValue in ["NULL"]:
+                feature.setAttribute(indxDest, None)
+            elif attributeValue:
+                feature.setAttribute(indxDest, attributeValue)
+
+        for fieldName in attributes:
+            indx = layer.fields().indexFromName(fieldName)
+            if indx < 0:
+                continue
+            config = layer.editorWidgetSetup(indx).config()
+            isMapValue = "map" in config
+            attributeValue = attributes[fieldName]
+            if isMapValue:
+                valueMap = self.formatMapValues(config["map"])
+                if attributeValue in valueMap:
+                    feature.setAttribute(indx, valueMap[attributeValue])
+            elif attributeValue and attributeValue in ["NULL"]:
+                feature.setAttribute(indx, None)
+            elif attributeValue and not (attributeValue in ["NULL", "IGNORAR"]):
+                """if re.match('^\@value\(".+"\)$', value):
+                variable = value.split('"')[-2]
+                value = ProjectQgis(self.iface).getVariableProject(variable)"""
+                feature.setAttribute(indx, attributeValue)
+
     def cutAndPasteSelectedFeatures(self, layer, destinatonLayer, attributes):
         geometryFilterDict = {
             QgsWkbTypes.PointGeometry: (QgsWkbTypes.PointGeometry,),
             QgsWkbTypes.LineGeometry: (QgsWkbTypes.LineGeometry,),
-            QgsWkbTypes.PolygonGeometry: (QgsWkbTypes.PointGeometry, QgsWkbTypes.PolygonGeometry)
+            QgsWkbTypes.PolygonGeometry: (
+                QgsWkbTypes.PointGeometry,
+                QgsWkbTypes.PolygonGeometry,
+            ),
         }
-        if destinatonLayer.geometryType() not in geometryFilterDict[layer.geometryType()]:
+        if (
+            destinatonLayer.geometryType()
+            not in geometryFilterDict[layer.geometryType()]
+        ):
             return
         layer.startEditing()
         destinatonLayer.startEditing()
@@ -233,12 +280,16 @@ class QgisCtrl:
         for feature in features:
             newFeat = core.QgsFeature()
             newFeat.setFields(destinatonLayer.fields())
-            newGeom = feature.geometry().pointOnSurface() \
-                if destinatonLayer.geometryType() == core.QgsWkbTypes.PointGeometry \
-                    and layer.geometryType() == core.QgsWkbTypes.PolygonGeometry \
+            newGeom = (
+                feature.geometry().pointOnSurface()
+                if destinatonLayer.geometryType() == core.QgsWkbTypes.PointGeometry
+                and layer.geometryType() == core.QgsWkbTypes.PolygonGeometry
                 else feature.geometry()
+            )
             newFeat.setGeometry(newGeom)
-            self.attributeFeature(newFeat, destinatonLayer, attributes)
+            self.attributeFeatureV2(
+                newFeat, destinatonLayer, attributes, feature, layer
+            )
             newFeatures.append(newFeat)
         layer.deleteSelectedFeatures()
         destinatonLayer.addFeatures(newFeatures)

@@ -22,29 +22,14 @@
 """
 from PyQt5.QtCore import QCoreApplication
 
-import processing
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (
-    QgsDataSourceUri,
-    QgsFeature,
-    QgsFeatureSink,
-    QgsGeometry,
     QgsProcessing,
-    QgsProcessingAlgorithm,
     QgsProcessingMultiStepFeedback,
     QgsProcessingOutputVectorLayer,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterDistance,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterField,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
-    QgsProcessingUtils,
-    QgsSpatialIndex,
-    QgsWkbTypes,
     QgsProject,
 )
 
@@ -56,7 +41,6 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     SELECTED = "SELECTED"
     TOLERANCE = "TOLERANCE"
-    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -81,11 +65,6 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
                 defaultValue=1.0,
             )
         )
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT, self.tr("Adjusted original network layer")
-            )
-        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -96,8 +75,9 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        if inputLyr is None or inputLyr.featureCount() == 0:
+            return {}
+        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(
             self.tr("Identifying dangles on {layer}...").format(layer=inputLyr.name())
@@ -109,27 +89,48 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
             onlySelected=onlySelected,
         )
+        if dangleLyr.featureCount() == 0:
+            return {}
 
         multiStepFeedback.setCurrentStep(1)
         layerHandler.filterDangles(dangleLyr, tol, feedback=multiStepFeedback)
-
         multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo(self.tr("Finding original segments"))
+        originalSegments = algRunner.runExtractByLocation(
+            inputLyr=inputLyr,
+            intersectLyr=dangleLyr,
+            context=context,
+            predicate=[algRunner.Disjoint],
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+
+        multiStepFeedback.setCurrentStep(3)
         multiStepFeedback.pushInfo(
             self.tr("Snapping layer {layer} to dangles...").format(
                 layer=inputLyr.name()
             )
         )
+        snappedDangles = algRunner.runSnapGeometriesToLayer(
+            inputLayer=dangleLyr,
+            referenceLayer=originalSegments,
+            tol=tol,
+            context=context,
+            feedback=multiStepFeedback,
+            behavior=algRunner.PreferClosestDoNotInsertNewVertices,
+            is_child_algorithm=True,
+        )
+        multiStepFeedback.setCurrentStep(4)
         algRunner.runSnapLayerOnLayer(
             inputLayer=inputLyr,
-            referenceLayer=dangleLyr,
+            referenceLayer=snappedDangles,
             tol=tol,
             context=context,
             feedback=multiStepFeedback,
             onlySelected=onlySelected,
-            behavior=0,
+            behavior=algRunner.PreferClosestInsertExtraVerticesWhereRequired,
         )
-        QgsProject.instance().removeMapLayer(dangleLyr.id())
-        return {self.OUTPUT: inputLyr}
+        return {}
 
     def name(self):
         """

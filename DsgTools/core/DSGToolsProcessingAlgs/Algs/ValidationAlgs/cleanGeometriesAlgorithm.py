@@ -33,6 +33,7 @@ from qgis.core import (
     QgsProcessingParameterFeatureSink,
     QgsProcessingParameterNumber,
     QgsProcessingParameterVectorLayer,
+    QgsWkbTypes,
 )
 
 from ...algRunner import AlgRunner
@@ -44,6 +45,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
     SELECTED = "SELECTED"
     TOLERANCE = "TOLERANCE"
     MINAREA = "MINAREA"
+    GEOGRAPHIC_BOUNDARY = "GEOGRAPHIC_BOUNDARY"
     FLAGS = "FLAGS"
     OUTPUT = "OUTPUT"
 
@@ -83,6 +85,15 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
         self.addParameter(areaParam)
 
         self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.GEOGRAPHIC_BOUNDARY,
+                self.tr("Geographic Bounds Layer"),
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True,
+            )
+        )
+
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS, self.tr("{0} Flags").format(self.displayName())
             )
@@ -105,13 +116,62 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
             raise QgsProcessingException(
                 self.invalidSourceError(parameters, self.INPUT)
             )
+        self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
+        if inputLyr.featureCount() == 0:
+            feedback.pushWarning(self.tr("Empty input"))
+            return {self.FLAGS: self.flag_id}
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         snap = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         # if snap < 0 and snap != -1:
         #     raise QgsProcessingException(self.invalidParameterError(parameters, self.TOLERANCE))
         minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
-        self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
+        geographicBoundsLyr = self.parameterAsVectorLayer(
+            parameters, self.GEOGRAPHIC_BOUNDARY, context
+        )
+        if (
+            inputLyr.wkbType() == QgsWkbTypes.PolygonGeometry
+            and geographicBoundsLyr is not None
+        ):
+            raise NotImplementedError(
+                self.tr("Spatial restriction not implemented yet for polygon layers")
+            )
+        if geographicBoundsLyr is None:
+            self.cleanGeometries(
+                context,
+                feedback,
+                layerHandler,
+                algRunner,
+                inputLyr,
+                onlySelected,
+                snap,
+                minArea,
+            )
+        else:
+            self.cleanGeometriesInsideGeographicBoundary(
+                context,
+                feedback,
+                layerHandler,
+                algRunner,
+                inputLyr,
+                onlySelected,
+                snap,
+                minArea,
+                geographicBoundsLyr,
+            )
 
+        return {self.FLAGS: self.flag_id}
+
+    def cleanGeometries(
+        self,
+        context,
+        feedback,
+        layerHandler,
+        algRunner,
+        inputLyr,
+        onlySelected,
+        snap,
+        minArea,
+    ):
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr("Populating temp layer..."))
@@ -142,7 +202,85 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
         )
         self.flagIssues(cleanedLyr, error, feedback)
 
-        return {self.OUTPUT: inputLyr, self.FLAGS: self.flag_id}
+    def cleanGeometriesInsideGeographicBoundary(
+        self,
+        context,
+        feedback,
+        layerHandler,
+        algRunner,
+        inputLyr,
+        onlySelected,
+        snap,
+        minArea,
+        geographicBoundsLyr,
+    ):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr("Populating temp layer..."))
+        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
+            [inputLyr],
+            geomType=inputLyr.wkbType(),
+            onlySelected=onlySelected,
+            feedback=multiStepFeedback,
+        )
+        multiStepFeedback.setCurrentStep(1)
+        (
+            insideLyr,
+            outsideLyr,
+        ) = layerHandler.prepareAuxLayerForSpatialConstrainedAlgorithm(
+            inputLyr=auxLyr,
+            geographicBoundaryLyr=geographicBoundsLyr,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo(self.tr("Running clean..."))
+        cleanedLyr, error = algRunner.runClean(
+            insideLyr,
+            [algRunner.RMSA, algRunner.Break, algRunner.RmDupl, algRunner.RmDangle],
+            context,
+            returnError=True,
+            snap=snap,
+            minArea=minArea,
+            feedback=multiStepFeedback,
+        )
+        cleanedLyr = algRunner.runRenameField(
+            inputLayer=cleanedLyr,
+            field="featid",
+            newName="oldfeatid",
+            context=context,
+        )
+        outsideLyr = algRunner.runRenameField(
+            inputLayer=outsideLyr,
+            field="featid",
+            newName="oldfeatid",
+            context=context,
+        )
+        multiStepFeedback.setCurrentStep(3)
+        outputLyr = (
+            layerHandler.integrateSpatialConstrainedAlgorithmOutputAndOutsideLayer(
+                algOutputLyr=cleanedLyr,
+                outsideLyr=outsideLyr,
+                tol=snap,
+                context=context,
+                feedback=multiStepFeedback,
+            )
+        )
+        outputLyr = algRunner.runRenameField(
+            inputLayer=outputLyr,
+            field="oldfeatid",
+            newName="featid",
+            context=context,
+        )
+        multiStepFeedback.setCurrentStep(4)
+        multiStepFeedback.pushInfo(self.tr("Updating original layer..."))
+        layerHandler.updateOriginalLayersFromUnifiedLayer(
+            [inputLyr],
+            outputLyr,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected,
+        )
+        self.flagIssues(cleanedLyr, error, feedback)
 
     def flagIssues(self, cleanedLyr, error, feedback):
         overlapDict = dict()
@@ -160,7 +298,11 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
             if len(featList) > 1:
                 txtList = []
                 for i in featList:
-                    txtList += ["{0} (id={1})".format(i["layer"], i["featid"])]
+                    txtList += (
+                        [f"""{i["layer"]} (id={i["featid"]})"""]
+                        if "featid" in i.attributeMap()
+                        else [f"""{i["layer"]} (id={i["oldfeatid"]})"""]
+                    )
                 txt = ", ".join(txtList)
                 self.flagFeature(
                     featList[0].geometry(),

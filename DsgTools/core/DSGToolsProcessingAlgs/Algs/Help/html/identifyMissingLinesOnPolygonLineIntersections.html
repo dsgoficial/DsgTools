@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="br">
+
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   </head>
+
+   <body>
+
+      <div>
+         <p > Help versão 1.0 </p>
+         <hr/>
+         <h2>Descrição:</h2>
+         <h4 style="text-align: center; padding: 6px;">
+            Identifica interseções de linhas com polígonos que não são coincidentes com outras linhas. Útil para verificar elementos de interseção, como pontes, faltando na interseção de camadas como massa d'água e vias.
+         </h4>
+         <hr />
+      </div>
+
+      <div>
+
+         <h2>Parâmetros:</h2>
+         <p>
+            <span style="margin-bottom: 10px;">
+                &#8226; Line Layer &rarr;  Camada vetorial de linha que pode intersectar os polígonos da camada de polígono.
+            </span>
+
+            <span style="margin-bottom: 10px;">
+                &#8226; Filter expression for line layer &rarr; Expressão para filtrar a camada de linhas.
+            </span>
+
+            <span style="margin-bottom: 10px;">
+                &#8226; Polygon Layer &rarr;  Camada vetorial de polígono que pode intersectar as linhas da camada de linha.
+            </span>
+
+            <span style="margin-bottom: 10px;">
+                &#8226; Filter expression for polygon layer &rarr; Expressão para filtrar a camada de polígonos.
+            </span>
+
+            <span style="margin-bottom: 10px;">
+                &#8226; Intersection Lines Layer &rarr; Camada vetorial de linha representando elementos de interseção das camadas anteriores.
+            </span>
+
+            <span style="margin-bottom: 10px;">
+                &#8226; Filter expression for intersection layer &rarr; Expressão para filtrar a camada de elementos de interseção, útil para filtrar apenas os valores que representam a interseção desejada, como pontes numa camada de elementos viários quaisquer.
+            </span>
+
+            <span style="color:#ff0000; font-weight: bold;"><u>Atenção:</u> Não confundir com Identify Missing Polygon Line Intersections on Lines, que verifica o contrário, linhas que não coincidem com interseções de linhas com polígonos.</span>
+         </p>
+         <hr />
+
+      </div>
+
+      <div>
+         <h2>Exemplo de uso: </h2>
+         <h4>Modelagem EDGV 3.0 Topo 1.3 na escala de 1:25.000 (EPSG):4674</h4>
+
+         <span style="margin-bottom: 10px;"> &#8226; Line Layer  &rarr;  infra_via_deslocamento_l </span>
+         <span style="margin-bottom: 10px;"> &#8226; Polygon Layer &rarr;  cobter_massa_dagua_a </span>
+         <span style="margin-bottom: 10px;"> &#8226; Intersection Lines Layer  &rarr;  infra_elemento_viario_l</span>
+         <span style="margin-bottom: 10px;"> &#8226; Filter expression for intersection layer  &rarr;  "tipo" in (201, 202, 203, 204, 501, 401, 402) and "modal_uso" in (4,97)</span>
+
+         <hr />
+      </div>
+
+      <div>
+         <h2>Exemplo de Flag:</h2>
+         <center><img src= "{}"></center>
+         <p style="text-align: center; font-style: italic;">Elemento de interseção faltando na interseção de via de deslocamento e massa d'água.</p>
+         <hr/>
+      </div>
+   </body>
+
+</html>

@@ -25,25 +25,16 @@ from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from qgis.PyQt.QtCore import QVariant
 import json, processing
 from qgis.core import (
-    QgsProcessing,
     QgsFeatureSink,
     QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterFeatureSink,
     QgsFeature,
-    QgsDataSourceUri,
-    QgsProcessingOutputVectorLayer,
-    QgsProcessingParameterVectorLayer,
     QgsProcessingParameterString,
     QgsWkbTypes,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterMultipleLayers,
     QgsWkbTypes,
     QgsProcessingUtils,
     QgsProject,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterFile,
-    QgsVectorLayerUtils,
+    QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsFields,
     QgsField,
@@ -97,7 +88,7 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterString(
                 self.OUTPUT_LAYER_PARAMETER_NAME,
                 self.tr("Output layer parameter name"),
-                defaultValue="FLAGS",
+                # defaultValue="FLAGS",
                 optional=True,
             )
         )
@@ -110,9 +101,7 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
         layerCsv = self.parameterAsString(parameters, self.INPUTLAYERS, context)
-        algParameterDict = self.loadAlgorithmParametersDict(
-            parameters, context, feedback
-        )
+        algParameterDict = self.loadAlgorithmParametersDict(parameters, context)
         algName = self.parameterAsString(parameters, self.ALG_NAME, context)
         inputKey = self.parameterAsString(
             parameters, self.INPUT_LAYER_PARAMETER_NAME, context
@@ -120,7 +109,7 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
         outputKey = self.parameterAsString(
             parameters, self.OUTPUT_LAYER_PARAMETER_NAME, context
         )
-        layerNameList = layerCsv.split(",")
+        layerNameList = layerCsv.split(",") if layerCsv != "" else []
         nSteps = len(layerNameList)
         if not nSteps:
             _, flag_id = self.parameterAsSink(
@@ -136,24 +125,36 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
         nSteps = len(layerList)
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         for idx, layer_id in enumerate(layerList):
+            if feedback.isCanceled():
+                break
             layer = QgsProcessingUtils.mapLayerFromString(layer_id, context)
             layerName = layer.name()
             multiStepFeedback.setCurrentStep(idx)
             multiStepFeedback.pushInfo(
                 self.tr(
-                    "Step {idx}/{total}: Running algorithm {algName} on {layerName}"
-                ).format(idx=idx, total=nSteps, algName=algName, layerName=layerName)
+                    f"Step {idx+1}/{nSteps}: Running algorithm {algName} on {layerName}"
+                )
             )
             if layer is None:
                 multiStepFeedback.pushInfo(
-                    self.tr("Layer {layerName} not found. Skipping step.").format(
-                        layerName=layerName
-                    )
+                    self.tr(f"Layer {layerName} not found. Skipping step.")
                 )
                 continue
-
-            currentDict = dict(algParameterDict)  # copy of the dict
-            currentDict[inputKey] = layerName
+            if layer.readOnly():
+                multiStepFeedback.pushInfo(
+                    self.tr(f"Layer {layerName} is read only. Skipping step.")
+                )
+                continue
+            if layer.featureCount() == 0:
+                multiStepFeedback.pushInfo(
+                    self.tr(f"Layer {layerName} is empty. Skipping step.")
+                )
+                continue
+            fieldNameSet = set(f.name() for f in layer.fields())
+            currentDict = self.parseParameterDict(
+                context, algParameterDict, fieldNameSet
+            )
+            currentDict[inputKey] = layer
             output = self.runProcessingAlg(
                 algName,
                 outputKey,
@@ -161,12 +162,14 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
                 context=context,
                 feedback=multiStepFeedback,
             )
+            if output is None:
+                continue
             outputLyr = (
                 QgsProcessingUtils.mapLayerFromString(output, context)
                 if isinstance(output, str)
                 else output
             )
-            if outputLyr is None:
+            if outputLyr.featureCount() == 0:
                 continue
             if self.flagSink is None:
                 self.prepareFlagSink(parameters, outputLyr, context)
@@ -182,9 +185,36 @@ class BatchRunAlgorithm(QgsProcessingAlgorithm):
             )
         return {self.OUTPUT: self.flag_id}
 
-    def loadAlgorithmParametersDict(self, parameters, context, feedback):
+    def parseParameterDict(self, context, algParameterDict, fieldNameSet):
+        """
+        Método diferente do caso com limite geográfico. Naquele caso, filtra a entrada
+        """
+        currentDict = dict(algParameterDict)  # copy of the dict
+        for k, v in currentDict.items():
+            if not isinstance(v, list):
+                continue
+            s = set(v).intersection(fieldNameSet)
+            if s != set():
+                # field list
+                currentDict[k] = list(s)
+                continue
+            if isinstance(v, str):
+                if v == "":
+                    continue
+                if "," in v or "|" in v:
+                    outputList = AlgRunner().runStringCsvToLayerList(v, context)
+                    if outputList == []:
+                        continue
+                    currentDict[k] = outputList[0]
+            currentDict[k] = (
+                AlgRunner().runStringCsvToLayerList(",".join(v), context)
+                if len(v) > 0
+                else []
+            )
+        return currentDict
+
+    def loadAlgorithmParametersDict(self, parameters, context):
         rules_text = self.parameterAsString(parameters, self.PARAMETER_DICT, context)
-        feedback.pushInfo(rules_text)
         return json.loads(rules_text)
 
     def runProcessingAlg(self, algName, outputKey, parameters, context, feedback):

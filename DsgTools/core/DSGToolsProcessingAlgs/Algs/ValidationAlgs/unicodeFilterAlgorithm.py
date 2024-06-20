@@ -8,17 +8,13 @@ from qgis.core import (
     QgsProcessingParameterFeatureSink,
     QgsCoordinateReferenceSystem,
     QgsProcessingParameterMultipleLayers,
-    QgsFeatureRequest,
     QgsFeature,
-    QgsProcessingParameterFile,
-    QgsProcessingParameterVectorLayer,
     QgsProcessingMultiStepFeedback,
     QgsField,
     QgsFields,
     QgsWkbTypes,
     NULL,
 )
-from qgis import processing
 from qgis.utils import iface
 import csv
 import concurrent.futures
@@ -131,14 +127,14 @@ class UnicodeFilterAlgorithm(QgsProcessingAlgorithm):
         point_sink, point_sink_id = self.createOutput(
             parameters, context, self.OUTPUT1, QgsWkbTypes.MultiPoint, fields
         )
-        returnDict[self.OUTPUT1] = point_sink
-        sinkDict[QgsWkbTypes.PointGeometry] = point_sink_id
+        returnDict[self.OUTPUT1] = point_sink_id
+        sinkDict[QgsWkbTypes.PointGeometry] = point_sink
 
         line_sink, line_sink_id = self.createOutput(
             parameters, context, self.OUTPUT2, QgsWkbTypes.MultiLineString, fields
         )
-        returnDict[self.OUTPUT2] = line_sink
-        sinkDict[QgsWkbTypes.LineGeometry] = line_sink_id
+        returnDict[self.OUTPUT2] = line_sink_id
+        sinkDict[QgsWkbTypes.LineGeometry] = line_sink
 
         polygon_sink, polygon_sink_id = self.createOutput(
             parameters, context, self.OUTPUT3, QgsWkbTypes.MultiPolygon, fields

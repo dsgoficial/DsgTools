@@ -97,7 +97,10 @@ class IdentifyDrainageLoops(ValidationAlgorithm):
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
             algRunner.runCreateSpatialIndex(
-                inputLyr=inputLyr, context=context, feedback=multiStepFeedback
+                inputLyr=inputLyr,
+                context=context,
+                feedback=multiStepFeedback,
+                is_child_algorithm=True,
             )
             currentStep += 1
 

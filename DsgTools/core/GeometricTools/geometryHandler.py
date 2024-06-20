@@ -47,10 +47,13 @@ geometry_creation_dict = {
     QgsWkbTypes.Point: lambda x: QgsGeometry.fromPointXY(x),
     QgsWkbTypes.MultiPoint: lambda x: QgsGeometry.fromMultiPointXY(x),
     QgsWkbTypes.LineString: lambda x: QgsGeometry.fromPolylineXY(x),
-    QgsWkbTypes.MultiLineString: lambda x: QgsGeometry.fromMultiPolylineXY([QgsPointXY(*i) for i in x]),
+    QgsWkbTypes.MultiLineString: lambda x: QgsGeometry.fromMultiPolylineXY(
+        [QgsPointXY(*i) for i in x]
+    ),
     QgsWkbTypes.Polygon: lambda x: QgsGeometry.fromPolygonXY([x]),
     QgsWkbTypes.MultiPolygon: lambda x: QgsGeometry.fromMultiPolygonXY([x]),
 }
+
 
 class GeometryHandler(QObject):
     def __init__(self, iface=None, parent=None):
@@ -490,6 +493,8 @@ class GeometryHandler(QObject):
                 nodes = geom.asMultiPolygon()
             else:
                 nodes = geom.asPolygon()
+        else:
+            nodes = list(geom.vertices())
         return nodes
 
     def getFirstNode(self, lyr, feat, geomType=None):
@@ -804,6 +809,8 @@ class GeometryHandler(QObject):
         isMulti = geom.isMultipart()
         geomType = geom.type()
         n = self.getGeomNodes(geom, geomType, isMulti)
+        if len(n) == 0:
+            return None, None
         if isMulti:
             if len(n) > 1:
                 return
@@ -908,6 +915,7 @@ def getSirgasEpsg(key):
     }
     return options.get(key, "EPSG:3857")
 
+
 def make_valid(geom: QgsGeometry) -> QgsGeometry:
     if geom is None:
         return geom
@@ -929,23 +937,32 @@ def make_valid(geom: QgsGeometry) -> QgsGeometry:
     newGeom.makeValid()
     return newGeom
 
+
 def fix_geom_vertices(newGeom: QgsGeometry) -> QgsGeometry:
     geomToUpdate = newGeom
     vertices_np_array = np.array([(i.x(), i.y()) for i in newGeom.vertices()])
-    hasInvalidCoord = np.isinf(vertices_np_array).any() or np.isnan(vertices_np_array).any()
+    hasInvalidCoord = (
+        np.isinf(vertices_np_array).any() or np.isnan(vertices_np_array).any()
+    )
     if not hasInvalidCoord:
         return geomToUpdate
     validVertices = vertices_np_array[~np.isinf(vertices_np_array).any(axis=1)]
     validVertices = validVertices[~np.isnan(validVertices).any(axis=1)]
-    geomToUpdate = geometry_creation_dict[newGeom.wkbType()]([QgsPointXY(*tuple(i)) for i in validVertices])
+    geomToUpdate = geometry_creation_dict[newGeom.wkbType()](
+        [QgsPointXY(*tuple(i)) for i in validVertices]
+    )
     if newGeom.isMultipart():
         geomToUpdate.convertToMultiType()
     return geomToUpdate
 
+
 def find_nan_or_inf_vertex_neighbor(geom: QgsGeometry) -> QgsPoint:
     vertexList = list(geom.vertices())
     vertex_np = np.array([(i.x(), i.y()) for i in vertexList])
-    problemIdx = np.argwhere(np.isinf(np.array(vertex_np)))[0][0]
+    problem = np.argwhere(np.isinf(np.array(vertex_np)))
+    if len(problem) == 0:
+        return vertexList[0]
+    problemIdx = problem[0][0]
     if problemIdx == 0:
         return vertexList[1]
-    return QgsGeometry(vertexList[problemIdx-1])
+    return QgsGeometry(vertexList[problemIdx - 1])

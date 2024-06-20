@@ -43,7 +43,6 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
     SELECTED = "SELECTED"
     GEOGRAPHIC_BOUNDS_LAYER = "GEOGRAPHIC_BOUNDS_LAYER"
     EXTEND_LENGTH = "EXTEND_LENGTH"
-    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -80,11 +79,6 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
                 defaultValue=0.0001,
             )
         )
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT, self.tr("Original layer with snapped features")
-            )
-        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -106,7 +100,7 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
                 self.invalidSourceError(parameters, self.GEOGRAPHIC_BOUNDS_LAYER)
             )
         if refSource.featureCount() == 0:
-            return {self.OUTPUT: inputLyr}
+            return {}
         tol = self.parameterAsDouble(parameters, self.EXTEND_LENGTH, context)
 
         nSteps = 5
@@ -151,14 +145,14 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         currentStep += 1
 
         if multiStepFeedback.isCanceled():
-            return {self.OUTPUT: inputLyr}
+            return {}
 
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.setProgressText(self.tr("Updating original layer..."))
         self.layerHandler.updateOriginalLayersFromUnifiedLayer(
             [inputLyr], auxLyr, feedback=multiStepFeedback, onlySelected=onlySelected
         )
-        return {self.OUTPUT: inputLyr}
+        return {}
 
     def extractGeographicBoundaryLines(self, tol, parameters, context, feedback):
         multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
@@ -189,7 +183,10 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         )
         multiStepFeedback.setCurrentStep(4)
         self.algRunner.runCreateSpatialIndex(
-            bufferAroundBoundsLines, context, feedback=multiStepFeedback
+            bufferAroundBoundsLines,
+            context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         return bufferAroundBoundsLines
 
@@ -206,7 +203,10 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         )
         multiStepFeedback.setCurrentStep(1)
         self.algRunner.runCreateSpatialIndex(
-            lineExtremityPointLyr, context=context, feedback=multiStepFeedback
+            lineExtremityPointLyr,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         multiStepFeedback.setCurrentStep(2)
         extractedPoints = self.algRunner.runExtractByLocation(

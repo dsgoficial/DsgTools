@@ -90,7 +90,10 @@ class StreamOrder(QgsProcessingAlgorithm):
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         algRunner.runCreateSpatialIndex(
-            inputLyr=localCache, context=context, feedback=multiStepFeedback
+            inputLyr=localCache,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
@@ -113,7 +116,7 @@ class StreamOrder(QgsProcessingAlgorithm):
             nodesLayer=nodesLayer,
             edgesLayer=localCache,
             feedback=multiStepFeedback,
-            directed=True,
+            graphType=graphHandler.GraphType.DIGRAPH,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)

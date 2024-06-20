@@ -40,7 +40,6 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
     INPUT = "INPUT"
     SELECTED = "SELECTED"
     TOLERANCE = "TOLERANCE"
-    OUTPUT = "OUTPUT"
 
     def initAlgorithm(self, config):
         """
@@ -63,11 +62,6 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
                 parentParameterName=self.INPUT,
                 minValue=-1.0,
                 defaultValue=1.0,
-            )
-        )
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
-                self.OUTPUT, self.tr("Original layer with overlayed lines")
             )
         )
 
@@ -128,7 +122,7 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
         )
 
-        return {self.OUTPUT: inputLyr}
+        return {}
 
     def name(self):
         """
