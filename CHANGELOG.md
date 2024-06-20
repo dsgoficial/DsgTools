@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 4.15.0 - dev
+
+Novas Funcionalidades:
+
+- 
+
+Melhorias:
+
+- 
+
+Correção de bugs:
+
+- 
+
 ## 4.14.0 - 2024-06-20
 
 Novas Funcionalidades:
