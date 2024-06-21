@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 4.15.0 - dev
+## 4.15.1 - dev
 
 Novas Funcionalidades:
 
@@ -12,7 +12,7 @@ Melhorias:
 
 Correção de bugs:
 
-- 
+- Correção de bug no action do processo de inventário (os actions de vetor e raster agora foram unidos em um só);
 
 ## 4.14.0 - 2024-06-20
 
