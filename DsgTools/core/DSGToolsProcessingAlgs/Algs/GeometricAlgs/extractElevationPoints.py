@@ -514,7 +514,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             mask=geographicBoundsLyr,
             context=context,
             feedback=feedback,
-            noData=-9999,
+            nodata=-9999,
             outputRaster=QgsProcessingUtils.generateTempFilename(
                 f"clip_{str(uuid4().hex)}.tif"
             ),
@@ -2106,7 +2106,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 rasterLyr,
                 mask=localHilltopLyr,
                 context=context,
-                noData=-9999,
+                nodata=-9999,
                 outputRaster=QgsProcessingUtils.generateTempFilename(
                     f"local_clip_{str(uuid4().hex)}.tif"
                 ),
@@ -2248,7 +2248,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 rasterLyr,
                 mask=localGridLyr,
                 context=context,
-                noData=-9999,
+                nodata=-9999,
                 outputRaster=QgsProcessingUtils.generateTempFilename(
                     f"local_clip_{str(uuid4().hex)}.tif"
                 ),
