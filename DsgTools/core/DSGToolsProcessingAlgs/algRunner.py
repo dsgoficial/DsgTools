@@ -1386,9 +1386,9 @@ class AlgRunner:
         return output["OUTPUT"]
 
     def runExtractSpecificVertices(
-        self, inputLyr, vertices, context, feedback=None, outputLyr=None
+        self, inputLyr, vertices, context, feedback=None, outputLyr=None, is_child_algorithm=False,
     ):
-        outputLyr = "TEMPORARY_OUTPUT" if outputLyr is None else outputLyr
+        outputLyr = "memory:" if outputLyr is None else outputLyr
         output = processing.run(
             "native:extractspecificvertices",
             {
@@ -1398,6 +1398,7 @@ class AlgRunner:
             },
             context=context,
             feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
         )
         return output["OUTPUT"]
 
