@@ -2938,7 +2938,7 @@ class LayerHandler(QObject):
                     )
                     flagDict[geomKey] = flagText
             if feedback is not None:
-                feedback.setCurrentStep(current * size)
+                feedback.setProgress(current * size)
         return polygonList, flagDict
 
     def valueMaps(self, layer):
