@@ -550,6 +550,8 @@ class TerrainModel:
                     context=context,
                 ).getFeatures()
             )
+            if contoursOnSlice == set():
+                continue
             outershellFeat = [
                 f
                 for f in self.algRunner.runFilterExpression(
