@@ -171,7 +171,10 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
         )
         method = self.parameterAsEnum(parameters, self.METHOD, context)
 
+        if networkLayer.featureCount() == 0:
+            return {}
         nSteps = 5 if groupBySpatialPartition else 2
+            
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
