@@ -258,8 +258,10 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             for current, point in enumerate(dangleSet):
                 if multiStepFeedback.isCanceled():
                     break
+                geom = QgsGeometry()
+                geom.fromWkb(point)
                 self.flagFeature(
-                    QgsGeometry.fromPointXY(point),
+                    geom,
                     self.tr("Dangle on {0}").format(inputLyr.name()),
                 )
                 multiStepFeedback.setProgress(current * currentTotal)
@@ -315,7 +317,8 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             id = feat["AUTO"]
             pointList = geom.asMultiPoint() if geom.isMultipart() else [geom.asPoint()]
             for point in pointList:
-                pointDict[point].add(id)
+                pointGeom = QgsGeometry.fromPointXY(point)
+                pointDict[pointGeom.asWkb()].add(id)
             multiStepFeedback.setProgress(current * step)
         return pointDict
 
@@ -386,7 +389,9 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         futures = set()
 
         def evaluate(point) -> Union[QgsPointXY, None]:
-            qgisPoint = QgsGeometry.fromPointXY(point)
+            # qgisPoint = QgsGeometry.fromPointXY(point)
+            qgisPoint = QgsGeometry()
+            qgisPoint.fromWkb(point)
             geomEngine = QgsGeometry.createGeometryEngine(qgisPoint.constGet())
             geomEngine.prepareGeometry()
             buffer = qgisPoint.buffer(searchRadius, -1)
@@ -396,7 +401,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             bufferCount, intersectCount = 0, 0
             point_relationship_lambda = (
                 lambda x: geomEngine.intersects(x.constGet())
-                or qgisPoint.distance(x) < 1e-8
+                or qgisPoint.distance(x) < 1e-16
                 if ignoreDanglesOnUnsegmentedLines
                 else geomEngine.touches(x.constGet())
             )
@@ -476,7 +481,9 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
 
         def evaluate(point: QgsPointXY) -> dict:
             candidateCount, bufferCount = 0, 0
-            qgisPoint = QgsGeometry.fromPointXY(point)
+            qgisPoint = QgsGeometry()
+            qgisPoint.fromWkb(point)
+            # qgisPoint = QgsGeometry.fromPointXY(point)
             # search radius to narrow down candidates
             buffer = qgisPoint.buffer(searchRadius, -1)
             bufferBB = buffer.boundingBox()
