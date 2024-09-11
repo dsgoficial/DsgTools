@@ -335,7 +335,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 spotElevationLyr=localElevationPointsLyr,
                 spotElevationFieldName=elevationPointHeightFieldName,
             )
-            return terrainModel.validate()
+            return terrainModel.validate(context=localContext)
 
         multiStepFeedback.setCurrentStep(currentStep)
         nRegions = len(geographicBoundaryLayerList)

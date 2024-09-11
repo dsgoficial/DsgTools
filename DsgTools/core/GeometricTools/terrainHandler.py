@@ -36,8 +36,9 @@ from qgis.core import (
     QgsSpatialIndex,
     QgsGeometry,
     QgsProject,
+    QgsProcessingUtils,
 )
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple, Union
 from . import graphHandler
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
@@ -50,7 +51,7 @@ class TerrainSlice:
     outershellFeat: QgsFeature
     holesFeatSet: Set[QgsFeature]
     contoursOnSlice: Set[QgsFeature]
-    contourLineLayer: QgsVectorLayer
+    contourLineLayer: Union[QgsVectorLayer, str]
     contourIdField: str
 
     def __post_init__(self):
@@ -59,6 +60,9 @@ class TerrainSlice:
         for feat in self.contoursOnSlice:
             self.contourDict[feat.id()] = feat
             self.spatialIndex.addFeature(feat)
+        if isinstance(self.contourLineLayer, str):
+            self.context = QgsProcessingContext()
+            self.contourLineLayer: QgsVectorLayer = QgsProcessingUtils.mapLayerFromString(self.contourLineLayer, self.context)
         self.contourLineDict = {
             feat[self.contourIdField]: feat
             for feat in self.contourLineLayer.getFeatures()
@@ -574,6 +578,7 @@ class TerrainModel:
                     ",)", ")"
                 ),
                 context=context,
+                is_child_algorithm=True,
             )
             futures.add(
                 pool.submit(

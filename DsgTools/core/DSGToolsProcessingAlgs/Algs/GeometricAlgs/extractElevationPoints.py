@@ -596,7 +596,6 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             geographicBoundsLyr,
             areaWithoutInformationLyr,
             waterBodiesLyr,
-            contourBufferLyr,
             context,
             algRunner,
             feedback=multiStepFeedback,
@@ -608,13 +607,25 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             multiStepFeedback.pushInfo(
                 self.tr("Getting max min feats and building exclusion polygons...")
             )
-        minMaxFeats = self.getMinMaxFeatures(
+        maxFeats = self.getMaxFeatures(
             fields,
             npRaster,
             transform,
             distance=localBufferDistance,
             maskLyr=maskLyr,
             feedback=multiStepFeedback,
+        )
+        minMaxFeats = self.getMinFeatures(
+            maxFeats,
+            fields,
+            npRaster,
+            transform,
+            distance=localBufferDistance,
+            maskLyr=maskLyr,
+            feedback=multiStepFeedback,
+        )
+        maskLyr = AlgRunner().runMergeVectorLayers(
+            [maskLyr, contourBufferLyr], context
         )
         elevationPointsLayer = layerHandler.createMemoryLayerWithFeatures(
             featList=minMaxFeats,
@@ -1070,7 +1081,6 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         geographicBoundsLyr,
         areaWithoutInformationLyr,
         waterBodiesLyr,
-        contourBufferLyr,
         context,
         algRunner,
         feedback,
@@ -1095,11 +1105,11 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         layerList = list(
             filter(
                 lambda x: x is not None,
-                [areaWithoutInformationLyr, waterBodiesLyr, contourBufferLyr],
+                [areaWithoutInformationLyr, waterBodiesLyr],
             )
         )
         if layerList == []:
-            return npRaster, npRaster, transform, contourBufferLyr
+            return npRaster, npRaster, transform, None
         maskLyr = (
             AlgRunner().runMergeVectorLayers(
                 layerList, context, feedback=multiStepFeedback
@@ -1115,7 +1125,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
         )
 
         if maskLyr.featureCount() == 0:
-            return npRaster
+            return npRaster, npRaster, transform, None
         if multiStepFeedback is not None:
             currentStep += 1
             multiStepFeedback.setCurrentStep(currentStep)
@@ -1591,21 +1601,15 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             context=context,
             feedback=multiStepFeedback,
         )
-
-    def getMinMaxFeatures(
+    
+    def getMaxFeatures(
         self, fields, npRaster, transform, distance, maskLyr, feedback=None
     ):
         featSet = set()
         maxCoordinatesArray = rasterHandler.getMaxCoordinatesFromNpArray(npRaster)
-        multiStepFeedback = (
-            QgsProcessingMultiStepFeedback(3, feedback)
-            if feedback is not None
-            else None
-        )
         npRasterCopy = np.array(npRaster)
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(1)
-            multiStepFeedback.pushInfo(
+        if feedback is not None:
+            feedback.pushInfo(
                 self.tr("Creating max feature list from pixel coordinates array...")
             )
         maxFeatList = (
@@ -1630,16 +1634,17 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             filteredFeatureList = self.filterFeaturesByDistanceAndExclusionLayer(
                 candidatesPointLyr=maxFeatLyr,
                 exclusionLyr=maskLyr,
-                distance=distance,
+                distance=distance/10,
                 context=QgsProcessingContext(),
                 feedback=None,
             )
             if filteredFeatureList != []:
                 featSet |= self.filterFeaturesByBuffer(
-                    filteredFeatureList, distance, cotaMaisAlta=True
+                    filteredFeatureList, distance/10, cotaMaisAlta=True
                 )
                 break
-            npRasterCopy[npRasterCopy == cotaMax] = np.nan
+            if len(npRasterCopy[npRasterCopy == cotaMax]) > 0:
+                npRasterCopy[npRasterCopy == cotaMax] = np.nan
             maxCoordinatesArray = rasterHandler.getMaxCoordinatesFromNpArray(
                 npRasterCopy
             )
@@ -1656,19 +1661,20 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 )
             )
             cotaMax -= 1
-            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+            if feedback is not None and feedback.isCanceled():
                 break
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(2)
-            multiStepFeedback.pushInfo(
-                self.tr("Getting min coordinates from numpy array...")
-            )
+        return list(featSet)
+
+    def getMinFeatures(
+        self, maxFeats, fields, npRaster, transform, distance, maskLyr, feedback=None
+    ):
+        featSet = set(maxFeats)
+        npRasterCopy = np.array(npRaster)
         minCoordinatesArray = rasterHandler.getMinCoordinatesFromNpArray(npRasterCopy)
-        if minCoordinatesArray == []:
+        if len(minCoordinatesArray) == 0:
             return list(featSet)
-        if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(3)
-            multiStepFeedback.pushInfo(
+        if feedback is not None:
+            feedback.pushInfo(
                 self.tr("Creating min feature list from pixel coordinates array...")
             )
         minFeatList = (
@@ -1693,7 +1699,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             filteredFeatureList = self.filterFeaturesByDistanceAndExclusionLayer(
                 candidatesPointLyr=minFeatLyr,
                 exclusionLyr=maskLyr,
-                distance=distance,
+                distance=distance / 10,
                 context=QgsProcessingContext(),
                 feedback=None,
             )
@@ -1704,7 +1710,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
             minCoordinatesArray = rasterHandler.getMinCoordinatesFromNpArray(
                 npRasterCopy
             )
-            if minCoordinatesArray == []:
+            if len(minCoordinatesArray) == 0:
                 return list(featSet)
             minFeatList = (
                 rasterHandler.createFeatureListWithPixelValuesFromPixelCoordinatesArray(
@@ -1717,7 +1723,7 @@ class ExtractElevationPoints(QgsProcessingAlgorithm):
                 )
             )
             cota += 1
-            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+            if feedback is not None and feedback.isCanceled():
                 break
         return list(featSet)
 
