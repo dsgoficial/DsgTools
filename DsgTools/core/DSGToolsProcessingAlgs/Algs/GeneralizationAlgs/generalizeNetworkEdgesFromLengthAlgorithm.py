@@ -185,6 +185,8 @@ class GeneralizeNetworkEdgesWithLengthAlgorithm(ValidationAlgorithm):
             geographicBoundsLayer=geographicBoundsLayer,
             feedback=multiStepFeedback,
         )
+        if localCache.featureCount() == 0 or nodesLayer.featureCount() == 0:
+            return {}
         if not groupBySpatialPartition or (
             geographicBoundsLayer is not None
             and geographicBoundsLayer.featureCount() <= 1
