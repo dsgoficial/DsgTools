@@ -402,11 +402,25 @@ class TerrainModel:
         currentStep = 0
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
-        lineLyrList = (
-            [self.contourCacheLyr]
-            if self.geoBoundsLineLyr is None
-            else [self.contourCacheLyr, self.geoBoundsLineLyr]
-        )
+        if self.geoBoundsLineLyr is not None:
+            buffered = self.algRunner.runBuffer(
+                inputLayer=self.geoBoundsLineLyr,
+                distance=1e-5,
+                context=context,
+                feedback=None,
+                endCapStyle=1,
+                is_child_algorithm=True,
+            )
+            clipped = self.algRunner.runClip(
+                inputLayer=self.contourCacheLyr,
+                overlayLayer=buffered,
+                context=context,
+                feedback=None,
+                is_child_algorithm=True,
+            )
+            lineLyrList = [clipped, self.geoBoundsLineLyr]
+        else:
+            lineLyrList = [self.contourCacheLyr]
         linesLyr = self.algRunner.runMergeVectorLayers(
             lineLyrList, context, feedback=multiStepFeedback
         )
@@ -578,8 +592,9 @@ class TerrainModel:
                     ",)", ")"
                 ),
                 context=context,
-                is_child_algorithm=True,
             )
+            if contourLineLayer.featureCount() == 0:
+                continue
             futures.add(
                 pool.submit(
                     buildTerrainBand,
