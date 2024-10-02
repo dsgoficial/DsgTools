@@ -62,7 +62,7 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.TOLERANCE, self.tr("Area tolerance"), minValue=0, defaultValue=625
+                self.TOLERANCE, self.tr("Area tolerance"), QgsProcessingParameterNumber.Double, minValue=0, defaultValue=625
             )
         )
 
@@ -83,17 +83,20 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
         if total == 0:
             return {}
         stepSize = 100 / total
-        inputLyr.startEditing()
         idRemoveSet = set()
         for current, feat in enumerate(featureList):
+            geometry = feat.geometry()
             # Stop the algorithm if cancel button has been clicked
             if feedback.isCanceled():
                 break
-            if feat.geometry().area() > tol:
+            if geometry.area() > tol:
                 continue
             idRemoveSet.add(feat.id())
             feedback.setProgress(current * stepSize)
+        inputLyr.startEditing()
+        inputLyr.beginEditCommand(f"Deleting features on layer {inputLyr.name()}.")
         inputLyr.deleteFeatures(list(idRemoveSet))
+        inputLyr.endEditCommand()
         return {}
 
     def name(self):
