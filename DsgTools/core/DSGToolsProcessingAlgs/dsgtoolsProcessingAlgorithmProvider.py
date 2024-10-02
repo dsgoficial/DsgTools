@@ -39,6 +39,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.findSmallClose
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeNetworkEdgesFromLengthAlgorithm import (
     GeneralizeNetworkEdgesWithLengthAlgorithm,
 )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.generalizeWaterBodyAlgorithm import (
+    GeneralizeWaterBodyAlgorithm,
+)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeneralizationAlgs.reclassifyGroupsOfPixelsToNearestNeighborAlgorithm import (
     ReclassifyGroupsOfPixelsToNearestNeighborAlgorithm,
 )
@@ -688,6 +691,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
             IdentifyMissingPointsOnLineIntersections(),
             IdentifyMissingPolygonLineIntersectionsOnLines(),
             BatchRasterPackagingForBDGEx(),
+            GeneralizeWaterBodyAlgorithm(),
         ]
         return algList
 
