@@ -77,7 +77,7 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         if inputLyr is None or inputLyr.featureCount() == 0:
             return {}
-        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(7, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(
             self.tr("Identifying dangles on {layer}...").format(layer=inputLyr.name())
@@ -93,9 +93,18 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
             return {}
 
         multiStepFeedback.setCurrentStep(1)
+        if multiStepFeedback.isCanceled():
+            return {}
         layerHandler.filterDangles(dangleLyr, tol, feedback=multiStepFeedback)
         multiStepFeedback.setCurrentStep(2)
+        if multiStepFeedback.isCanceled():
+            return {}
+        algRunner.runCreateSpatialIndex(inputLyr=dangleLyr, context=context, feedback=multiStepFeedback, is_child_algorithm=True)
+        multiStepFeedback.setCurrentStep(3)
+        if multiStepFeedback.isCanceled():
+            return {}
         multiStepFeedback.pushInfo(self.tr("Finding original segments"))
+        algRunner.runCreateSpatialIndex(inputLyr=dangleLyr, context=context, feedback=multiStepFeedback, is_child_algorithm=True)
         originalSegments = algRunner.runExtractByLocation(
             inputLyr=inputLyr,
             intersectLyr=dangleLyr,
@@ -105,7 +114,13 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
             is_child_algorithm=True,
         )
 
-        multiStepFeedback.setCurrentStep(3)
+        multiStepFeedback.setCurrentStep(4)
+        if multiStepFeedback.isCanceled():
+            return {}
+        algRunner.runCreateSpatialIndex(inputLyr=originalSegments, context=context, feedback=multiStepFeedback, is_child_algorithm=True)
+        multiStepFeedback.setCurrentStep(5)
+        if multiStepFeedback.isCanceled():
+            return {}
         multiStepFeedback.pushInfo(
             self.tr("Snapping layer {layer} to dangles...").format(
                 layer=inputLyr.name()
@@ -120,7 +135,9 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
             behavior=algRunner.PreferClosestDoNotInsertNewVertices,
             is_child_algorithm=True,
         )
-        multiStepFeedback.setCurrentStep(4)
+        multiStepFeedback.setCurrentStep(6)
+        if multiStepFeedback.isCanceled():
+            return {}
         algRunner.runSnapLayerOnLayer(
             inputLayer=inputLyr,
             referenceLayer=snappedDangles,
