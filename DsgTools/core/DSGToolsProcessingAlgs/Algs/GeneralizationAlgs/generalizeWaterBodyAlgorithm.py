@@ -24,6 +24,7 @@
 import os
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (
+    QgsProcessingParameterMultipleLayers,
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterVectorLayer,
@@ -32,7 +33,6 @@ from qgis.core import (
     QgsFeatureSink,
     QgsFeature,
     QgsVectorLayer,
-    QgsFeatureRequest,
     QgsProcessingMultiStepFeedback
 )
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
@@ -41,6 +41,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
 class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
     WATER_BODY = "WATER_BODY"
+    #RIVERS_WITH_FLOW = "RIVERS_WITH_FLOW"
+    #RIVERS_WITHOUT_FLOW = "RIVERS_WITHOUT_FLOW"
     SCALE = "SCALE"
     MIN_WIDTH_MM = "MIN_WIDTH_MM"
     OUTPUT = "OUTPUT"
@@ -56,23 +58,29 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 [QgsProcessing.TypeVectorPolygon],
             )
         )
+        '''
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.RIVERS_WITH_FLOW,
+                self.tr("Select rivers with flow (multiple line layers)"),
+                layerType=QgsProcessing.TypeVectorLine
+            )
+        )
 
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.RIVERS_WITHOUT_FLOW,
+                self.tr("Select rivers without flow (multiple line layers)"),
+                layerType=QgsProcessing.TypeVectorLine
+            )
+        )
+        '''
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.SCALE,
                 self.tr("Scale (e.g., 50 for 50k)"),
                 minValue=1,
                 defaultValue=50,
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.MIN_WIDTH_MM,
-                self.tr("Minimum width in millimeters"),
-                QgsProcessingParameterNumber.Double,
-                minValue=0.1,
-                defaultValue=0.8,
             )
         )
 
@@ -99,6 +107,8 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         Processing logic.
         """
         water_body_layer = self.parameterAsVectorLayer(parameters, self.WATER_BODY, context)
+        #river_with_flow = self.parameterAsLayerList(parameters, self.RIVERS_WITH_FLOW, context)
+        #river_no_flow = self.parameterAsLayerList(parameters, self.RIVERS_WITHOUT_FLOW, context)
         scale = self.parameterAsDouble(parameters, self.SCALE, context)
         min_width_mm = self.parameterAsDouble(parameters, self.MIN_WIDTH_MM, context)
         area_tolerancia = 3.16*10**(-8)
@@ -128,6 +138,11 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             onlySelected= False,
             feedback=multi_step_feedback,
         )
+        smallFeaturesLyr, localCache = localCache#filtrado
+        idsToRemove = [feat["featid"] for feat in smallFeaturesLyr.getFeatures()]
+        if idsToRemove:
+            water_body_layer.startEditing()
+            water_body_layer.deleteFeatures(idsToRemove)
         feedback.pushInfo('Applying dissolve...')
         dissolve = algRunner.runDissolve(localCache, context=context, feedback=multi_step_feedback)
         if not dissolve:
@@ -199,6 +214,13 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         filtered_holes = QgsVectorLayer("Polygon", "filtered_geometry", "memory")
         filtered_holes.setCrs(newnewsinglepart.crs())
         filtered_holes.dataProvider().addFeatures(filtered_features)
+
+        feedback.pushInfo('Removing small holes...')
+        newholes = algRunner.runDeleteHoles(filtered_holes, context=context, feedback=multi_step_feedback, min_area=100.000)
+        if not newholes:
+            feedback.reportError(self.tr('Holes not removed.'))
+            return {}
+        feedback.pushInfo('Samll holes successfully removed.')
         
         feedback.pushInfo('Taking the difference between original water body and the newest one...')
         newdifference = algRunner.runDifference(localCache, filtered_holes, context=context, feedback=multi_step_feedback)
@@ -224,7 +246,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         feedback.pushInfo('Water bodies edition finished')
 
         feedback.pushInfo('Generating output layer.')
-        for feat in filtered_holes.getFeatures():
+        for feat in newholes.getFeatures():
             newFeat = QgsFeature(fields)
             geomFeatAdd = feat.geometry()
             newFeat.setGeometry(geomFeatAdd)

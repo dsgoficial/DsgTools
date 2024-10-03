@@ -692,9 +692,13 @@ class AlgRunner:
         outputLyr=None,
         feedback=None,
         is_child_algorithm=False,
+        fail_output = None
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
-        parameters = {"EXPRESSION": expression, "INPUT": inputLyr, "OUTPUT": outputLyr}
+        if fail_output is None:
+            parameters = {"EXPRESSION": expression, "INPUT": inputLyr, "OUTPUT": outputLyr}
+        else:
+            parameters = {"EXPRESSION": expression, "INPUT": inputLyr, "OUTPUT": outputLyr, "FAIL_OUTPUT": fail_output}
         output = processing.run(
             "native:extractbyexpression",
             parameters,
@@ -702,7 +706,10 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
-        return output["OUTPUT"]
+        if fail_output is None:
+            return output["OUTPUT"]
+        return output["OUTPUT"], output["FAIL_OUTPUT"]
+        
 
     def runRemoveDuplicatedFeatures(
         self,
