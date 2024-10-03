@@ -31,8 +31,11 @@ from qgis.core import (
     QgsProcessingParameterFeatureSink,
     QgsFeatureSink,
     QgsFeature,
+    QgsVectorLayer,
+    QgsFeatureRequest,
     QgsProcessingMultiStepFeedback
 )
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 import processing
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
@@ -98,6 +101,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         water_body_layer = self.parameterAsVectorLayer(parameters, self.WATER_BODY, context)
         scale = self.parameterAsDouble(parameters, self.SCALE, context)
         min_width_mm = self.parameterAsDouble(parameters, self.MIN_WIDTH_MM, context)
+        area_tolerancia = 3.16*10**(-8)
 
         if water_body_layer is None:
             return {}
@@ -113,19 +117,31 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             min_width = (min_width_mm * scale)
 
         algRunner = AlgRunner()
+        layerHandler = LayerHandler()
 
-        steps = 8
+        steps = 1
         multi_step_feedback = QgsProcessingMultiStepFeedback(steps, feedback)
 
-        multi_step_feedback.setCurrentStep(0)
+        localCache = layerHandler.createAndPopulateUnifiedVectorLayer(
+            [water_body_layer],
+            geomType=water_body_layer.wkbType(),
+            onlySelected= False,
+            feedback=multi_step_feedback,
+        )
+        feedback.pushInfo('Applying dissolve...')
+        dissolve = algRunner.runDissolve(localCache, context=context, feedback=multi_step_feedback)
+        if not dissolve:
+            feedback.reportError('Error on dissolve process.')
+            return {}
+        feedback.pushInfo('Dissolve successfully applied.')
+
         feedback.pushInfo('Applying negative buffer to remove thin parts...')
-        buffer_neg = algRunner.runBuffer(water_body_layer, distance=-min_width / 2.0, context=context, dissolve=True, feedback=multi_step_feedback)
+        buffer_neg = algRunner.runBuffer(dissolve, distance=-min_width / 2.0, context=context, dissolve=True, feedback=multi_step_feedback)
         if not buffer_neg:
             feedback.reportError('Negative buffer was not generated correctly.')
             return {}
         feedback.pushInfo('Negative buffer generated successfully.')
 
-        multi_step_feedback.setCurrentStep(1)
         feedback.pushInfo('Transforming multipart geometries into singlepart...')
         singlepart = algRunner.runMultipartToSingleParts(buffer_neg, context=context, feedback=multi_step_feedback)
         if not singlepart:
@@ -133,7 +149,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             return {}
         feedback.pushInfo('Singlepart generated successfully.')
 
-        multi_step_feedback.setCurrentStep(2)
         feedback.pushInfo('Removing null geometries manually...')
         removenull = algRunner.runRemoveNull(singlepart, context=context, feedback=multi_step_feedback)
         if not removenull:
@@ -141,7 +156,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             return {}
         feedback.pushInfo('Null geometries removed successfully.')
 
-        multi_step_feedback.setCurrentStep(3)
         feedback.pushInfo('Removing duplicate vertices...')
         cleaned_duplicates = algRunner.runRemoveDuplicatedGeometries(removenull, context=context, feedback=multi_step_feedback)
         if not cleaned_duplicates:
@@ -149,14 +163,12 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             return {}
         feedback.pushInfo('Duplicate vertices removed successfully.')
 
-        multi_step_feedback.setCurrentStep(4)
-        feedback.pushInfo('Applying positive buffer to restore valid parts...')
+        feedback.pushInfo('Applying positive buffer to restore to initial state...')
         buffer_pos = algRunner.runBuffer(cleaned_duplicates, distance=min_width / 2.0, context=context, dissolve=True, feedback=multi_step_feedback)
         if not buffer_pos:
             feedback.reportError('Positive buffer was not generated correctly.')
             return {}
         
-        multi_step_feedback.setCurrentStep(5)
         feedback.pushInfo('Transforming multipart geometries into singlepart...')
         newsinglepart = algRunner.runMultipartToSingleParts(buffer_pos, context=context, feedback=multi_step_feedback)
         if not newsinglepart:
@@ -164,17 +176,55 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             return {}
         feedback.pushInfo('Singlepart generated successfully.')
 
-        multi_step_feedback.setCurrentStep(6)
         feedback.pushInfo('Taking the difference between original water body and the newest one...')
-        difference = algRunner.runDifference(water_body_layer, newsinglepart, context=context, feedback=multi_step_feedback)
+        difference = algRunner.runDifference(localCache, newsinglepart, context=context, feedback=multi_step_feedback)
         if not difference:
             feedback.reportError('Difference was not possible to take.')
             return {}
         feedback.pushInfo('Difference successfully taken.')
 
-        multi_step_feedback.setCurrentStep(7)
+        feedback.pushInfo('Transforming multipart geometries into singlepart...')
+        newnewsinglepart = algRunner.runMultipartToSingleParts(difference, context=context, feedback=multi_step_feedback)
+        if not newnewsinglepart:
+            feedback.reportError('Singlepart was not generated.')
+            return {}
+        feedback.pushInfo('Singlepart generated successfully.')
+
+        feedback.pushInfo('Filtering geometries by area...')
+        filtered_features = []
+        for feat in newnewsinglepart.getFeatures():
+            geom = feat.geometry()
+            if geom.area() >= area_tolerancia:
+                filtered_features.append(feat)
+        filtered_holes = QgsVectorLayer("Polygon", "filtered_geometry", "memory")
+        filtered_holes.setCrs(newnewsinglepart.crs())
+        filtered_holes.dataProvider().addFeatures(filtered_features)
+        
+        feedback.pushInfo('Taking the difference between original water body and the newest one...')
+        newdifference = algRunner.runDifference(localCache, filtered_holes, context=context, feedback=multi_step_feedback)
+        if not newdifference:
+            feedback.reportError(self.tr('Difference was not possible to take.'))
+            return {}
+        feedback.pushInfo('Difference successfully taken.')
+
+        feedback.pushInfo('Transforming multipart geometries into singlepart...')
+        newnewnewsinglepart = algRunner.runMultipartToSingleParts(newdifference, context=context, feedback=multi_step_feedback)
+        if not newnewnewsinglepart:
+            feedback.reportError('Singlepart was not generated.')
+            return {}
+        feedback.pushInfo('Singlepart generated successfully.')
+
+        feedback.pushInfo('Editing water bodies')
+        layerHandler.updateOriginalLayersFromUnifiedLayer(
+            [water_body_layer],
+            newnewnewsinglepart,
+            feedback=multi_step_feedback,
+            onlySelected= False,
+        )
+        feedback.pushInfo('Water bodies edition finished')
+
         feedback.pushInfo('Generating output layer.')
-        for feat in difference.getFeatures():
+        for feat in filtered_holes.getFeatures():
             newFeat = QgsFeature(fields)
             geomFeatAdd = feat.geometry()
             newFeat.setGeometry(geomFeatAdd)
@@ -182,7 +232,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 newFeat[field.name()] = feat[field.name()]
             output_sink.addFeature(newFeat, QgsFeatureSink.FastInsert)
 
-        multi_step_feedback.setCurrentStep(8)
         feedback.pushInfo('Returning output layer.')
         return {self.OUTPUT: output_id}
 
