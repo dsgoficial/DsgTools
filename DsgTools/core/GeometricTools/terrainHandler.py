@@ -49,7 +49,6 @@ class TerrainSlice:
     polygonid: int
     polygonFeat: QgsFeature
     contourElevationFieldName: str
-    depressionFieldName: str
     threshold: int
     contoursOnSlice: Set[QgsFeature]
     contourIdField: str
@@ -93,87 +92,118 @@ class TerrainModel:
     contourElevationFieldName: str
     geographicBoundsLyr: QgsVectorLayer
     threshold: int
-    depressionFieldName: str
     depressionExpression: str = field(default=None)
     spotElevationLyr: QgsVectorLayer = field(default=None)
     spotElevationFieldName: str = field(default=None)
+    feedback: QgsProcessingFeedback = field(default=None)
 
     def __post_init__(self):
         self.context = QgsProcessingContext()
         self.algRunner = AlgRunner()
+        multiStepFeedback = QgsProcessingMultiStepFeedback(9, self.feedback) if self.feedback is not None else None
+        currentStep = 0
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(self.tr("Creating contours cache"))
+            multiStepFeedback.setCurrentStep(currentStep)
+
         self.contourCacheLyr: QgsVectorLayer = self.algRunner.runCreateFieldWithExpression(
             inputLyr=self.contourLyr,
             expression="$id",
             fieldName="contourid",
             fieldType=1,
             context=self.context,
-            feedback=None,
+            feedback=multiStepFeedback,
         )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(self.tr("Merging lines"))
+            multiStepFeedback.setCurrentStep(currentStep)
+
         self.algRunner.runDSGToolsMergeLines(
             inputLayer=self.contourCacheLyr,
             context=self.context,
             attributeBlackList=[
                 f.name() for f in self.contourCacheLyr.fields() \
-                    if f.name() not in [self.contourElevationFieldName, self.depressionFieldName]
+                    if f.name() not in [self.contourElevationFieldName]
             ],
             allowClosed=True,
-            feedback=None,
+            feedback=multiStepFeedback,
         )
         self.contourCacheLyr.commitChanges()
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(self.tr("Creating spatial index on merged lines"))
+            multiStepFeedback.setCurrentStep(currentStep)
         self.algRunner.runCreateSpatialIndex(
             inputLyr=self.contourCacheLyr,
             context=self.context,
-            feedback=None,
+            feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(self.tr("Clipping to geographic bounds"))
+            multiStepFeedback.setCurrentStep(currentStep)
         auxClippedContourCacheLyr: QgsVectorLayer = self.algRunner.runClip(
             inputLayer=self.contourCacheLyr,
             overlayLayer=self.geographicBoundsLyr,
             context=self.context,
+            feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(self.tr("Finding closed lines"))
+            multiStepFeedback.setCurrentStep(currentStep)
         self.clippedContourCacheLyr: QgsVectorLayer = self.algRunner.runCreateFieldWithExpression(
             inputLyr=auxClippedContourCacheLyr,
             expression="is_closed($geometry)",
             fieldName="is_closed",
             fieldType=1,
             context=self.context,
-            feedback=None,
+            feedback=multiStepFeedback,
         )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(self.tr("Creating spatial index on clipped lines"))
+            multiStepFeedback.setCurrentStep(currentStep)
 
         self.algRunner.runCreateSpatialIndex(
             inputLyr=self.clippedContourCacheLyr,
             context=self.context,
-            feedback=None,
+            feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
-        self.geoBoundsLineLyr: QgsVectorLayer = self.buildBoundaryLines()
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(self.tr("Computing boundary lines"))
+            multiStepFeedback.setCurrentStep(currentStep)
+        self.geoBoundsLineLyr: QgsVectorLayer = self.buildBoundaryLines(context=self.context, feedback=multiStepFeedback)
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(self.tr("Extracting middle vertices"))
+            multiStepFeedback.setCurrentStep(currentStep)
         self.contourMiddlePointsLyr: QgsVectorLayer = self.algRunner.runDSGToolsExtractMiddleVertexOnLine(
             inputLayer=self.clippedContourCacheLyr,
-            context=self.context
+            context=self.context,
+            feedback=multiStepFeedback
         )
+        currentStep += 1
+        if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(self.tr("Creating spatial index for middle vertices"))
+            multiStepFeedback.setCurrentStep(currentStep)
         self.algRunner.runCreateSpatialIndex(
             inputLyr=self.contourMiddlePointsLyr,
             context=self.context,
-            feedback=None,
+            feedback=multiStepFeedback,
             is_child_algorithm=True,
         )
-
-        
 
     def buildAuxStructures(
         self,
         context: Optional[QgsProcessingContext] = None,
         feedback: Optional[QgsProcessingFeedback] = None,
     ):
-        try:
-            import networkx as nx
-        except ImportError:
-            raise Exception(
-                self.tr(
-                    "This algorithm requires the Python networkx library. Please install this library and try again."
-                )
-            )
         multiStepFeedback = (
             QgsProcessingMultiStepFeedback(2, feedback)
             if feedback is not None
@@ -184,7 +214,7 @@ class TerrainModel:
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
             multiStepFeedback.pushInfo(self.tr("Building terrain slices"))
-        self.terrainSlicesDict = self.buildTerrainSlices(nx, feedback=multiStepFeedback)
+        self.terrainSlicesDict = self.buildTerrainSlices(feedback=multiStepFeedback)
 
         currentStep += 1
         if multiStepFeedback is not None:
@@ -480,10 +510,11 @@ class TerrainModel:
             multiStepFeedback.setCurrentStep(currentStep)
         dangleCandidates = self.algRunner.runIdentifyDangles(
             inputLayer=self.contourCacheLyr,
-            searchRadius=1e-5,
+            searchRadius=1e-4,
             context=context,
             ignoreDanglesOnUnsegmentedLines=False,
             geographicBoundsLyr=self.geographicBoundsLyr,
+            feedback=multiStepFeedback,
         )
         if dangleCandidates.featureCount() > 0:
             invalidDict.update(
@@ -559,11 +590,11 @@ class TerrainModel:
             )
         return invalidDict
     
-    def buildTerrainGraph(self, nx, polygonBandDict: Dict[int, TerrainSlice], feedback: Optional[QgsProcessingFeedback] = None):
+    def buildTerrainGraph(self, polygonBandDict: Dict[int, TerrainSlice], feedback: Optional[QgsProcessingFeedback] = None):
         pass
 
     def validateTerrainBands(
-        self, terrainGraph, feedback: Optional[QgsProcessingFeedback] = None
+        self, feedback: Optional[QgsProcessingFeedback] = None
     ) -> Dict[QByteArray, str]:
         invalidDict = dict()
         multiStepFeedback = (
@@ -576,7 +607,13 @@ class TerrainModel:
             multiStepFeedback.setCurrentStep(0)
         
         # TODO find bands with missing contour
-        
+        for slice in self.terrainSlicesDict.values():
+            output = slice.validate()
+            if output == dict():
+                continue
+            invalidDict.update(output)
+        if invalidDict != dict():
+            return invalidDict
         # TODO search on graph starting on hilltops
 
         

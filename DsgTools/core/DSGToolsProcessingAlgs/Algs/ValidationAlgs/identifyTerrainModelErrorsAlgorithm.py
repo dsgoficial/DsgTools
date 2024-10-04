@@ -41,7 +41,6 @@ from qgis.core import (
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from DsgTools.core.GeometricTools.spatialRelationsHandler import SpatialRelationsHandler
 from DsgTools.core.GeometricTools.terrainHandler import TerrainModel
 from ..Help.algorithmHelpCreator import HTMLHelpCreator as help
 
@@ -155,7 +154,6 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        self.spatialRealtionsHandler = SpatialRelationsHandler()
         self.algRunner = AlgRunner()
         self.layerHandler = LayerHandler()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
@@ -197,13 +195,13 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             raise QgsProcessingException(
                 self.tr("Spot elevation height attribute must be selected.")
             )
-        point_flagSink, point_flag_id = self.prepareAndReturnFlagSink(
+        point_flagSink, point_flag_sink_id = self.prepareAndReturnFlagSink(
             parameters, inputLyr, QgsWkbTypes.Point, context, self.POINT_FLAGS
         )
-        line_flagSink, line_flag_id = self.prepareAndReturnFlagSink(
+        line_flagSink, line_flag_sink_id = self.prepareAndReturnFlagSink(
             parameters, inputLyr, QgsWkbTypes.LineString, context, self.LINE_FLAGS
         )
-        polygon_flagSink, line_flag_id = self.prepareAndReturnFlagSink(
+        polygon_flagSink, polygon_flag_sink_id = self.prepareAndReturnFlagSink(
             parameters, inputLyr, QgsWkbTypes.Polygon, context, self.POLYGON_FLAGS
         )
 
@@ -246,12 +244,12 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 break
             geom = QgsGeometry()
             geom.fromWkb(flagGeom)
-            flagSink = sinkDict.get(geom.type(), None)
+            flagSink = sinkDict.get(geom.wkbType(), None)
             if flagSink is None:
                 continue
             self.flagFeature(geom, text, fromWkb=False, sink=flagSink)
 
-        return {self.POINT_FLAGS: point_flag_id, self.LINE_FLAGS: line_flag_id, self.POLYGON_FLAGS: point_flag_id}
+        return {self.POINT_FLAGS: point_flag_sink_id, self.LINE_FLAGS: line_flag_sink_id, self.POLYGON_FLAGS: polygon_flag_sink_id}
 
     def validateTerrainModel(
         self,
@@ -266,6 +264,9 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         context,
         feedback,
     ):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback is not None else None
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
         terrainModel = TerrainModel(
             contourLyr=contourLyr,
             contourElevationFieldName=heightFieldName,
@@ -274,8 +275,11 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             depressionExpression=depressionExpression,
             spotElevationLyr=elevationPointsLyr,
             spotElevationFieldName=elevationPointHeightFieldName,
+            feedback=multiStepFeedback,
         )
-        return terrainModel.validate(context=context, feedback=feedback)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+        return terrainModel.validate(context=context, feedback=multiStepFeedback)
 
     def validateTerrainModelInParalel(
         self,
