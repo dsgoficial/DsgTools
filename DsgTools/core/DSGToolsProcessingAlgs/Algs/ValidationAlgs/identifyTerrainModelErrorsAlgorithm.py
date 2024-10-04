@@ -210,7 +210,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         sinkDict = {
             QgsWkbTypes.Point: point_flagSink,
             QgsWkbTypes.LineGeometry: line_flagSink,
-             QgsWkbTypes.Polygon: polygon_flagSink,
+            QgsWkbTypes.Polygon: polygon_flagSink,
         }
 
         invalidDict = (
