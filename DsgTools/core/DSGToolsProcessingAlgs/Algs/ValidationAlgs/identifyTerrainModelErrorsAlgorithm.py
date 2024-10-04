@@ -206,9 +206,9 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         )
 
         sinkDict = {
-            QgsWkbTypes.Point: point_flagSink,
+            QgsWkbTypes.PointGeometry: point_flagSink,
             QgsWkbTypes.LineGeometry: line_flagSink,
-            QgsWkbTypes.Polygon: polygon_flagSink,
+            QgsWkbTypes.PolygonGeometry: polygon_flagSink,
         }
 
         invalidDict = (
@@ -244,7 +244,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 break
             geom = QgsGeometry()
             geom.fromWkb(flagGeom)
-            flagSink = sinkDict.get(geom.wkbType(), None)
+            flagSink = sinkDict.get(geom.type(), None)
             if flagSink is None:
                 continue
             self.flagFeature(geom, text, fromWkb=False, sink=flagSink)

@@ -100,7 +100,7 @@ class TerrainModel:
     def __post_init__(self):
         self.context = QgsProcessingContext()
         self.algRunner = AlgRunner()
-        multiStepFeedback = QgsProcessingMultiStepFeedback(9, self.feedback) if self.feedback is not None else None
+        multiStepFeedback = QgsProcessingMultiStepFeedback(10, self.feedback) if self.feedback is not None else None
         currentStep = 0
         if multiStepFeedback is not None:
             multiStepFeedback.pushInfo(self.tr("Creating contours cache"))
@@ -153,10 +153,20 @@ class TerrainModel:
         )
         currentStep += 1
         if multiStepFeedback is not None:
+            multiStepFeedback.pushInfo(self.tr("Clipping to geographic bounds"))
+            multiStepFeedback.setCurrentStep(currentStep)
+        singlePartClippedContourCacheLyr: QgsVectorLayer = self.algRunner.runMultipartToSingleParts(
+            inputLayer=auxClippedContourCacheLyr,
+            context=self.context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=True,
+        )
+        currentStep += 1
+        if multiStepFeedback is not None:
             multiStepFeedback.pushInfo(self.tr("Finding closed lines"))
             multiStepFeedback.setCurrentStep(currentStep)
         self.clippedContourCacheLyr: QgsVectorLayer = self.algRunner.runCreateFieldWithExpression(
-            inputLyr=auxClippedContourCacheLyr,
+            inputLyr=singlePartClippedContourCacheLyr,
             expression="is_closed($geometry)",
             fieldName="is_closed",
             fieldType=1,
