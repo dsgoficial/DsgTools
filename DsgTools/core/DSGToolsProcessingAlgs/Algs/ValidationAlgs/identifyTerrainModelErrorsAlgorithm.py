@@ -60,6 +60,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
     GROUP_BY_SPATIAL_PARTITION = "GROUP_BY_SPATIAL_PARTITION"
     POINT_FLAGS = "POINT_FLAGS"
     LINE_FLAGS = "LINE_FLAGS"
+    POLYGON_FLAGS = "POLYGON_FLAGS"
 
     def initAlgorithm(self, config):
         """
@@ -144,6 +145,11 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 self.LINE_FLAGS, self.tr("{0} Line Flags").format(self.displayName())
             )
         )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.POLYGON_FLAGS, self.tr("{0} Polygon Flags").format(self.displayName())
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -197,6 +203,15 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         line_flagSink, line_flag_id = self.prepareAndReturnFlagSink(
             parameters, inputLyr, QgsWkbTypes.LineString, context, self.LINE_FLAGS
         )
+        polygon_flagSink, line_flag_id = self.prepareAndReturnFlagSink(
+            parameters, inputLyr, QgsWkbTypes.Polygon, context, self.POLYGON_FLAGS
+        )
+
+        sinkDict = {
+            QgsWkbTypes.Point: point_flagSink,
+            QgsWkbTypes.LineGeometry: line_flagSink,
+             QgsWkbTypes.Polygon: polygon_flagSink,
+        }
 
         invalidDict = (
             self.validateTerrainModel(
@@ -231,14 +246,12 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
                 break
             geom = QgsGeometry()
             geom.fromWkb(flagGeom)
-            flagSink = (
-                line_flagSink
-                if geom.type() == QgsWkbTypes.LineGeometry
-                else point_flagSink
-            )
+            flagSink = sinkDict.get(geom.type(), None)
+            if flagSink is None:
+                continue
             self.flagFeature(geom, text, fromWkb=False, sink=flagSink)
 
-        return {self.POINT_FLAGS: point_flag_id, self.LINE_FLAGS: line_flag_id}
+        return {self.POINT_FLAGS: point_flag_id, self.LINE_FLAGS: line_flag_id, self.POLYGON_FLAGS: point_flag_id}
 
     def validateTerrainModel(
         self,
