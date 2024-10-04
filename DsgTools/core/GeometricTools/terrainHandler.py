@@ -215,7 +215,7 @@ class TerrainModel:
         feedback: Optional[QgsProcessingFeedback] = None,
     ):
         multiStepFeedback = (
-            QgsProcessingMultiStepFeedback(2, feedback)
+            QgsProcessingMultiStepFeedback(3, feedback)
             if feedback is not None
             else None
         )
@@ -223,7 +223,11 @@ class TerrainModel:
         currentStep = 0
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(currentStep)
+        self.terrainPolygonLayer = self.buildTerrainPolygonLayerFromContours(context=context, feedback=multiStepFeedback)
+        currentStep += 1
+        if multiStepFeedback is not None:
             multiStepFeedback.pushInfo(self.tr("Building terrain slices"))
+            multiStepFeedback.setCurrentStep(currentStep)
         self.terrainSlicesDict = self.buildTerrainSlices(feedback=multiStepFeedback)
 
         currentStep += 1
