@@ -118,6 +118,30 @@ class AlgRunner:
         )
         return output["OUTPUT"]
 
+    def runPoleOfInaccessibility(
+        self,
+        inputLyr,
+        context,
+        feedback=None,
+        outputLyr=None,
+        tolerance=1,
+        is_child_algorithm=False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        parameters = {
+            "INPUT": inputLyr,
+            "TOLERANCE": tolerance,
+            "OUTPUT": outputLyr
+        }
+        output = processing.run(
+            "native:poleofinaccessibility",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
+        return output["OUTPUT"]
+
     def runGrassDissolve(
         self,
         inputLyr,
