@@ -138,11 +138,12 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             onlySelected= False,
             feedback=multi_step_feedback,
         )
-        smallFeaturesLyr, localCache = localCache#filtrado
+        '''smallFeaturesLyr, localCache = localCache#filtrado
         idsToRemove = [feat["featid"] for feat in smallFeaturesLyr.getFeatures()]
         if idsToRemove:
             water_body_layer.startEditing()
             water_body_layer.deleteFeatures(idsToRemove)
+        '''
         feedback.pushInfo('Applying dissolve...')
         dissolve = algRunner.runDissolve(localCache, context=context, feedback=multi_step_feedback)
         if not dissolve:
@@ -236,17 +237,35 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             return {}
         feedback.pushInfo('Singlepart generated successfully.')
 
+        feedback.pushInfo('Filtering features')
+        filtered_singlepart = algRunner.runFilterExpression(
+            inputLyr=newnewnewsinglepart,
+            expression=f"""$area >= {62500}""",
+            context=context,
+            feedback=multi_step_feedback,
+        )
+        feedback.pushInfo('Features filtered by area_otf successfully.')
+
         feedback.pushInfo('Editing water bodies')
         layerHandler.updateOriginalLayersFromUnifiedLayer(
             [water_body_layer],
-            newnewnewsinglepart,
+            filtered_singlepart,
             feedback=multi_step_feedback,
             onlySelected= False,
         )
         feedback.pushInfo('Water bodies edition finished')
 
+        feedback.pushInfo('Filtering holes')
+        filtered_newholes = algRunner.runFilterExpression(
+            inputLyr=newholes,
+            expression=f"""$area >= {100000}""",
+            context=context,
+            feedback=multi_step_feedback,
+        )
+        feedback.pushInfo('Features filtered by area_otf successfully.')
+
         feedback.pushInfo('Generating output layer.')
-        for feat in newholes.getFeatures():
+        for feat in filtered_newholes.getFeatures():
             newFeat = QgsFeature(fields)
             geomFeatAdd = feat.geometry()
             newFeat.setGeometry(geomFeatAdd)
