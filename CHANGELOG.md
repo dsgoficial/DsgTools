@@ -1,10 +1,10 @@
 # CHANGELOG
 
-## 4.15.4 - dev
+## 4.15.5 - dev
 
 Novas Funcionalidades:
 
--
+- Nova ferramenta para fechar linhas;
 
 Melhorias:
 
