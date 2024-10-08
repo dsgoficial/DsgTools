@@ -33,16 +33,13 @@ from qgis.PyQt.QtCore import QByteArray
 from qgis.core import (
     Qgis,
     QgsProcessing,
-    QgsProcessingException,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterEnum,
     QgsProcessingParameterFeatureSource,
     QgsFeedback,
-    QgsProcessingContext,
+    QgsFeature,
     QgsVectorLayer,
-    QgsProcessingParameterNumber,
-    QgsProcessingParameterMultipleLayers,
-    QgsProcessingParameterBoolean,
+    QgsProcessingParameterDistance,
 )
 
 from ...algRunner import AlgRunner
@@ -66,11 +63,11 @@ class FindSmallClosedLinesAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
-            QgsProcessingParameterNumber(
+            QgsProcessingParameterDistance(
                 self.MIN_LENGTH,
                 self.tr("Minimum size"),
                 minValue=0,
-                type=QgsProcessingParameterNumber.Double,
+                parentParameterName=self.INPUT,
                 defaultValue=0.001,
             )
         )
@@ -98,14 +95,6 @@ class FindSmallClosedLinesAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        try:
-            import networkx as nx
-        except ImportError:
-            raise QgsProcessingException(
-                self.tr(
-                    "This algorithm requires the Python networkx library. Please install this library and try again."
-                )
-            )
         # get the network handler
         self.algRunner = AlgRunner()
         self.layerHandler = LayerHandler()
@@ -113,11 +102,11 @@ class FindSmallClosedLinesAlgorithm(ValidationAlgorithm):
         minLen = self.parameterAsDouble(parameters, self.MIN_LENGTH, context)
         method = self.parameterAsEnum(parameters, self.METHOD, context)
 
-        nSteps = 9
+        nSteps = 6
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.setProgressText(self.tr("Building aux structures"))
+        multiStepFeedback.setProgressText(self.tr("Creating local cache..."))
         localCache = self.algRunner.runCreateFieldWithExpression(
             inputLyr=parameters[self.INPUT],
             expression="$id",
@@ -128,85 +117,82 @@ class FindSmallClosedLinesAlgorithm(ValidationAlgorithm):
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        orientedLines = self.algRunner.runSetLineOrientation(
-            inputLayer=localCache,
+        multiStepFeedback.setProgressText(
+            self.tr("Filtering small individual lines...")
+        )
+        smallIndividualLines = self.algRunner.runFilterExpression(
+            localCache,
+            expression=f"length($geometry)<{minLen}",
             context=context,
             feedback=multiStepFeedback,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(
-            inputLyr=orientedLines,
+        multiStepFeedback.setProgressText(self.tr("Dissolving small lines..."))
+        dissolved = self.algRunner.runDissolve(
+            inputLyr=smallIndividualLines,
             context=context,
             feedback=multiStepFeedback,
-            is_child_algorithm=True,
+            # is_child_algorithm=True,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        nodesLayer = self.algRunner.runExtractSpecificVertices(
-            inputLyr=orientedLines,
-            vertices="0,-1",
-            context=context,
-            feedback=multiStepFeedback,
-            is_child_algorithm=True,
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        nodesLayer = self.algRunner.runCreateFieldWithExpression(
-            inputLyr=nodesLayer,
-            expression="$id",
-            fieldName="nfeatid",
-            fieldType=1,
+        multiStepFeedback.setProgressText(self.tr("Filtering small dissolved lines..."))
+        smallLines = self.algRunner.runFilterExpression(
+            dissolved,
+            expression=f"length($geometry)<{minLen}",
             context=context,
             feedback=multiStepFeedback,
         )
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        self.algRunner.runCreateSpatialIndex(
-            inputLyr=nodesLayer,
-            context=context,
-            feedback=multiStepFeedback,
-            is_child_algorithm=True,
-        )
-
+        multiStepFeedback.setProgressText(self.tr("Filtering closed lines..."))
+        closedLines = self.findClosedLines(smallLines)
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
-        (
-            nodeDict,
-            nodeIdDict,
-            edgeDict,
-            hashDict,
-            networkDirectedGraph,
-            nodeLayerIdDict,
-        ) = graphHandler.buildAuxStructures(
-            nx,
-            nodesLayer=nodesLayer,
-            edgesLayer=orientedLines,
-            feedback=multiStepFeedback,
-            useWkt=False,
-            computeNodeLayerIdDict=True,
-            addEdgeLength=True,
-            graphType=graphHandler.GraphType.MULTIDIGRAPH,
-        )
-        currentStep += 1
-        multiStepFeedback.setCurrentStep(currentStep)
-        idsToRemove = graphHandler.find_small_closed_line_groups(
-            nx, networkDirectedGraph, minLength=minLen, feedback=multiStepFeedback
-        )
-
+        multiStepFeedback.setProgressText(self.tr("Finding lines..."))
+        lines = self.withinFeatures(localCache, closedLines)
+        idsToRemove = {line["featid"] for line in lines}
         currentStep += 1
         multiStepFeedback.setCurrentStep(currentStep)
         self.manageSelectedIdsUsingInputMethod(inputLayer, method, idsToRemove)
         return {}
 
-    def manageSelectedIdsUsingInputMethod(self, networkLayer, method, idsToRemove):
+    def findClosedLines(self, inputLyr) -> Set[QgsFeature]:
+        closedLines = set()
+        for feat in inputLyr.getFeatures():
+            geom = feat.geometry()
+            if geom.isMultipart():
+                for part in geom.asMultiPolyline():
+                    if part[0] == part[-1]:
+                        closedLines.add(feat)
+            else:
+                line = geom.asPolyline()
+                if line[0] == line[-1]:
+                    closedLines.add(feat)
+        return closedLines
+
+    def withinFeatures(self, inputLyr, features) -> Set[QgsFeature]:
+        featsWithin = set()
+        for feature in features:
+            geometry = feature.geometry()
+            bbox = geometry.boundingBox()
+            for feat in inputLyr.getFeatures(bbox):
+                geom = feat.geometry()
+                if geom.within(geometry):
+                    featsWithin.add(feat)
+        return featsWithin
+
+    def manageSelectedIdsUsingInputMethod(
+        self, inputLyr: QgsVectorLayer, method, idsToRemove
+    ):
         if method != 0:
-            networkLayer.selectByIds(list(idsToRemove), self.selectionIdDict[method])
+            inputLyr.selectByIds(list(idsToRemove), self.selectionIdDict[method])
             return {}
-        networkLayer.startEditing()
-        networkLayer.beginEditCommand(self.tr("Deleting features"))
-        networkLayer.deleteFeatures(list(idsToRemove))
-        networkLayer.endEditCommand()
+        inputLyr.startEditing()
+        inputLyr.beginEditCommand(self.tr("Deleting features"))
+        inputLyr.deleteFeatures(list(idsToRemove))
+        inputLyr.endEditCommand()
         return {}
 
     def name(self):
