@@ -45,9 +45,9 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
     #RIVERS_WITH_FLOW = "RIVERS_WITH_FLOW"
     #RIVERS_WITHOUT_FLOW = "RIVERS_WITHOUT_FLOW"
     SCALE = "SCALE"
-    MIN_WIDTH_MM = "MIN_WIDTH_MM"
+    MIN_BODY_WATER_WIDTH = "MIN_BODY_WATER_WIDTH"
     ISLAND = "ISLAND"
-    MIN_ISLAND_AREA = "MIN_ISLAND_AREA"
+    MIN_BODY_WATER_AREA = "MIN_BODY_WATER_AREA"
     OUTPUT_SMALL_WATER_BODY = "OUTPUT_SMALL_WATER_BODY"
     OUTPUT_SMALL_ISLAND = "OUTPUT_SMALL_ISLAND"
 
@@ -90,11 +90,21 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.MIN_WIDTH_MM,
-                self.tr("Minimum width in millimeters"),
+                self.MIN_BODY_WATER_WIDTH,
+                self.tr("Minimum body water width tolerance in millimeters"),
                 QgsProcessingParameterNumber.Double,
                 minValue=0.1,
                 defaultValue=0.8,
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.MIN_BODY_WATER_AREA,
+                self.tr("Minimum body water area tolerance in square millimeters"),
+                QgsProcessingParameterNumber.Double,
+                minValue=0.1,
+                defaultValue=4,
             )
         )
 
@@ -103,16 +113,6 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
                 self.ISLAND,
                 self.tr("Island Elemnat (polygon layer)"),
                 [QgsProcessing.TypeVectorPolygon],
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.MIN_ISLAND_AREA,
-                self.tr("Minimum island area"),
-                QgsProcessingParameterNumber.Double,
-                minValue=0.1,
-                defaultValue=100000,
             )
         )
 
@@ -140,10 +140,10 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         #river_with_flow = self.parameterAsLayerList(parameters, self.RIVERS_WITH_FLOW, context)
         #river_no_flow = self.parameterAsLayerList(parameters, self.RIVERS_WITHOUT_FLOW, context)
         scale = self.parameterAsDouble(parameters, self.SCALE, context)
-        min_width_mm = self.parameterAsDouble(parameters, self.MIN_WIDTH_MM, context)
+        min_body_water_width = self.parameterAsDouble(parameters, self.MIN_BODY_WATER_WIDTH, context)
         area_tolerancia = 3.16*10**(-8)
         island_layer = self.parameterAsVectorLayer(parameters, self.ISLAND, context)
-        min_island_area = self.parameterAsDouble(parameters, self.MIN_ISLAND_AREA, context)
+        min_body_water_area = self.parameterAsDouble(parameters, self.MIN_BODY_WATER_AREA, context)
 
         if water_body_layer is None or island_layer is None:
             return {}
@@ -158,9 +158,10 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         )
 
         if water_body_layer.crs().isGeographic():
-            min_width = (min_width_mm * scale) / (10**5)
+            min_body_water_width_tolerance = (min_body_water_width * scale) / (10**5)
         else:
-            min_width = (min_width_mm * scale)
+            min_body_water_width_tolerance = (min_body_water_width * scale)
+        min_body_water_area_tolerance = (min_body_water_area * (scale ** 2))
         
         if island_layer.crs().isGeographic():
             toleranceIsland = 1 / (10**5)
@@ -199,7 +200,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         feedback.pushInfo('Dissolve successfully applied.')
 
         feedback.pushInfo('Applying negative buffer to remove thin parts...')
-        buffer_neg = algRunner.runBuffer(dissolve, distance=-min_width / 2.0, context=context, dissolve=True, feedback=multi_step_feedback)
+        buffer_neg = algRunner.runBuffer(dissolve, distance=-min_body_water_width_tolerance / 2.0, context=context, dissolve=True, feedback=multi_step_feedback)
         if not buffer_neg:
             feedback.reportError('Negative buffer was not generated correctly.')
             return {}
@@ -227,7 +228,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         feedback.pushInfo('Duplicate vertices removed successfully.')
 
         feedback.pushInfo('Applying positive buffer to restore to initial state...')
-        buffer_pos = algRunner.runBuffer(cleaned_duplicates, distance=min_width / 2.0, context=context, dissolve=True, feedback=multi_step_feedback)
+        buffer_pos = algRunner.runBuffer(cleaned_duplicates, distance=min_body_water_width_tolerance / 2.0, context=context, dissolve=True, feedback=multi_step_feedback)
         if not buffer_pos:
             feedback.reportError('Positive buffer was not generated correctly.')
             return {}
@@ -287,7 +288,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         feedback.pushInfo('Filtering features')
         filtered_singlepart = algRunner.runFilterExpression(
             inputLyr=newnewnewsinglepart,
-            expression=f"""$area >= {62500}""",
+            expression=f"""$area >= {min_body_water_area*15625}""",
             context=context,
             feedback=multi_step_feedback,
         )
@@ -305,7 +306,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         feedback.pushInfo('Filtering holes')
         filtered_newholes = algRunner.runFilterExpression(
             inputLyr=newholes,
-            expression=f"""$area >= {100000}""",
+            expression=f"""$area >= {min_body_water_area_tolerance}""",
             context=context,
             feedback=multi_step_feedback,
         )
@@ -314,7 +315,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         feedback.pushInfo('Island filtering.')
         filtered_island = algRunner.runFilterExpression(
             inputLyr=localIslandCache,
-            expression=f"""$area >= {min_island_area}""",
+            expression=f"""$area >= {min_body_water_area_tolerance}""",
             context=context,
             feedback=multi_step_feedback,
         )
@@ -332,7 +333,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         feedback.pushInfo('Finding Small Islands.')
         smallIsland = algRunner.runFilterExpression(
             inputLyr=localIslandCache,
-            expression=f"""$area < {min_island_area}""",
+            expression=f"""$area < {min_body_water_area_tolerance}""",
             context=context,
             feedback=multi_step_feedback,
         )
