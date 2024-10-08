@@ -269,7 +269,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         if not newholes:
             feedback.reportError(self.tr('Holes not removed.'))
             return {}
-        feedback.pushInfo('Samll holes successfully removed.')
+        feedback.pushInfo('Small holes successfully removed.')
         
         feedback.pushInfo('Taking the difference between original water body and the newest one...')
         newdifference = algRunner.runDifference(localBodyWaterCache, filtered_holes, context=context, feedback=multi_step_feedback)
