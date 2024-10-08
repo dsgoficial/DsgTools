@@ -265,7 +265,7 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         filtered_holes.dataProvider().addFeatures(filtered_features)
 
         feedback.pushInfo('Removing small holes...')
-        newholes = algRunner.runDeleteHoles(filtered_holes, context=context, feedback=multi_step_feedback, min_area=100.000)
+        newholes = algRunner.runDeleteHoles(filtered_holes, context=context, feedback=multi_step_feedback, min_area=min_body_water_area_tolerance)
         if not newholes:
             feedback.reportError(self.tr('Holes not removed.'))
             return {}
