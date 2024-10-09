@@ -35,7 +35,8 @@ from qgis.core import (
     QgsFeatureSink,
     QgsFeature,
     QgsVectorLayer,
-    QgsProcessingMultiStepFeedback
+    QgsProcessingMultiStepFeedback,
+    QgsFeatureRequest,
 )
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 import processing
@@ -220,13 +221,11 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         riversIdsStr = ','.join(riversIdsTuple)
         filterRiversIdsExpression = f'featid in ({riversIdsStr})'
 
-        localRiversCache, localBodyWaterCache = algRunner.runFilterExpression(
+        localRiversCache, localBodyWaterCache = algRunner.runFilterExpressionWithFailOutput(
             inputLyr=localInputLayerCache,
             expression=filterRiversIdsExpression,
             context=context,
             feedback=multi_step_feedback,
-            outputLyr="memory:",
-            fail_output="memory:",
         ) 
 
         feedback.pushInfo('Applying dissolve...')
@@ -264,14 +263,15 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
             return {}
         
         feedback.pushInfo('Transforming multipart geometries into singlepart...')
-        singlespartbodywater = algRunner.runMultipartToSingleParts(buffer_pos, context=context, feedback=multi_step_feedback)
-        if not singlespartbodywater:
+        # single part pois resultado do buffer dissolvido é sempre multipart (pior para spatialIndex)
+        filtered_waterbodystretch = algRunner.runMultipartToSingleParts(buffer_pos, context=context, feedback=multi_step_feedback)
+        if not filtered_waterbodystretch:
             feedback.reportError('Singlepart was not generated.')
             return {}
         feedback.pushInfo('Singlepart generated successfully.')
 
         feedback.pushInfo('Taking the difference between original water body and the newest one...')
-        holes = algRunner.runDifference(localInputLayerCache, singlespartbodywater, context=context, feedback=multi_step_feedback)
+        holes = algRunner.runDifference(localInputLayerCache, filtered_waterbodystretch, context=context, feedback=multi_step_feedback)
         if not holes:
             feedback.reportError('Difference was not possible to take.')
             return {}
@@ -285,8 +285,8 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         feedback.pushInfo('Singlepart generated successfully.')
 
         feedback.pushInfo('Filtering features')
-        filtered_newbodywater = algRunner.runFilterExpression(
-            inputLyr=singlespartbodywater,
+        filtered_bodywater = algRunner.runFilterExpression(
+            inputLyr=localBodyWaterCache,
             expression=f"""$area >= {min_water_body_area*15625}""",
             context=context,
             feedback=multi_step_feedback,
@@ -299,9 +299,8 @@ class GeneralizeWaterBodyAlgorithm(QgsProcessingAlgorithm):
         )
         feedback.pushInfo('Features filtered by area successfully.')
 
-        unified_layer = algRunner.runUnion(
-            inputLyr=filtered_newbodywater,
-            overlayLyr=localBodyWaterCache,
+        unified_layer = algRunner.runMergeVectorLayers(
+            [filtered_waterbodystretch,filtered_bodywater],
             context=context,
             feedback=multi_step_feedback,
         )

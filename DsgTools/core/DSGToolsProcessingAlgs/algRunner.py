@@ -741,13 +741,9 @@ class AlgRunner:
         outputLyr=None,
         feedback=None,
         is_child_algorithm=False,
-        fail_output = None
     ):
         outputLyr = "memory:" if outputLyr is None else outputLyr
-        if fail_output is None:
-            parameters = {"EXPRESSION": expression, "INPUT": inputLyr, "OUTPUT": outputLyr}
-        else:
-            parameters = {"EXPRESSION": expression, "INPUT": inputLyr, "OUTPUT": outputLyr, "FAIL_OUTPUT": fail_output}
+        parameters = {"EXPRESSION": expression, "INPUT": inputLyr, "OUTPUT": outputLyr}
         output = processing.run(
             "native:extractbyexpression",
             parameters,
@@ -755,8 +751,28 @@ class AlgRunner:
             feedback=feedback,
             is_child_algorithm=is_child_algorithm,
         )
-        if fail_output is None:
-            return output["OUTPUT"]
+        return output["OUTPUT"]
+    
+    def runFilterExpressionWithFailOutput(
+        self,
+        inputLyr,
+        expression,
+        context,
+        outputLyr=None,
+        failOutputLyr = None, 
+        feedback=None,
+        is_child_algorithm=False,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        failOutputLyr = "memory:" if failOutputLyr is None else failOutputLyr
+        parameters = {"EXPRESSION": expression, "INPUT": inputLyr, "OUTPUT": outputLyr, "FAIL_OUTPUT": failOutputLyr}
+        output = processing.run(
+            "native:extractbyexpression",
+            parameters,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=is_child_algorithm,
+        )
         return output["OUTPUT"], output["FAIL_OUTPUT"]
         
 
