@@ -208,7 +208,7 @@ class AlgRunner:
 
     def runDeleteHoles(
         self, inputLyr, context, feedback=None, outputLyr=None, min_area=0
-    ):
+    )->QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"INPUT": inputLyr, "MIN_AREA": min_area, "OUTPUT": outputLyr}
         output = processing.run(
@@ -633,7 +633,7 @@ class AlgRunner:
         feedback=None,
         outputLyr=None,
         is_child_algorithm=False,
-    ):
+    )->QgsVectorLayer:
         outputLyr = "memory:" if outputLyr is None else outputLyr
         parameters = {"INPUT": inputLayer, "OUTPUT": outputLyr}
         output = processing.run(
@@ -705,6 +705,31 @@ class AlgRunner:
         }
         output = processing.run(
             "native:intersection", parameters, context=context, feedback=feedback
+        )
+        return output["OUTPUT"]
+    
+    def runUnion(
+        self,
+        inputLyr,
+        context,
+        inputFields=None,
+        outputLyr=None,
+        overlayLyr=None,
+        overlayFields=None,
+        feedback=None,
+    ):
+        outputLyr = "memory:" if outputLyr is None else outputLyr
+        inputFields = [] if inputFields is None else inputFields
+        overlayFields = [] if overlayFields is None else overlayFields
+        parameters = {
+            "INPUT": inputLyr,
+            "INPUT_FIELDS": inputFields,
+            "OUTPUT": outputLyr,
+            "OVERLAY": overlayLyr,
+            "OVERLAY_FIELDS": overlayFields,
+        }
+        output = processing.run(
+            "native:union", parameters, context=context, feedback=feedback
         )
         return output["OUTPUT"]
 
