@@ -264,11 +264,39 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
         context,
         feedback,
     ):
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback is not None else None
+        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback) if feedback is not None else None
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(0)
+        bufferedBounds = self.algRunner.runBuffer(
+            inputLayer=geoBoundsLyr,
+            distance=1e-6,
+            context=context,
+            feedback=multiStepFeedback,
+        )
+        if multiStepFeedback.isCanceled():
+            return {}
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+        clippedContours = self.algRunner.runClip(
+            inputLayer=contourLyr
+            if not onlySelected
+            else QgsProcessingFeatureSourceDefinition(contourLyr.id(), True),
+            overlayLayer=bufferedBounds,
+            context=context,
+            feedback=multiStepFeedback,
+            is_child_algorithm=False,
+        )
+        if multiStepFeedback.isCanceled():
+            return {}
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(2)
+        singlePartContours = self.algRunner.runMultipartToSingleParts(
+            inputLayer=clippedContours, context=context, feedback=multiStepFeedback
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(3)
         terrainModel = TerrainModel(
-            contourLyr=contourLyr,
+            contourLyr=singlePartContours,
             contourElevationFieldName=heightFieldName,
             geographicBoundsLyr=geoBoundsLyr,
             threshold=threshold,
@@ -278,7 +306,7 @@ class IdentifyTerrainModelErrorsAlgorithm(ValidationAlgorithm):
             feedback=multiStepFeedback,
         )
         if multiStepFeedback is not None:
-            multiStepFeedback.setCurrentStep(1)
+            multiStepFeedback.setCurrentStep(4)
         return terrainModel.validate(context=context, feedback=multiStepFeedback)
 
     def validateTerrainModelInParalel(

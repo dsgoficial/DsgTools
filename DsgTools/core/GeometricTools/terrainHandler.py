@@ -54,12 +54,12 @@ class TerrainSlice:
     contourIdField: str
 
     def __post_init__(self):
-        self.maxHeighOnSlice = max(
+        self.maxHeightFeatOnSlice: QgsFeature = max(
             self.contoursOnSlice,
             key=lambda x: x[self.contourElevationFieldName],
             default=None,
         )
-        self.minHeighOnSlice = min(
+        self.minHeighFeatOnSlice: QgsFeature = min(
             self.contoursOnSlice,
             key=lambda x: x[self.contourElevationFieldName],
             default=None,
@@ -67,20 +67,20 @@ class TerrainSlice:
 
     def validate(self) -> Dict[QByteArray, str]:
         flagDict = dict()
-        if self.maxHeighOnSlice is None or self.minHeighOnSlice is None:
+        if self.maxHeightFeatOnSlice is None or self.minHeighFeatOnSlice is None:
             return flagDict
-        if self.maxHeighOnSlice - self.minHeighOnSlice > self.threshold:
+        if self.maxHeightFeatOnSlice[self.contourElevationFieldName] - self.minHeighFeatOnSlice[self.contourElevationFieldName] > self.threshold:
             geom = self.polygonFeat.geometry()
             geomWkb = geom.asWkb()
             flagDict.update(
                 {
-                    geomWkb: self.tr(f"Contour band with missing contour value between {self.minHeighOnSlice} and {self.maxHeighOnSlice}")
+                    geomWkb: self.tr(f"Contour band with missing contour value between {self.minHeighFeatOnSlice[self.contourElevationFieldName]} and {self.maxHeightFeatOnSlice[self.contourElevationFieldName]}")
                 }
             )
         return flagDict
 
     def getMinMaxHeight(self) -> Tuple[float, float]:
-        return self.minHeighOnSlice, self.maxHeighOnSlice
+        return self.minHeighFeatOnSlice[self.contourElevationFieldName], self.maxHeightFeatOnSlice[self.contourElevationFieldName]
 
     def tr(self, string: str) -> str:
         return QCoreApplication.translate("TerrainSlice", string)
@@ -261,7 +261,7 @@ class TerrainModel:
             multiStepFeedback.setCurrentStep(currentStep)
         if self.geoBoundsLineLyr is not None:
             buffered = self.algRunner.runBuffer(
-                inputLayer=self.geoBoundsLineLyr,
+                inputLayer=self.geographicBoundsLyr,
                 distance=1e-6,
                 context=context,
                 feedback=None,
@@ -414,7 +414,8 @@ class TerrainModel:
         ):
             if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
-            request = QgsFeatureRequest(f""" "polygonid" = {polygonFeat["polygonid"]}""")
+            request = QgsFeatureRequest()
+            request.setFilterExpression(f""" "polygonid" = {polygonFeat["polygonid"]}""")
             contoursOnSlice = set(
                 f for f in self.contoursMiddlePointsJoinnedByPolygonBand.getFeatures(request)
             )
@@ -426,7 +427,6 @@ class TerrainModel:
                 contourElevationFieldName=self.contourElevationFieldName,
                 threshold=self.threshold,
                 contoursOnSlice=contoursOnSlice,
-                depressionFieldName=self.depressionFieldName,
                 contourIdField="contourid",
             )
             if multiStepFeedback is not None:
@@ -527,6 +527,7 @@ class TerrainModel:
             searchRadius=1e-4,
             context=context,
             ignoreDanglesOnUnsegmentedLines=False,
+            inputIsBoundaryLayer=True,
             geographicBoundsLyr=self.geographicBoundsLyr,
             feedback=multiStepFeedback,
         )
