@@ -32,6 +32,7 @@ from qgis.core import (
     QgsProcessingParameterDistance,
     QgsProcessingParameterVectorLayer,
     QgsProcessingParameterFeatureSource,
+    QgsFeatureRequest,
 )
 
 from ...algRunner import AlgRunner
@@ -123,10 +124,14 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         currentStep += 1
 
         multiStepFeedback.setCurrentStep(currentStep)
+        request = QgsFeatureRequest()
+        request.setFilterExpression("is_closed($geometry)")
+        closedCurveIds = set(feat.id() for feat in inputLyr.getFeatures(request))
         self.extendLinesByStartOrEndPoints(
             inputLyr=auxLyr,
             boundsBuffer=bufferAroundBoundsLines,
             tol=tol,
+            closedCurveIds=closedCurveIds,
             context=context,
             feedback=multiStepFeedback,
             startPoint=True,
@@ -138,6 +143,7 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
             inputLyr=auxLyr,
             boundsBuffer=bufferAroundBoundsLines,
             tol=tol,
+            closedCurveIds=closedCurveIds,
             context=context,
             feedback=multiStepFeedback,
             startPoint=False,
@@ -191,7 +197,7 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         return bufferAroundBoundsLines
 
     def extendLinesByStartOrEndPoints(
-        self, inputLyr, boundsBuffer, tol, context, feedback, startPoint=True
+        self, inputLyr, boundsBuffer, tol, closedCurveIds, context, feedback, startPoint=True
     ):
         multiStepFeedback = QgsProcessingMultiStepFeedback(6, feedback)
         multiStepFeedback.setCurrentStep(0)
@@ -251,7 +257,8 @@ class ExtendLinesToGeographicBoundsAlgorithm(ValidationAlgorithm):
         for current, feat in enumerate(extendedLines.getFeatures()):
             if multiStepFeedback.isCanceled():
                 return
-
+            if feat["featid"] in closedCurveIds:
+                continue
             inputLyr.changeGeometry(
                 originalFeaturesToUpdateDict[feat["featid"]].id(),
                 feat.geometry(),
